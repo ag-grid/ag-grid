@@ -9,6 +9,7 @@ import type {
     FilterDisplayState,
     FilterHandler,
     FilterHandlerBaseParams,
+    FilterHandlerParams,
     FilterModel,
     IFilterComp,
     IFilterParams,
@@ -104,14 +105,15 @@ export function _refreshHandlerAndUi(
     handlerParams: FilterHandlerBaseParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler',
+    additionalEventAttributes?: any
 ): AgPromise<void> {
-    handler.refresh?.({ ...handlerParams, model, source });
+    handler.refresh?.({ ...handlerParams, model, source, additionalEventAttributes } as FilterHandlerParams);
 
     return getFilterUi().then((filterUi) => {
         if (filterUi) {
             const { filter, filterParams } = filterUi;
-            _refreshFilterUi(filter, filterParams, model, state, source);
+            _refreshFilterUi(filter, filterParams, model, state, source, additionalEventAttributes);
         }
     });
 }
@@ -121,13 +123,15 @@ export function _refreshFilterUi(
     filterParams: FilterDisplayParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler' | 'init'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler' | 'init',
+    additionalEventAttributes?: any
 ): void {
     filter?.refresh?.({
         ...filterParams,
         model,
         state,
         source,
+        additionalEventAttributes,
     });
 }
 

@@ -199,9 +199,9 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         const groupHierarchyConfig = gos.get('groupHierarchyConfig') ?? {};
         if (part in groupHierarchyConfig) {
-            const providedDef = groupHierarchyConfig[part];
-            providedDef.colId ??= colId;
-            return _addColumnDefaultAndTypes(beans, { ...defaults, ...providedDef }, providedDef.colId, true);
+            const colDef = { ...defaults, ...groupHierarchyConfig[part] };
+            colDef.colId ??= colId;
+            return _addColumnDefaultAndTypes(beans, colDef, colDef.colId, true);
         }
 
         const base: ColDef = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);

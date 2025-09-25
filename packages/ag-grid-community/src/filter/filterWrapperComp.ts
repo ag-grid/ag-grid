@@ -32,7 +32,7 @@ export class FilterWrapperComp extends Component {
         private readonly eventParent: IEventEmitter<
             'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'
         >,
-        private readonly updateModel: (column: AgColumn, action: FilterAction) => void,
+        private readonly updateModel: (column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => void,
         private isGlobalButtons: boolean,
         private readonly enableGlobalButtonCheck?: boolean
     ) {
@@ -123,7 +123,7 @@ export class FilterWrapperComp extends Component {
                 const getListener =
                     (action: FilterAction) =>
                     ({ event }: FilterButtonEvent) => {
-                        this.updateModel(column, action);
+                        this.updateModel(column, action, { fromButtons: true });
                         this.afterAction(action, event);
                     };
                 eButtonsPanel?.addManagedListeners(eButtonsPanel, {
@@ -192,7 +192,7 @@ export class FilterWrapperComp extends Component {
     private handleKeyDown(event: KeyboardEvent): void {
         if (!event.defaultPrevented && event.key === KeyCode.ENTER && this.applyActive) {
             // trigger apply. Can't do this via form submit as it will use click event, which prevents restoring focus on close
-            this.updateModel(this.column, 'apply');
+            this.updateModel(this.column, 'apply', { fromButtons: true });
             this.afterAction('apply', event);
         }
     }

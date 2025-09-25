@@ -11,18 +11,13 @@ const curlRequest = (url) => {
 };
 
 const jiraRequest = (url) => {
-    // JIRA limits the data returned via the rest api so we need to access the whole data set in chunks - each "page" will be maxResults long
-    // we keep executing the request with a new startAt until we reach the total number of issues in the set
-    const startAt = 0,
-        maxResults = 50;
-
     const issueData = curlRequest(
-        `${url}&fields=summary,components,fixVersions,customfield_10536,customfield_10522,customfield_10520,customfield_10521,customfield_10523,issuetype,resolution,status`
+        `${url}&fields=summary,components,fixVersions,customfield_10536,customfield_10522,customfield_10520,customfield_10521,customfield_10523,issuetype,resolution,status&expand=renderedFields`
     );
     let nextPageToken = issueData.nextPageToken;
     while (nextPageToken) {
         const block = curlRequest(
-            `${url}&fields=summary,components,fixVersions,customfield_10536,customfield_10522,customfield_10520,customfield_10521,customfield_10523,issuetype,resolution,status&nextPageToken=${nextPageToken}`
+            `${url}&fields=summary,components,fixVersions,customfield_10536,customfield_10522,customfield_10520,customfield_10521,customfield_10523,issuetype,resolution,status&expand=renderedFields&nextPageToken=${nextPageToken}`
         );
         issueData.issues = issueData.issues.concat(block.issues);
 
@@ -50,6 +45,7 @@ const executeJiraRequest = (url, componentSelector) => {
                     resolution,
                     status: { name: status },
                 },
+                renderedFields,
             } = issue;
 
             // map the fixVersions to their underlying name (ie 26.0.0 is what we're interested in, not the underlying JIRA metadata for it)
@@ -69,7 +65,7 @@ const executeJiraRequest = (url, componentSelector) => {
                 status,
                 resolution: resolution ? resolution.name : null,
                 features,
-                moreInformation,
+                moreInformation: moreInformation ? renderedFields.customfield_10522 : moreInformation,
                 deprecationNotes,
                 breakingChangesNotes,
                 documentationUrl,
