@@ -21,41 +21,32 @@ export function _hasEdits(
 export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
     const { editModelSvc } = beans;
     const { column, rowNode } = position;
-    if (!editModelSvc || !rowNode) {
-        return;
-    }
 
     // if we have group total rows, we should decorate them, rather than agg nodes
-    if (beans.gos.get('groupTotalRow') && !rowNode.footer) {
+    if (beans.gos.get('groupTotalRow') && !rowNode?.footer) {
         return false;
     }
 
-    const query: EditPosition = { rowNode, column };
-    const nodeHasLeafEdit = (node: RowNode): boolean => {
-        const childrenAfterGroup = node.childrenAfterGroup;
-        if (!childrenAfterGroup) {
-            return false;
+    const nodeHasLeafEdit = (children: RowNode[] | null | undefined): boolean | undefined => {
+        if (!children) {
+            return;
         }
-        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-            const child = childrenAfterGroup[i];
+        for (const child of children) {
             if (child.data) {
-                query.rowNode = child;
-                if (editHighlightFn(editModelSvc.getEdit(query))) {
-                    return true;
-                }
-                query.rowNode = child.pinnedSibling;
-                if (editHighlightFn(editModelSvc.getEdit(query))) {
+                const highlight =
+                    editHighlightFn(editModelSvc?.getEdit({ rowNode: child, column })) ||
+                    editHighlightFn(editModelSvc?.getEdit({ rowNode: child.pinnedSibling, column }));
+                if (highlight) {
                     return true;
                 }
             }
-            if (child.group && nodeHasLeafEdit(child)) {
+            if (nodeHasLeafEdit(child.childrenAfterGroup)) {
                 return true;
             }
         }
-        return false;
     };
 
-    return nodeHasLeafEdit(rowNode as RowNode);
+    return nodeHasLeafEdit(rowNode?.childrenAfterGroup as RowNode[] | null | undefined);
 }
 
 export function _hasPinnedEdits(beans: BeanCollection, { rowNode, column }: EditPosition): boolean | undefined {

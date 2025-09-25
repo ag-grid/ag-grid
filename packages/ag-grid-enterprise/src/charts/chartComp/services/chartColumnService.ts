@@ -114,17 +114,11 @@ export class ChartColumnService extends BeanStub {
         }
 
         const row = _getRowNode(this.beans, { rowIndex: 0, rowPinned: null });
-
         if (!row) {
             return this.valueColsWithoutSeriesType.has(colId);
         }
 
-        let cellValue = this.valueSvc.getValue(col, row);
-
-        if (cellValue == null) {
-            cellValue = this.extractLeafData(row, col);
-        }
-
+        let cellValue = this.extractLeafData(row, col);
         if (cellValue != null) {
             // unwrap value objects if present
             if (typeof cellValue.toNumber === 'function') {
@@ -149,16 +143,14 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: AgColumn): any {
-        if (row.data != null) {
-            const value = this.valueSvc.getValue(col, row);
-            if (value != null) {
-                return value;
-            }
+        const value = row.data && this.valueSvc.getValue(col, row);
+        if (value != null) {
+            return value;
         }
         const childrenAfterGroup = row.childrenAfterGroup;
         if (childrenAfterGroup) {
-            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                const result = this.extractLeafData(childrenAfterGroup[i], col);
+            for (const child of childrenAfterGroup) {
+                const result = this.extractLeafData(child, col);
                 if (result != null) {
                     return result;
                 }

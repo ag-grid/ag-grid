@@ -142,7 +142,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
             const id = getRowIdFunc({ data, level });
 
-            row = this.getRowNode(id) as RowNode<TData> | undefined;
+            row = this.getRowNode(id);
             if (row) {
                 let rowChanged = false;
                 if (row.data !== data) {
@@ -222,7 +222,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
             // Now append all the new children
             for (const row of changedRowNodes.adds) {
-                (row as RowNode<TData>).sourceRowIndex = allLeafs.push(row) - 1;
+                row.sourceRowIndex = allLeafs.push(row) - 1;
             }
         }
 

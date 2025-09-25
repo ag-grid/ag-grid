@@ -725,10 +725,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         let started = false;
         let finished = false;
-
+        const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
         const result: RowNode[] = [];
 
-        const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
+        const addAllLeafs = (node: RowNode): void => {
+            const children = node.childrenAfterGroup;
+            if (children) {
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    const child = children[i];
+                    if (child.data) {
+                        result.push(child);
+                    }
+                    if (child.group) {
+                        addAllLeafs(child);
+                    }
+                }
+            }
+        };
 
         this.forEachNodeAfterFilterAndSort((rowNode) => {
             // range has been closed, skip till end
@@ -744,7 +757,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (groupsSelectChildren && rowNode.group) {
-                        addAllLeafs(rowNode, result);
+                        addAllLeafs(rowNode);
                         return;
                     }
                 }
@@ -1270,19 +1283,3 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 }
-
-/** Helper to recursively collect all leaf children of a node */
-const addAllLeafs = (node: RowNode, output: RowNode[]): void => {
-    const children = node.childrenAfterGroup;
-    if (children) {
-        for (let i = 0, len = children.length; i < len; ++i) {
-            const child = children[i];
-            if (child.data) {
-                output.push(child);
-            }
-            if (child.group) {
-                addAllLeafs(child, output);
-            }
-        }
-    }
-};

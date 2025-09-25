@@ -112,8 +112,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             const groupNodes: RowNode[] = [];
             let unbalancedNode: RowNode | undefined;
 
-            for (let i = 0, len = oldChildrenAfterGroup.length; i < len; ++i) {
-                const child = oldChildrenAfterGroup[i];
+            for (const child of oldChildrenAfterGroup) {
                 if (!child.childrenAfterGroup?.length) {
                     newChildrenAfterGroup.push(child); // Leaf
                 } else if (!unbalancedNode && child.key === '') {
