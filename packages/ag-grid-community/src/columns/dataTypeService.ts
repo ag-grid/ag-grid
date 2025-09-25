@@ -20,7 +20,6 @@ import type {
 import type { AgGridEvent, ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
 import { _warn } from '../validation/logging';
 import { _addColumnDefaultAndTypes } from './columnFactoryUtils';
