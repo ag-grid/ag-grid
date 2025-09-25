@@ -16,6 +16,7 @@ export class BatchRemover {
     private readonly allSets = new Map<RowNode, Set<RowNode>>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
+        invalidateAllLeafChildren(parent);
         this.getSet(parent).add(child);
     }
 

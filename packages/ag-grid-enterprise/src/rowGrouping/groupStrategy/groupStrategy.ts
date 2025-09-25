@@ -19,7 +19,6 @@ import {
     _areEqual,
     _exists,
     _getFirstLeafChild,
-    _removeFromArray,
     _warn,
 } from 'ag-grid-community';
 
@@ -203,7 +202,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 const didSort = sortGroupChildren(node.childrenAfterGroup);
                 if (didSort) {
                     details.changedPath.addParentNode(node);
-                    // Order-only change: not calling invalidateAllLeafChildrenRecursively(node);
+                    // Order-only change: not calling invalidateAllLeafChildren(node);
                 }
             },
             false,
@@ -378,16 +377,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
     // d) setRowIndex(null) - as the rowNode will no longer be displayed.
-    private removeFromParent(child: RowNode, batchRemover?: BatchRemover) {
+    private removeFromParent(child: RowNode, batchRemover: BatchRemover) {
         const parent = child.parent;
         if (parent) {
-            if (batchRemover) {
-                batchRemover.removeFromChildrenAfterGroup(parent, child);
-            } else {
-                _removeFromArray(parent.childrenAfterGroup!, child);
-                parent.updateHasChildren();
-            }
-            invalidateAllLeafChildren(parent);
+            batchRemover.removeFromChildrenAfterGroup(parent, child);
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         const childParentChildrenMapped = child.parent?.childrenMapped;
@@ -418,6 +411,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
 
             childrenAfterGroup.push(child);
+            invalidateAllLeafChildren(parent);
             setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
         }
     }
@@ -515,12 +509,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
         const oldParent = childNode.parent;
+        invalidateAllLeafChildren(oldParent);
+        invalidateAllLeafChildren(parentGroup);
         childNode.parent = parentGroup;
         childNode.level = path.length;
         parentGroup.childrenAfterGroup!.push(childNode);
         parentGroup.updateHasChildren();
-        invalidateAllLeafChildren(oldParent);
-        invalidateAllLeafChildren(parentGroup);
     }
 
     private getOrCreateNextNode(
@@ -644,13 +638,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
 
             if (keyExists) {
-                const item = {
+                res.push({
                     key,
-                    field,
+                    field: field!,
                     rowGroupColumn: col,
                     leafNode: rowNode,
-                } as GroupInfo;
-                res.push(item);
+                });
             }
         }
         return res;
