@@ -11,6 +11,7 @@ test.agExample(import.meta, () => {
                 'SideBarModule',
                 'ColumnsToolPanelModule',
                 'FiltersToolPanelModule',
+                'NumberEditorModule',
             ],
         });
 
