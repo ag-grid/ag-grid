@@ -72,6 +72,12 @@ export class ClientSideExpansionService
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 };
 
+                if (rowNode.master) {
+                    actionRow();
+                    masterDetailsToExpandOrCollapse.push(rowNode);
+                    return;
+                }
+
                 if (usingTreeData) {
                     const hasChildren = _exists(rowNode.childrenAfterGroup);
                     if (hasChildren) {
@@ -91,12 +97,6 @@ export class ClientSideExpansionService
                 const isRowGroup = rowNode.group;
                 if (isRowGroup) {
                     actionRow();
-                }
-
-                const isMasterRow = rowNode.master;
-                if (isMasterRow) {
-                    actionRow();
-                    masterDetailsToExpandOrCollapse.push(rowNode);
                 }
             });
         };
