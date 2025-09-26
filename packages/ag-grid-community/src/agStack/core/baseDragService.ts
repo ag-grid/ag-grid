@@ -147,7 +147,7 @@ export class BaseDragService<
         const eDocument = _getDocument(beans);
         addTempEventHandlers(
             drag.handlers,
-            [rootEl, 'contextmenu', preventEventDefault, { passive: false }],
+            [rootEl, 'contextmenu', preventEventDefault],
             [rootEl, 'keydown', keydownEvent],
             [eDocument, 'scroll', onScroll, { capture: true }],
             [eDocument.defaultView || window, 'scroll', onScroll],
