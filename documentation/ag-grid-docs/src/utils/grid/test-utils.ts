@@ -340,7 +340,8 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
     }
 
     if (errors.length > 0) {
-        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
+        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
+
         expect(errors.length, errorMessage).toBe(0);
         errors = [];
     }
@@ -361,7 +362,7 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
     expect(errors, 'Example Errors during destruction').toEqual([]);
 
     if (errors.length > 0) {
-        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
+        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
         expect(errors.length, errorMessage).toBe(0);
     }
 }
