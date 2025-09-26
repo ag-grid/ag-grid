@@ -338,6 +338,11 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
     if (test.info().status === 'skipped') {
         return;
     }
+    // log url if any errors
+    if (test.info().status === 'failed') {
+        // eslint-disable-next-line no-console
+        console.log(`Test failed, page URL: ${page.url()}`);
+    }
 
     if (errors.length > 0) {
         const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
