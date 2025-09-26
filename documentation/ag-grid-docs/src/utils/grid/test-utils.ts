@@ -274,6 +274,9 @@ const frameworkTest =
             if (additionalBrowser.includes(browserName) && !frameworksWithAdditionalBrowser.includes(agFramework)) {
                 test.skip(true, `Skipping ${agFramework} tests in ${browserName} to reduce duplication.`);
             }
+            if (process.env.FRAMEWORK && process.env.FRAMEWORK !== agFramework) {
+                test.skip(true, `Skipping ${agFramework} as not the selected framework ${process.env.FRAMEWORK}.`);
+            }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
             await applyCpuThrottle({ page, cpuThrottle }, testInfo);
