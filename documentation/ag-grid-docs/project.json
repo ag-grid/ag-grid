@@ -161,14 +161,6 @@
         "commands": ["npx playwright test --project=chromium"],
         "parallel": false,
         "cwd": "documentation/ag-grid-docs"
-      },
-      "configurations": {
-        "production": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
-        },
-        "staging:": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        }
       }
     },
     "test:interactive:all": {
@@ -178,14 +170,6 @@
         "commands": ["npx playwright test"],
         "parallel": false,
         "cwd": "documentation/ag-grid-docs"
-      },
-      "configurations": {
-        "production": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
-        },
-        "staging:": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        }
       }
     },
     "generate-examples": {

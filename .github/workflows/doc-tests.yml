@@ -112,7 +112,8 @@ jobs:
       - name: Run vanilla Examples
         env:
           FRAMEWORK: vanilla
-        run: yarn nx run ag-grid-docs:test:interactive:chromium -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          BASE_URL: https://grid-staging.ag-grid.com/
+        run: yarn nx run ag-grid-docs:test:interactive:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -138,7 +139,8 @@ jobs:
       - name: Run typescript Examples
         env:
           FRAMEWORK: typescript
-        run: yarn nx run ag-grid-docs:test:interactive:all -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          BASE_URL: https://grid-staging.ag-grid.com/
+        run: yarn nx run ag-grid-docs:test:interactive:all --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -164,7 +166,8 @@ jobs:
       - name: Run reactFunctionalTs Examples
         env:
           FRAMEWORK: reactFunctionalTs
-        run: yarn nx run ag-grid-docs:test:interactive:all -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          BASE_URL: https://grid-staging.ag-grid.com/
+        run: yarn nx run ag-grid-docs:test:interactive:all --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -190,7 +193,8 @@ jobs:
       - name: Run vue3 Examples
         env:
           FRAMEWORK: vue3
-        run: yarn nx run ag-grid-docs:test:interactive:chromium -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          BASE_URL: https://grid-staging.ag-grid.com/
+        run: yarn nx run ag-grid-docs:test:interactive:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -216,7 +220,8 @@ jobs:
       - name: Run angular Examples
         env:
           FRAMEWORK: angular
-        run: yarn nx run ag-grid-docs:test:interactive:chromium -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          BASE_URL: https://grid-staging.ag-grid.com/
+        run: yarn nx run ag-grid-docs:test:interactive:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
