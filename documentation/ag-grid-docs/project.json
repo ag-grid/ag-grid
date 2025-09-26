@@ -162,42 +162,6 @@
         },
         "dev": {
           "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
-        },
-        "typescript": {
-          "env": {
-            "FRAMEWORK": "typescript"
-          },
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "vanilla": {
-          "env": {
-            "FRAMEWORK": "vanilla"
-          },
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "reactFunctionalTs": {
-          "env": {
-            "FRAMEWORK": "reactFunctionalTs"
-          },
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "reactFunctionalTs_Dev": {
-          "env": {
-            "FRAMEWORK": "reactFunctionalTs_Dev"
-          },
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "angular": {
-          "env": {
-            "FRAMEWORK": "angular"
-          },
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "vue3": {
-          "env": {
-            "FRAMEWORK": "vue3"
-          },
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
         }
       }
     },

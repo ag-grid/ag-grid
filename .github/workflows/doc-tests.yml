@@ -156,10 +156,20 @@ jobs:
         shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run vanilla Examples
+        env:
+          FRAMEWORK: vanilla
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
+      - name: Upload Test Report
+        id: upload-recipes-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          framework: vanilla
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          name: playwright-vanilla-interactive
+          path: reports/
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   test-typescript:
     if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -173,27 +183,20 @@ jobs:
         shardTotal: [1]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run Typescript Examples
+        env:
+          FRAMEWORK: typescript
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
+      - name: Upload Test Report
+        id: upload-recipes-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          framework: typescript
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
-
-  # test-react-functional:
-  #   if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
-  #   name: Test React Examples
-  #   needs: download-examples
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       shardIndex: [1]
-  #       shardTotal: [1]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: ./.github/actions/test-framework-examples
-  #       with:
-  #         framework: reactFunctional
-  #         cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          name: playwright-typescript-interactive
+          path: reports/
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   test-react-functional-ts:
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -207,10 +210,20 @@ jobs:
         shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run React Examples
+        env:
+          FRAMEWORK: reactFunctionalTs
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
+      - name: Upload Test Report
+        id: upload-recipes-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          framework: reactFunctionalTs
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          name: playwright-reactFunctionalTs-interactive
+          path: reports/
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   test-vue3:
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -224,15 +237,24 @@ jobs:
         shardTotal: [1]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run Vue Examples
+        env:
+          FRAMEWORK: vue3
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
+      - name: Upload Test Report
+        id: upload-recipes-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          framework: vue3
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          name: playwright-vue3-interactive
+          path: reports/
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   test-angular:
     if: ${{ github.event.inputs.skip_angular != 'true' }}
     name: Test Angular Examples
-    needs: download-examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -241,10 +263,21 @@ jobs:
         shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run Angular Examples
+        env:
+          FRAMEWORK: angular
+        run: yarn nx run ag-grid-docs:test:interactive -c staging
+      - name: Upload Test Report
+        id: upload-recipes-report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
-          framework: angular
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          name: playwright-angular-interactive
+          path: reports/
+          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+
 
   test-recipes:
     if: ${{ github.event.inputs.skip_interactive != 'true' }}
