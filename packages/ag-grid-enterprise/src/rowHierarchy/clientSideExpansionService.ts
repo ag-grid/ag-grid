@@ -9,6 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
+import { getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
@@ -59,6 +60,7 @@ export class ClientSideExpansionService
         const rowModel = this.rowModel;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
+        const masterDetailsToExpandOrCollapse = [] as RowNode[];
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) {
@@ -90,6 +92,12 @@ export class ClientSideExpansionService
                 if (isRowGroup) {
                     actionRow();
                 }
+
+                const isMasterRow = rowNode.master;
+                if (isMasterRow) {
+                    actionRow();
+                    masterDetailsToExpandOrCollapse.push(rowNode);
+                }
             });
         };
 
@@ -99,6 +107,15 @@ export class ClientSideExpansionService
         }
 
         this.onGroupExpandedOrCollapsed();
+
+        for (const masterRowNode of masterDetailsToExpandOrCollapse) {
+            if (masterRowNode.detailNode?.id) {
+                const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
+                if (expand) {
+                    detailGridApi?.expandAll();
+                }
+            }
+        }
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',

@@ -3,7 +3,7 @@ import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
+import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -255,10 +255,10 @@ export class RowContainerEventsFeature extends BeanStub {
             gos,
         } = this;
 
-        if (rangeSvc && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
+        if (rangeSvc && _isCellSelectionEnabled(gos) && !_getCtrlASelectsRows(gos) && rowModel.isRowsToRender()) {
             _selectAllCells(this.beans);
         } else if (selectionSvc) {
-            selectionSvc?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
+            selectionSvc.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
         }
 
         event.preventDefault();

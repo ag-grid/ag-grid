@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1498.78,
+    AllEnterpriseModule: 1498.82,
     BatchEditModule: 81.15,
     CellSelectionModule: 55,
     ClipboardModule: 46.04,
@@ -80,7 +80,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 33.16,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 88.17,
+    TreeDataModule: 90.17,
     ViewportRowModelModule: 27,
 };
 
