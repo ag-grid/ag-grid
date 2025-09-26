@@ -47,51 +47,37 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     private nextId = 0;
     protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
-    public rootNode: ClientSideNodeManager.RootNode<TData> | null = null;
+    public rootNode: ClientSideNodeManager.RootNode<TData>;
+
+    public constructor(rootNode: ClientSideNodeManagerRootNode<TData>) {
+        super();
+        this.rootNode = rootNode;
+    }
 
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }
 
     public extractRowData(): TData[] | null | undefined {
-        return this.rootNode?.allLeafChildren?.map((node) => node.data!);
+        return this.rootNode.allLeafChildren?.map((node) => node.data!);
     }
 
-    public activate(rootNode: ClientSideNodeManagerRootNode<TData>): void {
-        this.rootNode = rootNode;
-
-        rootNode.group = true;
-        rootNode.level = -1;
-        rootNode.id = ROOT_NODE_ID;
-        rootNode.allLeafChildren = [];
-        rootNode.childrenAfterGroup = [];
-        rootNode.childrenAfterSort = [];
-        rootNode.childrenAfterAggFilter = [];
-        rootNode.childrenAfterFilter = [];
-
-        this.updateRootSiblingArrays(rootNode);
-    }
+    public activate?(): void;
 
     public deactivate(): void {
-        if (this.rootNode) {
-            this.allNodesMap = {};
-            this.rootNode = null!;
-        }
+        this.allNodesMap = {};
     }
 
     public override destroy(): void {
         super.destroy();
 
         // Forcefully deallocate memory
-        this.allNodesMap = {};
-        this.rootNode = null;
+        this.allNodesMap = null!;
+        this.rootNode = null!;
     }
 
     public setNewRowData(rowData: TData[]): void {
         const rootNode = this.rootNode;
-        if (!rootNode) {
-            return;
-        }
 
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
@@ -109,23 +95,11 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         this.loadNewRowData(rowData);
 
-        this.updateRootSiblingArrays(rootNode);
-    }
-
-    private updateRootSiblingArrays(rootNode: ClientSideNodeManager.RootNode<TData>): void {
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
-            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
-            sibling.childrenAfterSort = rootNode.childrenAfterSort;
-            sibling.childrenMapped = rootNode.childrenMapped;
-            sibling.allLeafChildren = rootNode.allLeafChildren;
-        }
+        initRootSibling(rootNode);
     }
 
     protected loadNewRowData(rowData: TData[]): void {
-        this.rootNode!.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
+        this.rootNode.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
     }
 
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
@@ -133,7 +107,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
         const changedRowNodes = params.changedRowNodes!;
         const processedNodes = new Set<ClientSideNodeManagerRowNode<TData>>();
-        const rootNode = this.rootNode!;
+        const rootNode = this.rootNode;
         const oldAllLeafChildren = rootNode.allLeafChildren!;
         const oldAllLeafChildrenLen = oldAllLeafChildren.length;
 
@@ -261,7 +235,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             return;
         }
 
-        let allLeafChildren = this.rootNode!.allLeafChildren!;
+        let allLeafChildren = this.rootNode.allLeafChildren!;
         let addIndex = allLeafChildren.length;
 
         if (typeof rowDataTran.addIndex === 'number') {
@@ -295,7 +269,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             newNodes[i] = newNode;
         }
 
-        const rootNode = this.rootNode!;
+        const rootNode = this.rootNode;
 
         if (addIndex < allLeafChildren.length) {
             // Insert at the specified index
@@ -371,7 +345,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             changedRowNodes.remove(rowNode);
         });
 
-        const rootNode = this.rootNode!;
+        const rootNode = this.rootNode;
 
         rootNode.allLeafChildren = rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
 
@@ -451,7 +425,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootNode!.allLeafChildren?.length ?? 0;
+        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
         if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
             return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
         }
@@ -495,7 +469,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             }
         } else {
             // find rowNode using object references
-            rowNode = this.rootNode?.allLeafChildren?.find((node) => node.data === data);
+            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
                 _error(5, { data });
                 return null;
@@ -505,3 +479,29 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return rowNode || null;
     }
 }
+
+export const initRootNode = <TData = any>(rootNode: ClientSideNodeManager.RootNode<TData>): RowNode<TData> => {
+    rootNode.group = true;
+    rootNode.level = -1;
+    rootNode.id = ROOT_NODE_ID;
+    rootNode.allLeafChildren = [];
+    rootNode.childrenAfterGroup = [];
+    rootNode.childrenAfterSort = [];
+    rootNode.childrenAfterAggFilter = [];
+    rootNode.childrenAfterFilter = [];
+
+    initRootSibling(rootNode);
+    return rootNode;
+};
+
+const initRootSibling = <TData = any>(rootNode: ClientSideNodeManager.RootNode<TData>): void => {
+    const sibling = rootNode.sibling;
+    if (sibling) {
+        sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
+        sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+        sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
+        sibling.childrenAfterSort = rootNode.childrenAfterSort;
+        sibling.childrenMapped = rootNode.childrenMapped;
+        sibling.allLeafChildren = rootNode.allLeafChildren;
+    }
+};

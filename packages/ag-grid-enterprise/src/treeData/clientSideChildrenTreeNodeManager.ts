@@ -12,7 +12,7 @@ import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 
 export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeManager<TData> {
-    private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null = null;
+    private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null | undefined = undefined;
 
     public override destroy(): void {
         super.destroy();
@@ -22,17 +22,15 @@ export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeMana
     }
 
     public override extractRowData(): TData[] | null | undefined {
-        return this.rootNode?.childrenAfterGroup?.map(({ data }) => data!);
+        return this.rootNode.childrenAfterGroup?.map(({ data }) => data!);
     }
 
-    public override activate(rootNode: RowNode<TData>): void {
+    public override activate(): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField') ?? null;
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
-
-        super.activate(rootNode);
     }
 
     public override deactivate(): void {
@@ -53,7 +51,7 @@ export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeMana
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const rootNode = this.rootNode!;
+        const rootNode = this.rootNode;
         const childrenGetter = this.childrenGetter;
 
         const processedData = new Map<TData, GroupingRowNode<TData>>();
@@ -90,7 +88,7 @@ export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeMana
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const gos = this.gos;
-        const rootNode = this.rootNode!;
+        const rootNode = this.rootNode;
         const childrenGetter = this.childrenGetter;
         const getRowIdFunc = _getRowIdCallback(gos)!;
         const canReorder = !gos.get('suppressMaintainUnsortedOrder');
