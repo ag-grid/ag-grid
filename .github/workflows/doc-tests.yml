@@ -284,7 +284,7 @@ jobs:
           summary-report: true
           failed-report: true
           flaky-report: true
-          skipped-report: true
+          skipped-report: false
           write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
       - name: Get previous run commit SHA
