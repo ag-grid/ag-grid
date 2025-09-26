@@ -1,24 +1,17 @@
 import type {
     ClientSideNodeManagerUpdateRowDataResult,
     IChangedRowNodes,
-    IClientSideNodeManager,
-    NamedBean,
     RefreshModelParams,
     RowDataTransaction,
     RowNode,
 } from 'ag-grid-community';
-import { AbstractClientSideNodeManager, ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
+import { ChangedPath, ClientSideNodeManager, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
 
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 
-export class ClientSideChildrenTreeNodeManager<TData>
-    extends AbstractClientSideNodeManager<TData>
-    implements IClientSideNodeManager<TData>, NamedBean
-{
-    beanName = 'csrmChildrenTreeNodeSvc' as const;
-
+export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeManager<TData> {
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null = null;
 
     public override destroy(): void {

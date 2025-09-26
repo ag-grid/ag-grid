@@ -14,7 +14,6 @@ import {
     _isAnimateRows,
     _isDomLayout,
 } from '../gridOptionsUtils';
-import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type {
     ClientSideRowModelStage,
     IChangedRowNodes,
@@ -29,6 +28,7 @@ import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ChangedRowNodes } from './changedRowNodes';
+import type { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
@@ -76,7 +76,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public rootNode: RowNode | null = null;
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
-    private nodeManager: IClientSideNodeManager<any>;
+
+    private nodeSvc: ClientSideNodeManager<any> | null | undefined = undefined;
+    private nodeWithChildrenSvc: ClientSideNodeManager<any> | null | undefined = undefined;
+    private nodeManager: ClientSideNodeManager<any> | null | undefined = undefined;
+
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
@@ -97,6 +101,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private orderedStages: IRowNodeStage[];
 
     public postConstruct(): void {
+        this.rootNode = new RowNode(this.beans);
         this.orderedStages = [
             this.groupStage,
             this.filterStage,
@@ -132,16 +137,36 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Property listeners which call `refreshModel` at different stages
         this.addPropertyListeners();
 
-        this.rootNode = new RowNode(this.beans);
-
-        const nodeManager = this.getNewNodeManager();
-        this.nodeManager = nodeManager;
-        nodeManager.activate(this.rootNode);
+        // const nodeManager = this.getNewNodeManager();
+        // this.nodeManager = nodeManager;
+        // nodeManager.activate(this.rootNode);
     }
 
-    private getNewNodeManager(): IClientSideNodeManager<any> {
-        const { gos, beans } = this;
-        return (_getGroupingApproach(gos) === 'treeNested' && beans.csrmChildrenTreeNodeSvc) || beans.csrmNodeSvc!;
+    private getNodeManager(): ClientSideNodeManager<any> | null {
+        let nodeManager = this.nodeManager;
+        if (nodeManager === undefined) {
+            this.nodeManager = nodeManager = this.getNewNodeManager();
+            nodeManager.activate(this.rootNode!);
+        }
+        return nodeManager;
+    }
+
+    private getNewNodeManager(): ClientSideNodeManager<any> {
+        const { gos, registry } = this.beans;
+        let bean: ClientSideNodeManager<any> | null | undefined;
+        if (_getGroupingApproach(gos) === 'treeNested') {
+            bean = this.nodeWithChildrenSvc;
+            if (bean === undefined) {
+                bean = registry.createDynamicBean<ClientSideNodeManager>('csrmNodeWithChildrenSvc', false) ?? null;
+                this.nodeWithChildrenSvc = bean && this.createBean(bean);
+            }
+        }
+        bean ??= this.nodeSvc;
+        if (!bean) {
+            bean = this.createBean(registry.createDynamicBean<ClientSideNodeManager>('csrmNodeSvc', true)!);
+            this.nodeSvc = bean;
+        }
+        return bean;
     }
 
     private addPropertyListeners() {
@@ -208,6 +233,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private setInitialData(): void {
+        if (!this.getNodeManager()) {
+            return; // Destroyed
+        }
         const rowData = this.gos.get('rowData');
         if (rowData) {
             this.onPropChange(['rowData']);
@@ -255,22 +283,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onPropChange(properties: (keyof GridOptions)[]): void {
-        if (!this.rootNode) {
+        const oldNodeManager = this.getNodeManager();
+        if (!oldNodeManager) {
             return; // Destroyed.
         }
+        const nodeManager = this.getNewNodeManager();
 
         const gos = this.gos;
-
         const changedProps = new Set(properties);
         const params: RefreshModelParams = {
             step: 'nothing',
             changedProps,
         };
-
         const rowDataChanged = changedProps.has('rowData');
-        const oldNodeManager = this.nodeManager;
-        const nodeManager = this.getNewNodeManager();
-
         const reset =
             oldNodeManager !== nodeManager ||
             (rowDataChanged && changedProps.has('treeData') && gos.get('treeData')) ||
@@ -299,7 +324,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 oldNodeManager?.deactivate();
                 this.nodeManager = nodeManager;
             }
-            nodeManager.activate(this.rootNode);
+            nodeManager.activate(this.rootNode!);
         }
 
         if (newRowData) {
@@ -612,7 +637,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        if (!this.rootNode) {
+        if (!this.getNodeManager()) {
             return; // Destroyed
         }
 
@@ -1005,7 +1030,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        const found = this.nodeManager.getRowNode(id);
+        const found = this.nodeManager?.getRowNode(id);
         if (typeof found === 'object') {
             return found; // we check for typeof object to avoid returning things from Object.prototype
         }
@@ -1039,6 +1064,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private executeBatchUpdateRowData(): void {
+        const nodeManager = this.nodeManager;
+        if (!nodeManager) {
+            return; // Destroyed
+        }
         this.valueCache?.onDataChanged();
 
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
@@ -1048,7 +1077,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let orderChanged = false;
         this.rowDataTransactionBatch?.forEach((tranItem) => {
             this.rowNodesCountReady = true;
-            const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(
+            const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(
                 tranItem.rowDataTransaction,
                 changedRowNodes
             );
@@ -1086,11 +1115,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * Called by gridApi & rowDragFeature
      */
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
+        const nodeManager = this.getNodeManager();
+        if (!nodeManager) {
+            return null;
+        }
         this.valueCache?.onDataChanged();
 
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
-        const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran, changedRowNodes);
+        const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(rowDataTran, changedRowNodes);
 
         this.commitTransactions(rowsInserted, changedRowNodes);
 
@@ -1208,10 +1241,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Forcefully deallocate memory
         this.started = false;
         this.rootNode = null;
-        this.nodeManager = null!;
+        this.nodeManager = null;
         this.rowDataTransactionBatch = null;
         this.orderedStages = _EmptyArray;
         this.rowsToDisplay = _EmptyArray;
+        this.nodeSvc = this.destroyBean(this.nodeSvc);
+        this.nodeWithChildrenSvc = this.destroyBean(this.nodeWithChildrenSvc);
     }
 
     private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);

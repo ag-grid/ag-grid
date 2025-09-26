@@ -27,7 +27,8 @@ export const ClientSideRowModelModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModel',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [ClientSideNodeManager, ClientSideRowModel, SortStage],
+    beans: [ClientSideRowModel, SortStage],
+    dynamicBeans: { csrmNodeSvc: ClientSideNodeManager },
     dependsOn: [SortModule],
 };
 

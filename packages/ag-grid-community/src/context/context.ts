@@ -48,7 +48,6 @@ import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
-import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
@@ -144,7 +143,9 @@ export type DynamicBeanName =
     | 'agGroupColumnFilterHandler'
     | 'agNumberColumnFilterHandler'
     | 'agDateColumnFilterHandler'
-    | 'agTextColumnFilterHandler';
+    | 'agTextColumnFilterHandler'
+    | 'csrmNodeSvc'
+    | 'csrmNodeWithChildrenSvc';
 
 export type UserComponentName =
     | 'agDragAndDropImage'
@@ -332,8 +333,6 @@ interface CoreBeanCollection
     rowDragSvc?: RowDragService;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
-    csrmNodeSvc?: IClientSideNodeManager;
-    csrmChildrenTreeNodeSvc?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
