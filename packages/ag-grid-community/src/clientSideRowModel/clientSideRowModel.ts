@@ -1252,31 +1252,39 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.onRowHeightChanged_debounced();
     }
 
-    public loadLeafs(node: RowNode): void {
-        let leafs: RowNode[] | null = null;
+    public loadLeafs(node: RowNode): RowNode[] | null {
+        if (node.footer) {
+            return node.sibling?.allLeafChildren || null; // footer nodes link to leafs via sibling
+        }
+        node._leafs = null;
+        return this.loadRealLeafs(node);
+    }
+
+    private loadRealLeafs(node: RowNode): RowNode[] | null {
         const childrenAfterGroup = node.childrenAfterGroup;
-        if (childrenAfterGroup) {
-            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                const child = childrenAfterGroup[i];
-                if (child.sourceRowIndex >= 0) {
-                    leafs ??= [];
-                    leafs.push(child);
-                }
-                const childLeafs = child.allLeafChildren;
-                const childLeafsLen = childLeafs?.length;
-                if (!childLeafsLen) {
-                    continue;
-                }
-                leafs ??= [];
+        const len = childrenAfterGroup?.length;
+        node._leafs = null;
+        if (!len) {
+            return null;
+        }
+        const leafs: RowNode[] = [];
+        for (let i = 0; i < len; ++i) {
+            const child = childrenAfterGroup[i];
+            if (child.sourceRowIndex >= 0) {
+                leafs.push(child);
+            }
+            let childLeafs = child.group ? child._leafs : null;
+            if (childLeafs === undefined) {
+                childLeafs = this.loadRealLeafs(child);
+            }
+            const childLeafsLen = childLeafs?.length;
+            if (childLeafsLen) {
                 for (let j = 0; j < childLeafsLen; ++j) {
-                    leafs.push(childLeafs[j]);
+                    leafs.push(childLeafs![j]);
                 }
             }
         }
-        node._leafs = leafs;
-        const sibling = node.sibling;
-        if (sibling) {
-            sibling._leafs = leafs;
-        }
+        node._leafs = leafs.length ? leafs : null;
+        return leafs;
     }
 }

@@ -345,12 +345,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
 
         if ((flags & FLAG_CHILDREN_CHANGED) !== 0) {
-            // Invalidate allLeafChildren cache when children changed and propagate up.
-            row._leafs = undefined;
-            const sibling = row.sibling;
-            if (sibling) {
-                sibling._leafs = undefined;
-            }
+            row._leafs = undefined; // Invalidate allLeafChildren cache when children changed and propagate up.
         }
 
         return flags + 1;
@@ -767,11 +762,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         row.groupData = null;
         row.treeParent = null;
         row.treeNodeFlags = 0;
-        row._leafs = undefined;
+        row._leafs = undefined; // Invalidate allLeafChildren cache
         row.childrenAfterGroup = null;
         const sibling = row.sibling;
         if (sibling) {
-            sibling._leafs = undefined;
             sibling.childrenAfterGroup = null;
         }
         row.updateHasChildren();

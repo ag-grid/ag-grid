@@ -107,6 +107,7 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         rootSibling.childrenMapped = null;
     }
     for (const row of allLeafs) {
+        row._leafs = undefined; // Invalidate allLeafChildren cache.
         resetChildRowGrouping(row);
         const sibling = row.sibling;
         if (sibling) {
@@ -128,7 +129,6 @@ const resetChildRowGrouping = <TData>(row: RowNode<TData>): void => {
     row.key = null;
     row.treeNodeFlags = 0;
     row.allChildrenCount = null;
-    row._leafs = undefined;
     row.childrenAfterGroup = null;
     row.childrenAfterAggFilter = null;
     row.childrenAfterFilter = null;

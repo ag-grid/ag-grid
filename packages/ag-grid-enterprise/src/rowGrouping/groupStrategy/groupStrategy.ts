@@ -206,11 +206,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return res;
     }
 
-    private moveNodeInWrongPath(
-        childNode: RowNode,
-        details: GroupingDetails,
-        batchRemover: BatchRemover | undefined
-    ): void {
+    private moveNodeInWrongPath(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover): void {
         // we add node, even if parent has not changed, as the data could have
         // changed, hence aggregations will be wrong
         if (details.changedPath.active) {
@@ -228,8 +224,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private moveNode(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
-        this.removeNodesFromParents([childNode], details, batchRemover);
+    private moveNode(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover): void {
+        this.removeFromParent(childNode, batchRemover, details.changedPath);
         this.insertOneNode(childNode, details);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
@@ -247,16 +243,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private removeNodes(
-        leafRowNodes: Iterable<RowNode>,
-        details: GroupingDetails,
-        batchRemover: BatchRemover | undefined
-    ): void {
-        this.removeNodesFromParents(leafRowNodes, details, batchRemover);
-        if (details.changedPath.active) {
-            for (const rowNode of leafRowNodes) {
-                details.changedPath.addParentNode(rowNode.parent);
-            }
+    private removeNodes(leafRowNodes: Iterable<RowNode>, details: GroupingDetails, batchRemover: BatchRemover): void {
+        const changedPath = details.changedPath;
+        for (const nodeToRemove of leafRowNodes) {
+            this.removeFromParent(nodeToRemove, batchRemover, changedPath);
         }
     }
 
@@ -265,25 +255,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         while (pointer && pointer !== details.rootNode) {
             callback(pointer);
             pointer = pointer.parent;
-        }
-    }
-
-    private removeNodesFromParents(
-        nodesToRemove: Iterable<RowNode>,
-        details: GroupingDetails,
-        provided: BatchRemover | undefined
-    ): void {
-        // this method can be called with BatchRemover as optional. if it is missed, we created a local version
-        // and flush it at the end. if one is provided, we add to the provided one and it gets flushed elsewhere.
-        const batchRemoverIsLocal = provided == null;
-        const batchRemoverToUse = provided ? provided : new BatchRemover();
-
-        for (const nodeToRemove of nodesToRemove) {
-            this.removeFromParent(nodeToRemove, batchRemoverToUse);
-        }
-
-        if (batchRemoverIsLocal) {
-            batchRemoverToUse.flush();
         }
     }
 
@@ -318,7 +289,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     if (groupShouldBeRemoved(rowNode)) {
                         checkAgain = true;
 
-                        this.removeFromParent(rowNode, batchRemover);
+                        this.removeFromParent(rowNode, batchRemover, null);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
                         selectionSvc?.setNodesSelected({
@@ -338,9 +309,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
     // d) setRowIndex(null) - as the rowNode will no longer be displayed.
-    private removeFromParent(child: RowNode, batchRemover: BatchRemover) {
+    private removeFromParent(child: RowNode, batchRemover: BatchRemover, changedPath: ChangedPath | null): void {
         const parent = child.parent;
         if (parent) {
+            invalidateAllLeafChildren(parent);
             batchRemover.removeFromChildrenAfterGroup(parent, child);
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
@@ -352,6 +324,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
         child.setRowIndex(null);
+        if (changedPath?.active) {
+            changedPath.addParentNode(child.parent);
+        }
     }
 
     /**
@@ -615,7 +590,6 @@ const recursiveSort = (rowNode: RowNode, comparer: (nodeA: RowNode, nodeB: RowNo
     if (!childrenAfterGroup || rowNode.leafGroup) {
         return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
     }
-
     childrenAfterGroup.sort(comparer);
     for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
         recursiveSort(childrenAfterGroup[i], comparer);

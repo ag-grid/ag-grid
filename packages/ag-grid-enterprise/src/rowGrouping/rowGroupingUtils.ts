@@ -66,16 +66,12 @@ export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: 
  * @param node The starting node to invalidate
  */
 export const invalidateAllLeafChildren = (node: RowNode | null): void => {
-    while (node) {
+    while (node && node._leafs !== undefined) {
         const parent = node.parent;
-        if (!parent || node._leafs === undefined) {
+        if (!parent) {
             break;
         }
-        node._leafs = undefined;
-        const sibling = node.sibling;
-        if (sibling) {
-            sibling._leafs = undefined;
-        }
+        node._leafs = undefined; // Invalidate allLeafChildren cache.
         node = parent;
     }
 };

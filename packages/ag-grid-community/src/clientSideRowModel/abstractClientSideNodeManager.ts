@@ -93,7 +93,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
             sibling.childrenAfterSort = rootNode.childrenAfterSort;
             sibling.childrenMapped = rootNode.childrenMapped;
-            sibling._leafs = rootNode._leafs;
         }
     }
 
@@ -176,10 +175,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             }
 
             rootNode._leafs = newAllLeafs;
-            const sibling = rootNode.sibling;
-            if (sibling) {
-                sibling._leafs = newAllLeafs;
-            }
             params.rowNodesOrderChanged ||= orderChanged;
         }
 
@@ -290,10 +285,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
 
         rootNode._leafs = allLeafs;
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling._leafs = allLeafs;
-        }
 
         // add new row nodes to the transaction add items
         result.rowNodeTransaction.add = newNodes;
@@ -346,10 +337,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
         const newAllLeafs = rootNode._leafs?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? [];
         rootNode._leafs = newAllLeafs;
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling._leafs = rootNode._leafs;
-        }
 
         for (let i = 0, len = newAllLeafs.length; i < len; i++) {
             newAllLeafs[i].sourceRowIndex = i;

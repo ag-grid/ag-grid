@@ -227,10 +227,6 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         rootNode._leafs = allLeafs;
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling._leafs = allLeafs;
-        }
 
         if (nodesToUnselect.length) {
             this.deselectNodes(nodesToUnselect);

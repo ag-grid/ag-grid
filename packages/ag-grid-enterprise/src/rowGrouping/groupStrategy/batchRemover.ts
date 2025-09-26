@@ -1,7 +1,5 @@
 import type { RowNode } from 'ag-grid-community';
 
-import { invalidateAllLeafChildren } from '../rowGroupingUtils';
-
 // doing _removeFromArray() multiple times on a large list can be a bottleneck.
 // when doing large deletes (eg removing 1,000 rows) then we would be calling _removeFromArray()
 // a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
@@ -16,7 +14,6 @@ export class BatchRemover {
     private readonly allSets = new Map<RowNode, Set<RowNode>>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
-        invalidateAllLeafChildren(parent);
         this.getSet(parent).add(child);
     }
 
@@ -41,10 +38,8 @@ export class BatchRemover {
             if (fromChildrenAfterGroup) {
                 const childrenAfterGroup = parent.childrenAfterGroup;
                 if (childrenAfterGroup && fromChildrenAfterGroup) {
-                    if (filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup)) {
-                        invalidateAllLeafChildren(parent);
-                        parent.updateHasChildren();
-                    }
+                    filterRowNodesInPlace(childrenAfterGroup, fromChildrenAfterGroup);
+                    parent.updateHasChildren();
                 }
             }
         }
@@ -52,18 +47,13 @@ export class BatchRemover {
     }
 }
 
-function filterRowNodesInPlace(array: RowNode[], removals: ReadonlySet<RowNode>): boolean {
+function filterRowNodesInPlace(array: RowNode[], removals: ReadonlySet<RowNode>): void {
     let writeIdx = 0;
-    const len = array.length;
-    for (let i = 0; i < len; ++i) {
+    for (let i = 0, len = array.length; i < len; ++i) {
         const item = array[i];
         if (!removals.has(item)) {
             array[writeIdx++] = item;
         }
     }
-    if (len === writeIdx) {
-        return false; // no change
-    }
     array.length = writeIdx;
-    return true;
 }

@@ -31,14 +31,15 @@ export function _createGlobalRowEvent<T extends AgEventType>(
 const IGNORED_SIBLING_PROPERTIES = new Set<
     keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
 >([
-    '__objectId',
     '__autoHeights',
-    '__localEventService',
     '__checkAutoHeightsDebounced',
-    'sticky',
+    '__localEventService',
+    '__objectId',
+    '_leafs',
     'childStore',
-    'treeParent',
+    'sticky',
     'treeNodeFlags',
+    'treeParent',
 ]);
 
 export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): RowNode {
