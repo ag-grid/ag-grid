@@ -365,6 +365,9 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
         const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
         expect(errors.length, errorMessage).toBe(0);
     }
+
+    // Ensure any routes created by the CacheRoute are removed to avoid warnings in the logs
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
 }
 
 function prev34WrapAdapter(wrap: ReturnType<typeof wrapAgTestIdFor<any>>, page: Page) {
