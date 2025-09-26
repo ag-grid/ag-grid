@@ -1,20 +1,18 @@
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { IDragAndDropImage } from '../agStack/interfaces/iDragAndDrop';
+import { _clearElement } from '../agStack/utils/dom';
 import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IComponent } from '../interfaces/iComponent';
-import type { ElementParams } from '../utils/dom';
-import { _clearElement } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
-import { Component, RefPlaceholder } from '../widgets/component';
+import { Component } from '../widgets/component';
 import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
-import type { DragAndDropIcon, DragSource } from './dragAndDropService';
+import type { DragAndDropIcon, GridDragSource } from './dragAndDropService';
+import type { DragSource } from './rowDragTypes';
 
 export interface IDragAndDropImageParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     dragSource: DragSource;
-}
-
-export interface IDragAndDropImage {
-    setIcon(iconName: string | null, shake: boolean): void;
-    setLabel(label: string): void;
 }
 
 export interface IDragAndDropImageComponent<
@@ -40,7 +38,7 @@ const DragAndDropElement: ElementParams = {
     ],
 };
 export class DragAndDropImageComponent extends Component implements IDragAndDropImageComponent<any, any> {
-    private dragSource: DragSource | null = null;
+    private dragSource: GridDragSource | null = null;
 
     private readonly eIcon: HTMLElement = RefPlaceholder;
     private readonly eLabel: HTMLElement = RefPlaceholder;
@@ -84,7 +82,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
     }
 
     public setIcon(iconName: DragAndDropIcon | null, shake: boolean): void {
-        const { eIcon, dragSource, dropIconMap, gos } = this;
+        const { eGhost, eIcon, dragSource, dropIconMap, gos } = this;
 
         _clearElement(eIcon);
 
@@ -95,6 +93,7 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
         }
         eIconChild = dropIconMap[iconName];
 
+        eGhost.classList.toggle('ag-dnd-ghost-not-allowed', iconName === 'notAllowed');
         eIcon.classList.toggle('ag-shake-left-to-right', shake);
 
         if (eIconChild === dropIconMap['hide'] && gos.get('suppressDragLeaveHidesColumns')) {

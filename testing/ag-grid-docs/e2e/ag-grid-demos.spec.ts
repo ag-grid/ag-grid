@@ -4,6 +4,14 @@ import { runExampleSpec, setupConsoleExpectations } from './exampleTestRunner';
 
 const demoUrls = ['example', 'example-finance', 'example-hr', 'example-inventory'];
 
+const baseURL = process.env.BASE_URL ?? 'https://ag-grid.com';
+
+console.log(`Running demo examples against base URL: ${baseURL}`);
+
+test.use({
+    baseURL,
+});
+
 test.describe(`Demo Examples`, async () => {
     for (const e of demoUrls) {
         let errors: string[];

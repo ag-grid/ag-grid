@@ -4,6 +4,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { RefreshModelParams } from './iClientSideRowModel';
 import type { FindDetailGridCellRendererParams } from './iFind';
 import type { IRowNode } from './iRowNode';
 
@@ -66,4 +67,5 @@ export interface IMasterDetailService {
 
     /** Used by flatten stage to get or create a detail node from a master node */
     getDetail(masterNode: RowNode): RowNode | null;
+    refreshModel(params: RefreshModelParams): void;
 }

@@ -2,7 +2,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { DndSourceOnRowDragParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import type { ElementParams } from '../utils/dom';
+import type { ElementParams } from '../utils/element';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 

@@ -8,6 +8,7 @@ import type {
     ICellEditor,
     ICellEditorComp,
     ICellRendererComp,
+    RowDragComp,
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 
@@ -65,6 +66,7 @@ const CellComp = ({
 
     const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
+    const rowDragCompRef = useRef<RowDragComp | undefined>();
 
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef<HTMLDivElement | null>();
@@ -79,6 +81,9 @@ const CellComp = ({
         (includeSelection || includeDndSource || includeRowDrag) &&
         (editDetails == null || !!editDetails.popup);
     const showCellWrapper = forceWrapper || showTools;
+    const cellValueClass = useMemo(() => {
+        return cellCtrl.getCellValueClass();
+    }, [cellCtrl]);
 
     const setCellEditorRef = useCallback(
         (cellEditor: ICellEditor | undefined) => {
@@ -127,6 +132,8 @@ const CellComp = ({
             return;
         }
 
+        rowDragCompRef.current?.refreshVisibility();
+
         const oldCompDetails = oldDetails.compDetails;
         const newCompDetails = newDetails.compDetails;
 
@@ -153,7 +160,7 @@ const CellComp = ({
 
     useLayoutEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
-        if (!doingJsEditor) {
+        if (!doingJsEditor || context.isDestroyed()) {
             return;
         }
 
@@ -175,7 +182,7 @@ const CellComp = ({
                 const parentEl = (forceWrapper ? eCellWrapper : eGui).current;
                 parentEl?.appendChild(compGui);
 
-                cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
+                cellEditor.afterGuiAttached?.();
             }
 
             setJsEditorComp(cellEditor);
@@ -199,27 +206,32 @@ const CellComp = ({
         (eRef: HTMLDivElement | null) => {
             eCellWrapper.current = eRef;
 
-            if (!eRef) {
-                cellWrapperDestroyFuncs.current.forEach((f) => f());
+            if (!eRef || context.isDestroyed() || !cellCtrl.isAlive()) {
+                const callbacks = cellWrapperDestroyFuncs.current;
                 cellWrapperDestroyFuncs.current = [];
+                for (const cb of callbacks) {
+                    cb();
+                }
                 return;
             }
 
+            let rowDragComp: RowDragComp | undefined;
+
             const addComp = (comp: Component | undefined) => {
                 if (comp) {
-                    const eGui = comp.getGui();
-                    eRef.insertAdjacentElement('afterbegin', eGui);
+                    eRef.insertAdjacentElement('afterbegin', comp.getGui());
                     cellWrapperDestroyFuncs.current.push(() => {
+                        _removeFromParent(comp.getGui());
                         context.destroyBean(comp);
-                        _removeFromParent(eGui);
+                        if (rowDragCompRef.current === rowDragComp) {
+                            rowDragCompRef.current = undefined;
+                        }
                     });
                 }
-                return comp;
             };
 
             if (includeSelection) {
-                const checkboxSelectionComp = cellCtrl.createSelectionCheckbox();
-                addComp(checkboxSelectionComp);
+                addComp(cellCtrl.createSelectionCheckbox());
             }
 
             if (includeDndSource) {
@@ -227,7 +239,12 @@ const CellComp = ({
             }
 
             if (includeRowDrag) {
-                addComp(cellCtrl.createRowDragComp());
+                rowDragComp = cellCtrl.createRowDragComp();
+                rowDragCompRef.current = rowDragComp;
+                if (rowDragComp) {
+                    addComp(rowDragComp);
+                    rowDragComp.refreshVisibility();
+                }
             }
         },
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
@@ -236,14 +253,11 @@ const CellComp = ({
     const init = useCallback(() => {
         const spanReady = !cellCtrl.isCellSpanning() || eWrapper.current;
         const eRef = eGui.current;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef || !spanReady || !cellCtrl) {
-            // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
-            // can get behind our internal state and call this function after the cellCtrl has been destroyed.
-            // If we were to shortcut here then cell values will flash in the first column of the grid as they will
-            // not have the correct cell position / styles applied as that is set via setComp.
+        if (!eRef || !spanReady || !cellCtrl || !cellCtrl.isAlive() || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+        compBean.current = context.createBean(new _EmptyBean());
 
         const compProxy: ICellComp = {
             toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
@@ -305,7 +319,7 @@ const CellComp = ({
                     }
                     // start editing
                     setEditDetails({
-                        compDetails: compDetails!,
+                        compDetails,
                         popup,
                         popupPosition,
                         compProxy,
@@ -417,7 +431,7 @@ const CellComp = ({
                 return null;
             }
             return showCellWrapper ? (
-                <span role="presentation" id={`cell-${instanceId}`} className="ag-cell-value" ref={setCellValueRef}>
+                <span role="presentation" id={`cell-${instanceId}`} className={cellValueClass} ref={setCellValueRef}>
                     {valueOrCellComp()}
                 </span>
             ) : (

@@ -1,11 +1,9 @@
-import { expect } from 'vitest';
+import type { GridApi } from 'ag-grid-community';
+import { KeyCode } from 'ag-grid-community';
 
-import type { AgPublicEventType, GridApi, IRowNode } from 'ag-grid-community';
-import { KeyCode, _areEqual } from 'ag-grid-community';
-
-function escapeQuotes(value: string): string {
-    return value.replaceAll(/(['"])/g, '\\$1');
-}
+import { escapeQuotes } from '../test-utils';
+import { assertSelectedRowElementsById, assertSelectedRowsByIndex } from '../test-utils/test-utils-assertions';
+import { waitForEvent } from '../test-utils/test-utils-events';
 
 export class GridActions {
     private parent: HTMLElement;
@@ -54,8 +52,19 @@ export class GridActions {
         assertSelectedRowsByIndex(indices, this.api);
     }
 
+    selectRowsById(ids: string[], click: boolean): void {
+        for (const i of ids) {
+            click ? this.clickRowById(i, { ctrlKey: true }) : this.toggleCheckboxById(i);
+        }
+        assertSelectedRowElementsById(ids, this.api);
+    }
+
     clickRowByIndex(index: number, opts?: MouseEventInit): void {
         this.getRowByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+    }
+
+    clickRowById(id: string, opts?: MouseEventInit): void {
+        this.getRowById(id)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
     }
 
     toggleCheckboxByIndex(index: number, opts?: MouseEventInit): void {
@@ -95,93 +104,10 @@ export class GridActions {
     }
 }
 
-export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
-    const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));
-    const expected = new Set(indices);
-    expect(actual).toEqual(expected);
-}
-
-export function assertSelectedRowElementsById(ids: string[], api: GridApi): void {
-    const selected = new Set<string>();
-    api.forEachNode((node) => (node.isSelected() ? selected.add(node.id!) : null));
-    expect(selected).toEqual(new Set(ids));
-}
-
-export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
-    const selectedNodes = api.getSelectedNodes();
-
-    expect(selectedNodes).toHaveLength(nodes.length);
-
-    for (let i = 0; i < nodes.length; i++) {
-        expect(selectedNodes[i]).toBe(nodes[i]);
-    }
-}
-
-export function assertSelectableByIndex(indices: number[], api: GridApi): void {
-    const selectable: number[] = [];
-
-    api.forEachNode((node) => {
-        if (node.selectable) {
-            selectable.push(node.rowIndex!);
-        }
-    });
-
-    expect(selectable).toEqual(indices);
-}
-
-export function _isDisplayed(element: HTMLElement): boolean {
-    let el: HTMLElement | null = element;
-    while (el) {
-        if (el.classList.contains('ag-invisible')) return false;
-        el = el.parentElement;
-    }
-    return true;
-}
-
-interface CellRangeSpec {
-    rowStartIndex: number;
-    rowEndIndex: number;
-    columns: string[];
-}
-
-export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridApi): void {
-    const selectedCellRanges = api.getCellRanges()?.slice();
-    const notFound: CellRangeSpec[] = [];
-
-    for (const range of cellRanges) {
-        const foundIdx =
-            selectedCellRanges?.findIndex(
-                (selectedRange) =>
-                    range.rowStartIndex === selectedRange.startRow?.rowIndex &&
-                    range.rowEndIndex === selectedRange.endRow?.rowIndex &&
-                    _areEqual(
-                        range.columns,
-                        selectedRange.columns.map((c) => c.getId())
-                    )
-            ) ?? -1;
-
-        if (foundIdx > -1) {
-            selectedCellRanges?.splice(foundIdx, 1);
-        } else {
-            notFound.push(range);
-        }
-    }
-    expect(notFound).toEqual([]);
-}
-
-export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Promise<void> {
-    let count = n;
-    return new Promise((resolve) => {
-        function listener() {
-            if (--count === 0) {
-                api.removeEventListener(event, listener);
-                resolve();
-            }
-        }
-        api.addEventListener(event, listener);
-    });
-}
-
 export function pressSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
     element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.SPACE, bubbles: true }));
+}
+
+export function pressAKey(element: HTMLElement, opts?: KeyboardEventInit): void {
+    element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.A, keyCode: 65, bubbles: true }));
 }

@@ -1,0 +1,4 @@
+.ag-details-grid {
+    --ag-background-color: #f004;
+    --ag-odd-row-background-color: var(--ag-background-color);
+}

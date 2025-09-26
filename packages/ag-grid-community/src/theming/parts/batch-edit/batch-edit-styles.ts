@@ -1,6 +1,6 @@
-import { createPart } from '../../Part';
-import type { Part } from '../../Part';
-import type { ColorValue } from '../../theme-types';
+import type { Part } from '../../../agStack/theming/part';
+import { createPart } from '../../../agStack/theming/partImpl';
+import type { ColorValue } from '../../../agStack/theming/themeTypes';
 import { batchEditStyleDefaultCSS } from './batch-edit-style-default.css-GENERATED';
 
 export type BatchEditStyleParams = {
@@ -50,13 +50,3 @@ const makeBatchEditStyleBaseTreeShakeable = () =>
     });
 
 export const batchEditStyleBase: Part<BatchEditStyleParams> = /*#__PURE__*/ makeBatchEditStyleBaseTreeShakeable();
-
-const makeDarkBatchEditStyleBaseTreeShakeable = () =>
-    createPart<BatchEditStyleParams>({
-        feature: 'batchEditStyle',
-        params: baseDarkBatchEditParams,
-        css: batchEditStyleDefaultCSS,
-    });
-
-export const darkBatchEditStyleBase: Part<BatchEditStyleParams> =
-    /*#__PURE__*/ makeDarkBatchEditStyleBaseTreeShakeable();

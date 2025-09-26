@@ -16,6 +16,11 @@
 .gridHeight {
     height: calc(100vh - var(--layout-grid-header-height) - var(--layout-grid-margin));
     margin: var(--layout-grid-margin);
+
+    @media screen and (max-height: 720px) {
+        min-height: 500px;
+        padding-bottom: 24px;
+    }
 }
 
 :global(.ag-theme-quartz-dark .ag-row) {

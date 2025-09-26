@@ -1,7 +1,7 @@
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { collapseAll, expandAll, onRowHeightChanged } from './csrmSsrmSharedApi';
-import type { _CsrmSsrmSharedGridApi, _SsrmInfiniteSharedGridApi } from './gridApi';
+import type { _CsrmSsrmSharedGridApi, _RowModelSharedApi, _SsrmInfiniteSharedGridApi } from './gridApi';
+import { collapseAll, expandAll, onRowHeightChanged, resetRowHeights } from './rowModelSharedApi';
 import { getCacheBlockState, isLastRowIndexKnown, setRowCount } from './ssrmInfiniteSharedApi';
 
 // these modules are not used in core, but are shared between multiple other modules
@@ -12,11 +12,16 @@ import { getCacheBlockState, isLastRowIndexKnown, setRowCount } from './ssrmInfi
 export const CsrmSsrmSharedApiModule: _ModuleWithApi<_CsrmSsrmSharedGridApi> = {
     moduleName: 'CsrmSsrmSharedApi',
     version: VERSION,
-    apiFunctions: {
-        expandAll,
-        collapseAll,
-        onRowHeightChanged,
-    },
+    apiFunctions: { expandAll, collapseAll },
+};
+
+/**
+ * @internal
+ */
+export const RowModelSharedApiModule: _ModuleWithApi<_RowModelSharedApi> = {
+    moduleName: 'RowModelSharedApi',
+    version: VERSION,
+    apiFunctions: { onRowHeightChanged, resetRowHeights },
 };
 
 /**

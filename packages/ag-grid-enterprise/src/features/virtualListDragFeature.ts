@@ -4,8 +4,8 @@ import type {
     Component,
     DragAndDropService,
     DragSourceType,
-    DraggingEvent,
     DropTarget,
+    GridDraggingEvent,
 } from 'ag-grid-community';
 import { AutoScrollService, BeanStub, _radioCssClass } from 'ag-grid-community';
 
@@ -85,7 +85,7 @@ export class VirtualListDragFeature<
         });
     }
 
-    private onDragging(e: DraggingEvent) {
+    private onDragging(e: GridDraggingEvent) {
         if (!this.currentDragValue || this.moveBlocked) {
             return;
         }
@@ -115,7 +115,7 @@ export class VirtualListDragFeature<
         _radioCssClass(el, `ag-item-highlight-${hoveredListItem.position}`);
     }
 
-    private getListDragItem(e: DraggingEvent): VirtualListDragItem<R> {
+    private getListDragItem(e: GridDraggingEvent): VirtualListDragItem<R> {
         const virtualListGui = this.virtualList.getGui();
         const paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop as string);
         const rowHeight = this.virtualList.getRowHeight();

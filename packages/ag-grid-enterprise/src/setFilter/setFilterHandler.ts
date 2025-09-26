@@ -14,7 +14,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    GROUP_AUTO_COLUMN_ID,
     _addGridCommonParams,
     _debounce,
     _error,
@@ -29,7 +28,7 @@ import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
 import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 
-export type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
+type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
 
 export class SetFilterHandler<TValue = string>
     extends BeanStub<SetFilterHandlerEventType>
@@ -102,12 +101,11 @@ export class SetFilterHandler<TValue = string>
     private updateParams(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
         this.params = params;
         const {
-            column,
             colDef,
             filterParams: { caseSensitive, treeList, keyCreator, valueFormatter },
         } = params;
         this.caseSensitive = !!caseSensitive;
-        const isGroupCol = column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
+        const isGroupCol = !!colDef.showRowGroup;
         this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
@@ -221,14 +219,18 @@ export class SetFilterHandler<TValue = string>
         this.syncAfterDataChange();
     }
 
-    public refreshFilterValues(): void {
+    /**
+     * @param suppressAvailableValuesCheck when refreshing values via the API, the model will be reset if all available values are selected.
+     * When refreshing due to internal changes, set this to `true` to do the reset check based on all values instead.
+     */
+    public refreshFilterValues(suppressAvailableValuesCheck?: boolean): void {
         // the model is still being initialised
         if (!this.valueModel.isInitialised()) {
             return;
         }
         this.valueModel.refreshAll().then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
-            this.validateModel(this.params, undefined, true);
+            this.validateModel(this.params, undefined, !suppressAvailableValuesCheck);
         });
     }
 
@@ -312,11 +314,16 @@ export class SetFilterHandler<TValue = string>
                 }
             }
             const numNewValues = newValues.length;
-            if (numNewValues === 0 && params.filterParams.excelMode) {
+            const filterParams = params.filterParams;
+            if (numNewValues === 0 && filterParams.excelMode) {
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
-            const allSelected = numNewValues === existingFormattedKeys.size;
+            const clearOnAllSelected =
+                !filterParams.defaultToNothingSelected &&
+                (this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
+                    !filterParams.suppressClearModelOnRefreshValues);
+            const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 
             if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model
@@ -409,6 +416,17 @@ export class SetFilterHandler<TValue = string>
             }
         }
         this.valueFormatter = valueFormatter;
+    }
+
+    public getCrossFilterModel(
+        callback: (
+            createKey: (value: TValue | null | undefined) => string | null,
+            availableKeys: Set<string | null>,
+            existingValues: SetFilterModelValue | undefined
+        ) => SetFilterModel
+    ): SetFilterModel {
+        const { createKey, valueModel, params } = this;
+        return callback(createKey, valueModel.availableKeys, params.model?.values);
     }
 
     public override destroy(): void {

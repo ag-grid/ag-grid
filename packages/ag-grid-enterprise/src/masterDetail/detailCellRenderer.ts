@@ -22,7 +22,7 @@ const DetailCellRendererElement: ElementParams = {
     children: [{ tag: 'div', ref: 'eDetailGrid', cls: 'ag-details-grid', role: 'presentation' }],
 };
 export class DetailCellRenderer extends Component implements ICellRenderer {
-    private eDetailGrid: HTMLElement = RefPlaceholder;
+    private readonly eDetailGrid: HTMLElement = RefPlaceholder;
 
     private detailApi?: GridApi;
     private params: IDetailCellRendererParams;

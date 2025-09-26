@@ -1,4 +1,5 @@
 import type {
+    AgColumn,
     AgEvent,
     BeanCollection,
     Component,
@@ -24,13 +25,13 @@ import {
     KeyCode,
     _addGridCommonParams,
     _createElement,
-    _preserveRangesWhile,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaRole,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
 
@@ -78,9 +79,9 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.registry = beans.registry;
     }
 
-    private ACTIVATION_DELAY = 80;
+    private readonly ACTIVATION_DELAY = 80;
 
-    private eGui?: HTMLElement;
+    private eGui: HTMLElement;
     private params: MenuItemDef;
     private isAnotherSubMenuOpen: () => boolean;
     private level: number;
@@ -239,8 +240,8 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
                 eventSource,
                 ePopup,
                 event: event instanceof MouseEvent ? event : undefined,
-                column,
-                node,
+                column: column as AgColumn | null,
+                rowNode: node,
             });
         };
 
@@ -436,18 +437,15 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         }
     }
 
-    private configureDefaults(params?: IMenuConfigParams): void {
-        if (!this.menuItemComp) {
-            // need to wait for init to complete
-            setTimeout(() => this.configureDefaults(params));
-            return;
-        }
-
+    private refreshRootElementGui(suppressRootStyles: boolean): HTMLElement {
         let eGui = this.menuItemComp.getGui();
-        const { suppressRootStyles, suppressTooltip, suppressAria, suppressTabIndex, suppressFocus } = params || {};
-
+        const {
+            cssClassPrefix,
+            params: { cssClasses, disabled },
+        } = this;
         // in some frameworks, `getGui` might be a framework element
         const rootElement = (this.menuItemComp as any).getRootElement?.() as HTMLElement | undefined;
+
         if (rootElement) {
             if (!suppressRootStyles) {
                 eGui.classList.add('ag-menu-option-custom');
@@ -455,39 +453,66 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             eGui = rootElement;
         }
 
-        this.eGui = eGui;
-
         this.suppressRootStyles = !!suppressRootStyles;
         if (!this.suppressRootStyles) {
-            eGui.classList.add(this.cssClassPrefix);
-            this.params.cssClasses?.forEach((it) => eGui.classList.add(it));
-            if (this.params.disabled) {
-                eGui.classList.add(`${this.cssClassPrefix}-disabled`);
+            eGui.classList.add(cssClassPrefix);
+            cssClasses?.forEach((it) => eGui.classList.add(it));
+            if (disabled) {
+                eGui.classList.add(`${cssClassPrefix}-disabled`);
             }
         }
 
-        if (!suppressTooltip) {
-            this.refreshTooltip(this.params.tooltip);
+        return eGui;
+    }
+
+    private applyAriaProperties(eGui: HTMLElement): void {
+        const {
+            params: { checked, subMenu, subMenuRole, disabled },
+        } = this;
+
+        const hasCheck = checked != null;
+        _setAriaRole(eGui, hasCheck ? 'menuitemcheckbox' : 'menuitem');
+
+        if (subMenu) {
+            _setAriaHasPopup(eGui, subMenuRole ?? 'menu');
         }
+
+        if (disabled) {
+            _setAriaDisabled(eGui, true);
+        }
+    }
+
+    private configureDefaults(configParams?: IMenuConfigParams): void {
+        if (!this.menuItemComp) {
+            // need to wait for init to complete
+            setTimeout(() => this.configureDefaults(configParams));
+            return;
+        }
+
+        const { suppressRootStyles, suppressTooltip, suppressAria, suppressTabIndex, suppressFocus } =
+            configParams || {};
+        const {
+            params: { tooltip, disabled },
+        } = this;
+
+        const eGui = (this.eGui = this.refreshRootElementGui(!!suppressRootStyles));
 
         this.suppressAria = !!suppressAria;
 
-        if (!this.suppressAria) {
-            _setAriaRole(eGui, 'menuitem');
-            if (this.params.subMenu) {
-                _setAriaHasPopup(eGui, this.params.subMenuRole ?? 'menu');
-            }
-            if (this.params.disabled) {
-                _setAriaDisabled(eGui, true);
-            }
+        if (!suppressAria) {
+            this.applyAriaProperties(eGui);
         }
 
         if (!suppressTabIndex) {
             eGui.setAttribute('tabindex', '-1');
         }
 
-        if (!this.params.disabled) {
-            this.addListeners(eGui, params);
+        if (!suppressTooltip) {
+            this.refreshTooltip(tooltip);
+        }
+
+        if (!disabled) {
+            this.addListeners(eGui, configParams);
         }
 
         this.suppressFocus = !!suppressFocus;

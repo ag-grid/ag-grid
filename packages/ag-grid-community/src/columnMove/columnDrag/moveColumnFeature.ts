@@ -1,14 +1,14 @@
-import type { HorizontalDirection } from '../../constants/direction';
+import type { HorizontalDirection } from '../../agStack/constants/direction';
+import { _last } from '../../agStack/utils/array';
+import { _exists, _missing } from '../../agStack/utils/generic';
 import { BeanStub } from '../../context/beanStub';
-import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
-import { _last } from '../../utils/array';
-import { _exists, _missing } from '../../utils/generic';
 import type { ColumnMoveParams } from '../internalColumnMoveUtils';
 import { attemptMoveColumns, getBestColumnMoveIndexFromXPosition, normaliseX } from '../internalColumnMoveUtils';
 import type { DropListener } from './bodyDropTarget';
@@ -27,9 +27,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private movingIntervalId: number | null;
     private intervalCount: number;
 
-    private isCenterContainer: boolean;
+    private readonly isCenterContainer: boolean;
 
-    private lastDraggingEvent: DraggingEvent | null;
+    private lastDraggingEvent: GridDraggingEvent | null;
     private lastHighlightedColumn: { column: AgColumn; position: ColumnHighlightPosition } | null;
     private lastMovedInfo: { columns: AgColumn[]; toIndex: number } | null = null;
 
@@ -80,7 +80,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         return 'notAllowed';
     }
 
-    public onDragEnter(draggingEvent: DraggingEvent): void {
+    public onDragEnter(draggingEvent: GridDraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
 
         const dragItem = draggingEvent.dragItem;
@@ -96,7 +96,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             // will be visible again. otherwise a group with three columns (but only two visible) could
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             const visibleState = dragItem.visibleState;
-            const visibleColumns: AgColumn[] = (columns || []).filter((column) => visibleState![column.getId()]);
+            const visibleColumns: AgColumn[] = (columns || []).filter(
+                (column) => visibleState![column.getId()] && !column.isVisible()
+            );
             this.setColumnsVisible(visibleColumns, true, 'uiColumnDragged');
         }
 
@@ -107,7 +109,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public onDragging(
-        draggingEvent: DraggingEvent | null = this.lastDraggingEvent,
+        draggingEvent: GridDraggingEvent | null = this.lastDraggingEvent,
         fromEnter = false,
         fakeEvent = false,
         finished = false
@@ -168,11 +170,14 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
-        if (!columns) {
+        if (!columns?.length) {
             return;
         }
 
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
+        if (!allowedCols.length) {
+            return;
+        }
         this.beans.colModel.setColsVisible(allowedCols, visible, source);
     }
 
@@ -205,7 +210,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private handleColumnDragWhileSuppressingMovement(
-        draggingEvent: DraggingEvent,
+        draggingEvent: GridDraggingEvent,
         fromEnter: boolean,
         fakeEvent: boolean,
         mouseX: number,
@@ -243,7 +248,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private handleColumnDragWhileAllowingMovement(
-        draggingEvent: DraggingEvent,
+        draggingEvent: GridDraggingEvent,
         fromEnter: boolean,
         fakeEvent: boolean,
         mouseX: number,
@@ -268,7 +273,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
     }
 
-    private getAllMovingColumns(draggingEvent: DraggingEvent, useSplit: boolean = false): AgColumn[] {
+    private getAllMovingColumns(draggingEvent: GridDraggingEvent, useSplit: boolean = false): AgColumn[] {
         const dragItem = draggingEvent.dragSource.getDragItem();
         let columns: AgColumn[] | null = null;
 
@@ -597,7 +602,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.intervalCount = 0;
         this.failedMoveAttempts = 0;
         this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), SCROLL_TIME_INTERVAL);
-        this.beans.dragAndDrop!.getDragAndDropImageComponent()?.setIcon(this.needToMoveLeft ? 'left' : 'right', true);
+        this.beans.dragAndDrop!.setDragImageCompIcon(this.needToMoveLeft ? 'left' : 'right', true);
     }
 
     private ensureIntervalCleared(): void {
@@ -608,7 +613,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         window.clearInterval(this.movingIntervalId);
         this.movingIntervalId = null;
         this.failedMoveAttempts = 0;
-        this.beans.dragAndDrop!.getDragAndDropImageComponent()?.setIcon(this.getIconName(), false);
+        this.beans.dragAndDrop!.setDragImageCompIcon(this.getIconName());
     }
 
     private moveInterval(): void {
@@ -644,7 +649,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
                 return;
             }
 
-            dragAndDrop!.getDragAndDropImageComponent()?.setIcon('pinned', false);
+            dragAndDrop!.setDragImageCompIcon('pinned');
 
             if (!gos.get('suppressMoveWhenColumnDragging')) {
                 const columns = this.lastDraggingEvent?.dragItem.columns as AgColumn[] | undefined;

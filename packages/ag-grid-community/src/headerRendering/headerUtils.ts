@@ -4,7 +4,11 @@ import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
 export function getHeaderRowCount(colModel: ColumnModel): number {
-    return colModel.cols ? colModel.cols.treeDepth + 1 : -1;
+    if (!colModel.cols) {
+        return -1;
+    }
+
+    return colModel.cols.treeDepth + 1;
 }
 
 export function getFocusHeaderRowCount(beans: BeanCollection): number {

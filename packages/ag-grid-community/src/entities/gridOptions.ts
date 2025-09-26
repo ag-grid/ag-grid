@@ -3,13 +3,18 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
-import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragFeature';
+import type { Theme } from '../agStack/theming/theme';
+import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragTypes';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -111,11 +116,7 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type {
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSize';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
@@ -185,7 +186,6 @@ import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
-import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
@@ -419,6 +419,10 @@ export interface GridOptions<TData = any> {
      * The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     pivotGroupHeaderHeight?: number;
+    /**
+     * Hide any column header rows that would only contain padded groups.
+     */
+    hidePaddedHeaderRows?: boolean;
 
     // *** Column Moving *** //
     /**
@@ -497,10 +501,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    autoSizeStrategy?:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy;
+    autoSizeStrategy?: AutoSizeStrategy;
 
     // *** Components *** //
     /**
@@ -515,6 +516,11 @@ export interface GridOptions<TData = any> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     editType?: EditStrategyType;
+
+    /**
+     * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+     */
+    suppressStartEditOnTab?: boolean;
 
     /**
      * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
@@ -727,7 +733,10 @@ export interface GridOptions<TData = any> {
     suppressSetFilterByDefault?: boolean;
     /**
      * Enable filter handlers for custom filter components.
-     * Requires all custom filters need to be implemented using handlers.
+     * Requires all custom filters to be implemented using handlers.
+     *
+     * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+     * The Multi Filter will also use a filter handler if this is enabled.
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -1445,6 +1454,12 @@ export interface GridOptions<TData = any> {
      */
     suppressGroupRowsSticky?: boolean;
 
+    /**
+     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    groupHierarchyConfig?: { [k: string]: ColDef };
+
     // *** Row Pinning *** //
     /**
      * Data to be displayed as pinned top rows in the grid.
@@ -1476,7 +1491,8 @@ export interface GridOptions<TData = any> {
     /**
      * Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */
@@ -2105,6 +2121,13 @@ export interface GridOptions<TData = any> {
      */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /**
+     * Controls how expand/collapse operations affect all rows and group interactions.
+     * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
+     * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
+     * @agModule RowGroupingModule / TreeDataModule
+     */
+    ssrmExpandAllAffectsAllRows?: boolean | undefined;
+    /**
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */
@@ -2394,6 +2417,22 @@ export interface GridOptions<TData = any> {
      */
     onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
     /**
+     * Bulk editing has started.
+     */
+    onBulkEditingStarted?(event: BulkEditingStartedEvent<TData>): void;
+    /**
+     * Bulk editing has stopped.
+     */
+    onBulkEditingStopped?(event: BulkEditingStoppedEvent<TData>): void;
+    /**
+     * Batch editing has started (when batch editing is enabled).
+     */
+    onBatchEditingStarted?(event: BatchEditingStartedEvent<TData>): void;
+    /**
+     * Batch editing has stopped (when batch editing is enabled).
+     */
+    onBatchEditingStopped?(event: BatchEditingStoppedEvent<TData>): void;
+    /**
      * Undo operation has started.
      */
     onUndoStarted?(event: UndoStartedEvent<TData>): void;
@@ -2583,7 +2622,7 @@ export interface GridOptions<TData = any> {
     onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
 
     /**
-     * Called by managed drag and drop when rows are dropped on another row.
+     * Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
      * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
      * @agModule `RowDragModule`
      */
@@ -2954,7 +2993,7 @@ interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
      * Configure where checkboxes are displayed.
      *
-     * Choosing 'selectionColumn' displays checkboxes in a dedicated selection column. Choosing 'autoGroupColumn'
+     * Choosing `'selectionColumn'` displays checkboxes in a dedicated selection column. Choosing `'autoGroupColumn'`
      * displays checkboxes in the autoGroupColumn. This applies to row checkboxes and header checkboxes.
      *
      * @default 'selectionColumn'
@@ -3019,6 +3058,11 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = 
      * @default true
      */
     headerCheckbox?: boolean;
+    /**
+     * If `true`, using CTRL+A will select all rows when [Cell Selection](./cell-selection) is enabled
+     * @default false
+     */
+    ctrlASelectsRows?: boolean;
 }
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */

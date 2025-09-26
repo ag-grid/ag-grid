@@ -1,4 +1,12 @@
-import type { GetRowIdParams, GridApi, GridOptions, RowDragEndEvent, ValueFormatterParams } from 'ag-grid-community';
+import type {
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    RowDragCancelEvent,
+    RowDragEndEvent,
+    RowDragLeaveEvent,
+    ValueFormatterParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -10,8 +18,8 @@ import {
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
-import type { FileDropIndicator, IFile } from './fileUtils';
-import { getFileDropIndicator, moveFiles } from './fileUtils';
+import type { IFile } from './fileUtils';
+import { getFileDropPosition, moveFiles } from './fileUtils';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -27,6 +35,30 @@ function getRowId(params: GetRowIdParams<IFile>) {
     return params.data.id;
 }
 
+function onRowDragMove(event: any) {
+    const source = event.node.data;
+    const target = event.overNode?.data;
+    const reorderOnly = event.event?.shiftKey;
+    const rowData = gridApi.getGridOption('rowData') ?? [];
+    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
+
+    if (indicator) {
+        // Find the row node by file reference
+        const rowNode = gridApi.getRowNode(indicator.target.id);
+        if (rowNode) {
+            // Update the position indicator
+            gridApi.setRowDropPositionIndicator({
+                row: rowNode,
+                dropIndicatorPosition: indicator.position,
+            });
+
+            return;
+        }
+    }
+
+    gridApi.setRowDropPositionIndicator(null);
+}
+
 function onRowDragEnd(event: RowDragEndEvent<IFile>) {
     const source = event.node.data;
     const target = event.overNode?.data;
@@ -36,42 +68,22 @@ function onRowDragEnd(event: RowDragEndEvent<IFile>) {
     }
     const reorderOnly = event.event?.shiftKey;
     const rowData = gridApi.getGridOption('rowData') ?? [];
-    const newRowData = moveFiles(rowData, source, target, !!reorderOnly);
-    if (newRowData !== rowData) {
-        gridApi.setGridOption('rowData', newRowData);
-    }
-    gridApi.setRowDropPositionIndicator(null);
-}
-
-function onRowDragCancel() {
-    gridApi.setRowDropPositionIndicator(null);
-}
-
-function onRowDragMove(event: any) {
-    const source = event.node.data;
-    const target = event.overNode?.data;
-    const reorderOnly = event.event?.shiftKey;
-    const rowData = gridApi.getGridOption('rowData') ?? [];
-    const indicator: FileDropIndicator | null = getFileDropIndicator(rowData, source, target, !!reorderOnly);
+    const indicator = getFileDropPosition(rowData, source, target, !!reorderOnly);
     if (indicator) {
-        // Find the row node by file reference
-        let rowNode = null;
-        gridApi.forEachNode((node) => {
-            if (node.data === indicator.file) {
-                rowNode = node;
-            }
-        });
-        if (rowNode) {
-            gridApi.setRowDropPositionIndicator({
-                row: rowNode,
-                dropIndicatorPosition: indicator.dropIndicatorPosition,
-            });
-        } else {
-            gridApi.setRowDropPositionIndicator(null);
+        const newRowData = moveFiles(rowData, indicator);
+        if (newRowData !== rowData) {
+            gridApi.setGridOption('rowData', newRowData);
         }
-    } else {
-        gridApi.setRowDropPositionIndicator(null);
     }
+    event.api.setRowDropPositionIndicator(null);
+}
+
+function onRowDragLeave(event: RowDragLeaveEvent<IFile>) {
+    event.api.setRowDropPositionIndicator(null);
+}
+
+function onRowDragCancel(event: RowDragCancelEvent<IFile>) {
+    event.api.setRowDropPositionIndicator(null);
 }
 
 const gridOptions: GridOptions<IFile> = {
@@ -106,8 +118,9 @@ const gridOptions: GridOptions<IFile> = {
     treeDataParentIdField: 'parentId',
     rowData: getData(),
     animateRows: true,
-    onRowDragEnd,
     onRowDragMove,
+    onRowDragEnd,
+    onRowDragLeave,
     onRowDragCancel,
     groupDefaultExpanded: -1,
 };

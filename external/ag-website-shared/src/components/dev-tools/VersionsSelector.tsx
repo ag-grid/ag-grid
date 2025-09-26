@@ -2,6 +2,8 @@ import type { Framework } from '@ag-grid-types';
 import { Select } from '@ag-website-shared/components/select/Select';
 import { getDocumentationArchiveUrl, getVersionFromUrl } from '@ag-website-shared/utils/getArchiveUrl';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
+import { useIsGallery } from '@ag-website-shared/utils/useIsGallery';
+import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import { LIBRARY } from '@constants';
 import { useStore } from '@nanostores/react';
 import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
@@ -19,12 +21,12 @@ import { $openLinksInNewTab } from './stores/devToolsStore';
 interface Props {
     framework: Framework;
     exampleName: string;
-    pageName: string;
 }
 
 const versionsUrl = urlWithBaseUrl('/debug/versions.json');
 
-export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pageName, exampleName }) => {
+export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, exampleName }) => {
+    const isGallery = useIsGallery();
     const [versions, setVersions] = useState([]);
     const [selectedVersion, setSelectedVersion] = useState<string>();
     const openLinksInNewTab = useStoreSsr($openLinksInNewTab, false);
@@ -89,20 +91,28 @@ export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, pag
     const handleVersionsChange = useCallback(
         (newValue) => {
             const version = newValue.value;
-            const newUrl = getDocumentationArchiveUrl({
-                site: LIBRARY,
-                version,
-                path:
-                    urlWithPrefix({
-                        framework,
-                        url: `./${pageName}`,
-                        siteBaseUrl: '/', // Gets added by `getDocumentationArchiveUrl`
-                    }) + `#example-${exampleName}`,
-            });
+            const pageName = getPageNameFromPath(window.location.pathname);
+
+            const newUrl = isGallery
+                ? getDocumentationArchiveUrl({
+                      site: LIBRARY,
+                      version,
+                      path: `/gallery/${pageName}`,
+                  })
+                : getDocumentationArchiveUrl({
+                      site: LIBRARY,
+                      version,
+                      path:
+                          urlWithPrefix({
+                              framework,
+                              url: `./${pageName}`,
+                              siteBaseUrl: '/', // Gets added by `getDocumentationArchiveUrl`
+                          }) + `#example-${exampleName}`,
+                  });
 
             window.open(newUrl, target);
         },
-        [target, framework, pageName, exampleName]
+        [target, framework, exampleName, isGallery]
     );
 
     return versions ? (

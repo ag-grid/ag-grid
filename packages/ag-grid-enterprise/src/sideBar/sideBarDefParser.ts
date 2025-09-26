@@ -70,14 +70,13 @@ export function parseSideBarDef(
         };
     }
 
-    const result: SideBarDef = {
+    return {
         toolPanels: parseComponents(toParse.toolPanels),
         defaultToolPanel: toParse.defaultToolPanel,
         hiddenByDefault: toParse.hiddenByDefault,
         position: toParse.position,
+        hideButtons: toParse.hideButtons,
     };
-
-    return result;
 }
 
 function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
@@ -88,21 +87,21 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
     }
 
     from.forEach((it: ToolPanelDef | string) => {
-        let toAdd: ToolPanelDef | null = null;
-        if (typeof it === 'string') {
-            const lookupResult = DEFAULT_BY_KEY[it];
-            if (!lookupResult) {
-                _warn(215, { key: it, defaultByKey: DEFAULT_BY_KEY });
-                return;
-            }
-
-            toAdd = lookupResult;
-        } else {
-            toAdd = it;
-        }
-
-        result.push(toAdd);
+        const parsed = parseOneComponent(it);
+        if (!parsed) return;
+        result.push(parsed);
     });
 
     return result;
+}
+
+export function parseOneComponent(it: ToolPanelDef | string): ToolPanelDef | null {
+    if (typeof it !== 'string') {
+        return it;
+    }
+    if (DEFAULT_BY_KEY[it]) {
+        return DEFAULT_BY_KEY[it];
+    }
+    _warn(215, { key: it, defaultByKey: DEFAULT_BY_KEY });
+    return null;
 }

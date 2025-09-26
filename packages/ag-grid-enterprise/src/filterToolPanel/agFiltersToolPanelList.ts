@@ -26,7 +26,7 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 import type { ToolPanelFilterItem } from './toolPanelFilterGroupComp';
 import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
-export type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
+type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
 export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEvent> {
     private colModel: ColumnModel;
 
@@ -232,7 +232,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         }
 
         const colGroupDef = columnGroup.getColGroupDef();
-        if (colGroupDef && colGroupDef.suppressFiltersToolPanel) {
+        if (colGroupDef?.suppressFiltersToolPanel) {
             return [];
         }
 
@@ -274,7 +274,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private shouldDisplayFilter(column: AgColumn) {
-        const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
+        const suppressFiltersToolPanel = column.getColDef()?.suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }
 

@@ -1,3 +1,4 @@
+import { _fuzzySuggestions } from '../../agStack/utils/fuzzyMatch';
 import type { DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
 import type {
@@ -7,8 +8,7 @@ import type {
     ValidationModuleName,
 } from '../../interfaces/iModule';
 import type { RowModelType } from '../../interfaces/iRowModel';
-import type { RowNodeEventType } from '../../interfaces/iRowNode';
-import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
+import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
 import { baseDocLink, getErrorLink } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
@@ -22,7 +22,7 @@ export const NoModulesRegisteredError = () =>
     ModuleRegistry.registerModules([ AllCommunityModule ]);
     ` as const;
 
-export const moduleImportMsg = (moduleNames: ModuleName[]) => {
+const moduleImportMsg = (moduleNames: ModuleName[]) => {
     const imports = moduleNames.map(
         (moduleName) =>
             `import { ${convertToUserModuleName(moduleName)} } from '${ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] ? 'ag-grid-enterprise' : 'ag-grid-community'}';`
@@ -345,7 +345,7 @@ export const AG_GRID_ERRORS = {
             ...Object.keys(agGridDefaults ?? []).filter(
                 (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
             ),
-            ...Object.keys(jsComps ?? []),
+            ...Object.keys(jsComps ?? []).filter((k) => !!jsComps[k]),
         ];
         const suggestions = _fuzzySuggestions({
             inputValue: componentName,
@@ -374,8 +374,19 @@ export const AG_GRID_ERRORS = {
     107: ({ key, value }: { key: string; value: unknown }) =>
         `Invalid value for theme param ${key} - ${value}` as const,
     108: ({ e }: { e: any }) => ['chart update failed', e] as const,
-    109: ({ aggFuncOrString }: { aggFuncOrString: any }) =>
-        `unrecognised aggregation function ${aggFuncOrString}` as const,
+    109: ({ inputValue, allSuggestions }: { inputValue: string; allSuggestions: string[] }) => {
+        const suggestions = _fuzzySuggestions({
+            inputValue,
+            allSuggestions,
+            hideIrrelevant: true,
+            filterByPercentageOfBestMatch: 0.8,
+        }).values;
+        return [
+            `Could not find '${inputValue}' aggregate function. It was configured as "aggFunc: '${inputValue}'" but it wasn't found in the list of registered aggregations.`,
+            suggestions.length > 0 ? `         Did you mean: [${suggestions.slice(0, 3)}]?` : '',
+            `If using a custom aggregation function check it has been registered correctly.`,
+        ].join('\n');
+    },
     110: () => 'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup' as const,
     111: () =>
         'Invalid selection state. When `groupSelects` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
@@ -512,7 +523,8 @@ export const AG_GRID_ERRORS = {
             'second instance',
             secondData,
         ] as const,
-    188: () => `getRowId callback must be provided for Server Side Row Model selection to work correctly.` as const,
+    188: (props?: { feature?: string }) =>
+        `getRowId callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
@@ -692,7 +704,7 @@ export const AG_GRID_ERRORS = {
         `Filter for column '${colId}' does not have 'filterParams.buttons', but the new Filters Tool Panel has buttons configured. Either configure buttons for the filter, or disable buttons on the Filters Tool Panel.` as const,
     282: () => 'New filter tool panel requires `enableFilterHandlers: true`.' as const,
     283: () =>
-        'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.' as const,
+        'As of v34, use the same method on the filter handler (`api.getColumnFilterHandler(colKey)`) instead.' as const,
     284: () =>
         'As of v34, filters are active when they have a model. Use `api.getColumnFilterModel()` instead.' as const,
     285: () => 'As of v34, use (`api.getColumnFilterModel()`) instead.' as const,
@@ -701,6 +713,12 @@ export const AG_GRID_ERRORS = {
     288: () => '`api.getColumnFilterModel(key, true)` requires `enableFilterHandlers = true' as const,
     289: ({ rowModelType }: { rowModelType: string }) =>
         `Row Model '${rowModelType}' is not supported with Batch Editing` as const,
+    290: ({ rowIndex, rowPinned }: { rowIndex: number; rowPinned: RowPinnedType }) =>
+        `Row with index '${rowIndex}' and pinned state '${rowPinned}' not found` as const,
+    291: () =>
+        'License Key being set multiple times with different values. This can result in an incorrect license key being used,' as const,
+    292: ({ colId }: { colId: string }) =>
+        `The Multi Filter for column '${colId}' has buttons configured against the child filters. When 'enableFilterHandlers=true', buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
@@ -723,7 +741,7 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
     return Array.isArray(errorBody) ? (errorBody.concat(errorSuffix) as string[]) : [errorBody, errorSuffix];
 }
 
-export const MISSING_MODULE_REASONS = {
+const MISSING_MODULE_REASONS = {
     1: 'Charting Aggregation',
     2: 'pivotResultFields',
     3: 'setTooltip',

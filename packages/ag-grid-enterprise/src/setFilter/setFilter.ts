@@ -1,12 +1,13 @@
 import type {
     AgColumn,
-    AgInputTextField,
     AgPromise,
     ComponentSelector,
     ElementParams,
     FilterDisplayParams,
+    GridInputTextField,
     IAfterGuiAttachedParams,
     ISetFilter,
+    SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
     SetFilterModel,
     SetFilterModelValue,
@@ -46,11 +47,11 @@ import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
-    implements ISetFilter<V>, SetFilterUi
+    implements ISetFilter<V>, SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
 
-    private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
+    private readonly eMiniFilter: GridInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
     private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
@@ -104,6 +105,9 @@ export class SetFilter<V = string>
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
+            if (!this.isAlive()) {
+                return;
+            }
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
@@ -147,7 +151,7 @@ export class SetFilter<V = string>
         if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
             this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
         }
-        this.handler.refreshFilterValues();
+        this.handler.refreshFilterValues(true);
     }
 
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
@@ -297,7 +301,8 @@ export class SetFilter<V = string>
     }
 
     protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
-        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null);
+        // model is being updated, so set mini filter UI state only
+        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null, true);
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
@@ -614,7 +619,7 @@ export class SetFilter<V = string>
 
         eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
 
-        if (!params || !params.suppressFocus) {
+        if (!params?.suppressFocus) {
             if (eMiniFilter.isDisplayed()) {
                 eMiniFilter.getFocusableElement().focus();
             } else {
@@ -691,8 +696,13 @@ export class SetFilter<V = string>
         // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput() {
+    private onMiniFilterInput(silent?: boolean) {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
+            return;
+        }
+        if (silent) {
+            // update UI state only
+            this.showOrHideResults();
             return;
         }
 
@@ -828,9 +838,9 @@ export class SetFilter<V = string>
         this.focusRowIfAlive(focusedRow);
     }
 
-    public setMiniFilter(newMiniFilter: string | null): void {
-        this.eMiniFilter.setValue(newMiniFilter);
-        this.onMiniFilterInput();
+    public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
+        this.eMiniFilter.setValue(newMiniFilter, silent);
+        this.onMiniFilterInput(silent);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
@@ -1159,6 +1169,10 @@ export class SetFilter<V = string>
         } else {
             this.selectedKeys = new Set(keys);
         }
+    }
+
+    public getFilterHandler(): ISetFilterHandler<V> {
+        return this.handler;
     }
 
     public override destroy(): void {

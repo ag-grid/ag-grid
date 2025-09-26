@@ -10,8 +10,15 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import { Component, _exists, _setAriaLabel, _setAriaLevel, _warn, isProvidedColumnGroup } from 'ag-grid-community';
-import { DragSourceType } from 'ag-grid-community';
+import {
+    Component,
+    DragSourceType,
+    _exists,
+    _setAriaLabel,
+    _setAriaLevel,
+    _warn,
+    isProvidedColumnGroup,
+} from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../features/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
@@ -40,7 +47,7 @@ class UIColumnModel implements VirtualListModel {
 
 const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
-export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
+type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
 export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private colModel: ColumnModel;
 
@@ -182,8 +189,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let movePadding = 0;
 
         if (isUp) {
-            const children = item.columnDepth > 0 && column.getParent()?.getChildren();
-            if (children && children.length && column === children[0]) {
+            const children = item.columnDepth > 0 ? column.getParent()?.getChildren() : null;
+            if (children?.length && column === children[0]) {
                 movePadding = -1;
             }
         } else if (group) {
@@ -356,7 +363,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             parentList: ColumnModelItem[]
         ): void => {
             const columnGroupDef = columnGroup.getColGroupDef();
-            const skipThisGroup = columnGroupDef && columnGroupDef.suppressColumnsToolPanel;
+            const skipThisGroup = columnGroupDef?.suppressColumnsToolPanel;
             if (skipThisGroup) {
                 return;
             }
@@ -382,7 +389,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         };
 
         const createColumnItem = (column: AgColumn, depth: number, parentList: ColumnModelItem[]): void => {
-            const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
+            const skipThisColumn = column.getColDef()?.suppressColumnsToolPanel;
 
             if (skipThisColumn) {
                 return;

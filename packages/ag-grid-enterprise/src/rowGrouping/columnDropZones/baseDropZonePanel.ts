@@ -1,4 +1,4 @@
-import type { AgColumn, ColumnEventType, DragItem, DraggingEvent, DropTarget } from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, DragItem, DropTarget, GridDraggingEvent } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
@@ -10,7 +10,7 @@ export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     constructor(
         horizontal: boolean,
-        private dropZonePurpose: TDropZone
+        private readonly dropZonePurpose: TDropZone
     ) {
         super(horizontal);
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
@@ -46,13 +46,13 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return Math.min(numberOfLockedCols, numberOfGroupCols);
     }
 
-    private showOrHideColumnOnExit(draggingEvent: DraggingEvent): boolean {
+    private showOrHideColumnOnExit(draggingEvent: GridDraggingEvent): boolean {
         return (
             this.isRowGroupPanel() && _shouldUpdateColVisibilityAfterGroup(this.gos, true) && !draggingEvent.fromNudge
         );
     }
 
-    protected override handleDragEnterEnd(draggingEvent: DraggingEvent): void {
+    protected override handleDragEnterEnd(draggingEvent: GridDraggingEvent): void {
         const hideColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (hideColumnOnExit) {
@@ -62,7 +62,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         }
     }
 
-    protected override handleDragLeaveEnd(draggingEvent: DraggingEvent): void {
+    protected override handleDragLeaveEnd(draggingEvent: GridDraggingEvent): void {
         const showColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (showColumnOnExit) {

@@ -1,9 +1,9 @@
+import { _getScrollbarWidth } from '../agStack/utils/browser';
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import { _getScrollbarWidth } from '../utils/browser';
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -31,6 +31,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     public verticalScrollGap: boolean;
 
     public postConstruct(): void {
+        this.horizontalScrollShowing = this.gos.get('alwaysShowHorizontalScroll') === true;
+        this.verticalScrollShowing = this.gos.get('alwaysShowVerticalScroll') === true;
+
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 

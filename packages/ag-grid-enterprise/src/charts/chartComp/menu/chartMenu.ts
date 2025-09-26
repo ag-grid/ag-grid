@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
-    Environment,
     IconName,
 } from 'ag-grid-community';
 import { AgPromise, Component, _warn } from 'ag-grid-community';
@@ -26,17 +25,15 @@ type ChartToolbarButtons = {
 export class ChartMenu extends Component {
     private chartMenuSvc: ChartMenuService;
     private chartMenuListFactory: ChartMenuListFactory;
-    private environment: Environment;
 
     public wireBeans(beans: BeanCollection) {
         this.chartMenuSvc = beans.chartMenuSvc as ChartMenuService;
         this.chartMenuListFactory = beans.chartMenuListFactory as ChartMenuListFactory;
-        this.environment = beans.environment;
     }
 
     private readonly chartController: ChartController;
 
-    private buttons: ChartToolbarButtons = {
+    private readonly buttons: ChartToolbarButtons = {
         chartLink: { iconName: 'linked', callback: () => this.chartMenuSvc.toggleLinked(this.chartMenuContext) },
         chartUnlink: {
             iconName: 'unlinked',
@@ -220,11 +217,11 @@ export class ChartMenu extends Component {
     public override destroy() {
         super.destroy();
 
-        if (this.menuPanel && this.menuPanel.isAlive()) {
+        if (this.menuPanel?.isAlive()) {
             this.destroyBean(this.menuPanel);
         }
 
-        if (this.tabbedMenu && this.tabbedMenu.isAlive()) {
+        if (this.tabbedMenu?.isAlive()) {
             this.destroyBean(this.tabbedMenu);
         }
     }

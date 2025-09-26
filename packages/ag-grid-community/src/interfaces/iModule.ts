@@ -1,11 +1,12 @@
+import type { ClassImp } from '../agStack/interfaces/iContext';
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
-import type { ClassImp, ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
+import type { ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
 import type { IconName, IconValue } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
-export type ModuleValidationValidResult = {
+type ModuleValidationValidResult = {
     isValid: true;
 };
 
@@ -55,7 +56,7 @@ export type _ModuleWithoutApi = Module & {
     apiFunctions?: never;
 };
 
-export type InternalModuleName =
+type InternalModuleName =
     | 'Aggregation'
     | 'AnimationFrame'
     | 'Aria'
@@ -65,6 +66,7 @@ export type InternalModuleName =
     | 'CheckboxCellRenderer'
     | 'ClientSideRowModelFilter'
     | 'ClientSideRowModelHierarchy'
+    | 'ColumnDelayRender'
     | 'ColumnFilter'
     | 'ColumnFlex'
     | 'ColumnGroupHeaderComp'
@@ -74,6 +76,7 @@ export type InternalModuleName =
     | 'ColumnResize'
     | 'CommunityCore'
     | 'CsrmSsrmSharedApi'
+    | 'RowModelSharedApi'
     | 'DataType'
     | 'Drag'
     | 'EditCore'
@@ -84,6 +87,7 @@ export type InternalModuleName =
     | 'FindCore'
     | 'GroupCellRenderer'
     | 'GroupColumn'
+    | 'GroupHierarchy'
     | 'HorizontalResize'
     | 'InfiniteRowModelCore'
     | 'KeyboardNavigation'
@@ -108,7 +112,8 @@ export type InternalModuleName =
     | 'Sort'
     | 'SsrmInfiniteSharedApi'
     | 'StickyRow'
-    | 'Touch';
+    | 'Touch'
+    | 'Testing';
 
 export type CommunityModuleName =
     | 'AlignedGrids'
@@ -301,6 +306,7 @@ export type ResolvableModuleName = Extract<
     | 'ColumnResize'
     | 'FilterCore'
     | 'CsrmSsrmSharedApi'
+    | 'RowModelSharedApi'
     | 'SsrmInfiniteSharedApi'
     | 'SharedMasterDetail'
     | 'SharedRowGrouping'

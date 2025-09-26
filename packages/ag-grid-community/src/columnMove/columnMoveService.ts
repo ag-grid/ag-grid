@@ -1,8 +1,9 @@
+import type { HorizontalDirection } from '../agStack/constants/direction';
+import { _last, _moveInArray, _removeFromArray } from '../agStack/utils/array';
 import type { ColKey } from '../columns/columnModel';
-import type { HorizontalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { DragSource } from '../dragAndDrop/dragAndDropService';
+import type { GridDragSource } from '../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
@@ -11,7 +12,6 @@ import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { DragItem } from '../interfaces/iDragItem';
-import { _last, _moveInArray, _removeFromArray } from '../utils/array';
 import { _warn } from '../validation/logging';
 import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';
@@ -212,7 +212,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         eSource: HTMLElement,
         column: AgColumn | AgColumnGroup,
         displayName: string | null
-    ): DragSource {
+    ): GridDragSource {
         const { gos, colModel, dragAndDrop, visibleCols } = this.beans;
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
         const isGroup = isColumnGroup(column);
@@ -220,7 +220,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const getDragItem = isGroup
             ? () => createDragItemForGroup(column, visibleCols.allCols)
             : () => createDragItem(column);
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
             getDefaultIconName: () => (hideColumnOnExit ? 'hide' : 'notAllowed'),

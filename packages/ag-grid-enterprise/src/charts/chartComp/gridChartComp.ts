@@ -16,6 +16,7 @@ import type {
     PartialCellRange,
     PopupService,
     SeriesChartType,
+    SortModelItem,
     UpdateChartParams,
 } from 'ag-grid-community';
 import {
@@ -72,6 +73,7 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    crossFilteringSort?: SortModelItem[] | boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
@@ -118,7 +120,7 @@ export class GridChartComp extends Component {
     private readonly params: GridChartParams;
 
     // function to clean up the 'color-scheme-change' event listener
-    private onDestroyColorSchemeChangeListener: () => void;
+    private readonly onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
         super(/* html */ `
@@ -634,7 +636,7 @@ export class GridChartComp extends Component {
         this.destroyBean(this.chartMenu);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
-        if (this.chartDialog && this.chartDialog.isAlive()) {
+        if (this.chartDialog?.isAlive()) {
             this.destroyBean(this.chartDialog);
         }
 

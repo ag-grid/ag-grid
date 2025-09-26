@@ -179,7 +179,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return colAutosize
                         ? {
                               name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                              action: () => colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize')),
+                              action: () =>
+                                  column && colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize')),
                           }
                         : null;
                 case 'autoSizeAll':
@@ -322,15 +323,25 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         return null;
                     }
                 case 'paste':
-                    return clipboardSvc
-                        ? {
-                              name: localeTextFunc('paste', 'Paste'),
-                              shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
-                              disabled: true,
-                              icon: _createIconNoSpan('clipboardPaste', beans, null),
-                              action: () => clipboardSvc.pasteFromClipboard(),
-                          }
-                        : null;
+                    if (clipboardSvc) {
+                        const isPasteBlocked =
+                            gos.get('suppressClipboardApi') ||
+                            gos.get('suppressClipboardPaste') ||
+                            !column ||
+                            !node ||
+                            !column.isCellEditable(node) ||
+                            column.isSuppressPaste(node);
+
+                        return {
+                            name: localeTextFunc('paste', 'Paste'),
+                            shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
+                            icon: _createIconNoSpan('clipboardPaste', beans, null),
+                            disabled: isPasteBlocked,
+                            action: () => clipboardSvc.pasteFromClipboard(),
+                        };
+                    } else {
+                        return null;
+                    }
                 case 'export': {
                     const exportSubMenuItems: string[] = [];
 

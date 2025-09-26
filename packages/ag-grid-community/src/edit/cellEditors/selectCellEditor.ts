@@ -1,16 +1,16 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _missing } from '../../agStack/utils/generic';
+import type { ListOption } from '../../agStack/widgets/agList';
+import { AgSelectSelector } from '../../agStack/widgets/agSelect';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorParams } from '../../interfaces/iCellEditor';
-import type { ElementParams } from '../../utils/dom';
-import { _missing } from '../../utils/generic';
+import type { ElementParams } from '../../utils/element';
 import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { ListOption } from '../../widgets/agList';
-import type { AgSelect } from '../../widgets/agSelect';
-import { AgSelectSelector } from '../../widgets/agSelect';
-import { RefPlaceholder } from '../../widgets/component';
+import type { GridSelect } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { ISelectCellEditorParams } from './iSelectCellEditor';
 
 interface SelectCellEditorParams<TData = any, TValue = any, TContext = any>
@@ -36,7 +36,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         this.valueSvc = beans.valueSvc;
     }
 
-    protected readonly eEditor: AgSelect = RefPlaceholder;
+    protected readonly eEditor: GridSelect = RefPlaceholder;
     private startedByEnter: boolean = false;
 
     constructor() {

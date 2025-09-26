@@ -1,3 +1,5 @@
+import { _EmptyArray, _last } from '../agStack/utils/array';
+import { _debounce } from '../agStack/utils/function';
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -23,9 +25,7 @@ import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _EmptyArray, _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce } from '../utils/function';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ChangedRowNodes } from './changedRowNodes';
@@ -78,7 +78,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
-    private lastHighlightedRow: RowNode | null = null;
+
+    /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
+    private rowDataUpdatedPending: boolean = false;
+
     private applyAsyncTransactionsTimeout: number | undefined;
     /** Has the start method been called */
     private started: boolean = false;
@@ -122,6 +125,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             columnPivotModeChanged: refreshEverythingFunc,
             gridStylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
+            rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
 
         // doesn't need done if doing full reset
@@ -391,7 +395,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const changedPathActive = changedPath.active;
 
         const clearIfNotDisplayed = (rowNode?: RowNode) => {
-            if (rowNode && rowNode.id != null && !displayedRowsMapped.has(rowNode.id)) {
+            if (rowNode?.id != null && !displayedRowsMapped.has(rowNode.id)) {
                 rowNode.clearRowTopAndRowIndex();
             }
         };
@@ -458,7 +462,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // we use the childrenAfterSort as postSortRows is occasionally used to reduce row count.
         const filteredChildren = rootNode.childrenAfterSort;
-        const totalFooterInc = rootNode.sibling ? 1 : 0;
+        const totalFooterInc = rootNode.sibling?.displayed ? 1 : 0;
         return (filteredChildren ? filteredChildren.length : 0) + totalFooterInc;
     }
 
@@ -538,7 +542,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return null;
     }
 
-    public onRowGroupOpened(): void {
+    private onRowGroupOpened(): void {
         const animate = _isAnimateRows(this.gos);
         this.refreshModel({ step: 'map', keepRenderedRows: true, animate: animate });
     }
@@ -607,14 +611,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return true; // Nothing changed, or only updates with no new rows and no removals
     }
 
-    private beforeRefreshModel(params: RefreshModelParams, groupsChanged: boolean = false): void {
-        this.eventSvc.dispatchEvent({ type: 'beforeRefreshModel', params, groupsChanged });
-
-        if (this.started && params.rowDataUpdated) {
-            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
-        }
-    }
-
     public refreshModel(params: RefreshModelParams): void {
         if (!this.rootNode) {
             return; // Destroyed
@@ -632,7 +628,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // let start: number;
         // console.log('======= start =======');
 
-        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && !!params.rowDataUpdated));
+        const beans = this.beans;
+
+        let rowDataUpdated = !!params.rowDataUpdated;
+        const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && rowDataUpdated));
+
+        if (this.started && rowDataUpdated) {
+            this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
+        }
 
         if (
             !this.started ||
@@ -640,22 +643,32 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
-            this.beforeRefreshModel(params);
+            this.rowDataUpdatedPending ||= rowDataUpdated;
             return;
+        }
+
+        if (this.rowDataUpdatedPending) {
+            this.rowDataUpdatedPending = false;
+            params.rowDataUpdated = rowDataUpdated = true;
+            params.step = 'group'; // Ensure grouping runs
         }
 
         this.isRefreshingModel = true;
 
-        if (params.step !== 'group') {
-            this.beforeRefreshModel(params);
+        beans.masterDetailSvc?.refreshModel(params);
+
+        if (rowDataUpdated && params.step !== 'group') {
+            beans.colFilter?.refreshModel();
         }
 
         /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group': {
                 const groupingChanged = this.doRowGrouping(params);
-                this.beforeRefreshModel(params, groupingChanged); // Do this after grouping, so the parent field is correct
-                if (params.step === 'group' && this.rowNodesCountReady) {
+                if (groupingChanged || rowDataUpdated) {
+                    beans.colFilter?.refreshModel();
+                }
+                if (!this.rowCountReady && this.rowNodesCountReady) {
                     this.rowCountReady = true; // only if row data has been set
                     this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
                 }
@@ -735,6 +748,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     return;
                 }
                 started = true;
+
+                // When the first and last node are the same we're already finished
+                if (lastInRange === firstInRange) {
+                    finished = true;
+                }
             }
 
             // only select leaf nodes if groupsSelectChildren
@@ -1196,7 +1214,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowsToDisplay = _EmptyArray;
     }
 
-    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
+    private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
     /**
      * @deprecated v33.1
      */

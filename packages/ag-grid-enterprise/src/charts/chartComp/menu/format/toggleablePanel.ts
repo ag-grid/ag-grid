@@ -5,7 +5,7 @@ import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
-export interface ToggleablePanelParams {
+interface ToggleablePanelParams {
     tag: string;
     title?: string;
     suppressEnabledCheckbox?: boolean;
@@ -17,7 +17,7 @@ export class ToggleablePanel extends Component {
     private readonly toggleableGroup: AgGroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
-    private activeComps: Component[] = [];
+    private readonly activeComps: Component[] = [];
 
     constructor(private readonly params: ToggleablePanelParams) {
         super();

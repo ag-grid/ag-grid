@@ -1,3 +1,9 @@
+import { _setAriaColIndex } from '../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _findFocusableElements } from '../../agStack/utils/focus';
+import { _makeNull } from '../../agStack/utils/generic';
+import { AgPromise } from '../../agStack/utils/promise';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
@@ -9,10 +15,8 @@ import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entitie
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
-import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
@@ -35,14 +39,10 @@ import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
-import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
-import { _getCtrlForEventTarget } from '../../utils/event';
-import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
-import { _makeNull } from '../../utils/generic';
-import { AgPromise } from '../../utils/promise';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
+import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
@@ -86,12 +86,6 @@ export interface ICellComp {
     refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
 }
 
-export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
-
-export function _getCellCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): CellCtrl | null {
-    return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_CELL_CTRL);
-}
-
 let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
@@ -108,7 +102,7 @@ export class CellCtrl extends BeanStub {
     public value: any;
     public valueFormatted: any;
 
-    private rangeFeature: ICellRangeFeature | undefined = undefined;
+    public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
@@ -135,8 +129,8 @@ export class CellCtrl extends BeanStub {
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
-    private editSvc?: IEditService;
-    private hasEdit: boolean = false;
+    private readonly editSvc?: IEditService;
+    private readonly hasEdit: boolean = false;
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
@@ -268,8 +262,16 @@ export class CellCtrl extends BeanStub {
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
-        if (startEditing && this.isCellEditable()) {
-            this.editSvc?.startEditing(this, { startedEdit: true, source: 'api' });
+        if (
+            (startEditing && this.isCellEditable()) ||
+            (this.hasEdit && this.editSvc?.isEditing(this, { withOpenEditor: true }))
+        ) {
+            this.editSvc?.startEditing(this, {
+                startedEdit: false,
+                source: 'api',
+                silent: true,
+                continueEditing: true,
+            });
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -372,6 +374,8 @@ export class CellCtrl extends BeanStub {
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
 
+        this.customRowDragComp?.refreshVisibility();
+
         // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
             _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
@@ -394,6 +398,18 @@ export class CellCtrl extends BeanStub {
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
         return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
+    }
+
+    public getCellValueClass(): string {
+        const prefix = 'ag-cell-value';
+        const isCheckboxRenderer = this.column.getColDef().cellRenderer === 'agCheckboxCellRenderer';
+        let suffix = '';
+
+        if (isCheckboxRenderer) {
+            suffix = ' ag-allow-overflow';
+        }
+
+        return `${prefix}${suffix}`;
     }
 
     /**
@@ -474,7 +490,7 @@ export class CellCtrl extends BeanStub {
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode).value,
             setValue: (value: any) =>
-                editSvc?.setDataValue({ rowNode, column }, value) || valueSvc.setValue(rowNode, column, value),
+                editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
             data: rowNode.data,
             node: rowNode,
@@ -517,6 +533,15 @@ export class CellCtrl extends BeanStub {
             this.rowCtrl?.recreateCell(this);
         } else {
             this.refreshCell(params);
+        }
+
+        if (this.hasEdit && this.editCompDetails) {
+            const { editSvc, comp } = this;
+
+            if (!comp?.getCellEditor() && editSvc!.isEditing(this, { withOpenEditor: true })) {
+                // editor was cleaned up by virtualisation, needs to be re-created
+                editSvc!.startEditing(this, { startedEdit: false, source: 'api', silent: true });
+            }
         }
     }
 
@@ -827,7 +852,7 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused && event?.forceBrowserFocus) {
             let focusEl = this.comp.getFocusableElement();
 
             if (editing) {
@@ -964,18 +989,14 @@ export class CellCtrl extends BeanStub {
         return dndSourceComp;
     }
 
-    public registerRowDragger(
-        customElement: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): void {
+    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number, alwaysVisible?: boolean): void {
         // if previously existed, then we are only updating
         if (this.customRowDragComp) {
             this.customRowDragComp.setDragElement(customElement, dragStartPixels);
             return;
         }
 
-        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
+        const newComp = this.createRowDragComp(customElement, dragStartPixels, alwaysVisible);
 
         if (newComp) {
             this.customRowDragComp = newComp;
@@ -983,13 +1004,14 @@ export class CellCtrl extends BeanStub {
                 this.beans.context.destroyBean(newComp);
                 (this.customRowDragComp as any) = null;
             });
+            newComp.refreshVisibility();
         }
     }
 
     public createRowDragComp(
         customElement?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp | undefined {
         const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
@@ -997,7 +1019,7 @@ export class CellCtrl extends BeanStub {
             () => this.value,
             customElement,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         if (!rowDragComp) {
             return undefined;

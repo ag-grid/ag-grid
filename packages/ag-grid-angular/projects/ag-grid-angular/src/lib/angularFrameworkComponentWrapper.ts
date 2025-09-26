@@ -1,6 +1,5 @@
 import type { ComponentRef } from '@angular/core';
-import { ViewContainerRef } from '@angular/core';
-import { Component, Injectable, inject } from '@angular/core';
+import { Component, Injectable, ViewContainerRef, inject } from '@angular/core';
 
 import type { FrameworkComponentWrapper, IFilter, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _removeFromParent } from 'ag-grid-community';

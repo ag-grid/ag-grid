@@ -21,8 +21,8 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
-import type { FileDropIndicator, IFile } from './fileUtils';
-import { getFileDropIndicator, moveFiles } from './fileUtils';
+import type { IFile } from './fileUtils';
+import { getFileDropPosition, moveFiles } from './fileUtils';
 import './style.css';
 
 ModuleRegistry.registerModules([
@@ -77,10 +77,10 @@ const DragAndDropGrid = () => {
             const source = event.node.data;
             const target = event.overNode?.data;
             const reorderOnly = event.event?.shiftKey;
-            const indicator: FileDropIndicator | null = getFileDropIndicator(rowData, source, target, !!reorderOnly);
+            const position = getFileDropPosition(rowData, source, target, !!reorderOnly);
             event.api.setRowDropPositionIndicator({
-                row: indicator?.file && event.api.getRowNode(indicator.file.id),
-                dropIndicatorPosition: indicator?.dropIndicatorPosition || 'none',
+                row: position?.target && event.api.getRowNode(position.target.id),
+                dropIndicatorPosition: position?.position || 'none',
             });
         },
         [rowData]
@@ -91,8 +91,11 @@ const DragAndDropGrid = () => {
             const source = event.node.data;
             const target = event.overNode?.data;
             const reorderOnly = event.event?.shiftKey;
-            const newRowData = moveFiles(rowData, source, target, !!reorderOnly);
-            setRowData(newRowData);
+            const position = getFileDropPosition(rowData, source, target, !!reorderOnly);
+            if (position) {
+                const newRowData = moveFiles(rowData, position);
+                setRowData(newRowData);
+            }
             event.api.setRowDropPositionIndicator(null);
         },
         [rowData]

@@ -16,6 +16,7 @@
       <project name="ag-grid-generate-example-files" file="file://$PROJECT_DIR$/plugins/ag-grid-generate-example-files/project.json" />
       <project name="ag-grid-module-size" file="file://$PROJECT_DIR$/testing/module-size/project.json" />
       <project name="ag-grid-module-size-angular" file="file://$PROJECT_DIR$/testing/module-size-angular/project.json" />
+      <project name="ag-grid-public-e2e-testing-recipes" file="file://$PROJECT_DIR$/testing/public-recipes/e2e/project.json" />
       <project name="ag-grid-react" file="file://$PROJECT_DIR$/packages/ag-grid-react/project.json" />
       <project name="ag-grid-task-autogen" file="file://$PROJECT_DIR$/plugins/ag-grid-task-autogen/project.json" />
       <project name="ag-grid-vue3" file="file://$PROJECT_DIR$/packages/ag-grid-vue3/project.json" />

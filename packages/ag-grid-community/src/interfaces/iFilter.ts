@@ -1,10 +1,10 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ColDef } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
-import type { AgPromise } from '../utils/promise';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 
@@ -32,6 +32,11 @@ export interface FilterHandlerParams<TData = any, TContext = any, TModel = any, 
     extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
     model: TModel | null;
     source: FilterHandlerSource;
+    /**
+     * If this refresh was as a result of the filter triggering an update
+     * with additional event attributes, these will be set here
+     */
+    additionalEventAttributes?: any;
 }
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
@@ -52,6 +57,11 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * filter.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
+    /**
+     * Optional: When using an apply button with the filter, this method will be called before the apply happens,
+     * The returned model will be applied, allowing for any validation or updates to be performed.
+     */
+    processModelToApply?(model: TModel | null): TModel | null;
     /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
     destroy?(): void;
 }
@@ -360,6 +370,11 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
      */
     getHandler: () => FilterHandler<TData, TContext, TModel>;
     source: FilterDisplaySource;
+    /**
+     * If this refresh was as a result of the filter triggering an update
+     * with additional event attributes, these will be set here
+     */
+    additionalEventAttributes?: any;
 }
 
 /**

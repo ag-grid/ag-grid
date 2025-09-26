@@ -1,7 +1,19 @@
 import type { RowNode } from '../entities/rowNode';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
-export interface IExpansionService {
+export interface RowGroupExpansionState {
+    expandedRowGroupIds: string[];
+    collapsedRowGroupIds?: string[];
+}
+
+export interface RowGroupBulkExpansionState {
+    expandAll: boolean;
+    invertedRowGroupIds: string[];
+}
+
+export interface IExpansionService<
+    T extends RowGroupExpansionState | RowGroupBulkExpansionState = RowGroupExpansionState,
+> {
     addExpandedCss(classes: string[], rowNode: RowNode): void;
 
     getRowExpandedListeners(rowCtrl: RowCtrl): {
@@ -9,7 +21,8 @@ export interface IExpansionService {
         hasChildrenChanged: () => void;
     };
 
-    expandRows(rowIdsToExpand: string[], rowIdsToCollapse?: string[]): void;
+    setExpansionState(state: T, source: 'gridInitializing' | 'api'): void;
+    getExpansionState(): T;
 
     expandAll(value: boolean): void;
 

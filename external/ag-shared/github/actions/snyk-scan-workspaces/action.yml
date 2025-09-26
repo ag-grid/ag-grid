@@ -11,13 +11,52 @@ inputs:
     severity_threshold:
         description: 'Severity threshold of the snyk scan'
         default: 'high'
+    remote_repo_url:
+        description: 'Public remote repository url'
+        required: true
+    report_file:
+        description: 'Output file in CTRF format'
+        default: 'report.json'
+    output_dir:
+        description: 'Output folder'
+        default: 'test-results/'
+    snyk_file:
+        description: 'Snyk output json file'
+        default: 'snyk.json'
 
 runs:
     using: 'composite'
     steps:
+        - name: Create output directory if required
+          uses: actions/github-script@v7
+          env:
+              OUTPUT_DIR: ${{ inputs.output_dir }}
+          with:
+              script: |
+                  const fs = require('fs');
+                  fs.mkdirSync('${{ inputs.output_dir }}', { recursive: true });
+
         - name: Run snyk to check for vulnerabilities on all yarn workspaces
+          id: snyk-scan
           uses: snyk/actions/node@master
+          continue-on-error: true
           env:
               SNYK_TOKEN: ${{ inputs.snyk_token }}
           with:
-              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }}
+              args: --yarn-workspaces --dev --strict-out-of-sync=false --severity-threshold=${{ inputs.severity_threshold }} --exclude=${{ inputs.exclude }} --remote-repo-url=${{ inputs.remote_repo_url }} --json > ${{ inputs.output_dir }}${{ inputs.snyk_file }}
+
+        - name: Convert snyk report to CTRF report
+          shell: bash
+          if: ${{ inputs.report_file != '' }}
+          env:
+              SNYK_JSON_FILE: '${{ inputs.output_dir }}${{ inputs.snyk_file }}'
+              CTRF_OUTPUT_FILE: '${{ inputs.output_dir }}${{ inputs.report_file }}'
+          run: |
+              node ./external/ag-shared/scripts/snyk/snyk-to-ctrf-command.mjs
+
+        - name: Fail job if scan failed
+          shell: bash
+          if: success() && steps.snyk-scan.outcome == 'failure'
+          run: |
+              echo "Workflow failed, failing the build."
+              exit 1

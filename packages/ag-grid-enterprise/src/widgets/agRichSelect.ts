@@ -1,10 +1,15 @@
 import type {
-    AgInputTextField,
+    AgComponentSelectorType,
+    AgEventTypeParams,
+    AgGridCommon,
     AgPromise,
     AriaAnnouncementService,
     BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
+    GridInputTextField,
+    GridOptionsService,
+    GridOptionsWithDefaults,
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
@@ -41,7 +46,7 @@ import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
-export type AgRichSelectEvent = AgRichSelectListEvent;
+type AgRichSelectEvent = AgRichSelectListEvent;
 
 const AgRichSelectElement: ElementParams = {
     tag: 'div',
@@ -68,6 +73,12 @@ const AgRichSelectElement: ElementParams = {
     ],
 };
 export class AgRichSelect<TValue = any> extends AgPickerField<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType,
     TValue[] | TValue,
     RichSelectParams<TValue>,
     AgRichSelectEvent,
@@ -90,7 +101,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected values: TValue[];
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
-    private readonly eInput: AgInputTextField = RefPlaceholder;
+    private readonly eInput: GridInputTextField = RefPlaceholder;
     private readonly eDeselect: HTMLSpanElement = RefPlaceholder;
 
     private ariaToggleSelection: string;
@@ -209,13 +220,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const {
             allowTyping,
             cellRenderer,
+            cellRendererParams,
             initialInputValue,
             multiSelect,
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
+            valueFormatter,
         } = config;
 
-        const valueFormatted = config.valueFormatter?.(value) ?? String(value);
+        const valueFormatted = formatValueFn(value, valueFormatter);
 
         if (allowTyping) {
             this.eInput.setValue(initialInputValue ?? valueFormatted);
@@ -241,6 +254,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 _addGridCommonParams(this.gos, {
                     value,
                     valueFormatted,
+                    cellRendererParams,
                     getValue: () => this.getValue(),
                     setValue: (value: TValue[] | TValue | null) => {
                         this.setValue(value, true);
@@ -351,16 +365,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (idx != null) {
+            this.tooltipFeature?.attemptToHideTooltip();
             listComponent.highlightIndex(idx);
         } else {
             listComponent.refresh();
         }
 
         this.displayOrHidePicker();
-    }
-
-    protected override beforeHidePicker(): void {
-        super.beforeHidePicker();
     }
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
@@ -458,14 +469,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private getSearchStringsFromValues(values: TValue[]): string[] | undefined {
-        const { config } = this;
-        const { valueFormatter = (value) => String(value) } = config;
-
+        const {
+            config: { valueFormatter },
+        } = this;
         if (typeof values[0] === 'object' && this.searchStringCreator) {
             return this.searchStringCreator(values);
         }
 
-        return values.map((v) => valueFormatter(v) as string);
+        return values.map((value) => formatValueFn(value, valueFormatter));
     }
 
     private filterListModel(filteredValues: TValue[]): void {
@@ -758,8 +769,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     protected override onKeyDown(e: KeyboardEvent): void {
         const { key, isComposing } = e;
 
-        const { isPickerDisplayed, config, listComponent, pickerComponent } = this;
-        const { allowTyping, multiSelect, suppressDeselectAll } = config;
+        const {
+            isPickerDisplayed,
+            config: { allowTyping, multiSelect, suppressDeselectAll },
+            listComponent,
+            pickerComponent,
+        } = this;
 
         switch (key) {
             case KeyCode.LEFT:
@@ -820,7 +835,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
                 break;
             case KeyCode.SPACE:
-                e.preventDefault();
+                if (!allowTyping || isComposing) {
+                    e.preventDefault();
+                }
 
                 if (!isComposing && isPickerDisplayed && multiSelect && listComponent) {
                     const lastItemHovered = listComponent.getLastItemHovered();
@@ -859,6 +876,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         super.destroy();
     }
 }
+
+// helper function that users a provided value formatter or
+// converts the value to a string, or to '' if the original
+// value is `null` or `undefined`
+const formatValueFn = <TValue>(value: TValue, valueFormatter?: ((value: TValue | TValue[]) => string) | undefined) =>
+    valueFormatter?.(value) ?? String(value ?? '');
 
 /**
  * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they

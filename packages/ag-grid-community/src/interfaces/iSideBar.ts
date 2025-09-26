@@ -1,10 +1,10 @@
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
 
 export interface ISideBarService {
     comp: ISideBar;
-    getSelector(): ComponentSelector;
+    getSelector(): ComponentSelector<Component>;
 }
 
 export interface ISideBar {
@@ -12,7 +12,11 @@ export interface ISideBar {
     setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
     isToolPanelShowing(): boolean;
-    openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
+    openToolPanel(
+        key: string,
+        source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api',
+        parent?: HTMLElement | null
+    ): void;
     getToolPanelInstance(key: string): IToolPanel | undefined;
     close(source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
     openedItem(): string | null;
@@ -52,6 +56,12 @@ export interface ToolPanelDef {
     toolPanel?: any;
     /** Customise the parameters provided to the `toolPanel` component. */
     toolPanelParams?: any;
+
+    /**
+     * DOM element to use as the parent for the tool panel to allow it to appear outside the grid.
+     * Set to `null` or omit the property for tool panel to appear inside the grid.
+     */
+    parent?: HTMLElement | null;
 }
 
 export interface SideBarDef {
@@ -65,4 +75,6 @@ export interface SideBarDef {
     hiddenByDefault?: boolean;
     /** Sets the side bar position relative to the grid. */
     position?: 'left' | 'right';
+    /** To hide the side bar buttons by default set this to true. If left undefined the buttons will be shown. This is useful if you want to show a tool panel without showing the buttons. */
+    hideButtons?: boolean;
 }

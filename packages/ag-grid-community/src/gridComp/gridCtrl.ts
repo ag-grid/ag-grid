@@ -1,14 +1,14 @@
+import { Direction } from '../agStack/constants/direction';
+import { _last } from '../agStack/utils/array';
+import { _getActiveDomElement } from '../agStack/utils/document';
+import { _observeResize } from '../agStack/utils/dom';
+import { _findTabbableParent, _focusInto } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
-import { _stampTopLevelGridCompWithGridInstance } from '../gridBodyComp/mouseEventUtils';
-import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
-import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
-import { _last } from '../utils/array';
-import { _observeResize } from '../utils/dom';
-import { _findTabbableParent, _focusInto, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/focus';
-import type { ComponentSelector } from '../widgets/component';
+import { _isCellFocusSuppressed, _isHeaderFocusSuppressed } from '../utils/gridFocus';
+import type { Component, ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -20,11 +20,11 @@ export interface IGridComp extends LayoutView {
 }
 
 export interface OptionalGridComponents {
-    paginationSelector?: ComponentSelector;
-    gridHeaderDropZonesSelector?: ComponentSelector;
-    sideBarSelector?: ComponentSelector;
-    statusBarSelector?: ComponentSelector;
-    watermarkSelector?: ComponentSelector;
+    paginationSelector?: ComponentSelector<Component>;
+    gridHeaderDropZonesSelector?: ComponentSelector<Component>;
+    sideBarSelector?: ComponentSelector<Component>;
+    statusBarSelector?: ComponentSelector<Component>;
+    watermarkSelector?: ComponentSelector<Component>;
 }
 
 export class GridCtrl extends BeanStub {
@@ -32,20 +32,18 @@ export class GridCtrl extends BeanStub {
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
-    private additionalFocusableContainers: Set<FocusableContainer> = new Set();
+    private readonly additionalFocusableContainers: Set<FocusableContainer> = new Set();
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
-        this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
+        this.eGui.setAttribute('grid-id', this.beans.context.getId());
 
         const { dragAndDrop, ctrlsSvc } = this.beans;
 
         dragAndDrop?.registerGridDropTarget(() => this.eGui, this);
-
-        _stampTopLevelGridCompWithGridInstance(this.gos, eGridDiv);
 
         this.createManagedBean(new LayoutFeature(this.view));
 
@@ -67,10 +65,10 @@ export class GridCtrl extends BeanStub {
         const beans = this.beans;
         return {
             paginationSelector: beans.pagination?.getPaginationSelector(),
-            gridHeaderDropZonesSelector: beans.registry.getSelector('AG-GRID-HEADER-DROP-ZONES'),
+            gridHeaderDropZonesSelector: beans.registry?.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBar?.getSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),
-            watermarkSelector: (beans.licenseManager as IWatermark)?.getWatermarkSelector(),
+            watermarkSelector: beans.licenseManager?.getWatermarkSelector(),
         };
     }
 
@@ -90,8 +88,15 @@ export class GridCtrl extends BeanStub {
         return this.eGui;
     }
 
-    public setResizeCursor(on: boolean): void {
-        this.view.setCursor(on ? 'ew-resize' : null);
+    public setResizeCursor(direction: Direction | false): void {
+        const { view } = this;
+
+        if (direction === false) {
+            view.setCursor(null);
+        } else {
+            const cursor = direction === Direction.Horizontal ? 'ew-resize' : 'ns-resize';
+            view.setCursor(cursor);
+        }
     }
 
     public disableUserSelect(on: boolean): void {
@@ -123,7 +128,7 @@ export class GridCtrl extends BeanStub {
 
     public focusInnerElement(fromBottom?: boolean): boolean {
         const userCallbackFunction = this.gos.getCallback('focusGridInnerElement');
-        if (userCallbackFunction && userCallbackFunction({ fromBottom: !!fromBottom })) {
+        if (userCallbackFunction?.({ fromBottom: !!fromBottom })) {
             return true;
         }
 

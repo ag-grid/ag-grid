@@ -1,9 +1,9 @@
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ColDef, KeyCreatorParams, ValueFormatterParams } from '../entities/colDef';
 import type { FilterUiChangedEvent } from '../events';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
-import type { AgPromise } from '../utils/promise';
 import type { AgGridCommon } from './iCommon';
 import type { IFilterParams } from './iFilter';
 
@@ -87,12 +87,15 @@ export interface SetFilterHandler<TValue = string> {
     resetFilterValues(): void;
 }
 
-export interface SetFilterUi {
+export interface SetFilterUi<TValue = string> {
     /** Returns the current mini-filter text. */
     getMiniFilter(): string | null;
 
     /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
     setMiniFilter(newMiniFilter: string | null): void;
+
+    /** Returns the corresponding Set Filter Handler. */
+    getFilterHandler(): SetFilterHandler<TValue>;
 }
 
 /**
@@ -237,6 +240,15 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * This will be an empty array if the node is at the root level.
      */
     treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string;
+    /**
+     * By default, if using provided filter values and there is an active filter model,
+     * when the filter values are refreshed such that every value is in the filter model,
+     * the filter model will be cleared (reset to `null`).
+     *
+     * To prevent this behaviour, set this property to `true`.
+     * This is useful if using SSRM and updating the filter values based on other column filters.
+     */
+    suppressClearModelOnRefreshValues?: boolean;
 }
 
 /**

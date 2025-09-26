@@ -1,7 +1,8 @@
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _ensureDomOrder } from '../../agStack/utils/dom';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { ElementParams } from '../../utils/dom';
-import { _ensureDomOrder } from '../../utils/dom';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import type { ElementParams } from '../../utils/element';
+import { Component } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
 import type { IHeaderRowContainerComp } from './headerRowContainerCtrl';
@@ -12,17 +13,17 @@ const PinnedRightElement: ElementParams = { tag: 'div', cls: 'ag-pinned-right-he
 const CenterElement: ElementParams = {
     tag: 'div',
     cls: 'ag-header-viewport',
-    role: 'presentation',
+    role: 'rowgroup',
     attrs: { tabindex: '-1' },
-    children: [{ tag: 'div', ref: 'eCenterContainer', cls: 'ag-header-container', role: 'rowgroup' }],
+    children: [{ tag: 'div', ref: 'eCenterContainer', cls: 'ag-header-container', role: 'presentation' }],
 };
 
 export class HeaderRowContainerComp extends Component {
-    private eCenterContainer: HTMLElement = RefPlaceholder;
+    private readonly eCenterContainer: HTMLElement = RefPlaceholder;
 
     private eRowContainer: HTMLElement;
 
-    private pinned: ColumnPinnedType;
+    private readonly pinned: ColumnPinnedType;
 
     private headerRowComps: { [ctrlId: HeaderRowCtrlInstanceId]: HeaderRowComp } = {};
     private rowCompsList: HeaderRowComp[] = [];

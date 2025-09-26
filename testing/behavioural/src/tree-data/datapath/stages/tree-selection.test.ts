@@ -1,8 +1,9 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
+import { GridActions } from '../../../selection/utils';
 import type { GridRowsOptions } from '../../../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridRows, TestGridsManager, assertSelectedRowElementsById, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
@@ -126,5 +127,97 @@ describe('ag-grid tree selection', () => {
             · └─┬ X GROUP selected id:3 name:"A. Church"
             · · └── G LEAF id:7 name:"Brian Kernighan"
         `);
+    });
+
+    test('parent with unselectable children is selectable when groupSelects: "descendants" and isRowSelectable: true for parent', () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
+            { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
+            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
+            { id: '6', name: 'Linus Torvalds', orgHierarchy: ['A', 'C', 'F'] },
+            { id: '7', name: 'Brian Kernighan', orgHierarchy: ['A', 'C', 'G'] },
+            { id: '8', name: 'Claude Elwood Shannon', orgHierarchy: ['A', 'C', 'H', 'I'] },
+            { id: '9', name: 'E. Dijkstra', orgHierarchy: ['J'] },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            rowSelection: {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                isRowSelectable: (node) => ['1', '2', '9'].includes(node.id!),
+            },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data: any) => data.orgHierarchy,
+        });
+
+        const actions = new GridActions(api, '#myGrid');
+
+        actions.toggleCheckboxById('2');
+        assertSelectedRowElementsById(['2'], api);
+        expect(api.getRowNode('2')?.selectable).toBe(true);
+
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            groupSelects: 'descendants',
+            isRowSelectable: (node) => ['1', '9'].includes(node.id!),
+        });
+
+        actions.toggleCheckboxById('2');
+        assertSelectedRowElementsById([], api);
+        expect(api.getRowNode('2')?.selectable).toBe(false);
+    });
+
+    test('parent with unselectable children is selectable when groupSelects: "filteredDescendants" and isRowSelectable: true for parent', () => {
+        const rowData = cachedJSONObjects.array([
+            { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
+            { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
+            { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
+            { id: '4', name: 'Donald Knuth', orgHierarchy: ['A', 'B', 'D'] },
+            { id: '5', name: 'Grace Hopper', orgHierarchy: ['A', 'B', 'E'] },
+            { id: '6', name: 'Linus Torvalds', orgHierarchy: ['A', 'C', 'F'] },
+            { id: '7', name: 'Brian Kernighan', orgHierarchy: ['A', 'C', 'G'] },
+            { id: '8', name: 'Claude Elwood Shannon', orgHierarchy: ['A', 'C', 'H', 'I'] },
+            { id: '9', name: 'E. Dijkstra', orgHierarchy: ['J'] },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
+            autoGroupColumnDef: { headerName: 'Hierarchy' },
+            treeData: true,
+            animateRows: false,
+            rowSelection: {
+                mode: 'multiRow',
+                groupSelects: 'filteredDescendants',
+                isRowSelectable: (node) => ['1', '2', '9'].includes(node.id!),
+            },
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+            getDataPath: (data: any) => data.orgHierarchy,
+        });
+
+        const actions = new GridActions(api, '#myGrid');
+
+        actions.toggleCheckboxById('2');
+        assertSelectedRowElementsById(['2'], api);
+        expect(api.getRowNode('2')?.selectable).toBe(true);
+
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            groupSelects: 'filteredDescendants',
+            isRowSelectable: (node) => ['1', '9'].includes(node.id!),
+        });
+
+        actions.toggleCheckboxById('2');
+        assertSelectedRowElementsById([], api);
+        expect(api.getRowNode('2')?.selectable).toBe(false);
     });
 });

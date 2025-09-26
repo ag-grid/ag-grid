@@ -554,7 +554,7 @@ export function handleRowGenericInterface(fileTxt: string, tData: string): strin
 
 export function addGenericInterfaceImport(imports: string[], tData: string, bindings) {
     if (tData && !bindings.interfaces.some((i) => i.includes(tData)) && !imports.some((i) => i.includes(tData))) {
-        imports.push(`import { ${tData} } from './interfaces'`);
+        imports.push(`import { ${tData} } from './interfaces';`);
     }
 }
 
@@ -764,4 +764,44 @@ export function wrapTearDownExample(method: string) {
     const tearDownEnd = '/** TEAR DOWN END **/';
 
     return `${tearDownStart}${method}${tearDownEnd}`;
+}
+
+export function getEnableAGTestIdLogic(isUmd: boolean = false): string {
+    const enableStart = '/** ENABLE AG-TEST-ID START **/';
+    const enableEnd = '/** ENABLE AG-TEST-ID END **/';
+    const community = 'agGridCommunity';
+    const enterprise = 'agGridEnterprise';
+
+    // Support dynamically adding modules during integration testing
+    const agGridCommunityImport = isUmd ? '' : `import * as ${community} from 'ag-grid-community';`;
+    const agGridEnterpriseImport = isUmd ? '' : `import * as ${enterprise} from 'ag-grid-enterprise';`;
+
+    const extraModules = isUmd
+        ? ''
+        : `
+    const modulesCSV = url.get('modules');
+    if (modulesCSV) {
+        ${community}.ModuleRegistry.registerModules(
+            modulesCSV.split(',').map(name => ${community}[name] || ${enterprise}[name])
+        );
+    }
+`;
+
+    const setupCode = isUmd ? 'agGrid.setupAgTestIds();' : `${community}.setupAgTestIds();`;
+    const exposeGridApi = isUmd
+        ? 'window.getGridApi = agGrid.getGridApi;'
+        : `window.getGridApi = ${community}.getGridApi;`;
+
+    const method = `
+${agGridCommunityImport}
+${agGridEnterpriseImport}
+const url = new URLSearchParams(window.location.search);
+const enableTestIds = url.get('enableTestIds');
+if (enableTestIds) {
+    ${extraModules}
+    ${setupCode}
+    ${exposeGridApi}
+}
+    `;
+    return `${enableStart}${method}${enableEnd}`;
 }

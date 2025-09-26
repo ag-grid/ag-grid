@@ -4,7 +4,6 @@ import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _warn } from '../validation/logging';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionSvc?.onGroupExpandedOrCollapsed();
@@ -47,14 +46,6 @@ export function forEachNodeAfterFilterAndSort<TData = any>(
     callback: (rowNode: IRowNode<TData>, index: number) => void
 ): void {
     _getClientSideRowModel(beans)?.forEachNodeAfterFilterAndSort(callback);
-}
-
-export function resetRowHeights(beans: BeanCollection): void {
-    if (beans.rowAutoHeight?.active) {
-        _warn(3);
-        return;
-    }
-    _getClientSideRowModel(beans)?.resetRowHeights();
 }
 
 export function applyTransaction<TData = any>(

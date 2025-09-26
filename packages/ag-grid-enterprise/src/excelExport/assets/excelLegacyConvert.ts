@@ -25,7 +25,6 @@ type ColorKeyType =
     | 'DiagStripe'
     | 'DiagCross'
     | 'ThickDiagCross'
-    | 'ThickDiagCross'
     | 'ThinHorzStripe'
     | 'ThinVertStripe'
     | 'ThinReverseDiagStripe'

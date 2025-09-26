@@ -96,6 +96,7 @@ function createColumnChart(api: GridApi) {
                 },
             },
         },
+        sort: [{ colId: 'country', sort: 'asc' }],
         chartContainer: document.querySelector('#barChart') as any,
     });
 }
@@ -117,6 +118,7 @@ function createBubbleChart(api: GridApi) {
                 },
             },
         },
+        sort: false,
         chartContainer: document.querySelector('#bubbleChart') as any,
     });
 }

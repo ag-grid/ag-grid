@@ -13,7 +13,7 @@ const colSpan = function (params: ColSpanParams) {
 const columnDefs: (ColDef | ColGroupDef)[] = [
     {
         headerName: 'A',
-        field: 'author',
+        colId: 'a',
         width: 300,
         colSpan: colSpan,
     },
@@ -22,12 +22,14 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         children: [
             {
                 headerName: 'B',
+                colId: 'b',
                 minWidth: 200,
                 maxWidth: 350,
                 flex: 2,
             },
             {
                 headerName: 'C',
+                colId: 'c',
                 flex: 1,
             },
         ],

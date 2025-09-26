@@ -4,7 +4,7 @@ const VERSION_CHECKING_FIRST_GRID_MAJOR_VERSION = 28;
 const VERSION_CHECKING_FIRST_CHARTS_MAJOR_VERSION = 6;
 
 function isValidVersion(version: string) {
-    return version && version.match(/\d+\.\d+\.\d+/);
+    return version?.match(/\d+\.\d+\.\d+/);
 }
 
 function isValidMajorVersion({

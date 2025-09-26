@@ -77,6 +77,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
                 },
             },
         },
+        sort: false,
         chartContainer: document.querySelector('#pieChart') as any,
     });
 }

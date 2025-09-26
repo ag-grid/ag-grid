@@ -1,3 +1,5 @@
+import { _exists, _warn } from 'ag-grid-community';
+
 import { MD5 } from './md5';
 
 const LICENSE_TYPES = {
@@ -12,15 +14,15 @@ export interface ILicenseManager {
 }
 
 export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTc1MDY2MDA2NjA0Ng==';
+    private static readonly RELEASE_INFORMATION: string = 'MTc1NzA4ODUwMDMzNw==';
     private static licenseKey: string;
     private static chartsLicenseManager?: ILicenseManager;
     private watermarkMessage: string | undefined = undefined;
 
-    private md5: MD5;
-    private document: Document;
+    private readonly md5: MD5;
+    private readonly document: Document;
 
-    private totalMessageLength = 124;
+    private readonly totalMessageLength = 124;
 
     constructor(document: Document) {
         this.document = document;
@@ -283,6 +285,10 @@ export class LicenseManager {
     }
 
     static setLicenseKey(licenseKey: string): void {
+        if (_exists(this.licenseKey) && this.licenseKey !== licenseKey) {
+            _warn(291);
+        }
+
         this.licenseKey = licenseKey;
         this.chartsLicenseManager?.setLicenseKey(licenseKey, true);
     }
@@ -400,7 +406,7 @@ export class LicenseManager {
         this.centerPadAndOutput(` ${currentLicenseName} License `);
         this.centerPadAndOutput(' Incompatible Software Version ');
         this.padAndOutput(
-            `* Your license key works with versions of ${suppliedLicenseName} released before ${formattedExpiryDate}.`,
+            `* Your license key works with versions${suppliedLicenseName == '' ? '' : ` of ${suppliedLicenseName}`} released before ${formattedExpiryDate}.`,
             ' ',
             '*'
         );

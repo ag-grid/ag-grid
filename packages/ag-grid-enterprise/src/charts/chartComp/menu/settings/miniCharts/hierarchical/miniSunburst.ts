@@ -8,16 +8,16 @@ export class MiniSunburstClass extends MiniChartWithPolarAxes {
     private readonly series: Group[];
 
     // Hierarchical data using multidimensional array
-    private data = [
+    private readonly data = [
         [[], []],
         [[], []],
         [[], []],
     ];
 
     // Rotate the chart by the given angle (-90 degrees)
-    private angleOffset = -Math.PI / 2;
+    private readonly angleOffset = -Math.PI / 2;
 
-    private innerRadiusRatio = 0;
+    private readonly innerRadiusRatio = 0;
 
     constructor(container: HTMLElement, agChartsExports: AgChartsExports, fills: string[], strokes: string[]) {
         super(container, agChartsExports, 'sunburstTooltip');

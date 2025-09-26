@@ -28,7 +28,7 @@
       "dependsOn": ["@ag-grid-community/styles:build"],
       "inputs": ["{workspaceRoot}/community-modules/styles/*.*css"],
       "outputs": ["{projectRoot}/styles/**/*"],
-      "cache": true,
+      "cache": false,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
         "cwd": "packages/ag-grid-community"
@@ -116,7 +116,17 @@
         }
       }
     },
+    "lint:knip": {
+      "command": "knip",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint:depcruise": {
+      "dependsOn": ["build:css"]
+    },
     "lint": {
+      "dependsOn": ["lint:knip", "lint:depcruise"],
       "command": "eslint && stylelint './src/**/*css'",
       "options": {
         "cwd": "{projectRoot}"

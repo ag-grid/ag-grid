@@ -4,16 +4,17 @@ import type { GridApi, GridOptions, Params } from 'ag-grid-community';
 import { ClientSideRowModelModule, PinnedRowModule, isColumnSelectionCol } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
-import { GROUP_ROW_DATA } from './group-data';
 import {
-    GridActions,
-    _isDisplayed,
+    TestGridsManager,
+    assertElementDisplayed,
     assertSelectableByIndex,
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
+    asyncSetTimeout,
     waitForEvent,
-} from './utils';
+} from '../test-utils';
+import { GROUP_ROW_DATA } from './group-data';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -387,7 +388,7 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
-                rowData.map((_, i) => expect(_isDisplayed(actions.getCheckboxByIndex(i)!)).toBe(false));
+                rowData.map((_, i) => expect(assertElementDisplayed(actions.getCheckboxByIndex(i)!)).toBe(false));
             });
 
             describe('Range selection behaviour', () => {
@@ -812,6 +813,22 @@ describe('Row Selection Grid Options', () => {
                 actions.clickRowByIndex(2);
 
                 assertSelectedRowsByIndex([1, 3], api);
+            });
+
+            test('SHIFT-click on row that is already selected is a no-op', () => {
+                const [api, actions] = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: { mode: 'multiRow', enableClickSelection: true },
+                });
+
+                actions.clickRowByIndex(1);
+
+                assertSelectedRowsByIndex([1], api);
+
+                actions.clickRowByIndex(1, { shiftKey: true });
+
+                assertSelectedRowsByIndex([1], api);
             });
         });
 
@@ -1419,7 +1436,7 @@ describe('Row Selection Grid Options', () => {
                 });
 
                 actions.clickRowByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14], api);
             });
 
             test('toggling group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {
@@ -1430,15 +1447,15 @@ describe('Row Selection Grid Options', () => {
 
                 // Group selects children
                 actions.toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14], api);
 
                 // Can un-select child row
                 actions.toggleCheckboxByIndex(4);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 14], api);
 
                 // Toggling group row from indeterminate state selects all children
                 actions.toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 4], api);
+                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 14, 4], api);
 
                 // Toggle group row again de-selects all children
                 actions.toggleCheckboxByIndex(0);
@@ -1454,19 +1471,184 @@ describe('Row Selection Grid Options', () => {
 
                 // Group selects children
                 actions.toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '18',
+                        '20',
+                        'row-group-country-United States-sport-Swimming',
+                    ],
+                    api
+                );
+
+                // Group checkbox is indeterminate because rows are filtered out
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBeUndefined();
 
                 // Can un-select child row
                 actions.toggleCheckboxByIndex(4);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11], api);
+                expect(api.getDisplayedRowAtIndex(0)?.isSelected()).toEqual(undefined);
+                assertSelectedRowElementsById(['0', '1', '3', '6', '7', '8', '9', '11', '18', '20'], api);
 
-                // Toggling group row from indeterminate state de-selects all children
+                // Toggling group row from indeterminate state re-selects all visible children
                 actions.toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '18',
+                        '20',
+                        'row-group-country-United States-sport-Swimming',
+                    ],
+                    api
+                );
 
-                // Toggle group row again selects all children
+                // Group checkbox is still indeterminate because rows are still filtered out
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBeUndefined();
+
+                // Remove filter
+                api.setGridOption('quickFilterText', undefined);
+
+                // Toggling indeterminate group row checkbox now transitions to checked state
                 actions.toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '13',
+                        '18',
+                        '20',
+                        'row-group-country-United States',
+                        'row-group-country-United States-sport-Swimming',
+                        'row-group-country-United States-sport-Gymnastics',
+                    ],
+                    api
+                );
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBe(true);
+            });
+
+            test('clicking indeterminate group row checkbox when filtered out children are selected and `groupSelects: "filteredDescendants"` selects all children', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: { mode: 'multiRow', groupSelects: 'filteredDescendants' },
+                });
+
+                // Group selects all children
+                actions.toggleCheckboxByIndex(0);
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '18',
+                        '13',
+                        '20',
+                        'row-group-country-United States',
+                        'row-group-country-United States-sport-Gymnastics',
+                        'row-group-country-United States-sport-Swimming',
+                    ],
+                    api
+                );
+
+                // Filter rows
+                api.setGridOption('quickFilterText', 'ing');
+
+                // De-select group row
+                actions.toggleCheckboxByIndex(0);
+                assertSelectedRowElementsById(['13'], api);
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBeUndefined();
+
+                // Toggle indeterminate re-selects all nodes
+                actions.toggleCheckboxByIndex(0);
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '18',
+                        '13',
+                        '20',
+                        'row-group-country-United States',
+                        'row-group-country-United States-sport-Gymnastics',
+                        'row-group-country-United States-sport-Swimming',
+                    ],
+                    api
+                );
+                expect(api.getDisplayedRowAtIndex(0)!.isSelected()).toBe(true);
+            });
+
+            test('clicking indeterminate group row checkbox when only visible children are selected and `groupSelects: "filteredDescendants" de-selects all children', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: { mode: 'multiRow', groupSelects: 'filteredDescendants' },
+                    quickFilterText: 'ing',
+                });
+
+                // Select all filtered children individually
+                actions.toggleCheckboxById('0');
+                actions.toggleCheckboxById('1');
+                actions.toggleCheckboxById('2');
+                actions.toggleCheckboxById('3');
+                actions.toggleCheckboxById('6');
+                actions.toggleCheckboxById('7');
+                actions.toggleCheckboxById('8');
+                actions.toggleCheckboxById('9');
+                actions.toggleCheckboxById('11');
+                actions.toggleCheckboxById('18');
+                actions.toggleCheckboxById('20');
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '18',
+                        '20',
+                        'row-group-country-United States-sport-Swimming',
+                    ],
+                    api
+                );
+
+                actions.toggleCheckboxById('row-group-country-United States');
+                assertSelectedRowElementsById([], api);
             });
 
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
@@ -1491,6 +1673,20 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: {
                         mode: 'multiRow',
                         groupSelects: 'descendants',
+                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
+                    },
+                });
+
+                actions.toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+            });
+
+            test('Can select group rows where `isRowSelectable` returns false and `groupSelects` = "filteredDescendants"', async () => {
+                const [api, actions] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'filteredDescendants',
                         isRowSelectable: (node) => node.data?.sport === 'Swimming',
                     },
                 });
@@ -1568,6 +1764,34 @@ describe('Row Selection Grid Options', () => {
                 actions.toggleCheckboxById('rowGroupFooter_row-group-country-United States-sport-Swimming');
 
                 assertSelectedRowElementsById(['row-group-country-United States-sport-Swimming'], api);
+            });
+
+            test('parent with unselectable children is unselectable when groupSelects: descendants', async () => {
+                const [api] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => node.id?.startsWith('row-group') ?? false,
+                    },
+                });
+
+                expect(api.getRowNode('row-group-country-United States')?.selectable).toBe(false);
+                expect(api.getRowNode('row-group-country-United States-sport-Swimming')?.selectable).toBe(false);
+            });
+
+            test('parent with unselectable children is unselectable when groupSelects: filteredDescendants', async () => {
+                const [api] = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'filteredDescendants',
+                        isRowSelectable: (node) => node.id?.startsWith('row-group') ?? false,
+                    },
+                });
+
+                expect(api.getRowNode('row-group-country-United States')?.selectable).toBe(false);
+                expect(api.getRowNode('row-group-country-United States-sport-Swimming')?.selectable).toBe(false);
             });
 
             describe('Range selection behaviour', () => {

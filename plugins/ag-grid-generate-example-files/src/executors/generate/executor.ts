@@ -8,6 +8,7 @@ import { SOURCE_ENTRY_FILE_NAME } from './generator/constants';
 import gridVanillaSrcParser from './generator/transformation-scripts/grid-vanilla-src-parser';
 import {
     DARK_INTEGRATED_START,
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getInterfaceFileContents,
     removeModuleRegistration,
@@ -253,7 +254,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
         }
 
         let styleFilesKeys = [];
-        const mergedFiles = {
+        let mergedFiles = {
             ...mergedStyleFiles,
             ...htmlFiles,
             ...files,
@@ -271,6 +272,16 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             }
         }
 
+        // Keep the spec files from the main script files
+        const specFiles = scriptFiles?.filter((file) => file.endsWith('.spec.ts') || file.endsWith('.spec.js')) ?? [];
+        scriptFiles = scriptFiles?.filter((file) => !specFiles.includes(file));
+
+        // Stable random for tests and examples but not for examples that have a web worker as they can't access window.agRandom
+        if (!exampleConfig.usesWebWorker) {
+            scriptFiles = useAgRandom(scriptFiles);
+            mergedFiles = useAgRandom(mergedFiles);
+        }
+
         // Replace files with provided examples
         const result: GeneratedContents = {
             isEnterprise,
@@ -283,6 +294,7 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             mainFileName,
             sourceFileList,
             scriptFiles: scriptFiles!,
+            specFiles,
             styleFiles: styleFilesKeys,
             htmlFiles: Object.keys(htmlFiles),
             files: mergedFiles,
@@ -400,11 +412,19 @@ async function processProvidedFiles(
                 code
             );
         }
+
+        if (writeToFileName === mainFileName) {
+            // Add testId setup to the main file for provided examples
+            const isUmd = internalFramework === 'vanilla';
+            const testIdSetup = getEnableAGTestIdLogic(isUmd);
+            provideFrameworkFiles[writeToFileName] = testIdSetup + '\n\n' + provideFrameworkFiles[writeToFileName];
+        }
     }
 
     // Transform entry file
-    provideFrameworkFiles[entryFileName] = transformEntryFile({
-        entryFile: provideFrameworkFiles[entryFileName],
+    const transformMainFile = internalFramework === 'angular' ? mainFileName : entryFileName;
+    provideFrameworkFiles[transformMainFile] = transformEntryFile({
+        entryFile: provideFrameworkFiles[transformMainFile],
     });
 
     return scriptFiles;
@@ -436,6 +456,28 @@ async function writeContents(
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
+}
+
+// We want to replace Math.random() calls with agRandom() calls in the example runner so that tests are predictable.
+function useAgRandom<T extends string[] | Record<string, string>>(scripts: T): T {
+    if (!scripts) return scripts;
+
+    const replacer = (value: string) => value.replace(/Math\.random\(\)/g, 'window.agRandom()');
+
+    if (Array.isArray(scripts)) {
+        for (let i = 0; i < scripts.length; i++) {
+            scripts[i] = replacer(scripts[i]);
+        }
+        return scripts;
+    }
+
+    Object.keys(scripts).forEach((key) => {
+        const value = scripts[key];
+        if (typeof value === 'string') {
+            scripts[key] = replacer(value);
+        }
+    });
+    return scripts;
 }
 
 // nx run ag-grid-docs:generate-examples --skip-nx-cache

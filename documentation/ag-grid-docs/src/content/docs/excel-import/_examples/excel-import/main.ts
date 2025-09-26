@@ -36,22 +36,6 @@ const gridOptions: GridOptions = {
     rowData: [],
 };
 
-// XMLHttpRequest in promise format
-function makeRequest(method: string, url: string, success: any, error: any) {
-    const httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', url, true);
-    httpRequest.responseType = 'arraybuffer';
-
-    httpRequest.open(method, url);
-    httpRequest.onload = function () {
-        success(httpRequest.response);
-    };
-    httpRequest.onerror = function () {
-        error(httpRequest.response);
-    };
-    httpRequest.send();
-}
-
 // read the raw data and convert it to a XLSX workbook
 function convertDataToWorkbook(dataRows: ArrayBuffer) {
     /* convert data to binary string */
@@ -69,7 +53,7 @@ function convertDataToWorkbook(dataRows: ArrayBuffer) {
 
 // pull out the values we're after, converting it into an array of rowData
 
-function populateGrid(workbook: any) {
+function populateGrid(api: GridApi, workbook: any) {
     // our data is in the first sheet
     const firstSheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[firstSheetName];
@@ -106,7 +90,7 @@ function populateGrid(workbook: any) {
     }
 
     // finally, set the imported rowData into the grid
-    gridApi!.setGridOption('rowData', rowData);
+    api.setGridOption('rowData', rowData);
 }
 
 function importExcel() {
@@ -114,7 +98,7 @@ function importExcel() {
         .then((response) => response.arrayBuffer())
         .then((data: ArrayBuffer) => {
             const workbook = convertDataToWorkbook(data);
-            populateGrid(workbook);
+            populateGrid(gridApi, workbook);
         });
 }
 

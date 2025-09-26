@@ -116,7 +116,7 @@ export interface CustomDragAndDropImageProps<TData = any, TContext = any>
     label: string;
     /** The name of the icon provided by the grid about the current drop target. */
     icon: string | null;
-    /** `True` if the grid is attempting to scroll horizontally while dragging. */
+    /** `true` if the grid is attempting to scroll horizontally while dragging. */
     shake: boolean;
 }
 

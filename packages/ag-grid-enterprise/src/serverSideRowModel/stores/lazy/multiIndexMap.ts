@@ -1,6 +1,6 @@
 export class MultiIndexMap<K, I extends keyof K> {
-    private indexes: I[];
-    private maps: Map<I, Map<any, K>>;
+    private readonly indexes: I[];
+    private readonly maps: Map<I, Map<any, K>>;
 
     constructor(...indexes: I[]) {
         this.indexes = indexes;

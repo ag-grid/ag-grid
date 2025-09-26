@@ -2,6 +2,7 @@ import type { AgChartThemeOverrides, AgHierarchyChartOptions, AgHierarchySeriesO
 
 import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
 
+import type { ChartValueWrapper } from '../../datasource/chartDatasource';
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 import { CATEGORY_LABEL_KEY, createAutoGroupHierarchy, createCategoryHierarchy } from './hierarchicalChartUtils';
@@ -61,7 +62,10 @@ export class HierarchicalChartProxy<TSeries extends 'sunburst' | 'treemap'> exte
                       }) ?? []
                   )
                 : data;
-            return createAutoGroupHierarchy(processedData, (item) => item[GROUP_AUTO_COLUMN_ID]?.labels ?? null);
+            return createAutoGroupHierarchy(
+                processedData,
+                (item) => (item[GROUP_AUTO_COLUMN_ID] as ChartValueWrapper<string[]> | undefined)?.value ?? null
+            );
         } else {
             const categoryKeys = categories.map(({ id }) => id);
             return createCategoryHierarchy(data, categoryKeys);

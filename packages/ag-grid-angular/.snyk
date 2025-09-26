@@ -3,8 +3,8 @@ version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
     SNYK-JS-WEBPACKDEVSERVER-10300775:
-        - '@angular-devkit/build-angular@17.3.11 > webpack-dev-server@4.15.1':
-              reason: Only used for calculating module size and is dev only
+        - '@angular-devkit/build-angular@17.3.17 > webpack-dev-server@4.15.1':
+              reason: Only used for dev
               expires: 2025-09-21T12:00:00.000Z
               created: 2025-06-06T14:47:25.226Z
     SNYK-JS-VITE-9653016:

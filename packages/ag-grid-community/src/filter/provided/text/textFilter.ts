@@ -1,22 +1,23 @@
+import { _makeNull } from '../../../agStack/utils/generic';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
-import { _createElement } from '../../../utils/dom';
-import { _makeNull } from '../../../utils/generic';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { _createElement } from '../../../utils/element';
+import type { GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { ITextFilterParams, TextFilterModel } from './iTextFilter';
 import { DEFAULT_TEXT_FILTER_OPTIONS } from './textFilterConstants';
-import { mapValuesFromTextFilterModel, trimInputForFilter } from './textFilterUtils';
+import { mapValuesFromTextFilterModel } from './textFilterUtils';
 
 /** temporary type until `TextFilterParams` is updated as breaking change */
 type TextFilterDisplayParams = ITextFilterParams &
     FilterDisplayParams<any, any, TextFilterModel | ICombinedSimpleModel<TextFilterModel>>;
 
-export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTextField, TextFilterDisplayParams> {
+export class TextFilter extends SimpleFilter<TextFilterModel, string, GridInputTextField, TextFilterDisplayParams> {
     public readonly filterType = 'text' as const;
 
-    private readonly eValuesFrom: AgInputTextField[] = [];
-    private readonly eValuesTo: AgInputTextField[] = [];
+    private readonly eValuesFrom: GridInputTextField[] = [];
+    private readonly eValuesTo: GridInputTextField[] = [];
 
     constructor() {
         super('textFilter', mapValuesFromTextFilterModel, DEFAULT_TEXT_FILTER_OPTIONS);
@@ -32,7 +33,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
             type,
         };
 
-        const values = this.getValuesWithSideEffects(position, true);
+        const values = this.getValues(position);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -49,7 +50,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
         );
     }
 
-    protected getInputs(position: number): Tuple<AgInputTextField> {
+    protected getInputs(position: number): Tuple<GridInputTextField> {
         const { eValuesFrom, eValuesTo } = this;
         if (position >= eValuesFrom.length) {
             return [null, null];
@@ -58,19 +59,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
     }
 
     protected getValues(position: number): Tuple<string> {
-        return this.getValuesWithSideEffects(position, false);
-    }
-
-    private getValuesWithSideEffects(position: number, applySideEffects: boolean): Tuple<string> {
         const result: Tuple<string> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                let value = _makeNull(element.getValue());
-                if (applySideEffects && this.params.trimInput) {
-                    value = trimInputForFilter(value) ?? null;
-                    element.setValue(value, true); // ensure clean value is visible
-                }
-                result.push(value);
+                result.push(_makeNull(element.getValue()));
             }
         });
 
@@ -87,8 +79,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
         return eCondition;
     }
 
-    private createFromToElement(eCondition: HTMLElement, eValues: AgInputTextField[], fromTo: string): void {
-        const eValue = this.createManagedBean(new AgInputTextField());
+    private createFromToElement(eCondition: HTMLElement, eValues: GridInputTextField[], fromTo: string): void {
+        const eValue = this.createManagedBean<GridInputTextField>(new AgInputTextField());
         eValue.addCss(`ag-filter-${fromTo}`);
         eValue.addCss('ag-filter-filter');
         eValues.push(eValue);
@@ -96,7 +88,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string, AgInputTex
     }
 
     protected removeEValues(startPosition: number, deleteCount?: number): void {
-        const removeComps = (eGui: AgInputTextField[]) => this.removeComponents(eGui, startPosition, deleteCount);
+        const removeComps = (eGui: GridInputTextField[]) => this.removeComponents(eGui, startPosition, deleteCount);
         const { eValuesFrom, eValuesTo } = this;
         removeComps(eValuesFrom);
         removeComps(eValuesTo);

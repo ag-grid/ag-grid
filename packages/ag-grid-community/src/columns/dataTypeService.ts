@@ -1,4 +1,8 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
+import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../agStack/utils/date';
+import { _toStringOrNull } from '../agStack/utils/generic';
+import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -18,15 +22,11 @@ import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { ColumnEventName } from '../interfaces/iColumn';
-import type { IEventListener } from '../interfaces/iEventEmitter';
-import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from '../utils/date';
-import { _toStringOrNull } from '../utils/generic';
-import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
 import { _addColumnDefaultAndTypes } from './columnFactoryUtils';
 import type { ColumnModel } from './columnModel';
-import { _applyColumnState, getColumnStateFromColDef } from './columnStateUtils';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
+import { _applyColumnState, getColumnStateFromColDef } from './columnStateUtils';
 import { convertColumnTypes } from './columnUtils';
 
 interface GroupSafeValueFormatter {
@@ -484,6 +484,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         const { dataTypeDefinitions, beans, formatValueFuncs } = this;
         const dataTypeDefinition = dataTypeDefinitions[cellDataType];
+        if (!dataTypeDefinition) {
+            return;
+        }
         beans.colFilter?.setColDefPropsForDataType(colDef, dataTypeDefinition, formatValueFuncs[cellDataType]);
     }
 
@@ -497,7 +500,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     // using an object here to enforce dev to not forget to implement new types as they are added
-    private columnDefinitionPropsPerDataType: Record<
+    private readonly columnDefinitionPropsPerDataType: Record<
         BaseCellDataType,
         (args: {
             colDef: ColDef;

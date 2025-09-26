@@ -1,13 +1,12 @@
+import { _getTabIndex } from '../../agStack/utils/browser';
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
-import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _getTabIndex } from '../../utils/browser';
 import { _destroyEditors } from './editors';
 
 type ResolveRowControllerType = {
@@ -28,11 +27,6 @@ type ResolveCellControllerType = {
 
 type ResolveControllerType = ResolveRowControllerType & ResolveCellControllerType;
 
-type ResolvedControllersType = {
-    rowCtrl?: RowCtrl;
-    cellCtrl?: CellCtrl;
-};
-
 export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerType = {}): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
 
@@ -43,7 +37,13 @@ export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerT
     const { rowModel, rowRenderer } = beans;
 
     let { rowNode } = inputs;
-    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!);
+    if (!rowNode) {
+        if (rowId) {
+            rowNode = _getRowById(beans, rowId, rowPinned);
+        } else if (rowIndex != null) {
+            rowNode = rowModel.getRow(rowIndex);
+        }
+    }
 
     return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }
@@ -74,16 +74,6 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
     }
 
     return undefined;
-}
-
-export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType = {}): ResolvedControllersType {
-    const rowCtrl = _getRowCtrl(beans, inputs);
-    const cellCtrl = _getCellCtrl(beans, inputs);
-
-    return {
-        rowCtrl,
-        cellCtrl,
-    };
 }
 
 function _stopEditing(beans: BeanCollection): void {
@@ -119,7 +109,7 @@ export function _addStopEditingWhenGridLosesFocus(
             // see if click came from inside the viewports
             viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
             // and also that it's not from a detail grid
-            _isElementInThisGrid(gos, elementWithFocus);
+            gos.isElementInThisInstance(elementWithFocus);
 
         if (!clickInsideGrid) {
             clickInsideGrid =

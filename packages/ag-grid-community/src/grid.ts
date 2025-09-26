@@ -1,13 +1,20 @@
+import { AgContext } from './agStack/core/agContext';
+import type { AgContextParams } from './agStack/core/agContext';
+import { _missing } from './agStack/utils/generic';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { ContextParams, SingletonBean } from './context/context';
-import { Context } from './context/context';
+import type { BeanCollection, SingletonBean } from './context/context';
+import type { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
+import type { AgEventTypeParams } from './events';
 import { GlobalGridOptions } from './globalGridOptions';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityCoreModule } from './gridCoreModule';
+import type { GridOptionsWithDefaults } from './gridOptionsDefault';
+import type { GridOptionsService } from './gridOptionsService';
+import type { AgGridCommon } from './interfaces/iCommon';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type {
     CommunityModuleName,
@@ -23,9 +30,9 @@ import {
     _hasUserRegistered,
     _isModuleRegistered,
     _registerModule,
+    _unRegisterGridModules,
 } from './modules/moduleRegistry';
-import { _createElement } from './utils/dom';
-import { _missing } from './utils/generic';
+import { _createElement } from './utils/element';
 import { NoModulesRegisteredError, missingRowModelTypeError } from './validation/errorMessages/errorText';
 import { _error, _logPreInitErr } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -54,6 +61,9 @@ export interface Params {
      */
     modules?: Module[];
 }
+
+const _gridApiCache = new WeakMap<Element, GridApi>();
+const _gridElementCache = new WeakMap<GridApi, Element>();
 
 // **NOTE** If updating this JsDoc please also update the re-exported createGrid in main-umd-shared.ts
 /**
@@ -112,7 +122,7 @@ export class GridCoreCreator {
         createUi: (context: Context) => void,
         acceptChanges?: (context: Context) => void,
         params?: GridParams,
-        destroyCallback?: () => void
+        _destroyCallback?: () => void
     ): GridApi {
         // Returns a shallow copy of the provided options, with global options merged in
         const gridOptions = GlobalGridOptions.applyGlobalGridOptions(providedOptions);
@@ -130,28 +140,50 @@ export class GridCoreCreator {
             return undefined as any;
         }
 
-        const contextParams: ContextParams = {
+        const destroyCallback = () => {
+            _gridElementCache.delete(api);
+            _gridApiCache.delete(eGridDiv);
+            _unRegisterGridModules(gridId);
+            _destroyCallback?.();
+        };
+
+        const contextParams: AgContextParams<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        > = {
             providedBeanInstances,
             beanClasses,
-            gridId,
+            id: gridId,
             beanInitComparator: gridBeanInitComparator,
             beanDestroyComparator: gridBeanDestroyComparator,
             derivedBeans: [createGridApi],
             destroyCallback,
         };
 
-        const context = new Context(contextParams);
+        const context = new AgContext<
+            BeanCollection,
+            GridOptionsWithDefaults,
+            AgEventTypeParams,
+            AgGridCommon<any, any>,
+            GridOptionsService
+        >(contextParams);
         this.registerModuleFeatures(context, registeredModules);
 
         createUi(context);
 
         context.getBean('syncSvc').start();
 
-        if (acceptChanges) {
-            acceptChanges(context);
-        }
+        acceptChanges?.(context);
 
-        return context.getBean('gridApi');
+        const api = context.getBean('gridApi');
+
+        _gridApiCache.set(eGridDiv, api);
+        _gridElementCache.set(api, eGridDiv);
+
+        return api;
     }
 
     private getRegisteredModules(
@@ -195,11 +227,12 @@ export class GridCoreCreator {
         const seed = {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
+            eRootDiv: eGridDiv,
             globalListener: params ? params.globalListener : null,
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
         };
-        if (params && params.providedBeanInstances) {
+        if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);
         }
 
@@ -281,4 +314,38 @@ export class GridCoreCreator {
 
 function getDefaultRowModelType(passedRowModelType?: RowModelType): RowModelType {
     return passedRowModelType ?? 'clientSide';
+}
+
+/**
+ * Returns a `GridApi` instance that is associated with the grid rendered in `gridElement`.
+ *
+ * The `gridElement` argument can be one of the following:
+ * - a DOM node
+ * - the grid ID as determined by the `gridId` grid option.
+ * - CSS selector string
+ *
+ * When using a CSS selector, it must refer to the element passed to `createGrid`.
+ *
+ * If passing a DOM node as an argument, this DOM node must be an immediate child of the element passed
+ * to `createGrid`. This is to support the case where multiple grids are instantiated in a single element.
+ */
+export function getGridApi(gridElement: Element | string | null | undefined): GridApi | undefined {
+    if (typeof gridElement === 'string') {
+        try {
+            gridElement =
+                document.querySelector(`[grid-id="${gridElement}"]`)?.parentElement ??
+                document.querySelector(gridElement)?.firstElementChild ??
+                document.getElementById(gridElement)?.firstElementChild;
+        } catch {
+            gridElement = null;
+        }
+    }
+    return gridElement ? _gridApiCache.get(gridElement) : undefined;
+}
+
+/**
+ * Returns the `Element` instance associated with the grid instance referred to by `GridApi`
+ */
+export function getGridElement(api: GridApi): Element | undefined {
+    return _gridElementCache.get(api);
 }

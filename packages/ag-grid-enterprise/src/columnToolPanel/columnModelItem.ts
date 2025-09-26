@@ -1,9 +1,9 @@
 import type { AgColumn, AgProvidedColumnGroup, IEventEmitter, IEventListener } from 'ag-grid-community';
 import { LocalEventService } from 'ag-grid-community';
 
-export type ColumnModelItemEvent = 'expandedChanged';
+type ColumnModelItemEvent = 'expandedChanged';
 export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
-    private localEventService: LocalEventService<ColumnModelItemEvent> = new LocalEventService();
+    private readonly localEventService: LocalEventService<ColumnModelItemEvent> = new LocalEventService();
 
     public readonly columnGroup: AgProvidedColumnGroup;
     public readonly column: AgColumn;

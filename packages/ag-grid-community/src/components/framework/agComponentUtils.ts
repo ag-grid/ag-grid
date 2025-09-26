@@ -1,8 +1,9 @@
+import { _loadTemplate } from '../../agStack/utils/dom';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
-import { _createElement, _loadTemplate } from '../../utils/dom';
+import { _createElement } from '../../utils/element';
 
 export class AgComponentUtils extends BeanStub implements NamedBean {
     beanName = 'agCompUtils' as const;

@@ -22,6 +22,7 @@ import type {
     PartialCellRange,
     SeriesChartType,
     SeriesGroupType,
+    SortModelItem,
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
@@ -46,6 +47,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     switchCategorySeries?: boolean;
     aggFunc?: string | IAggFunc;
     crossFiltering?: boolean;
+    crossFilteringSort?: SortModelItem[] | boolean;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
@@ -68,11 +70,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
-    private activeCharts = new Set<ChartRef>();
-    private activeChartComps = new Set<GridChartComp>();
+    private readonly activeCharts = new Set<ChartRef>();
+    private readonly activeChartComps = new Set<GridChartComp>();
 
     // this shared (singleton) context is used by cross filtering in line and area charts
-    private crossFilteringContext: CrossFilteringContext = {
+    private readonly crossFilteringContext: CrossFilteringContext = {
         lastSelectedChartId: '',
     };
 
@@ -249,6 +251,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             cellRange,
             suppressChartRanges,
             crossFiltering: true,
+            crossFilteringSort: params.sort,
             focusDialogOnOpen: !fromApi,
         });
     }

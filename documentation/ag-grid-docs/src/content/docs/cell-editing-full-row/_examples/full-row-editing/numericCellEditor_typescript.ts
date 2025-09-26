@@ -47,7 +47,8 @@ export class NumericCellEditor implements ICellEditorComp {
     }
 
     getValue() {
-        return this.eInput.value;
+        const value = this.eInput.value;
+        return value === '' || value == null ? null : parseInt(value);
     }
 
     // when we tab into this editor, we want to focus the contents

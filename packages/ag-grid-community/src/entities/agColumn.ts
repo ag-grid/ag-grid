@@ -1,6 +1,11 @@
+import { LocalEventService } from '../agStack/events/localEventService';
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import { _exists, _missing } from '../agStack/utils/generic';
+import { _escapeString } from '../agStack/utils/string';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
-import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
+import type { ColumnEvent, ColumnEventType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
     Column,
@@ -13,13 +18,9 @@ import type {
     HeaderColumnId,
     ProvidedColumnGroup,
 } from '../interfaces/iColumn';
-import type { IAgEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { LocalEventService } from '../localEventService';
-import { _exists, _missing } from '../utils/generic';
-import { _mergeDeep } from '../utils/object';
-import { _escapeString } from '../utils/string';
+import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
@@ -64,7 +65,7 @@ export class AgColumn<TValue = any>
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
-    private instanceId = getNextColInstanceId();
+    private readonly instanceId = getNextColInstanceId();
     /** Sanitised version of the column id */
     public readonly colIdSanitised: string;
 
@@ -81,6 +82,7 @@ export class AgColumn<TValue = any>
     public sort: SortDirection | undefined;
     public sortIndex: number | null | undefined;
     public moving = false;
+    public resizing = false;
     public menuVisible = false;
     public highlighted: ColumnHighlightPosition | null;
 
@@ -193,6 +195,8 @@ export class AgColumn<TValue = any>
         this.initTooltip();
 
         this.initRowSpan();
+
+        this.addPivotListener();
     }
 
     private initDotNotation(): void {
@@ -220,6 +224,21 @@ export class AgColumn<TValue = any>
         if (this.colDef.spanRows) {
             this.beans.rowSpanSvc?.register(this);
         }
+    }
+
+    private addPivotListener(): void {
+        const pivotColDefSvc = this.beans.pivotColDefSvc;
+        const pivotValueColumn = this.colDef.pivotValueColumn;
+        if (!pivotColDefSvc || !pivotValueColumn) {
+            return;
+        }
+
+        this.addManagedListeners(pivotValueColumn, {
+            colDefChanged: (evt) => {
+                const colDef = pivotColDefSvc.recreateColDef(this.colDef);
+                this.setColDef(colDef, colDef, evt.source);
+            },
+        });
     }
 
     public resetActualWidth(source: ColumnEventType): void {
@@ -529,10 +548,21 @@ export class AgColumn<TValue = any>
         return !colDef.suppressSpanHeaderHeight;
     }
 
+    /**
+     * Returns the first parent that is not a padding group.
+     */
+    public getFirstRealParent(): AgProvidedColumnGroup | null {
+        let parent = this.getOriginalParent();
+        while (parent?.isPadding()) {
+            parent = parent.getOriginalParent();
+        }
+        return parent;
+    }
+
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
         let parent = this.getParent();
 
-        if (!parent || !parent.isPadding()) {
+        if (!parent?.isPadding()) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 

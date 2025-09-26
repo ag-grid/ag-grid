@@ -1,12 +1,13 @@
 import type { ElementParams, FilterAction, FilterPanelFilterState } from 'ag-grid-community';
-import { FilterButtonComp, _translateForFilter } from 'ag-grid-community';
 import {
     Component,
+    FilterButtonComp,
     RefPlaceholder,
     _focusInto,
     _getActiveDomElement,
     _isNothingFocused,
     _removeFromParent,
+    _translateForFilter,
 } from 'ag-grid-community';
 
 import { AddFilterComp } from './addFilterComp';

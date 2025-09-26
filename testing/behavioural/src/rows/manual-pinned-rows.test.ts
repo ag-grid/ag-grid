@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule } from 'ag-grid-community';
 import type { GridApi, RowNode, RowPinnedType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -15,7 +15,9 @@ function assertPinnedRows(api: GridApi, floating: NonNullable<RowPinnedType>, id
 }
 
 describe('Manual pinned rows', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, PaginationModule],
+    });
 
     const columnDefs = [{ field: 'sport' }];
     const rowData = [
@@ -80,6 +82,24 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(5);
 
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
+    });
+
+    test('Setting `grandTotalRow` to pinned value when pagination is enabled works', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData,
+            getRowId(params) {
+                return `${params.level}-${params.data?.sport}`;
+            },
+            grandTotalRow: 'pinnedBottom',
+            pagination: true,
+            paginationPageSize: rowData.length,
+            paginationPageSizeSelector: [rowData.length, 2 * rowData.length],
+        });
+
+        await asyncSetTimeout(5);
+
+        assertPinnedRows(api, 'bottom', ['b-bottom-rowGroupFooter_ROOT_NODE_ID']);
     });
 
     test('grand total row can be pinned without `enableRowPinning`', async () => {

@@ -17,16 +17,17 @@ import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
-    const { context } = useContext(BeansContext);
+    const { gos, context } = useContext(BeansContext);
 
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
-    const ariaRowIndex = ctrl.getAriaRowIndex();
+    const tabIndex = useMemo(() => gos.get('tabIndex'), []);
+    const [ariaRowIndex, setAriaRowIndex] = useState(() => ctrl.getAriaRowIndex());
     const className = ctrl.headerRowClass;
 
     const [height, setHeight] = useState<string>(() => rowHeight + 'px');
     const [top, setTop] = useState<string>(() => topOffset + 'px');
 
-    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[]>([]);
+    const cellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getUpdatedHeaderCtrls());
 
     const compBean = useRef<_EmptyBean>();
@@ -34,10 +35,11 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
-        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
-        if (!eRef) {
+        if (!eRef || !ctrl.isAlive() || context.isDestroyed()) {
+            compBean.current = context.destroyBean(compBean.current);
             return;
         }
+        compBean.current = context.createBean(new _EmptyBean());
 
         const compProxy: IHeaderRowComp = {
             setHeight: (height: string) => setHeight(height),
@@ -54,6 +56,9 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }
+            },
+            setRowIndex: (rowIndex: number) => {
+                setAriaRowIndex(rowIndex);
             },
         };
 
@@ -82,7 +87,14 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     }, []);
 
     return (
-        <div ref={setRef} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
+        <div
+            ref={setRef}
+            className={className}
+            role="row"
+            style={style}
+            tabIndex={tabIndex}
+            aria-rowindex={ariaRowIndex}
+        >
             {cellCtrls.map(createCellJsx)}
         </div>
     );

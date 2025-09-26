@@ -1,21 +1,21 @@
+import { _setAriaColSpan } from '../../agStack/utils/aria';
+import { _last } from '../../agStack/utils/array';
+import { _exists } from '../../agStack/utils/generic';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { isColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
-import { _setAriaColSpan } from '../../utils/aria';
-import { _last } from '../../utils/array';
-import { _exists } from '../../utils/generic';
 
 export class SetLeftFeature extends BeanStub {
-    private ariaEl: HTMLElement;
+    private readonly ariaEl: HTMLElement;
 
     private actualLeft: number;
 
     constructor(
         private readonly columnOrGroup: AgColumn | AgColumnGroup,
-        private eCell: HTMLElement,
+        private readonly eCell: HTMLElement,
         beans: BeanCollection,
         private colsSpanning?: AgColumn[]
     ) {

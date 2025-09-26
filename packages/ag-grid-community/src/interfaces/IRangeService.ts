@@ -14,6 +14,7 @@ export interface IRangeService {
     isEmpty(): boolean;
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
+    getRangeRowCount(cellRange: CellRange): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
     isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean;
@@ -31,7 +32,9 @@ export interface IRangeService {
     addCellRange(params: CellRangeParams): void;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
-    updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
+    extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void;
+    extendRangeColumnCountBy(cellRange: CellRange, delta: number): void;
+    updateRangeRowBoundary(params: CellRangeBoundaryParams): void;
     getRangeStartRow(cellRange: PartialCellRange): RowPosition;
     getRangeEndRow(cellRange: PartialCellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
@@ -88,6 +91,13 @@ export interface CellRangeParams {
     columnEnd?: string | Column;
     /** Specify Columns to include instead of using `columnStart` and `columnEnd` */
     columns?: (string | Column)[];
+}
+
+export interface CellRangeBoundaryParams {
+    cellRange: CellRange;
+    boundary: 'start' | 'end';
+    cellPosition: CellPosition;
+    silent?: boolean;
 }
 
 export interface ClearCellRangeParams {

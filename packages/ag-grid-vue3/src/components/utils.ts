@@ -1,6 +1,7 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
+    AutoSizeStrategy,
     CellPosition,
     CellSelectionOptions,
     ChartRefParams,
@@ -80,9 +81,6 @@ import type {
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     SideBarDef,
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
     SortDirection,
     StatusPanelDef,
     TabToNextCellParams,
@@ -97,8 +95,12 @@ import type {
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -204,7 +206,7 @@ import type {
 
 import type { GridOptions, Module } from 'ag-grid-community';
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
-import {isProxy, isReactive, isRef, toRaw} from 'vue';
+import { isProxy, isReactive, isRef, toRaw } from 'vue';
 
 export interface Properties {
     [propertyName: string]: any;
@@ -400,6 +402,9 @@ export interface Props<TData> {
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
          */
     pivotGroupHeaderHeight?: number | undefined,
+    /** Hide any column header rows that would only contain padded groups.
+         */
+    hidePaddedHeaderRows?: boolean | undefined,
     /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
          * @default false
          * @agModule `ColumnsToolPanelModule`
@@ -458,9 +463,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `ColumnAutoSizeModule`
          */
-    autoSizeStrategy?: | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy | undefined,
+    autoSizeStrategy?: AutoSizeStrategy | undefined,
     /** A map of component names to components.
          * @initial
          */
@@ -469,6 +472,9 @@ export interface Props<TData> {
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
     editType?: EditStrategyType | undefined,
+    /** Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+         */
+    suppressStartEditOnTab?: boolean | undefined,
     /** Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -635,7 +641,10 @@ export interface Props<TData> {
          */
     suppressSetFilterByDefault?: boolean | undefined,
     /** Enable filter handlers for custom filter components.
-         * Requires all custom filters need to be implemented using handlers.
+         * Requires all custom filters to be implemented using handlers.
+         *
+         * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+         * The Multi Filter will also use a filter handler if this is enabled.
          * @initial
          */
     enableFilterHandlers?: boolean | undefined,
@@ -1195,6 +1204,10 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     suppressGroupRowsSticky?: boolean | undefined,
+    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+         * @agModule `RowGroupingModule`
+         */
+    groupHierarchyConfig?: { [k: string]: ColDef } | undefined,
     /** Data to be displayed as pinned top rows in the grid.
          * @agModule `PinnedRowModule`
          */
@@ -1220,7 +1233,8 @@ export interface Props<TData> {
     isRowPinnable?: IsRowPinnable<TData> | undefined,
     /** Called for every row in the grid.
          *
-         * Return `true` if the row should be pinned initially. Return `false` otherwise.
+         * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+         * Return `null` or `undefined` otherwise.
          * User interactions can subsequently still change the pinned state of a row.
          * @agModule `PinnedRowModule`
          */
@@ -1674,6 +1688,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
     isGroupOpenByDefault?: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined,
+    /** Controls how expand/collapse operations affect all rows and group interactions.
+         * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
+         * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
+         * @agModule RowGroupingModule / TreeDataModule
+         */
+    ssrmExpandAllAffectsAllRows?: boolean | undefined | undefined,
     /** Allows default sorting of groups.
          * @agModule `RowGroupingModule`
          */
@@ -1762,7 +1782,7 @@ export interface Props<TData> {
     /** Tells the grid if this row should be rendered as full width.
          */
     isFullWidthRow?: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined,
-    /** Called by managed drag and drop when rows are dropped on another row.
+    /** Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
          * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
          * @agModule `RowDragModule`
          */
@@ -1805,6 +1825,10 @@ export interface Props<TData> {
    'onCell-editing-stopped'?: CellEditingStoppedEvent<TData>,
    'onRow-editing-started'?: RowEditingStartedEvent<TData>,
    'onRow-editing-stopped'?: RowEditingStoppedEvent<TData>,
+   'onBulk-editing-started'?: BulkEditingStartedEvent<TData>,
+   'onBulk-editing-stopped'?: BulkEditingStoppedEvent<TData>,
+   'onBatch-editing-started'?: BatchEditingStartedEvent<TData>,
+   'onBatch-editing-stopped'?: BatchEditingStoppedEvent<TData>,
    'onUndo-started'?: UndoStartedEvent<TData>,
    'onUndo-ended'?: UndoEndedEvent<TData>,
    'onRedo-started'?: RedoStartedEvent<TData>,
@@ -1922,6 +1946,7 @@ export function getProps() {
         floatingFiltersHeight: undefined,
         pivotHeaderHeight: undefined,
         pivotGroupHeaderHeight: undefined,
+        hidePaddedHeaderRows: undefined,
         allowDragFromColumnsToolPanel: undefined,
         suppressMovableColumns: undefined,
         suppressColumnMoveAnimation: undefined,
@@ -1937,6 +1962,7 @@ export function getProps() {
         autoSizeStrategy: undefined,
         components: undefined,
         editType: undefined,
+        suppressStartEditOnTab: undefined,
         getFullRowEditValidationErrors: undefined,
         invalidEditValueMode: undefined,
         singleClickEdit: undefined,
@@ -2081,6 +2107,7 @@ export function getProps() {
         treeDataParentIdField: undefined,
         rowGroupPanelSuppressSort: undefined,
         suppressGroupRowsSticky: undefined,
+        groupHierarchyConfig: undefined,
         pinnedTopRowData: undefined,
         pinnedBottomRowData: undefined,
         enableRowPinning: undefined,
@@ -2183,6 +2210,7 @@ export function getProps() {
         paginationNumberFormatter: undefined,
         getGroupRowAgg: undefined,
         isGroupOpenByDefault: undefined,
+        ssrmExpandAllAffectsAllRows: undefined,
         initialGroupOrderComparator: undefined,
         processPivotResultColDef: undefined,
         processPivotResultColGroupDef: undefined,
@@ -2312,7 +2340,11 @@ export function getProps() {
         'onFind-changed': undefined,
         'onRow-resize-started': undefined,
         'onRow-resize-ended': undefined,
-        'onColumns-reset': undefined
+        'onColumns-reset': undefined,
+        'onBulk-editing-started': undefined,
+        'onBulk-editing-stopped': undefined,
+        'onBatch-editing-started': undefined,
+        'onBatch-editing-stopped': undefined
 // @END_EVENT_PROPS@
 
     };

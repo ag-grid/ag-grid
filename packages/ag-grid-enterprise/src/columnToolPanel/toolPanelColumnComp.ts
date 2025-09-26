@@ -1,9 +1,9 @@
 import type {
-    AgCheckbox,
     AgColumn,
     DragItem,
-    DragSource,
     ElementParams,
+    GridCheckbox,
+    GridDragSource,
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -36,7 +36,7 @@ const ToolPanelColumnElement: ElementParams = {
 };
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly cbSelect: GridCheckbox = RefPlaceholder;
 
     public readonly column: AgColumn;
     public readonly columnDepth: number;
@@ -92,10 +92,12 @@ export class ToolPanelColumnComp extends Component {
 
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
+                getGui: () => this.focusWrapper,
                 getLocation: () => 'columnToolPanelColumn',
-                getColDef: () => column.getColDef(),
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getAdditionalParams: () => ({
+                    colDef: column.getColDef(),
+                }),
             } as ITooltipCtrl)
         );
 
@@ -217,7 +219,7 @@ export class ToolPanelColumnComp extends Component {
         const { gos, eventSvc, dragAndDrop } = beans;
 
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
             dragItemName: this.displayName,

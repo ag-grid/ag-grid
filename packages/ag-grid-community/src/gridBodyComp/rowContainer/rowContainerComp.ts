@@ -1,10 +1,11 @@
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _ensureDomOrder } from '../../agStack/utils/dom';
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
-import type { ElementParams } from '../../utils/dom';
-import { _ensureDomOrder } from '../../utils/dom';
+import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { Component } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
 import {
     RowContainerCtrl,
@@ -29,21 +30,23 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
             tag: 'div',
             ref: 'eSpannedContainer',
             cls: `ag-spanning-container ${_getRowSpanContainerClass(name)}`,
-            role: 'rowgroup',
+            role: 'presentation',
         };
+
+        eContainerElement.role = 'presentation';
 
         return {
             tag: 'div',
             ref: 'eViewport',
             cls: `ag-viewport ${_getRowViewportClass(name)}`,
-            role: 'presentation',
+            role: 'rowgroup',
             children: [eContainerElement, isCellSpanning ? eSpannedContainerElement : null],
         };
     }
     return eContainerElement;
 }
 
-export class RowContainerComp extends Component {
+class RowContainerComp extends Component {
     private readonly eViewport: HTMLElement = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;

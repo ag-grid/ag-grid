@@ -1,8 +1,76 @@
 [
+    { "pageName": "accessibility", "exampleName": "accessibility", "internalFramework": "vanilla" },
+    { "pageName": "accessibility", "exampleName": "accessibility", "internalFramework": "typescript" },
+    { "pageName": "accessibility", "exampleName": "accessibility", "internalFramework": "reactFunctional" },
+    { "pageName": "accessibility", "exampleName": "accessibility", "internalFramework": "reactFunctionalTs" },
+    { "pageName": "accessibility", "exampleName": "accessibility", "internalFramework": "angular" },
+    { "pageName": "accessibility", "exampleName": "accessibility", "internalFramework": "vue3" },
     { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "vanilla" },
     { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "typescript" },
     { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "reactFunctional" },
     { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "reactFunctionalTs" },
     { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "angular" },
-    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "vue3" }
+    { "pageName": "accessing-data", "exampleName": "using-for-each", "internalFramework": "vue3" },
+    { "pageName": "aggregation", "exampleName": "aggregation-overview", "internalFramework": "vanilla" },
+    { "pageName": "aggregation", "exampleName": "aggregation-overview", "internalFramework": "typescript" },
+    { "pageName": "aggregation", "exampleName": "aggregation-overview", "internalFramework": "reactFunctional" },
+    { "pageName": "aggregation", "exampleName": "aggregation-overview", "internalFramework": "reactFunctionalTs" },
+    { "pageName": "aggregation", "exampleName": "aggregation-overview", "internalFramework": "angular" },
+    { "pageName": "aggregation", "exampleName": "aggregation-overview", "internalFramework": "vue3" },
+    { "pageName": "aggregation-columns", "exampleName": "enable-aggregation", "internalFramework": "vanilla" },
+    { "pageName": "aggregation-columns", "exampleName": "enable-aggregation", "internalFramework": "typescript" },
+    { "pageName": "aggregation-columns", "exampleName": "enable-aggregation", "internalFramework": "reactFunctional" },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "enable-aggregation",
+        "internalFramework": "reactFunctionalTs"
+    },
+    { "pageName": "aggregation-columns", "exampleName": "enable-aggregation", "internalFramework": "angular" },
+    { "pageName": "aggregation-columns", "exampleName": "enable-aggregation", "internalFramework": "vue3" },
+    { "pageName": "aggregation-columns", "exampleName": "suppress-func-name", "internalFramework": "vanilla" },
+    { "pageName": "aggregation-columns", "exampleName": "suppress-func-name", "internalFramework": "typescript" },
+    { "pageName": "aggregation-columns", "exampleName": "suppress-func-name", "internalFramework": "reactFunctional" },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "suppress-func-name",
+        "internalFramework": "reactFunctionalTs"
+    },
+    { "pageName": "aggregation-columns", "exampleName": "suppress-func-name", "internalFramework": "angular" },
+    { "pageName": "aggregation-columns", "exampleName": "suppress-func-name", "internalFramework": "vue3" },
+    { "pageName": "aggregation-columns", "exampleName": "user-configured", "internalFramework": "vanilla" },
+    { "pageName": "aggregation-columns", "exampleName": "user-configured", "internalFramework": "typescript" },
+    { "pageName": "aggregation-columns", "exampleName": "user-configured", "internalFramework": "reactFunctional" },
+    { "pageName": "aggregation-columns", "exampleName": "user-configured", "internalFramework": "reactFunctionalTs" },
+    { "pageName": "aggregation-columns", "exampleName": "user-configured", "internalFramework": "angular" },
+    { "pageName": "aggregation-columns", "exampleName": "user-configured", "internalFramework": "vue3" },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "user-configured-allowed-aggregations",
+        "internalFramework": "vanilla"
+    },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "user-configured-allowed-aggregations",
+        "internalFramework": "typescript"
+    },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "user-configured-allowed-aggregations",
+        "internalFramework": "reactFunctional"
+    },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "user-configured-allowed-aggregations",
+        "internalFramework": "reactFunctionalTs"
+    },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "user-configured-allowed-aggregations",
+        "internalFramework": "angular"
+    },
+    {
+        "pageName": "aggregation-columns",
+        "exampleName": "user-configured-allowed-aggregations",
+        "internalFramework": "vue3"
+    }
 ]

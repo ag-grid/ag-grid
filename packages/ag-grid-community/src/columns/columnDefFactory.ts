@@ -5,7 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { IColsService } from '../interfaces/iColsService';
-import { SKIP_JS_BUILTINS } from '../utils/object';
+import { SKIP_JS_BUILTINS } from '../utils/mergeDeep';
 
 // returns copy of an object, doing a deep clone of any objects with that object.
 // this is used for eg creating copies of Column Definitions, where we want to

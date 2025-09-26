@@ -18,6 +18,8 @@ export interface ExampleConfig {
      * Example uses `#myGrid`, which needs to be generated in framework examples
      */
     myGridReference?: boolean;
+
+    usesWebWorker?: boolean;
 }
 
 export interface BindingImport {
@@ -101,6 +103,7 @@ export interface GeneratedContents extends ExampleConfig {
     files: FileContents;
     sourceFileList: string[];
     scriptFiles: string[];
+    specFiles: string[];
     styleFiles: string[];
     htmlFiles: string[];
     boilerPlateFiles: FileContents;

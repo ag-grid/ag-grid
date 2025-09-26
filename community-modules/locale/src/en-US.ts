@@ -615,7 +615,6 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelSelectField: 'Select Field',
 
     // Cell Editor
-    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Cell Editor Validation',
 
     // aria labels for async context menus
@@ -667,6 +666,16 @@ export const AG_GRID_LOCALE_EN = {
     october: 'October',
     november: 'November',
     december: 'December',
+
+    // Date-time parts
+    year: 'Year',
+    quarter: 'Quarter',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
+    hour: 'Hour',
+    minute: 'Minute',
+    second: 'Second',
 
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',

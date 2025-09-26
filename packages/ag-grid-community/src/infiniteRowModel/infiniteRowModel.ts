@@ -1,10 +1,10 @@
+import { _jsonEquals } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
 import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
-import { _jsonEquals } from '../utils/generic';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
@@ -278,4 +278,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         this.infiniteCache?.setRowCount(rowCount, lastRowIndexKnown);
     }
+
+    public resetRowHeights(): void {}
+    public onRowHeightChanged(): void {}
 }

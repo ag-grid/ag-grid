@@ -1,4 +1,12 @@
-import type { AgCheckbox, AgEvent, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type {
+    AgBaseComponent,
+    AgEvent,
+    BeanCollection,
+    ComponentSelector,
+    ElementParams,
+    GridCheckbox,
+    GridToggleButton,
+} from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgToggleButton,
@@ -6,13 +14,14 @@ import {
     KeyCode,
     RefPlaceholder,
     _createIcon,
+    _isComponent,
     _setAriaExpanded,
     _setDisplayed,
 } from 'ag-grid-community';
 
-type GroupItem = Component<any> | HTMLElement;
+type GroupItem = AgBaseComponent<BeanCollection> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
-type Direction = 'horizontal' | 'vertical';
+type GroupDirection = 'horizontal' | 'vertical';
 
 export interface AgGroupComponentParams {
     title?: string;
@@ -23,7 +32,7 @@ export interface AgGroupComponentParams {
     cssIdentifier?: string;
     items?: GroupItem[];
     alignItems?: Align;
-    direction?: Direction;
+    direction?: GroupDirection;
     onEnableChange?: (enabled: boolean) => void;
     onExpandedChange?: (expanded: boolean) => void;
     expanded?: boolean;
@@ -31,8 +40,8 @@ export interface AgGroupComponentParams {
     suppressKeyboardNavigation?: boolean;
 }
 
-export type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
-export type ExpandedChangedEventType = 'expandedChanged';
+type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
+type ExpandedChangedEventType = 'expandedChanged';
 
 interface ExpandChangedEvent extends AgEvent<ExpandedChangedEventType> {
     expanded?: boolean;
@@ -44,7 +53,7 @@ interface EnableChangeEvent extends AgEvent<'enableChange'> {
 
 function getAgGroupComponentTemplate(params: AgGroupComponentParams): ElementParams {
     const cssIdentifier = params.cssIdentifier || 'default';
-    const direction: Direction = params.direction || 'vertical';
+    const direction: GroupDirection = params.direction || 'vertical';
 
     return {
         tag: 'div',
@@ -68,19 +77,19 @@ function getAgGroupComponentTemplate(params: AgGroupComponentParams): ElementPar
 
 export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private items: GroupItem[];
-    private cssIdentifier: string;
+    private readonly cssIdentifier: string;
     private enabled: boolean;
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
-    private suppressToggleExpandOnEnableChange: boolean = false;
+    private readonly suppressToggleExpandOnEnableChange: boolean = false;
     private alignItems: Align | undefined;
-    private useToggle: boolean;
+    private readonly useToggle: boolean;
 
-    private eToggle?: AgToggleButton;
+    private eToggle?: GridToggleButton;
     private eTitleBar?: DefaultTitleBar;
 
     private readonly eToolbar: HTMLElement = RefPlaceholder;
-    private readonly cbGroupEnabled: AgCheckbox = RefPlaceholder;
+    private readonly cbGroupEnabled: GridCheckbox = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
 
     constructor(private readonly params: AgGroupComponentParams = {}) {
@@ -217,7 +226,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 
     private insertItem(item: GroupItem, prepend?: boolean) {
         const container = this.eContainer;
-        const el = item instanceof Component ? item.getGui() : item;
+        const el = _isComponent(item) ? item.getGui() : item;
 
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
@@ -236,7 +245,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     }
 
     public getItemIndex(item: GroupItem): number | -1 {
-        const el = item instanceof Component ? item.getGui() : item;
+        const el = _isComponent(item) ? item.getGui() : item;
         return this.items.indexOf(el);
     }
 
@@ -332,8 +341,8 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         return titleBar;
     }
 
-    private createToggleTitleBar(): AgToggleButton {
-        const eToggle = this.createManagedBean(
+    private createToggleTitleBar(): GridToggleButton {
+        const eToggle = this.createManagedBean<GridToggleButton>(
             new AgToggleButton({
                 value: this.enabled,
                 label: this.params.title,
@@ -381,7 +390,7 @@ function getDefaultTitleBarTemplate(params: AgGroupComponentParams): ElementPara
 class DefaultTitleBar extends Component<ExpandedChangedEventType> {
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
-    private suppressKeyboardNavigation: boolean = false;
+    private readonly suppressKeyboardNavigation: boolean = false;
 
     private readonly eGroupOpenedIcon: HTMLElement = RefPlaceholder;
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;

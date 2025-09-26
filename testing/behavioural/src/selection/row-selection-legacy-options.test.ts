@@ -4,9 +4,9 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, InfiniteRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, assertSelectedRowsByIndex, waitForEvent } from '../test-utils';
 import { GROUP_ROW_DATA } from './group-data';
-import { GridActions, assertSelectedRowsByIndex, waitForEvent } from './utils';
+import { GridActions } from './utils';
 
 describe('Row Selection Legacy Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];

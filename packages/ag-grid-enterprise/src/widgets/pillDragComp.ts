@@ -3,10 +3,10 @@ import type {
     ComponentSelector,
     DragAndDropIcon,
     DragItem,
-    DragSource,
     DragSourceType,
     DropTarget,
     ElementParams,
+    GridDragSource,
     ITooltipCtrl,
     TooltipFeature,
 } from 'ag-grid-community';
@@ -20,7 +20,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-export type PillDragCompEvent = 'columnRemove';
+type PillDragCompEvent = 'columnRemove';
 
 const PillDragCompElement: ElementParams = {
     tag: 'span',
@@ -52,9 +52,9 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     private tooltipFeature?: TooltipFeature;
 
     constructor(
-        private dragSourceDropTarget: DropTarget,
-        private ghost: boolean,
-        private horizontal: boolean,
+        private readonly dragSourceDropTarget: DropTarget,
+        private readonly ghost: boolean,
+        private readonly horizontal: boolean,
         protected template?: ElementParams,
         protected agComponents?: ComponentSelector[]
     ) {
@@ -147,7 +147,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         } = this;
         const getDragItem = this.createGetDragItem();
         const defaultIconName = this.getDefaultIconName();
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: this.getDragSourceType(),
             sourceId: this.getDragSourceId(),
             eElement: eDragHandle,

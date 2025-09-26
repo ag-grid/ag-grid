@@ -8,6 +8,7 @@ import type {
     ContainerType,
     DefaultMenuItem,
     IAfterGuiAttachedParams,
+    IEventEmitter,
     IMenuFactory,
     MenuItemDef,
     NamedBean,
@@ -38,7 +39,7 @@ import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
 import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
-export interface TabSelectedEvent extends AgEvent<'tabSelected'> {
+interface TabSelectedEvent extends AgEvent<'tabSelected'> {
     key: string;
 }
 
@@ -298,7 +299,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         restoreFocusParams: MenuRestoreFocusParams,
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
-    ): (EnterpriseColumnMenu & BeanStub<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
+    ): (EnterpriseColumnMenu & IEventEmitter<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
         if (_isLegacyMenuEnabled(this.gos)) {
             return this.createBean(
                 new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource)
@@ -368,8 +369,8 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     private tabItemGeneral: TabbedItem;
     private tabItemColumns: TabbedItem;
 
-    private tabFactories: { [p: string]: () => TabbedItem } = {};
-    private includeChecks: { [p: string]: () => boolean } = {};
+    private readonly tabFactories: { [p: string]: () => TabbedItem } = {};
+    private readonly includeChecks: { [p: string]: () => boolean } = {};
 
     private filterComp?: FilterComp | null;
 

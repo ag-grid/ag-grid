@@ -12,12 +12,16 @@ import type {
 } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
 import type { ValueService } from '../valueService/valueService';
-import type { RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
-import type { GridSerializingParams, GridSerializingSession } from './iGridSerializer';
+import type {
+    GridSerializingParams,
+    GridSerializingSession,
+    RowAccumulator,
+    RowSpanningAccumulator,
+} from './iGridSerializer';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
-    private colNames: ColumnNameService;
+    private readonly colNames: ColumnNameService;
     public rowGroupColsSvc?: IColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
@@ -70,10 +74,12 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         type: string,
         node: RowNode
     ): { value: any; valueFormatted?: string | null } {
+        const isFullWidthGroup =
+            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         if (
             this.processRowGroupCallback &&
             (this.gos.get('treeData') || node.group) &&
-            column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '')
+            (column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '') || isFullWidthGroup)
         ) {
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
         }
@@ -106,8 +112,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const valueService = this.valueSvc;
 
         const isGrandTotalRow = node.level === -1 && node.footer;
-        const isFullWidthGroup =
-            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         const isMultiAutoCol = column.colDef.showRowGroup === true && (node.group || isTreeData);
         // when using single auto group column or group row, create arrow separated string of group vals
         if (!isGrandTotalRow && (isFullWidthGroup || isMultiAutoCol)) {

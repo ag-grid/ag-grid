@@ -59,6 +59,10 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
         if (areElementsRemoved()) {
             rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
+        if (context.isDestroyed()) {
+            return;
+        }
+
         if (areElementsReady()) {
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
                 const next = getNextValueIfDifferent(
@@ -158,7 +162,11 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     );
 
     const buildContainer = () => (
-        <div className={containerClasses} ref={setContainerRef} role={'rowgroup'}>
+        <div
+            className={containerClasses}
+            ref={setContainerRef}
+            role={shouldRenderViewport ? 'presentation' : 'rowgroup'}
+        >
             {rowCtrlsOrdered.map((rowCtrl) => (
                 <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
             ))}
@@ -170,14 +178,14 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     }
 
     const buildSpanContainer = () => (
-        <div className={spanClasses} ref={setSpanContainerRef} role={'rowgroup'}>
+        <div className={spanClasses} ref={setSpanContainerRef} role={'presentation'}>
             {spannedRowCtrlsOrdered.map((rowCtrl) => (
                 <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
             ))}
         </div>
     );
     return (
-        <div className={viewportClasses} ref={setViewportRef} role="presentation">
+        <div className={viewportClasses} ref={setViewportRef} role="rowgroup">
             {buildContainer()}
             {isSpanning ? buildSpanContainer() : null}
         </div>

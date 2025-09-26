@@ -108,6 +108,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'selectionColumnDef',
     'findOptions',
     'filterHandlers',
+    'groupHierarchyConfig',
 ];
 
 // only used internally
@@ -321,9 +322,12 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'enableStrictPivotColumnOrder',
     'suppressSetFilterByDefault',
     'enableFilterHandlers',
+    'suppressStartEditOnTab',
+    'hidePaddedHeaderRows',
+    'ssrmExpandAllAffectsAllRows',
 ];
 
-// Used in example generation
+/** @knipIgnore Used in example generation */
 export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'doesExternalFilterPass',
     'processPivotResultColDef',

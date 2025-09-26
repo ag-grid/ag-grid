@@ -1,4 +1,4 @@
-import { _parseDateTimeFromString } from '../../../utils/date';
+import { _parseDateTimeFromString } from '../../../agStack/utils/date';
 import type { Tuple } from '../iSimpleFilter';
 import type { OptionsFactory } from '../optionsFactory';
 import { getNumberOfInputs } from '../simpleFilterUtils';
@@ -18,7 +18,7 @@ export function mapValuesFromDateFilterModel(
     //       the model. When we recreate the date again here, it's without a timezone.
     const { dateFrom, dateTo, type } = filterModel || {};
     return [
-        (dateFrom && _parseDateTimeFromString(dateFrom)) || null,
-        (dateTo && _parseDateTimeFromString(dateTo)) || null,
+        (dateFrom && _parseDateTimeFromString(dateFrom, undefined, true)) || null,
+        (dateTo && _parseDateTimeFromString(dateTo, undefined, true)) || null,
     ].slice(0, getNumberOfInputs(type, optionsFactory));
 }

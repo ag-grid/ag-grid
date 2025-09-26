@@ -10,6 +10,7 @@ import type {
     PartialCellRange,
     RowNode,
     RowNodeSorter,
+    SortOption,
     SortService,
     ValueService,
 } from 'ag-grid-community';
@@ -31,18 +32,27 @@ export interface ChartDatasourceParams {
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
+    crossFilteringSort: SortOption[] | boolean;
     valueCols: AgColumn[];
     startRow: number;
     endRow: number;
     isScatter: boolean;
     aggFunc?: string | IAggFunc;
     referenceCellRange?: PartialCellRange;
+    /** Used for statistical charts */
+    combineGroupValues?: boolean;
 }
 
 interface IData {
     chartData: any[];
     colNames: { [key: string]: string[] };
     groupChartData?: any[];
+}
+
+export interface ChartValueWrapper<T = any> {
+    value: T;
+    id: number;
+    toString: () => string;
 }
 
 export class ChartDatasource extends BeanStub {
@@ -86,7 +96,16 @@ export class ChartDatasource extends BeanStub {
     }
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
-        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
+        const {
+            crossFiltering,
+            startRow,
+            endRow,
+            valueCols,
+            dimensionCols,
+            grouping,
+            crossFilteringSort,
+            combineGroupValues,
+        } = params;
         let extractedRowData: any[] = [];
         const colNames: { [key: string]: string[] } = {};
 
@@ -101,7 +120,7 @@ export class ChartDatasource extends BeanStub {
         let numRows;
         if (crossFiltering) {
             filteredNodes = this.getFilteredRowNodes();
-            allRowNodes = this.getAllRowNodes();
+            allRowNodes = this.getAllRowNodes(crossFilteringSort);
             numRows = allRowNodes.length;
         } else {
             // make sure enough rows in range to chart. if user filters and less rows, then end row will be
@@ -172,20 +191,26 @@ export class ChartDatasource extends BeanStub {
                         const labels = this.getGroupLabels(rowNode, valueString);
                         const value = labels.slice().reverse();
 
-                        const groupingValue = {
+                        let groupingValue: ChartValueWrapper<string[]> = {
                             value,
                             // this is needed so that standalone can handle animations properly when data updates
                             id: id++,
                             toString: () => value.filter(Boolean).join(' - '),
                         };
 
-                        // Reuse previously created value object if it already exists
-                        const groupingKey = groupingValue.toString();
-                        const cachedGroupingValue = groupingCache[groupingKey];
+                        if (combineGroupValues) {
+                            // Reuse previously created value object if it already exists
+                            const groupingKey = groupingValue.toString();
+                            const cachedGroupingValue = groupingCache[groupingKey];
 
-                        data[colId] = cachedGroupingValue
-                            ? cachedGroupingValue
-                            : (groupingCache[groupingKey] = groupingValue);
+                            if (cachedGroupingValue) {
+                                groupingValue = cachedGroupingValue;
+                            } else {
+                                groupingCache[groupingKey] = groupingValue;
+                            }
+                        }
+
+                        data[colId] = groupingValue;
 
                         // keep track of group node indexes, so they can be padded when other groups are expanded
                         if (rowNode.group) {
@@ -278,7 +303,7 @@ export class ChartDatasource extends BeanStub {
         }
 
         const lastCol = _last(dimensionCols);
-        const lastColId = lastCol && lastCol.colId;
+        const lastColId = lastCol?.colId;
         const map: any = {};
         const dataAggregated: any[] = [];
 
@@ -426,6 +451,7 @@ export class ChartDatasource extends BeanStub {
         return labels;
     }
 
+    /** cross filtering only */
     private getFilteredRowNodes() {
         const filteredNodes: { [key: string]: RowNode } = {};
         (this.gridRowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
@@ -434,16 +460,18 @@ export class ChartDatasource extends BeanStub {
         return filteredNodes;
     }
 
-    private getAllRowNodes() {
+    /** cross filtering only */
+    private getAllRowNodes(sortModel: SortOption[] | boolean) {
         const allRowNodes: RowNode[] = [];
         this.gridRowModel.forEachNode((rowNode: RowNode) => {
             allRowNodes.push(rowNode);
         });
-        return this.sortRowNodes(allRowNodes);
+        return this.sortRowNodes(allRowNodes, sortModel);
     }
 
-    private sortRowNodes(rowNodes: RowNode[]): RowNode[] {
-        const sortOptions = this.sortSvc?.getSortOptions();
+    /** cross filtering only */
+    private sortRowNodes(rowNodes: RowNode[], sortModel: SortOption[] | boolean): RowNode[] {
+        const sortOptions = sortModel === true ? this.sortSvc?.getSortOptions() : sortModel;
         if (!sortOptions || sortOptions.length == 0 || !this.rowNodeSorter) {
             return rowNodes;
         }

@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
     DragAndDropService,
-    DragSource,
     ElementParams,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
+    GridDragSource,
     ITooltipCtrl,
     Registry,
     TooltipFeature,
@@ -29,8 +29,10 @@ import {
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AddDropdownComp } from './addDropdownComp';
-import type { AdvancedFilterBuilderDragStartedEvent } from './advancedFilterBuilderDragFeature';
-import type { AdvancedFilterBuilderDragFeature } from './advancedFilterBuilderDragFeature';
+import type {
+    AdvancedFilterBuilderDragFeature,
+    AdvancedFilterBuilderDragStartedEvent,
+} from './advancedFilterBuilderDragFeature';
 import { AdvancedFilterBuilderItemNavigationFeature } from './advancedFilterBuilderItemNavigationFeature';
 import { getAdvancedFilterBuilderAddButtonParams } from './advancedFilterBuilderUtils';
 import { ConditionPillWrapperComp } from './conditionPillWrapperComp';
@@ -432,7 +434,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
     }
 
     private setupDragging(): void {
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,
             dragItemName: () => this.ePillWrapper.getDragName(),

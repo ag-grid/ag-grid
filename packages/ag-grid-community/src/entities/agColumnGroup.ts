@@ -1,3 +1,5 @@
+import { _last } from '../agStack/utils/array';
+import { _escapeString } from '../agStack/utils/string';
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,
@@ -7,7 +9,6 @@ import type {
     ColumnPinnedType,
     HeaderColumnId,
 } from '../interfaces/iColumn';
-import { _last } from '../utils/array';
 import type { AgColumn } from './agColumn';
 import { isColumn } from './agColumn';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
@@ -23,6 +24,9 @@ export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColu
 
 export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
     public readonly isColumn = false as const;
+
+    /** Sanitised version of the column id */
+    public readonly colIdSanitised: string;
 
     // all the children of this group, regardless of whether they are opened or closed
     private children: (AgColumn | AgColumnGroup)[] | null;
@@ -45,6 +49,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         private readonly pinned: ColumnPinnedType
     ) {
         super();
+        this.colIdSanitised = _escapeString(this.getUniqueId())!;
     }
 
     // as the user is adding and removing columns, the groups are recalculated.
@@ -258,7 +263,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     public getPaddingLevel(): number {
         const parent = this.getParent();
 
-        if (!this.isPadding() || !parent || !parent.isPadding()) {
+        if (!this.isPadding() || !parent?.isPadding()) {
             return 0;
         }
 
@@ -272,7 +277,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
         let parentWithExpansion: AgColumnGroup | null = this;
-        while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
+        while (parentWithExpansion?.isPadding()) {
             parentWithExpansion = parentWithExpansion.getParent();
         }
 
@@ -289,7 +294,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // colDef.columnGroupShow set.
         this.children!.forEach((child) => {
             // never add empty groups
-            const emptyGroup = isColumnGroup(child) && (!child.displayedChildren || !child.displayedChildren.length);
+            const emptyGroup = isColumnGroup(child) && !child.displayedChildren?.length;
             if (emptyGroup) {
                 return;
             }

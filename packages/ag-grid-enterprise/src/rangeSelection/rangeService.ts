@@ -6,6 +6,7 @@ import type {
     CellNavigationService,
     CellPosition,
     CellRange,
+    CellRangeBoundaryParams,
     CellRangeParams,
     ClearCellRangeParams,
     ColumnModel,
@@ -29,9 +30,11 @@ import {
     _areCellsEqual,
     _areEqual,
     _exists,
+    _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getRowAbove,
     _getRowBelow,
+    _getRowCtrlForEventTarget,
     _getRowNode,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
@@ -78,7 +81,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
-    private bodyScrollListener = this.onBodyScroll.bind(this);
+    private readonly bodyScrollListener = this.onBodyScroll.bind(this);
 
     private lastCellHovered: CellPosition | undefined;
     private cellHasChanged: boolean;
@@ -128,7 +131,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!_isCellSelectionEnabled(this.gos)) {
+        const gos = this.gos;
+        if (
+            !_isCellSelectionEnabled(gos) ||
+            _getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)
+        ) {
             return;
         }
 
@@ -136,7 +143,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // ctrlKey for windows, metaKey for Apple
         const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !_getSuppressMultiRanges(this.gos);
+        const allowMulti = !_getSuppressMultiRanges(gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && !!this.cellRanges?.length;
 
@@ -178,7 +185,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             const columns = this.getColumnsFromModel([this.lastCellHovered.column] as AgColumn[]);
 
-            if (!columns || !columns.length) {
+            if (!columns?.length) {
                 return;
             }
 
@@ -349,6 +356,17 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
+    public getRangeRowCount(cellRange: PartialCellRange): number {
+        const beans = this.beans;
+        const start = this.getRangeStartRow(cellRange);
+        const end = this.getRangeEndRow(cellRange);
+
+        const startIndex = _getAbsoluteRowIndex(beans, start);
+        const endIndex = _getAbsoluteRowIndex(beans, end);
+
+        return endIndex - startIndex + 1;
+    }
+
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         const { gos } = this;
         if (!_isCellSelectionEnabled(gos)) {
@@ -393,6 +411,114 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dispatchChangedEvent(true, true);
     }
 
+    private getRangeLastColumn(cellRange: CellRange): AgColumn {
+        const firstCol = cellRange.columns[0];
+        const lastCol = _last(cellRange.columns)!;
+
+        return (this.newestRangeStartCell?.column === firstCol ? lastCol : firstCol) as AgColumn;
+    }
+
+    public extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void {
+        const { beans } = this;
+        const { startRow, endRow } = cellRange;
+
+        if (!startRow || !endRow) {
+            return;
+        }
+
+        let stepsMoved = 0;
+        let currentRow;
+
+        const isBottomUp = _isRowBefore(endRow, startRow);
+        if (isBottomUp) {
+            currentRow = startRow;
+        } else {
+            currentRow = endRow;
+        }
+
+        const stepFn = targetCount > 0 ? _getRowBelow : _getRowAbove;
+        const stepCount = Math.abs(targetCount);
+
+        while (stepsMoved < stepCount) {
+            const nextRow = stepFn(beans, currentRow);
+            if (!nextRow) {
+                break;
+            }
+            currentRow = nextRow;
+            stepsMoved++;
+        }
+
+        if (stepsMoved !== stepCount) {
+            return; // Could not move the desired number of rows
+        }
+
+        const cellPosition = {
+            ...currentRow,
+            column: this.getRangeLastColumn(cellRange),
+        };
+
+        this.updateRangeRowBoundary({ cellRange, boundary: isBottomUp ? 'start' : 'end', cellPosition });
+    }
+
+    public extendRangeColumnCountBy(cellRange: CellRange, delta: number): void {
+        const { columns, startColumn } = cellRange;
+
+        if (delta === 0) return;
+
+        const allColumns = this.getColumnsFromModel(); // ordered visible columns
+
+        if (!allColumns) {
+            return;
+        }
+
+        const lastColumn = _last(columns);
+        const endColumn = startColumn === columns[0] ? lastColumn! : columns[0];
+
+        if (!lastColumn || !endColumn) {
+            return;
+        }
+
+        let startIdx = allColumns.indexOf(startColumn as AgColumn);
+        let endIdx = allColumns.indexOf(endColumn as AgColumn);
+        const isRtlRange = endIdx < startIdx;
+
+        if (isRtlRange) {
+            // if we are anchoring to the left and the range is rtl
+            // then we need to flip the start and end indices
+            [startIdx, endIdx] = [endIdx, startIdx];
+        }
+
+        const currentLength = columns.length;
+        const targetLength = currentLength + delta;
+
+        if (targetLength <= 0) {
+            return; // can't shrink to 0 or less
+        }
+
+        const newColumns: AgColumn[] = [];
+
+        for (let i = startIdx; i < startIdx + targetLength; i++) {
+            const col = allColumns[i];
+            if (!col) {
+                break;
+            }
+            newColumns.push(col);
+        }
+
+        // Only update if length actually changed
+        if (newColumns.length === targetLength) {
+            if (isRtlRange) {
+                // before we add changes to the range, the
+                // new range start should receive focus
+                const newColumnToFocus = _last(newColumns);
+                cellRange.startColumn = newColumnToFocus;
+                this.focusCellOnNewColumn(cellRange, newColumnToFocus);
+            }
+            cellRange.columns = newColumns;
+            this.dispatchChangedEvent(true, true, cellRange.id);
+        }
+    }
+
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
         if (this.isEmpty() || !this.newestRangeStartCell) {
             return;
@@ -401,10 +527,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const cellRange = _last(this.cellRanges);
 
         this.setSelectionMode(isRowNumberCol(cellPosition.column));
-        this.updateRangeEnd(cellRange, cellPosition);
+        this.updateRangeRowBoundary({ cellRange, boundary: 'end', cellPosition });
     }
 
-    public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
+    public updateRangeRowBoundary(params: CellRangeBoundaryParams): void {
+        const { cellRange, boundary, cellPosition, silent = false } = params;
         const endColumn = cellPosition.column as AgColumn;
         const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn as AgColumn, endColumn);
 
@@ -412,8 +539,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        if (boundary === 'start') {
+            this.focusCellOnNewRow(cellRange, cellPosition);
+        }
+
         cellRange.columns = colsToAdd;
-        cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
+        cellRange[boundary === 'start' ? 'startRow' : 'endRow'] = {
+            rowIndex: cellPosition.rowIndex,
+            rowPinned: cellPosition.rowPinned,
+        };
 
         if (!silent) {
             this.dispatchChangedEvent(true, true, cellRange.id);
@@ -444,13 +578,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const lastRange = _last(this.cellRanges)!;
         const startCell = this.newestRangeStartCell;
-        const firstCol = lastRange.columns[0];
-        const lastCol = _last(lastRange.columns)!;
 
         // find the cell that is at the furthest away corner from the starting cell
         const endCellIndex = lastRange.endRow!.rowIndex;
         const endCellFloating = lastRange.endRow!.rowPinned;
-        const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
+        const endCellColumn = this.getRangeLastColumn(lastRange);
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
         const newEndCell = this.cellNavigation.getNextCellToFocus(key, endCell, ctrlKey);
@@ -545,7 +677,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 }
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.getColumnFromModel(cellRange.columns[i] as AgColumn);
-                    if (!column || !column.isCellEditable(rowNode)) {
+                    if (!column?.isCellEditable(rowNode)) {
                         continue;
                     }
                     const emptyValue = valueSvc.getDeleteValue(column, rowNode);
@@ -716,7 +848,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
-        const columnInRange = range.columns !== null && range.columns.includes(cell.column);
+        const columnInRange = range.columns?.includes(cell.column);
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
@@ -903,7 +1035,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         } else if (columnA && columnB) {
             processedColumns = this.calculateColumnsBetween(columnA, columnB);
 
-            if (processedColumns && processedColumns.length) {
+            if (processedColumns?.length) {
                 startsOnTheRight = processedColumns[0] !== this.getColumnFromModel(columnA);
             }
         }
@@ -1090,6 +1222,42 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         return this.getColumnsFromModel(columns);
+    }
+
+    private focusCellOnNewColumn(currentRange: CellRange, column: AgColumn): void {
+        const { focusSvc } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+
+        if (!focusedCell) {
+            return;
+        }
+
+        if (this.isCellInSpecificRange(focusedCell, currentRange)) {
+            focusSvc.setFocusedCell({
+                ...focusedCell,
+                column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
+        }
+    }
+
+    private focusCellOnNewRow(currentRange: CellRange, row: RowPosition): void {
+        const { focusSvc } = this.beans;
+        const focusedCell = focusSvc.getFocusedCell();
+
+        if (!focusedCell) {
+            return;
+        }
+
+        if (this.isCellInSpecificRange(focusedCell, currentRange)) {
+            focusSvc.setFocusedCell({
+                ...row,
+                column: focusedCell.column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
+        }
     }
 
     public createDragListenerFeature(eContainer: HTMLElement): BeanStub {

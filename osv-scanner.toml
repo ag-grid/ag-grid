@@ -57,10 +57,6 @@ id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
 
 [[IgnoredVulns]]
-id = "GHSA-67mh-4wv8-2f99"
-reason = "We do not use the esbuild development server"
-
-[[IgnoredVulns]]
 id = "GHSA-jr5f-v2jv-69x6"
 reason = "We only use axios in examples"
 
@@ -129,46 +125,50 @@ id = "GHSA-9jgg-88mc-972h"
 reason = "We only use the dev server for development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
+id = "GHSA-xvf7-4v9q-58w6"
+reason = "We do not use form-data directly and where it is used is only for testing or examples"
+
+[[IgnoredVulns]]
+id = "GHSA-xffm-g5w8-qvg7"
+reason = "eslint is only used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
 id = "GHSA-4r6h-8v6p-xvw6"
-reason = "x"
+reason = "sheetjs is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-5pgg-2g8v-p4x9" 
-reason = "x"
+id = "GHSA-5pgg-2g8v-p4x9"
+reason = "sheetjs is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-72xf-g2v4-qvf3" 
-reason = "x"
+id = "GHSA-grv7-fg5c-xmjg"
+reason = "braces is only used in development/testing - it's not used in the final production build"
 
 [[IgnoredVulns]]
-id = "GHSA-64vr-g452-qvp3" 
-reason = "x"
+id = "GHSA-fjxv-7rqg-78g4"
+reason = "We do not use form-data directly and where it is used is only for testing or examples"
 
 [[IgnoredVulns]]
-id = "GHSA-4vvj-4cpr-p986" 
-reason = "x"
+id = "GHSA-76c9-3jph-rj3q"
+reason = "We do not use on-headers directly and where it is used is only for testing or examples"
 
 [[IgnoredVulns]]
-id = "GHSA-952p-6rrq-rcjv" 
-reason = "x"
+id = "GHSA-4vvj-4cpr-p986"
+reason = "Vulnerable versions are only used in webpack-dev-server which is not used in production code"
 
 [[IgnoredVulns]]
-id = "GHSA-x7hr-w5r2-h6wg" 
-reason = "x"
+id = "GHSA-mvw6-62qv-vmqf"
+reason = "We do not use koa directly and where it is used is only for testing or dev use"
 
 [[IgnoredVulns]]
-id = "GHSA-968p-4wvh-cqc8" 
-reason = "x"
+id = "GHSA-jgmv-j7ww-jx2x"
+reason = "We do not use koa directly and where it is used is only for testing or dev use"
 
 [[IgnoredVulns]]
-id = "GHSA-grv7-fg5c-xmjg" 
-reason = "x"
+id = "GHSA-v6h2-p8h4-qcjw"
+reason = "Low risk and determined to not be exploitable in our use case"
 
 [[IgnoredVulns]]
-id = "GHSA-w7q9-p3jq-fmhm" 
-reason = "x"
-
-[[IgnoredVulns]]
-id = "GHSA-xvf7-4v9q-58w6" 
-reason = "x"
+id = "GHSA-52f5-9888-hmc6"
+reason = "Low risk and determined to not be exploitable in our use case"
 

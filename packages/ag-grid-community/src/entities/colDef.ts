@@ -311,7 +311,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to `true` for this column to be hidden.
      * @default false
      */
-    hide?: boolean;
+    hide?: boolean | null;
     /**
      * Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -528,7 +528,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Set to true to pivot by this column.
      * @agModule `PivotModule`
      */
-    pivot?: boolean;
+    pivot?: boolean | null;
     /**
      * Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -656,7 +656,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      * @agModule `RowGroupingModule`
      */
-    rowGroup?: boolean;
+    rowGroup?: boolean | null;
     /**
      * Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -713,8 +713,16 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * If missing, all installed functions are allowed.
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
-     * */
+     */
     allowedAggFuncs?: string[];
+    /**
+     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group by.
+     *
+     * This can be used to group by values derived from a source column. The grid provides hierarchy type related to date components.
+     * Users can provide their own hierarchy types by specifying a `ColDef`, or referring to the name of a hierarchy type defined in `groupHierarchyConfig`.
+     * @agModule `RowGroupingModule` / `PivotModule`
+     */
+    rowGroupingHierarchy?: (GroupHierarchyParts | string | ColDef<TData, TValue>)[];
 
     /**
      * Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.
@@ -809,7 +817,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * flex value, so a column with `flex: 2` will be twice the size as one with
      * `flex: 1`.
      */
-    flex?: number;
+    flex?: number | null;
     /**
      * Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -964,7 +972,7 @@ export interface BaseColDefParams<TData = any, TValue = any, TContext = any> ext
     colDef: ColDef<TData, TValue>;
 }
 
-export interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContext = any>
+interface BaseColDefOptionalDataParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     /** Row node for the given row */
     node: IRowNode<TData> | null;
@@ -1145,3 +1153,13 @@ export interface CellEditorSelectorResult {
 }
 
 export type SortDirection = 'asc' | 'desc' | null;
+
+export type GroupHierarchyParts =
+    | 'year'
+    | 'quarter'
+    | 'month'
+    | 'formattedMonth'
+    | 'day'
+    | 'hour'
+    | 'minute'
+    | 'second';

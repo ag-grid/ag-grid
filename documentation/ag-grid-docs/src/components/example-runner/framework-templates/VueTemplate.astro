@@ -42,7 +42,7 @@ const {
     extras,
     headFragment,
     usesMathRandom,
-    nonce
+    nonce,
 } = Astro.props as Props;
 
 const startFile = pathJoin(appLocation, entryFileName);
@@ -59,7 +59,7 @@ const startFile = pathJoin(appLocation, entryFileName);
     <body>
         <div id="app"><my-component></my-component></div>
 
-        <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce}/>
+        <Scripts baseUrl={appLocation} files={scriptFiles} nonce={nonce} />
         <SystemJs
             isDev={isDev}
             boilerplatePath={boilerplatePath}

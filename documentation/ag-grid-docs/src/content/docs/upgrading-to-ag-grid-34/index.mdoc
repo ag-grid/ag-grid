@@ -8,7 +8,7 @@ New Filters Tool Panel, Cell Editor Validation, Batch Editing, Date Picker Time 
 
 ## What's New
 
-AG Grid {% migrationVersion() %} adds important new features – [New Filters Tool Panel](./tool-panel-filters-new/), [Cell Editor Validation](./cell-editing-validation/), [Batch Editing](./cell-editing-batch/), [Date Picker Time Support](./cell-data-types/#datetime), [Tree Data Row Dragging](./tree-data-row-dragging/), as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34-0/).
+AG Grid {% migrationVersion() %} adds important new features – [New Filters Tool Panel](./tool-panel-filters-new/), [Cell Editor Validation](./cell-editing-validation/), [Batch Editing](./cell-editing-batch/), [Date Picker Time Support](./cell-data-types/#datetime), [Tree Data Row Dragging](./tree-data-row-dragging/), as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34/).
 
 These improvements involve no breaking changes as listed below.
 
@@ -38,7 +38,7 @@ There are no deprecated API removals in AG Grid version {% migrationVersion() %}
 
 ### Filters
 
-- `ISetFilter` interface is deprecated. When retrieving via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the filter handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface.
+- `ISetFilter` interface is deprecated. When retrieving a Set Filter via `api.getColumnFilterInstance(column)`, use `SetFilterUi`. To access the methods that were previously available on `ISetFilter` (but not on `SetFilterUi`), instead retrieve the Set Filter Handler via `api.getColumnFilterHandler(column)` and use the `SetFilterHandler` interface. See [Set Filter API](./filter-set-api/#set-filter-api) for more information.
 
 - `getModel()` and `setModel()` on all grid-provided filter instances are deprecated. Use `api.getColumnFilterModel(column)` and `api.setColumnFilterModel(column)` instead.
 

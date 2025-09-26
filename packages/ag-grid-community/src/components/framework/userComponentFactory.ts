@@ -1,14 +1,14 @@
+import type { IComponent } from '../../agStack/interfaces/iComponent';
+import { AgPromise } from '../../agStack/utils/promise';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection, ProcessParamsFunc } from '../../context/context';
 import type { CellEditorSelectorFunc, CellEditorSelectorResult, CellRendererSelectorFunc } from '../../entities/colDef';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _mergeDeep } from '../../utils/object';
-import { AgPromise } from '../../utils/promise';
+import { _mergeDeep } from '../../utils/mergeDeep';
 import { _error } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
@@ -252,7 +252,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         // pull user params from the defObject
         const defObjectAny = defObject as any;
-        const userParams = defObjectAny && defObjectAny[type.name + 'Params'];
+        const userParams = defObjectAny?.[type.name + 'Params'];
 
         if (typeof userParams === 'function') {
             const userParamsFromFunc = userParams(paramsFromGrid);

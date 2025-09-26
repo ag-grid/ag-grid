@@ -1,15 +1,15 @@
+import { _last } from '../agStack/utils/array';
+import { _getDocument } from '../agStack/utils/document';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
-import { isColumnGroup } from '../entities/agColumnGroup';
+import type { BeanCollection } from '../context/context';
+import { AgColumn } from '../entities/agColumn';
+import { AgColumnGroup, isColumnGroup } from '../entities/agColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { _getDocument } from '../gridOptionsUtils';
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { HeaderRowType } from '../headerRendering/row/headerRowComp';
 import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
-import { _last } from '../utils/array';
 
 export type HeaderNavigationDirection = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 
@@ -17,29 +17,38 @@ interface HeaderFuturePosition extends HeaderPosition {
     headerRowIndexWithoutSpan?: number;
 }
 
-function isAnyChildSpanningHeaderHeight(columnGroup: AgColumnGroup | null): boolean {
-    if (!columnGroup) {
-        return false;
-    }
-    return columnGroup.getLeafColumns().some((col) => col.isSpanHeaderHeight());
-}
-
-export function getHeaderIndexToFocus(column: AgColumn | AgColumnGroup, currentIndex: number): HeaderPosition {
-    let nextColumn: AgColumn | undefined;
-
-    if (isColumnGroup(column) && isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
-        const targetColumn: AgColumnGroup = column;
-        nextColumn = targetColumn.getLeafColumns()[0];
-        let col: AgColumn | AgColumnGroup = nextColumn;
-        while (col !== targetColumn) {
-            currentIndex++;
-            col = col.getParent()!;
-        }
+/**
+ * @returns a header position to focus at the level provided.
+ */
+export function getHeaderIndexToFocus(beans: BeanCollection, column: AgColumn, level: number): HeaderPosition {
+    const columnRowIndex = beans.visibleCols.headerGroupRowCount;
+    // if level is greater or equal to the column row index, then it's filters or col and needs to be supplied this col.
+    if (level >= columnRowIndex) {
+        return {
+            column,
+            headerRowIndex: level,
+        };
     }
 
+    // if level is less, then find the group with the given level
+    let parent = column.getParent();
+    while (parent && parent.getProvidedColumnGroup().getLevel() > level) {
+        parent = parent.getParent();
+    }
+
+    const isColSpanning = column.isSpanHeaderHeight();
+    // if no parent or found a padding group which should be spanned, return the column and column the level
+    if (!parent || (isColSpanning && parent.isPadding())) {
+        return {
+            column,
+            headerRowIndex: columnRowIndex,
+        };
+    }
+
+    // if found a group, return the parent and the level
     return {
-        column: nextColumn || column,
-        headerRowIndex: currentIndex,
+        column: parent,
+        headerRowIndex: parent.getProvidedColumnGroup().getLevel(),
     };
 }
 
@@ -113,30 +122,29 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
     /*
      * This method navigates grid header vertically
-     * @returns {boolean} true to preventDefault on the event that caused this navigation.
+     * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateVertically(direction: HeaderNavigationDirection, event: KeyboardEvent): boolean {
-        const focusSvc = this.beans.focusSvc;
-        const fromHeader = focusSvc.focusedHeader;
+        const { focusSvc, visibleCols } = this.beans;
+        const { focusedHeader } = focusSvc;
 
-        if (!fromHeader) {
+        if (!focusedHeader) {
             return false;
         }
 
-        const { headerRowIndex } = fromHeader;
-        const column = fromHeader.column as AgColumn;
+        const { headerRowIndex } = focusedHeader;
+        const column = focusedHeader.column as AgColumn;
         const rowLen = getFocusHeaderRowCount(this.beans);
-        const isUp = direction === 'UP';
-
         const currentRowType = this.getHeaderRowType(headerRowIndex);
+        const columnHeaderRowIndex = visibleCols.headerGroupRowCount;
 
         let {
             headerRowIndex: nextRow,
             column: nextFocusColumn,
             headerRowIndexWithoutSpan,
-        } = isUp
+        } = direction === 'UP'
             ? getColumnVisibleParent(currentRowType, column, headerRowIndex)
-            : getColumnVisibleChild(currentRowType, column, headerRowIndex);
+            : getColumnVisibleChild(column, headerRowIndex, columnHeaderRowIndex);
 
         let skipColumn = false;
 
@@ -231,35 +239,36 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         direction: 'Before' | 'After',
         event: KeyboardEvent
     ): boolean {
-        const currentIndex = focusedHeader.headerRowIndex;
-        let nextPosition: HeaderPosition | null = null;
-        let nextRowIndex: number;
         const beans = this.beans;
+        const currentIndex = focusedHeader.headerRowIndex;
 
+        let nextFocusedCol: AgColumn | null = null;
+        let nextRowIndex: number;
+
+        const headerRowCount = getFocusHeaderRowCount(beans);
+        const allVisibleCols = this.beans.visibleCols.allCols;
         if (direction === 'Before') {
-            if (currentIndex > 0) {
-                nextRowIndex = currentIndex - 1;
-                this.currentHeaderRowWithoutSpan -= 1;
-                nextPosition = this.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
+            if (currentIndex <= 0) {
+                return false; // no previous row to focus
             }
+            nextFocusedCol = _last(allVisibleCols);
+            nextRowIndex = currentIndex - 1;
+            this.currentHeaderRowWithoutSpan -= 1;
         } else {
+            nextFocusedCol = allVisibleCols[0];
             nextRowIndex = currentIndex + 1;
-            if (this.currentHeaderRowWithoutSpan < getFocusHeaderRowCount(beans)) {
+            if (this.currentHeaderRowWithoutSpan < headerRowCount) {
                 this.currentHeaderRowWithoutSpan += 1;
             } else {
                 this.currentHeaderRowWithoutSpan = -1;
             }
-            nextPosition = this.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
-        if (!nextPosition) {
-            return false;
+        let { column, headerRowIndex } = getHeaderIndexToFocus(this.beans, nextFocusedCol, nextRowIndex);
+        // if index is greater than the header row count, then row -1 to move to next container
+        if (headerRowIndex >= headerRowCount) {
+            headerRowIndex = -1;
         }
-
-        const { column, headerRowIndex } = getHeaderIndexToFocus(
-            nextPosition.column as AgColumn,
-            nextPosition?.headerRowIndex
-        );
 
         return beans.focusSvc.focusHeaderPosition({
             headerPosition: { column, headerRowIndex },
@@ -288,39 +297,50 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
-        let nextColumn: AgColumn | AgColumnGroup | undefined;
-        let getColMethod: 'getColBefore' | 'getColAfter';
         const { colGroupSvc, visibleCols } = this.beans;
 
-        if (isColumnGroup(focusedHeader.column)) {
-            nextColumn = colGroupSvc?.getGroupAtDirection(focusedHeader.column, direction) ?? undefined;
-        } else {
-            getColMethod = `getCol${direction}` as any;
-            nextColumn = visibleCols[getColMethod](focusedHeader.column as AgColumn)!;
+        let currentFocusedColumn = focusedHeader.column as AgColumn | AgColumnGroup;
+        if (currentFocusedColumn instanceof AgColumnGroup) {
+            const leafChildren = currentFocusedColumn.getDisplayedLeafColumns();
+            currentFocusedColumn = direction === 'Before' ? leafChildren[0] : leafChildren[leafChildren.length - 1];
         }
 
-        if (!nextColumn) {
-            return;
+        const nextFocusedCol =
+            direction === 'Before'
+                ? visibleCols.getColBefore(currentFocusedColumn)
+                : visibleCols.getColAfter(currentFocusedColumn);
+        if (!nextFocusedCol) {
+            return undefined;
         }
 
-        const { headerRowIndex } = focusedHeader;
-
-        if (this.getHeaderRowType(headerRowIndex) !== 'filter') {
-            const columnsInPath: (AgColumn | AgColumnGroup)[] = [nextColumn];
-
-            while (nextColumn.getParent()) {
-                nextColumn = nextColumn.getParent()!;
-                columnsInPath.push(nextColumn);
-            }
-
-            nextColumn = columnsInPath[Math.max(0, columnsInPath.length - 1 - headerRowIndex)];
+        const headerGroupRowIndex = visibleCols.headerGroupRowCount;
+        if (focusedHeader.headerRowIndex >= headerGroupRowIndex) {
+            return {
+                headerRowIndex: focusedHeader.headerRowIndex,
+                column: nextFocusedCol,
+            };
+        }
+        const groupAtLevel = colGroupSvc?.getColGroupAtLevel(nextFocusedCol, focusedHeader.headerRowIndex);
+        if (!groupAtLevel) {
+            // spanned or filler column
+            const isSpanningCol = nextFocusedCol instanceof AgColumn && nextFocusedCol.isSpanHeaderHeight();
+            return {
+                headerRowIndex: isSpanningCol ? visibleCols.headerGroupRowCount : focusedHeader.headerRowIndex,
+                column: nextFocusedCol,
+            };
         }
 
-        const { column, headerRowIndex: indexToFocus } = getHeaderIndexToFocus(nextColumn, headerRowIndex);
-
+        if (groupAtLevel.isPadding() && nextFocusedCol.isSpanHeaderHeight()) {
+            // if the next column is a padding group, but the current column is spanning, we want to return the
+            // next column at the full tree depth index to instead focus the spanned column
+            return {
+                headerRowIndex: visibleCols.headerGroupRowCount,
+                column: nextFocusedCol,
+            };
+        }
         return {
-            column,
-            headerRowIndex: indexToFocus,
+            headerRowIndex: focusedHeader.headerRowIndex,
+            column: groupAtLevel ?? nextFocusedCol,
         };
     }
 
@@ -330,33 +350,6 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return centerHeaderContainer.getRowType(rowIndex);
         }
     }
-
-    private findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const { visibleCols, ctrlsSvc, colGroupSvc } = this.beans;
-        const displayedColumns = visibleCols.allCols;
-        const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
-
-        if (!column) {
-            return;
-        }
-
-        const childContainer = ctrlsSvc.getHeaderRowContainerCtrl(column.getPinned());
-        const type = childContainer?.getRowType(level);
-
-        if (type == 'group') {
-            const columnGroup = colGroupSvc?.getColGroupAtLevel(column, level);
-            return {
-                headerRowIndex: level,
-                column: columnGroup!,
-            };
-        }
-
-        return {
-            // if type==null, means the header level didn't exist
-            headerRowIndex: type == null ? -1 : level,
-            column,
-        };
-    }
 }
 
 function getColumnVisibleParent(
@@ -364,68 +357,89 @@ function getColumnVisibleParent(
     currentColumn: AgColumn | AgColumnGroup,
     currentIndex: number
 ): HeaderFuturePosition {
-    const isFloatingFilter = currentRowType === 'filter';
-    const isColumn = currentRowType === 'column';
-
-    let nextFocusColumn: AgColumn | AgColumnGroup | null = isFloatingFilter ? currentColumn : currentColumn.getParent();
-    let nextRow = currentIndex - 1;
-    let headerRowIndexWithoutSpan: number | undefined = nextRow;
-
-    if (isColumn && isAnyChildSpanningHeaderHeight((currentColumn as AgColumn).getParent())) {
-        while (nextFocusColumn && (nextFocusColumn as AgColumnGroup).isPadding()) {
-            nextFocusColumn = nextFocusColumn.getParent();
-            nextRow--;
+    const optimisticNextIndex = currentIndex - 1;
+    if (currentRowType !== 'filter') {
+        const isSpanningCol = currentColumn instanceof AgColumn && currentColumn.isSpanHeaderHeight();
+        let nextVisibleParent = currentColumn.getParent();
+        while (
+            nextVisibleParent &&
+            // skip if row isn't visible or col is padding and spanned
+            (nextVisibleParent.getProvidedColumnGroup().getLevel() > optimisticNextIndex ||
+                (isSpanningCol && nextVisibleParent.isPadding()))
+        ) {
+            nextVisibleParent = nextVisibleParent.getParent();
         }
 
-        headerRowIndexWithoutSpan = nextRow;
-        if (nextRow < 0) {
-            nextFocusColumn = currentColumn;
-            nextRow = currentIndex;
-            headerRowIndexWithoutSpan = undefined;
+        if (nextVisibleParent) {
+            if (isSpanningCol) {
+                // if the column is spanning, we want to return the parent at the full tree depth index
+                // not last row, as last row could be filter
+                return {
+                    column: nextVisibleParent,
+                    headerRowIndex: nextVisibleParent.getProvidedColumnGroup().getLevel(),
+                    headerRowIndexWithoutSpan: optimisticNextIndex,
+                };
+            } else {
+                // if not spanning, return the parent at the optimistic next index
+                return {
+                    column: nextVisibleParent,
+                    headerRowIndex: optimisticNextIndex,
+                    headerRowIndexWithoutSpan: optimisticNextIndex,
+                };
+            }
         }
     }
 
-    return { column: nextFocusColumn!, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
+    return {
+        column: currentColumn,
+        headerRowIndex: optimisticNextIndex,
+        headerRowIndexWithoutSpan: optimisticNextIndex,
+    };
 }
 
 function getColumnVisibleChild(
-    currentRowType: HeaderRowType | undefined,
     column: AgColumn | AgColumnGroup,
     currentIndex: number,
-    direction: 'Before' | 'After' = 'After'
+    columnHeaderRowIndex: number
 ): HeaderFuturePosition {
-    let nextFocusColumn: AgColumn | AgColumnGroup | null = column;
-    let nextRow = currentIndex + 1;
-    const headerRowIndexWithoutSpan = nextRow;
+    const optimisticNextIndex = currentIndex + 1;
 
-    if (currentRowType === 'group') {
-        const leafColumns = (column as AgColumnGroup).getDisplayedLeafColumns();
-        const leafColumn = direction === 'After' ? leafColumns[0] : _last(leafColumns);
-        const columnsInTheWay: AgColumnGroup[] = [];
+    const result: HeaderFuturePosition = {
+        column,
+        headerRowIndex: optimisticNextIndex,
+        headerRowIndexWithoutSpan: optimisticNextIndex,
+    };
 
-        let currentColumn: AgColumn | AgColumnGroup = leafColumn;
-        while (currentColumn.getParent() !== column) {
-            currentColumn = currentColumn.getParent()!;
-            columnsInTheWay.push(currentColumn);
+    // if a group, push focus into the first child
+    if (column instanceof AgColumnGroup) {
+        // if moving down to end of tree, get a leaf column as might be skipping
+        // non-rendered padding groups.
+        if (optimisticNextIndex >= columnHeaderRowIndex) {
+            return {
+                column: column.getDisplayedLeafColumns()[0],
+                headerRowIndex: columnHeaderRowIndex,
+                headerRowIndexWithoutSpan: optimisticNextIndex,
+            };
         }
 
-        nextFocusColumn = leafColumn;
-        if (leafColumn.isSpanHeaderHeight()) {
-            for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
-                const colToFocus = columnsInTheWay[i];
-                if (!colToFocus.isPadding()) {
-                    nextFocusColumn = colToFocus;
-                    break;
-                }
-                nextRow++;
+        const children = column.getDisplayedChildren();
+        let firstChild = children![0];
+        if (firstChild instanceof AgColumnGroup && firstChild.isPadding()) {
+            const firstCol = firstChild.getDisplayedLeafColumns()[0];
+            if (firstCol.isSpanHeaderHeight()) {
+                firstChild = firstCol;
             }
-        } else {
-            nextFocusColumn = _last(columnsInTheWay);
-            if (!nextFocusColumn) {
-                nextFocusColumn = leafColumn;
-            }
+        }
+        result.column = firstChild;
+
+        // if the first child is a col that is spanning, skip to the full tree depth index
+        // not last row, as last row could be filter
+        const isSpanningCol = firstChild instanceof AgColumn && firstChild.isSpanHeaderHeight();
+        if (isSpanningCol) {
+            result.headerRowIndex = columnHeaderRowIndex;
+            result.headerRowIndexWithoutSpan = optimisticNextIndex;
         }
     }
 
-    return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
+    return result;
 }

@@ -1,9 +1,9 @@
+import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
-import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _createElement } from '../../../utils/dom';
+import { _createElement } from '../../../utils/element';
 import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
@@ -205,11 +205,12 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const model: Partial<DateFilterModel> = {};
 
         const values = this.getValues(position);
+        const separator = this.params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
-            model.dateFrom = _serialiseDate(values[0]);
+            model.dateFrom = _serialiseDate(values[0], true, separator);
         }
         if (values.length > 1) {
-            model.dateTo = _serialiseDate(values[1]);
+            model.dateTo = _serialiseDate(values[1], true, separator);
         }
 
         return {

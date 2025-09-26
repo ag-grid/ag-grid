@@ -1,9 +1,9 @@
 import type {
     AgEvent,
-    AgInputTextField,
     BeanCollection,
     ComponentSelector,
     ElementParams,
+    GridInputTextField,
     PopupPositionParams,
     PopupService,
 } from 'ag-grid-community';
@@ -41,11 +41,7 @@ export interface AutocompleteValidChangedEvent extends AgEvent<'eventValidChange
     validationMessage: string | null;
 }
 
-export type AgAutocompleteEvent =
-    | 'eventValueChanged'
-    | 'eventValueConfirmed'
-    | 'eventOptionSelected'
-    | 'eventValidChanged';
+type AgAutocompleteEvent = 'eventValueChanged' | 'eventValueConfirmed' | 'eventOptionSelected' | 'eventValidChanged';
 
 const AgAutocompleteElement: ElementParams = {
     tag: 'div',
@@ -66,7 +62,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         this.popupSvc = beans.popupSvc!;
     }
 
-    private eAutocompleteInput: AgInputTextField = RefPlaceholder;
+    private readonly eAutocompleteInput: GridInputTextField = RefPlaceholder;
 
     private isListOpen = false;
     private autocompleteList: AgAutocompleteList | null;

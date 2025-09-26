@@ -1,8 +1,8 @@
 import type {
     AgColumn,
-    AgInputTextField,
     ElementParams,
     FloatingFilterDisplayParams,
+    GridInputTextField,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
@@ -25,7 +25,7 @@ const SetFloatingFilterElement: ElementParams = {
 };
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
+    private readonly eFloatingFilterText: GridInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
     private listenerAdded = false;
@@ -77,7 +77,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private addAvailableValuesListener(): void {
         const addListener = (handler: SetFilterHandler<V>) => {
-            if (handler == null || !handler.isAlive()) {
+            if (!handler?.isAlive()) {
                 return;
             }
             const valueModel = handler.valueModel;
@@ -106,13 +106,13 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
-        if (!this.listenerAdded) {
-            this.addAvailableValuesListener();
-        }
-
         if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
         } else {
+            // listener is only needed if there is an active model
+            if (!this.listenerAdded) {
+                this.addAvailableValuesListener();
+            }
             if (this.gos.get('enableFilterHandlers')) {
                 this.eFloatingFilterText.setValue(
                     (this.params as unknown as FloatingFilterDisplayParams)

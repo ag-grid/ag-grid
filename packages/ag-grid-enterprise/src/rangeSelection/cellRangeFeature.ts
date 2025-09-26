@@ -45,7 +45,7 @@ function _isFillHandleEnabled(gos: GridOptionsService): boolean {
 }
 
 export class CellRangeFeature implements ICellRangeFeature {
-    private rangeSvc: IRangeService;
+    private readonly rangeSvc: IRangeService;
     private cellComp: ICellComp;
     private eGui: HTMLElement;
 
@@ -66,6 +66,10 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.cellComp = cellComp;
         this.eGui = this.cellCtrl.eGui;
         this.onCellSelectionChanged();
+    }
+
+    public unsetComp(): void {
+        this.beans.context.destroyBean(this.selectionHandle);
     }
 
     public onCellSelectionChanged(): void {
@@ -216,14 +220,15 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     public refreshHandle(): void {
-        if (this.beans.context.isDestroyed()) {
+        const { context } = this.beans;
+        if (context.isDestroyed()) {
             return;
         }
 
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
         if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
+            this.selectionHandle = context.destroyBean(this.selectionHandle);
         }
 
         if (shouldHaveSelectionHandle) {
@@ -291,6 +296,6 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     public destroy(): void {
-        this.beans.context.destroyBean(this.selectionHandle);
+        this.unsetComp();
     }
 }

@@ -1,11 +1,11 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
+import type { PopupEventParams } from '../agStack/interfaces/iPopup';
+import { _removeFromParent } from '../agStack/utils/dom';
+import { _jsonEquals } from '../agStack/utils/generic';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { FilterAction, FilterWrapperParams } from '../interfaces/iFilter';
-import type { PopupEventParams } from '../interfaces/iPopup';
-import { _removeFromParent } from '../utils/dom';
-import { _jsonEquals } from '../utils/generic';
 import { Component } from '../widgets/component';
 import type {
     FilterActionEvent,
@@ -32,7 +32,7 @@ export class FilterWrapperComp extends Component {
         private readonly eventParent: IEventEmitter<
             'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'
         >,
-        private readonly updateModel: (column: AgColumn, action: FilterAction) => void,
+        private readonly updateModel: (column: AgColumn, action: FilterAction, additionalEventAttributes?: any) => void,
         private isGlobalButtons: boolean,
         private readonly enableGlobalButtonCheck?: boolean
     ) {
@@ -123,7 +123,7 @@ export class FilterWrapperComp extends Component {
                 const getListener =
                     (action: FilterAction) =>
                     ({ event }: FilterButtonEvent) => {
-                        this.updateModel(column, action);
+                        this.updateModel(column, action, { fromButtons: true });
                         this.afterAction(action, event);
                     };
                 eButtonsPanel?.addManagedListeners(eButtonsPanel, {
@@ -150,8 +150,8 @@ export class FilterWrapperComp extends Component {
             return;
         }
 
-        const keyboardEvent = e as KeyboardEvent;
-        const key = keyboardEvent && keyboardEvent.key;
+        const keyboardEvent = e as KeyboardEvent | undefined;
+        const key = keyboardEvent?.key;
         let params: PopupEventParams;
 
         if (key === KeyCode.ENTER || key === KeyCode.SPACE) {
@@ -192,7 +192,7 @@ export class FilterWrapperComp extends Component {
     private handleKeyDown(event: KeyboardEvent): void {
         if (!event.defaultPrevented && event.key === KeyCode.ENTER && this.applyActive) {
             // trigger apply. Can't do this via form submit as it will use click event, which prevents restoring focus on close
-            this.updateModel(this.column, 'apply');
+            this.updateModel(this.column, 'apply', { fromButtons: true });
             this.afterAction('apply', event);
         }
     }

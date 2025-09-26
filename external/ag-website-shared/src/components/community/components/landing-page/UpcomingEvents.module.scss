@@ -94,8 +94,8 @@
 }
 
 .organiserLogo {
-    width: 32px;
-    height: auto;
+    width: auto;
+    height: 32px;
 }
 
 .description {
@@ -111,6 +111,11 @@
     margin-bottom: 4px;
     color: var(--color-fg-primary);
     padding-top: 8px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 130px;
 }
 
 .description {
@@ -136,7 +141,8 @@
     padding-top: 4px;
     padding-bottom: 4px;
     background-color: var(--color-util-brand-100);
-    display: flex;
+    white-space: nowrap;
+    display: inline-block;
     justify-content: center;
     gap: 8px;
     font-size: var(--text-fs-base);
@@ -148,9 +154,9 @@
 .conferenceIcon {
     margin-top: 16px;
     height: 32px;
-    width: 32px;
+    width: auto;
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
 }
 

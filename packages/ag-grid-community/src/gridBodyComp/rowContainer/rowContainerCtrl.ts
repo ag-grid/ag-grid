@@ -1,10 +1,3 @@
-import { BeanStub } from '../../context/beanStub';
-import type { StickyTopOffsetChangedEvent } from '../../events';
-import { _isDomLayout } from '../../gridOptionsUtils';
-import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import type { RowRenderer } from '../../rendering/rowRenderer';
-import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import {
     _getInnerWidth,
     _getScrollLeft,
@@ -12,7 +5,14 @@ import {
     _isInDOM,
     _observeResize,
     _setScrollLeft,
-} from '../../utils/dom';
+} from '../../agStack/utils/dom';
+import { BeanStub } from '../../context/beanStub';
+import type { StickyTopOffsetChangedEvent } from '../../events';
+import { _isDomLayout } from '../../gridOptionsUtils';
+import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { RowRenderer } from '../../rendering/rowRenderer';
+import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
@@ -269,7 +269,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private pinnedWidthFeature: SetPinnedWidthFeature | undefined;
     private visible: boolean = true;
     // Maintaining a constant reference enables optimization in React.
-    private EMPTY_CTRLS = [];
+    private readonly EMPTY_CTRLS = [];
 
     constructor(private readonly name: RowContainerName) {
         super();

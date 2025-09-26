@@ -105,9 +105,11 @@ This delay helps prevent accidental moves when hovering over potential drop targ
 
 ### Preventing Dropping on Certain Rows
 
-The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed row dragging, and optionally override the rows or parent or position for the drop.
-This is useful for restricting where rows can be dropped, or customizing drop behaviour in tree data.
-Returning an object instead allows the rows to drop to be filtered, or the parent or position of the drop to be changed
+The `isRowValidDropPosition` callback allows you to control whether a row drop is allowed during managed or unmanaged row dragging, and optionally override the rows, parent or position for the drop.
+This is useful for restricting where rows can be dropped or customizing drop behaviour.
+Returning an object allows instead to filter the rows to drop, or change the parent or the position of the drop.
+
+This affects also the icon and label shown when dragging a row for both managed and unmanaged row dragging.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["isRowValidDropPosition"] /%}
 
@@ -135,7 +137,7 @@ Example with Data Paths:
 
 ## Unmanaged Row Dragging 
 
-In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging/#unmanaged-dragging).
+In order to have full control over row dragging, it is possible to provide a customized implementation of row dragging using [Unmanaged Row Dragging](./row-dragging-unmanaged).
 In this case, the application is responsible for maintaining the rowData state, handling the dragging events and updating the rowData based on the drag events fired by the grid.
 
 ### Tree Data with getDataPath

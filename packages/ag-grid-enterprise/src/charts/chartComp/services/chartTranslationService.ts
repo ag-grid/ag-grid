@@ -3,7 +3,7 @@ import { BeanStub } from 'ag-grid-community';
 
 export type ChartTranslationKey = keyof typeof DEFAULT_CHART_TRANSLATIONS;
 
-export const DEFAULT_CHART_TRANSLATIONS = {
+const DEFAULT_CHART_TRANSLATIONS = {
     pivotChartTitle: 'Pivot Chart',
     rangeChartTitle: 'Range Chart',
     settings: 'Chart',

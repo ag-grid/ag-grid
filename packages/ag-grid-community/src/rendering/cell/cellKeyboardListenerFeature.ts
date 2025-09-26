@@ -1,11 +1,12 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { _isMacOsUserAgent } from '../../agStack/utils/browser';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import { _populateModelValidationErrors } from '../../edit/utils/editors';
+import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import type { DefaultProvidedCellEditorParams } from '../../interfaces/iCellEditor';
-import { _isMacOsUserAgent } from '../../utils/browser';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { SpannedCellCtrl } from '../spanning/spannedCellCtrl';
 import type { CellCtrl } from './cellCtrl';
@@ -91,8 +92,14 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         const endCell = rangeSvc.extendLatestRangeInDirection(event);
 
-        if (endCell) {
-            navigation?.ensureCellVisible(endCell);
+        if (!endCell) {
+            return;
+        }
+
+        if (event.key === KeyCode.LEFT || event.key === KeyCode.RIGHT) {
+            navigation?.ensureColumnVisible(endCell.column as AgColumn);
+        } else {
+            navigation?.ensureRowVisible(endCell.rowIndex);
         }
     }
 
@@ -127,14 +134,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onEnterKeyDown(event: KeyboardEvent): void {
         const { cellCtrl, beans } = this;
         const { editSvc, navigation } = beans;
-        const cellEditing = editSvc?.isEditing(cellCtrl);
+        const cellEditing = editSvc?.isEditing(cellCtrl, { withOpenEditor: true });
         const rowNode = cellCtrl.rowNode;
-        const rowEditing = editSvc?.isRowEditing(rowNode);
+        const rowEditing = editSvc?.isRowEditing(rowNode, { withOpenEditor: true });
 
         const startEditingAction = (cellCtrl: CellCtrl) => {
             const started = editSvc?.startEditing(cellCtrl, {
                 startedEdit: true,
                 event,
+                source: 'edit',
             });
             if (started) {
                 // if we started editing, then we need to prevent default, otherwise the Enter action can get
@@ -155,17 +163,18 @@ export class CellKeyboardListenerFeature extends BeanStub {
             // re-run ALL validations, Enter key is used to commit the edit, so we want to ensure it's valid
             _populateModelValidationErrors(beans);
 
-            if (editSvc?.checkNavWithValidation(cellCtrl, event) === 'block-stop') {
+            if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
                 return;
             }
 
             if (editSvc?.isEditing(cellCtrl, { withOpenEditor: true })) {
                 editSvc?.stopEditing(cellCtrl, {
                     event,
+                    source: 'edit',
                 });
             } else if (rowEditing && !cellCtrl.isCellEditable()) {
                 // must be on a read only cell
-                editSvc?.stopEditing({ rowNode }, { event });
+                editSvc?.stopEditing({ rowNode }, { event, source: 'edit' });
             } else {
                 startEditingAction(cellCtrl);
             }
@@ -195,6 +204,18 @@ export class CellKeyboardListenerFeature extends BeanStub {
             cellCtrl,
             beans: { editSvc },
         } = this;
+
+        const editing = editSvc?.isEditing();
+
+        if (editing) {
+            // re-run ALL validations, F2 is used to initiate a new edit. If we have one already in progress,
+            // we want to ensure it's valid before initiating a new edit cycle
+            _populateModelValidationErrors(this.beans);
+
+            if (editSvc?.checkNavWithValidation(undefined, event) === 'block-stop') {
+                return;
+            }
+        }
 
         editSvc?.startEditing(cellCtrl, { startedEdit: true, event });
     }

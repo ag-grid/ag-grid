@@ -123,7 +123,7 @@ const GridExample = () => {
     const loadGrids = useCallback(() => {
         setLeftRowData([...rawData]);
         setRightRowData([]);
-        leftApi!.deselectAll();
+        leftApi?.deselectAll();
     }, [leftApi, rawData]);
 
     useEffect(() => {

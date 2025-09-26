@@ -1,7 +1,6 @@
 :global(:root) {
     --layout-grid-header-height: 32px;
     --layout-grid-margin: 32px;
-    --ag-row-border: 1px solid #c41717;
 }
 
 :global(body) {
@@ -139,6 +138,11 @@
 
     height: calc(100vh - var(--layout-grid-header-height) - 62px - var(--layout-grid-margin));
     margin: 0 var(--layout-grid-margin) var(--layout-grid-margin);
+
+    @media screen and (max-height: 720px) {
+        min-height: 500px;
+        padding-bottom: 24px;
+    }
 }
 
 .exampleHeader {

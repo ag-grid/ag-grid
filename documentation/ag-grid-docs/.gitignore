@@ -3,6 +3,7 @@ dist/
 
 # generated types
 .astro/
+.playwright-network-cache/
 
 # dependencies
 node_modules/
@@ -19,3 +20,6 @@ pnpm-debug.log*
 
 # Temporary files
 tmp
+
+# Testing files
+test-results/

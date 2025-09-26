@@ -8,6 +8,7 @@ export default defineConfig({
     /* Run tests in files in parallel */
     fullyParallel: true,
     timeout: process.env.CI ? 60_000 : 10_000,
+    expect: { timeout: process.env.CI ? 10_000 : undefined },
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
     /* Retry on CI only */
@@ -39,7 +40,6 @@ export default defineConfig({
         /* Base URL to use in actions like `await page.goto('/')`. */
         // baseURL: 'https://grid-staging.ag-grid.com',
         baseURL: process.env.CI ? 'https://grid-staging.ag-grid.com' : 'https://localhost:4610',
-
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'off', // process.env.CI ? 'off' : 'retain-on-first-failure',
     },
@@ -50,15 +50,27 @@ export default defineConfig({
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
         },
-
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
+            testIgnore: [
+                // We test Vanilla and React rendering across all browsers, but to reduce duplication we only test the other variants in Chromium
+                '**/frameworks/angular-examples.spec.ts',
+                '**/frameworks/vue3-examples.spec.ts',
+                '**/frameworks/reactFunctional-examples.spec.ts',
+                '**/frameworks/typescript-examples.spec.ts',
+            ],
         },
-
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
+            testIgnore: [
+                // We test Vanilla and React rendering across all browsers, but to reduce duplication we only test the other variants in Chromium
+                '**/frameworks/angular-examples.spec.ts',
+                '**/frameworks/vue3-examples.spec.ts',
+                '**/frameworks/reactFunctional-examples.spec.ts',
+                '**/frameworks/typescript-examples.spec.ts',
+            ],
         },
 
         /* Test against mobile viewports. */

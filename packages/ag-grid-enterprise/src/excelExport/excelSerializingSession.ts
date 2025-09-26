@@ -54,7 +54,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     private readonly excelStyles: (ExcelStyle & { quotePrefix?: 1 })[];
 
-    private rows: ExcelRow[] = [];
+    private readonly rows: ExcelRow[] = [];
     private cols: ExcelColumn[];
     private columnsToExport: AgColumn[];
     private frozenRowCount: number = 0;
@@ -144,7 +144,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 header: string,
                 index: number,
                 span: number,
-                collapsibleRanges: number[][]
+                collapsibleGroupRanges: number[][]
             ) => {
                 const styleIds: string[] = this.config.styleLinker({
                     rowType: 'HEADER_GROUPING',
@@ -159,7 +159,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                         header,
                         span
                     ),
-                    collapsibleRanges,
+                    collapsibleRanges: collapsibleGroupRanges,
                 });
             },
         };
@@ -249,10 +249,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const padding = node.footer ? 1 : 0;
         const currentRow = _last(this.rows);
 
-        // Excel only supports up to 7 levels of outline
-        const outlineLevel = Math.min(node.level + padding, 7);
-
-        currentRow.outlineLevel = outlineLevel;
+        // if level is different than uiLevel, the parent is hidden
+        // due to `groupHideParentOfSingleChild`
+        if (node.uiLevel == null || node.level === node.uiLevel) {
+            // Excel only supports up to 7 levels of outline
+            const outlineLevel = Math.min(node.level + padding, 7);
+            currentRow.outlineLevel = outlineLevel;
+        }
 
         if (rowGroupExpandState === 'expanded') {
             return;
@@ -451,7 +454,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return 'f';
         }
 
-        if (style && style.dataType) {
+        if (style?.dataType) {
             switch (style.dataType.toLocaleLowerCase()) {
                 case 'formula':
                     return 'f';
@@ -574,7 +577,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private getStyleId(styleIds?: string[] | null): string | null {
-        if (!styleIds || !styleIds.length) {
+        if (!styleIds?.length) {
             return null;
         }
         if (styleIds.length === 1) {

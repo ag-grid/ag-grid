@@ -1,10 +1,10 @@
+import { _setAriaRowIndex, _setAriaRowSpan } from '../../agStack/utils/aria';
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent } from '../../events';
 import type { CellPosition } from '../../interfaces/iCellPosition';
-import { _setAriaRowIndex, _setAriaRowSpan } from '../../utils/aria';
-import { _isCellFocusSuppressed } from '../../utils/focus';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellComp } from '../cell/cellCtrl';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -51,10 +51,11 @@ export class SpannedCellCtrl extends CellCtrl {
      * When cell is spanning, ensure row index is also available on the cell
      */
     public override refreshAriaRowIndex(): void {
-        if (this.rowNode.rowIndex == null) {
+        const { eGui, rowNode } = this;
+        if (!eGui || rowNode.rowIndex == null) {
             return;
         }
-        _setAriaRowIndex(this.eGui, this.rowNode.rowIndex);
+        _setAriaRowIndex(eGui, rowNode.rowIndex);
     }
 
     /**

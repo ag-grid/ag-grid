@@ -1,3 +1,6 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import { _exists, _jsonEquals } from '../agStack/utils/generic';
+import { AgPromise } from '../agStack/utils/promise';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
     _getFilterCompKeys,
@@ -12,7 +15,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueGetterFunc } from '../entities/colDef';
 import type { BaseCellDataType, CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
-import type { AgEvent, ColumnEventType, FilterChangedEventSourceType } from '../events';
+import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import {
     _addGridCommonParams,
     _getGroupAggFiltering,
@@ -22,7 +25,6 @@ import {
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { isColumnFilterComp } from '../interfaces/iFilter';
 import type {
     BaseFilterParams,
     ColumnFilterState,
@@ -41,9 +43,8 @@ import type {
     IFilterDef,
     IFilterParams,
 } from '../interfaces/iFilter';
+import { isColumnFilterComp } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import { _exists, _jsonEquals } from '../utils/generic';
-import { AgPromise } from '../utils/promise';
 import { _error, _warn } from '../validation/logging';
 import type { FilterHandlerName, FilterUi, FilterWrapper, LegacyFilterWrapper } from './columnFilterUtils';
 import {
@@ -118,8 +119,8 @@ export class ColumnFilterService
 {
     beanName: BeanName = 'colFilter';
 
-    private allColumnFilters = new Map<string, FilterWrapper>();
-    private allColumnListeners = new Map<string, (() => null) | undefined>();
+    private readonly allColumnFilters = new Map<string, FilterWrapper>();
+    private readonly allColumnListeners = new Map<string, (() => null) | undefined>();
     private activeAggregateFilters: DoesFilterPassWrapper[] = [];
     private activeColumnFilters: DoesFilterPassWrapper[] = [];
 
@@ -138,22 +139,17 @@ export class ColumnFilterService
     /** This may not contain the model for non-handler columns */
     public model: FilterModel;
     /** This contains the UI state for handler columns */
-    private state: Map<string, FilterDisplayState> = new Map();
-    private handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } = {
-        ...FILTER_HANDLER_MAP,
-    };
+    private readonly state: Map<string, FilterDisplayState> = new Map();
+    private readonly handlerMap: { -readonly [K in keyof typeof FILTER_HANDLER_MAP]?: (typeof FILTER_HANDLER_MAP)[K] } =
+        {
+            ...FILTER_HANDLER_MAP,
+        };
     public isGlobalButtons: boolean = false;
     public activeFilterComps: Set<FilterComp> = new Set();
 
     public postConstruct(): void {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onColumnsChanged.bind(this),
-            beforeRefreshModel: ({ params, groupsChanged }) => {
-                // We listen to both row data updated and treeData changed as the SetFilter needs it
-                if (groupsChanged || params.rowDataUpdated) {
-                    this.onNewRowsLoaded('rowDataUpdated');
-                }
-            },
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
@@ -170,7 +166,16 @@ export class ColumnFilterService
         }
     }
 
-    public setModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
+    public refreshModel() {
+        // We listen to both row data updated and treeData changed as the SetFilter needs it
+        this.onNewRowsLoaded('rowDataUpdated');
+    }
+
+    public setModel(
+        model: FilterModel | null,
+        source: FilterChangedEventSourceType = 'api',
+        forceUpdateActive?: boolean
+    ): void {
         const { colModel, dataTypeSvc, filterManager } = this.beans;
         if (dataTypeSvc?.isPendingInference) {
             this.modelUpdates.push({ model, source });
@@ -234,6 +239,8 @@ export class ColumnFilterService
 
             if (columns.length > 0) {
                 filterManager?.onFilterChanged({ columns, source });
+            } else if (forceUpdateActive) {
+                this.updateActive('filterChanged');
             }
         });
     }
@@ -282,7 +289,7 @@ export class ColumnFilterService
                 });
             }
         }
-        this.setModel(model, source);
+        this.setModel(model, source, true);
     }
 
     public getState(): ColumnFilterState | undefined {
@@ -601,9 +608,11 @@ export class ColumnFilterService
                 );
             }
         });
-        AgPromise.all(promises)
-            .then(() => this.updateFilterFlagInColumns(source, { afterDataChange: true }))
-            .then(() => this.updateActiveFilters());
+        AgPromise.all(promises).then(() => this.updateActive(source, { afterDataChange: true }));
+    }
+
+    private updateActive(source: ColumnEventType, additionalEventAttributes?: any): void {
+        this.updateFilterFlagInColumns(source, additionalEventAttributes).then(() => this.updateActiveFilters());
     }
 
     public createGetValue(
@@ -829,7 +838,7 @@ export class ColumnFilterService
             };
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
-                this.refreshHandlerAndUi(column, model, 'ui').then(() => {
+                this.refreshHandlerAndUi(column, model, 'ui', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -932,6 +941,7 @@ export class ColumnFilterService
     }
 
     private createHandlerFunc(
+        column: AgColumn,
         filterDef: IFilterDef,
         defaultFilter: string
     ):
@@ -962,7 +972,8 @@ export class ColumnFilterService
             }
             return typeof filter === 'string' ? filter : undefined;
         };
-        const providedFilterHandler = gos.get('enableFilterHandlers') ? getFilterHandlerFromDef(filterDef) : undefined;
+        const enableFilterHandlers = gos.get('enableFilterHandlers');
+        const providedFilterHandler = enableFilterHandlers ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
             this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
@@ -1001,7 +1012,15 @@ export class ColumnFilterService
             }
         }
         if (!filterHandler) {
-            return undefined;
+            if (!enableFilterHandlers) {
+                return undefined;
+            }
+            if (_isClientSideRowModel(gos)) {
+                _warn(277, { colId: column.getColId() });
+            }
+            // create dummy handler for server side,
+            // or to prevent blowing up for CSRM custom with missing props
+            return DUMMY_HANDLER;
         }
         return { filterHandler, handlerNameOrCallback: doesFilterPass ?? handlerName };
     }
@@ -1020,18 +1039,9 @@ export class ColumnFilterService
                   | ((params: DoesFilterPassParams) => boolean);
           }
         | undefined {
-        let handlerFunc = this.createHandlerFunc(filterDef, defaultFilter);
+        const handlerFunc = this.createHandlerFunc(column, filterDef, defaultFilter);
         if (!handlerFunc) {
-            const gos = this.gos;
-            if (!gos.get('enableFilterHandlers')) {
-                return undefined;
-            }
-            if (_isClientSideRowModel(gos)) {
-                _warn(277, { colId: column.getColId() });
-            }
-            // create dummy handler for server side,
-            // or to prevent blowing up for CSRM custom with missing props
-            handlerFunc = DUMMY_HANDLER;
+            return undefined;
         }
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             this.beans.userCompFactory,
@@ -1070,7 +1080,7 @@ export class ColumnFilterService
                 this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.updateStoredModel(colId, newModel);
-                this.refreshHandlerAndUi(column, newModel, 'handler').then(() => {
+                this.refreshHandlerAndUi(column, newModel, 'handler', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             },
@@ -1168,7 +1178,7 @@ export class ColumnFilterService
             displayParams.model = _getFilterModel(this.model, colId);
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
-                this.refreshHandlerAndUi(column, model, 'floating', true).then(() => {
+                this.refreshHandlerAndUi(column, model, 'floating', true, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -1314,7 +1324,7 @@ export class ColumnFilterService
             : colDef;
 
         const handlerFunc = isFilterAllowed
-            ? this.createHandlerFunc(filterDef, this.getDefaultFilter(column))
+            ? this.createHandlerFunc(column, filterDef, this.getDefaultFilter(column))
             : undefined;
         const isHandler = !!handlerFunc;
         const wasHandler = filterWrapper.isHandler;
@@ -1408,7 +1418,8 @@ export class ColumnFilterService
         column: AgColumn,
         model: any,
         source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler',
-        createIfMissing?: boolean
+        createIfMissing?: boolean,
+        additionalEventAttributes?: any
     ): AgPromise<void> {
         const filterWrapper = this.cachedFilter(column);
 
@@ -1445,7 +1456,8 @@ export class ColumnFilterService
             handlerParams,
             model,
             this.state.get(column.getColId()) ?? { model },
-            source
+            source,
+            additionalEventAttributes
         );
     }
 
@@ -1695,15 +1707,19 @@ export class ColumnFilterService
 
     public updateModel(column: AgColumn, action: FilterAction, additionalEventAttributes?: any): void {
         const colId = column.getColId();
+        const filterWrapper = this.cachedFilter(column);
         const getFilterUi = () =>
-            this.cachedFilter(column)?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
+            filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
         _updateFilterModel(
             action,
             getFilterUi,
             () => _getFilterModel(this.model, colId),
             () => this.state.get(colId),
             (state) => this.updateState(column, state),
-            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes)
+            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
+            filterWrapper?.isHandler
+                ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
+                : undefined
         );
     }
 
@@ -1726,7 +1742,8 @@ export class ColumnFilterService
                             action,
                         });
                         promises.push(this.refreshHandlerAndUi(column, model, 'ui'));
-                    }
+                    },
+                    filter?.isHandler ? filter.handler.processModelToApply?.bind(filter.handler) : undefined
                 );
             }
         });

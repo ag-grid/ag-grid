@@ -1,16 +1,17 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import type { ElementParams } from '../../utils/dom';
+import type { DragListenerParams } from '../../agStack/interfaces/iDrag';
 import {
-    _createElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
     _isVisible,
     _observeResize,
     _setFixedHeight,
     _setFixedWidth,
-} from '../../utils/dom';
+} from '../../agStack/utils/dom';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { DragService } from '../../dragAndDrop/dragService';
+import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
 import type { PopupService } from '../../widgets/popupService';
 
 type ResizerRefPrefix =
@@ -81,7 +82,7 @@ interface MappedResizer {
     dragSource?: DragListenerParams;
 }
 
-export type PositionableFeatureEvent = 'resize';
+type PositionableFeatureEvent = 'resize';
 export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     protected popupSvc?: PopupService;
     private dragSvc?: DragService;
@@ -96,12 +97,12 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         y: 0,
     };
 
-    private position = {
+    private readonly position = {
         x: 0,
         y: 0,
     };
 
-    private lastSize = {
+    private readonly lastSize = {
         width: -1,
         height: -1,
     };
@@ -116,9 +117,9 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     private minHeight?: number;
     private positioned = false;
     private resizersAdded = false;
-    private config: PositionableOptions;
+    private readonly config: PositionableOptions;
 
-    private resizeListeners: DragListenerParams[] = [];
+    private readonly resizeListeners: DragListenerParams[] = [];
     private moveElementDragListener: DragListenerParams | undefined;
 
     private offsetParent: HTMLElement;

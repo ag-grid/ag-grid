@@ -1,7 +1,8 @@
+import { KeyCode } from '../../../agStack/constants/keyCode';
+import { _last } from '../../../agStack/utils/array';
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
-import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
@@ -12,7 +13,6 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
-import { _last } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
@@ -39,7 +39,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
 
-    public setComp(
+    public override wireComp(
         comp: IHeaderGroupCellComp,
         eGui: HTMLElement,
         eResize: HTMLElement,
@@ -337,7 +337,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         listener();
     }
 
-    private onSuppressColMoveChange = () => {
+    private readonly onSuppressColMoveChange = () => {
         if (!this.isAlive() || this.isSuppressMoving()) {
             this.removeDragSource();
         } else {

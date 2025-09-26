@@ -1,3 +1,4 @@
+import { _escapeString } from 'ag-grid-community';
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 import type { ExcelDataTable } from '../../assets/excelInterfaces';
@@ -47,7 +48,7 @@ const tableFactory: ExcelOOXMLTemplate = {
                     'mc:Ignorable': 'xr xr3',
                     'xmlns:xr': 'http://schemas.microsoft.com/office/spreadsheetml/2014/revision',
                     'xmlns:xr3': 'http://schemas.microsoft.com/office/spreadsheetml/2016/revision3',
-                    name,
+                    name: displayNameToUse,
                     displayName: displayNameToUse,
                     ref,
                     totalsRowShown: 0,
@@ -76,7 +77,7 @@ const tableFactory: ExcelOOXMLTemplate = {
                         properties: {
                             rawMap: {
                                 id: (idx + 1).toString(),
-                                name: sanitizeTableName(col),
+                                name: _escapeString(sanitizeTableName(col)),
                                 dataCellStyle: 'Normal',
                             },
                         },

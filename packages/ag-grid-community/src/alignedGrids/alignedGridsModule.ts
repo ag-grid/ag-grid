@@ -1,3 +1,4 @@
+import { ColumnApiModule } from '../columns/columnModule';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { AlignedGridsService } from './alignedGridsService';
@@ -10,4 +11,5 @@ export const AlignedGridsModule: _ModuleWithoutApi = {
     moduleName: 'AlignedGrids',
     version: VERSION,
     beans: [AlignedGridsService],
+    dependsOn: [ColumnApiModule],
 };

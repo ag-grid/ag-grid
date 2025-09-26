@@ -1,0 +1,28 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ReturnToSupportPage from '@components/campaigns-components/ReturnToSupportPage';
+import { getEntry, type CollectionEntry } from 'astro:content';
+
+const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
+
+// Tracking / Analytics
+const utmSource = 'ag-grid.com';
+const utmMedium = 'marketing-campaign-landing-page';
+const utmCampaign = 'return-to-support-campaign';
+const utm = `?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}`;
+---
+
+<!-- Oswald font -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet" />
+
+<Layout
+    title={'Welcome back to better support & new features'}
+    description={'Renew your AG Grid support to unlock the latest features, updates, and dedicated support.'}
+    showDocsNav={false}
+    showSearchBar={true}
+    hidePageFromSearchEngines={true}
+>
+    <ReturnToSupportPage versionsData={versionsData} utm={utm} client:load />
+</Layout>

@@ -22,9 +22,6 @@ Ensure `maxBlocksInCache` is not set when using dynamic row height.
 To have the grid calculate the row height based on the cell contents, set `autoHeight=true` on columns that require
 variable height. The grid will calculate the height once when the data is loaded into the grid.
 
-This is different to the [Client-Side Row Model](./row-models/#client-side) where the grid height can be changed. For
-Server-Side Row Model the row height cannot be changed once it is set.
-
 In the example below, Column A & B have `autoHeight=true` and `wrapText=true`. See [Row Height](./row-height/) for
 details on these properties.
 
@@ -34,6 +31,19 @@ details on these properties.
 Ensure `maxBlocksInCache` is not set when using auto row height.
 {% /note %}
 
+## Changing Row Height
+
+To dynamically set or restore row heights in the Server-Side Row Model, use `setRowHeight()` to apply custom heights to specific rows and `resetRowHeights()` to revert all rows to the values calculated by the `getRowHeight()` in Grid Options. See [Changing Row Height](./row-height/#rownodesetrowheightheight-and-apionrowheightchanged) for more.
+
+{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["resetRowHeights"] /%}
+
+The following example demonstrates this functionality:
+
+- Clicking on a row sets its height to `100px` using `setRowHeight()`.
+- Clicking the "Reset Row Heights" button resets all rows to their original heights using `resetRowHeights()`.
+
+{% gridExampleRunner title="Reset Row Height Example" name="resetting-row-height" exampleHeight=630 /%}
+
 ## Next Up
 
-Continue to the next section to learn how to combine [Master Detail](./server-side-model-master-detail/) with the SSRM.
+Continue to the next section to learn how to work with [Tree Data](./server-side-model-tree-data/).

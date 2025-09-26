@@ -35,7 +35,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private colNames: ColumnNameService;
     private dataTypeSvc?: DataTypeService;
 
-    private filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
+    private readonly filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
         number: (model) => _toStringOrNull(model.filter) ?? '',
         date: (model) => {
             const column = this.colModel.getColDefCol(model.colId);
@@ -61,7 +61,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         text: () => null,
     };
 
-    private operandModelValueGetters: Record<
+    private readonly operandModelValueGetters: Record<
         BaseCellDataType,
         (op: string, cln: AgColumn, dt: BaseCellDataType) => number | string | null
     > = {

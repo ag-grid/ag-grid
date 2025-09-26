@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue3",
   "description": "AG Grid Vue 3 Component",
-  "version": "34.0.0",
+  "version": "34.2.0-beta.20250921.2005",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "files": [
@@ -36,14 +36,13 @@
   "scripts": {
     "clean": "rimraf dist lib",
     "dev": "vite",
-    "update-properties": "node updateGridAndColumnProperties.cjs",
-    "build": "run-p update-properties type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force --declaration --emitDeclarationOnly"
+    "build": "run-p type-check \"build-only {@}\" --",
+    "type-check": "vue-tsc --build --force --declaration --emitDeclarationOnly",
+    "build-only": "vite build"
   },
   "dependencies": {
-    "ag-grid-community": "34.0.0"
+    "ag-grid-community": "34.2.0-beta.20250921.2005"
   },
   "devDependencies": {
     "vue": "^3.5.0",

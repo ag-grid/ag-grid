@@ -1,5 +1,6 @@
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
+import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
 import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
 import type { SortModelItem } from './iSortModelItem';
@@ -145,10 +146,6 @@ export interface ColumnGroupState {
     openColumnGroupIds: string[];
 }
 
-export interface RowGroupExpansionState {
-    expandedRowGroupIds: string[];
-}
-
 export interface RowPinningState {
     /** Row IDs of rows pinned to the top container */
     top: string[];
@@ -192,6 +189,8 @@ export interface GridState {
     rowGroup?: RowGroupState;
     /** Includes currently expanded group rows */
     rowGroupExpansion?: RowGroupExpansionState;
+    /** Includes currently expanded group rows when using ssrmExpandAllAffectsAllRows */
+    ssrmRowGroupExpansion?: RowGroupExpansionState | RowGroupBulkExpansionState;
     /**
      * Includes currently selected rows.
      * For Server-Side Row Model, will be `ServerSideRowSelectionState | ServerSideRowGroupSelectionState`,

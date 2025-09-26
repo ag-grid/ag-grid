@@ -5,39 +5,34 @@ on:
     branches:
       - 'latest'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-      - 'seanlandsman-patch-9'
   pull_request:
     branches:
       - 'latest'
       - 'next'
       - 'b[0-9][0-9]?.[0-9][0-9]?.[0-9][0-9]?'
-      - 'seanlandsman-patch-9'
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
     inputs:
-      run_docs:
+      skip_docs:
         description: 'Skip docs build & link checker'
-        type: 'choice'
+        type: boolean
+        default: false
         required: true
-        default: 'true'
-        options:
-          - 'true'
-          - 'false'
-      run_bundle_size:
+      skip_bundle_size:
         description: 'Skip bundle size tests'
-        type: 'choice'
+        type: boolean
+        default: true
         required: true
-        default: 'true'
-        options:
-          - 'true'
-          - 'false'
+      run_package_tests:
+        description: 'Run package tests'
+        type: boolean
+        default: false
+        required: true
       clean_checkout:
         description: 'Disable all caching'
-        type: 'choice'
+        type: boolean
+        default: false
         required: true
-        default: 'false'
-        options:
-          - 'true'
-          - 'false'
       nx_command:
         type: 'choice'
         required: true
@@ -49,6 +44,8 @@ env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "http://52.50.158.57:4873"
   CI: true
@@ -64,6 +61,7 @@ permissions:
 jobs:
   build_lint:
     name: Build & Lint
+    if: github.event.pull_request.draft == false
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
       build: ${{ steps.build.outcome || '' }}
@@ -95,7 +93,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-nx
         with:
-          cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+          cache_mode: ${{ inputs.clean_checkout && 'off' || 'rw' }}
 
       - name: nx format:check
         id: format
@@ -134,7 +132,7 @@ jobs:
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
           
-          matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+          matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
           echo "Test matrix determined to be: ${matrix}"
@@ -154,7 +152,7 @@ jobs:
           # 3 is optimal atm for bundle tests
           bundle_count=3
           
-          bundle_matrix=$(node ./scripts/test/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+          bundle_matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
           echo "bundle Test matrix determined to be: ${bundle_matrix}"
@@ -218,11 +216,11 @@ jobs:
         id: pack-verify
         run: |
           yarn nx ${{ github.event.inputs.nx_command || 'affected' }} -t pack:verify --prod
-      - name: andrew checker
+      - name: Assert No Debugger
         if: matrix.shard == 0
-        id: andrew
+        id: assertNoDebugger
         run: |
-          ./scripts/andrewChecker.sh
+          ./scripts/assertNoDebugger.sh
       - name: Persist test results
         if: always() && matrix.shard != 0
         uses: actions/upload-artifact@v4
@@ -277,7 +275,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_bundle_size_tests }}
+    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_bundle_size }}
     strategy:
       matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
       fail-fast: false
@@ -323,7 +321,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
     needs: build_lint
-    if: needs.build_lint.result == 'success' && ${{ github.event.inputs.run_docs }}
+    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     env:
@@ -383,7 +381,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
-    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
+    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release') || inputs.run_package_tests
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -411,45 +409,10 @@ jobs:
         if: matrix.framework != 'none'
         run: yarn nx run-many -t test:package -p ${{ matrix.framework }}-package-tests -c=staging
 
-  angular_fw_pkg_test:
-    runs-on: ubuntu-24.04
-    name: Angular Package Tests
-    needs: build_lint
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.build_lint.outputs.test_angular_pkg_matrix )}}
-    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release')
-    env:
-      NX_BASE: ${{ needs.init.outputs.nx_base }}
-    steps:
-      - name: Checkout
-        id: checkout
-        if: matrix.framework != 'none'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
-      - name: Setup
-        id: setup
-        if: matrix.framework != 'none'
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: ro
-
-      - name: nx package:test
-        id: package-test
-        if: matrix.framework != 'none'
-        run: yarn nx run-many -t test:package:shard-${{ matrix.shard }} -p angular-package-tests -c staging
-
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, angular_fw_pkg_test ]
-    if: cancelled() != true
+    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
+    if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
       actions: read
@@ -516,6 +479,10 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
           fi
           echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
 
@@ -563,11 +530,12 @@ jobs:
       - name: SlackBot
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest'
         env:
-          GRID_TEAM_CITY_CHANNEL: ${{ secrets.GRID_TEAM_CITY_CHANNEL }}
+          CI_GRID_GATE_CHANNEL: ${{ env.SLACK_CHANNEL }}
           CHARTS_TEAM_CITY_CHANNEL: ${{ secrets.CHARTS_TEAM_CITY_CHANNEL }}
           WEBSITE_STATUS_CHANNEL: ${{ secrets.WEBSITE_STATUS_CHANNEL }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_DEBUG_CHANNEL: ${{ secrets.SLACK_DEBUG_CHANNEL }}
+          SLACK_GITHUB_MAPPING: ${{ secrets.SLACK_GITHUB_MAPPING }}
           RUN_CONTEXT: >
             {
               "workflow": "${{ github.workflow }}",
@@ -585,16 +553,17 @@ jobs:
                     "Lint": "${{ needs.build_lint.outputs.lint }}",
                     "Format": "${{ needs.build_lint.outputs.format }}",
                     "Test": "${{ needs.test.result }}",
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",            
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
-                    "Angular_Pkg": "${{ needs.angular_fw_pkg_test.result }}"
+                    "SonarCommunity": "${{ needs.sonar_community.result }}",
+                    "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
                 }
             }
         run: |
           npx ts-node ./scripts/agBotSlackMessage.ts --auth-token "$SLACK_BOT_OAUTH_TOKEN" \
-            --grid-channel "$GRID_TEAM_CITY_CHANNEL" \
+            --grid-channel "$CI_GRID_GATE_CHANNEL" \
             --charts-channel "$CHARTS_TEAM_CITY_CHANNEL" \
             --website-status-channel "$WEBSITE_STATUS_CHANNEL" \
             --debug-channel "$SLACK_DEBUG_CHANNEL" \
@@ -605,3 +574,54 @@ jobs:
         run: |
             echo "Workflow failed, failing the build."
             exit 1
+
+  sonar_community:
+    name: SonarQube Community
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: SonarQube Analysis Community
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONAR_COMMUNITY_LOGIN }}
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-community,./ag-grid-angular/projects/ag-grid-angular,./ag-grid-react,./ag-grid-vue3
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-community/tsconfig.lib.json,./ag-grid-angular/projects/ag-grid-angular/tsconfig.lib.prod.json,./ag-grid-react/tsconfig.json,./ag-grid-vue3/tsconfig.json
+            -Dsonar.projectKey=ag-grid_community_latest
+            -Dsonar.exclusions=**/__tests__/*,**/test.ts,**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*
+
+  sonar_enterprise:
+    name: SonarQube Enterprise
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: SonarQube Analysis Enterprise
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_ENTERPRISE_LOGIN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          projectBaseDir: ./packages/
+          args: >
+            -Dsonar.javascript.node.maxspace=8192
+            -Dsonar.organization=ag-grid
+            -Dsonar.sources=./ag-grid-enterprise
+            -Dsonar.typescript.tsconfigPaths=./ag-grid-enterprise/tsconfig.lib.json
+            -Dsonar.branch.name=master
+            -Dsonar.projectKey=ag-grid-enterprise-latest
+            -Dsonar.exclusions=**/tsconfig.typings.json,**/LICENSE.html,**/*.md,**/dist,**/node_modules,**/typings,**/lib,**/*spec.js
+            -Dsonar.scanner.force-deprecated-java-version=true
+            -Dsonar.coverage.exclusions=**/*

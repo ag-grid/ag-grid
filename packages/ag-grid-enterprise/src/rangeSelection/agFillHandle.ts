@@ -12,6 +12,7 @@ import {
     _addGridCommonParams,
     _getCellByPosition,
     _getFillHandle,
+    _getLastRow,
     _getNormalisedMousePosition,
     _getRowAbove,
     _getRowBelow,
@@ -19,6 +20,7 @@ import {
     _isRowBefore,
     _isSameRow,
     _last,
+    _stopPropagationForAgGrid,
     _toStringOrNull,
     _warn,
     isRowNumberCol,
@@ -47,10 +49,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private initialPosition: CellPosition | undefined;
     private initialXY: { x: number; y: number } | null;
     private lastCellMarked: CellPosition | undefined;
-    private markedCells: CellCtrl[] = [];
-    private cellValues: FillValues[][] = [];
+    private readonly markedCells: CellCtrl[] = [];
+    private readonly cellValues: FillValues[][] = [];
 
-    private dragAxis: FillDirection;
+    private dragAxis?: FillDirection;
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
@@ -59,6 +61,51 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     constructor() {
         super(FillHandleElement);
+    }
+
+    public override postConstruct(): void {
+        super.postConstruct();
+
+        this.addManagedElementListeners(this.getGui(), {
+            dblclick: this.onDblClick.bind(this),
+        });
+    }
+
+    private onDblClick(e: MouseEvent) {
+        // Stop propagation here, we don't want other services (e.g. editing) reacting to this event
+        _stopPropagationForAgGrid(e);
+
+        const { cellRange: initialRange, rangeStartRow, beans } = this;
+        const { rangeSvc, visibleCols } = beans;
+        const lastRow = _getLastRow(beans);
+
+        if (!lastRow) {
+            return;
+        }
+
+        const fillHandleDirection = this.getFillHandleDirection();
+        this.dragAxis = fillHandleDirection === 'xy' ? 'y' : fillHandleDirection;
+
+        const finalRange = rangeSvc?.createCellRangeFromCellRangeParams({
+            rowStartIndex: rangeStartRow.rowIndex,
+            rowStartPinned: rangeStartRow.rowPinned,
+            columnStart: initialRange.columns[0],
+            rowEndIndex: this.dragAxis === 'x' ? initialRange.endRow?.rowIndex ?? null : lastRow.rowIndex,
+            rowEndPinned: this.dragAxis === 'x' ? initialRange.endRow?.rowPinned : lastRow.rowPinned,
+            columnEnd: this.dragAxis === 'x' ? _last(visibleCols.allCols) : _last(initialRange.columns),
+        });
+
+        this.isUp = false;
+        this.isLeft = false;
+
+        if (finalRange) {
+            this.performFill({
+                event: e,
+                initialRange,
+                finalRange,
+            });
+        }
+        this.dragAxis = undefined;
     }
 
     protected override updateValuesOnMove(e: MouseEvent) {
@@ -115,12 +162,15 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         const isX = this.dragAxis === 'x';
-        const { cellRange: initialRange, rangeStartRow, rangeEndRow, beans } = this;
+        const {
+            cellRange: initialRange,
+            rangeStartRow,
+            rangeEndRow,
+            beans: { rangeSvc },
+        } = this;
         const colLen = initialRange.columns.length;
 
         let finalRange: CellRange | undefined;
-
-        const { rangeSvc, eventSvc } = beans;
 
         if (!this.isUp && !this.isLeft) {
             finalRange = rangeSvc!.createCellRangeFromCellRangeParams({
@@ -146,17 +196,11 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         if (finalRange) {
             // raising fill events for undo / redo
-            eventSvc.dispatchEvent({
-                type: 'fillStart',
-            });
-
-            this.handleValueChanged(initialRange, finalRange, e);
-            rangeSvc!.setCellRanges([finalRange]);
-
-            eventSvc.dispatchEvent({
-                type: 'fillEnd',
-                initialRange: initialRange,
-                finalRange: finalRange,
+            this.performFill({
+                event: e,
+                initialRange,
+                finalRange,
+                shouldUpdateRange: true,
             });
         }
     }
@@ -168,6 +212,34 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         this.clearMarkedPath();
+    }
+
+    private performFill({
+        event,
+        initialRange,
+        finalRange,
+        shouldUpdateRange,
+    }: {
+        event: MouseEvent;
+        initialRange: CellRange;
+        finalRange: CellRange;
+        shouldUpdateRange?: boolean;
+    }): void {
+        const { eventSvc, rangeSvc } = this.beans;
+
+        eventSvc.dispatchEvent({ type: 'fillStart' });
+
+        this.handleValueChanged(initialRange, finalRange, event);
+
+        if (shouldUpdateRange) {
+            rangeSvc!.setCellRanges([finalRange]);
+        }
+
+        eventSvc.dispatchEvent({
+            type: 'fillEnd',
+            initialRange,
+            finalRange,
+        });
     }
 
     private getFillHandleDirection(): 'x' | 'y' | 'xy' {

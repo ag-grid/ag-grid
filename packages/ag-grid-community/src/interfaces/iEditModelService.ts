@@ -1,3 +1,4 @@
+import type { ICellEditor } from './iCellEditor';
 import type { Column } from './iColumn';
 import type { EditPosition, EditRowPosition } from './iEditService';
 import type { IRowNode } from './iRowNode';
@@ -9,9 +10,16 @@ export type EditValidation = {
 };
 
 export type EditValue = {
-    newValue: any;
-    oldValue: any;
+    editorValue: any;
+    pendingValue: any;
+    sourceValue: any;
     state: EditState;
+    editorState: {
+        cellStartedEditing?: boolean;
+        cellStoppedEditing?: boolean;
+        isCancelAfterEnd?: ReturnType<NonNullable<ICellEditor['isCancelAfterEnd']>> | undefined;
+        isCancelBeforeStart?: ReturnType<NonNullable<ICellEditor['isCancelBeforeStart']>> | undefined;
+    };
 };
 
 export type EditPositionValue = Required<EditPosition> & EditValue;
@@ -32,15 +40,14 @@ export interface IEditModelService {
     suspend(suspend: boolean): void;
     removeEdits({ rowNode, column }: EditPosition): void;
 
-    getEdit(position: EditPosition): Readonly<EditValue> | undefined;
+    getEdit(position: EditPosition, copy?: boolean): Readonly<EditValue> | undefined;
     getEditPositions(editMap?: EditMap): EditPositionValue[];
     getEditRow(rowNode: IRowNode, params?: GetEditsParams): EditRow | undefined;
     getEditRowDataValue(rowNode: IRowNode, params?: GetEditsParams): any;
     getEditMap(copy?: boolean): EditMap;
 
-    setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): void;
+    setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue>;
     setEditMap(edits: EditMap): void;
-    setState(position: EditPosition, state: EditState): void;
 
     clearEditValue(position: EditPosition): void;
     clear(): void;

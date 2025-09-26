@@ -1,21 +1,22 @@
+import { KeyCode } from '../../../agStack/constants/keyCode';
+import type { AriaSortState } from '../../../agStack/utils/aria';
+import { _getAriaSortState } from '../../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../../agStack/utils/document';
+import { _setDisplayed } from '../../../agStack/utils/dom';
+import { _isKeyboardMode } from '../../../agStack/utils/focus';
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
-import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
-import type { ColumnSortState } from '../../../utils/aria';
-import { _getAriaSortState } from '../../../utils/aria';
-import { _setDisplayed } from '../../../utils/dom';
-import { _isKeyboardMode } from '../../../utils/focus';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
@@ -25,7 +26,7 @@ import type { HeaderComp } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    setAriaSort(sort?: ColumnSortState): void;
+    setAriaSort(sort?: AriaSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
     refreshSelectAllGui(): void;
@@ -56,10 +57,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private userCompDetails: UserCompDetails;
 
     private userHeaderClasses: Set<string> = new Set();
-    private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
+    private readonly ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
-    public setComp(
+    public override wireComp(
         comp: IHeaderCellComp,
         eGui: HTMLElement,
         eResize: HTMLElement,
@@ -552,8 +553,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         comp.toggleCss('ag-header-span-total', isSpanningTotal);
 
+        // span to this level
+        const indexToStartSpanning = (this.column.getFirstRealParent()?.getLevel() ?? -1) + 1;
+        const rowsToSpan = groupHeaderHeight.length - indexToStartSpanning;
         let extraHeight = 0;
-        for (let i = 0; i < numberOfParents; i++) {
+        for (let i = 0; i < rowsToSpan; i++) {
             extraHeight += groupHeaderHeight[groupHeaderHeight.length - 1 - i];
         }
 

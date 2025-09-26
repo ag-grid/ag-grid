@@ -5,6 +5,7 @@
 }
 
 .exampleWrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     overflow: visible;
@@ -25,6 +26,11 @@
             --ag-grid-size: 6px;
         }
     }
+
+    @media screen and (max-height: 720px) {
+        min-height: 500px !important; // !important fix for darkmode specificity
+        padding-bottom: $spacing-size-6;
+    }
 }
 
 #{$selector-darkmode} .starIcon {
@@ -36,14 +42,4 @@
     flex: 1 1 auto;
     overflow: hidden;
     display: flex;
-}
-
-.messages {
-    padding-top: $spacing-size-4;
-    padding-left: $spacing-size-4;
-    display: none;
-
-    &.show {
-        display: inline;
-    }
 }

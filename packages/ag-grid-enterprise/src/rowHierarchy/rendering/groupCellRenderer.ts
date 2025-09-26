@@ -29,7 +29,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private readonly eChildCount: HTMLElement = RefPlaceholder;
 
     // this cell renderer
-    private innerCellRenderer: ICellRendererComp;
+    private readonly innerCellRenderer: ICellRendererComp;
 
     constructor() {
         super(GroupCellRendererElement);

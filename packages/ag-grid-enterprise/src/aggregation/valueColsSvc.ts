@@ -44,7 +44,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
         },
     } as const;
 
-    private modifyColumnsNoEventsCallbacks = {
+    private readonly modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => this.columns.push(column),
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };

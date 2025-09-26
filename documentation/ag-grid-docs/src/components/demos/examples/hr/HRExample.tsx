@@ -2,8 +2,6 @@ import { type FunctionComponent, useCallback, useMemo, useRef, useState } from '
 
 import type { ColDef, GetDataPath, ValueFormatterFunc, ValueFormatterParams } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
     ExcelExportModule,
     MasterDetailModule,
@@ -149,7 +147,6 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             <div className={styles.container}>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
-                        theme="legacy"
                         ref={gridRef}
                         columnDefs={colDefs}
                         rowData={rowData}
