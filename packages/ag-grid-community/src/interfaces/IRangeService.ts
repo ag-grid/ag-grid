@@ -22,7 +22,7 @@ export interface IRangeService {
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;
     areAllRangesAbleToMerge(): boolean;
-    onDragStart(mouseEvent: MouseEvent): void;
+    onDragStart(mouseEvent: MouseEvent): boolean;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): CellRange[];

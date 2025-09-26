@@ -128,10 +128,15 @@ export abstract class BaseDragAndDropService<
         }
     }
 
-    private onDragStart(dragSource: TDragSource, mouseEvent: MouseEvent): void {
+    private onDragStart(dragSource: TDragSource, mouseEvent: MouseEvent): boolean {
+        const dragItem = dragSource.getDragItem();
+        if (dragItem == null) {
+            return false;
+        }
+
         this.lastMouseEvent = mouseEvent;
         this.dragSource = dragSource;
-        this.dragItem = dragSource.getDragItem();
+        this.dragItem = dragItem;
 
         const rect = dragSource.eElement.getBoundingClientRect();
         this.dragInitialSourcePointerOffsetX = mouseEvent.clientX - rect.left;
@@ -144,6 +149,8 @@ export abstract class BaseDragAndDropService<
         }
 
         this.createAndUpdateDragImageComp(dragSource);
+
+        return true;
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {

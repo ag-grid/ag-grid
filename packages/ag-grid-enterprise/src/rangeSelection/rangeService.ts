@@ -130,13 +130,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     // Drag And Drop Target Methods
-    public onDragStart(mouseEvent: MouseEvent): void {
+    public onDragStart(mouseEvent: MouseEvent): boolean {
         const gos = this.gos;
         if (
             !_isCellSelectionEnabled(gos) ||
             _getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)
         ) {
-            return;
+            return false;
         }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
@@ -160,7 +160,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         if (!this.lastCellHovered) {
-            return;
+            return true;
         }
 
         this.dragging = true;
@@ -186,7 +186,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             const columns = this.getColumnsFromModel([this.lastCellHovered.column] as AgColumn[]);
 
             if (!columns?.length) {
-                return;
+                return true;
             }
 
             this.draggingRange = {
@@ -204,6 +204,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             .eBodyViewport.addEventListener('scroll', this.bodyScrollListener, { passive: true });
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
+
+        return true;
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {

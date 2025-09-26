@@ -274,7 +274,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private getAllMovingColumns(draggingEvent: GridDraggingEvent, useSplit: boolean = false): AgColumn[] {
-        const dragItem = draggingEvent.dragSource.getDragItem();
+        const { dragItem } = draggingEvent;
         let columns: AgColumn[] | null = null;
 
         if (useSplit) {

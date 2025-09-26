@@ -353,13 +353,16 @@ export class BaseDragService<
                 return;
             }
 
+            if (dragSource.onDragStart(start) === false) {
+                this.cancelDrag();
+                return;
+            }
+
             this.dragging = true;
             this.eventSvc.dispatchEvent({
                 type: 'dragStarted',
                 target: dragSource.eElement,
             });
-
-            dragSource.onDragStart(start);
 
             // we need ONE drag action at the start event, so that we are guaranteed the drop target
             // at the start gets notified. this is because the drag can start outside of the element

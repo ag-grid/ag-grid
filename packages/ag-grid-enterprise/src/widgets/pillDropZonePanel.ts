@@ -311,7 +311,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.state = 'rearrangeItems';
 
-        this.potentialDndItems = this.getItems(draggingEvent.dragSource.getDragItem());
+        this.potentialDndItems = this.getItems(draggingEvent.dragItem);
         this.refreshGui();
 
         this.checkInsertIndex(draggingEvent);
@@ -330,7 +330,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
     private onDragEnter(draggingEvent: GridDraggingEvent): void {
         // this will contain all items that are potential drops
-        const dragItems = this.getItems(draggingEvent.dragSource.getDragItem());
+        const dragItems = this.getItems(draggingEvent.dragItem);
         this.state = 'newItemsIn';
         // take out items that are not droppable
         const goodDragItems = dragItems.filter((item) => this.isItemDroppable(item, draggingEvent));
@@ -366,7 +366,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // some place else, then we don't, as it was only 'asking'
 
         if (this.state === 'rearrangeItems') {
-            const items = this.getItems(draggingEvent.dragSource.getDragItem());
+            const items = this.getItems(draggingEvent.dragItem);
             this.removeItems(items);
         }
 

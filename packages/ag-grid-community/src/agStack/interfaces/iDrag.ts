@@ -15,8 +15,8 @@ export interface DragListenerParams {
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */
     eElement: Element;
-    /** Callback for drag starting */
-    onDragStart: (mouseEvent: MouseEvent | Touch) => void;
+    /** Callback for drag starting. Return false to cancel the drag operation. */
+    onDragStart: (mouseEvent: MouseEvent | Touch) => boolean;
     /** Callback for drag stopping */
     onDragStop: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for drag cancel */

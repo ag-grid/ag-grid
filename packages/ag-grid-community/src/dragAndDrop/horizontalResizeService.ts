@@ -40,13 +40,15 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
         return finishedWithResizeFunc;
     }
 
-    private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
+    private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): boolean {
         this.dragStartX = mouseEvent.clientX;
 
         this.setResizeIcons();
 
         const shiftKey = mouseEvent instanceof MouseEvent && mouseEvent.shiftKey === true;
         params.onResizeStart(shiftKey);
+
+        return true;
     }
 
     private setResizeIcons(): void {

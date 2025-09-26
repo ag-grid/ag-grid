@@ -88,6 +88,7 @@ export class AgAngleSelect extends AgAbstractLabel<
             dragStartPixels: 0,
             onDragStart: () => {
                 this.parentCircleRect = this.eParentCircle.getBoundingClientRect();
+                return true;
             },
             onDragging: (e: MouseEvent | Touch) => this.calculateAngleDrag(e),
             onDragStop: () => {},

@@ -40,8 +40,8 @@ export interface AgDragSource<
     sourceId?: string;
     /** Element which, when dragged, will kick off the DnD process */
     eElement: Element;
-    /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    getDragItem: () => TDragItem;
+    /** If eElement is dragged, then the dragItem is the object that gets passed around. Return null or undefined to conditionally disable dragging. */
+    getDragItem: () => TDragItem | null | undefined;
     /** This name appears in the drag and drop image component when dragging. */
     dragItemName: ((draggingEvent?: TDraggingEvent | null) => string | null | undefined) | string | null;
     /** Icon to show when not over a drop zone */

@@ -84,6 +84,8 @@ export abstract class AbstractSelectionHandle extends Component {
         });
 
         document.body.classList.add(this.getDraggingCssClass());
+
+        return true;
     }
 
     private getDraggingCssClass(): string {

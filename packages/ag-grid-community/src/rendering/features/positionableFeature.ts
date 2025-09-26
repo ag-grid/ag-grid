@@ -646,7 +646,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         return this.resizerMap![side].element;
     }
 
-    private onResizeStart(e: MouseEvent, side: ResizableSides) {
+    private onResizeStart(e: MouseEvent, side: ResizableSides): boolean {
         this.boundaryEl = this.findBoundaryElement();
 
         if (!this.positioned) {
@@ -671,6 +671,8 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
 
         this.isResizing = true;
         this.updateDragStartPosition(e.clientX, e.clientY);
+
+        return true;
     }
 
     private getSiblings(): HTMLElement[] | null {
@@ -858,7 +860,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         }
     }
 
-    private onMoveStart(e: MouseEvent) {
+    private onMoveStart(e: MouseEvent): boolean {
         this.boundaryEl = this.findBoundaryElement();
 
         if (!this.positioned) {
@@ -869,6 +871,8 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
 
         this.element.classList.add('ag-moving');
         this.updateDragStartPosition(e.clientX, e.clientY);
+
+        return true;
     }
 
     private onMove(e: MouseEvent) {

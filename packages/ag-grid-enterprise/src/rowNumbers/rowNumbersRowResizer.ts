@@ -38,9 +38,9 @@ export class AgRowNumbersRowResizer extends Component {
         this.node = _getRowNode(this.beans, rowPosition);
     }
 
-    private onDragStart(mouseEvent: MouseEvent | Touch): void {
+    private onDragStart(mouseEvent: MouseEvent | Touch): boolean {
         if (!this.node) {
-            return;
+            return false;
         }
 
         const {
@@ -58,6 +58,8 @@ export class AgRowNumbersRowResizer extends Component {
             event: mouseEvent,
             rowHeight: this.initialHeight,
         });
+
+        return true;
     }
 
     private onDragging(mouseEvent: MouseEvent | Touch): void {

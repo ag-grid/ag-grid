@@ -56,9 +56,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         const hideColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (hideColumnOnExit) {
-            const dragItem = draggingEvent.dragSource.getDragItem();
-            const columns = dragItem.columns as AgColumn[];
-            this.setColumnsVisible(columns, false, 'uiColumnDragged');
+            this.setColumnsVisible(draggingEvent.dragItem.columns as AgColumn[], false, 'uiColumnDragged');
         }
     }
 
@@ -66,9 +64,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         const showColumnOnExit = this.showOrHideColumnOnExit(draggingEvent);
 
         if (showColumnOnExit) {
-            const dragItem = draggingEvent.dragSource.getDragItem();
-
-            this.setColumnsVisible(dragItem.columns as AgColumn[], true, 'uiColumnDragged');
+            this.setColumnsVisible(draggingEvent.dragItem.columns as AgColumn[], true, 'uiColumnDragged');
         }
     }
 
