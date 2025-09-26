@@ -157,8 +157,13 @@
         "production": {
           "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
         },
-        "staging": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        "staging:chromium": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging",
+          "commands": ["npx playwright test --project=chromium"]
+        },
+        "staging:all": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging",
+          "commands": ["npx playwright test"]
         },
         "dev": {
           "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"

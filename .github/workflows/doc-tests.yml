@@ -160,7 +160,7 @@ jobs:
       - name: Run Vanilla Examples
         env:
           FRAMEWORK: vanilla
-        run: yarn nx run ag-grid-docs:test:interactive -c staging -- --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive -c staging:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
