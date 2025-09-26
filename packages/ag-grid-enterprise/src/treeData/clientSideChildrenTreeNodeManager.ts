@@ -28,7 +28,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     public override extractRowData(): TData[] | null | undefined {
-        return this.rootNode?.childrenAfterGroup?.map(({ data }) => data!);
+        return super.extractRowData(this.rootNode?.childrenAfterGroup ?? null);
     }
 
     public override activate(rootNode: RowNode<TData>): void {

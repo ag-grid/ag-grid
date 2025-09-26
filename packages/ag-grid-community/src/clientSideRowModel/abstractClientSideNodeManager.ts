@@ -1,4 +1,3 @@
-import { _EmptyArray } from '../agStack/utils/array';
 import { BeanStub } from '../context/beanStub';
 import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
@@ -26,8 +25,16 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return this.allNodesMap[id];
     }
 
-    public extractRowData(): TData[] | null | undefined {
-        return this.rootNode?._leafs?.map((node) => node.data!);
+    public extractRowData(rowNodes: RowNode[] | null | undefined = this.rootNode?._leafs): TData[] | null | undefined {
+        const allLeafsLen = rowNodes?.length;
+        if (!allLeafsLen) {
+            return null;
+        }
+        const result = new Array<TData>(allLeafsLen);
+        for (let i = 0; i < allLeafsLen; i++) {
+            result[i] = rowNodes[i].data!;
+        }
+        return result;
     }
 
     public activate(rootNode: RowNode<TData>): void {
@@ -455,13 +462,22 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             return null;
         }
 
-        // find rowNode using object references
-        for (const leaf of this.rootNode?._leafs ?? _EmptyArray) {
-            if (leaf.data === data) {
-                return leaf;
-            }
+        const rowNode = findNodeByData(this.rootNode?._leafs, data);
+        if (rowNode === null) {
+            _error(5, { data });
         }
-        _error(5, { data });
-        return null;
+        return rowNode;
     }
 }
+
+const findNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, data: TData): RowNode<TData> | null => {
+    if (nodes) {
+        for (let i = 0, len = nodes.length; i < len; ++i) {
+            const rowNode = nodes[i];
+            if (nodes[i].data === data) {
+                return rowNode;
+            }
+        }
+    }
+    return null;
+};
