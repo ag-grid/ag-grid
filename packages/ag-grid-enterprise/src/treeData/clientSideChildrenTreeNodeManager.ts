@@ -1,7 +1,6 @@
 import type {
     ClientSideNodeManagerUpdateRowDataResult,
     IChangedRowNodes,
-    IClientSideNodeManager,
     NamedBean,
     RefreshModelParams,
     RowDataTransaction,
@@ -14,7 +13,7 @@ import { makeFieldPathGetter } from './fieldAccess';
 
 export class ClientSideChildrenTreeNodeManager<TData>
     extends AbstractClientSideNodeManager<TData>
-    implements IClientSideNodeManager<TData>, NamedBean
+    implements NamedBean
 {
     beanName = 'csrmChildrenTreeNodeSvc' as const;
 
@@ -27,7 +26,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         this.childrenGetter = null;
     }
 
-    public override extractRowData(): TData[] | null | undefined {
+    public override extractRowData(): TData[] | undefined {
         return super.extractRowData(this.rootNode?.childrenAfterGroup ?? null);
     }
 

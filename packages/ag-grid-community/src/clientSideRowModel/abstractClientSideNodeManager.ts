@@ -2,20 +2,25 @@ import { BeanStub } from '../context/beanStub';
 import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
-import type {
-    ClientSideNodeManagerUpdateRowDataResult,
-    IClientSideNodeManager,
-} from '../interfaces/iClientSideNodeManager';
 import type { IChangedRowNodes, RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 
-export abstract class AbstractClientSideNodeManager<TData = any>
-    extends BeanStub
-    implements IClientSideNodeManager<TData>
-{
+/** Result of AbstractClientSideNodeManager.updateRowData method */
+export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
+    changedRowNodes: IChangedRowNodes<TData>;
+
+    /** The RowNodeTransaction containing all the removals, updates and additions */
+    rowNodeTransaction: RowNodeTransaction<TData>;
+
+    /** True if at least one row was inserted (and not just appended) */
+    rowsInserted: boolean;
+}
+
+export abstract class AbstractClientSideNodeManager<TData = any> extends BeanStub {
     private nextId = 0;
     protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
@@ -25,14 +30,13 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return this.allNodesMap[id];
     }
 
-    public extractRowData(rowNodes: RowNode[] | null | undefined = this.rootNode?._leafs): TData[] | null | undefined {
-        const allLeafsLen = rowNodes?.length;
-        if (!allLeafsLen) {
-            return null;
-        }
-        const result = new Array<TData>(allLeafsLen);
-        for (let i = 0; i < allLeafsLen; i++) {
-            result[i] = rowNodes[i].data!;
+    public extractRowData(rowNodes = this.rootNode?._leafs): TData[] | undefined {
+        let result: TData[] | undefined;
+        if (rowNodes) {
+            result = new Array<TData>(rowNodes.length);
+            for (let i = 0, len = result.length; i < len; ++i) {
+                result[i] = rowNodes[i].data!;
+            }
         }
         return result;
     }

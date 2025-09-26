@@ -14,7 +14,6 @@ import {
     _isAnimateRows,
     _isDomLayout,
 } from '../gridOptionsUtils';
-import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type {
     ClientSideRowModelStage,
     IChangedRowNodes,
@@ -28,6 +27,7 @@ import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
+import type { AbstractClientSideNodeManager } from './abstractClientSideNodeManager';
 import { ChangedRowNodes } from './changedRowNodes';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
@@ -72,7 +72,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public rootNode: RowNode | null = null;
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
-    private nodeManager: IClientSideNodeManager<any>;
+    private nodeManager: AbstractClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
@@ -139,7 +139,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return this.rootNode?._leafs ?? _EmptyArray;
     }
 
-    private getNewNodeManager(): IClientSideNodeManager<any> {
+    private getNewNodeManager(): AbstractClientSideNodeManager<any> {
         const { gos, beans } = this;
         return (_getGroupingApproach(gos) === 'treeNested' && beans.csrmChildrenTreeNodeSvc) || beans.csrmNodeSvc!;
     }
