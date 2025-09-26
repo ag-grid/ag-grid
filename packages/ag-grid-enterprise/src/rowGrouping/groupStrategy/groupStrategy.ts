@@ -11,7 +11,7 @@ import { BeanStub, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _areEqual, _getFirstLeafCh
 
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
-import { invalidateAllLeafChildren, setRowNodeGroup } from '../rowGroupingUtils';
+import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
@@ -167,7 +167,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const parentsWithChildrenRemoved = batchRemover.getAllParents();
         batchRemover.flush();
-        this.removeEmptyGroups(parentsWithChildrenRemoved, details);
+        this.removeEmptyGroups(parentsWithChildrenRemoved);
 
         if (details.rowNodesOrderChanged) {
             this.sortChildren(details);
@@ -250,58 +250,53 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private forEachParentGroup(details: GroupingDetails, group: RowNode, callback: (parent: RowNode) => void): void {
-        let pointer: RowNode | null = group;
-        while (pointer && pointer !== details.rootNode) {
-            callback(pointer);
-            pointer = pointer.parent;
+    private groupShouldBeRemoved(rowNode: RowNode): boolean {
+        // because of the while loop below, it's possible we already moved the node,
+        // so double check before trying to remove again.
+        const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
+        const parentChildrenMapped = rowNode.parent?.childrenMapped;
+        const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
+
+        if (groupAlreadyRemoved) {
+            // if not linked, then group was already removed
+            return false;
         }
+        // if still not removed, then we remove if this group is empty
+        return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
     }
 
-    private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: GroupingDetails): void {
+    private removeEmptyGroups(possibleEmptyGroups: RowNode[]): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
-        let checkAgain = true;
-
-        const groupShouldBeRemoved = (rowNode: RowNode): boolean => {
-            // because of the while loop below, it's possible we already moved the node,
-            // so double check before trying to remove again.
-            const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
-            const parentChildrenMapped = rowNode.parent?.childrenMapped;
-            const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
-
-            if (groupAlreadyRemoved) {
-                // if not linked, then group was already removed
-                return false;
-            }
-            // if still not removed, then we remove if this group is empty
-            return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
-        };
-
-        while (checkAgain) {
-            checkAgain = false;
-            const batchRemover = new BatchRemover();
-            const selectionSvc = this.beans.selectionSvc;
-            for (const possibleEmptyGroup of possibleEmptyGroups) {
-                // remove empty groups
-                this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
-                    if (groupShouldBeRemoved(rowNode)) {
-                        checkAgain = true;
-
-                        this.removeFromParent(rowNode, batchRemover, null);
-                        // we remove selection on filler nodes here, as the selection would not be removed
-                        // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        selectionSvc?.setNodesSelected({
-                            nodes: [rowNode],
-                            newValue: false,
-                            source: 'rowGroupChanged',
-                        });
+        const selectionSvc = this.beans.selectionSvc;
+        let batchRemover: BatchRemover | null;
+        do {
+            batchRemover = null;
+            for (const group of possibleEmptyGroups) {
+                let pointer: RowNode | null = group;
+                while (true) {
+                    const rowNode = pointer;
+                    pointer = pointer?.parent;
+                    if (!pointer) {
+                        break;
                     }
-                });
+                    if (!this.groupShouldBeRemoved(rowNode)) {
+                        continue;
+                    }
+                    batchRemover ??= new BatchRemover();
+                    this.removeFromParent(rowNode, batchRemover, null);
+                    // we remove selection on filler nodes here, as the selection would not be removed
+                    // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+                    selectionSvc?.setNodesSelected({
+                        nodes: [rowNode],
+                        newValue: false,
+                        source: 'rowGroupChanged',
+                    });
+                }
             }
-            batchRemover.flush();
-        }
+            batchRemover?.flush();
+        } while (batchRemover); // If we removed anything, check again for newly empty groups.
     }
 
     // removes the node from the parent by:
@@ -593,5 +588,17 @@ const recursiveSort = (rowNode: RowNode, comparer: (nodeA: RowNode, nodeB: RowNo
     childrenAfterGroup.sort(comparer);
     for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
         recursiveSort(childrenAfterGroup[i], comparer);
+    }
+};
+
+/** Sets rowNode._leafs to undefined on node and its parents recursively so it will be reloaded at next access. It does not touch the root node. */
+const invalidateAllLeafChildren = (node: RowNode | null): void => {
+    while (node?._leafs !== undefined) {
+        const parent = node.parent;
+        if (!parent) {
+            break;
+        }
+        node._leafs = undefined; // Invalidate allLeafChildren cache.
+        node = parent;
     }
 };

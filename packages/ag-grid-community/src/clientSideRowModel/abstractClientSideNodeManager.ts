@@ -451,33 +451,24 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
+        let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
             const id = getRowIdFunc({ data, level: 0 });
-            const rowNode = this.allNodesMap[id];
-            if (rowNode) {
-                return rowNode;
+            rowNode = this.allNodesMap[id];
+            if (!rowNode) {
+                _error(4, { id });
+                return null;
             }
-            _error(4, { id });
-            return null;
+        } else {
+            // find rowNode using object references
+            rowNode = this.rootNode?.allLeafChildren?.find((node) => node.data === data);
+            if (!rowNode) {
+                _error(5, { data });
+                return null;
+            }
         }
 
-        const rowNode = findNodeByData(this.rootNode?._leafs, data);
-        if (rowNode === null) {
-            _error(5, { data });
-        }
-        return rowNode;
+        return rowNode || null;
     }
 }
-
-const findNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, data: TData): RowNode<TData> | null => {
-    if (nodes) {
-        for (let i = 0, len = nodes.length; i < len; ++i) {
-            const rowNode = nodes[i];
-            if (nodes[i].data === data) {
-                return rowNode;
-            }
-        }
-    }
-    return null;
-};

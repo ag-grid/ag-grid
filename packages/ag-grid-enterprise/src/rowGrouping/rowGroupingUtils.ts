@@ -58,20 +58,3 @@ export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: 
     const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.getColId() === column.getColId());
     return groupLockGroupColumns > colIndex;
 }
-
-/**
- * Sets _allLeafChildren to undefined on node and its parents, until root or a node is found that does not have _allLeafChildren defined.
- * It does not touch the root node.
- * When next time node.allLeafChildren property is accessed, it will be recalculated.
- * @param node The starting node to invalidate
- */
-export const invalidateAllLeafChildren = (node: RowNode | null): void => {
-    while (node && node._leafs !== undefined) {
-        const parent = node.parent;
-        if (!parent) {
-            break;
-        }
-        node._leafs = undefined; // Invalidate allLeafChildren cache.
-        node = parent;
-    }
-};
