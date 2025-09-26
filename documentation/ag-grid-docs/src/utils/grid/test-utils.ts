@@ -25,7 +25,7 @@ type RemoteGrid = ((page: Page, gridId?: string) => AsyncGridApi) & {
     waitForEventlog: (timeoutMs: number) => Promise<EventLog>;
 };
 
-type AgGridFixtures = {
+export type AgGridFixtures = {
     agFramework: AgFramework;
     agExampleUrl?: AgExampleUrl;
     /**
