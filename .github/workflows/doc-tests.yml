@@ -44,8 +44,8 @@ on:
         type: boolean
         required: true
         default: true
-      skip_interactive:
-        description: 'Skip Recipe / Interactive tests'
+      skip_recipes:
+        description: 'Skip Recipe tests'
         type: boolean
         required: true
         default: true
@@ -228,7 +228,7 @@ jobs:
 
 
   test-recipes:
-    if: ${{ github.event.inputs.skip_interactive != 'true' }}
+    if: ${{ github.event.inputs.skip_recipes != 'true' }}
     name: Test Public Testing Recipes
     runs-on: ubuntu-latest
     strategy:
