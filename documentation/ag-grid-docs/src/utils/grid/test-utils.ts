@@ -108,7 +108,7 @@ const excludeErrors = [
     'This site appears to use a scroll-linked positioning effect.',
 ];
 
-function setupConsoleExpectations(page: Page) {
+export function setupConsoleExpectations(page: Page) {
     const errors: string[] = [];
 
     // catch any errors or warnings and fail the test
