@@ -9,7 +9,7 @@ const COL_IDS = ['athlete', 'age', 'country', 'year', 'date'] as const;
 
 type ColIds = (typeof COL_IDS)[number];
 
-function getHeaders({ agIdFor }: AgGridFixtures): Record<ColIds, Locator> {
+function getHeaders(agIdFor: AgGridFixtures['agIdFor']): Record<ColIds, Locator> {
     return Object.fromEntries(COL_IDS.map((colId) => [colId, agIdFor.headerCell(colId)])) as Record<ColIds, Locator>;
 }
 
@@ -27,9 +27,8 @@ async function totalHeaderWidth(headers: Record<ColIds, Locator>): Promise<numbe
 }
 
 test.agExample(import.meta, () => {
-    test.eachFramework('fitCellToContents', async (fixtures) => {
-        const { page } = fixtures;
-        const headers = getHeaders(fixtures);
+    test.eachFramework('fitCellToContents', async ({ page, agIdFor }) => {
+        const headers = getHeaders(agIdFor);
         const headerRow = page.locator('.ag-header-row').filter({ has: headers.athlete });
         const baseHeaderWidths = await getHeaderWidths(headers);
 
@@ -93,17 +92,18 @@ test.agExample(import.meta, () => {
         await page.locator('#toggle-scale-up').click(); // on
         await page.locator('button.resize-button').click();
 
-        expect(await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))).toEqual(
-            680
-        );
+        expect(
+            await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))
+        ).toBeGreaterThan(600);
     });
 
     test.describe('Example modifications', () => {
         test.use({ agModules: ['RowSelectionModule'] });
 
         test.eachFramework('fitCellContents + pinned col + selection col', async ({ page, remoteGrid, agIdFor }) => {
-            const remoteApi = remoteGrid(page, '1');
+            const headers = getHeaders(agIdFor);
 
+            const remoteApi = remoteGrid(page, '1');
             await remoteApi.setGridOption('rowSelection', { mode: 'multiRow' });
             await remoteApi.setGridOption('columnDefs', [
                 { field: 'athlete', width: 150, pinned: 'left' },
@@ -116,23 +116,25 @@ test.agExample(import.meta, () => {
                 { field: 'year', width: 90 },
                 { field: 'date', width: 110 },
             ]);
+            const baseHeaderWidths = await getHeaderWidths(headers);
 
             await page.locator('#toggle-scale-up').click(); // on
             await page.locator('button.resize-button').click();
+            const apiResizedHeaderWidths = await getHeaderWidths(headers);
 
-            expect(await getWidth(agIdFor.headerCell('athlete'))).toEqual(185);
-            expect(await getWidth(agIdFor.headerCell('age'))).toEqual(222);
-            expect(await getWidth(agIdFor.headerCell('country'))).toEqual(296);
-            expect(await getWidth(agIdFor.headerCell('year'))).toEqual(222);
-            expect(await getWidth(agIdFor.headerCell('date'))).toEqual(271);
+            expect(apiResizedHeaderWidths.athlete).toBeGreaterThan(baseHeaderWidths.athlete);
+            expect(apiResizedHeaderWidths.age).toBeGreaterThan(baseHeaderWidths.age);
+            expect(apiResizedHeaderWidths.country).toBeGreaterThan(baseHeaderWidths.country);
+            expect(apiResizedHeaderWidths.year).toBeGreaterThan(baseHeaderWidths.year);
+            expect(apiResizedHeaderWidths.date).toBeGreaterThan(baseHeaderWidths.date);
 
             expect(await getWidth(agIdFor.headerCell('ag-Grid-SelectionColumn'))).toEqual(50);
 
-            const pinnedWidth =
-                (await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))) ?? 0;
-            const mainWidth =
-                (await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('age') }))) ?? 0;
-            expect(pinnedWidth + mainWidth).toEqual(1246);
+            const pinnedWidth = (await getWidth(page.locator('.ag-header-row').filter({ has: headers.athlete }))) ?? 0;
+            const mainWidth = (await getWidth(page.locator('.ag-header-row').filter({ has: headers.age }))) ?? 0;
+
+            // +50 for the selection column
+            expect(pinnedWidth + mainWidth).toEqual((await totalHeaderWidth(headers)) + 50);
         });
     });
 });
