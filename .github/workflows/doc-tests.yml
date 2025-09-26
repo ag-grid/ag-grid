@@ -24,11 +24,6 @@ on:
         type: boolean
         required: true
         default: true
-      # skip_reactFunctional:
-      #   description: 'Skip React Functional tests'
-      #   type: boolean
-      #   required: true
-      #   default: true
       skip_reactFunctionalTs:
         description: 'Skip React Functional TS tests'
         type: boolean
@@ -70,36 +65,6 @@ permissions:
   actions: read
 
 jobs:
-  # Run all framework tasks in parallel
-
-  # download-examples:
-  #   name: Download all-examples.json
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     cache-key: ${{ steps.cache-key.outputs.key }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 1
-
-  #     - name: Download all-examples-cached.json
-  #       run: |
-  #         mkdir -p ./testing/ag-grid-docs/e2e/.cache
-  #         curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-
-  #     - name: Generate cache key
-  #       id: cache-key
-  #       run: |
-  #         CACHE_KEY="all-examples-$(sha256sum ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json | cut -d' ' -f1)"
-  #         echo "key=${CACHE_KEY}" >> $GITHUB_OUTPUT
-  #         echo "Generated cache key: ${CACHE_KEY}"
-
-  #     - name: Cache all-examples-cached.json
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-  #         key: ${{ steps.cache-key.outputs.key }}
 
 
   test-demos-smoke:
@@ -112,11 +77,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      # - name: Download all-examples-cached.json
-      #   run: |
-      #     mkdir -p ./testing/ag-grid-docs/e2e/.cache
-      #     curl https://ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-
       - name: Install Playwright Browsers
         working-directory: testing/ag-grid-docs
         run: npm i && npx playwright install chromium firefox webkit --with-deps --only-shell
@@ -126,14 +86,6 @@ jobs:
         env:
           BASE_URL: https://grid-staging.ag-grid.com/
         run: npx playwright test ag-grid-demos.spec.ts
-
-      # - name: Smoke Test Examples (ag-grid.com)
-      #   if: always()
-      #   working-directory: testing/ag-grid-docs
-      #   env:
-      #     BASE_URL: https://ag-grid.com
-      #     AG_GRID_PERCENTAGE_TO_RUN: 0.01
-      #   run: npx playwright test smoke-test-examples.spec.ts
 
       - name: Upload Test Report
         id: upload-report
@@ -160,7 +112,7 @@ jobs:
       - name: Run vanilla Examples
         env:
           FRAMEWORK: vanilla
-        run: yarn nx run ag-grid-docs:test:interactive -c staging:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:chromium -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -186,7 +138,7 @@ jobs:
       - name: Run typescript Examples
         env:
           FRAMEWORK: typescript
-        run: yarn nx run ag-grid-docs:test:interactive -c staging:all --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:all -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -212,7 +164,7 @@ jobs:
       - name: Run reactFunctionalTs Examples
         env:
           FRAMEWORK: reactFunctionalTs
-        run: yarn nx run ag-grid-docs:test:interactive -c staging:all --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:all -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -238,7 +190,7 @@ jobs:
       - name: Run vue3 Examples
         env:
           FRAMEWORK: vue3
-        run: yarn nx run ag-grid-docs:test:interactive -c staging:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:chromium -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -264,7 +216,7 @@ jobs:
       - name: Run angular Examples
         env:
           FRAMEWORK: angular
-        run: yarn nx run ag-grid-docs:test:interactive -c staging:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:chromium -c staging --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -296,39 +248,16 @@ jobs:
           path: reports/
           retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
   
-  # test-interactive:
-  #   if: ${{ github.event.inputs.skip_interactive != 'true' }}
-  #   name: Test Interactive Examples
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Bootstrap
-  #       run: npm run bootstrap
-  #     - name: Run Interactive Examples
-  #       run: yarn nx run ag-grid-docs:test:interactive -c staging
-  #     - name: Upload Test Report
-  #       id: upload-recipes-report
-  #       uses: actions/upload-artifact@v4
-  #       if: ${{ !cancelled() }}
-  #       with:
-  #         name: playwright-report-interactive
-  #         path: reports/
-  #         retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-
   publish-reports:
     if: always()
     needs:
       - test-demos-smoke
-      # - test-react-functional
       - test-reactFunctionalTs
       - test-angular
       - test-typescript
       - test-vanilla
       - test-vue3
       - test-recipes
-      # - test-interactive
     env:
       IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-reactFunctionalTs.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-demos-smoke.result != 'failure' && needs.test-recipes.result != 'failure' }}
     runs-on: ubuntu-latest
