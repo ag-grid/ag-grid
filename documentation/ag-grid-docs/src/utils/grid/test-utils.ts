@@ -448,6 +448,6 @@ export async function clickAllButtons(page: Page) {
     }
 }
 
-export { ensureGridReady } from './test/remoteGridapi';
+export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';
