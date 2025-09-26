@@ -12,7 +12,15 @@ import type {
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _addGridCommonParams,
+    _focusInto,
+    _isSameRow,
+    _isServerSideRowModel,
+    _missing,
+    _warn,
+} from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -117,7 +125,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc },
+            beans: { gos, selectionSvc, findSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -165,7 +173,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
 
-            const ssrmExpandAllAffectsAllRows = api.getGridOption('ssrmExpandAllAffectsAllRows');
+            const ssrmExpandAllAffectsAllRows = _isServerSideRowModel(gos)
+                ? masterGridApi.getGridOption('ssrmExpandAllAffectsAllRows')
+                : true;
             if (ssrmExpandAllAffectsAllRows) {
                 const state = masterGridApi.getState();
                 const expandState = state?.ssrmRowGroupExpansion as RowGroupBulkExpansionState;
