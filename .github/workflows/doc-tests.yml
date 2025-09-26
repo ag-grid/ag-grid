@@ -154,18 +154,13 @@ jobs:
         shardIndex: [1, 2]
         shardTotal: [2]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Install Playwright Browsers
-        working-directory: documentation/ag-grid-docs
-        run: npm install && npx playwright install chromium --with-deps --only-shell
-        shell: bash
-      - name: Run vanilla Examples
+      - uses: actions/checkout@v4
+      - name: Bootstrap
+        run: npm run bootstrap
+      - name: Run Vanilla Examples
         env:
           FRAMEWORK: vanilla
-        run: npx playwright test --project chromium
+        run: yarn nx run ag-grid-docs:test:interactive -c staging -- --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
