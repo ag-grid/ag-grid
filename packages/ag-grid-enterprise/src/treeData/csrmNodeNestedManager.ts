@@ -51,8 +51,9 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                 return;
             }
 
-            row = this.createRowNode(data, allLeafChildren.length);
+            row = this.createRowNode(data);
             row.treeParent = parent;
+            row.sourceRowIndex = allLeafChildren.length;
             processedData.set(data, row);
             allLeafChildren.push(row);
 
@@ -143,7 +144,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                     }
                 }
             } else {
-                row = this.createRowNode(data, -1);
+                row = this.createRowNode(data);
                 row.treeParent = parent;
                 rowsChanged = true;
                 adds.add(row);

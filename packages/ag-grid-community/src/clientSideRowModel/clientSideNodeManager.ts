@@ -74,7 +74,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const len = rowData.length;
         const result = new Array<RowNode<TData>>(len);
         for (let i = 0, len = rowData.length; i < len; i++) {
-            result[i] = this.createRowNode(rowData[i], i);
+            const node = this.createRowNode(rowData[i]);
+            node.sourceRowIndex = i;
+            result[i] = node;
         }
         return result;
     }
@@ -112,7 +114,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 }
             } else {
                 nodesAdded = true;
-                node = this.createRowNode(data, -1);
+                node = this.createRowNode(data);
                 adds.add(node);
             }
             processedNodes.add(node);
@@ -213,8 +215,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         // Insert new nodes
         const adds = result.changedRowNodes.adds;
         for (let i = 0; i < addLength; i++) {
-            const node = this.createRowNode(add[i], writeIdx);
+            const node = this.createRowNode(add[i]);
             adds.add(node);
+            node.sourceRowIndex = writeIdx;
             newAllLeafs[writeIdx++] = node;
         }
 
@@ -253,7 +256,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const removedSet = new Set<RowNode<TData>>();
         const removedResult = rowNodeTransaction.remove;
         for (let i = 0, len = remove.length; i < len; i++) {
-            const rowNode = this.lookupRowNode(getRowIdFunc, remove[i]);
+            const rowNode = this.lookupNode(getRowIdFunc, remove[i]);
             if (!rowNode) {
                 continue;
             }
@@ -284,7 +287,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const updatedRowNodes = rowNodeTransaction.update;
         for (let i = 0, len = update.length; i < len; i++) {
             const item = update[i];
-            const rowNode = this.lookupRowNode(getRowIdFunc, item);
+            const rowNode = this.lookupNode(getRowIdFunc, item);
             if (!rowNode) {
                 continue;
             }
@@ -348,13 +351,12 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return Math.ceil(addIndex);
     }
 
-    protected createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
+    protected createRowNode(data: TData): RowNode<TData> {
         const node: RowNode<TData> = new RowNode<TData>(this.beans);
         node.parent = this.rootNode;
         node.level = 0;
         node.group = false;
         node.expanded = false;
-        node.sourceRowIndex = sourceRowIndex;
 
         node.setDataAndId(data, String(this.nextId));
 
@@ -368,9 +370,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return node;
     }
 
-    protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
+    protected lookupNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
         if (!getRowIdFunc) {
-            return lookupRowNodeByData(this.rootNode.allLeafChildren, data);
+            return lookupNodeByData(this.rootNode.allLeafChildren, data);
         }
 
         // find rowNode using id
@@ -414,7 +416,7 @@ const initRootSibling = <TData = any>(rootNode: RowNode<TData>): void => {
  * Finds a row node in the given array whose data matches the provided data object.
  * Returns the node if found, otherwise undefined.
  */
-const lookupRowNodeByData = <TData>(
+const lookupNodeByData = <TData>(
     allLeafChildren: RowNode<TData>[] | null | undefined,
     data: TData
 ): RowNode<TData> | null => {
