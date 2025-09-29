@@ -47,8 +47,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
-    private nodeManagerName: 'csrmNodeMgr' | 'csrmNodeNestedMgr' | null = null;
-    private nodeManager: ClientSideNodeManager<any> | null | undefined = undefined;
+    private nodeMgrName: 'csrmNodeMgr' | 'csrmNodeNestedMgr' | null = null;
+    private nodeMgr: ClientSideNodeManager<any> | null | undefined = undefined;
 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
 
@@ -109,30 +109,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private getNodeManager(loadNew: boolean = false): ClientSideNodeManager<any> | null {
-        let bean = this.nodeManager;
-        let beanName = this.nodeManagerName;
+        let bean = this.nodeMgr;
+        let beanName = this.nodeMgrName;
         if (!bean || !beanName || loadNew) {
             if (bean === null) {
                 return null; // Destroyed
             }
             beanName = _getGroupingApproach(this.gos) === 'treeNested' ? 'csrmNodeNestedMgr' : 'csrmNodeMgr';
         }
-        if (bean && this.nodeManagerName === beanName) {
+        if (bean && this.nodeMgrName === beanName) {
             if (loadNew) {
                 bean.activate?.();
             }
             return bean; // no change
         }
+        this.nodeMgrName = beanName;
         const { beans, rootNode } = this;
         const registry = beans.registry;
-        this.nodeManagerName = beanName;
         bean = registry.createDynamicBean<ClientSideNodeManager>(beanName, false, rootNode) ?? null;
         if (!bean) {
             bean = registry.createDynamicBean<ClientSideNodeManager>('csrmNodeMgr', true, rootNode)!;
         }
         this.createBean(bean);
         bean.activate?.();
-        this.nodeManager = bean;
+        this.nodeMgr = bean;
         return bean;
     }
 
@@ -259,7 +259,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             (changedProps.has('treeDataChildrenField') && gos.get('treeData')) ||
             (changedProps.has('treeData') && !!gos.get('treeDataChildrenField'));
 
-        const oldNodeManager = this.nodeManager;
+        const oldNodeManager = this.nodeMgr;
         const nodeManager = this.getNodeManager(reset);
         if (!nodeManager) {
             return; // Destroyed.
@@ -287,7 +287,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             if (oldNodeManager !== nodeManager) {
                 this.destroyBean(oldNodeManager);
-                this.nodeManager = nodeManager;
+                this.nodeMgr = nodeManager;
             }
             initRootNode(this.rootNode!);
         }
@@ -410,7 +410,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     // as expanded=undefined for root node
                     const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
                     if (!skipChildren) {
-                        rowNode.childrenAfterGroup.forEach(recurse);
+                        const childrenAfterGroup = rowNode.childrenAfterGroup;
+                        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                            recurse(childrenAfterGroup[i]);
+                        }
                     }
                 }
             }
@@ -827,7 +830,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachLeafNode(callback: (node: RowNode, index: number) => void): void {
-        this.rootNode?.allLeafChildren?.forEach((rowNode, index) => callback(rowNode, index));
+        const allLeafs = this.rootNode?.allLeafChildren;
+        if (allLeafs) {
+            for (let i = 0, len = allLeafs.length; i < len; ++i) {
+                callback(allLeafs[i], i);
+            }
+        }
     }
 
     public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
@@ -835,7 +843,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachDisplayedNode(callback: (rowNode: RowNode<any>, index: number) => void): void {
-        this.rowsToDisplay.forEach(callback);
+        const rowsToDisplay = this.rowsToDisplay;
+        for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
+            callback(rowsToDisplay[i], i);
+        }
     }
 
     public forEachNodeAfterFilter(
@@ -901,11 +912,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             callback(node, index++);
         }
 
-        const { footerSvc } = this.beans;
-
         if (node.hasChildren() && !node.footer) {
             const children = getChildren(node);
             if (children) {
+                const footerSvc = this.beans.footerSvc;
                 index = footerSvc?.addTotalRows(index, node, callback, includeFooterNodes, isRootNode, 'top') ?? index;
                 for (const node of children) {
                     index = this.depthFirstSearchRowNodes(callback, includeFooterNodes, getChildren, node, index);
@@ -957,7 +967,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private doRowGrouping(params: RefreshModelParams): boolean {
         const rootNode: ClientSideRowModelRootNode = this.rootNode!;
-
         const groupStageExecuted = this.beans.groupStage?.execute({
             rowNode: rootNode,
             changedRowNodes: params.changedRowNodes,
@@ -998,7 +1007,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        const found = this.nodeManager?.getRowNode(id);
+        const found = this.nodeMgr?.getRowNode(id);
         if (typeof found === 'object') {
             return found; // we check for typeof object to avoid returning things from Object.prototype
         }
@@ -1032,7 +1041,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private executeBatchUpdateRowData(): void {
-        const nodeManager = this.nodeManager;
+        const nodeManager = this.nodeMgr;
         if (!nodeManager) {
             return; // Destroyed
         }
@@ -1043,27 +1052,29 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedRowNodes = new ChangedRowNodes();
         let orderChanged = false;
-        this.rowDataTransactionBatch?.forEach((tranItem) => {
+        const rowDataTransactionBatch = this.rowDataTransactionBatch ?? _EmptyArray;
+        for (let i = 0, len = rowDataTransactionBatch.length; i < len; i++) {
+            const tranItem = rowDataTransactionBatch[i];
             this.rowNodesCountReady = true;
             const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(
                 tranItem.rowDataTransaction,
                 changedRowNodes
             );
-            if (rowsInserted) {
-                orderChanged = true;
-            }
+            orderChanged ||= rowsInserted;
             rowNodeTrans.push(rowNodeTransaction);
             if (tranItem.callback) {
                 callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
             }
-        });
+        }
 
         this.commitTransactions(orderChanged, changedRowNodes);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
             window.setTimeout(() => {
-                callbackFuncsBound.forEach((func) => func());
+                for (let i = 0, len = callbackFuncsBound.length; i < len; i++) {
+                    callbackFuncsBound[i]();
+                }
             }, 0);
         }
 
@@ -1174,8 +1185,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 detailNode.setRowHeight(detailNode.rowHeight, true);
             }
 
-            if (rowNode.sibling) {
-                rowNode.sibling.setRowHeight(rowNode.sibling.rowHeight, true);
+            const sibling = rowNode.sibling;
+            if (sibling) {
+                sibling.setRowHeight(sibling.rowHeight, true);
             }
             atLeastOne = true;
         });
@@ -1210,11 +1222,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Forcefully deallocate memory
         this.started = false;
         this.rootNode = null;
-        this.nodeManager = null;
+        this.nodeMgr = null;
         this.rowDataTransactionBatch = null;
         this.orderedStages = _EmptyArray;
         this.rowsToDisplay = _EmptyArray;
-        this.nodeManager = this.destroyBean(this.nodeManager);
+        this.nodeMgr = this.destroyBean(this.nodeMgr);
     }
 
     private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);

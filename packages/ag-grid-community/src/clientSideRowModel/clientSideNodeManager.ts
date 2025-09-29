@@ -243,7 +243,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 // We enable it only for trees that use getDataPath and not the new children field
                 const getDataPath = this.gos.get('treeData') && this.gos.get('getDataPath');
                 if (getDataPath) {
-                    for (let i = 0; i < allLeafChildren.length; i++) {
+                    for (let i = 0, len = allLeafChildren.length; i < len; i++) {
                         const node = allLeafChildren[i];
                         if (node?.rowIndex == addIndex - 1) {
                             addIndex = i + 1;
@@ -254,10 +254,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             }
         }
 
-        const addLength = add.length;
-
         const changedRowNodes = result.changedRowNodes;
         // create new row nodes for each data item
+        const addLength = add.length;
         const newNodes = new Array(addLength);
         for (let i = 0; i < addLength; i++) {
             const newNode = this.createRowNode(add[i], addIndex + i);
@@ -312,43 +311,30 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
-        remove.forEach((item) => {
+        for (let i = 0, len = remove.length; i < len; i++) {
+            const item = remove[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
-
-            if (!rowNode) {
-                return;
-            }
-
-            if (rowNode.isSelected()) {
-                nodesToUnselect.push(rowNode);
-            }
-
-            // If a row has been manually pinned, ensure its sibling is also removed
-            if (rowNode.pinnedSibling) {
-                this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
-            }
-
-            // so row renderer knows to fade row out (and not reposition it)
+            if (!rowNode) continue;
+            if (rowNode.isSelected()) nodesToUnselect.push(rowNode);
+            if (rowNode.pinnedSibling) this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
             rowNode.clearRowTopAndRowIndex();
-
-            // NOTE: were we could remove from allLeaveChildren, however removeFromArray() is expensive, especially
-            // if called multiple times (eg deleting lots of rows) and if allLeafChildren is a large list
             rowIdsRemoved[rowNode.id!] = true;
-            // removeFromArray(this.rootNode.allLeafChildren, rowNode);
             delete this.allNodesMap[rowNode.id!];
-
             rowNodeTransaction.remove.push(rowNode);
             changedRowNodes.remove(rowNode);
-        });
+        }
 
         const rootNode = this.rootNode;
 
         rootNode.allLeafChildren = rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
 
         // after rows have been removed, all following rows need the position index updated
-        rootNode.allLeafChildren?.forEach((node, idx) => {
-            node.sourceRowIndex = idx;
-        });
+        if (rootNode.allLeafChildren) {
+            const leafLen = rootNode.allLeafChildren.length;
+            for (let idx = 0; idx < leafLen; idx++) {
+                rootNode.allLeafChildren[idx].sourceRowIndex = idx;
+            }
+        }
 
         const sibling = rootNode.sibling;
         if (sibling) {
@@ -367,21 +353,15 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             return;
         }
 
-        update.forEach((item) => {
+        for (let i = 0, len = update.length; i < len; i++) {
+            const item = update[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
-
-            if (!rowNode) {
-                return;
-            }
-
+            if (!rowNode) continue;
             rowNode.updateData(item);
-            if (!rowNode.selectable && rowNode.isSelected()) {
-                nodesToUnselect.push(rowNode);
-            }
-
+            if (!rowNode.selectable && rowNode.isSelected()) nodesToUnselect.push(rowNode);
             rowNodeTransaction.update.push(rowNode);
             changedRowNodes.update(rowNode);
-        });
+        }
     }
 
     protected dispatchRowDataUpdateStartedEvent(rowData?: TData[] | null): void {
