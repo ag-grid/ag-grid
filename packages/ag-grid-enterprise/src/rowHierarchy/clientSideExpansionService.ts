@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    GridApi,
     IClientSideRowModel,
     IExpansionService,
     NamedBean,
@@ -122,6 +123,23 @@ export class ClientSideExpansionService
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
         this.rowModel.refreshModel({ step: 'map' });
+    }
+
+    public setDetailsExpansionState(detailGridApi: GridApi): void {
+        const { gridApi: masterGridApi } = this.beans;
+
+        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
+            switch (source) {
+                case 'expandAll':
+                    return detailGridApi.expandAll();
+                case 'collapseAll':
+                    return detailGridApi.collapseAll();
+            }
+        });
+        if (this.getExpansionState().collapsedRowGroupIds.length) {
+            return detailGridApi.collapseAll();
+        }
+        return detailGridApi.expandAll();
     }
 
     // because the user can call rowNode.setExpanded() many times in one VM turn,

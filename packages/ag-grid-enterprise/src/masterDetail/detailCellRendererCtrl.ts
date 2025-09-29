@@ -8,16 +8,10 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
-    IExpansionService,
-    RowGroupBulkExpansionState,
-    RowGroupExpansionState,
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
-import { _isClientSideRowModel, _isServerSideRowModel } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
-
-import { IExpansionStrategy } from '../serverSideRowModel/services/expansion/strategies/iExpansionStrategy';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -122,7 +116,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc },
+            beans: { selectionSvc, findSvc, expansionSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -169,7 +163,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
-            this.handleExpandStates(api);
+            expansionSvc?.setDetailsExpansionState(api);
         });
 
         this.addDestroyFunc(() => {
@@ -183,39 +177,6 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
             rowNode.detailGridInfo = null; // unregister from node
         });
-    }
-
-    private handleExpandStates(detailGridApi: GridApi): void {
-        const masterExpansionSvc = this.beans.expansionSvc;
-        const masterGridApi = this.params.api;
-        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
-            if (source === 'expandAll' || source === 'collapseAll') {
-                detailGridApi[source]();
-            }
-        });
-        // ideally, we would want to combine these strategies / states some day.
-        const state = (
-            masterExpansionSvc as IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState> | undefined
-        )?.getExpansionState?.();
-
-        let expandAllState: boolean | undefined;
-
-        if (state) {
-            if ('collapsedRowGroupIds' in state) {
-                expandAllState = !state.collapsedRowGroupIds.length;
-            } else {
-                expandAllState = state.expandAll;
-            }
-        }
-
-        switch (expandAllState) {
-            case true:
-                return detailGridApi.expandAll();
-            case false:
-                return detailGridApi.collapseAll();
-            default:
-            // likely state module is not registered
-        }
     }
 
     private loadRowData(): void {

@@ -1,6 +1,7 @@
 import { RowNode, _exists, _getRowHeightForNode } from 'ag-grid-community';
 import type {
     BeanCollection,
+    GridApi,
     IExpansionService,
     NamedBean,
     RowGroupBulkExpansionState,
@@ -121,6 +122,30 @@ export class ServerSideExpansionService
     public onGroupExpandedOrCollapsed(): void {
         // this could be made to work, but the pattern for encouraging .expanded to be explicitly set on nodes
         // is old, and we should move towards batch APIs
+    }
+
+    public setDetailsExpansionState(detailGridApi: GridApi): void {
+        const { gridApi: masterGridApi, gos: masterGos } = this.beans;
+
+        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
+            switch (source) {
+                case 'expandAll':
+                    return detailGridApi.expandAll();
+                case 'collapseAll':
+                    return detailGridApi.collapseAll();
+            }
+        });
+
+        // to prevent massive server side queries, we only propagate if the master is using a special flag
+        if (!masterGos.get('ssrmExpandAllAffectsAllRows')) {
+            return;
+        }
+
+        // ideally, we would want to combine these strategies / states some day so there is no need in type cast here
+        if ((this.getExpansionState() as RowGroupBulkExpansionState).expandAll) {
+            return detailGridApi.expandAll();
+        }
+        return detailGridApi.collapseAll();
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {
