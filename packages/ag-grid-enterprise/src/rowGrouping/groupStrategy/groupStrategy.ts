@@ -13,7 +13,7 @@ import type {
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { RowNode } from 'ag-grid-community';
-import { BeanStub, _ROW_ID_PREFIX_ROW_GROUP, _areEqual, _exists, _removeFromArray, _warn } from 'ag-grid-community';
+import { BeanStub, _ROW_ID_PREFIX_ROW_GROUP, _areEqual, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
@@ -98,32 +98,33 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
         changedPath.forEachChangedNodeDepthFirst((group: RowNode) => {
-            if (group.childrenAfterGroup) {
-                const leafNodes: RowNode[] = [];
-                const groupNodes: RowNode[] = [];
-                let unbalancedNode: RowNode | undefined;
-
-                group.childrenAfterGroup.forEach((row) => {
-                    if (!row.childrenAfterGroup?.length) {
-                        leafNodes.push(row);
-                    } else {
-                        if (row.key === '' && !unbalancedNode) {
-                            unbalancedNode = row;
-                        } else {
-                            groupNodes.push(row);
-                        }
-                    }
-                });
-
-                if (unbalancedNode) {
-                    groupNodes.push(unbalancedNode);
+            const childrenAfterGroup = group.childrenAfterGroup;
+            const childrenAfterGroupLen = childrenAfterGroup?.length;
+            if (!childrenAfterGroupLen) {
+                return;
+            }
+            const leafNodes: RowNode[] = [];
+            const groupNodes: RowNode[] = [];
+            let unbalancedNode: RowNode | undefined;
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                const row = childrenAfterGroup[i];
+                if (!row.childrenAfterGroup?.length) {
+                    leafNodes.push(row);
+                } else if (row.key === '' && !unbalancedNode) {
+                    unbalancedNode = row;
+                } else {
+                    groupNodes.push(row);
                 }
+            }
 
-                group.childrenAfterGroup = [...leafNodes, ...groupNodes];
-                const sibling = group.sibling;
-                if (sibling) {
-                    sibling.childrenAfterGroup = group.childrenAfterGroup;
-                }
+            if (unbalancedNode) {
+                groupNodes.push(unbalancedNode);
+            }
+
+            group.childrenAfterGroup = [...leafNodes, ...groupNodes];
+            const sibling = group.sibling;
+            if (sibling) {
+                sibling.childrenAfterGroup = group.childrenAfterGroup;
             }
         }, false);
     }
@@ -176,7 +177,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const parentsWithChildrenRemoved = batchRemover.getAllParents();
         batchRemover.flush();
-        this.removeEmptyGroups(parentsWithChildrenRemoved, details);
+        this.removeEmptyGroups(parentsWithChildrenRemoved);
 
         if (details.rowNodesOrderChanged) {
             this.sortChildren(details);
@@ -199,21 +200,25 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private orderGroups(details: GroupingDetails): void {
         const comparator = details.initialGroupOrderComparator;
-        if (_exists(comparator)) {
-            recursiveSort(details.rootNode);
+        if (!comparator) {
+            return;
         }
-
-        function recursiveSort(rowNode: RowNode): void {
-            const doSort =
-                _exists(rowNode.childrenAfterGroup) &&
-                // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
-                !rowNode.leafGroup;
-
-            if (doSort) {
-                rowNode.childrenAfterGroup!.sort((nodeA, nodeB) => comparator!({ nodeA, nodeB }));
-                rowNode.childrenAfterGroup!.forEach((childNode: RowNode) => recursiveSort(childNode));
+        const comparer = (nodeA: RowNode, nodeB: RowNode) => comparator({ nodeA, nodeB });
+        const recursiveSort = (rowNode: RowNode): void => {
+            const childrenAfterGroup = rowNode.childrenAfterGroup;
+            const childrenAfterGroupLen = childrenAfterGroup?.length;
+            if (!childrenAfterGroupLen) {
+                return;
             }
-        }
+            if (!rowNode.leafGroup) {
+                return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
+            }
+            childrenAfterGroup.sort(comparer);
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                recursiveSort(childrenAfterGroup[i]);
+            }
+        };
+        recursiveSort(details.rootNode);
     }
 
     private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
@@ -287,14 +292,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private forEachParentGroup(details: GroupingDetails, group: RowNode, callback: (parent: RowNode) => void): void {
-        let pointer: RowNode | null = group;
-        while (pointer && pointer !== details.rootNode) {
-            callback(pointer);
-            pointer = pointer.parent;
-        }
-    }
-
     private removeNodesFromParents(
         nodesToRemove: Iterable<RowNode>,
         details: GroupingDetails,
@@ -310,9 +307,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
             // remove from allLeafChildren. we clear down all parents EXCEPT the Root Node, as
             // the ClientSideNodeManager is responsible for the Root Node.
-            this.forEachParentGroup(details, nodeToRemove.parent!, (parentNode) => {
-                batchRemoverToUse.removeFromAllLeafChildren(parentNode, nodeToRemove);
-            });
+            let pointer: RowNode | null = nodeToRemove.parent;
+            while (pointer) {
+                const parent = pointer.parent;
+                if (!parent) {
+                    break; // root node
+                }
+                batchRemoverToUse.removeFromAllLeafChildren(pointer, nodeToRemove);
+                pointer = parent;
+            }
         }
 
         if (batchRemoverIsLocal) {
@@ -320,12 +323,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private removeEmptyGroups(possibleEmptyGroups: RowNode[], details: GroupingDetails): void {
-        // we do this multiple times, as when we remove groups, that means the parent of just removed
-        // group can then be empty. to get around this, if we remove, then we check everything again for
-        // newly emptied groups. the max number of times this will execute is the depth of the group tree.
-        let checkAgain = true;
-
+    private removeEmptyGroups(possibleEmptyGroups: RowNode[]): void {
         const groupShouldBeRemoved = (rowNode: RowNode): boolean => {
             // because of the while loop below, it's possible we already moved the node,
             // so double check before trying to remove again.
@@ -341,28 +339,40 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
         };
 
-        while (checkAgain) {
-            checkAgain = false;
-            const batchRemover = new BatchRemover();
-            possibleEmptyGroups.forEach((possibleEmptyGroup) => {
-                // remove empty groups
-                this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
-                    if (groupShouldBeRemoved(rowNode)) {
-                        checkAgain = true;
-
-                        this.removeFromParent(rowNode, batchRemover);
-                        // we remove selection on filler nodes here, as the selection would not be removed
-                        // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        this.selectionSvc?.setNodesSelected({
-                            nodes: [rowNode],
-                            newValue: false,
-                            source: 'rowGroupChanged',
-                        });
+        // we do this multiple times, as when we remove groups, that means the parent of just removed
+        // group can then be empty. to get around this, if we remove, then we check everything again for
+        // newly emptied groups. the max number of times this will execute is the depth of the group tree.
+        let batchRemover: BatchRemover | null;
+        do {
+            batchRemover = null;
+            for (let idx = 0; idx < possibleEmptyGroups.length; ++idx) {
+                let pointer = possibleEmptyGroups[idx];
+                while (pointer) {
+                    const parent: RowNode | null = pointer.parent;
+                    if (!parent) {
+                        break; // root node
                     }
-                });
-            });
-            batchRemover.flush();
-        }
+                    if (!groupShouldBeRemoved(pointer)) {
+                        pointer = parent;
+                        continue;
+                    }
+
+                    batchRemover ??= new BatchRemover();
+                    this.removeFromParent(pointer, batchRemover);
+                    // we remove selection on filler nodes here, as the selection would not be removed
+                    // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
+                    this.selectionSvc?.setNodesSelected({
+                        nodes: [pointer],
+                        newValue: false,
+                        source: 'rowGroupChanged',
+                    });
+
+                    possibleEmptyGroups[idx] = parent; // check parent next
+                    pointer = parent;
+                }
+            }
+            batchRemover?.flush();
+        } while (batchRemover);
     }
 
     // removes the node from the parent by:
@@ -417,10 +427,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (!rowNodes) {
                 return;
             }
-            rowNodes.forEach((rowNode) => {
+            for (let i = 0, len = rowNodes.length; i < len; ++i) {
+                const rowNode = rowNodes[i];
                 const isLeafNode = !rowNode.group;
                 if (isLeafNode) {
-                    return;
+                    continue;
                 }
                 const groupInfo: GroupInfo = {
                     field: rowNode.field,
@@ -430,7 +441,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 };
                 this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);
-            });
+            }
         };
 
         recurse(details.rootNode.childrenAfterGroup);
@@ -485,12 +496,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
-        newRowNodes.forEach((rowNode) => {
+        let activeChangedPath: ChangedPath | null = details.changedPath;
+        if (!activeChangedPath.active) {
+            activeChangedPath = null;
+        }
+        for (let i = 0, len = newRowNodes.length; i < len; ++i) {
+            const rowNode = newRowNodes[i];
             this.insertOneNode(rowNode, details);
-            if (details.changedPath.active) {
-                details.changedPath.addParentNode(rowNode.parent);
-            }
-        });
+            activeChangedPath?.addParentNode(rowNode.parent);
+        }
     }
 
     private insertOneNode(childNode: RowNode, details: GroupingDetails, batchRemover?: BatchRemover): void {
@@ -515,8 +529,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     ): RowNode {
         let nextNode: RowNode = details.rootNode;
 
-        path.forEach((groupInfo, level) => {
-            nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
+        for (let level = 0, len = path.length; level < len; ++level) {
+            nextNode = this.getOrCreateNextNode(nextNode, path[level], level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
 
@@ -526,7 +540,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 // if this node is about to be removed, prevent that
                 batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
             }
-        });
+        }
 
         return nextNode;
     }
@@ -610,7 +624,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupCols.getShowRowGroupCols();
-        groupDisplayCols.forEach((col) => {
+        for (const col of groupDisplayCols) {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
 
@@ -620,7 +634,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 // if maintain group value type, get the value from any leaf node.
                 groupNode.groupData![col.getColId()] = this.valueSvc.getValue(groupColumn, groupInfo.leafNode);
             }
-        });
+        }
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {

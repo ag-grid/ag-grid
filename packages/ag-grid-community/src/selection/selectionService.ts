@@ -359,7 +359,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         // in the selection service
         oldNode.id = rowNode.id;
         oldNode.data = rowNode.data;
-        oldNode.__daemon = true;
         oldNode.__selected = rowNode.__selected;
         oldNode.level = rowNode.level;
 
