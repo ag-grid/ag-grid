@@ -38,15 +38,11 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
     }
 
     for (let i = 0; i < levelDiff; i++) {
-        const parent = currentNode.parent;
-        if (!parent) {
-            break;
-        }
-        const isFirstChild = parent.getFirstChild() === currentNode;
+        const isFirstChild = currentNode.parent?.getFirstChild() === currentNode;
         if (!isFirstChild) {
             return false;
         }
-        currentNode = parent;
+        currentNode = currentNode.parent!;
     }
     return currentNode === ancestor;
 }
