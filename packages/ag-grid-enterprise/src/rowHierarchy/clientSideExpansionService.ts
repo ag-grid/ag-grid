@@ -9,7 +9,6 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
-import { getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
@@ -42,6 +41,7 @@ export class ClientSideExpansionService
 
     public getExpansionState(): RowGroupExpansionState {
         const expandedRowGroupIds: string[] = [];
+        const collapsedRowGroupIds: string[] = [];
         this.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
@@ -50,9 +50,11 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
+            } else {
+                collapsedRowGroupIds.push(id);
             }
         });
-        return { expandedRowGroupIds };
+        return { expandedRowGroupIds, collapsedRowGroupIds };
     }
 
     public expandAll(expand: boolean): void {
@@ -60,7 +62,6 @@ export class ClientSideExpansionService
         const rowModel = this.rowModel;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
-        const masterDetailsToExpandOrCollapse = [] as RowNode[];
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) {
@@ -74,7 +75,6 @@ export class ClientSideExpansionService
 
                 if (rowNode.master) {
                     actionRow();
-                    masterDetailsToExpandOrCollapse.push(rowNode);
                     return;
                 }
 
@@ -107,15 +107,6 @@ export class ClientSideExpansionService
         }
 
         this.onGroupExpandedOrCollapsed();
-
-        for (const masterRowNode of masterDetailsToExpandOrCollapse) {
-            if (masterRowNode.detailNode?.id) {
-                const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
-                if (expand) {
-                    detailGridApi?.expandAll();
-                }
-            }
-        }
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',

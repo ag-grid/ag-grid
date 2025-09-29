@@ -3,7 +3,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export interface RowGroupExpansionState {
     expandedRowGroupIds: string[];
-    collapsedRowGroupIds?: string[];
+    collapsedRowGroupIds: string[];
 }
 
 export interface RowGroupBulkExpansionState {
