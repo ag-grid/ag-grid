@@ -96,16 +96,12 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
             const data = rowData[i];
             let node: RowNode<TData> | undefined = this.getRowNode(getRowIdFunc({ data, level: 0 }));
-            if (!node) {
-                nodesAdded = true;
-                node = this.createRowNode(data, -1);
-                adds.add(node);
-            } else {
+            if (node) {
                 if (reorder) {
                     const sourceRowIndex = node.sourceRowIndex;
                     orderChanged ||=
-                        sourceRowIndex <= prevSourceRowIndex || // A node was moved up, so order changed
-                        nodesAdded; // A node was inserted not at the end
+                        nodesAdded || // A node was inserted not at the end
+                        sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
                     prevSourceRowIndex = sourceRowIndex;
                 }
                 if (node.data !== data) {
@@ -115,6 +111,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                         updates.add(node);
                     }
                 }
+            } else {
+                nodesAdded = true;
+                node = this.createRowNode(data, -1);
+                adds.add(node);
             }
             processedNodes.add(node);
         }

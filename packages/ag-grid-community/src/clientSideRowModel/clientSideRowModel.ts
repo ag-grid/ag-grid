@@ -122,13 +122,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.nodeMgrName = beanName;
         const { beans, rootNode } = this;
         const registry = beans.registry;
-        bean = registry.createDynamicBean<ClientSideNodeManager>(beanName, false, rootNode) ?? null;
-        if (!bean) {
-            bean = registry.createDynamicBean<ClientSideNodeManager>('csrmNodeMgr', true, rootNode)!;
-        }
+        bean =
+            registry.createDynamicBean<ClientSideNodeManager>(beanName, false, rootNode) ??
+            registry.createDynamicBean<ClientSideNodeManager>('csrmNodeMgr', true, rootNode)!;
         this.createBean(bean);
-        bean.activate?.();
         this.nodeMgr = bean;
+        bean.activate?.();
         return bean;
     }
 
