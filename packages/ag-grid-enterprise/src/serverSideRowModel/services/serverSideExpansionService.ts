@@ -98,12 +98,12 @@ export class ServerSideExpansionService
     }
 
     public expandAll(expanded: boolean): void {
-        const canUseNewExpandAll = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
+        const ssrmExpandAllAffectsAllRows = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
         // if allowed, swap to expand all strategy
-        const strategy: IExpansionStrategy<any> =
-            this.isExpandAllStrategy(this.strategy) || !canUseNewExpandAll ? this.strategy : new ExpandAllStrategy();
-        this.strategy = strategy;
-        strategy.expandAll(expanded);
+        const shouldUseExpandAllStrategy = !this.isExpandAllStrategy(this.strategy) && ssrmExpandAllAffectsAllRows;
+
+        this.strategy = shouldUseExpandAllStrategy ? new ExpandAllStrategy() : this.strategy;
+        this.strategy.expandAll(expanded);
         this.updateAllNodes();
         this.dispatchStateUpdatedEvent();
         this.beans.eventSvc.dispatchEvent({

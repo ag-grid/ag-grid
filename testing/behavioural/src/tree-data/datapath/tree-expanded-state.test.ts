@@ -125,6 +125,81 @@ describe('ag-grid tree expanded state', () => {
             · └── yoo-1 LEAF id:yoo-1
         `);
     });
+
+    test('updated node that creates filler starts collapsed', async () => {
+        const node1 = {
+            path: ['Desktop', 'ProjectAlpha', 'Proposal.docx'],
+            key: '1',
+        };
+
+        const node2 = {
+            path: ['Desktop', 'ProjectAlpha', 'Timeline.xlsx'],
+            key: '2',
+        };
+
+        const rowData = [node1, node2];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [],
+            rowData,
+            treeData: true,
+            groupDefaultExpanded: 0,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.key,
+        });
+
+        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Desktop filler collapsed id:row-group-0-Desktop
+            · └─┬ ProjectAlpha filler collapsed hidden id:row-group-0-Desktop-1-ProjectAlpha
+            · · ├── Proposal.docx LEAF hidden id:1
+            · · └── Timeline.xlsx LEAF hidden id:2
+        `);
+
+        // Expand Desktop and ProjectAlpha
+        api.getRowNode('row-group-0-Desktop')!.setExpanded(true, undefined, true);
+        api.getRowNode('row-group-0-Desktop-1-ProjectAlpha')!.setExpanded(true, undefined, true);
+
+        gridRows = new GridRows(api, 'expanded', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Desktop filler id:row-group-0-Desktop
+            · └─┬ ProjectAlpha filler id:row-group-0-Desktop-1-ProjectAlpha
+            · · ├── Proposal.docx LEAF id:1
+            · · └── Timeline.xlsx LEAF id:2
+        `);
+
+        const update = () => {
+            const last_node = node2.path[node2.path.length - 1];
+
+            // Create the update node
+            const updateNode = { ...node2 };
+            updateNode.path = [
+                ...updateNode.path.slice(0, updateNode.path.length - 1),
+                last_node + '-virtual',
+                last_node,
+            ];
+            const newNode = { ...node2, key: '3' };
+
+            newNode.path = [...newNode.path.slice(0, newNode.path.length - 1), last_node + '-virtual', 'newNode'];
+
+            api.applyTransaction({ update: [updateNode], add: [newNode] });
+        };
+
+        update();
+
+        gridRows = new GridRows(api, 'updated', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Desktop filler id:row-group-0-Desktop
+            · └─┬ ProjectAlpha filler id:row-group-0-Desktop-1-ProjectAlpha
+            · · ├── Proposal.docx LEAF id:1
+            · · └─┬ Timeline.xlsx-virtual filler collapsed id:row-group-0-Desktop-1-ProjectAlpha-2-Timeline.xlsx-virtual
+            · · · ├── Timeline.xlsx LEAF hidden id:2
+            · · · └── newNode LEAF hidden id:3
+        `);
+    });
 });
 
 function getOrgHierarchyData() {

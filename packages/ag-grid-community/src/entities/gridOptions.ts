@@ -3058,6 +3058,11 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = 
      * @default true
      */
     headerCheckbox?: boolean;
+    /**
+     * If `true`, using CTRL+A will select all rows when [Cell Selection](./cell-selection) is enabled
+     * @default false
+     */
+    ctrlASelectsRows?: boolean;
 }
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */

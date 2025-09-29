@@ -406,31 +406,16 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         });
     }
 
-    public getValueColState(): ColState[] {
-        return this.model.valueColState.map(this.displayNameMapper.bind(this));
-    }
-
     public getSelectedValueColState(): { colId: string; displayName: string | null }[] {
-        return this.getValueColState().filter((cs) => cs.selected);
+        return this.model.getValueColState().filter((cs) => cs.selected);
     }
 
     public getSelectedDimensions(): ColState[] {
         return this.model.getSelectedDimensions();
     }
 
-    private displayNameMapper(col: ColState): ColState {
-        const { column } = col;
-        if (column) {
-            col.displayName = this.model.getColDisplayName(column, this.model.isPivotMode());
-        } else {
-            const colNames = this.model.colNames[col.colId];
-            col.displayName = colNames ? colNames.join(' - ') : this.model.getColDisplayName(column!);
-        }
-        return col;
-    }
-
     public getColStateForMenu(): { dimensionCols: ColState[]; valueCols: ColState[] } {
-        return { dimensionCols: this.model.dimensionColState, valueCols: this.getValueColState() };
+        return { dimensionCols: this.model.dimensionColState, valueCols: this.model.getValueColState() };
     }
 
     public setChartRange(silent = false): void {

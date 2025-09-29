@@ -1,9 +1,4 @@
-import type {
-    AgPolarAxisOptions,
-    AgPolarChartOptions,
-    AgPolarSeriesOptions,
-    AgRadarAreaSeriesOptions,
-} from 'ag-charts-types';
+import type { AgPolarAxisOptions, AgPolarChartOptions, AgPolarSeriesOptions } from 'ag-charts-types';
 
 import type { SeriesGroupType } from 'ag-grid-community';
 
@@ -28,14 +23,24 @@ export class PolarChartProxy extends ChartProxy<
         const radialBar = this.standaloneChartType === 'radial-bar';
         const seriesGroupTypeOptions = this.getSeriesGroupTypeOptions(seriesGroupType);
 
-        return fields.map((f) => ({
-            type: this.standaloneChartType as AgRadarAreaSeriesOptions['type'],
-            angleKey: radialBar ? f.colId : category.id,
-            angleName: radialBar ? f.displayName ?? undefined : category.name,
-            radiusKey: radialBar ? category.id : f.colId,
-            radiusName: radialBar ? category.name : f.displayName ?? undefined,
-            ...seriesGroupTypeOptions,
-        }));
+        // The (f) => {} function returns a type that looks something like:
+        //   { type: 'a' | 'b' | 'c' }
+        //
+        // But the desired type looks like:
+        //   { type: 'a' } | { type: 'b' } | { type: 'c' }
+        //
+        // The `as` converts to the desired type, but other type-requirements are verified with  `satisfies`.
+        //
+        return fields.map((f): AgPolarSeriesOptions => {
+            return {
+                type: this.standaloneChartType satisfies AgPolarSeriesOptions['type'],
+                angleKey: radialBar ? f.colId : category.id,
+                angleName: radialBar ? f.displayName ?? undefined : category.name,
+                radiusKey: radialBar ? category.id : f.colId,
+                radiusName: radialBar ? category.name : f.displayName ?? undefined,
+                ...seriesGroupTypeOptions,
+            } satisfies Omit<AgPolarSeriesOptions, 'type'> as AgPolarSeriesOptions;
+        });
     }
 
     public override getSeriesGroupType(): SeriesGroupType | undefined {

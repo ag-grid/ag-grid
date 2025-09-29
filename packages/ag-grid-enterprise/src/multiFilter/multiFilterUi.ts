@@ -11,7 +11,7 @@ import type {
     IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
-import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } from 'ag-grid-community';
+import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi, _warn } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
@@ -38,7 +38,19 @@ export class MultiFilterUi
 
     public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {
         this.params = params;
-        this.filterDefs = getMultiFilterDefs(params);
+        const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
+            if (filterDef.filterParams?.buttons) {
+                _warn(292, { colId: params.column.getColId() });
+                const newParams = { ...filterDef.filterParams };
+                delete newParams.buttons;
+                return {
+                    ...filterDef,
+                    filterParams: newParams,
+                };
+            }
+            return filterDef;
+        });
+        this.filterDefs = filterDefs;
 
         this.allState = params.state;
 

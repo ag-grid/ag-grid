@@ -634,6 +634,21 @@
                             "children": [
                                 {
                                     "type": "item",
+                                    "title": "Managed Row Dragging",
+                                    "path": "row-dragging-managed"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Unmanaged Row Dragging",
+                                    "path": "row-dragging-unmanaged"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Row Dragging Customisation",
+                                    "path": "row-dragging-customisation"
+                                },
+                                {
+                                    "type": "item",
                                     "title": "External DropZone",
                                     "path": "row-dragging-to-external-dropzone"
                                 },

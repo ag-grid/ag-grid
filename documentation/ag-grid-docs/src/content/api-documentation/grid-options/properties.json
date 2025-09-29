@@ -1223,49 +1223,49 @@
         "rowDragManaged": {
             "more": {
                 "name": "Managed Row Dragging",
-                "url": "./row-dragging/#managed-dragging"
+                "url": "./row-dragging-managed/"
             }
         },
         "rowDragEntireRow": {
             "more": {
                 "name": "Entire Row Dragging",
-                "url": "./row-dragging/#entire-row-dragging"
+                "url": "./row-dragging-customisation/#entire-row-dragging"
             }
         },
         "rowDragMultiRow": {
             "more": {
                 "name": "Mulit-Row Dragging",
-                "url": "./row-dragging/#multi-row-dragging"
+                "url": "./row-dragging-managed/#multi-row-dragging"
             }
         },
         "suppressRowDrag": {
             "more": {
                 "name": "Suppress Row Drag",
-                "url": "./row-dragging/#suppress-row-drag"
+                "url": "./row-dragging-managed/#suppress-row-drag"
             }
         },
         "suppressMoveWhenRowDragging": {
             "more": {
                 "name": "Suppress Move When Dragging",
-                "url": "./row-dragging/#suppress-move-when-dragging"
+                "url": "./row-dragging-managed/#suppress-move-when-dragging"
             }
         },
         "rowDragText": {
             "more": {
                 "name": "Custom Row Drag Text",
-                "url": "./row-dragging/#custom-row-drag-text"
+                "url": "./row-dragging-customisation/#custom-row-drag-text"
             }
         },
         "dragAndDropImageComponent": {
             "more": {
                 "name": "Custom Drag and Drop Image",
-                "url": "./row-dragging/#custom-drag-and-drop-image"
+                "url": "./row-dragging-customisation/#custom-drag-and-drop-image"
             }
         },
         "dragAndDropImageComponentParams": {
             "more": {
                 "name": "Custom Drag and Drop Image",
-                "url": "./row-dragging/#custom-params"
+                "url": "./row-dragging-customisation/#custom-params"
             }
         },
         "rowDragInsertDelay": {
