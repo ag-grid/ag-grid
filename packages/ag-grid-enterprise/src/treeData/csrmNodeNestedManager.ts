@@ -7,7 +7,6 @@ import type {
 } from 'ag-grid-community';
 import { ChangedPath, ClientSideNodeManager, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
 
-import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 
@@ -42,8 +41,8 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         const rootNode = this.rootNode;
         const childrenGetter = this.childrenGetter;
 
-        const processedData = new Map<TData, GroupingRowNode<TData>>();
-        const allLeafChildren: GroupingRowNode<TData>[] = [];
+        const processedData = new Map<TData, RowNode<TData>>();
+        const allLeafChildren: RowNode<TData>[] = [];
 
         const processChild = (parent: RowNode, data: TData) => {
             let row = processedData.get(data);
@@ -81,22 +80,22 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         const getRowIdFunc = _getRowIdCallback(gos)!;
         const canReorder = !gos.get('suppressMaintainUnsortedOrder');
 
-        const processedData = new Map<TData, GroupingRowNode<TData>>();
+        const processedData = new Map<TData, RowNode<TData>>();
 
         const changedPath = new ChangedPath(false, rootNode);
         params.changedPath = changedPath;
 
         const changedRowNodes = params.changedRowNodes!;
 
-        const oldAllLeafChildren: GroupingRowNode[] | null = rootNode.allLeafChildren;
-        const allLeafChildren: GroupingRowNode[] = [];
-        const nodesToUnselect: GroupingRowNode<TData>[] = [];
+        const oldAllLeafChildren: RowNode[] | null = rootNode.allLeafChildren;
+        const allLeafChildren: RowNode[] = [];
+        const nodesToUnselect: RowNode<TData>[] = [];
 
         let orderChanged = false;
         let rowsChanged = false;
         const { adds, updates } = changedRowNodes;
 
-        const processChildren = (parent: GroupingRowNode<TData>, children: TData[], childrenLevel: number): void => {
+        const processChildren = (parent: RowNode<TData>, children: TData[], childrenLevel: number): void => {
             const childrenLen = children?.length;
             let inOrder = true;
             let prevIndex = -1;
@@ -114,7 +113,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
             }
         };
 
-        const processChild = (parent: GroupingRowNode<TData>, data: TData, level: number): number => {
+        const processChild = (parent: RowNode<TData>, data: TData, level: number): number => {
             let row = processedData.get(data);
             if (row !== undefined) {
                 _warn(2, { nodeId: row.id }); // Duplicate node
@@ -123,7 +122,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
 
             const id = getRowIdFunc({ data, level });
 
-            row = this.getRowNode(id) as GroupingRowNode<TData> | undefined;
+            row = this.getRowNode(id);
             if (row) {
                 let rowChanged = false;
                 if (row.data !== data) {
@@ -204,7 +203,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
 
             // Now append all the new children
             for (const row of changedRowNodes.adds) {
-                (row as GroupingRowNode<TData>).sourceRowIndex = allLeafChildren.push(row) - 1;
+                row.sourceRowIndex = allLeafChildren.push(row) - 1;
             }
         }
 

@@ -19,37 +19,13 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 
-/**
- * This is the type of any row in allLeafChildren and childrenAfterGroup of the ClientSideNodeManager rootNode.
- * ClientSideNodeManager is allowed to update the sourceRowIndex property of the nodes.
- */
-interface ClientSideNodeManagerRowNode<TData> extends RowNode<TData> {
-    sourceRowIndex: number;
-}
-
-/**
- * This is the type of the root RowNode of the ClientSideNodeManager
- * ClientSideNodeManager is allowed to update the allLeafChildren and childrenAfterGroup properties of the root node.
- */
-interface ClientSideNodeManagerRootNode<TData> extends RowNode<TData> {
-    sibling: ClientSideNodeManagerRootNode<TData>;
-    allLeafChildren: ClientSideNodeManagerRowNode<TData>[] | null;
-    childrenAfterGroup: ClientSideNodeManagerRowNode<TData>[] | null;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace ClientSideNodeManager {
-    export type RowNode<TData> = ClientSideNodeManagerRowNode<TData>;
-    export type RootNode<TData> = ClientSideNodeManagerRootNode<TData>;
-}
-
 export class ClientSideNodeManager<TData = any> extends BeanStub {
     private nextId = 0;
     protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
-    public rootNode: ClientSideNodeManager.RootNode<TData>;
+    public rootNode: RowNode<TData>;
 
-    public constructor(rootNode: ClientSideNodeManagerRootNode<TData>) {
+    public constructor(rootNode: RowNode<TData>) {
         super();
         this.rootNode = rootNode;
     }
@@ -106,7 +82,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
-        const processedNodes = new Set<ClientSideNodeManagerRowNode<TData>>();
+        const processedNodes = new Set<RowNode<TData>>();
         const rootNode = this.rootNode;
         const oldAllLeafChildren = rootNode.allLeafChildren!;
         const oldAllLeafChildrenLen = oldAllLeafChildren.length;
@@ -119,9 +95,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const { adds, updates } = changedRowNodes;
         for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
             const data = rowData[i];
-            let node: ClientSideNodeManagerRowNode<TData> | undefined = this.getRowNode(
-                getRowIdFunc({ data, level: 0 })
-            );
+            let node: RowNode<TData> | undefined = this.getRowNode(getRowIdFunc({ data, level: 0 }));
             if (!node) {
                 nodesAdded = true;
                 node = this.createRowNode(data, -1);
@@ -249,9 +223,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         }
 
         const addLength = add.length;
-        const adds = result.changedRowNodes.adds;
         // Preallocate new array for result
-        const newAllLeafs = new Array<ClientSideNodeManagerRowNode<TData>>(allLeafsLen + addLength);
+        const newAllLeafs = new Array<RowNode<TData>>(allLeafsLen + addLength);
 
         // Copy nodes before addIndex
         for (let i = 0; i < addIndex; i++) {
@@ -261,8 +234,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         let writeIdx = addIndex;
 
         // Insert new nodes
+        const adds = result.changedRowNodes.adds;
         for (let i = 0; i < addLength; i++) {
-            const node = this.createRowNode(add[i], writeIdx) as ClientSideNodeManagerRowNode<TData>;
+            const node = this.createRowNode(add[i], writeIdx);
             adds.add(node);
             newAllLeafs[writeIdx++] = node;
         }
@@ -326,7 +300,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         if (!allLeafsLen) {
             return;
         }
-        const newAllLeafs = new Array<ClientSideNodeManagerRowNode<TData>>(allLeafsLen - removedSet.size);
+        const newAllLeafs = new Array<RowNode<TData>>(allLeafsLen - removedSet.size);
         let writeIdx = 0;
         for (let readIdx = 0, len = allLeafsLen; readIdx < len; ++readIdx) {
             const rowNode = allLeafs![readIdx];
@@ -424,7 +398,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     protected createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
-        const node: ClientSideNodeManagerRowNode<TData> = new RowNode<TData>(this.beans);
+        const node: RowNode<TData> = new RowNode<TData>(this.beans);
         node.parent = this.rootNode;
         node.level = 0;
         node.group = false;
@@ -459,7 +433,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 }
 
-export const initRootNode = <TData = any>(rootNode: ClientSideNodeManager.RootNode<TData>): RowNode<TData> => {
+export const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TData> => {
     rootNode.group = true;
     rootNode.level = -1;
     rootNode.id = ROOT_NODE_ID;
@@ -473,7 +447,7 @@ export const initRootNode = <TData = any>(rootNode: ClientSideNodeManager.RootNo
     return rootNode;
 };
 
-const initRootSibling = <TData = any>(rootNode: ClientSideNodeManager.RootNode<TData>): void => {
+const initRootSibling = <TData = any>(rootNode: RowNode<TData>): void => {
     const sibling = rootNode.sibling;
     if (sibling) {
         sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
@@ -490,9 +464,9 @@ const initRootSibling = <TData = any>(rootNode: ClientSideNodeManager.RootNode<T
  * Returns the node if found, otherwise undefined.
  */
 const lookupRowNodeByData = <TData>(
-    allLeafChildren: ClientSideNodeManagerRowNode<TData>[] | null | undefined,
+    allLeafChildren: RowNode<TData>[] | null | undefined,
     data: TData
-): ClientSideNodeManagerRowNode<TData> | null => {
+): RowNode<TData> | null => {
     if (allLeafChildren) {
         for (let i = 0, len = allLeafChildren.length; i < len; i++) {
             const node = allLeafChildren[i];

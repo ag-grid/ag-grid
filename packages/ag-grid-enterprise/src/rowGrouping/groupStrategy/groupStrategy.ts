@@ -12,23 +12,15 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    RowNode,
-    _ROW_ID_PREFIX_ROW_GROUP,
-    _areEqual,
-    _exists,
-    _removeFromArray,
-    _warn,
-} from 'ag-grid-community';
+import { RowNode } from 'ag-grid-community';
+import { BeanStub, _ROW_ID_PREFIX_ROW_GROUP, _areEqual, _exists, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
-import type { GroupingRowNode, IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
+import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
-import type { GroupRow } from './groupRow';
 import { sortGroupChildren } from './sortGroupChildren';
 
 interface GroupInfo {
@@ -105,7 +97,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
-        changedPath.forEachChangedNodeDepthFirst((group: GroupRow) => {
+        changedPath.forEachChangedNodeDepthFirst((group: RowNode) => {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
                 const groupNodes: RowNode[] = [];
@@ -128,7 +120,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 }
 
                 group.childrenAfterGroup = [...leafNodes, ...groupNodes];
-                const sibling = group.sibling as GroupingRowNode;
+                const sibling = group.sibling;
                 if (sibling) {
                     sibling.childrenAfterGroup = group.childrenAfterGroup;
                 }
@@ -401,7 +393,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     /**
      * This is idempotent, but relies on the `key` field being the same throughout a RowNode's lifetime
      */
-    private addToParent(child: RowNode, parent: GroupingRowNode) {
+    private addToParent(child: RowNode, parent: RowNode) {
         const childrenMapped = (parent.childrenMapped ??= {});
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (childrenMapped[mapKey] !== child) {
@@ -452,7 +444,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
-        const rootNode: GroupRow = details.rootNode;
+        const rootNode: RowNode = details.rootNode;
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = details.groupCols.length === 0;
@@ -462,7 +454,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         rootNode.childrenMapped = {};
         rootNode.updateHasChildren();
 
-        const sibling: GroupRow = rootNode.sibling;
+        const sibling: RowNode = rootNode.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             sibling.childrenMapped = rootNode.childrenMapped;
@@ -559,7 +551,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
-        const groupNode: GroupRow = new RowNode(this.beans);
+        const groupNode: RowNode = new RowNode(this.beans);
 
         groupNode.group = true;
         groupNode.field = groupInfo.field;

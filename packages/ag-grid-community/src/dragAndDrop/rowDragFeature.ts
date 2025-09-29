@@ -15,11 +15,6 @@ import { DragSourceType } from './dragAndDropService';
 import { RowDragFeatureNudger } from './rowDragFeatureNudger';
 import type { RowDraggingEvent, RowDropZoneEvents, RowDropZoneParams, RowsDrop } from './rowDragTypes';
 
-interface WritableRowNode extends RowNode {
-    treeParent: RowNode | null;
-    sourceRowIndex: number;
-}
-
 /** We actually have a different interface if we are passing params out of the grid and
  * directly into another grid. These internal params just work directly off the DraggingEvent.
  * However, we don't want to expose these to the user, so we have a different interface for
@@ -607,10 +602,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private moveRows({ position, target, rows, newParent, rootNode }: RowsDrop): boolean {
         let changed = false;
 
-        const leafs = new Set<WritableRowNode>();
-        for (const row of rows as WritableRowNode[]) {
+        const leafs = new Set<RowNode>();
+        for (const row of rows as RowNode[]) {
             if (newParent && row.parent !== newParent) {
-                row.treeParent = newParent as RowNode | null;
+                row.treeParent = newParent as RowNode;
                 changed = true;
             }
 
@@ -684,14 +679,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
      * @returns True if the order of the rows changed, false otherwise
      */
     private reorderLeafChildren(
-        leafs: ReadonlySet<WritableRowNode>,
+        leafs: ReadonlySet<RowNode>,
         firstAffectedLeafIdx: number,
         targetPositionIdx: number,
         lastAffectedLeafIndex: number
     ): boolean {
         let orderChanged = false;
 
-        const allLeafChildren: WritableRowNode[] | null | undefined = this.clientSideRowModel.rootNode?.allLeafChildren;
+        const allLeafChildren: RowNode[] | null | undefined = this.clientSideRowModel.rootNode?.allLeafChildren;
         if (!leafs.size || !allLeafChildren) {
             return false;
         }

@@ -30,10 +30,6 @@ import type { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
-interface ClientSideRowModelRootNode extends RowNode {
-    childrenAfterGroup: RowNode[] | null;
-}
-
 interface BatchTransactionItem<TData = any> {
     rowDataTransaction: RowDataTransaction<TData>;
     callback: ((res: RowNodeTransaction<TData>) => void) | undefined;
@@ -966,7 +962,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doRowGrouping(params: RefreshModelParams): boolean {
-        const rootNode: ClientSideRowModelRootNode = this.rootNode!;
+        const rootNode: RowNode = this.rootNode!;
         const groupStageExecuted = this.beans.groupStage?.execute({
             rowNode: rootNode,
             changedRowNodes: params.changedRowNodes,
@@ -979,7 +975,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return groupStageExecuted;
         }
 
-        const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+        const sibling: RowNode = rootNode.sibling;
         rootNode.childrenAfterGroup = rootNode.allLeafChildren;
         if (sibling) {
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;

@@ -134,36 +134,22 @@ export class RowNode<TData = any>
      * The index of the row in the source rowData array including any updates via transactions.
      * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
      * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value is set to `-1`.
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
-     * - ClientSideRowModel, cast to ClientSideRowModelRowNode
      */
-    public readonly sourceRowIndex: number = -1;
+    public sourceRowIndex: number = -1;
 
     /**
      * All lowest level nodes beneath this node, no groups.
      * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      * The array might also br frozen (immutable).
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
      */
-    public readonly allLeafChildren: RowNode<TData>[] | null;
+    public allLeafChildren: RowNode<TData>[] | null;
 
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
      */
-    public readonly childrenAfterGroup: RowNode<TData>[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode<TData>[] | null;
@@ -185,10 +171,10 @@ export class RowNode<TData = any>
      * When set, the parent node in the hierarchy is updated during Client-Side Row Model (CSRM) grouping.
      * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
      */
-    public readonly treeParent: RowNode<TData> | null = null;
+    public treeParent: RowNode<TData> | null = null;
 
     /** The flags associated to this node. Used only internally within TreeGroupStrategy. */
-    public readonly treeNodeFlags: number = 0;
+    public treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
