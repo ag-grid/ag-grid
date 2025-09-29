@@ -1,4 +1,5 @@
 import { BASE_URL } from '../baseUrl';
+import { _isUmd } from '../modules/moduleRegistry';
 import { _errorOnce, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
@@ -122,6 +123,10 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
 
 const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessage?: string) => {
     const errorLink = getErrorLink(errorNum, args);
+
+    if (_isUmd()) {
+        return errorLink;
+    }
     return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
