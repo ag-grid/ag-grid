@@ -11,7 +11,7 @@ import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
 import { makeFieldPathGetter } from './fieldAccess';
 
-export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeManager<TData> {
+export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null | undefined = undefined;
 
     public override destroy(): void {
@@ -31,11 +31,6 @@ export class ClientSideChildrenTreeNodeManager<TData> extends ClientSideNodeMana
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
-    }
-
-    public override deactivate(): void {
-        this.childrenGetter = null;
-        super.deactivate();
     }
 
     public override updateRowData(

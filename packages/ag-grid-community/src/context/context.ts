@@ -144,8 +144,8 @@ export type DynamicBeanName =
     | 'agNumberColumnFilterHandler'
     | 'agDateColumnFilterHandler'
     | 'agTextColumnFilterHandler'
-    | 'csrmNodeSvc'
-    | 'csrmNodeWithChildrenSvc';
+    | 'csrmNodeMgr'
+    | 'csrmNodeNestedMgr';
 
 export type UserComponentName =
     | 'agDragAndDropImage'

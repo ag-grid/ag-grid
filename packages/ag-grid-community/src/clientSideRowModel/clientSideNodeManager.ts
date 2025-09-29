@@ -64,15 +64,11 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     public activate?(): void;
 
-    public deactivate(): void {
-        this.allNodesMap = {};
-    }
-
     public override destroy(): void {
         super.destroy();
 
         // Forcefully deallocate memory
-        this.allNodesMap = null!;
+        this.allNodesMap = {};
         this.rootNode = null!;
     }
 

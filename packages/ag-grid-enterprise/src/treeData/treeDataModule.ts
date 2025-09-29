@@ -8,7 +8,7 @@ import {
     StickyRowModule,
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
-import { ClientSideChildrenTreeNodeManager } from './clientSideChildrenTreeNodeManager';
+import { CsrmNodeNestedManager } from './csrmNodeNestedManager';
 import { TreeGroupStrategy } from './treeGroupStrategy';
 
 /**
@@ -28,7 +28,7 @@ export const TreeDataModule: _ModuleWithoutApi = {
     moduleName: 'TreeData',
     version: VERSION,
     dynamicBeans: {
-        csrmNodeWithChildrenSvc: ClientSideChildrenTreeNodeManager,
+        csrmNodeNestedMgr: CsrmNodeNestedManager,
         treeGroupStrategy: TreeGroupStrategy,
     },
     rowModels: ['clientSide'],
