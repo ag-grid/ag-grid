@@ -58,19 +58,21 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return this.allNodesMap[id];
     }
 
-    public extractRowData(): TData[] | null | undefined {
-        return this.rootNode.allLeafChildren?.map((node) => node.data!);
+    public extractRowData(
+        rowNodes: RowNode<TData>[] | null | undefined = this.rootNode.allLeafChildren
+    ): TData[] | null | undefined {
+        if (!rowNodes) {
+            return rowNodes;
+        }
+        const len = rowNodes.length;
+        const result = new Array<TData>(len);
+        for (let i = 0; i < len; ++i) {
+            result[i] = rowNodes[i].data!;
+        }
+        return result;
     }
 
     public activate?(): void;
-
-    public override destroy(): void {
-        super.destroy();
-
-        // Forcefully deallocate memory
-        this.allNodesMap = {};
-        this.rootNode = null!;
-    }
 
     public setNewRowData(rowData: TData[]): void {
         const rootNode = this.rootNode;
@@ -86,16 +88,19 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         // Clear internal maps
 
-        this.allNodesMap = {};
         this.nextId = 0;
-
-        this.loadNewRowData(rowData);
-
+        this.allNodesMap = {};
+        rootNode.allLeafChildren = this.loadNewRowData(rowData);
         initRootSibling(rootNode);
     }
 
-    protected loadNewRowData(rowData: TData[]): void {
-        this.rootNode.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
+    protected loadNewRowData(rowData: TData[]): RowNode[] {
+        const len = rowData.length;
+        const result = new Array<RowNode<TData>>(len);
+        for (let i = 0, len = rowData.length; i < len; i++) {
+            result[i] = this.createRowNode(rowData[i], i);
+        }
+        return result;
     }
 
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
@@ -225,129 +230,122 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return updateRowDataResult;
     }
 
-    protected executeAdd(
-        rowDataTran: RowDataTransaction,
-        result: ClientSideNodeManagerUpdateRowDataResult<TData>
-    ): void {
+    private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult<TData>): void {
         const add = rowDataTran.add;
         if (!add?.length) {
             return;
         }
 
-        let allLeafChildren = this.rootNode.allLeafChildren!;
-        let addIndex = allLeafChildren.length;
+        const allLeafs = this.rootNode.allLeafChildren!;
+        const allLeafsLen = allLeafs.length;
+        let addIndex = allLeafsLen;
 
         if (typeof rowDataTran.addIndex === 'number') {
             addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
-
-            if (addIndex > 0) {
-                // TODO: this code should not be here, see AG-12602
-                // This was a fix for AG-6231, but is not the correct fix
-                // We enable it only for trees that use getDataPath and not the new children field or parentId field
-                const getDataPath = this.gos.get('treeData') && this.gos.get('getDataPath');
-                if (getDataPath) {
-                    for (let i = 0, len = allLeafChildren.length; i < len; i++) {
-                        const node = allLeafChildren[i];
-                        if (node?.rowIndex == addIndex - 1) {
-                            addIndex = i + 1;
-                            break;
-                        }
-                    }
-                }
+            const gos = this.gos;
+            if (addIndex > 0 && gos.get('treeData') && gos.get('getDataPath')) {
+                addIndex = adjustAddIndexForDataPath(addIndex, allLeafs);
             }
         }
 
-        // create new row nodes for each data item
         const addLength = add.length;
-        const newNodes = new Array(addLength);
         const adds = result.changedRowNodes.adds;
+        // Preallocate new array for result
+        const newAllLeafs = new Array<ClientSideNodeManagerRowNode<TData>>(allLeafsLen + addLength);
+
+        // Copy nodes before addIndex
+        for (let i = 0; i < addIndex; i++) {
+            newAllLeafs[i] = allLeafs[i];
+        }
+
+        let writeIdx = addIndex;
+
+        // Insert new nodes
         for (let i = 0; i < addLength; i++) {
-            const newNode = this.createRowNode(add[i], addIndex + i);
-            adds.add(newNode);
-            newNodes[i] = newNode;
+            const node = this.createRowNode(add[i], writeIdx) as ClientSideNodeManagerRowNode<TData>;
+            adds.add(node);
+            newAllLeafs[writeIdx++] = node;
         }
 
-        const rootNode = this.rootNode;
-
-        if (addIndex < allLeafChildren.length) {
-            // Insert at the specified index
-
-            const nodesBeforeIndex = allLeafChildren.slice(0, addIndex);
-            const nodesAfterIndex = allLeafChildren.slice(addIndex, allLeafChildren.length);
-
-            // update latter row indexes
-            const nodesAfterIndexFirstIndex = nodesBeforeIndex.length + newNodes.length;
-            for (let index = 0, length = nodesAfterIndex.length; index < length; ++index) {
-                nodesAfterIndex[index].sourceRowIndex = nodesAfterIndexFirstIndex + index;
-            }
-
-            allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
-
-            // Mark the result as rows inserted
-            result.rowsInserted = true;
-        } else {
-            // Just append at the end
-            allLeafChildren = allLeafChildren.concat(newNodes);
+        // Copy and update nodes after addIndex
+        for (let i = addIndex; i < allLeafsLen; i++) {
+            const node = allLeafs[i];
+            node.sourceRowIndex = writeIdx;
+            newAllLeafs[writeIdx++] = node;
         }
 
-        rootNode.allLeafChildren = allLeafChildren;
-        const sibling = rootNode.sibling;
+        this.rootNode.allLeafChildren = newAllLeafs;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
-            sibling.allLeafChildren = allLeafChildren;
+            sibling.allLeafChildren = newAllLeafs;
+        }
+
+        // If not appending, mark as inserted
+        if (addIndex < allLeafsLen) {
+            result.rowsInserted = true;
         }
 
         // add new row nodes to the transaction add items
-        result.rowNodeTransaction.add = newNodes;
+        result.rowNodeTransaction.add = newAllLeafs.slice(addIndex, addIndex + addLength);
     }
 
-    protected executeRemove(
+    private executeRemove(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         rowDataTran: RowDataTransaction,
         { changedRowNodes, rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
         nodesToUnselect: RowNode<TData>[]
     ): void {
         const { remove } = rowDataTran;
-
         if (!remove?.length) {
             return;
         }
 
-        const rowIdsRemoved: { [key: string]: boolean } = {};
-
+        const removedSet = new Set<RowNode<TData>>();
+        const removeRowNodes = rowNodeTransaction.remove;
         for (let i = 0, len = remove.length; i < len; i++) {
-            const item = remove[i];
-            const rowNode = this.lookupRowNode(getRowIdFunc, item);
+            const rowNode = this.lookupRowNode(getRowIdFunc, remove[i]);
             if (!rowNode) {
                 continue;
             }
-            if (rowNode.isSelected()) nodesToUnselect.push(rowNode);
-            if (rowNode.pinnedSibling) this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
-            rowNode.clearRowTopAndRowIndex();
-            rowIdsRemoved[rowNode.id!] = true;
-            delete this.allNodesMap[rowNode.id!];
-            rowNodeTransaction.remove.push(rowNode);
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+            if (rowNode.pinnedSibling) {
+                this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
+            }
+            this.rowNodeDeleted(rowNode);
             changedRowNodes.remove(rowNode);
+            removeRowNodes.push(rowNode);
+            removedSet.add(rowNode);
         }
-
-        const rootNode = this.rootNode;
-
-        rootNode.allLeafChildren = rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
-
-        // after rows have been removed, all following rows need the position index updated
-        if (rootNode.allLeafChildren) {
-            const leafLen = rootNode.allLeafChildren.length;
-            for (let idx = 0; idx < leafLen; idx++) {
-                rootNode.allLeafChildren[idx].sourceRowIndex = idx;
+        if (!removedSet.size) {
+            return;
+        }
+        const allLeafs = this.rootNode.allLeafChildren;
+        const allLeafsLen = allLeafs?.length ?? 0;
+        if (!allLeafsLen) {
+            return;
+        }
+        const newAllLeafs = new Array<ClientSideNodeManagerRowNode<TData>>(allLeafsLen - removedSet.size);
+        let writeIdx = 0;
+        for (let readIdx = 0, len = allLeafsLen; readIdx < len; ++readIdx) {
+            const rowNode = allLeafs![readIdx];
+            if (!removedSet.has(rowNode)) {
+                rowNode.sourceRowIndex = writeIdx;
+                newAllLeafs[writeIdx++] = rowNode;
             }
         }
-
-        const sibling = rootNode.sibling;
-        if (sibling) {
-            sibling.allLeafChildren = rootNode.allLeafChildren;
+        if (writeIdx !== allLeafsLen) {
+            newAllLeafs.length = writeIdx;
+            this.rootNode.allLeafChildren = newAllLeafs;
+            const sibling = this.rootNode.sibling;
+            if (sibling) {
+                sibling.allLeafChildren = newAllLeafs;
+            }
         }
     }
 
-    protected executeUpdate(
+    private executeUpdate(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         rowDataTran: RowDataTransaction,
         { changedRowNodes: { adds, updates }, rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
@@ -358,6 +356,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             return;
         }
 
+        const updatedRowNodes = rowNodeTransaction.update;
         for (let i = 0, len = update.length; i < len; i++) {
             const item = update[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
@@ -365,8 +364,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 continue;
             }
             rowNode.updateData(item);
-            if (!rowNode.selectable && rowNode.isSelected()) nodesToUnselect.push(rowNode);
-            rowNodeTransaction.update.push(rowNode);
+            if (!rowNode.selectable && rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+            updatedRowNodes.push(rowNode);
             if (!adds.has(rowNode)) {
                 updates.add(rowNode);
             }
@@ -443,25 +444,18 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
-        let rowNode: RowNode | undefined;
-        if (getRowIdFunc) {
-            // find rowNode using id
-            const id = getRowIdFunc({ data, level: 0 });
-            rowNode = this.allNodesMap[id];
-            if (!rowNode) {
-                _error(4, { id });
-                return null;
-            }
-        } else {
-            // find rowNode using object references
-            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
-            if (!rowNode) {
-                _error(5, { data });
-                return null;
-            }
+        if (!getRowIdFunc) {
+            return lookupRowNodeByData(this.rootNode.allLeafChildren, data);
         }
 
-        return rowNode || null;
+        // find rowNode using id
+        const id = getRowIdFunc({ data, level: 0 });
+        const rowNode = this.allNodesMap[id];
+        if (rowNode) {
+            return rowNode;
+        }
+        _error(4, { id });
+        return null;
     }
 }
 
@@ -489,4 +483,38 @@ const initRootSibling = <TData = any>(rootNode: ClientSideNodeManager.RootNode<T
         sibling.childrenMapped = rootNode.childrenMapped;
         sibling.allLeafChildren = rootNode.allLeafChildren;
     }
+};
+
+/**
+ * Finds a row node in the given array whose data matches the provided data object.
+ * Returns the node if found, otherwise undefined.
+ */
+const lookupRowNodeByData = <TData>(
+    allLeafChildren: ClientSideNodeManagerRowNode<TData>[] | null | undefined,
+    data: TData
+): ClientSideNodeManagerRowNode<TData> | null => {
+    if (allLeafChildren) {
+        for (let i = 0, len = allLeafChildren.length; i < len; i++) {
+            const node = allLeafChildren[i];
+            if (node.data === data) {
+                return node;
+            }
+        }
+    }
+    _error(5, { data });
+    return null;
+};
+
+/**
+ * Adjusts addIndex for treeData scenarios (AG-6231 workaround).
+ * Returns the corrected addIndex value.
+ */
+const adjustAddIndexForDataPath = <TData>(addIndex: number, allLeafs: RowNode<TData>[]): number => {
+    for (let i = 0, len = allLeafs.length; i < len; i++) {
+        const node = allLeafs[i];
+        if (node?.rowIndex == addIndex - 1) {
+            return i + 1;
+        }
+    }
+    return addIndex;
 };

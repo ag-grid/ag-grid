@@ -14,15 +14,8 @@ import { makeFieldPathGetter } from './fieldAccess';
 export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null | undefined = undefined;
 
-    public override destroy(): void {
-        super.destroy();
-
-        // Forcefully deallocate memory
-        this.childrenGetter = null;
-    }
-
     public override extractRowData(): TData[] | null | undefined {
-        return this.rootNode.childrenAfterGroup?.map(({ data }) => data!);
+        return super.extractRowData(this.rootNode.childrenAfterGroup ?? null);
     }
 
     public override activate(): void {
@@ -45,14 +38,12 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         };
     }
 
-    protected override loadNewRowData(rowData: TData[]): void {
+    protected override loadNewRowData(rowData: TData[]): RowNode[] {
         const rootNode = this.rootNode;
         const childrenGetter = this.childrenGetter;
 
         const processedData = new Map<TData, GroupingRowNode<TData>>();
         const allLeafChildren: GroupingRowNode<TData>[] = [];
-
-        rootNode.allLeafChildren = allLeafChildren;
 
         const processChild = (parent: RowNode, data: TData) => {
             let row = processedData.get(data);
@@ -77,6 +68,8 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         for (let i = 0, len = rowData.length; i < len; ++i) {
             processChild(rootNode, rowData[i]);
         }
+
+        return allLeafChildren;
     }
 
     public override setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
@@ -188,7 +181,6 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                     if (pinnedSibling) {
                         pinnedRowModel?.pinRow(pinnedSibling, null);
                     }
-                    row.clearRowTopAndRowIndex();
                     this.rowNodeDeleted(row);
                     if (row.isSelected()) {
                         nodesToUnselect.push(row);
