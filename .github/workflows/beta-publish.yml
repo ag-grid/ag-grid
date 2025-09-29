@@ -33,12 +33,11 @@ jobs:
             - name: Fetch Refs
               run: git fetch origin --depth 1 latest-success latest
 
-            - name: Setup Node.js
-              id: setup_node
-              uses: actions/setup-node@v4
+            - name: Setup
+              id: setup
+              uses: ./.github/actions/setup-nx
               with:
-                  node-version: '20'
-                  cache: 'yarn'
+                cache_mode: ro
 
             - name: nx pack:verify
               id: pack-verify
