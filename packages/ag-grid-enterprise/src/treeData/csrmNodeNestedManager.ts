@@ -101,6 +101,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
 
         let orderChanged = false;
         let rowsChanged = false;
+        const { adds, updates } = changedRowNodes;
 
         const processChildren = (parent: GroupingRowNode<TData>, children: TData[], childrenLevel: number): void => {
             const childrenLen = children?.length;
@@ -145,13 +146,15 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                 }
                 if (rowChanged) {
                     rowsChanged = true;
-                    changedRowNodes.update(row);
+                    if (!adds.has(row)) {
+                        updates.add(row);
+                    }
                 }
             } else {
                 row = this.createRowNode(data, -1);
                 row.treeParent = parent;
                 rowsChanged = true;
-                changedRowNodes.add(row);
+                adds.add(row);
             }
 
             processedData.set(data, row);

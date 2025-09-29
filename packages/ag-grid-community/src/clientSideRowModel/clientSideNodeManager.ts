@@ -101,7 +101,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
-        const changedRowNodes = params.changedRowNodes!;
         const processedNodes = new Set<ClientSideNodeManagerRowNode<TData>>();
         const rootNode = this.rootNode;
         const oldAllLeafChildren = rootNode.allLeafChildren!;
@@ -111,6 +110,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         let nodesRemoved = false;
         let nodesUpdated = false;
         let orderChanged = false;
+        const changedRowNodes = params.changedRowNodes!;
+        const { adds, updates } = changedRowNodes;
         for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
             const data = rowData[i];
             let node: ClientSideNodeManagerRowNode<TData> | undefined = this.getRowNode(
@@ -119,7 +120,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             if (!node) {
                 nodesAdded = true;
                 node = this.createRowNode(data, -1);
-                changedRowNodes.add(node);
+                adds.add(node);
             } else {
                 if (reorder) {
                     const sourceRowIndex = node.sourceRowIndex;
@@ -131,7 +132,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 if (node.data !== data) {
                     nodesUpdated = true;
                     node.updateData(data);
-                    changedRowNodes.update(node);
+                    if (!adds.has(node)) {
+                        updates.add(node);
+                    }
                 }
             }
             processedNodes.add(node);
@@ -240,7 +243,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             if (addIndex > 0) {
                 // TODO: this code should not be here, see AG-12602
                 // This was a fix for AG-6231, but is not the correct fix
-                // We enable it only for trees that use getDataPath and not the new children field
+                // We enable it only for trees that use getDataPath and not the new children field or parentId field
                 const getDataPath = this.gos.get('treeData') && this.gos.get('getDataPath');
                 if (getDataPath) {
                     for (let i = 0, len = allLeafChildren.length; i < len; i++) {
@@ -254,13 +257,13 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             }
         }
 
-        const changedRowNodes = result.changedRowNodes;
         // create new row nodes for each data item
         const addLength = add.length;
         const newNodes = new Array(addLength);
+        const adds = result.changedRowNodes.adds;
         for (let i = 0; i < addLength; i++) {
             const newNode = this.createRowNode(add[i], addIndex + i);
-            changedRowNodes.add(newNode);
+            adds.add(newNode);
             newNodes[i] = newNode;
         }
 
@@ -314,7 +317,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         for (let i = 0, len = remove.length; i < len; i++) {
             const item = remove[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
-            if (!rowNode) continue;
+            if (!rowNode) {
+                continue;
+            }
             if (rowNode.isSelected()) nodesToUnselect.push(rowNode);
             if (rowNode.pinnedSibling) this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
             rowNode.clearRowTopAndRowIndex();
@@ -345,7 +350,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     protected executeUpdate(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         rowDataTran: RowDataTransaction,
-        { changedRowNodes, rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
+        { changedRowNodes: { adds, updates }, rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
         nodesToUnselect: RowNode<TData>[]
     ): void {
         const { update } = rowDataTran;
@@ -356,11 +361,15 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         for (let i = 0, len = update.length; i < len; i++) {
             const item = update[i];
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
-            if (!rowNode) continue;
+            if (!rowNode) {
+                continue;
+            }
             rowNode.updateData(item);
             if (!rowNode.selectable && rowNode.isSelected()) nodesToUnselect.push(rowNode);
             rowNodeTransaction.update.push(rowNode);
-            changedRowNodes.update(rowNode);
+            if (!adds.has(rowNode)) {
+                updates.add(rowNode);
+            }
         }
     }
 

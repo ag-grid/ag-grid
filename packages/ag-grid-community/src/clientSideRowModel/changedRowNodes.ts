@@ -13,16 +13,4 @@ export class ChangedRowNodes<TData = any> {
             this.removals.add(node as RowNode<TData>);
         }
     }
-
-    /** Marks a row as updated. Order of operations is: remove, update, add */
-    public update(node: IRowNode<TData>): void {
-        if (!this.adds.has(node as RowNode<TData>)) {
-            this.updates.add(node as RowNode<TData>);
-        }
-    }
-
-    /** Marks a row as added. Order of operation is: remove, update, add */
-    public add(node: IRowNode<TData>): void {
-        this.adds.add(node as RowNode<TData>);
-    }
 }
