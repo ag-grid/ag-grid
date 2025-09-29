@@ -170,10 +170,14 @@ export class RowNode<TData = any>
      * Parent RowNode for tree data.
      * When set, the parent node in the hierarchy is updated during Client-Side Row Model (CSRM) grouping.
      * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
+     * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
     public treeParent: RowNode<TData> | null = null;
 
-    /** The flags associated to this node. Used only internally within TreeGroupStrategy. */
+    /**
+     * The flags associated to this node. Used only internally within TreeGroupStrategy.
+     * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
+     */
     public treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
