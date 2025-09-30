@@ -8,6 +8,7 @@ import type {
     RowGroupExpansionState,
     RowGroupOpenedEvent,
 } from 'ag-grid-community';
+import { _getGridBeans } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -128,24 +129,42 @@ export class ServerSideExpansionService
         const { gridApi: masterGridApi, gos: masterGos } = this.beans;
 
         masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
+            const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
+            if (!detailGridExpansionSvc) {
+                return;
+            }
             switch (source) {
                 case 'expandAll':
-                    return detailGridApi.expandAll();
+                    return detailGridExpansionSvc.expandAll(true);
                 case 'collapseAll':
-                    return detailGridApi.collapseAll();
+                    return detailGridExpansionSvc.expandAll(false);
             }
         });
 
         // to prevent massive server side queries, we only propagate if the master is using a special flag
+        // this flag also indicates that we are using the expandAll strategy, and it's safe to cast the state to RowGroupBulkExpansionState
         if (!masterGos.get('ssrmExpandAllAffectsAllRows')) {
             return;
         }
 
-        // ideally, we would want to combine these strategies / states some day so there is no need in type cast here
-        if ((this.getExpansionState() as RowGroupBulkExpansionState).expandAll) {
-            return detailGridApi.expandAll();
+        const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
+        if (!detailGridExpansionSvc) {
+            return;
         }
-        return detailGridApi.collapseAll();
+
+        // ideally, we would want to combine these strategies / states some day so there is no need in type cast here
+        const masterExpansionState = this.getExpansionState() as RowGroupBulkExpansionState;
+        const isInitial = masterExpansionState.expandAll === undefined;
+        if (isInitial) {
+            return;
+        }
+        const allExpanded = masterExpansionState.expandAll! && masterExpansionState.invertedRowGroupIds.length === 0;
+        const allCollapsed = !masterExpansionState.expandAll! && masterExpansionState.invertedRowGroupIds.length === 0;
+
+        if (allCollapsed === allExpanded) {
+            return;
+        }
+        return detailGridExpansionSvc.expandAll(allExpanded);
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {

@@ -8,6 +8,7 @@ import type {
     RowGroupOpenedEvent,
     RowNode,
 } from 'ag-grid-community';
+import { _getGridBeans } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
@@ -129,17 +130,28 @@ export class ClientSideExpansionService
         const { gridApi: masterGridApi } = this.beans;
 
         masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
+            const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
+            if (!detailGridExpansionSvc) {
+                return;
+            }
             switch (source) {
                 case 'expandAll':
-                    return detailGridApi.expandAll();
+                    return detailGridExpansionSvc.expandAll(true);
                 case 'collapseAll':
-                    return detailGridApi.collapseAll();
+                    return detailGridExpansionSvc.expandAll(false);
             }
         });
-        if (this.getExpansionState().collapsedRowGroupIds.length) {
-            return detailGridApi.collapseAll();
+        const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
+        if (!detailGridExpansionSvc) {
+            return;
         }
-        return detailGridApi.expandAll();
+        const expansionState = this.getExpansionState();
+        const allExpanded = expansionState.collapsedRowGroupIds.length === 0;
+        const allCollapsed = expansionState.expandedRowGroupIds.length === 0;
+        if (allCollapsed === allExpanded) {
+            return;
+        }
+        return detailGridExpansionSvc.expandAll(allExpanded);
     }
 
     // because the user can call rowNode.setExpanded() many times in one VM turn,

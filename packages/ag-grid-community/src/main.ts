@@ -853,7 +853,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
-export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement } from './grid';
+export { GridParams, Params, GridCoreCreator, createGrid, getGridApi, getGridElement, _getGridBeans } from './grid';
 export { provideGlobalGridOptions, GlobalGridOptionsMergeStrategy, _getGlobalGridOption } from './globalGridOptions';
 export {
     GridApi,
