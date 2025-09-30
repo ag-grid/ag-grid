@@ -51,10 +51,10 @@ AG Grid's Model Context Protocol (MCP) server provides AI Agents with framework 
 
 The core feature of the AG MCP Server is an LLM optimized search tool which will provide additional context, (e.g. version specific documentation, examples, and references), in a condensed markdown format, minimising the amount of context used.
 
-More specifically, the AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources):
+More specifically, the AG MCP Server is made up of [Tools](#tools), [Prompts](#prompts) and [Resources](#resources-docs-api--example-search):
 
-- **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#todo) and [detecting & setting the current AG Grid version](#setting-the-ag-grid-version).
-- **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#quick-start), or [migrating to later versions](#migrations--upgrades).
+- **Tools** - Schema defined interfaces that enable AI models to perform actions, including [searching the docs](#search-docs) and [detecting & setting the current AG Grid version](#detect-version).
+- **Prompts** - Pre-configured actions that allow you to perform common actions, such as [creating new grids](#create-a-new-grid), or [migrating to later versions](#migrate-to-a-new-version).
 - **Resources** - Documentation, examples, and API definitions/interfaces in condensed markdown.
 
 Each of these components are available to your LLM whenever it needs more information on how to implement AG Grid features, and can also be accessed directly.
@@ -102,15 +102,16 @@ To learn more, see the [Cursor MCP documentation](https://cursor.com/docs/contex
 To install manually, create a `.vscode/mcp.json` file in your workspace, and add the following:
 
 ```bash
-"ag-mcp": {
-    "type": "stdio",
+"servers": {
+  "ag-mcp": {
     "command": "npx",
     "args": [
-        "ag-mcp",
-        "${input:stdio-arg}"
+      "ag-mcp"
     ],
-    "env": {}
-}
+    "type": "stdio"
+  }
+  // other MCP servers...
+},
 ```
 
 {% note %}
@@ -137,9 +138,7 @@ To learn more, see the [Claude MCP documentation](https://docs.claude.com/en/doc
 
 Once the MCP is installed, your LLM will automatically leverage the AG MCP Server to access additional context, based on your prompt. [Tools](#tools), [Prompts](#prompts) and [Resources](#resources) can also be accessed directly, as demonstrated below. 
 
-{% note %}
 Refer to your LLM documentation for specific instructions on accessing MCP features.
-{% /note %}
 
 ## Prompts
 
@@ -206,7 +205,7 @@ mcp.ag-mcp.upgrade-grid {additional-context}
 
 ## Resources (Docs, API & Example Search)
 
-The core feature of the AG MCP Server is an LLM optimized search tool which will provide documentation, examples, and API definitions/interfaces. The content is provided in a condensed markdown so as to minimise the amount of context used, and not overwhelm the LLM.
+Resources allow servers to share data that provides context to language models, such as files, database schemas, or application-specific information.
 
 There are currently three sets of resources available:
 
@@ -216,7 +215,7 @@ There are currently three sets of resources available:
 
 Your LLM can access these resources whenever it needs more information on how to implement AG Grid features. 
 
-To directly reference articles, definitions or examples, include the following command in your LLM prompt:
+To directly reference articles, definitions or examples, use the following steps depending on your LLM provider of choice:
 
 {% tabs %}
 {% tabItem id="resources-vs-code" label="VS Code (CoPilot)" %}
@@ -225,8 +224,6 @@ To add a resource from an MCP server to your chat prompt:
 1. In the Chat view, select Add Context > MCP Resources
 
 2. Select a resource type from the list and provide optional resource input parameters.
-
-{% imageCaption imagePath="resources/vscode-resources-preview.png" alt="VS Code MCP Resources" constrained=true maxWidth="600px"  /%}
 
 [VS Code Docs](https://code.visualstudio.com/docs/copilot/customization/mcp-servers#_use-mcp-resources)
 
