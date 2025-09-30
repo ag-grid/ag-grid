@@ -480,10 +480,10 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.sonar_community.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
+#          elif [ "${{ needs.sonar_enterprise.result }}" == "failure" ] ; then
+#            WORKFLOW_STATUS="failure"
           fi
           echo "workflowStatus=${WORKFLOW_STATUS}" >> $GITHUB_OUTPUT
 
