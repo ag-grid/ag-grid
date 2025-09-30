@@ -77,21 +77,11 @@ jobs:
         shardTotal: [1]
     steps:
       - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
-      - name: Run vanilla Examples
-        env:
-          FRAMEWORK: vanilla
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:chromium ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload Test Report
-        id: upload-recipes-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - uses: ./.github/actions/test-framework-examples
         with:
-          name: playwright-vanilla-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          framework: vanilla
+          browsers: chronium
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-typescript:
     if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -103,29 +93,12 @@ jobs:
         shardIndex: [1, 2]
         shardTotal: [2]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/test-framework-examples
         with:
-          fetch-depth: 1
-
-      - name: Setup
-        id: setup
-        uses: ./.github/actions/setup-nx
-        with:
-          cache_mode: 'ro'
-      - name: Run typescript Examples
-        env:
-          FRAMEWORK: typescript
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:all ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload Test Report
-        id: upload-recipes-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-typescript-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          framework: typescript
+          browsers: all
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-reactFunctionalTs:
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -138,21 +111,11 @@ jobs:
         shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
-      - name: Run reactFunctionalTs Examples
-        env:
-          FRAMEWORK: reactFunctionalTs
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:all ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload Test Report
-        id: upload-recipes-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - uses: ./.github/actions/test-framework-examples
         with:
-          name: playwright-reactFunctionalTs-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          framework: reactFunctionalTs
+          browsers: all
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-vue3:
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -165,21 +128,11 @@ jobs:
         shardTotal: [1]
     steps:
       - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
-      - name: Run vue3 Examples
-        env:
-          FRAMEWORK: vue3
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:chromium ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload Test Report
-        id: upload-recipes-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - uses: ./.github/actions/test-framework-examples
         with:
-          name: playwright-vue3-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          framework: vue3
+          browsers: chronium
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-angular:
     if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -192,21 +145,11 @@ jobs:
         shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
-      - name: Run angular Examples
-        env:
-          FRAMEWORK: angular
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:chromium ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload Test Report
-        id: upload-recipes-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+      - uses: ./.github/actions/test-framework-examples
         with:
-          name: playwright-angular-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
+          framework: angular
+          browsers: chronium
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
 
   test-recipes:
@@ -240,7 +183,7 @@ jobs:
       - test-vue3
       - test-recipes
     env:
-      IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-reactFunctionalTs.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-demos-smoke.result != 'failure' && needs.test-recipes.result != 'failure' }}
+      IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-reactFunctionalTs.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-recipes.result != 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
