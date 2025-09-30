@@ -80,7 +80,7 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: vanilla
-          browsers: chronium
+          browsers: chromium
           test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-typescript:
@@ -131,7 +131,7 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: vue3
-          browsers: chronium
+          browsers: chromium
           test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-angular:
@@ -148,7 +148,7 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: angular
-          browsers: chronium
+          browsers: chromium
           test-pattern: ${{github.event.inputs.test-pattern}}
 
 
