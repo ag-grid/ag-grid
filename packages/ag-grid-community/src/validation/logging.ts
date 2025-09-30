@@ -124,10 +124,11 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
 const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessage?: string) => {
     const errorLink = getErrorLink(errorNum, args);
 
+    const prefix = `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}`;
     if (_isUmd()) {
-        return errorLink;
+        return prefix;
     }
-    return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
+    return `${prefix}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
 export function _warn<
