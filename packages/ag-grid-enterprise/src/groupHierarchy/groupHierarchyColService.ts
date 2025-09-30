@@ -209,7 +209,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         const colId = `${GROUP_HIERARCHY_COLUMN_ID_PREFIX}-${sourceCol.getColId()}-${part}`;
         const defaults: Partial<ColDef> = {
-            enableRowGroup: true,
+            enableRowGroup: sourceColDef.enableRowGroup,
             rowGroup: sourceColDef.rowGroup,
             enablePivot: sourceColDef.enablePivot,
             hide: true,
