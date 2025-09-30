@@ -69,7 +69,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.columns.forEach((col, index) => (this.columnIndexMap[col.getId()] = index));
     };
 
-    protected setColList(
+    private setColList(
         colKeys: ColKey[] = [],
         masterList: AgColumn[],
         eventName: IColsService['eventName'],
@@ -131,7 +131,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.dispatchColumnChangedEvent(this.eventSvc, eventName, [...changes.keys()], source);
     }
 
-    protected updateColList(
+    private updateColList(
         keys: Maybe<ColKey>[] = [],
         masterList: AgColumn[],
         actionIsAdd: boolean,
