@@ -257,6 +257,9 @@ export {
     AgPropertyKey as _AgPropertyKey,
     AgPropertyValueChangedListener as _AgPropertyValueChangedListener,
     IPropertiesService as _IPropertiesService,
+    AgPropertyChangeSet as _AgPropertyChangeSet,
+    AgPropertyValueChangedEvent as _AgPropertyValueChangedEvent,
+    AgPropertyChangedSource as _AgPropertyChangedSource,
 } from './agStack/interfaces/iProperties';
 export { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';

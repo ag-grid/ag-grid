@@ -56,7 +56,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     CellSelectionModule: 55,
     ClipboardModule: 46.04,
     ColumnMenuModule: 153.19,
-    ColumnsToolPanelModule: 146,
+    ColumnsToolPanelModule: 150.64,
     ContextMenuModule: 72,
     ExcelExportModule: 84,
     FiltersToolPanelModule: 133.66,
