@@ -411,7 +411,8 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test ]
+#    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
