@@ -156,7 +156,11 @@
     },
     "test:interactive:chromium": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:interactive:setup:chromium", "ag-grid-community:build"],
+      "dependsOn": [
+        "test:interactive:setup:chromium",
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package"
+      ],
       "options": {
         "commands": ["npx playwright test --project=chromium"],
         "parallel": false,
@@ -165,7 +169,11 @@
     },
     "test:interactive:all": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:interactive:setup:all", "ag-grid-community:build"],
+      "dependsOn": [
+        "test:interactive:setup:chromium",
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package"
+      ],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
