@@ -1,9 +1,10 @@
+import type { GridApi } from '../api/gridApi';
 import type { RowNode } from '../entities/rowNode';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export interface RowGroupExpansionState {
     expandedRowGroupIds: string[];
-    collapsedRowGroupIds?: string[];
+    collapsedRowGroupIds: string[];
 }
 
 export interface RowGroupBulkExpansionState {
@@ -31,4 +32,6 @@ export interface IExpansionService<
     setExpanded(rowNode: RowNode, expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     isExpandable(rowNode: RowNode): boolean;
+
+    setDetailsExpansionState(detailGridApi: GridApi): void;
 }

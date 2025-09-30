@@ -671,7 +671,6 @@ export const AG_GRID_LOCALE_EN = {
     year: 'Year',
     quarter: 'Quarter',
     month: 'Month',
-    week: 'Week',
     day: 'Day',
     hour: 'Hour',
     minute: 'Minute',

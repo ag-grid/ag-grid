@@ -91,7 +91,7 @@ Below shows Row Grouping combined with Master / Detail. From the example you can
 
 ### Expanding Master Rows
 
-Normally parent rows (groups) can be expanded and child rows cannot be expanded (unless they are themselves parents). This means that normally only parent rows have expand / collapse icons.
+Normally, parent rows (groups) can be expanded and child rows cannot be expanded (unless they are themselves parents). This means that normally only parent rows have expand / collapse icons.
 
 For Master / Detail, expand and collapse icons are also needed at the master level. When doing Master / Detail, expand and collapse icons are also needed to expand the child rows where those rows are also master rows.
 
@@ -109,6 +109,10 @@ const gridOptions = {
     ]
 }
 ```
+
+{% note %}
+Note that `ssrmExpandAllAffectsAllRows` is not automatically propagated to nested detail grids. Even if set to `true` on the master grid, it only controls expansion at the master level. To expand all rows in nested detail grids (e.g., in a hierarchy of master-detail grids), you must explicitly set `ssrmExpandAllAffectsAllRows: true` on each detail grid’s `detailGridOptions`. 
+{% /note %}
 
 ## Combining Tree Data with Master Detail
 

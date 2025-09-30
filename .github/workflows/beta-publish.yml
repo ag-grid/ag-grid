@@ -33,39 +33,16 @@ jobs:
             - name: Fetch Refs
               run: git fetch origin --depth 1 latest-success latest
 
-            - name: Setup Node.js
-              id: setup_node
-              uses: actions/setup-node@v4
+            - name: Setup
+              id: setup
+              uses: ./.github/actions/setup-nx
               with:
-                  node-version: '20'
-                  cache: 'yarn'
+                cache_mode: ro
 
-            - name: Calculate Next Beta Version
-              id: next_version
+            - name: nx pack:verify
+              id: pack-verify
               run: |
-                  NEW_VERSION=$(node ./scripts/calculate-next-version.js)
-                  CHARTS_NEW_VERSION=$(node -e "console.log(require('./packages/ag-grid-enterprise/package.json').optionalDependencies['ag-charts-community'])")
-                  echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
-                  echo "CHARTS_NEW_VERSION=${CHARTS_NEW_VERSION}" >> $GITHUB_ENV
-                  echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
-                  echo "tag=b${NEW_VERSION}" >> $GITHUB_OUTPUT
-
-            - name: Bump Beta Package Version
-              run: node scripts/deployments/versionModules.js ${NEW_VERSION} ${CHARTS_NEW_VERSION} local
-
-            - name: Commit Changes
-              uses: EndBug/add-and-commit@v9
-              if: success()
-              with:
-                  default_author: github_actions
-                  message: Automated package version bump to ${{ steps.next_version.outputs.version }}.
-
-            - name: Tag Latest Successful Commit
-              uses: EndBug/latest-tag@latest
-              if: success()
-              with:
-                  ref: ${{ steps.next_version.outputs.tag }}
-                  description: Latest commit to pass GitHub Actions workflow on latest branch.
+                NODE_ENV=production yarn nx pack:verify -c staging
 
             - name: Tag Latest Successful Commit
               uses: EndBug/latest-tag@latest
