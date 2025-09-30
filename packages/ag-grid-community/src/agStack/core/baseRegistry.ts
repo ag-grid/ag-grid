@@ -21,6 +21,10 @@ export abstract class BaseRegistry<
 
     private dynamicBeans: { [K in TDynamicBeanName]?: new (args?: any[]) => object };
 
+    public get ready(): boolean {
+        return !!this.dynamicBeans;
+    }
+
     protected registerDynamicBeans(dynamicBeans?: Partial<Record<TDynamicBeanName, ClassImp>>): void {
         if (dynamicBeans) {
             // initialise the dynamic beans registry on first use

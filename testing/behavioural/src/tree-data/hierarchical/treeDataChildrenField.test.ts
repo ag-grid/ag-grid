@@ -76,7 +76,7 @@ describe('ag-grid treeDataChildrenField', () => {
         `);
     });
 
-    test('ag-grid treeDataChildrenField is reactive', async () => {
+    test.only('ag-grid treeDataChildrenField is reactive', async () => {
         const rowData = [
             {
                 id: '1',

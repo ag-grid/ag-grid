@@ -22,24 +22,19 @@ import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
 
+    private enabled: boolean | undefined = undefined;
     public store: { [id: string]: DetailGridInfo | undefined } = {};
 
-    private enabled: boolean;
-
     private isEnabled(): boolean {
-        return !!this.gos.get('masterDetail');
-    }
-
-    public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
-            this.enabled = this.isEnabled();
-        }
+        const gos = this.gos;
+        return !!gos.get('masterDetail') && _isClientSideRowModel(gos);
     }
 
     public refreshModel(params: RefreshModelParams) {
-        if (params.changedProps) {
+        if (params.changedProps?.has('masterDetail')) {
             const enabled = this.isEnabled();
             if (this.enabled !== enabled) {
+                this.enabled = enabled;
                 this.setMasters(null);
                 return;
             }
@@ -51,9 +46,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     }
 
     private setMasters(changedRowNodes: IChangedRowNodes | null | undefined): void {
-        const enabled = this.isEnabled();
-        this.enabled = enabled;
-
+        const enabled = (this.enabled ??= this.isEnabled());
         const gos = this.gos;
         const isRowMaster = gos.get('isRowMaster');
         const treeData = gos.get('treeData');

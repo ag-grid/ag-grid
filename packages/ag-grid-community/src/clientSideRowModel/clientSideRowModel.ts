@@ -43,7 +43,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
-    private nodeMgrName: 'csrmNodeMgr' | 'csrmNodeNestedMgr' | null = null;
+    private nodeMgrName: 'csrmNodeMgr' | 'csrmNodeNestedMgr' = 'csrmNodeMgr';
     private nodeMgr: ClientSideNodeManager<any> | null | undefined = undefined;
 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
@@ -104,31 +104,33 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.addPropertyListeners();
     }
 
-    private getNodeManager(loadNew: boolean = false): ClientSideNodeManager<any> | null {
+    private getNodeManager(): ClientSideNodeManager<any> | null {
+        return this.nodeMgr ?? this.loadNodeManager();
+    }
+
+    private loadNodeManager(): ClientSideNodeManager<any> | null {
         let bean = this.nodeMgr;
-        let beanName = this.nodeMgrName;
-        if (!bean || !beanName || loadNew) {
-            if (bean === null) {
-                return null; // Destroyed
-            }
-            beanName = _getGroupingApproach(this.gos) === 'treeNested' ? 'csrmNodeNestedMgr' : 'csrmNodeMgr';
+        if (bean === null) {
+            return null; // Destroyed
         }
-        if (bean && this.nodeMgrName === beanName) {
-            if (loadNew) {
-                bean.activate?.();
-            }
+        const newBeanName = _getGroupingApproach(this.gos) === 'treeNested' ? 'csrmNodeNestedMgr' : 'csrmNodeMgr';
+        if (this.nodeMgrName !== newBeanName) {
+            this.nodeMgrName = newBeanName;
+        } else if (bean) {
             return bean; // no change
         }
-        this.nodeMgrName = beanName;
-        const { beans, rootNode } = this;
-        const registry = beans.registry;
-        bean =
-            registry.createDynamicBean<ClientSideNodeManager>(beanName, false, rootNode) ??
-            registry.createDynamicBean<ClientSideNodeManager>('csrmNodeMgr', true, rootNode)!;
-        this.createBean(bean);
+        const rootNode = this.rootNode;
+        const registry = this.beans.registry;
+        if (!registry.ready || !rootNode) {
+            return null; // destroyed or not ready
+        }
+        bean = registry.createDynamicBean<ClientSideNodeManager>(this.nodeMgrName, false, rootNode);
+        bean = bean
+            ? this.createBean(bean)
+            : this.nodeMgr ?? // try reuse existing bean
+              this.createBean(registry.createDynamicBean<ClientSideNodeManager>('csrmNodeMgr', true, rootNode)!);
         this.nodeMgr = bean;
-        bean.activate?.();
-        return bean;
+        return bean ?? null;
     }
 
     private addPropertyListeners() {
@@ -248,21 +250,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             step: 'nothing',
             changedProps,
         };
-        const rowDataChanged = changedProps.has('rowData');
-        let reset =
-            (rowDataChanged && changedProps.has('treeData') && gos.get('treeData')) ||
-            (changedProps.has('treeDataChildrenField') && gos.get('treeData')) ||
-            (changedProps.has('treeData') && !!gos.get('treeDataChildrenField'));
 
-        const oldNodeManager = this.nodeMgr;
-        const nodeManager = this.getNodeManager(reset);
-        if (!nodeManager) {
-            return; // Destroyed.
-        }
+        let reset = this.nodeMgr?.onPropChange?.(changedProps);
+
+        const oldNodeManager = this.getNodeManager();
+        const nodeManager =
+            changedProps.has('treeDataChildrenField') || changedProps.has('treeData')
+                ? this.loadNodeManager()
+                : oldNodeManager;
         reset ||= oldNodeManager !== nodeManager;
 
         let newRowData: any[] | null | undefined;
-
+        const rowDataChanged = changedProps.has('rowData');
         if (reset || rowDataChanged) {
             newRowData = gos.get('rowData');
 
@@ -287,7 +286,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             initRootNode(this.rootNode!);
         }
 
-        if (newRowData) {
+        if (newRowData && nodeManager) {
             const immutable =
                 !reset &&
                 !this.isEmpty() &&
@@ -601,7 +600,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public refreshModel(params: RefreshModelParams): void {
         if (!this.getNodeManager()) {
-            return; // Destroyed
+            return;
         }
 
         // this goes through the pipeline of stages. what's in my head is similar
@@ -1091,7 +1090,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         const nodeManager = this.getNodeManager();
         if (!nodeManager) {
-            return null; // Destroyed.
+            return null;
         }
         this.beans.valueCache?.onDataChanged();
 

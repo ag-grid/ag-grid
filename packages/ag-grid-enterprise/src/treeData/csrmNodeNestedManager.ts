@@ -1,5 +1,6 @@
 import type {
     ClientSideNodeManagerUpdateRowDataResult,
+    GridOptions,
     IChangedRowNodes,
     RefreshModelParams,
     RowDataTransaction,
@@ -17,12 +18,26 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         return super.extractRowData(this.rootNode.childrenAfterGroup ?? null);
     }
 
-    public override activate(): void {
-        const oldChildrenGetter = this.childrenGetter;
-        const childrenField = this.gos.get('treeDataChildrenField') ?? null;
-        if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
-            this.childrenGetter = makeFieldPathGetter(childrenField);
+    public override onPropChange(changedProps: ReadonlySet<keyof GridOptions>): boolean {
+        const gos = this.gos;
+        if (changedProps.has('treeDataChildrenField')) {
+            this.childrenGetter = undefined;
+            if (gos.get('treeData')) {
+                return true;
+            }
         }
+        if (changedProps.has('treeData') && gos.get('treeDataChildrenField')) {
+            return true;
+        }
+        return false;
+    }
+
+    private getChildrenGetter(): DataFieldGetter<TData, TData[] | null | undefined> | null | undefined {
+        let result = this.childrenGetter;
+        if (result === undefined) {
+            this.childrenGetter = result = makeFieldPathGetter(this.gos.get('treeDataChildrenField') ?? null);
+        }
+        return result;
     }
 
     public override updateRowData(
@@ -39,7 +54,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
 
     protected override loadNewRowData(rowData: TData[]): RowNode[] {
         const rootNode = this.rootNode;
-        const childrenGetter = this.childrenGetter;
+        const childrenGetter = this.getChildrenGetter();
 
         const processedData = new Map<TData, RowNode<TData>>();
         const allLeafChildren: RowNode<TData>[] = [];
@@ -77,7 +92,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
 
         const gos = this.gos;
         const rootNode = this.rootNode;
-        const childrenGetter = this.childrenGetter;
+        const childrenGetter = this.getChildrenGetter();
         const getRowIdFunc = _getRowIdCallback(gos)!;
         const canReorder = !gos.get('suppressMaintainUnsortedOrder');
 

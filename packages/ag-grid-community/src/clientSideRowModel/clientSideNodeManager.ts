@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import type { GetRowIdFunc } from '../entities/gridOptions';
+import type { GetRowIdFunc, GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { IChangedRowNodes, RefreshModelParams } from '../interfaces/iClientSideRowModel';
@@ -30,6 +30,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         this.rootNode = rootNode;
     }
 
+    public onPropChange?(changedProps: ReadonlySet<keyof GridOptions>): boolean;
+
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }
@@ -47,8 +49,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         }
         return result;
     }
-
-    public activate?(): void;
 
     public setNewRowData(rowData: TData[]): void {
         const rootNode = this.rootNode;
