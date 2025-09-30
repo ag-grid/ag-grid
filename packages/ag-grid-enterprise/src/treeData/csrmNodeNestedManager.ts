@@ -171,16 +171,11 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         processChildren(rootNode, rowData, 0);
 
         if (oldAllLeafChildren) {
-            const pinnedRowModel = this.beans.pinnedRowModel;
             for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
                 const row = oldAllLeafChildren[i];
                 if (!processedData.has(row.data)) {
                     row.treeParent = null;
                     row.treeNodeFlags = 0;
-                    const pinnedSibling = row.pinnedSibling;
-                    if (pinnedSibling) {
-                        pinnedRowModel?.pinRow(pinnedSibling, null);
-                    }
                     this.rowNodeDeleted(row);
                     if (row.isSelected()) {
                         nodesToUnselect.push(row);

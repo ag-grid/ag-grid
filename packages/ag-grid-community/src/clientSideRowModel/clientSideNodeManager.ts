@@ -97,27 +97,28 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
             const data = rowData[i];
             let node: RowNode<TData> | undefined = this.getRowNode(getRowIdFunc({ data, level: 0 }));
-            if (node) {
-                if (reorder) {
-                    const sourceRowIndex = node.sourceRowIndex;
-                    orderChanged ||=
-                        nodesAdded || // A node was inserted not at the end
-                        sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
-                    prevSourceRowIndex = sourceRowIndex;
-                }
-                if (node.data !== data) {
-                    nodesUpdated = true;
-                    node.updateData(data);
-                    if (!adds.has(node)) {
-                        updates.add(node);
-                    }
-                }
-            } else {
+            if (!node) {
                 nodesAdded = true;
                 node = this.createRowNode(data);
                 adds.add(node);
+                processedNodes.add(node);
+                continue;
             }
             processedNodes.add(node);
+            if (reorder) {
+                const sourceRowIndex = node.sourceRowIndex;
+                orderChanged ||=
+                    nodesAdded || // A node was inserted not at the end
+                    sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
+                prevSourceRowIndex = sourceRowIndex;
+            }
+            if (node.data !== data) {
+                nodesUpdated = true;
+                node.updateData(data);
+                if (!adds.has(node)) {
+                    updates.add(node);
+                }
+            }
         }
 
         // Destroy the remaining unprocessed node and collect the removed that were selected.
@@ -125,27 +126,25 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         let nodesRemoved = false;
         for (let i = 0; i < oldAllLeafChildrenLen; i++) {
             const node = oldAllLeafChildren[i];
-            if (!processedNodes.has(node)) {
-                nodesRemoved = true;
-                if (node.isSelected()) {
-                    nodesToUnselect.push(node);
-                }
-                if (node.pinnedSibling) {
-                    this.beans.pinnedRowModel?.pinRow(node.pinnedSibling, null);
-                }
-                this.rowNodeDeleted(node);
-                changedRowNodes.remove(node);
+            if (processedNodes.has(node)) {
+                continue;
+            }
+            this.rowNodeDeleted(node);
+            changedRowNodes.remove(node);
+            nodesRemoved = true;
+            if (node.isSelected()) {
+                nodesToUnselect.push(node);
             }
         }
 
         if (nodesAdded || nodesRemoved || orderChanged) {
-            updateLeafsAfterChange(rootNode, processedNodes, reorder);
             params.rowNodesOrderChanged ||= orderChanged;
+            updateLeafsAfterChange(rootNode, processedNodes, reorder);
         }
 
         if (nodesAdded || nodesRemoved || orderChanged || nodesUpdated) {
-            this.deselectNodes(nodesToUnselect);
             params.rowDataUpdated = true;
+            this.deselectNodes(nodesToUnselect);
         }
     }
 
@@ -156,6 +155,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const allNodesMap = this.allNodesMap;
         if (allNodesMap[id] === node) {
             delete allNodesMap[id];
+        }
+        const pinnedSibling = node.pinnedSibling;
+        if (pinnedSibling) {
+            this.beans.pinnedRowModel?.pinRow(pinnedSibling, null);
         }
     }
 
@@ -262,9 +265,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             }
             if (rowNode.isSelected()) {
                 nodesToUnselect.push(rowNode);
-            }
-            if (rowNode.pinnedSibling) {
-                this.beans.pinnedRowModel?.pinRow(rowNode.pinnedSibling, null);
             }
             this.rowNodeDeleted(rowNode);
             changedRowNodes.remove(rowNode);
