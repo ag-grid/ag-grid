@@ -127,20 +127,6 @@ export class ClientSideExpansionService
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
-        const { gridApi: masterGridApi } = this.beans;
-
-        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
-            const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
-            if (!detailGridExpansionSvc) {
-                return;
-            }
-            switch (source) {
-                case 'expandAll':
-                    return detailGridExpansionSvc.expandAll(true);
-                case 'collapseAll':
-                    return detailGridExpansionSvc.expandAll(false);
-            }
-        });
         const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
         if (!detailGridExpansionSvc) {
             return;

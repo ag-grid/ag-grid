@@ -126,20 +126,7 @@ export class ServerSideExpansionService
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
-        const { gridApi: masterGridApi, gos: masterGos } = this.beans;
-
-        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
-            const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
-            if (!detailGridExpansionSvc) {
-                return;
-            }
-            switch (source) {
-                case 'expandAll':
-                    return detailGridExpansionSvc.expandAll(true);
-                case 'collapseAll':
-                    return detailGridExpansionSvc.expandAll(false);
-            }
-        });
+        const { gos: masterGos } = this.beans;
 
         // to prevent massive server side queries, we only propagate if the master is using a special flag
         // this flag also indicates that we are using the expandAll strategy, and it's safe to cast the state to RowGroupBulkExpansionState
