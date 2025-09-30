@@ -8,6 +8,7 @@ import type {
     GridDragSource,
     IAggFunc,
     ITooltipCtrl,
+    LongTapEvent,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -92,7 +93,7 @@ export class ToolPanelColumnGroupComp extends Component {
         const checkboxGui = cbSelect.getGui();
         const checkboxInput = cbSelect.getInputElement();
 
-        checkboxGui.insertAdjacentElement('afterend', eDragHandle);
+        checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
         eLabel.textContent = displayName ?? '';
@@ -114,6 +115,13 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+
+        const touchListener = new TouchListener(this.getGui(), false);
+        this.addManagedListeners(touchListener, {
+            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        });
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+
         this.addManagedListeners(focusWrapper, {
             keydown: this.handleKeyDown.bind(this),
             contextmenu: this.onContextMenu.bind(this),
@@ -128,7 +136,9 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), gos, null, columnGroup);
-        classes.forEach((c) => this.toggleCss(c, true));
+        for (const c of classes) {
+            this.toggleCss(c, true);
+        }
     }
 
     public getColumns(): AgColumn[] {
@@ -168,7 +178,7 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent): void {
+    private onContextMenu(e: MouseEvent | Touch): void {
         const { columnGroup, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
@@ -185,14 +195,14 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private addVisibilityListenersToAllChildren(): void {
         const listener = this.onColumnStateChanged.bind(this);
-        this.columnGroup.getLeafColumns().forEach((column) => {
+        for (const column of this.columnGroup.getLeafColumns()) {
             this.addManagedListeners(column, {
                 visibleChanged: listener,
                 columnValueChanged: listener,
                 columnPivotChanged: listener,
                 columnRowGroupChanged: listener,
             });
-        });
+        }
     }
 
     private setupDragging(): void {
@@ -257,11 +267,11 @@ export class ToolPanelColumnGroupComp extends Component {
                 aggFunc?: string | IAggFunc | null;
             };
         } = {};
-        columns.forEach((col) => {
+        for (const col of columns) {
             const colId = col.getId();
             visibleState[colId] = col.isVisible();
             pivotState[colId] = createPivotState(col);
-        });
+        }
 
         return {
             columns,
@@ -297,16 +307,15 @@ export class ToolPanelColumnGroupComp extends Component {
         const childColumns: AgColumn[] = [];
 
         const extractCols = (children: ColumnModelItem[]) => {
-            children.forEach((child) => {
-                if (!child.passesFilter) {
-                    return;
+            for (const child of children) {
+                if (child.passesFilter) {
+                    if (child.group) {
+                        extractCols(child.children);
+                    } else {
+                        childColumns.push(child.column);
+                    }
                 }
-                if (child.group) {
-                    extractCols(child.children);
-                } else {
-                    childColumns.push(child.column);
-                }
-            });
+            }
         };
 
         extractCols(this.modelItem.children);
@@ -361,17 +370,15 @@ export class ToolPanelColumnGroupComp extends Component {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        visibleLeafColumns.forEach((column) => {
-            if (!pivotMode && column.getColDef().lockVisible) {
-                return;
+        for (const column of visibleLeafColumns) {
+            if (pivotMode || !column.getColDef().lockVisible) {
+                if (this.isColumnChecked(column, pivotMode)) {
+                    checkedCount++;
+                } else {
+                    uncheckedCount++;
+                }
             }
-
-            if (this.isColumnChecked(column, pivotMode)) {
-                checkedCount++;
-            } else {
-                uncheckedCount++;
-            }
-        });
+        }
 
         if (checkedCount > 0 && uncheckedCount > 0) {
             return undefined;
@@ -385,7 +392,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
         let colsThatCanAction = 0;
 
-        this.columnGroup.getLeafColumns().forEach((col) => {
+        for (const col of this.columnGroup.getLeafColumns()) {
             if (pivotMode) {
                 if (col.isAnyFunctionAllowed()) {
                     colsThatCanAction++;
@@ -395,7 +402,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     colsThatCanAction++;
                 }
             }
-        });
+        }
 
         return colsThatCanAction === 0;
     }

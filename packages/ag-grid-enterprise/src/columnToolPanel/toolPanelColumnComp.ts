@@ -5,6 +5,7 @@ import type {
     GridCheckbox,
     GridDragSource,
     ITooltipCtrl,
+    LongTapEvent,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -13,6 +14,7 @@ import {
     DragSourceType,
     KeyCode,
     RefPlaceholder,
+    TouchListener,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
@@ -78,7 +80,7 @@ export class ToolPanelColumnComp extends Component {
         const checkboxGui = cbSelect.getGui();
         const checkboxInput = cbSelect.getInputElement();
 
-        checkboxGui.insertAdjacentElement('afterend', eDragHandle);
+        checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
         eLabel.textContent = displayName;
@@ -117,6 +119,12 @@ export class ToolPanelColumnComp extends Component {
             contextmenu: this.onContextMenu.bind(this),
         });
 
+        const touchListener = new TouchListener(focusWrapper);
+        this.addManagedListeners(touchListener, {
+            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        });
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
@@ -128,7 +136,9 @@ export class ToolPanelColumnComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(column.getColDef(), gos, column, null);
-        classes.forEach((c) => this.toggleCss(c, true));
+        for (const c of classes) {
+            this.toggleCss(c, true);
+        }
     }
 
     public getColumn(): AgColumn {
@@ -142,7 +152,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
-    private onContextMenu(e: MouseEvent): void {
+    private onContextMenu(e: MouseEvent | Touch): void {
         const { column, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
