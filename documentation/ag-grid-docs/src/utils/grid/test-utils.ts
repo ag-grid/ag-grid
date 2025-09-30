@@ -58,6 +58,24 @@ const ALL_FRAMEWORKS = [
 ] as const;
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
+// Filter frameworks based on FRAMEWORK environment variable
+function getFilteredFrameworks(): readonly AgFramework[] {
+    const frameworkFilter = process.env.FRAMEWORK;
+    if (frameworkFilter) {
+        const requestedFramework = frameworkFilter as AgFramework;
+        if (ALL_FRAMEWORKS.includes(requestedFramework)) {
+            return [requestedFramework] as const;
+        } else {
+            throw new Error(
+                `Invalid framework specified in FRAMEWORK environment variable: ${frameworkFilter}. Valid options are: ${ALL_FRAMEWORKS.join(', ')}`
+            );
+        }
+    }
+    return ALL_FRAMEWORKS;
+}
+
+const FILTERED_FRAMEWORKS = getFilteredFrameworks();
+
 const additionalBrowser = ['webkit', 'firefox'];
 const frameworksWithAdditionalBrowser: AgFramework[] = ['reactFunctionalTs', 'typescript'];
 
@@ -90,7 +108,7 @@ const excludeErrors = [
     'This site appears to use a scroll-linked positioning effect.',
 ];
 
-function setupConsoleExpectations(page: Page) {
+export function setupConsoleExpectations(page: Page) {
     const errors: string[] = [];
 
     // catch any errors or warnings and fail the test
@@ -256,6 +274,9 @@ const frameworkTest =
             if (additionalBrowser.includes(browserName) && !frameworksWithAdditionalBrowser.includes(agFramework)) {
                 test.skip(true, `Skipping ${agFramework} tests in ${browserName} to reduce duplication.`);
             }
+            if (process.env.FRAMEWORK && process.env.FRAMEWORK !== agFramework) {
+                test.skip(true, `Skipping ${agFramework} as not the selected framework ${process.env.FRAMEWORK}.`);
+            }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
             await applyCpuThrottle({ page, cpuThrottle }, testInfo);
@@ -282,11 +303,8 @@ const frameworkTest =
 
                 extended(`${agFramework} (only)`, testWrapper);
 
-                extended.afterEach(async () => {
-                    if (errors.length > 0) {
-                        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
-                        expect(errors.length, errorMessage).toBe(0);
-                    }
+                extended.afterEach(async ({ page }) => {
+                    await checkForErrorsAndTearDownExample(errors, page);
                 });
             });
         } else {
@@ -295,7 +313,7 @@ const frameworkTest =
     };
 
 /**
- * Run the same test against all frameworks.
+ * Run the same test against all frameworks (or filtered frameworks based on FRAMEWORK env var).
  * @param testName Names of this test case. Useful if running multiple tests against the same example.
  * @param testBody The test body function that will be executed for each framework.
  */
@@ -306,16 +324,56 @@ const eachFramework = (testName: string, testBody: (fixtures: TestFixtures) => P
             errors = setupConsoleExpectations(page);
         });
 
-        ALL_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
+        FILTERED_FRAMEWORKS.forEach((framework) => frameworkTest(framework)(undefined, testBody));
 
-        extended.afterEach(async () => {
-            if (errors.length > 0) {
-                const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n`;
-                expect(errors.length, errorMessage).toBe(0);
-            }
+        extended.afterEach(async ({ page }) => {
+            await checkForErrorsAndTearDownExample(errors, page);
         });
     });
 };
+
+async function checkForErrorsAndTearDownExample(errors: string[], page: Page) {
+    // If the test was skipped, don't check for errors that might have been logged about a missing example URL
+    // or other errors that are expected when skipping a test
+    if (test.info().status === 'skipped') {
+        return;
+    }
+    // log url if any errors
+    if (test.info().status === 'failed') {
+        // eslint-disable-next-line no-console
+        console.log(`Test failed, page URL: ${page.url()}`);
+    }
+
+    if (errors.length > 0) {
+        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
+
+        expect(errors.length, errorMessage).toBe(0);
+        errors = [];
+    }
+
+    let exampleRemoved = false;
+    await page.evaluate(() => {
+        const win: any = window;
+        if (win.tearDownExample) {
+            win.tearDownExample();
+            exampleRemoved = true;
+        }
+    });
+    if (exampleRemoved) {
+        const root = page.locator('.ag-root-wrapper');
+        await root.waitFor({ state: 'detached' });
+    }
+
+    expect(errors, 'Example Errors during destruction').toEqual([]);
+
+    if (errors.length > 0) {
+        const errorMessage = `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`;
+        expect(errors.length, errorMessage).toBe(0);
+    }
+
+    // Ensure any routes created by the CacheRoute are removed to avoid warnings in the logs
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+}
 
 function prev34WrapAdapter(wrap: ReturnType<typeof wrapAgTestIdFor<any>>, page: Page) {
     wrap.cell = (rowId: string | null, colId: string | null) => {
@@ -391,6 +449,17 @@ export async function dragOverTo(source: Locator, target: Locator) {
     await mouse.up();
 }
 
-export { ensureGridReady } from './test/remoteGridapi';
+export async function clickAllButtons(page: Page) {
+    // Click all visible buttons in the grid example
+    // Don't use buttons within the ag-root-wrapper as these are not part of the example
+    // and will cause the test to fail if they are clicked
+    const buttons = page.locator('button:visible:not([disabled]):not(.ag-root-wrapper button):not(.ag-chart button)');
+    const buttonCount = await buttons.count();
+    for (let i = 0; i < buttonCount; i++) {
+        await buttons.nth(i).click();
+    }
+}
+
+export { ensureGridReady, waitForGridContent } from './test/remoteGridapi';
 export { repeat } from './test/repeat';
 export { scrollGridRelative } from './test/scrollGridRelative';

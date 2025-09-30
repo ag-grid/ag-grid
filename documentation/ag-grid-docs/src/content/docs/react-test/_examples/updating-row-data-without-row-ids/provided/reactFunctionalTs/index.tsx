@@ -48,7 +48,7 @@ const GridExample = () => {
             }
             if (count % 500 == 0) {
                 endTime = new Date();
-                console.warn('To 1000', endTime - startTime);
+                console.log('To 1000', endTime - startTime);
                 startTime = undefined;
             }
             let rd = [...rowData];

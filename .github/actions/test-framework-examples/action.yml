@@ -5,9 +5,14 @@ inputs:
     description: 'Framework to use'
     required: true
     default: 'invalid-framework'
-  cache-key:
-    description: 'Cache key for all-examples-cached.json'
+  browsers:
+    description: 'Broswers to run tests on: all / chromium'
     required: true
+    default: 'chromium'
+  test-pattern:
+    description: 'Test pattern to run'
+    required: false
+    default: ''
 runs:
   using: "composite"
   steps:
@@ -16,29 +21,24 @@ runs:
       with:
         fetch-depth: 1
 
-    - name: Restore all-examples-cached.json
-      uses: actions/cache@v4
+    - name: Setup
+      id: setup
+      uses: ./.github/actions/setup-nx
       with:
-        path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-        key: ${{ inputs.cache-key }}
+        cache_mode: ro
 
-    - name: Install Playwright Browsers
-      working-directory: testing/ag-grid-docs
-      run: npm install && npx playwright install chromium firefox webkit --with-deps --only-shell
-      shell: bash
-
-    - name: ${{ inputs.framework }}
-      working-directory: testing/ag-grid-docs
+    - name: Run ${{ inputs.framework }} Examples
       env:
         FRAMEWORK: ${{ inputs.framework }}
-      run: npx playwright test frameworks/${{ inputs.framework }}-examples.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        BASE_URL: https://grid-staging.ag-grid.com/
       shell: bash
-
+      run: yarn nx run ag-grid-docs:test:interactive:${{ inputs.browsers }} ${{inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+    
     - name: Upload Test Report
-      id: upload-report
+      id: upload-recipes-report
       uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
-        name: playwright-report-${{ inputs.framework }}-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
+        name: playwright-${{ inputs.framework }}-examples-${{ matrix.shardIndex }}-of-${{ matrix.shardTotal }}
         path: reports/
         retention-days: ${{env.DEFAULT_RETENTION_DAYS}}

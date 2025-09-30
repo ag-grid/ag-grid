@@ -136,7 +136,16 @@
         }
       }
     },
-    "test:interactive:setup": {
+    "test:interactive:setup:chromium": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "cache": true
+    },
+    "test:interactive:setup:all": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["npx playwright install --with-deps chromium firefox webkit"],
@@ -145,24 +154,26 @@
       },
       "cache": true
     },
-    "test:interactive": {
+    "test:interactive:chromium": {
       "executor": "nx:run-commands",
-      "dependsOn": ["test:interactive:setup", "ag-grid-community:build"],
+      "dependsOn": [
+        "test:interactive:setup:chromium",
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package"
+      ],
+      "options": {
+        "commands": ["npx playwright test --project=chromium"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      }
+    },
+    "test:interactive:all": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["test:interactive:setup:all", "ag-grid-community:build:types", "ag-grid-community:build:package"],
       "options": {
         "commands": ["npx playwright test"],
         "parallel": false,
         "cwd": "documentation/ag-grid-docs"
-      },
-      "configurations": {
-        "production": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
-        },
-        "staging": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
-        },
-        "dev": {
-          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
-        }
       }
     },
     "generate-examples": {
