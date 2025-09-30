@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "34.2.0-beta.20250928.2005",
+  "version": "34.2.0-beta.20250929.1228",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/package/main.cjs.js",
   "types": "./dist/types/src/main.d.ts",

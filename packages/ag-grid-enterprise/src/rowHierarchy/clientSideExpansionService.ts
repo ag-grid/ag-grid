@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    GridApi,
     IClientSideRowModel,
     IExpansionService,
     NamedBean,
@@ -9,7 +10,6 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
-import { getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
@@ -42,6 +42,7 @@ export class ClientSideExpansionService
 
     public getExpansionState(): RowGroupExpansionState {
         const expandedRowGroupIds: string[] = [];
+        const collapsedRowGroupIds: string[] = [];
         this.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
@@ -50,9 +51,11 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
+            } else {
+                collapsedRowGroupIds.push(id);
             }
         });
-        return { expandedRowGroupIds };
+        return { expandedRowGroupIds, collapsedRowGroupIds };
     }
 
     public expandAll(expand: boolean): void {
@@ -60,7 +63,6 @@ export class ClientSideExpansionService
         const rowModel = this.rowModel;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
-        const masterDetailsToExpandOrCollapse = [] as RowNode[];
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) {
@@ -71,6 +73,11 @@ export class ClientSideExpansionService
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 };
+
+                if (rowNode.master) {
+                    actionRow();
+                    return;
+                }
 
                 if (usingTreeData) {
                     const hasChildren = _exists(rowNode.childrenAfterGroup);
@@ -92,12 +99,6 @@ export class ClientSideExpansionService
                 if (isRowGroup) {
                     actionRow();
                 }
-
-                const isMasterRow = rowNode.master;
-                if (isMasterRow) {
-                    actionRow();
-                    masterDetailsToExpandOrCollapse.push(rowNode);
-                }
             });
         };
 
@@ -107,15 +108,6 @@ export class ClientSideExpansionService
         }
 
         this.onGroupExpandedOrCollapsed();
-
-        for (const masterRowNode of masterDetailsToExpandOrCollapse) {
-            if (masterRowNode.detailNode?.id) {
-                const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
-                if (expand) {
-                    detailGridApi?.expandAll();
-                }
-            }
-        }
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
@@ -131,6 +123,23 @@ export class ClientSideExpansionService
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
         this.rowModel.refreshModel({ step: 'map' });
+    }
+
+    public setDetailsExpansionState(detailGridApi: GridApi): void {
+        const { gridApi: masterGridApi } = this.beans;
+
+        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
+            switch (source) {
+                case 'expandAll':
+                    return detailGridApi.expandAll();
+                case 'collapseAll':
+                    return detailGridApi.collapseAll();
+            }
+        });
+        if (this.getExpansionState().collapsedRowGroupIds.length) {
+            return detailGridApi.collapseAll();
+        }
+        return detailGridApi.expandAll();
     }
 
     // because the user can call rowNode.setExpanded() many times in one VM turn,
