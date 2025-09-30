@@ -6,6 +6,7 @@ import type { IChangedRowNodes, RefreshModelParams } from '../interfaces/iClient
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
+import { ChangedRowNodes } from './changedRowNodes';
 
 export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     changedRowNodes: IChangedRowNodes<TData>;
@@ -111,23 +112,42 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
                 prevSourceRowIndex = sourceRowIndex;
             }
-            if (node.data === data) {
-                continue;
-            }
-            dataUpdated = true;
-            node.updateData(data);
-            if (adds.has(node)) {
-                continue;
-            }
-            updates.add(node);
-            if (!node.selectable && node.isSelected()) {
-                nodesToUnselect.push(node);
+            if (node.data !== data) {
+                dataUpdated = true;
+                node.updateData(data);
+                if (!adds.has(node)) {
+                    updates.add(node);
+                    if (!node.selectable && node.isSelected()) {
+                        nodesToUnselect.push(node);
+                    }
+                }
             }
         }
 
         // Destroy the remaining unprocessed node and collect the removed that were selected.
+        let nodesChanged = nodesAdded || orderChanged;
+        if (this.removeUnprocessedNodes(processedNodes, nodesToUnselect, changedRowNodes)) {
+            nodesChanged = true;
+        }
+
+        if (nodesChanged) {
+            params.rowNodesOrderChanged ||= orderChanged;
+            updateLeafsAfterChange(rootNode, processedNodes, reorder);
+        }
+
+        if (nodesChanged || dataUpdated) {
+            params.rowDataUpdated = true;
+            this.deselectNodes(nodesToUnselect);
+        }
+    }
+
+    private removeUnprocessedNodes(
+        processedNodes: Set<RowNode<TData>>,
+        nodesToUnselect: RowNode<TData>[],
+        changedRowNodes: ChangedRowNodes<TData>
+    ): boolean {
         let nodesRemoved = false;
-        const allLeafs = rootNode.allLeafChildren!;
+        const allLeafs = this.rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafs.length; i < len; i++) {
             const node = allLeafs[i];
             if (processedNodes.has(node)) {
@@ -140,17 +160,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             changedRowNodes.remove(node);
             nodesRemoved = true;
         }
-
-        const nodesChanged = nodesAdded || nodesRemoved || orderChanged;
-        if (nodesChanged) {
-            params.rowNodesOrderChanged ||= orderChanged;
-            updateLeafsAfterChange(rootNode, processedNodes, reorder);
-        }
-
-        if (nodesChanged || dataUpdated) {
-            params.rowDataUpdated = true;
-            this.deselectNodes(nodesToUnselect);
-        }
+        return nodesRemoved;
     }
 
     /** Called when a node needs to be deleted */
@@ -480,11 +490,11 @@ const filterRemovedNodes = <TData>(rootNode: RowNode<TData>, removedSet: Readonl
 };
 
 /** Updates rootNode.allLeafChildren and its sibling after changes (add/remove/reorder). */
-function updateLeafsAfterChange<TData>(
+const updateLeafsAfterChange = <TData>(
     rootNode: RowNode<TData>,
     processedNodes: Set<RowNode<TData>>,
     reorder: boolean
-) {
+) => {
     const newAllLeafChildren = new Array<RowNode<TData>>(processedNodes.size); // Preallocate
     let writeIdx = 0;
     if (!reorder) {
@@ -510,4 +520,4 @@ function updateLeafsAfterChange<TData>(
     if (sibling) {
         sibling.allLeafChildren = newAllLeafChildren;
     }
-}
+};
