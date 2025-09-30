@@ -1,7 +1,14 @@
 <div class="outer-div">
-    <div class="button-bar">
-        <button onclick="autoSizeAll(false)">Resize to Fit Cell Contents</button>
-        <button onclick="autoSizeAll(true)">Resize to Fit Cell Contents (Ignore Headers)</button>
+    <div class="interaction-bar">
+        <button class="resize-button" onclick="autoSizeAll()">Resize to Fit Cell Contents</button>
+        <label>
+            <input id="toggle-ignore-headers" type="checkbox" />
+            <span>Toggle "Ignore Headers"</span>
+        </label>
+        <label>
+            <input id="toggle-scale-up" type="checkbox" />
+            <span>Toggle "Scale up to Fit Grid Width"</span>
+        </label>
     </div>
     <div class="grid-wrapper">
         <div id="myGrid" style="height: 100%"></div>

@@ -116,7 +116,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc },
+            beans: { selectionSvc, findSvc, expansionSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -155,7 +155,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
         }
 
-        // initialise selection state
+        // initialise selection and expandAll state
         api.addEventListener('firstDataRendered', () => {
             if (api.isDestroyed() || masterGridApi.isDestroyed()) return;
 
@@ -163,6 +163,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
+            expansionSvc?.setDetailsExpansionState(api);
         });
 
         this.addDestroyFunc(() => {

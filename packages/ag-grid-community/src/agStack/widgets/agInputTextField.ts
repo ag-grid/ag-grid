@@ -81,7 +81,7 @@ export class AgInputTextField<
             paste: (e: ClipboardEvent) => {
                 const text = e.clipboardData?.getData('text');
 
-                if (text && text.split('').some((c: string) => !pattern.test(c))) {
+                if (text?.split('').some((c: string) => !pattern.test(c))) {
                     e.preventDefault();
                 }
             },

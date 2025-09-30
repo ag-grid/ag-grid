@@ -38,9 +38,9 @@ export function _getLocaleTextFromFunc(
 
 export function _getLocaleTextFromMap(localeText?: { [key: string]: string }): LocaleTextFunc {
     return (key: string, defaultValue: string, variableValues?: string[]) => {
-        let localisedText = localeText && localeText[key];
+        let localisedText = localeText?.[key];
 
-        if (localisedText && variableValues && variableValues.length) {
+        if (localisedText && variableValues?.length) {
             let found = 0;
             while (true) {
                 if (found >= variableValues.length) {

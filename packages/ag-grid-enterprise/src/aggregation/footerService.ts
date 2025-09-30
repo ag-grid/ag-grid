@@ -77,7 +77,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         }
 
         // otherwise, show in relevant group column
-        return !!node.rowGroupColumn && col && col.isRowGroupDisplayed(node.rowGroupColumn.getId());
+        return !!node.rowGroupColumn && col?.isRowGroupDisplayed(node.rowGroupColumn.getId());
     }
 
     public applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, column: Column): string {

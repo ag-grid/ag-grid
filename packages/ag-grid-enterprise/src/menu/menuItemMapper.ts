@@ -179,7 +179,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return colAutosize
                         ? {
                               name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                              action: () => colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize')),
+                              action: () =>
+                                  column && colAutosize.autoSizeColumn(column, source, gos.get('skipHeaderOnAutoSize')),
                           }
                         : null;
                 case 'autoSizeAll':

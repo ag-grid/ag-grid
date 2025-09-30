@@ -48,7 +48,7 @@ const getExt = (image: ExcelImage): XmlElement => {
             ],
         },
     ];
-    const recolor = image.recolor && image.recolor.toLowerCase();
+    const recolor = image.recolor?.toLowerCase();
 
     switch (recolor) {
         case 'grayscale':

@@ -27,7 +27,7 @@ const getEditErrorsForPosition = (
 
     const errors = cellValidationErrors || rowValidationErrors;
 
-    return errors && errors.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
+    return errors?.length ? errors.join(translate('tooltipValidationErrorSeparator', '. ')) : undefined;
 };
 
 export class TooltipService extends BeanStub implements NamedBean {
@@ -102,7 +102,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => 'headerGroup',
-            getTooltipValue: () => value ?? (colGroupDef && colGroupDef.headerTooltip),
+            getTooltipValue: () => value ?? colGroupDef?.headerTooltip,
             shouldDisplayTooltip,
             getAdditionalParams: () => {
                 const additionalParams: ITooltipCtrlParams = {

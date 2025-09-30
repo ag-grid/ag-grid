@@ -1,6 +1,7 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
+    AutoSizeStrategy,
     CellPosition,
     CellSelectionOptions,
     ChartRefParams,
@@ -80,9 +81,6 @@ import type {
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     SideBarDef,
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
     SortDirection,
     StatusPanelDef,
     TabToNextCellParams,
@@ -465,9 +463,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `ColumnAutoSizeModule`
          */
-    autoSizeStrategy?: | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy | undefined,
+    autoSizeStrategy?: AutoSizeStrategy | undefined,
     /** A map of component names to components.
          * @initial
          */

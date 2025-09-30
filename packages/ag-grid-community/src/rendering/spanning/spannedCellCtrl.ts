@@ -51,10 +51,11 @@ export class SpannedCellCtrl extends CellCtrl {
      * When cell is spanning, ensure row index is also available on the cell
      */
     public override refreshAriaRowIndex(): void {
-        if (this.rowNode.rowIndex == null) {
+        const { eGui, rowNode } = this;
+        if (!eGui || rowNode.rowIndex == null) {
             return;
         }
-        _setAriaRowIndex(this.eGui, this.rowNode.rowIndex);
+        _setAriaRowIndex(eGui, rowNode.rowIndex);
     }
 
     /**

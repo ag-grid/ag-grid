@@ -78,4 +78,8 @@ After removing the built-in part, this example uses CSS in a separate style shee
 
 {% gridExampleRunner title="Configuring Theme Parts" name="removing-parts" /%}
 
-The above example uses `theme.withoutPart("checkboxStyle")` to disable the default checkbox styles and adds its own checkbox styles in the application style sheet. If you want to distribute the checkbox style as a library, you can create your own `checkboxStyle` part, see [Distributing Shared Themes & Parts](./theming-distribution/#creating-your-own-parts).
+The above example uses `theme.withoutPart("checkboxStyle")` to disable the default checkbox styles and adds its own checkbox styles in the application style sheet. This is the simplest way of changing the appearance of the grid when you are working on a single application.
+
+## Creating Your Own Parts
+
+You can create your own theme parts to use in your application. This is useful for companies with multiple apps that share common styles or a design system, see [Distributing Shared Themes & Parts](./theming-distribution/#creating-your-own-parts).

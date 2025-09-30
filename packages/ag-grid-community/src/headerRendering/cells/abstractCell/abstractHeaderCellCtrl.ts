@@ -104,7 +104,7 @@ export abstract class AbstractHeaderCellCtrl<
         const { headerRowIndex, column } = this.beans.focusSvc.focusedHeader!;
 
         const colDef = column.getDefinition();
-        const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
+        const colDefFunc = colDef?.suppressHeaderKeyboardEvent;
 
         if (!_exists(colDefFunc)) {
             return false;
@@ -193,7 +193,7 @@ export abstract class AbstractHeaderCellCtrl<
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 const doc = _getDocument(beans);
-                const notYetInDom = !doc || !doc.contains(wrapperElement);
+                const notYetInDom = !doc?.contains(wrapperElement);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway

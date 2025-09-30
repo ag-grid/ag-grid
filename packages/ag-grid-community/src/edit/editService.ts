@@ -274,7 +274,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {
-        const { event, cancel, source = 'ui', suppressNavigateAfterEdit, forceCancel, forceStop } = params || {};
+        const { event, cancel, source = 'ui', forceCancel, forceStop } = params || {};
         const { beans, model } = this;
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source)) {
@@ -286,7 +286,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         const treatAsSource: EditSource = this.committing ? STOP_EDIT_SOURCE_TRANSFORM[source] : source;
-
         const isEditingOrBatchWithEdits =
             this.committing ||
             this.isEditing(position) ||
@@ -318,7 +317,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             _syncFromEditors(beans, { persist: true, isCancelling: willCancel || cancel, isStopping: willStop });
 
             const freshEdits = model.getEditMap();
-
             const editsToDelete = this.processEdits(freshEdits, cancel, source);
 
             this.strategy?.stop(cancel, event);
@@ -346,7 +344,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.strategy?.midBatchInputsAllowed(position) &&
             this.isEditing(position, { withOpenEditor: true })
         ) {
-            const key = event.key;
+            const { key } = event;
 
             const isEnter = key === KeyCode.ENTER;
             const isEscape = key === KeyCode.ESCAPE;
@@ -384,9 +382,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         // Suppress navigation is required for bulk activities like pasting or fill handle via setDataValue,
         // otherwise navigateAfterEdit will cause the grid to redundantly scan for the next available cell
         // to edit, which causes focus and rendering changes, for each cell in the bulk operation
-        if (!suppressNavigateAfterEdit && cellCtrl) {
-            this.navigateAfterEdit(event instanceof KeyboardEvent && event.shiftKey, cellCtrl.cellPosition);
-        }
+        this.navigateAfterEdit(params, cellCtrl?.cellPosition);
 
         _purgeUnchangedEdits(beans);
 
@@ -414,13 +410,27 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return res;
     }
 
-    private navigateAfterEdit(shiftKey: boolean, cellPosition: CellPosition): void {
+    private navigateAfterEdit(params?: StopEditParams, cellPosition?: CellPosition): void {
+        if (!params || !cellPosition) {
+            return;
+        }
+
+        const { event, suppressNavigateAfterEdit } = params;
+        const isKeyBoardEvent = event instanceof KeyboardEvent;
+
+        if (!isKeyBoardEvent || suppressNavigateAfterEdit) {
+            return;
+        }
+
+        const { key, shiftKey } = event;
         const navAfterEdit = this.gos.get('enterNavigatesVerticallyAfterEdit');
 
-        if (navAfterEdit) {
-            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
-            this.beans.navigation?.navigateToNextCell(null, key, cellPosition, false);
+        if (key !== KeyCode.ENTER || !navAfterEdit) {
+            return;
         }
+
+        const direction = shiftKey ? KeyCode.UP : KeyCode.DOWN;
+        this.beans.navigation?.navigateToNextCell(null, direction, cellPosition, false);
     }
 
     private processEdits(edits: EditMap, cancel: boolean = false, source: EditSource): EditPosition[] {

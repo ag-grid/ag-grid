@@ -838,7 +838,7 @@ export class ColumnFilterService
             };
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
-                this.refreshHandlerAndUi(column, model, 'ui').then(() => {
+                this.refreshHandlerAndUi(column, model, 'ui', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -1080,7 +1080,7 @@ export class ColumnFilterService
                 this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.updateStoredModel(colId, newModel);
-                this.refreshHandlerAndUi(column, newModel, 'handler').then(() => {
+                this.refreshHandlerAndUi(column, newModel, 'handler', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             },
@@ -1178,7 +1178,7 @@ export class ColumnFilterService
             displayParams.model = _getFilterModel(this.model, colId);
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
-                this.refreshHandlerAndUi(column, model, 'floating', true).then(() => {
+                this.refreshHandlerAndUi(column, model, 'floating', true, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -1418,7 +1418,8 @@ export class ColumnFilterService
         column: AgColumn,
         model: any,
         source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler',
-        createIfMissing?: boolean
+        createIfMissing?: boolean,
+        additionalEventAttributes?: any
     ): AgPromise<void> {
         const filterWrapper = this.cachedFilter(column);
 
@@ -1455,7 +1456,8 @@ export class ColumnFilterService
             handlerParams,
             model,
             this.state.get(column.getColId()) ?? { model },
-            source
+            source,
+            additionalEventAttributes
         );
     }
 

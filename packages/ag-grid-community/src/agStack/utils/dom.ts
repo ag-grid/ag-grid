@@ -27,17 +27,19 @@ export function _radioCssClass(element: HTMLElement, elementClass: string | null
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
-export function _isFocusableFormField(element: HTMLElement): boolean {
-    const matches: (str: string) => boolean = Element.prototype.matches || (Element as any).prototype.msMatchesSelector;
-
-    const inputSelector = 'input, select, button, textarea';
-    const isFocusable = matches.call(element, inputSelector);
-    const isNotFocusable = matches.call(element, FOCUSABLE_EXCLUDE);
-    const isElementVisible = _isVisible(element);
-
-    const focusable = isFocusable && !isNotFocusable && isElementVisible;
-
-    return focusable;
+export function _isFocusableFormField(element: Element | null): boolean {
+    if (!element) {
+        return false;
+    }
+    const isFocusable = element.matches('input, select, button, textarea');
+    if (!isFocusable) {
+        return false;
+    }
+    const isNotFocusable = element.matches(FOCUSABLE_EXCLUDE);
+    if (!isNotFocusable) {
+        return false;
+    }
+    return _isVisible(element);
 }
 
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
@@ -221,27 +223,25 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
 }
 
 export function _clearElement(el: HTMLElement | null | undefined): void {
-    while (el && el.firstChild) {
+    while (el?.firstChild) {
         el.removeChild(el.firstChild);
     }
 }
 
 export function _removeFromParent(node: Element | null) {
-    if (node && node.parentNode) {
+    if (node?.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
 
-export function _isInDOM(element: HTMLElement): boolean {
-    return !!element.offsetParent;
+export function _isInDOM(element: Element): boolean {
+    return !!(element as HTMLElement).offsetParent;
 }
 
-export function _isVisible(element: HTMLElement) {
-    const el = element as any;
-    if (el.checkVisibility) {
-        return el.checkVisibility({ checkVisibilityCSS: true });
+export function _isVisible(element: Element) {
+    if (element.checkVisibility) {
+        return element.checkVisibility({ checkVisibilityCSS: true });
     }
-
     const isHidden = !_isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
     return !isHidden;
 }
@@ -318,7 +318,7 @@ export function _addStylesToElement(
 
     for (const key of Object.keys(styles)) {
         const value = styles[key];
-        if (!key || !key.length || value == null) {
+        if (!key?.length || value == null) {
             continue;
         }
 

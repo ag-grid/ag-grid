@@ -87,7 +87,8 @@ function updateRootPackageJson() {
     const packageJson = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'));
     packageJson.version = gridNewVersion;
 
-    fs.writeFileSync(resolvedPath, JSON.stringify(packageJson, null, 2), 'utf8');
+    fs.writeFileSync(resolvedPath, JSON.stringify(packageJson, null, 2));
+    fs.appendFileSync(resolvedPath, '\n');
 }
 
 function updateFileWithNewVersions(currentFile) {
@@ -104,7 +105,8 @@ function updateFileWithNewVersions(currentFile) {
         updateOptionalDependencies
     )(packageJson);
 
-    fs.writeFileSync(currentFile, JSON.stringify(updatedPackageJson, null, 2), 'utf8');
+    fs.writeFileSync(currentFile, JSON.stringify(updatedPackageJson, null, 2));
+    fs.appendFileSync(currentFile, '\n');
 }
 
 /**
@@ -120,7 +122,7 @@ function updateVersionFile(currentFile) {
         const substitute = `$1 '${gridNewVersion}';`;
         const replacement = contents.replace(regex, substitute);
 
-        fs.writeFileSync(currentFile, replacement, 'utf8');
+        fs.writeFileSync(currentFile, replacement);
     });
 }
 

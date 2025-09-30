@@ -155,7 +155,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
         const undoRedoAction: UndoRedoAction | undefined = undoRedoStack.pop();
 
-        if (!undoRedoAction || !undoRedoAction.cellValueChanges) {
+        if (!undoRedoAction?.cellValueChanges) {
             return false;
         }
 

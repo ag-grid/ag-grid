@@ -177,7 +177,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         // We don't want to update the floating filter if the floating filter caused the change,
         // because the UI is already in sync. if we didn't do this, the UI would behave strangely
         // as it would be updating as the user is typing
-        if (event && event.afterFloatingFilter) {
+        if (event?.afterFloatingFilter) {
             return;
         }
 

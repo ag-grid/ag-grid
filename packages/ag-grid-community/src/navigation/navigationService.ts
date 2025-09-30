@@ -457,7 +457,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         // or that the focusedCell is a Full Width Row
         if (!cellOrRow) {
             cellOrRow = rowRenderer.getRowByPosition(focusedCell);
-            if (!cellOrRow || !cellOrRow.isFullWidth()) {
+            if (!cellOrRow?.isFullWidth()) {
                 return false;
             }
         }
@@ -790,7 +790,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const { visibleCols, rowRenderer, focusSvc, eventSvc } = this.beans;
         const displayedColumns = visibleCols.allCols;
         const rowComp = rowRenderer.getRowByPosition(position);
-        if (!rowComp || !rowComp.isFullWidth()) {
+        if (!rowComp?.isFullWidth()) {
             return false;
         }
 

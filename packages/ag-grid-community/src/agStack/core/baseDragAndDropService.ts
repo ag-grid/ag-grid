@@ -1,3 +1,5 @@
+import type { MouseCapture } from '../events/mouseCapture';
+import { captureMouse, releaseMouseCapture } from '../events/mouseCapture';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -44,6 +46,8 @@ export abstract class BaseDragAndDropService<
     >[] = [];
 
     private dragItem: TDragItem | null = null;
+    private dragInitialSourcePointerOffsetX: number = 0;
+    private dragInitialSourcePointerOffsetY: number = 0;
     private lastMouseEvent: MouseEvent | null = null;
     private lastDraggingEvent: TDraggingEvent | null = null;
     private dragSource: TDragSource | null = null;
@@ -53,6 +57,7 @@ export abstract class BaseDragAndDropService<
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
+    private mouseCapture: MouseCapture | null = null;
 
     private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
@@ -128,7 +133,16 @@ export abstract class BaseDragAndDropService<
         this.dragSource = dragSource;
         this.dragItem = dragSource.getDragItem();
 
+        const rect = dragSource.eElement.getBoundingClientRect();
+        this.dragInitialSourcePointerOffsetX = mouseEvent.clientX - rect.left;
+        this.dragInitialSourcePointerOffsetY = mouseEvent.clientY - rect.top;
+
         dragSource.onDragStarted?.();
+
+        if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
+            this.mouseCapture = captureMouse(this.beans.eRootDiv, mouseEvent);
+        }
+
         this.createAndUpdateDragImageComp(dragSource);
     }
 
@@ -199,6 +213,7 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
+        this.mouseCapture = releaseMouseCapture(this.mouseCapture);
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
         this.dragImageParent = null;
@@ -208,7 +223,10 @@ export abstract class BaseDragAndDropService<
         this.lastDraggingEvent = null;
         this.lastDropTarget = null;
         this.dragItem = null;
+        this.dragInitialSourcePointerOffsetX = 0;
+        this.dragInitialSourcePointerOffsetY = 0;
         this.dragSource = null;
+        this.mouseCapture = null;
     }
 
     private getAllContainersFromDropTarget(
@@ -318,7 +336,14 @@ export abstract class BaseDragAndDropService<
         mouseEvent: MouseEvent,
         fromNudge: boolean
     ): TDraggingEvent {
-        const { dragSource, dragItem, lastDraggingEvent, lastMouseEvent } = this;
+        const {
+            dragSource,
+            dragItem,
+            lastDraggingEvent,
+            lastMouseEvent,
+            dragInitialSourcePointerOffsetX,
+            dragInitialSourcePointerOffsetY,
+        } = this;
         const dropZoneTarget = dropTarget.getContainer();
         const rect = dropZoneTarget.getBoundingClientRect();
         const { clientX, clientY } = mouseEvent;
@@ -331,6 +356,8 @@ export abstract class BaseDragAndDropService<
             y: clientY - rect.top, // relative y
             vDirection: yDir > 0 ? 'down' : yDir < 0 ? 'up' : null,
             hDirection: xDir < 0 ? 'left' : xDir > 0 ? 'right' : null,
+            initialSourcePointerOffsetX: dragInitialSourcePointerOffsetX,
+            initialSourcePointerOffsetY: dragInitialSourcePointerOffsetY,
             dragSource: dragSource!,
             fromNudge,
             dragItem: dragItem!,
@@ -390,8 +417,11 @@ export abstract class BaseDragAndDropService<
         const eGui = component.getGui();
         const style = eGui.style;
 
-        style.setProperty('position', 'absolute');
-        style.setProperty('z-index', '9999');
+        style.position = 'absolute';
+        style.zIndex = '9999';
+        if (this.mouseCapture != null) {
+            style.pointerEvents = 'none';
+        }
 
         this.gos.setInstanceDomData(eGui);
         this.beans.environment.applyThemeClasses(eGui);

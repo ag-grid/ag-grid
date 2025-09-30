@@ -81,7 +81,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             columnsToRemove = processUnpinnedColumns(params) as AgColumn[];
         }
 
-        if (!columnsToRemove || !columnsToRemove.length) {
+        if (!columnsToRemove?.length) {
             return;
         }
 

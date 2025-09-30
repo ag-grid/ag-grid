@@ -24,11 +24,6 @@ on:
         type: boolean
         required: true
         default: true
-      # skip_reactFunctional:
-      #   description: 'Skip React Functional tests'
-      #   type: boolean
-      #   required: true
-      #   default: true
       skip_reactFunctionalTs:
         description: 'Skip React Functional TS tests'
         type: boolean
@@ -44,16 +39,16 @@ on:
         type: boolean
         required: true
         default: true
-      skip_demo_smoke:
-        description: 'Skip Demo / Smoke tests'
+      skip_recipes:
+        description: 'Skip Recipe tests'
         type: boolean
         required: true
         default: true
-      skip_interactive:
-        description: 'Skip Recipe / Interactive tests'
-        type: boolean
-        required: true
-        default: true
+      test-pattern:
+        description: 'Run only tests matching this pattern'
+        type: string
+        required: false
+        default: ''
       notify:
         description: 'Notify Slack channel'
         type: boolean
@@ -70,101 +65,10 @@ permissions:
   actions: read
 
 jobs:
-  # Run all framework tasks in parallel
-
-  download-examples:
-    name: Download all-examples.json
-    runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.cache-key.outputs.key }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Download all-examples-cached.json
-        run: |
-          mkdir -p ./testing/ag-grid-docs/e2e/.cache
-          curl https://grid-staging.ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-
-      - name: Generate cache key
-        id: cache-key
-        run: |
-          CACHE_KEY="all-examples-$(sha256sum ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json | cut -d' ' -f1)"
-          echo "key=${CACHE_KEY}" >> $GITHUB_OUTPUT
-          echo "Generated cache key: ${CACHE_KEY}"
-
-      - name: Cache all-examples-cached.json
-        uses: actions/cache@v4
-        with:
-          path: ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-          key: ${{ steps.cache-key.outputs.key }}
-
-
-  test-demos-smoke:
-    if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
-    name: Smoke Test Demos / Examples
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Download all-examples-cached.json
-        run: |
-          mkdir -p ./testing/ag-grid-docs/e2e/.cache
-          curl https://ag-grid.com/debug/all-examples.json > ./testing/ag-grid-docs/e2e/.cache/all-examples-cached.json
-
-      - name: Install Playwright Browsers
-        working-directory: testing/ag-grid-docs
-        run: npm i && npx playwright install chromium firefox webkit --with-deps --only-shell
-
-      - name: Demo Pages
-        working-directory: testing/ag-grid-docs
-        env:
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: npx playwright test ag-grid-demos.spec.ts
-
-      - name: Smoke Test Examples (ag-grid.com)
-        if: always()
-        working-directory: testing/ag-grid-docs
-        env:
-          BASE_URL: https://ag-grid.com
-          AG_GRID_PERCENTAGE_TO_RUN: 0.01
-        run: npx playwright test smoke-test-examples.spec.ts
-
-      - name: Upload Test Report
-        id: upload-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report-demos
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   test-vanilla:
     if: ${{ github.event.inputs.skip_vanilla != 'true' }}
-    name: Test Vanilla Examples
-    needs: download-examples
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/test-framework-examples
-        with:
-          framework: vanilla
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
-
-  test-typescript:
-    if: ${{ github.event.inputs.skip_typescript != 'true' }}
-    name: Test Typescript Examples
-    needs: download-examples
+    name: Test vanilla Examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -175,30 +79,30 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
         with:
+          framework: vanilla
+          browsers: chromium
+          test-pattern: ${{github.event.inputs.test-pattern}}
+
+  test-typescript:
+    if: ${{ github.event.inputs.skip_typescript != 'true' }}
+    name: Test typescript Examples
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2]
+        shardTotal: [2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/test-framework-examples
+        with:
           framework: typescript
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          browsers: all
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
-  # test-react-functional:
-  #   if: ${{ github.event.inputs.skip_reactFunctional != 'true' }}
-  #   name: Test React Examples
-  #   needs: download-examples
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       shardIndex: [1]
-  #       shardTotal: [1]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: ./.github/actions/test-framework-examples
-  #       with:
-  #         framework: reactFunctional
-  #         cache-key: ${{ needs.download-examples.outputs.cache-key }}
-
-  test-react-functional-ts:
+  test-reactFunctionalTs:
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
-    name: Test React TS Examples
-    needs: download-examples
+    name: Test reactFunctionalTs Examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -210,12 +114,12 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: reactFunctionalTs
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          browsers: all
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-vue3:
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
-    name: Test Vue Examples
-    needs: download-examples
+    name: Test vue3 Examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -227,12 +131,12 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: vue3
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          browsers: chromium
+          test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-angular:
     if: ${{ github.event.inputs.skip_angular != 'true' }}
-    name: Test Angular Examples
-    needs: download-examples
+    name: Test angular Examples
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -244,18 +148,27 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: angular
-          cache-key: ${{ needs.download-examples.outputs.cache-key }}
+          browsers: chromium
+          test-pattern: ${{github.event.inputs.test-pattern}}
+
 
   test-recipes:
-    if: ${{ github.event.inputs.skip_interactive != 'true' }}
+    if: ${{ github.event.inputs.skip_recipes != 'true' }}
     name: Test Public Testing Recipes
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
       - name: Run Public Testing Recipes
         run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
       - name: Upload Test Report
@@ -267,41 +180,17 @@ jobs:
           path: reports/
           retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
   
-  test-interactive:
-    if: ${{ github.event.inputs.skip_interactive != 'true' }}
-    name: Test Interactive Examples
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
-      - name: Run Interactive Examples
-        run: yarn nx run ag-grid-docs:test:interactive -c staging
-      - name: Upload Test Report
-        id: upload-recipes-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report-interactive
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
-
   publish-reports:
     if: always()
     needs:
-      - test-demos-smoke
-      # - test-react-functional
-      - test-react-functional-ts
+      - test-reactFunctionalTs
       - test-angular
       - test-typescript
       - test-vanilla
       - test-vue3
       - test-recipes
-      - test-interactive
     env:
-      IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-react-functional-ts.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-demos-smoke.result != 'failure' && needs.test-recipes.result != 'failure' && needs.test-interactive.result != 'failure' }}
+      IS_SUCCESS: ${{ needs.test-angular.result != 'failure' && needs.test-reactFunctionalTs.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-recipes.result != 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -321,7 +210,7 @@ jobs:
           summary-report: true
           failed-report: true
           flaky-report: true
-          skipped-report: true
+          skipped-report: false
           write-ctrf-to-file: ${{ env.CTRF_FILE }}
 
       - name: Get previous run commit SHA

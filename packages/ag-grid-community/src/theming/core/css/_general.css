@@ -403,7 +403,8 @@ always be 0 and then making a row sticky causes the grid to scroll. */
     flex: 1 1 auto;
 }
 
-.ag-cell-value,
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-cell-value:not(.ag-allow-overflow),
 .ag-group-value {
     overflow: hidden;
     text-overflow: ellipsis;

@@ -13,7 +13,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ClientSideRowModelApiModule: 1.88,
     ClientSideRowModelModule: 29.1,
     ColumnApiModule: 3.6,
-    ColumnAutoSizeModule: 6.34,
+    ColumnAutoSizeModule: 7.6,
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 63.38,
@@ -45,13 +45,13 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     TextFilterModule: 124,
     TooltipModule: 23.68,
     UndoRedoEditModule: 69.34,
-    ValidationModule: 72.17,
+    ValidationModule: 74.37,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1493.76,
+    AllEnterpriseModule: 1498.82,
     BatchEditModule: 81.15,
     CellSelectionModule: 55,
     ClipboardModule: 46.04,
@@ -80,7 +80,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 33.16,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 88.17,
+    TreeDataModule: 90.17,
     ViewportRowModelModule: 27,
 };
 
@@ -134,7 +134,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 495.72 };
+export const baseModule = { modules: [], expectedSize: 501.06 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

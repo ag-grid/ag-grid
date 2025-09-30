@@ -189,8 +189,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         let movePadding = 0;
 
         if (isUp) {
-            const children = item.columnDepth > 0 && column.getParent()?.getChildren();
-            if (children && children.length && column === children[0]) {
+            const children = item.columnDepth > 0 ? column.getParent()?.getChildren() : null;
+            if (children?.length && column === children[0]) {
                 movePadding = -1;
             }
         } else if (group) {
@@ -363,7 +363,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             parentList: ColumnModelItem[]
         ): void => {
             const columnGroupDef = columnGroup.getColGroupDef();
-            const skipThisGroup = columnGroupDef && columnGroupDef.suppressColumnsToolPanel;
+            const skipThisGroup = columnGroupDef?.suppressColumnsToolPanel;
             if (skipThisGroup) {
                 return;
             }
@@ -389,7 +389,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         };
 
         const createColumnItem = (column: AgColumn, depth: number, parentList: ColumnModelItem[]): void => {
-            const skipThisColumn = column.getColDef() && column.getColDef().suppressColumnsToolPanel;
+            const skipThisColumn = column.getColDef()?.suppressColumnsToolPanel;
 
             if (skipThisColumn) {
                 return;

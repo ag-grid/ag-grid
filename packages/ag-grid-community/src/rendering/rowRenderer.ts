@@ -263,7 +263,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
      */
     private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
-        if (event && event.rowIndex != null && !event.rowPinned) {
+        if (event?.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellBeingRendered(event.rowIndex, col)) {
                 this.redraw();
@@ -1592,7 +1592,7 @@ class RowCtrlCache {
     }
 
     public getRow(rowNode: RowNode): RowCtrl | null {
-        if (rowNode == null || rowNode.id == null) {
+        if (rowNode?.id == null) {
             return null;
         }
 

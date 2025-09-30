@@ -125,7 +125,7 @@ export abstract class AgComponentStub<
                 (this as any)[elementRef] = newComponent ?? element;
             } else {
                 // Don't warn if the data-ref is used for passing parameters to the component
-                const usedAsParamRef = paramsMap && paramsMap[elementRef];
+                const usedAsParamRef = paramsMap?.[elementRef];
                 if (!this.suppressDataRefValidation && !usedAsParamRef) {
                     // This can happen because of:
                     // 1. The data-ref has a typo and doesn't match the property in the component

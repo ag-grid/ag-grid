@@ -10,7 +10,7 @@ to create a seamless data drag and drop experience.
 {% apiDocumentation source="grid-api/api.json" section="rowDrag" names=["addRowDropZone", "removeRowDropZone"] /%}
 
 {% note %}
-If you read the [Managed Dragging](./row-dragging/#managed-dragging) section of the Row Dragging
+If you read the [Managed Row Dragging](./row-dragging-managed) section of the Row Dragging
 documentation you probably noticed that when you `sort`, `filter` and
 `rowGroup` the Grid, the managed Row Dragging stops working. The only exception to this
 rule is when you register external drop zones using `addRowDropZone`. In this case, you
@@ -45,7 +45,7 @@ In the example below, note the following:
 
 * You can move rows inside the grid.
 * You can move rows to the container on the right hand side.
-* Toggle the checkbox to enable or disable [suppressMoveWhenRowDragging](./row-dragging/#suppress-move-when-dragging)
+* Toggle the checkbox to enable or disable [suppressMoveWhenRowDragging](./row-dragging-managed/#suppress-move-when-dragging)
 
 {% gridExampleRunner title="Simple" name="simple" /%}
 
@@ -65,3 +65,6 @@ In the example below, note the following:
 * New rows can be created by clicking on the red, green and blue buttons.
 
 {% gridExampleRunner title="Two Grids" name="two-grids" /%}
+
+## Next Up
+Continue to the next section to learn about [Row Dragging Between Grids](./row-dragging-to-grid).

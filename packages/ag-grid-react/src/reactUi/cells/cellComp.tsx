@@ -81,6 +81,9 @@ const CellComp = ({
         (includeSelection || includeDndSource || includeRowDrag) &&
         (editDetails == null || !!editDetails.popup);
     const showCellWrapper = forceWrapper || showTools;
+    const cellValueClass = useMemo(() => {
+        return cellCtrl.getCellValueClass();
+    }, [cellCtrl]);
 
     const setCellEditorRef = useCallback(
         (cellEditor: ICellEditor | undefined) => {
@@ -428,7 +431,7 @@ const CellComp = ({
                 return null;
             }
             return showCellWrapper ? (
-                <span role="presentation" id={`cell-${instanceId}`} className="ag-cell-value" ref={setCellValueRef}>
+                <span role="presentation" id={`cell-${instanceId}`} className={cellValueClass} ref={setCellValueRef}>
                     {valueOrCellComp()}
                 </span>
             ) : (

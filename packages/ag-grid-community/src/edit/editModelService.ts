@@ -352,7 +352,7 @@ export class EditCellValidationModel implements IEditCellValidationModel {
     }
 
     public hasCellValidation(position?: EditPosition): boolean {
-        if (!position || !position.rowNode || !position.column) {
+        if (!position?.rowNode || !position.column) {
             return this.cellValidations.size > 0;
         }
         return !!this.getCellValidation(position);
@@ -392,7 +392,7 @@ export class EditRowValidationModel implements IEditRowValidationModel {
     }
 
     public hasRowValidation(position?: EditRowPosition): boolean {
-        if (!position || !position.rowNode) {
+        if (!position?.rowNode) {
             return this.rowValidations.size > 0;
         }
         return !!this.getRowValidation(position);

@@ -35,7 +35,7 @@ export class TitlePanel extends Component {
 
     protected hasTitle(): boolean {
         const title: any = this.chartOptions.getValue(this.key);
-        return title && title.enabled && title.text && title.text.length > 0;
+        return title?.enabled && title.text && title.text.length > 0;
     }
 
     private initFontPanel(): void {
