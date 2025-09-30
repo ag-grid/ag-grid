@@ -29,17 +29,27 @@ export function _createGlobalRowEvent<T extends AgEventType>(
  */
 const IGNORED_SIBLING_PROPERTIES = new Set<
     keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
->(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced', 'childStore']);
+>([
+    '__autoHeights',
+    '__checkAutoHeightsDebounced',
+    '__localEventService',
+    '__objectId',
+    'childStore',
+    'oldRowTop',
+    'sticky',
+    'treeNodeFlags',
+    'treeParent',
+]);
 
 export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): RowNode {
     const sibling = new RowNode(beans);
 
-    Object.keys(rowNode).forEach((key: keyof RowNode) => {
+    for (const key of Object.keys(rowNode) as (keyof RowNode)[]) {
         if (IGNORED_SIBLING_PROPERTIES.has(key)) {
-            return;
+            continue;
         }
-        (sibling as any)[key] = (rowNode as any)[key];
-    });
+        (sibling as Record<string, any>)[key] = rowNode[key];
+    }
 
     // manually set oldRowTop to null so we discard any
     // previous information about its position.

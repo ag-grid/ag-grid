@@ -25,4 +25,4 @@ export interface IContext<TBeanCollection> {
     readonly instanceId: number;
 }
 
-export type ClassImp = new (...args: []) => object;
+export type ClassImp = new (...args: unknown[]) => object;
