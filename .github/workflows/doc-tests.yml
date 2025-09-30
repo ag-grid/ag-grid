@@ -159,9 +159,16 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
       - name: Run Public Testing Recipes
         run: yarn nx run ag-grid-public-e2e-testing-recipes:test:recipes -c staging
       - name: Upload Test Report

@@ -25,7 +25,7 @@ runs:
       id: setup
       uses: ./.github/actions/setup-nx
       with:
-        cache_mode: 'ro'
+        cache_mode: ro
 
     - name: Run ${{ inputs.framework }} Examples
       env:
