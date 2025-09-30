@@ -104,10 +104,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.addPropertyListeners();
     }
 
-    private getNodeManager(): ClientSideNodeManager<any> | null {
-        return this.nodeMgr ?? this.loadNodeManager();
-    }
-
     private loadNodeManager(): ClientSideNodeManager<any> | null {
         let bean = this.nodeMgr;
         if (bean === null) {
@@ -251,9 +247,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             changedProps,
         };
 
-        let reset = this.nodeMgr?.onPropChange?.(changedProps);
+        const oldNodeManager = this.nodeMgr;
+        let reset = oldNodeManager?.onPropChange?.(changedProps);
 
-        const oldNodeManager = this.getNodeManager();
         const nodeManager =
             changedProps.has('treeDataChildrenField') || changedProps.has('treeData')
                 ? this.loadNodeManager()
@@ -281,7 +277,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             if (oldNodeManager !== nodeManager) {
                 this.destroyBean(oldNodeManager);
-                this.nodeMgr = nodeManager;
             }
             initRootNode(this.rootNode!);
         }
@@ -599,8 +594,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        if (!this.getNodeManager()) {
-            return;
+        if (!this.nodeMgr && !this.loadNodeManager()) {
+            return; // destroyed or not ready
         }
 
         // this goes through the pipeline of stages. what's in my head is similar
@@ -1088,9 +1083,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * Called by gridApi & rowDragFeature
      */
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
-        const nodeManager = this.getNodeManager();
+        const nodeManager = this.nodeMgr ?? this.loadNodeManager();
         if (!nodeManager) {
-            return null;
+            return null; // destroyed or not ready
         }
         this.beans.valueCache?.onDataChanged();
 
