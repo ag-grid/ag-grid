@@ -5,6 +5,10 @@ import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
+function quote(s: string): string {
+    return `"${s}"`;
+}
+
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
     headerCheckboxSelection: {
@@ -268,10 +272,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                     'minute',
                     'second',
                 ]);
-
-                function quote(s: string): string {
-                    return `"${s}"`;
-                }
 
                 const unrecognisedParts: string[] = [];
 
