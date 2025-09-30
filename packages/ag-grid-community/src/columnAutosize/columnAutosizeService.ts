@@ -269,7 +269,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         return () => {
             element.removeEventListener('dblclick', autoSizeColListener);
-            touchListener.removeEventListener('doubleTap', autoSizeColListener);
             touchListener.destroy();
         };
     }

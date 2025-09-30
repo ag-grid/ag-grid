@@ -192,3 +192,34 @@ export function _anchorElementToMouseMoveEvent(
     element.style.left = `${left}px`;
     element.style.top = `${top}px`;
 }
+
+/**  Tuple [target, type, listener, options?] */
+export type TempEventHandler = [
+    target: EventTarget,
+    type: string,
+    listener: (e: Event) => void,
+    options?: boolean | AddEventListenerOptions,
+];
+
+export const addTempEventHandlers = (list: TempEventHandler[], ...handlers: TempEventHandler[]): void => {
+    for (const handler of handlers) {
+        const [target, type, eventListener, options] = handler;
+        target.addEventListener(type, eventListener, options);
+        list.push(handler);
+    }
+};
+
+export const clearTempEventHandlers = (list: TempEventHandler[] | null | undefined): void => {
+    if (list) {
+        for (const [target, type, listener, options] of list) {
+            target.removeEventListener(type, listener, options);
+        }
+        list.length = 0;
+    }
+};
+
+export const preventEventDefault = (event: Event) => {
+    if (event.cancelable) {
+        event.preventDefault();
+    }
+};
