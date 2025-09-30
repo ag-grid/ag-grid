@@ -39,11 +39,6 @@ on:
         type: boolean
         required: true
         default: true
-      skip_demo_smoke:
-        description: 'Skip Demo / Smoke tests'
-        type: boolean
-        required: true
-        default: true
       skip_recipes:
         description: 'Skip Recipe tests'
         type: boolean
@@ -65,36 +60,6 @@ permissions:
   actions: read
 
 jobs:
-
-
-  test-demos-smoke:
-    if: ${{ github.event.inputs.skip_demo_smoke != 'true' }}
-    name: Demos Examples
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Install Playwright Browsers
-        working-directory: testing/ag-grid-docs
-        run: npm i && npx playwright install chromium firefox webkit --with-deps --only-shell
-
-      - name: Demo Pages
-        working-directory: testing/ag-grid-docs
-        env:
-          BASE_URL: https://grid-staging.ag-grid.com/
-        run: npx playwright test ag-grid-demos.spec.ts
-
-      - name: Upload Test Report
-        id: upload-report
-        uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report-demos
-          path: reports/
-          retention-days: ${{env.DEFAULT_RETENTION_DAYS}}
 
   test-vanilla:
     if: ${{ github.event.inputs.skip_vanilla != 'true' }}
@@ -256,7 +221,6 @@ jobs:
   publish-reports:
     if: always()
     needs:
-      - test-demos-smoke
       - test-reactFunctionalTs
       - test-angular
       - test-typescript
