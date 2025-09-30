@@ -5,7 +5,7 @@ export class ChangedRowNodes<TData = any> {
     public readonly updates = new Set<RowNode<TData>>();
     public readonly adds = new Set<RowNode<TData>>();
 
-    /** Marks a row as removed. Order of operations is: remove, update, add */
+    /** Marks a row as removed.*/
     public remove(node: RowNode<TData>): void {
         if (!this.adds.delete(node)) {
             this.updates.delete(node);

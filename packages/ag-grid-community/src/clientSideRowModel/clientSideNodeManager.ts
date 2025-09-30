@@ -2,14 +2,14 @@ import { BeanStub } from '../context/beanStub';
 import type { GetRowIdFunc, GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
-import type { IChangedRowNodes, RefreshModelParams } from '../interfaces/iClientSideRowModel';
+import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
 import type { ChangedRowNodes } from './changedRowNodes';
 
 export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
-    changedRowNodes: IChangedRowNodes<TData>;
+    changedRowNodes: ChangedRowNodes<TData>;
 
     /** The RowNodeTransaction containing all the removals, updates and additions */
     rowNodeTransaction: RowNodeTransaction<TData>;
@@ -179,7 +179,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     public updateRowData(
         rowDataTran: RowDataTransaction<TData>,
-        changedRowNodes: IChangedRowNodes<TData>
+        changedRowNodes: ChangedRowNodes<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData> {
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 

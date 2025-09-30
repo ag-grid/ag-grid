@@ -2,8 +2,8 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
+    ChangedRowNodes,
     ColumnModel,
-    IChangedRowNodes,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
@@ -156,7 +156,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return details;
     }
 
-    private handleDeltaUpdate(details: GroupingDetails, { removals, updates, adds }: IChangedRowNodes): void {
+    private handleDeltaUpdate(details: GroupingDetails, { removals, updates, adds }: ChangedRowNodes): void {
         const batchRemover = new BatchRemover();
 
         if (removals.size) {

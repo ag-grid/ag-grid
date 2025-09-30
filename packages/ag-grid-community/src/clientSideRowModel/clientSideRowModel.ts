@@ -14,7 +14,6 @@ import {
 } from '../gridOptionsUtils';
 import type {
     ClientSideRowModelStage,
-    IChangedRowNodes,
     IClientSideRowModel,
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
@@ -937,7 +936,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private doSort(changedRowNodes: IChangedRowNodes | undefined, changedPath: ChangedPath) {
+    private doSort(changedRowNodes: ChangedRowNodes | undefined, changedPath: ChangedPath) {
         const sortStage = this.beans.sortStage;
         if (sortStage) {
             sortStage.execute({
@@ -1107,7 +1106,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commitTransactions(rowNodesOrderChanged: boolean, changedRowNodes: IChangedRowNodes): void {
+    private commitTransactions(rowNodesOrderChanged: boolean, changedRowNodes: ChangedRowNodes): void {
         this.refreshModel({
             step: 'group',
             rowDataUpdated: true,

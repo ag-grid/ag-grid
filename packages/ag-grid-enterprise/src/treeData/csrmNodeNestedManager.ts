@@ -1,7 +1,7 @@
 import type {
+    ChangedRowNodes,
     ClientSideNodeManagerUpdateRowDataResult,
     GridOptions,
-    IChangedRowNodes,
     RefreshModelParams,
     RowDataTransaction,
     RowNode,
@@ -42,7 +42,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
 
     public override updateRowData(
         _rowDataTran: RowDataTransaction<TData>,
-        changedRowNodes: IChangedRowNodes<TData>
+        changedRowNodes: ChangedRowNodes<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData> {
         _warn(268);
         return {

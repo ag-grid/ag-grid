@@ -736,8 +736,8 @@ export {
     ClientSideRowModelStage,
     ClientSideRowModelStep,
     RefreshModelParams,
-    IChangedRowNodes,
 } from './interfaces/iClientSideRowModel';
+export type { ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export {
     ClientSideNodeManager,
     ClientSideNodeManagerUpdateRowDataResult,

@@ -58,8 +58,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowHeightChangedDebounced(): void;
 }
 
-export type IChangedRowNodes<TData = any> = ChangedRowNodes<TData>;
-
 export interface RefreshModelParams<TData = any> {
     /** how much of the pipeline to execute */
     step: ClientSideRowModelStage;
@@ -87,7 +85,7 @@ export interface RefreshModelParams<TData = any> {
     /**
      * A data structure that holds the affected row nodes, if this was an update and not a full reload.
      */
-    changedRowNodes?: IChangedRowNodes<TData>;
+    changedRowNodes?: ChangedRowNodes<TData>;
 
     /** The changedPath, if any */
     changedPath?: ChangedPath;

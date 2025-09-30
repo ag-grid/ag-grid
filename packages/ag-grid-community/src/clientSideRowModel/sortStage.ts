@@ -4,12 +4,13 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
-import type { ClientSideRowModelStage, IChangedRowNodes } from '../interfaces/iClientSideRowModel';
+import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
+import type { ChangedRowNodes } from './changedRowNodes';
 
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
@@ -63,7 +64,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     private sort(
         sortOptions: SortOption[],
         useDeltaSort: boolean,
-        changedRowNodes: IChangedRowNodes | undefined,
+        changedRowNodes: ChangedRowNodes | undefined,
         changedPath: ChangedPath | undefined
     ): void {
         const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = this.beans;
@@ -167,7 +168,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
 const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
-    changedRowNodes: IChangedRowNodes,
+    changedRowNodes: ChangedRowNodes,
     changedPath: ChangedPath | undefined,
     sortOptions: SortOption[]
 ): RowNode[] => {
