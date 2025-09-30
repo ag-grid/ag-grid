@@ -376,18 +376,11 @@ export function _addColumnDefaultAndTypes(
     const isSortingCoupled = _isColumnsSortingCoupledToGroup(gos);
     if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
         // override the sort for row group columns where the autoGroupColDef defines these values.
-        _mergeDeep(
-            res,
-            { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef,
-            false,
-            true
-        );
+        _mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
     }
 
-    if (dataTypeSvc) {
-        dataTypeSvc.postProcess(res);
-        dataTypeSvc.validateColDef(res);
-    }
+    dataTypeSvc?.postProcess(res);
+    dataTypeSvc?.validateColDef(res);
 
     gos.validateColDef(res, colId, isAutoCol);
 
