@@ -27,7 +27,7 @@ test.agExample(import.meta, () => {
                     rowGroup: true,
                     enableRowGroup: true,
                     enablePivot: true,
-                    rowGroupingHierarchy: ['year', 'month'],
+                    groupHierarchy: ['year', 'month'],
                 },
                 { field: 'total', aggFunc: 'sum' },
             ]);
