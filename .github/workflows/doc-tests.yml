@@ -44,6 +44,11 @@ on:
         type: boolean
         required: true
         default: true
+      test-pattern:
+        description: 'Run only tests matching this pattern'
+        type: string
+        required: false
+        default: ''
       notify:
         description: 'Notify Slack channel'
         type: boolean
@@ -78,7 +83,7 @@ jobs:
         env:
           FRAMEWORK: vanilla
           BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:chromium ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -105,7 +110,7 @@ jobs:
         env:
           FRAMEWORK: typescript
           BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:all --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:all ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -132,7 +137,7 @@ jobs:
         env:
           FRAMEWORK: reactFunctionalTs
           BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:all --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:all ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -159,7 +164,7 @@ jobs:
         env:
           FRAMEWORK: vue3
           BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:chromium ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
@@ -186,7 +191,7 @@ jobs:
         env:
           FRAMEWORK: angular
           BASE_URL: https://grid-staging.ag-grid.com/
-        run: yarn nx run ag-grid-docs:test:interactive:chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: yarn nx run ag-grid-docs:test:interactive:chromium ${{github.event.inputs.test-pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Upload Test Report
         id: upload-recipes-report
         uses: actions/upload-artifact@v4
