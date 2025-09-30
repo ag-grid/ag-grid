@@ -86,11 +86,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
         const processedNodes = new Set<RowNode<TData>>();
         const rootNode = this.rootNode;
-        const oldAllLeafChildren = rootNode.allLeafChildren!;
-        const oldAllLeafChildrenLen = oldAllLeafChildren.length;
+        const nodesToUnselect: RowNode<TData>[] = [];
 
         let nodesAdded = false;
-        let nodesUpdated = false;
+        let dataUpdated = false;
         let orderChanged = false;
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
@@ -112,37 +111,43 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
                 prevSourceRowIndex = sourceRowIndex;
             }
-            if (node.data !== data) {
-                nodesUpdated = true;
-                node.updateData(data);
-                if (!adds.has(node)) {
-                    updates.add(node);
-                }
-            }
-        }
-
-        // Destroy the remaining unprocessed node and collect the removed that were selected.
-        const nodesToUnselect: RowNode<TData>[] = [];
-        let nodesRemoved = false;
-        for (let i = 0; i < oldAllLeafChildrenLen; i++) {
-            const node = oldAllLeafChildren[i];
-            if (processedNodes.has(node)) {
+            if (node.data === data) {
                 continue;
             }
-            this.rowNodeDeleted(node);
-            changedRowNodes.remove(node);
-            nodesRemoved = true;
-            if (node.isSelected()) {
+            dataUpdated = true;
+            node.updateData(data);
+            if (adds.has(node)) {
+                continue;
+            }
+            updates.add(node);
+            if (!node.selectable && node.isSelected()) {
                 nodesToUnselect.push(node);
             }
         }
 
-        if (nodesAdded || nodesRemoved || orderChanged) {
+        // Destroy the remaining unprocessed node and collect the removed that were selected.
+        let nodesRemoved = false;
+        const allLeafs = rootNode.allLeafChildren!;
+        for (let i = 0, len = allLeafs.length; i < len; i++) {
+            const node = allLeafs[i];
+            if (processedNodes.has(node)) {
+                continue;
+            }
+            if (node.isSelected()) {
+                nodesToUnselect.push(node);
+            }
+            this.rowNodeDeleted(node);
+            changedRowNodes.remove(node);
+            nodesRemoved = true;
+        }
+
+        const nodesChanged = nodesAdded || nodesRemoved || orderChanged;
+        if (nodesChanged) {
             params.rowNodesOrderChanged ||= orderChanged;
             updateLeafsAfterChange(rootNode, processedNodes, reorder);
         }
 
-        if (nodesAdded || nodesRemoved || orderChanged || nodesUpdated) {
+        if (nodesChanged || dataUpdated) {
             params.rowDataUpdated = true;
             this.deselectNodes(nodesToUnselect);
         }
@@ -480,15 +485,14 @@ function updateLeafsAfterChange<TData>(
     processedNodes: Set<RowNode<TData>>,
     reorder: boolean
 ) {
-    const oldAllLeafChildren = rootNode.allLeafChildren!;
-    const oldAllLeafChildrenLen = oldAllLeafChildren.length;
     const newAllLeafChildren = new Array<RowNode<TData>>(processedNodes.size); // Preallocate
     let writeIdx = 0;
     if (!reorder) {
         // All the old nodes will be in the new array in the order they were in the old array
         // At the end of this loop, processedNodes will contain only the new appended nodes
-        for (let i = 0; i < oldAllLeafChildrenLen; ++i) {
-            const node = oldAllLeafChildren[i];
+        const allLeafs = rootNode.allLeafChildren!;
+        for (let i = 0, len = allLeafs.length; i < len; ++i) {
+            const node = allLeafs[i];
             if (processedNodes.delete(node)) {
                 node.sourceRowIndex = writeIdx;
                 newAllLeafChildren[writeIdx++] = node;
