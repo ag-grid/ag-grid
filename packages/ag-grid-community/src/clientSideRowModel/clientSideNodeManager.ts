@@ -6,7 +6,7 @@ import type { IChangedRowNodes, RefreshModelParams } from '../interfaces/iClient
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
-import { ChangedRowNodes } from './changedRowNodes';
+import type { ChangedRowNodes } from './changedRowNodes';
 
 export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     changedRowNodes: IChangedRowNodes<TData>;
@@ -141,7 +141,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         }
     }
 
-    private removeUnprocessedNodes(
+    protected removeUnprocessedNodes(
         processedNodes: Set<RowNode<TData>>,
         nodesToUnselect: RowNode<TData>[],
         changedRowNodes: ChangedRowNodes<TData>
@@ -153,12 +153,12 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             if (processedNodes.has(node)) {
                 continue;
             }
+            nodesRemoved = true;
+            this.rowNodeDeleted(node);
+            changedRowNodes.remove(node);
             if (node.isSelected()) {
                 nodesToUnselect.push(node);
             }
-            this.rowNodeDeleted(node);
-            changedRowNodes.remove(node);
-            nodesRemoved = true;
         }
         return nodesRemoved;
     }
@@ -466,7 +466,7 @@ const filterRemovedNodes = <TData>(rootNode: RowNode<TData>, removedSet: Readonl
         return;
     }
     const allLeafs = rootNode.allLeafChildren;
-    const allLeafsLen = allLeafs?.length ?? 0;
+    const allLeafsLen = allLeafs?.length;
     if (!allLeafsLen) {
         return;
     }

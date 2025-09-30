@@ -188,15 +188,14 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         if (oldAllLeafChildren) {
             for (let i = 0, len = oldAllLeafChildren.length; i < len; ++i) {
                 const row = oldAllLeafChildren[i];
-                if (!processedData.has(row.data)) {
-                    row.treeParent = null;
-                    row.treeNodeFlags = 0;
-                    this.rowNodeDeleted(row);
-                    if (row.isSelected()) {
-                        nodesToUnselect.push(row);
-                    }
-                    changedRowNodes.remove(row);
+                if (processedData.has(row.data)) {
+                    continue;
                 }
+                this.rowNodeDeleted(row);
+                if (row.isSelected()) {
+                    nodesToUnselect.push(row);
+                }
+                changedRowNodes.remove(row);
             }
         }
 
