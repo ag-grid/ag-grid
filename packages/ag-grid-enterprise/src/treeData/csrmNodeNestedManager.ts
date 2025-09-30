@@ -191,7 +191,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                 if (processedData.has(row.data)) {
                     continue;
                 }
-                this.rowNodeDeleted(row);
+                this.deleteNode(row);
                 if (row.isSelected()) {
                     nodesToUnselect.push(row);
                 }

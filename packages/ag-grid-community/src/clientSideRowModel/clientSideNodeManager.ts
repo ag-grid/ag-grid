@@ -154,7 +154,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 continue;
             }
             nodesRemoved = true;
-            this.rowNodeDeleted(node);
+            this.deleteNode(node);
             changedRowNodes.remove(node);
             if (node.isSelected()) {
                 nodesToUnselect.push(node);
@@ -164,7 +164,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     /** Called when a node needs to be deleted */
-    protected rowNodeDeleted(node: RowNode<TData>): void {
+    protected deleteNode(node: RowNode<TData>): void {
         node.clearRowTopAndRowIndex(); // so row renderer knows to fade row out (and not reposition it)
         const id = node.id!;
         const allNodesMap = this.allNodesMap;
@@ -281,7 +281,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             if (rowNode.isSelected()) {
                 nodesToUnselect.push(rowNode);
             }
-            this.rowNodeDeleted(rowNode);
+            this.deleteNode(rowNode);
             changedRowNodes.remove(rowNode);
             removedResult.push(rowNode);
             removedSet.add(rowNode);
