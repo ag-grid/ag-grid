@@ -232,7 +232,7 @@ export class GridCoreCreator {
             globalSyncListener: params ? params.globalSyncListener : null,
             frameworkOverrides: frameworkOverrides,
         };
-        if (params && params.providedBeanInstances) {
+        if (params?.providedBeanInstances) {
             Object.assign(seed, params.providedBeanInstances);
         }
 

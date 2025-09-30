@@ -4,8 +4,15 @@
     flex-direction: column;
 }
 
-.button-bar {
+.interaction-bar {
     margin-bottom: 1rem;
+    display: flex;
+    gap: 1em;
+    align-items: center;
+}
+
+.resize-button {
+    margin: 0px !important;
 }
 
 .grid-wrapper {

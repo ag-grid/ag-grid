@@ -1,39 +1,37 @@
 import type { Column } from './iColumn';
 
-export interface IColumnLimit {
-    /** Selector for the column to which these dimension limits will apply */
-    key: Column | string;
+interface WidthLimits {
     /** Defines a minimum width for this column (does not override the column minimum width) */
     minWidth?: number;
     /** Defines a maximum width for this column (does not override the column maximum width) */
     maxWidth?: number;
 }
 
-export interface ISizeColumnsToFitParams {
+interface DefaultWidthLimits {
     /** Defines a default minimum width for every column (does not override the column minimum width) */
     defaultMinWidth?: number;
     /** Defines a default maximum width for every column (does not override the column maximum width) */
     defaultMaxWidth?: number;
+}
+
+export interface IColumnLimit extends WidthLimits {
+    /** Selector for the column to which these dimension limits will apply */
+    key: Column | string;
+}
+
+export interface ISizeColumnsToFitParams extends DefaultWidthLimits {
     /** Provides a minimum and/or maximum width to specific columns */
     columnLimits?: IColumnLimit[];
 }
 
 /** Limit a column width when auto-sizing to fit grid width. */
-export interface SizeColumnsToFitGridColumnLimits {
+export interface SizeColumnsToFitGridColumnLimits extends WidthLimits {
     colId: string;
-    /** Minimum width for this column (does not override the column minimum width) */
-    minWidth?: number;
-    /** Maximum width for this column (does not override the column maximum width) */
-    maxWidth?: number;
 }
 
 /** Auto-size columns to fit the grid width. */
-export interface SizeColumnsToFitGridStrategy {
+export interface SizeColumnsToFitGridStrategy extends DefaultWidthLimits {
     type: 'fitGridWidth';
-    /** Default minimum width for every column (does not override the column minimum width). */
-    defaultMinWidth?: number;
-    /** Default maximum width for every column (does not override the column maximum width). */
-    defaultMaxWidth?: number;
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToFitGridColumnLimits[];
 }
@@ -44,12 +42,8 @@ export interface SizeColumnsToFitProvidedWidthStrategy {
     width: number;
 }
 
-export interface SizeColumnsToContentColumnLimits {
+export interface SizeColumnsToContentColumnLimits extends WidthLimits {
     colId: string;
-    /** Minimum width for this column (does not override the column minimum width) */
-    minWidth?: number;
-    /** Maximum width for this column (does not override the column maximum width) */
-    maxWidth?: number;
 }
 
 /**
@@ -57,32 +51,27 @@ export interface SizeColumnsToContentColumnLimits {
  *
  * Not supported by the Viewport Row Model
  */
-export interface SizeColumnsToContentStrategy {
+export interface SizeColumnsToContentStrategy extends ISizeAllColumnsToContentParams {
     type: 'fitCellContents';
+}
+
+export interface ISizeAllColumnsToContentParams extends DefaultWidthLimits {
     /** If true, the header won't be included when calculating the column widths. */
     skipHeader?: boolean;
     /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
     colIds?: string[];
-    /** Default minimum width for every column (does not override the column minimum width). */
-    defaultMinWidth?: number;
-    /** Default maximum width for every column (does not override the column maximum width). */
-    defaultMaxWidth?: number;
     /** Provide to limit specific column widths when sizing. */
     columnLimits?: SizeColumnsToContentColumnLimits[];
-}
-
-export interface ISizeAllColumnsToContentParams {
-    /** If true, the header won't be included when calculating the column widths. */
-    skipHeader?: boolean;
-    /** Default minimum width for every column (does not override the column minimum width). */
-    defaultMinWidth?: number;
-    /** Default maximum width for every column (does not override the column maximum width). */
-    defaultMaxWidth?: number;
-    /** Provide to limit specific column widths when sizing. */
-    columnLimits?: SizeColumnsToContentColumnLimits[];
+    /** Proportionally scale up columns after sizing to fill any empty space remaining in the grid. */
+    scaleUpToFitGridWidth?: boolean;
 }
 
 export interface ISizeColumnsToContentParams extends ISizeAllColumnsToContentParams {
     /** If not provided will auto-size all columns. Otherwise will size the specified columns. */
     colIds?: string[];
 }
+
+export type AutoSizeStrategy =
+    | SizeColumnsToFitGridStrategy
+    | SizeColumnsToFitProvidedWidthStrategy
+    | SizeColumnsToContentStrategy;

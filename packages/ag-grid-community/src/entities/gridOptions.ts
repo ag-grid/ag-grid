@@ -116,11 +116,7 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type {
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSize';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
@@ -505,10 +501,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    autoSizeStrategy?:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy;
+    autoSizeStrategy?: AutoSizeStrategy;
 
     // *** Components *** //
     /**
@@ -3065,6 +3058,11 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = 
      * @default true
      */
     headerCheckbox?: boolean;
+    /**
+     * If `true`, using CTRL+A will select all rows when [Cell Selection](./cell-selection) is enabled
+     * @default false
+     */
+    ctrlASelectsRows?: boolean;
 }
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */

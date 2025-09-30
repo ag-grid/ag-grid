@@ -75,6 +75,10 @@ export interface AgDraggingEvent<
     vDirection: VerticalDirection | null;
     /** The horizontal direction of the drag, can be 'left', 'right' or null */
     hDirection: HorizontalDirection | null;
+    /** The x-offset of the pointer from the drag source when the drag operation started */
+    initialSourcePointerOffsetX: number;
+    /** The y-offset of the pointer from the drag source when the drag operation started */
+    initialSourcePointerOffsetY: number;
     /** The drag source that initiated the drag */
     dragSource: AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>;
     /** The drag item that is being dragged */

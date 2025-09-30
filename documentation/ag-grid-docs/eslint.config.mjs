@@ -18,6 +18,7 @@ export default [
             '**/.angular',
             '**/systemjs.config.js',
             '**/systemjs.config.dev.js',
+            '.playwright-network-cache/',
         ],
     },
     {

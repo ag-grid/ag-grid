@@ -5,7 +5,7 @@ import Layout from '@layouts/Layout.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import styles from '@pages-styles/about.module.scss';
 
 import BornSvg from '../images/about-icons/born.svg';
@@ -127,7 +127,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
 ---
 
 <Layout
-    title="About AG grid: Our Mission, Principles Team"
+    title="About AG Grid: Our Mission, Principles Team"
     description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
     showSearchBar={true}
     showDocsNav={false}
@@ -325,9 +325,7 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                     <div>
                         <h2>Get in touch</h2>
                         <p>We are here to help with licenses, developer support and any other queries.</p>
-                        <a class={`${styles.emailButton}`} href="mailto:info@ag-grid.com"
-                            >Contact us at info@ag-grid.com</a
-                        >
+                        <ContactForm client:load />
                     </div>
                     <div>
                         <h3>Where to find us</h3>

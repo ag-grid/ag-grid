@@ -2,10 +2,10 @@ import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, assertSelectedRowsByIndex } from '../test-utils';
-import { GridActions, pressSpaceKey } from './utils';
+import { GridActions, pressAKey, pressSpaceKey } from './utils';
 
 describe('Row Selection with Keyboard', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -28,7 +28,7 @@ describe('Row Selection with Keyboard', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, CellSelectionModule],
     });
 
     beforeEach(() => {
@@ -76,6 +76,39 @@ describe('Row Selection with Keyboard', () => {
 
         pressSpaceKey(actions.getCellByPosition(3, 'sport')!);
         assertSelectedRowsByIndex([2, 5], api);
+    });
+
+    test('ctrl+A', () => {
+        const [api, actions] = createGrid({
+            columnDefs,
+            rowData,
+            rowSelection: { mode: 'multiRow' },
+            cellSelection: true,
+        });
+
+        assertSelectedRowsByIndex([], api);
+        expect(api.getCellRanges()).toEqual([]);
+
+        // CTRL+A on a random cell
+        pressAKey(actions.getCellByPosition(2, 'sport')!, { ctrlKey: true });
+
+        assertSelectedRowsByIndex([], api);
+        const ranges = api.getCellRanges()?.slice();
+        expect(ranges).toHaveLength(1);
+        expect(ranges![0].startRow?.rowIndex).toBe(0);
+        expect(ranges![0].endRow?.rowIndex).toBe(6);
+        expect(ranges![0].columns).toHaveLength(2);
+
+        api.clearCellSelection();
+        expect(api.getCellRanges()).toEqual([]);
+
+        api.setGridOption('rowSelection', { mode: 'multiRow', ctrlASelectsRows: true });
+
+        // CTRL+A on a random cell
+        pressAKey(actions.getCellByPosition(2, 'sport')!, { ctrlKey: true });
+
+        assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
+        expect(api.getCellRanges()).toEqual([]);
     });
 
     describe('Range selection behaviour', () => {

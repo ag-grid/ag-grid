@@ -509,6 +509,12 @@ export function _getSelectAll(gos: GridOptionsService, defaultValue = true): Sel
     return rowSelection.mode === 'multiRow' ? rowSelection.selectAll : 'all';
 }
 
+export function _getCtrlASelectsRows(gos: GridOptionsService): boolean {
+    const rowSelection = gos.get('rowSelection');
+    if (typeof rowSelection === 'string') return false;
+    return rowSelection?.mode === 'multiRow' ? rowSelection.ctrlASelectsRows ?? false : false;
+}
+
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
     const groupSelection = _getGroupSelection(gos);
     return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';

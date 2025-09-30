@@ -1,11 +1,12 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { columnDelayRenderCSS } from './column-delay-render.css-GENERATED';
 
 const HideClass = 'ag-delay-render';
-type ColumnDelayRenderKey = 'colFlex' | 'columnState' | 'fitGridWidth' | 'fitProvidedWidth' | 'fitCellContents';
+type ColumnDelayRenderKey = 'colFlex' | 'columnState' | AutoSizeStrategy['type'];
 
 export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     beanName = 'colDelayRenderSvc' as const;

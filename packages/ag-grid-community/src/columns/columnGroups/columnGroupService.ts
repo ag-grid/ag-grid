@@ -430,7 +430,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         let depth = 0;
         let pointer = balancedColumnTree;
 
-        while (pointer && pointer[0] && isProvidedColumnGroup(pointer[0])) {
+        while (pointer?.[0] && isProvidedColumnGroup(pointer[0])) {
             depth++;
             pointer = (pointer[0] as AgProvidedColumnGroup).getChildren();
         }

@@ -107,3 +107,7 @@ export class GridActions {
 export function pressSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
     element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.SPACE, bubbles: true }));
 }
+
+export function pressAKey(element: HTMLElement, opts?: KeyboardEventInit): void {
+    element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.A, keyCode: 65, bubbles: true }));
+}

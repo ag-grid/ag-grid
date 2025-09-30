@@ -196,7 +196,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             const isToggled = state.toggledNodes.has(nextNode.id!);
             if (nextNode.hasChildren()) {
                 const groupState = state.toggledNodes.get(nextNode.id!);
-                if (groupState && groupState.toggledNodes.size) {
+                if (groupState?.toggledNodes.size) {
                     return undefined;
                 }
             }

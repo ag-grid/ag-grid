@@ -1,0 +1,12 @@
+{
+    "success": {
+        "name": "Contact Success",
+        "title": "AG Grid: Contact Form Success",
+        "message": "Thank you for getting in touch!"
+    },
+    "failure": {
+        "name": "Contact Failure",
+        "title": "AG Grid: Contact Form Error",
+        "message": "There was an error sending your message. Please try again later."
+    }
+}

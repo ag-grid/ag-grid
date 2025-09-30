@@ -212,7 +212,8 @@ export class CellComp extends Component {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = _createElement({ tag: 'span', cls: 'ag-cell-value', role: 'presentation' });
+            const cls = this.cellCtrl.getCellValueClass();
+            this.eCellValue = _createElement({ tag: 'span', cls, role: 'presentation' });
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
@@ -434,7 +435,7 @@ export class CellComp extends Component {
             return;
         }
 
-        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
+        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart?.();
         if (editingCancelledByUserComp) {
             context.destroyBean(cellEditor);
             this.cellCtrl.stopEditing(true);
@@ -450,7 +451,7 @@ export class CellComp extends Component {
         this.cellEditor = cellEditor;
         this.cellEditorGui = cellEditor.getGui();
 
-        const cellEditorInPopup = popup || (cellEditor.isPopup !== undefined && cellEditor.isPopup());
+        const cellEditorInPopup = popup || cellEditor.isPopup?.();
         if (cellEditorInPopup) {
             this.addPopupCellEditor(params, position);
         } else {

@@ -553,7 +553,7 @@ export class AgColumn<TValue = any>
      */
     public getFirstRealParent(): AgProvidedColumnGroup | null {
         let parent = this.getOriginalParent();
-        while (parent && parent.isPadding()) {
+        while (parent?.isPadding()) {
             parent = parent.getOriginalParent();
         }
         return parent;
@@ -562,7 +562,7 @@ export class AgColumn<TValue = any>
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
         let parent = this.getParent();
 
-        if (!parent || !parent.isPadding()) {
+        if (!parent?.isPadding()) {
             return { numberOfParents: 0, isSpanningTotal: false };
         }
 

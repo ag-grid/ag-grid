@@ -260,7 +260,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private destroyRootStore(): void {
-        if (!this.rootNode || !this.rootNode.childStore) {
+        if (!this.rootNode?.childStore) {
             return;
         }
         this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;

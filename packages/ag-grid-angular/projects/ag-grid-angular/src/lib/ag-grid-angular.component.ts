@@ -20,6 +20,7 @@ import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
+    AutoSizeStrategy,
     BatchEditingStartedEvent,
     BatchEditingStoppedEvent,
     BodyScrollEndEvent,
@@ -192,9 +193,6 @@ import type {
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     SideBarDef,
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
@@ -638,11 +636,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    @Input() public autoSizeStrategy:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy
-        | undefined = undefined;
+    @Input() public autoSizeStrategy: AutoSizeStrategy | undefined = undefined;
     /** A map of component names to components.
      * @initial
      */

@@ -52,7 +52,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
     ): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
-        if (event && event.keyboardEvent) {
+        if (event?.keyboardEvent) {
             keyboardEvent = event.keyboardEvent;
         }
 
@@ -110,7 +110,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         if (showMenuCallback(eventOrTouch)) {
             const event = mouseEvent ?? touchEvent;
 
-            if (event && event.cancelable) {
+            if (event?.cancelable) {
                 event.preventDefault();
             }
         }

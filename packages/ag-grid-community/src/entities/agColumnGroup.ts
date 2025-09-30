@@ -263,7 +263,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     public getPaddingLevel(): number {
         const parent = this.getParent();
 
-        if (!this.isPadding() || !parent || !parent.isPadding()) {
+        if (!this.isPadding() || !parent?.isPadding()) {
             return 0;
         }
 
@@ -277,7 +277,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // find the column group that is controlling expandable. this is relevant when we have padding (empty)
         // groups, where the expandable is actually the first parent that is not a padding group.
         let parentWithExpansion: AgColumnGroup | null = this;
-        while (parentWithExpansion != null && parentWithExpansion.isPadding()) {
+        while (parentWithExpansion?.isPadding()) {
             parentWithExpansion = parentWithExpansion.getParent();
         }
 

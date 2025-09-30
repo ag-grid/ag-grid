@@ -29,7 +29,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
 
         let topLevelMenuItem: MenuItemDefWithKey | null = builder.getMenuItem();
 
-        if (topLevelMenuItem && topLevelMenuItem.subMenu && !isEnterprise) {
+        if (topLevelMenuItem?.subMenu && !isEnterprise) {
             // Filter out enterprise-only menu items if 'Community Integrated'
             const filterEnterpriseItems = (m: MenuItemDefWithKey): MenuItemDefWithKey => ({
                 ...m,

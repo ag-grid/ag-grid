@@ -526,6 +526,25 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        autoSizeStrategy: {
+            validate: ({ autoSizeStrategy }) => {
+                if (!autoSizeStrategy) return null;
+
+                const validModes: NonNullable<GridOptions['autoSizeStrategy']>['type'][] = [
+                    'fitCellContents',
+                    'fitGridWidth',
+                    'fitProvidedWidth',
+                ];
+                const type = autoSizeStrategy.type;
+                if (type !== 'fitCellContents' && type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
+                    return `Invalid Auto-size strategy. \`autoSizeStrategy\` must be one of ${validModes.map((m) => '"' + m + '"').join(', ')}, currently it's ${type}`;
+                }
+                if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
+                    return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                return null;
+            },
+        },
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {

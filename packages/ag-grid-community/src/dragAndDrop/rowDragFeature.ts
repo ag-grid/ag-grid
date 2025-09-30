@@ -406,7 +406,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const clientSideRowModel = this.clientSideRowModel;
         do {
             nextRow = clientSideRowModel.getRow(nextRowIndex++);
-        } while (nextRow && nextRow.footer);
+        } while (nextRow?.footer);
 
         const childrenAfterGroup = target.childrenAfterGroup;
         if (nextRow && nextRow.parent === target && childrenAfterGroup?.length) {

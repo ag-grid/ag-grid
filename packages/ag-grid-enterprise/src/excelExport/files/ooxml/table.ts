@@ -48,7 +48,7 @@ const tableFactory: ExcelOOXMLTemplate = {
                     'mc:Ignorable': 'xr xr3',
                     'xmlns:xr': 'http://schemas.microsoft.com/office/spreadsheetml/2014/revision',
                     'xmlns:xr3': 'http://schemas.microsoft.com/office/spreadsheetml/2016/revision3',
-                    name,
+                    name: displayNameToUse,
                     displayName: displayNameToUse,
                     ref,
                     totalsRowShown: 0,

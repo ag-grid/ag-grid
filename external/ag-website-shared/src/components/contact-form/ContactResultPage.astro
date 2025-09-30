@@ -1,0 +1,32 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { getEntry, type CollectionEntry } from 'astro:content';
+import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
+import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
+import type { ResultType } from './constants';
+import { ResultContent } from './ResultContent';
+
+interface Props {
+    type: ResultType;
+}
+
+const { type } = Astro.props as Props;
+
+const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
+const { data: contactResultsData } = (await getEntry('contactResults', 'result')) as CollectionEntry<'contactResults'>;
+
+const title = contactResultsData[type].title;
+const pageName = contactResultsData[type].name;
+const message = contactResultsData[type].message;
+---
+
+<Layout title={title} showDocsNav={true} showSearchBar={true}>
+    <div class="layout-grid">
+        <!-- NOTE: Result page is used for all paths, so will need to get framework from localstorage -->
+        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
+
+        <div id="doc-content" class:list={[styles.docPage, styles.noSideMenu]}>
+            <ResultContent client:load name={pageName} message={message} />
+        </div>
+    </div>
+</Layout>

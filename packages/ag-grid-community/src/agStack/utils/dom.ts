@@ -28,7 +28,10 @@ export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, 
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
 export function _isFocusableFormField(element: Element | null): boolean {
-    const isFocusable = element && element.matches('input, select, button, textarea');
+    if (!element) {
+        return false;
+    }
+    const isFocusable = element.matches('input, select, button, textarea');
     if (!isFocusable) {
         return false;
     }
@@ -220,13 +223,13 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
 }
 
 export function _clearElement(el: HTMLElement | null | undefined): void {
-    while (el && el.firstChild) {
+    while (el?.firstChild) {
         el.removeChild(el.firstChild);
     }
 }
 
 export function _removeFromParent(node: Element | null) {
-    if (node && node.parentNode) {
+    if (node?.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
@@ -315,7 +318,7 @@ export function _addStylesToElement(
 
     for (const key of Object.keys(styles)) {
         const value = styles[key];
-        if (!key || !key.length || value == null) {
+        if (!key?.length || value == null) {
             continue;
         }
 

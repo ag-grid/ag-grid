@@ -355,7 +355,7 @@ class AgSideBar extends Component implements ISideBar {
         if (selfDefOrStr) {
             const panelDef = parseOneComponent(selfDefOrStr);
             if (panelDef) {
-                const state = (this.gos.get('initialState') ?? {}).sideBar?.toolPanels?.[panelDef.id];
+                const state = this.gos.get('initialState')?.sideBar?.toolPanels?.[panelDef.id];
                 panelDef.parent = parent;
                 const wrapper = this.toolPanelWrappers.find((wrapper) => wrapper.getToolPanelId() === key);
                 this.createToolPanelAndSideButton(panelDef, state, wrapper);
@@ -468,6 +468,7 @@ class AgSideBar extends Component implements ISideBar {
                 }
                 const params = _addGridCommonParams<IToolPanelParams>(this.gos, {
                     ...(toolPanelDef.toolPanelParams ?? {}),
+                    initialState: sideBarState?.toolPanels?.[id],
                     onStateUpdated: () => this.dispatchSideBarUpdated(),
                 });
                 const hasRefreshed = toolPanelWrapper.getToolPanelInstance()?.refresh(params);

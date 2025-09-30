@@ -39,11 +39,11 @@ export function _defaultComparator(valueA: any, valueB: any, accentedCompare: bo
     // this is for aggregations sum and avg, where the result can be a number that is wrapped.
     // if we didn't do this, then the toString() value would be used, which would result in
     // the strings getting used instead of the numbers.
-    if (valueA && valueA.toNumber) {
+    if (valueA?.toNumber) {
         valueA = valueA.toNumber();
     }
 
-    if (valueB && valueB.toNumber) {
+    if (valueB?.toNumber) {
         valueB = valueB.toNumber();
     }
 

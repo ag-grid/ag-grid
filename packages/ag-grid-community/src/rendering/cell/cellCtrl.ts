@@ -400,6 +400,18 @@ export class CellCtrl extends BeanStub {
         return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
     }
 
+    public getCellValueClass(): string {
+        const prefix = 'ag-cell-value';
+        const isCheckboxRenderer = this.column.getColDef().cellRenderer === 'agCheckboxCellRenderer';
+        let suffix = '';
+
+        if (isCheckboxRenderer) {
+            suffix = ' ag-allow-overflow';
+        }
+
+        return `${prefix}${suffix}`;
+    }
+
     /**
      * Wrapper providing general conditions under which control elements (e.g. checkboxes and drag handles)
      * are rendered for a particular cell.
@@ -840,7 +852,7 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused && event?.forceBrowserFocus) {
             let focusEl = this.comp.getFocusableElement();
 
             if (editing) {

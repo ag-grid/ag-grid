@@ -232,7 +232,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         }
 
         const colGroupDef = columnGroup.getColGroupDef();
-        if (colGroupDef && colGroupDef.suppressFiltersToolPanel) {
+        if (colGroupDef?.suppressFiltersToolPanel) {
             return [];
         }
 
@@ -274,7 +274,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private shouldDisplayFilter(column: AgColumn) {
-        const suppressFiltersToolPanel = column.getColDef() && column.getColDef().suppressFiltersToolPanel;
+        const suppressFiltersToolPanel = column.getColDef()?.suppressFiltersToolPanel;
         return column.isFilterAllowed() && !suppressFiltersToolPanel;
     }
 
