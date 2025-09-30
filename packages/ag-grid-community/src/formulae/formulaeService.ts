@@ -1,23 +1,18 @@
-import type {
-    AgColumn,
-    BeanCollection,
-    NamedBean,
-    RowNode
-} from '../main';
-import { BeanStub, _getClientSideRowModel } from '../main';
+import { _getClientSideRowModel } from '../api/rowModelApiUtils';
+import { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import { BeanCollection } from '../context/context';
+import { AgColumn } from '../entities/agColumn';
+import { RowNode } from '../entities/rowNode';
 import { parseFormula } from './ast/parsers';
-import { serializeFormula } from './ast/serializer';
-import type { FormulaNode } from './ast/utils';
-import {
-    FormulaError
-} from './ast/utils';
-import {
-    evalAst,
-    iterateCellAddresses,
-} from './functions/utils';
+import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
+import type { Cell, CellRef, FormulaNode } from './ast/utils';
+import { FormulaError } from './ast/utils';
 import * as SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
+import { evalAst, iterateCellAddresses } from './functions/utils';
 
 // plunker: https://plnkr.co/edit/8idB7tTubExLB58S?open=main.js
+// plunker2: https://plnkr.co/edit/VsIBH0GJb3iyq45c?open=main.js
 
 /** Return the cell's formula string if present (starts with '='); otherwise null. */
 const getFormula = (column: AgColumn, node: RowNode): string | null => {
@@ -34,7 +29,7 @@ const getFormula = (column: AgColumn, node: RowNode): string | null => {
         return null;
     }
 
-    return (typeof maybe === 'string' && maybe.startsWith('=')) ? maybe : null;
+    return typeof maybe === 'string' && maybe.startsWith('=') ? maybe : null;
 };
 
 /**
@@ -54,10 +49,12 @@ class CellFormula {
         public readonly column: AgColumn,
         public formulaString: string,
         private readonly beans: BeanCollection
-    ) { }
+    ) {}
 
     public setFormulaString(next: string) {
-        if (this.formulaString === next) return;
+        if (this.formulaString === next) {
+            return;
+        }
         this.formulaString = next;
         this.astStale = true;
         this._valueStale = true;
@@ -118,6 +115,106 @@ export class FormulaeService extends BeanStub implements NamedBean {
             columnOrderChanged: this.setupColRefMap.bind(this),
             cellValueChanged: this.reset.bind(this),
         });
+    }
+
+    public updateFormulaByOffset(value: string, direction: 'up' | 'down' | 'left' | 'right'): string {
+        const beans = this.beans;
+        const cols = beans.visibleCols.allCols;
+        const ast = parseFormula(this.beans, value);
+
+        // Compute the row and column delta based on drag direction
+        const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
+        const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
+
+        // Shift a row reference by dRow, only if it is relative
+        const shiftRowRef = (ref?: CellRef) => {
+            if (!ref || rowDelta === 0 || ref.absolute) {
+                return;
+            }
+
+            const idx1 = rowIndexFromId(beans, ref.id); // 1-based
+            if (idx1 == null) {
+                return;
+            }
+
+            const next1 = idx1 + rowDelta;
+            if (next1 < 1) {
+                return;
+            }
+
+            const nextId = rowIdFromIndex(this.beans, next1);
+            if (nextId) {
+                ref.id = nextId;
+            }
+        };
+
+        // Shift a column reference by dCol, only if it is relative
+        const shiftColRef = (ref?: CellRef) => {
+            if (!ref || columnDelta === 0 || ref.absolute) {
+                return;
+            }
+
+            const i0 = colIndexFromId(beans.colModel, cols, ref.id); // 0-based
+            if (i0 == null) {
+                return;
+            }
+
+            const j0 = i0 + columnDelta;
+            if (j0 < 0) {
+                return;
+            }
+
+            const nextId = colIdFromIndex(cols, j0);
+            if (nextId) {
+                ref.id = nextId;
+            }
+        };
+
+        // Type guard to check if an operand value is a cell reference or range
+        const isCellOperand = (
+            value: string | number | boolean | Cell
+        ): value is { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef } => {
+            return (
+                !!value &&
+                typeof value === 'object' &&
+                value !== null &&
+                'row' in (value as any) &&
+                'column' in (value as any)
+            );
+        };
+
+        // Traverse the AST and apply shifts to any cell references
+        const shiftNode = (node: FormulaNode): void => {
+            if (node.type === 'operand') {
+                const { value } = node;
+                if (!isCellOperand(value)) {
+                    return;
+                }
+
+                const { row, column, endRow, endColumn } = value;
+
+                // Shift the primary row and column
+                shiftRowRef(row);
+                shiftColRef(column);
+
+                // Shift the range end, if present
+                shiftRowRef(endRow);
+                shiftColRef(endColumn);
+
+                return;
+            }
+
+            if (node.type === 'operation') {
+                for (const child of node.operands) {
+                    shiftNode(child);
+                }
+            }
+        };
+
+        shiftNode(ast);
+
+        // Serialize back to a formula string (A1 format for user-facing)
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ false);
     }
 
     private setupFunctions() {
@@ -240,7 +337,10 @@ export class FormulaeService extends BeanStub implements NamedBean {
     /** Get or create the inner Map for a given row in a WeakMap<RowNode, Map<...>>. */
     private getOrCreate<K, V>(wm: WeakMap<RowNode, Map<K, V>>, row: RowNode): Map<K, V> {
         let m = wm.get(row);
-        if (!m) { m = new Map<K, V>(); wm.set(row, m); }
+        if (!m) {
+            m = new Map<K, V>();
+            wm.set(row, m);
+        }
         return m;
     }
 
@@ -279,7 +379,6 @@ export class FormulaeService extends BeanStub implements NamedBean {
         return this.beans.valueSvc.getValue(col, row, false, 'ui');
     }
 
-
     /**
      * Evaluate a single cell's formula **iteratively** (no recursion to avoid large stack traces),
      * caching dependency results into their own CellFormula entries.
@@ -299,8 +398,10 @@ export class FormulaeService extends BeanStub implements NamedBean {
         // Visitation state for formula cells: 0=unseen, 1=visiting, 2=done
         type Status = 0 | 1 | 2;
         const status = new WeakMap<RowNode, Map<AgColumn, Status>>();
-        const getStatus = (r: RowNode, c: AgColumn) => (status.get(r)?.get(c) ?? 0 as Status);
-        const setStatus = (r: RowNode, c: AgColumn, s: Status) => { this.getOrCreate(status, r).set(c, s); };
+        const getStatus = (r: RowNode, c: AgColumn) => status.get(r)?.get(c) ?? (0 as Status);
+        const setStatus = (r: RowNode, c: AgColumn, s: Status) => {
+            this.getOrCreate(status, r).set(c, s);
+        };
 
         type Addr = { row: RowNode; column: AgColumn };
         type Frame = {
@@ -319,8 +420,13 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
                 if (f.phase === 'discover') {
                     const st = getStatus(row, col);
-                    if (st === 2) { stack.pop(); continue; }
-                    if (st === 1) { throw new FormulaError('Circular reference', '#CIRCREF!'); }
+                    if (st === 2) {
+                        stack.pop();
+                        continue;
+                    }
+                    if (st === 1) {
+                        throw new FormulaError('Circular reference', '#CIRCREF!');
+                    }
                     setStatus(row, col, 1); // visiting
 
                     // Formula cell?
@@ -410,9 +516,7 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
                     stack.pop();
                 } catch (e: any) {
-                    const err = e instanceof FormulaError
-                        ? e
-                        : new FormulaError(String(e?.message ?? e), '#PARSE!');
+                    const err = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e), '#PARSE!');
 
                     // Mark failing cell
                     const currCF = this.ensureCellFormula(row, col);
@@ -434,15 +538,11 @@ export class FormulaeService extends BeanStub implements NamedBean {
             const hit = startHolder.tryGetCachedValue?.();
             return hit && hit.hit ? hit.value : undefined;
         } catch (e: any) {
-            const err = e instanceof FormulaError
-                ? e
-                : new FormulaError(String(e?.message ?? e), '#PARSE!');
+            const err = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e), '#PARSE!');
             startHolder.setError(err);
             return err.type;
         }
     }
-
-
 
     /** True if the user is currently typing a formula into a focused text input. */
     public isWritingFormula = (): boolean => {

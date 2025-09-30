@@ -2,7 +2,7 @@
     position: relative;
 }
 
-.ag-formula-wrapper > input {
+:where(.ag-formula-wrapper > input) {
     color: #0000; /* transparent */
     caret-color: var(--ag-input-text-color);
 }
@@ -23,6 +23,6 @@
     text-decoration: red wavy underline;
 }
 
-.ag-formula-mode .ag-cell {
+:where(.ag-formula-mode .ag-cell) {
     border-style: dashed !important;
 }

@@ -1148,10 +1148,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return isRowNumberCol(currentColumn);
     }
 
-    public getDraggingRange(): CellRange | undefined {
-        return this.draggingRange;
-    }
-
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
         this.eventSvc.dispatchEvent({
             type: 'cellSelectionChanged',

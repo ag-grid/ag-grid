@@ -212,7 +212,7 @@
 //                     return;
 //                 }
 
-//                 const range = (this.beans.rangeSvc as any)?.getDraggingRange();
+//                 const range = (this.beans.rangeSvc as any)?.draggingRange;
 //                 if (!range) {
 //                     return;
 //                 }

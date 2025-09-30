@@ -1,6 +1,6 @@
-import type { BeanCollection } from "../../context/context";
-import type { BinaryOperator } from "./serializer";
-import { BINARY_PRECEDENCE, isBinaryOp } from "./serializer";
+import type { BeanCollection } from '../../context/context';
+import type { BinaryOperator } from './serializer';
+import { BINARY_PRECEDENCE, isBinaryOp } from './serializer';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 import { FormulaParseError } from './utils';
 
@@ -26,8 +26,8 @@ export const parseOperand = (beans: BeanCollection, operand: string): string | n
     }
 
     // booleans
-    if (trimmed.toLowerCase() === "true") return true;
-    if (trimmed.toLowerCase() === "false") return false;
+    if (trimmed.toLowerCase() === 'true') return true;
+    if (trimmed.toLowerCase() === 'false') return false;
 
     // numbers
     const num = Number(trimmed);
@@ -35,37 +35,30 @@ export const parseOperand = (beans: BeanCollection, operand: string): string | n
 
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
-    const cellRegex =
-        /^(\$?)([A-Z]+)(\$?)([0-9]+)(?::(\$?)([A-Z]+)(\$?)([0-9]+))?$/i;
+    const cellRegex = /^(\$?)([A-Z]+)(\$?)([0-9]+)(?::(\$?)([A-Z]+)(\$?)([0-9]+))?$/i;
     const match = trimmed.match(cellRegex);
 
     if (match) {
-        const [
-            ,
-            absCol1, col1,
-            absRow1, row1,
-            absCol2, col2,
-            absRow2, row2,
-        ] = match;
+        const [, absCol1, col1, absRow1, row1, absCol2, col2, absRow2, row2] = match;
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string): Cell => {
             const col = colAbs ? colStr.toUpperCase() : beans.formulae?.getColByRef(colStr)?.colId;
             const row = rowAbs ? rowStr : beans.rowModel?.getRow(Number(rowStr) - 1)?.id; // TODO handle NaN
 
             if (col == null || row == null) {
-                throw new FormulaParseError("Invalid cell reference", 0, 0);
+                throw new FormulaParseError('Invalid cell reference', 0, 0);
             }
 
             return {
                 column: { id: col!, absolute: colAbs },
                 row: { id: row!, absolute: rowAbs },
             };
-        }
+        };
 
-        const start: Cell = toCell(absCol1 === "$", col1, absRow1 === "$", row1);
+        const start: Cell = toCell(absCol1 === '$', col1, absRow1 === '$', row1);
 
         if (col2 && row2) {
-            const end: Cell = toCell(absCol2 === "$", col2, absRow2 === "$", row2);
+            const end: Cell = toCell(absCol2 === '$', col2, absRow2 === '$', row2);
             start.endColumn = end.column;
             start.endRow = end.row;
         }
@@ -93,16 +86,30 @@ function tokenize(expr: string): string[] {
         let j = start;
 
         const dollar = () => (s[j] === '$' ? (j++, true) : false);
-        const letters = () => { const k = j; while (j < s.length && /[A-Za-z]/.test(s[j])) j++; return j > k; };
-        const digits = () => { const k = j; while (j < s.length && /[0-9]/.test(s[j])) j++; return j > k; };
+        const letters = () => {
+            const k = j;
+            while (j < s.length && /[A-Za-z]/.test(s[j])) j++;
+            return j > k;
+        };
+        const digits = () => {
+            const k = j;
+            while (j < s.length && /[0-9]/.test(s[j])) j++;
+            return j > k;
+        };
 
         // Parse one cell: [$]LETTERS [$]DIGITS
         const parseCell = (): boolean => {
             const j0 = j;
-            dollar();              // optional $ before column
-            if (!letters()) { j = j0; return false; }
-            dollar();              // optional $ before row
-            if (!digits()) { j = j0; return false; }
+            dollar(); // optional $ before column
+            if (!letters()) {
+                j = j0;
+                return false;
+            }
+            dollar(); // optional $ before row
+            if (!digits()) {
+                j = j0;
+                return false;
+            }
             return true;
         };
 
@@ -114,25 +121,27 @@ function tokenize(expr: string): string[] {
             j++; // consume ':'
             if (!parseCell()) {
                 // Be explicit about what's wrong, instead of falling back and later erroring on ':'
-                throw new FormulaParseError("Invalid range end reference", colonPos, j);
+                throw new FormulaParseError('Invalid range end reference', colonPos, j);
             }
         }
 
         return j - start; // length of cell or range token
     };
 
-
     while (i < expr.length) {
         const ch = expr[i];
 
         // skip whitespace
-        if (/\s/.test(ch)) { i++; continue; }
+        if (/\s/.test(ch)) {
+            i++;
+            continue;
+        }
 
         // string literal "..."
         if (ch === '"') {
             let j = i + 1;
             while (j < expr.length && expr[j] !== '"') j++;
-            if (j >= expr.length) throw new FormulaParseError("Unterminated string", i, expr.length);
+            if (j >= expr.length) throw new FormulaParseError('Unterminated string', i, expr.length);
             tokens.push(expr.slice(i, j + 1));
             i = j + 1;
             continue;
@@ -164,13 +173,13 @@ function tokenize(expr: string): string[] {
         }
 
         // single-char operators/delimiters
-        if ("+-*/^(),%".includes(ch)) {
+        if ('+-*/^(),%'.includes(ch)) {
             tokens.push(ch);
             i++;
             continue;
         }
 
-        throw new FormulaParseError("Unexpected character: " + ch, i, i + 1);
+        throw new FormulaParseError('Unexpected character: ' + ch, i, i + 1);
     }
 
     return tokens;
@@ -213,7 +222,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
 
     const applyTop = () => {
         const frame = ops.pop();
-        if (!frame) throw new FormulaParseError("Operator stack underflow", 0, 0);
+        if (!frame) throw new FormulaParseError('Operator stack underflow', 0, 0);
 
         switch (frame.kind) {
             case 'unaryMinus': {
@@ -231,7 +240,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             }
             case 'parenthesis':
             case 'function':
-                throw new FormulaParseError("Internal error: unexpected frame during reduction", 0, 0);
+                throw new FormulaParseError('Internal error: unexpected frame during reduction', 0, 0);
         }
     };
 
@@ -257,11 +266,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // '+' / '-' unary vs binary
         if (token === '+' || token === '-') {
             const prev = tokens[i - 1];
-            const isUnary =
-                i === 0 ||
-                prev === '(' ||
-                prev === ',' ||
-                (prev !== undefined && isBinaryOp(prev));
+            const isUnary = i === 0 || prev === '(' || prev === ',' || (prev !== undefined && isBinaryOp(prev));
 
             if (isUnary) {
                 if (token === '-') ops.push({ kind: 'unaryMinus' }); // unary '+': no-op
@@ -272,7 +277,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // binary '+' / '-'
             reducePendingUnaryMinus();
 
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -290,7 +295,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         if (isBinaryOp(token)) {
             reducePendingUnaryMinus();
 
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -323,7 +328,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') break;
                 if (top.kind === 'binary' || top.kind === 'unaryMinus') {
@@ -333,12 +338,12 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
                 }
             }
             if (ops[ops.length - 1]?.kind !== 'parenthesis') {
-                throw new FormulaParseError("Misplaced comma", i, i + 1);
+                throw new FormulaParseError('Misplaced comma', i, i + 1);
             }
             // function frame must be just below '('
             const maybeFunction = ops[ops.length - 2];
             if (!maybeFunction || maybeFunction.kind !== 'function') {
-                throw new FormulaParseError("Comma outside of a function call", i, i + 1);
+                throw new FormulaParseError('Comma outside of a function call', i, i + 1);
             }
             const argNode = output.pop();
             if (argNode) maybeFunction.args.push(argNode); // ignore empty arg if none
@@ -349,7 +354,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') break;
                 if (top.kind === 'binary' || top.kind === 'unaryMinus') {
@@ -359,7 +364,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
                 }
             }
             if (ops[ops.length - 1]?.kind !== 'parenthesis') {
-                throw new FormulaParseError("Mismatched parentheses", i, i + 1);
+                throw new FormulaParseError('Mismatched parentheses', i, i + 1);
             }
             ops.pop(); // pop '('
 
@@ -378,7 +383,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Operand
         const parsed = parseOperand(beans, token);
         if (parsed == null) {
-            throw new FormulaParseError("Unsupported operand: " + token, 0, token.length);
+            throw new FormulaParseError('Unsupported operand: ' + token, 0, token.length);
         }
         output.push({ type: 'operand', value: parsed });
         i++;
@@ -391,16 +396,15 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         if (top.kind === 'binary' || top.kind === 'unaryMinus') {
             applyTop();
         } else {
-            throw new FormulaParseError("Mismatched parentheses or unfinished function call", 0, 0);
+            throw new FormulaParseError('Mismatched parentheses or unfinished function call', 0, 0);
         }
     }
 
     if (output.length !== 1) {
-        throw new FormulaParseError("Invalid expression", 0, 0);
+        throw new FormulaParseError('Invalid expression', 0, 0);
     }
     return output[0];
 }
-
 
 /**
  * Parse a full formula string that starts with "=" into an AST.
@@ -413,8 +417,8 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
  * parseFormula(beans, '=1+2') // => operation("+", [1,2])
  */
 export const parseFormula = (beans: BeanCollection, formula: string): FormulaNode => {
-    if (!formula.startsWith("=")) {
-        throw new FormulaParseError("Formulas must begin with =", 0, 1);
+    if (!formula.startsWith('=')) {
+        throw new FormulaParseError('Formulas must begin with =', 0, 1);
     }
     const body = formula.slice(1).trim();
     return normalizeRefCells(parseExpression(beans, body));
@@ -438,7 +442,7 @@ function asStringish(node: FormulaNode | undefined): string | null {
     return null;
 }
 
-function extractColumnRef(node: FormulaNode): CellRef | null {
+export function extractColumnRef(node: FormulaNode): CellRef | null {
     if (!isOperation(node, 'COLUMN')) return null;
     const id = asStringish(node.operands[0]);
     if (id == null) return null;
@@ -446,7 +450,7 @@ function extractColumnRef(node: FormulaNode): CellRef | null {
     return { id, absolute };
 }
 
-function extractRowRef(node: FormulaNode): CellRef | null {
+export function extractRowRef(node: FormulaNode): CellRef | null {
     if (!isOperation(node, 'ROW')) return null;
     const id = asStringish(node.operands[0]);
     if (id == null) return null;
@@ -485,7 +489,11 @@ function tryFoldRefToCell(node: FormulaNode): FormulaNode | null {
 function normalizeRefCells(node: FormulaNode): FormulaNode {
     if (node.type === 'operation') {
         const normalizedOperands = node.operands.map(normalizeRefCells);
-        const rebuilt: FormulaOperation = { type: 'operation', operation: node.operation, operands: normalizedOperands };
+        const rebuilt: FormulaOperation = {
+            type: 'operation',
+            operation: node.operation,
+            operands: normalizedOperands,
+        };
         const folded = tryFoldRefToCell(rebuilt);
         return folded ?? rebuilt;
     }
