@@ -103,9 +103,16 @@ jobs:
         shardIndex: [1, 2]
         shardTotal: [2]
     steps:
-      - uses: actions/checkout@v4
-      - name: Bootstrap
-        run: npm run bootstrap
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: 'ro'
       - name: Run typescript Examples
         env:
           FRAMEWORK: typescript
