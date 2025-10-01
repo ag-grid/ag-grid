@@ -103,47 +103,45 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         let nodesChanged = false;
         let prevSourceRowIndex = -1;
 
-        const processChild = (parent: RowNode<TData>, data: TData, level: number): void => {
-            let node = this.getRowNode(getRowIdFunc({ data, level }));
-            if (node) {
-                if (!nodesChanged && reorder) {
-                    const sourceRowIndex = node.sourceRowIndex;
-                    nodesChanged =
-                        nodesAdded || // A node was inserted not at the end
-                        sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
-                    prevSourceRowIndex = sourceRowIndex;
-                }
-                if (node.data !== data) {
-                    dataUpdated = true;
-                    node.updateData(data);
-                    if (!adds.has(node)) {
-                        updates.add(node);
-                        if (!node.selectable && node.isSelected()) {
-                            nodesToUnselect.push(node);
+        const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
+            for (let i = 0, len = childrenData.length; i < len; ++i) {
+                const data = childrenData[i];
+                let node = this.getRowNode(getRowIdFunc({ data, level }));
+                if (node) {
+                    if (!nodesChanged && reorder) {
+                        const sourceRowIndex = node.sourceRowIndex;
+                        nodesChanged =
+                            nodesAdded || // A node was inserted not at the end
+                            sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
+                        prevSourceRowIndex = sourceRowIndex;
+                    }
+                    if (node.data !== data) {
+                        dataUpdated = true;
+                        node.updateData(data);
+                        if (!adds.has(node)) {
+                            updates.add(node);
+                            if (!node.selectable && node.isSelected()) {
+                                nodesToUnselect.push(node);
+                            }
                         }
                     }
+                    dataUpdated ||= node.treeParent !== parent;
+                } else {
+                    node = this.createRowNode(data);
+                    adds.add(node);
+                    nodesAdded = true;
                 }
-                dataUpdated ||= node.treeParent !== parent;
-            } else {
-                node = this.createRowNode(data);
-                adds.add(node);
-                nodesAdded = true;
-            }
-            node.treeParent = parent;
-            processedNodes.add(node);
+                node.treeParent = parent;
+                processedNodes.add(node);
 
-            const children = childrenGetter?.(data);
-            if (children) {
-                ++level;
-                for (let i = 0, len = children.length; i < len; ++i) {
-                    processChild(node, children[i], level);
+                const children = childrenGetter?.(data);
+                if (children) {
+                    processChildren(node, children, level + 1);
                 }
             }
         };
 
-        for (let i = 0, len = rowData.length; i < len; ++i) {
-            processChild(rootNode, rowData[i], 0);
-        }
+        processChildren(rootNode, rowData, 0);
 
         nodesChanged ||= nodesAdded;
 
