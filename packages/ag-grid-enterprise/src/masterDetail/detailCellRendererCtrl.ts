@@ -151,23 +151,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         function adjustDetailsOnExpandOrCollapseAll({ source }: AgEventTypeParams['expandOrCollapseAll']) {
-            if (api.isModuleRegistered('CsrmSsrmSharedApiModule' as AgModuleName)) {
-                if (source === 'expandAll') {
-                    return api.expandAll();
-                }
-                if (source === 'collapseAll') {
-                    return api.collapseAll();
-                }
+            if (source === 'expandAll') {
+                return api.expandAll();
             }
-        }
-
-        function setDetailsExpansionState() {
-            const sharedApiModuleName = 'CsrmSsrmSharedApi' satisfies ModuleName;
-            const asAgModuleName = `${sharedApiModuleName}Module`;
-            if (!api.isModuleRegistered(asAgModuleName as AgModuleName)) {
-                return;
+            if (source === 'collapseAll') {
+                return api.collapseAll();
             }
-            expansionSvc?.setDetailsExpansionState(api);
         }
 
         function onMasterRowSelected({ node, source }: RowSelectedEvent) {
@@ -186,8 +175,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
-            masterGridApi.addEventListener('expandOrCollapseAll', adjustDetailsOnExpandOrCollapseAll);
-            setDetailsExpansionState();
+            const sharedApiModuleName = 'CsrmSsrmSharedApi' satisfies ModuleName;
+            const asAgModuleName = `${sharedApiModuleName}Module` as AgModuleName;
+            if (api.isModuleRegistered(asAgModuleName)) {
+                masterGridApi.addEventListener('expandOrCollapseAll', adjustDetailsOnExpandOrCollapseAll);
+                expansionSvc?.setDetailsExpansionState(api);
+            }
         });
 
         this.addDestroyFunc(() => {
