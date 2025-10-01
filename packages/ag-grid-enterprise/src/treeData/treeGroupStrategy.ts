@@ -246,7 +246,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         for (let i = 0; i < allLeafChildrenLen; ++i) {
             let current = rootAllLeafChildren[i];
             while (true) {
-                const parent: RowNode<TData> | null = current.treeParent;
+                const parent = current.treeParent;
                 if (parent === null) {
                     break;
                 }
@@ -450,7 +450,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     /** Load the tree structure for self-referencing data, aka parentId field */
     private loadSelfRef({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
-        const rootAllLeafChildren: RowNode<TData>[] = rootNode.allLeafChildren!;
+        const rootAllLeafChildren = rootNode.allLeafChildren!;
         const gos = this.gos;
 
         if (!gos.get('getRowId')) {
@@ -493,7 +493,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private loadFlattened(rootNode: RowNode<TData>): void {
-        const allLeafChildren: RowNode<TData>[] = rootNode.allLeafChildren!;
+        const allLeafChildren = rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
             const row = allLeafChildren[i];
             row.treeParent = rootNode; // Display all rows as children of the root node
@@ -521,7 +521,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             dupPaths = this.loadExistingDataPath(rootNode, nodesByPath, paths);
         }
 
-        const allLeafChildren: RowNode<TData>[] = rootNode.allLeafChildren!;
+        const allLeafChildren = rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
             const node = allLeafChildren[i];
             if (!fullReload && node.treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
@@ -560,7 +560,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         paths: Map<RowNode, string>
     ): DuplicatePathsMap<TData> | undefined {
         let dupPaths: Map<string, RowNode<TData>[]> | undefined;
-        const allLeafChildren: RowNode<TData>[] = rootNode.allLeafChildren!;
+        const allLeafChildren = rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
             const node = allLeafChildren[i];
             const treeParent = node.treeParent;

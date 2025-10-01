@@ -96,49 +96,47 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         let nodesAdded = false;
         let dataUpdated = false;
-        let orderChanged = false;
-        for (let i = 0, prevSourceRowIndex = -1, len = rowData.length; i < len; i++) {
+        let nodesChanged = false;
+        let prevSourceRowIndex = -1;
+
+        for (let i = 0, len = rowData.length; i < len; i++) {
             const data = rowData[i];
             let node = this.getRowNode(getRowIdFunc({ data, level: 0 }));
-            if (!node) {
-                nodesAdded = true;
+            if (node) {
+                if (!nodesChanged && reorder) {
+                    const sourceRowIndex = node.sourceRowIndex;
+                    nodesChanged =
+                        nodesAdded || // A node was inserted not at the end
+                        sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
+                    prevSourceRowIndex = sourceRowIndex;
+                }
+                if (node.data !== data) {
+                    dataUpdated = true;
+                    node.updateData(data);
+                    if (!adds.has(node)) {
+                        updates.add(node);
+                        if (!node.selectable && node.isSelected()) {
+                            nodesToUnselect.push(node);
+                        }
+                    }
+                }
+            } else {
                 node = this.createRowNode(data);
                 adds.add(node);
-                processedNodes.add(node);
-                continue;
+                nodesAdded = true;
             }
             processedNodes.add(node);
-            if (reorder) {
-                const sourceRowIndex = node.sourceRowIndex;
-                orderChanged ||=
-                    nodesAdded || // A node was inserted not at the end
-                    sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
-                prevSourceRowIndex = sourceRowIndex;
-            }
-            if (node.data === data) {
-                continue; // no change
-            }
-            dataUpdated = true;
-            node.updateData(data);
-            if (adds.has(node)) {
-                continue; // already marked as added
-            }
-            updates.add(node);
-            if (!node.selectable && node.isSelected()) {
-                nodesToUnselect.push(node);
-            }
         }
 
+        nodesChanged ||= nodesAdded;
+
         // Destroy the remaining unprocessed node and collect the removed that were selected.
-        let nodesChanged = nodesAdded || orderChanged;
         if (this.removeUnprocessed(rootNode.allLeafChildren!, processedNodes, nodesToUnselect, changedRowNodes)) {
             nodesChanged = true;
         }
 
-        if (nodesChanged) {
-            if (this.updateLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
-                params.rowNodesOrderChanged = true;
-            }
+        if (nodesChanged && this.updateLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
+            params.rowNodesOrderChanged = true;
         }
 
         if (nodesChanged || dataUpdated) {

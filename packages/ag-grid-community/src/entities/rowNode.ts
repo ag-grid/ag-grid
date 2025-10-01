@@ -507,7 +507,6 @@ export class RowNode<TData = any>
         this.dispatchCellChangedEvent(column, newValue, oldValue);
 
         if (valueChanged) {
-            // if we have a pinned sibling, we also need to update the value on the pinned row.
             // pinned sibling shares a reference to the same data object as the
             this.pinnedSibling?.dispatchCellChangedEvent(column, newValue, oldValue);
         }

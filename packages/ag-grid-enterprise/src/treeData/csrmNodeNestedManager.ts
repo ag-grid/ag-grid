@@ -98,17 +98,17 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         const { adds, updates } = changedRowNodes;
         const childrenGetter = this.getChildrenGetter();
 
-        let prevSourceRowIndex = -1;
         let nodesAdded = false;
         let dataUpdated = false;
-        let orderChanged = false;
+        let nodesChanged = false;
+        let prevSourceRowIndex = -1;
 
         const processChild = (parent: RowNode<TData>, data: TData, level: number): void => {
             let node = this.getRowNode(getRowIdFunc({ data, level }));
             if (node) {
-                if (reorder && !orderChanged) {
+                if (!nodesChanged && reorder) {
                     const sourceRowIndex = node.sourceRowIndex;
-                    orderChanged =
+                    nodesChanged =
                         nodesAdded || // A node was inserted not at the end
                         sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
                     prevSourceRowIndex = sourceRowIndex;
@@ -145,16 +145,15 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
             processChild(rootNode, rowData[i], 0);
         }
 
+        nodesChanged ||= nodesAdded;
+
         // Destroy the remaining unprocessed node and collect the removed that were selected.
-        let nodesChanged = nodesAdded || orderChanged;
         if (this.removeUnprocessed(rootNode.allLeafChildren!, processedNodes, nodesToUnselect, changedRowNodes)) {
             nodesChanged = true;
         }
 
-        if (nodesChanged) {
-            if (this.updateLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
-                params.rowNodesOrderChanged = true;
-            }
+        if (nodesChanged && this.updateLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
+            params.rowNodesOrderChanged = true;
         }
 
         if (nodesChanged || dataUpdated) {
