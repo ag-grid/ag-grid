@@ -7,7 +7,7 @@ export type { MultiFilter } from './multiFilter/multiFilter';
 export type { SetFilter } from './setFilter/setFilter';
 
 // AG Stack
-export { AgVirtualList as _AgVirtualList } from './agStack/agVirtualList';
+export { AgVirtualList as _AgVirtualList, VirtualListParams as _VirtualListParams } from './agStack/agVirtualList';
 export { AgVirtualListDragFeature as _AgVirtualListDragFeature } from './agStack/agVirtualListDragFeature';
 export { VirtualListModel as _VirtualListModel } from './agStack/iVirtualList';
 export {
