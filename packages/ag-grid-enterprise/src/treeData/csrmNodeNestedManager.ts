@@ -60,14 +60,14 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
-                const row = this.createRowNode(data);
-                row.sourceRowIndex = writeIdx;
-                allLeafs[writeIdx++] = row;
+                const node = this.createRowNode(data);
+                node.sourceRowIndex = writeIdx;
+                allLeafs[writeIdx++] = node;
                 if (nestedDataGetter) {
-                    row.treeParent = parent;
+                    node.treeParent = parent;
                     const children = nestedDataGetter(data);
                     if (children) {
-                        processChildren(row, children);
+                        processChildren(node, children);
                     }
                 }
             }
@@ -110,9 +110,9 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                         node.updateData(data);
                         if (!adds.has(node)) {
                             updates.add(node);
-                            if (!node.selectable && node.isSelected()) {
-                                nodesToUnselect.push(node);
-                            }
+                        }
+                        if (!node.selectable && node.isSelected()) {
+                            nodesToUnselect.push(node);
                         }
                     }
                     updated ||= !!nestedDataGetter && node.treeParent !== parent;
