@@ -8,7 +8,6 @@ import type {
     RowGroupExpansionState,
     RowGroupOpenedEvent,
 } from 'ag-grid-community';
-import { _getGridBeans } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -134,11 +133,6 @@ export class ServerSideExpansionService
             return;
         }
 
-        const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
-        if (!detailGridExpansionSvc) {
-            return;
-        }
-
         // ideally, we would want to combine these strategies / states some day so there is no need in type cast here
         const masterExpansionState = this.getExpansionState() as RowGroupBulkExpansionState;
         const isInitial = masterExpansionState.expandAll === undefined;
@@ -151,7 +145,7 @@ export class ServerSideExpansionService
         if (allCollapsed === allExpanded) {
             return;
         }
-        return detailGridExpansionSvc.expandAll(allExpanded);
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {

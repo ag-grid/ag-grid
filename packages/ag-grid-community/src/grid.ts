@@ -63,7 +63,7 @@ export interface Params {
 }
 
 const _gridApiCache = new WeakMap<Element, GridApi>();
-const _gridBeansCache = new WeakMap<GridApi, BeanCollection>();
+const _gridElementCache = new WeakMap<GridApi, Element>();
 
 // **NOTE** If updating this JsDoc please also update the re-exported createGrid in main-umd-shared.ts
 /**
@@ -141,7 +141,7 @@ export class GridCoreCreator {
         }
 
         const destroyCallback = () => {
-            _gridBeansCache.delete(api);
+            _gridElementCache.delete(api);
             _gridApiCache.delete(eGridDiv);
             _unRegisterGridModules(gridId);
             _destroyCallback?.();
@@ -181,7 +181,7 @@ export class GridCoreCreator {
         const api = context.getBean('gridApi');
 
         _gridApiCache.set(eGridDiv, api);
-        _gridBeansCache.set(api, context.getBeans());
+        _gridElementCache.set(api, eGridDiv);
 
         return api;
     }
@@ -347,13 +347,5 @@ export function getGridApi(gridElement: Element | string | null | undefined): Gr
  * Returns the `Element` instance associated with the grid instance referred to by `GridApi`
  */
 export function getGridElement(api: GridApi): Element | undefined {
-    return _gridBeansCache.get(api)?.eGridDiv;
-}
-
-/**
- * For internal use only, to retrieve the beans of a grid instance. Useful for master-details, or a cross-grids communication.
- * @internal
- */
-export function _getGridBeans(api: GridApi): BeanCollection | undefined {
-    return _gridBeansCache.get(api);
+    return _gridElementCache.get(api);
 }

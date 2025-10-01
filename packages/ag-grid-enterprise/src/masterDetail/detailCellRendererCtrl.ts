@@ -1,5 +1,6 @@
 import type {
     AgEventTypeParams,
+    AgModuleName,
     BeanCollection,
     DetailGridInfo,
     Environment,
@@ -9,18 +10,11 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    ModuleName,
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _focusInto,
-    _getGridBeans,
-    _isSameRow,
-    _missing,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
@@ -157,16 +151,23 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         }
 
         function adjustDetailsOnExpandOrCollapseAll({ source }: AgEventTypeParams['expandOrCollapseAll']) {
-            const detailGridExpansionSvc = _getGridBeans(api)?.expansionSvc;
-            if (!detailGridExpansionSvc) {
+            if (api.isModuleRegistered('CsrmSsrmSharedApiModule' as AgModuleName)) {
+                if (source === 'expandAll') {
+                    return api.expandAll();
+                }
+                if (source === 'collapseAll') {
+                    return api.collapseAll();
+                }
+            }
+        }
+
+        function setDetailsExpansionState() {
+            const sharedApiModuleName = 'CsrmSsrmSharedApi' satisfies ModuleName;
+            const asAgModuleName = `${sharedApiModuleName}Module`;
+            if (!api.isModuleRegistered(asAgModuleName as AgModuleName)) {
                 return;
             }
-            if (source === 'expandAll') {
-                return detailGridExpansionSvc.expandAll(true);
-            }
-            if (source === 'collapseAll') {
-                return detailGridExpansionSvc.expandAll(false);
-            }
+            expansionSvc?.setDetailsExpansionState(api);
         }
 
         function onMasterRowSelected({ node, source }: RowSelectedEvent) {
@@ -186,7 +187,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
             masterGridApi.addEventListener('expandOrCollapseAll', adjustDetailsOnExpandOrCollapseAll);
-            expansionSvc?.setDetailsExpansionState(api);
+            setDetailsExpansionState();
         });
 
         this.addDestroyFunc(() => {

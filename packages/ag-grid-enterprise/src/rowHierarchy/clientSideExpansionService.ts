@@ -8,7 +8,6 @@ import type {
     RowGroupOpenedEvent,
     RowNode,
 } from 'ag-grid-community';
-import { _getGridBeans } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
@@ -127,17 +126,13 @@ export class ClientSideExpansionService
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
-        const detailGridExpansionSvc = _getGridBeans(detailGridApi)?.expansionSvc;
-        if (!detailGridExpansionSvc) {
-            return;
-        }
         const expansionState = this.getExpansionState();
         const allExpanded = expansionState.collapsedRowGroupIds.length === 0;
         const allCollapsed = expansionState.expandedRowGroupIds.length === 0;
         if (allCollapsed === allExpanded) {
             return;
         }
-        return detailGridExpansionSvc.expandAll(allExpanded);
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
     }
 
     // because the user can call rowNode.setExpanded() many times in one VM turn,
