@@ -112,15 +112,17 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
                 prevSourceRowIndex = sourceRowIndex;
             }
-            if (node.data !== data) {
-                dataUpdated = true;
-                node.updateData(data);
-                if (!adds.has(node)) {
-                    updates.add(node);
-                    if (!node.selectable && node.isSelected()) {
-                        nodesToUnselect.push(node);
-                    }
-                }
+            if (node.data === data) {
+                continue; // no change
+            }
+            dataUpdated = true;
+            node.updateData(data);
+            if (adds.has(node)) {
+                continue; // already marked as added
+            }
+            updates.add(node);
+            if (!node.selectable && node.isSelected()) {
+                nodesToUnselect.push(node);
             }
         }
 
