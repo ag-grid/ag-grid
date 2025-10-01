@@ -144,7 +144,6 @@ export type DynamicBeanName =
     | 'agNumberColumnFilterHandler'
     | 'agDateColumnFilterHandler'
     | 'agTextColumnFilterHandler'
-    | 'csrmNodeMgr'
     | 'csrmNodeNestedMgr';
 
 export type UserComponentName =

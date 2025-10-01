@@ -1,11 +1,9 @@
 import type { ChangedPath, ChangedRowNodes, GroupingApproach, StageExecuteParams } from 'ag-grid-community';
-import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _EmptyArray, _fieldGetter, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
-import type { DataFieldGetter } from './fieldAccess';
-import { makeFieldPathGetter } from './fieldAccess';
 
 // The approach used here avoids complex incremental updates by using linear passes and a final traversal.
 // We reduce memory allocations and footprint and we ensure consistent performance without keeping additional per node map.
@@ -39,10 +37,13 @@ const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum chi
 const PATH_KEY_SEPARATOR = String.fromCodePoint(31, 41150, 8291);
 const PATH_KEY_SEPARATOR_LEN = 3;
 
+type ParentIdGetter<TData> = (data: TData | null | undefined) => string | null | undefined;
+
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     private groupColsIds: string = '';
     private groupColsChanged: boolean = true;
-    private parentIdGetter: DataFieldGetter<TData, string> | null = null;
+    private parentIdField: string | null = null;
+    private parentIdGetter: ParentIdGetter<TData> | null = null;
     private fillerNodesById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
 
@@ -464,8 +465,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const removals = changedRowNodes?.removals;
         let parentIdGetter = this.parentIdGetter;
         const parentIdField = gos.get('treeDataParentIdField') || null;
-        if (parentIdGetter?.path !== parentIdField) {
-            this.parentIdGetter = parentIdGetter = makeFieldPathGetter(parentIdField);
+        if (this.parentIdField !== parentIdField) {
+            this.parentIdField = parentIdField;
+            this.parentIdGetter = parentIdGetter = parentIdField ? _fieldGetter(parentIdField) : null;
             fullReload = true;
         }
 
@@ -473,7 +475,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const row = rootAllLeafChildren[i];
             if (fullReload || row.treeNodeFlags & FLAG_CHANGED || removals?.has(row.treeParent!)) {
                 let newParent: RowNode<TData> | null | undefined;
-                const parentId = parentIdGetter(row.data);
+                const parentId = parentIdGetter?.(row.data);
                 if (parentId !== null && parentId !== undefined) {
                     newParent = rowModel.getRowNode(parentId);
                     if (!newParent) {

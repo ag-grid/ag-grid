@@ -6,13 +6,12 @@ import type {
     RowDataTransaction,
     RowNode,
 } from 'ag-grid-community';
-import { ClientSideNodeManager, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
+import { ClientSideNodeManager, _fieldGetter, _getRowIdCallback, _warn } from 'ag-grid-community';
 
-import type { DataFieldGetter } from './fieldAccess';
-import { makeFieldPathGetter } from './fieldAccess';
+type NestedDataGetter<TData> = (data: TData | null | undefined) => TData[] | null | undefined;
 
 export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
-    private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null | undefined = undefined;
+    private nestedDataGetter: NestedDataGetter<TData> | null | undefined = undefined;
 
     public override extractRowData(): TData[] | null | undefined {
         return super.extractRowData(this.rootNode.childrenAfterGroup ?? null);
@@ -21,7 +20,7 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
     public override onPropChange(changedProps: ReadonlySet<keyof GridOptions>): boolean {
         const gos = this.gos;
         if (changedProps.has('treeDataChildrenField')) {
-            this.childrenGetter = undefined;
+            this.nestedDataGetter = undefined;
             if (gos.get('treeData')) {
                 return true;
             }
@@ -32,12 +31,13 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
         return super.onPropChange(changedProps);
     }
 
-    private getChildrenGetter(): DataFieldGetter<TData, TData[] | null | undefined> | null | undefined {
-        let result = this.childrenGetter;
-        if (result === undefined) {
-            this.childrenGetter = result = makeFieldPathGetter(this.gos.get('treeDataChildrenField') ?? null);
+    private getNestedDataGetter(): NestedDataGetter<TData> | null {
+        let getter = this.nestedDataGetter;
+        if (getter === undefined) {
+            const field = this.gos.get('treeDataChildrenField');
+            this.nestedDataGetter = getter = field ? _fieldGetter(field) : null;
         }
-        return result;
+        return getter;
     }
 
     public override updateRowData(
@@ -53,70 +53,60 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
     }
 
     protected override loadNewRowData(rowData: TData[]): RowNode[] {
-        const rootNode = this.rootNode;
-        const childrenGetter = this.getChildrenGetter();
-        const processedData = new Map<TData, RowNode<TData>>();
-        const allLeafChildren = new Array<RowNode<TData>>(rowData.length);
+        const nestedDataGetter = this.getNestedDataGetter();
+        const allLeafs = new Array<RowNode<TData>>(rowData.length);
 
         let writeIdx = 0;
-        const processChild = (parent: RowNode, data: TData) => {
-            let row = processedData.get(data);
-            if (row !== undefined) {
-                _error(2, { nodeId: row.id }); // Duplicate node
-                return;
-            }
-
-            row = this.createRowNode(data);
-            row.treeParent = parent;
-            row.sourceRowIndex = writeIdx;
-            allLeafChildren[writeIdx++] = row;
-            processedData.set(data, row);
-
-            const children = childrenGetter?.(data);
-            if (children) {
-                for (let i = 0, len = children.length; i < len; ++i) {
-                    processChild(row, children[i]);
+        const processChildren = (parent: RowNode, childrenData: TData[]) => {
+            for (let i = 0, len = childrenData.length; i < len; ++i) {
+                const data = childrenData[i];
+                const row = this.createRowNode(data);
+                row.sourceRowIndex = writeIdx;
+                allLeafs[writeIdx++] = row;
+                if (nestedDataGetter) {
+                    row.treeParent = parent;
+                    const children = nestedDataGetter(data);
+                    if (children) {
+                        processChildren(row, children);
+                    }
                 }
             }
         };
 
-        for (let i = 0, len = rowData.length; i < len; ++i) {
-            processChild(rootNode, rowData[i]);
-        }
-        allLeafChildren.length = writeIdx;
-        return allLeafChildren;
+        processChildren(this.rootNode, rowData);
+        allLeafs.length = writeIdx;
+        return allLeafs;
     }
 
     public override setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
+        const nestedDataGetter = this.getNestedDataGetter();
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
-        const processedNodes = new Set<RowNode<TData>>();
-        const rootNode = this.rootNode;
-        const nodesToUnselect: RowNode<TData>[] = [];
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
-        const childrenGetter = this.getChildrenGetter();
+        const processedNodes = new Set<RowNode<TData>>();
+        const nodesToUnselect: RowNode<TData>[] = [];
 
-        let nodesAdded = false;
-        let dataUpdated = false;
-        let nodesChanged = false;
-        let prevSourceRowIndex = -1;
+        let added = false;
+        let updated = false;
+        let reordered = false;
+        let prevIndex = -1;
 
         const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
                 let node = this.getRowNode(getRowIdFunc({ data, level }));
                 if (node) {
-                    if (!nodesChanged && reorder) {
-                        const sourceRowIndex = node.sourceRowIndex;
-                        nodesChanged =
-                            nodesAdded || // A node was inserted not at the end
-                            sourceRowIndex <= prevSourceRowIndex; // A node was moved up, so order changed
-                        prevSourceRowIndex = sourceRowIndex;
+                    if (!reordered && reorder) {
+                        const oldIndex = node.sourceRowIndex;
+                        reordered =
+                            added || // There was an update after an insertion, so order changed
+                            oldIndex <= prevIndex; // A node was moved up, so order changed
+                        prevIndex = oldIndex;
                     }
                     if (node.data !== data) {
-                        dataUpdated = true;
+                        updated = true;
                         node.updateData(data);
                         if (!adds.has(node)) {
                             updates.add(node);
@@ -125,36 +115,36 @@ export class CsrmNodeNestedManager<TData> extends ClientSideNodeManager<TData> {
                             }
                         }
                     }
-                    dataUpdated ||= node.treeParent !== parent;
+                    updated ||= !!nestedDataGetter && node.treeParent !== parent;
                 } else {
+                    added = true;
                     node = this.createRowNode(data);
                     adds.add(node);
-                    nodesAdded = true;
                 }
-                node.treeParent = parent;
                 processedNodes.add(node);
 
-                const children = childrenGetter?.(data);
-                if (children) {
-                    processChildren(node, children, level + 1);
+                if (nestedDataGetter) {
+                    node.treeParent = parent;
+                    const children = nestedDataGetter(data);
+                    if (children) {
+                        processChildren(node, children, level + 1);
+                    }
                 }
             }
         };
 
+        const rootNode = this.rootNode;
         processChildren(rootNode, rowData, 0);
-
-        nodesChanged ||= nodesAdded;
 
         // Destroy the remaining unprocessed node and collect the removed that were selected.
         if (this.removeUnprocessed(rootNode.allLeafChildren!, processedNodes, nodesToUnselect, changedRowNodes)) {
-            nodesChanged = true;
+            reordered = true;
         }
 
-        if (nodesChanged && this.updateLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
+        if ((added || reordered) && this.updateLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
             params.rowNodesOrderChanged = true;
         }
-
-        if (nodesChanged || dataUpdated) {
+        if (added || updated || reordered) {
             params.rowDataUpdated = true;
             this.deselect(nodesToUnselect);
         }

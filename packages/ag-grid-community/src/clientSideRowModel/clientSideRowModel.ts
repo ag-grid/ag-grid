@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
+import type { GroupingApproach } from '../gridOptionsUtils';
 import {
     _getGroupSelectsDescendants,
     _getGroupingApproach,
@@ -24,8 +25,8 @@ import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
-import { initRootNode } from './clientSideNodeManager';
-import type { ClientSideNodeManager } from './clientSideNodeManager';
+import { ClientSideNodeManager } from './clientSideNodeManager';
+import { initRootNode } from './clientSideRootNode';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
@@ -42,7 +43,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
-    private nodeMgrName: 'csrmNodeMgr' | 'csrmNodeNestedMgr' = 'csrmNodeMgr';
+    private groupingApproach: GroupingApproach = 'group';
     private nodeMgr: ClientSideNodeManager<any> | null | undefined = undefined;
 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
@@ -108,9 +109,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (bean === null) {
             return null; // Destroyed
         }
-        const newBeanName = _getGroupingApproach(this.gos) === 'treeNested' ? 'csrmNodeNestedMgr' : 'csrmNodeMgr';
-        if (this.nodeMgrName !== newBeanName) {
-            this.nodeMgrName = newBeanName;
+        const newApproach = _getGroupingApproach(this.gos);
+        if (this.groupingApproach !== newApproach) {
+            this.groupingApproach = newApproach;
         } else if (bean) {
             return bean; // no change
         }
@@ -119,11 +120,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (!registry.ready || !rootNode) {
             return null; // destroyed or not ready
         }
-        bean = registry.createDynamicBean<ClientSideNodeManager>(this.nodeMgrName, false, rootNode);
-        bean = bean
-            ? this.createBean(bean)
-            : this.nodeMgr ?? // try reuse existing bean
-              this.createBean(registry.createDynamicBean<ClientSideNodeManager>('csrmNodeMgr', true, rootNode)!);
+        if (newApproach === 'treeNested') {
+            bean = registry.createDynamicBean<ClientSideNodeManager>('csrmNodeNestedMgr', false, rootNode);
+            if (bean) {
+                this.createBean(bean);
+            }
+        } else {
+            bean = null;
+        }
+        if (!bean) {
+            bean = this.createBean(new ClientSideNodeManager(rootNode));
+        }
         this.nodeMgr = bean;
         return bean ?? null;
     }
@@ -247,7 +254,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         };
 
         const oldNodeManager = this.nodeMgr;
-        let reset = oldNodeManager?.onPropChange?.(changedProps);
+        let reset = oldNodeManager?.onPropChange(changedProps);
 
         const nodeManager =
             changedProps.has('treeDataChildrenField') || changedProps.has('treeData')
@@ -1212,8 +1219,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rootNode = null;
         this.nodeMgr = null;
         this.rowDataTransactionBatch = null;
-        this.orderedStages = _EmptyArray;
-        this.rowsToDisplay = _EmptyArray;
+        this.orderedStages = [];
+        this.rowsToDisplay = [];
         this.nodeMgr = this.destroyBean(this.nodeMgr);
     }
 

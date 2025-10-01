@@ -929,12 +929,12 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
-    _getGroupingApproach,
+    _getGroupingApproach as _getGroupingApproach,
     _getGridOption,
     _isSetFilterByDefault,
     _interpretAsRightClick,
 } from './gridOptionsUtils';
-export type { GroupingApproach } from './gridOptionsUtils';
+export type { GroupingApproach as GroupingApproach } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export { SortedRowNode } from './sort/rowNodeSorter';
@@ -1243,6 +1243,7 @@ export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
+export { _fieldGetter } from './utils/fieldGetter';
 export { _addFocusableContainerListener, _focusGridInnerElement, _focusNextGridCoreContainer } from './utils/gridFocus';
 
 // charts
