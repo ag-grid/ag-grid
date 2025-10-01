@@ -1,3 +1,7 @@
+import type { IEventListener } from '../agStack/interfaces/iEventEmitter';
+import { _removeFromArray } from '../agStack/utils/array';
+import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _exists } from '../agStack/utils/generic';
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -11,7 +15,6 @@ import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
     _addGridCommonParams,
-    _getEnableRowPinning,
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isCellSelectionEnabled,
@@ -20,18 +23,14 @@ import {
 import { getFocusHeaderRowCount } from '../headerRendering/headerUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { RefreshCellsParams } from '../interfaces/iCellsParams';
+import type { RefreshCellsParams, RefreshRowsParams } from '../interfaces/iCellsParams';
 import type { IEditService } from '../interfaces/iEditService';
-import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { IStickyRowFeature } from '../interfaces/iStickyRows';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import { _removeFromArray } from '../utils/array';
-import { _requestAnimationFrame } from '../utils/dom';
-import { _exists } from '../utils/generic';
 import { _errMsg } from '../validation/logging';
 import type { CellCtrl } from './cell/cellCtrl';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
@@ -73,7 +72,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private destroyFuncsForColumnListeners: (() => void)[] = [];
+    private readonly destroyFuncsForColumnListeners: (() => void)[] = [];
 
     public firstRenderedRow: number;
     public lastRenderedRow: number;
@@ -264,7 +263,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
      */
     private onCellFocusChanged(event: CellFocusedEvent) {
         // if the focused cell has not been rendered, need to render cell so focus can be captured.
-        if (event && event.rowIndex != null && !event.rowPinned) {
+        if (event?.rowIndex != null && !event.rowPinned) {
             const col = this.beans.colModel.getCol(event.column) ?? undefined;
             if (!this.isCellBeingRendered(event.rowIndex, col)) {
                 this.redraw();
@@ -321,7 +320,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }
 
-    private setupRangeSelectionListeners = () => {
+    private readonly setupRangeSelectionListeners = () => {
         const onCellSelectionChanged = () => {
             this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellSelectionChanged());
         };
@@ -331,17 +330,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         const addCellSelectionListeners = () => {
-            this.eventSvc.addEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.addEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.addEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.addEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.addListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.addListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeCellSelectionListeners = () => {
-            this.eventSvc.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventSvc.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventSvc.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventSvc.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.removeListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.removeListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
         this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
@@ -473,7 +472,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    public refreshFloatingRowComps(recycleRows = true): void {
+    private refreshFloatingRowComps(recycleRows = true): void {
         this.refreshFloatingRows(this.topRowCtrls, 'top', recycleRows);
 
         this.refreshFloatingRows(this.bottomRowCtrls, 'bottom', recycleRows);
@@ -583,7 +582,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public redrawRows(rowNodes?: IRowNode[]): void {
         const { editSvc } = this.beans;
         if (editSvc?.isEditing()) {
-            if (editSvc.batch) {
+            if (editSvc.isBatchEditing()) {
                 editSvc.cleanupEditors();
             } else {
                 editSvc.stopEditing(undefined, { source: 'api' });
@@ -647,7 +646,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
-            this.refreshFloatingRowComps(_getEnableRowPinning(gos) ? recycleRows : undefined);
+            this.refreshFloatingRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
         }
 
         this.dispatchDisplayedRowsChanged();
@@ -655,10 +654,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
-        }
-
-        if (this.editSvc?.isEditing()) {
-            this.editSvc.updateCells();
         }
 
         this.releaseLockOnRefresh();
@@ -843,15 +838,22 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    public refreshCells(params: RefreshCellsParams = {}): void {
+    public refreshCells({ rowNodes, columns, force, suppressFlash }: RefreshCellsParams = {}): void {
         const refreshCellParams = {
-            forceRefresh: params.force,
+            force,
             newData: false,
-            suppressFlash: params.suppressFlash,
+            suppressFlash,
         };
-        for (const cellCtrl of this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
+        for (const cellCtrl of this.getCellCtrls(rowNodes, columns as AgColumn[])) {
             cellCtrl.refreshOrDestroyCell(refreshCellParams);
         }
+
+        // refresh the full width rows too
+        this.refreshFullWidth(rowNodes);
+    }
+
+    public refreshRows(params: RefreshRowsParams = {}): void {
+        this.getRowCtrls(params.rowNodes).forEach((rowCtrl) => rowCtrl.refreshRow(params));
 
         // refresh the full width rows too
         this.refreshFullWidth(params.rowNodes);
@@ -1289,8 +1291,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
             // this ensures we fire displayedRowsChanged AFTER all the 'executeInAWhileFuncs' get
             // executed, as we added it to the end of the list.
             executeInAWhileFuncs.push(() => {
-                this.updateAllRowCtrls();
-                this.dispatchDisplayedRowsChanged();
+                if (this.isAlive()) {
+                    this.updateAllRowCtrls();
+                    this.dispatchDisplayedRowsChanged();
+                }
             });
             window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), ROW_ANIMATION_TIMEOUT);
         }
@@ -1566,7 +1570,7 @@ class RowCtrlCache {
     private entriesMap: RowCtrlByRowNodeIdMap = {};
 
     // list for keeping order
-    private entriesList: RowCtrl[] = [];
+    private readonly entriesList: RowCtrl[] = [];
 
     private readonly maxCount: number;
 
@@ -1588,7 +1592,7 @@ class RowCtrlCache {
     }
 
     public getRow(rowNode: RowNode): RowCtrl | null {
-        if (rowNode == null || rowNode.id == null) {
+        if (rowNode?.id == null) {
             return null;
         }
 
@@ -1630,7 +1634,7 @@ class RowCtrlCache {
     }
 }
 
-export interface RefreshViewParams {
+interface RefreshViewParams {
     recycleRows?: boolean;
     animate?: boolean;
     onlyBody?: boolean;

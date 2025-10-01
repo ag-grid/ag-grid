@@ -16,13 +16,13 @@ export type Deprecations<T extends object> = Partial<{
     [key in keyof T]: { version: string; message?: string };
 }>;
 
-export type GetRequiredModule<T extends object> = (
+type GetRequiredModule<T extends object> = (
     options: T,
     gridOptions: GridOptions,
     beans: BeanCollection
-) => ValidationModuleName | null;
+) => ValidationModuleName | ValidationModuleName[] | null;
 
-export type RequiredModule<T extends object> = GetRequiredModule<T> | ValidationModuleName;
+export type RequiredModule<T extends object> = GetRequiredModule<T> | ValidationModuleName | ValidationModuleName[];
 
 export type ModuleValidation<T extends object> = {
     [key in keyof T]?: RequiredModule<T>;
@@ -32,10 +32,9 @@ export type ModuleValidation<T extends object> = {
 export type Validations<T extends object> = {
     [key in keyof T]?: OptionsValidation<T>;
 };
-export type ValidationsRequired<T extends object> = Required<Validations<T>>;
 
 // Rules object, if present, module is required.
-export interface OptionsValidation<T extends object> {
+interface OptionsValidation<T extends object> {
     supportedRowModels?: RowModelType[];
     dependencies?: RequiredOptions<T>;
     validate?: (options: T, gridOptions: GridOptions, beans: BeanCollection) => string | null;

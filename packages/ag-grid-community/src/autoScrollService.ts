@@ -1,27 +1,27 @@
 export class AutoScrollService {
     private tickingInterval: number | null = null;
 
-    private scrollHorizontally: boolean;
-    private scrollVertically: boolean;
+    private readonly scrollHorizontally: boolean;
+    private readonly scrollVertically: boolean;
 
     private tickLeft: boolean;
     private tickRight: boolean;
     private tickUp: boolean;
     private tickDown: boolean;
 
-    private scrollContainer: HTMLElement;
-    private scrollByTick: number;
+    private readonly scrollContainer: HTMLElement;
+    private readonly scrollByTick: number;
 
-    private getVerticalPosition: () => number;
-    private setVerticalPosition: (position: number) => void;
+    private readonly getVerticalPosition: () => number;
+    private readonly setVerticalPosition: (position: number) => void;
 
-    private getHorizontalPosition: () => number;
-    private setHorizontalPosition: (position: number) => void;
+    private readonly getHorizontalPosition: () => number;
+    private readonly setHorizontalPosition: (position: number) => void;
 
-    private shouldSkipVerticalScroll: () => boolean;
-    private shouldSkipHorizontalScroll: () => boolean;
+    private readonly shouldSkipVerticalScroll: () => boolean;
+    private readonly shouldSkipHorizontalScroll: () => boolean;
 
-    private onScrollCallback: (() => void) | null = null;
+    private readonly onScrollCallback: (() => void) | null = null;
 
     private tickCount: number;
 

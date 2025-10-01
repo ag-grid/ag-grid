@@ -1,0 +1,14 @@
+.phone-cell-editor {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+}
+
+.phone-cell-editor:focus {
+    outline: none;
+}
+
+.phone-cell-editor:focus:not(:invalid) {
+    border-color: blue;
+}

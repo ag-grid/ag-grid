@@ -3,12 +3,18 @@
  ************************************************************************************************/
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { Theme } from '../agStack/theming/theme';
+import type { IsRowValidDropPositionCallback } from '../dragAndDrop/rowDragTypes';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
+    BatchEditingStartedEvent,
+    BatchEditingStoppedEvent,
     BodyScrollEndEvent,
     BodyScrollEvent,
+    BulkEditingStartedEvent,
+    BulkEditingStoppedEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -110,12 +116,9 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type {
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSize';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
+import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -124,10 +127,12 @@ import type {
 } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
+import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
     FillOperationParams,
     FocusGridInnerElementParams,
+    FullRowEditValidationParams,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetContextMenuItemsParams,
@@ -181,7 +186,6 @@ import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
-import type { Theme } from '../theming/Theme';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
@@ -415,6 +419,10 @@ export interface GridOptions<TData = any> {
      * The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
      */
     pivotGroupHeaderHeight?: number;
+    /**
+     * Hide any column header rows that would only contain padded groups.
+     */
+    hidePaddedHeaderRows?: boolean;
 
     // *** Column Moving *** //
     /**
@@ -493,10 +501,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    autoSizeStrategy?:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy;
+    autoSizeStrategy?: AutoSizeStrategy;
 
     // *** Components *** //
     /**
@@ -511,6 +516,23 @@ export interface GridOptions<TData = any> {
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
     editType?: EditStrategyType;
+
+    /**
+     * Determine the behavior when navigating to the next/previous editable cell. Default is to begin editing the cell.
+     */
+    suppressStartEditOnTab?: boolean;
+
+    /**
+     * Validates the Full Row Edit. Only relevant when `editType="fullRow"`.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    getFullRowEditValidationErrors?: GetFullRowEditValidationErrors;
+
+    /**
+     * Set to `block` to block the commit of invalid cell edits, keeping editors open.
+     */
+    invalidEditValueMode?: EditValidationCommitType;
+
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
@@ -690,6 +712,11 @@ export interface GridOptions<TData = any> {
      */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
     /**
+     * Customise the parameters passed to the Advanced Filter
+     * @agModule `AdvancedFilterModule`
+     */
+    advancedFilterParams?: IAdvancedFilterParams;
+    /**
      * @deprecated As of v34, advanced filter no longer uses function evaluation, so this option has no effect.
      * @default true
      * @agModule `AdvancedFilterModule`
@@ -706,7 +733,10 @@ export interface GridOptions<TData = any> {
     suppressSetFilterByDefault?: boolean;
     /**
      * Enable filter handlers for custom filter components.
-     * Requires all custom filters need to be implemented using handlers.
+     * Requires all custom filters to be implemented using handlers.
+     *
+     * Note that grid-provided filters (except for the Multi Filter) always use filter handlers.
+     * The Multi Filter will also use a filter handler if this is enabled.
      * @initial
      */
     enableFilterHandlers?: boolean;
@@ -715,7 +745,7 @@ export interface GridOptions<TData = any> {
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    filterHandlers?: { [key: string]: CreateFilterHandlerFunc };
+    filterHandlers?: { [key: string]: CreateFilterHandlerFunc<TData> };
 
     // *** Integrated Charts *** //
     /**
@@ -753,7 +783,7 @@ export interface GridOptions<TData = any> {
      * Get chart menu items. Only applies when using AG Charts Enterprise.
      * @agModule `IntegratedChartsModule`
      */
-    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef)[] | GetChartMenuItems<TData>;
+    chartMenuItems?: (DefaultChartMenuItem | MenuItemDef<TData>)[] | GetChartMenuItems<TData>;
 
     // *** Loading Cell Renderers *** //
     /**
@@ -1178,6 +1208,14 @@ export interface GridOptions<TData = any> {
      */
     rowDragManaged?: boolean;
     /**
+     * Used if rowDragManaged is enabled and treeData is enabled,
+     * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
+     * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
+     * @default 500
+     * @agModule `RowDragModule`
+     */
+    rowDragInsertDelay?: number;
+    /**
      * Set to `true` to suppress row dragging.
      * @default false
      */
@@ -1300,8 +1338,6 @@ export interface GridOptions<TData = any> {
     /**
      * When provided, an extra grand total row will be inserted into the grid at the specified position.
      * This row displays the aggregate totals of all rows in the grid.
-     *
-     * Note that the `'pinnedTop'` and `'pinnedBottom'` values are deprecated in v34. Use `grandTotalRowPinned` instead.
      * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
      */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom';
@@ -1418,6 +1454,12 @@ export interface GridOptions<TData = any> {
      */
     suppressGroupRowsSticky?: boolean;
 
+    /**
+     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * @agModule `RowGroupingModule`
+     */
+    groupHierarchyConfig?: { [k: string]: ColDef };
+
     // *** Row Pinning *** //
     /**
      * Data to be displayed as pinned top rows in the grid.
@@ -1449,19 +1491,12 @@ export interface GridOptions<TData = any> {
     /**
      * Called for every row in the grid.
      *
-     * Return `true` if the row should be pinned initially. Return `false` otherwise.
+     * Return "top", "bottom" if the row should be initially pinned to the top or bottom respectively.
+     * Return `null` or `undefined` otherwise.
      * User interactions can subsequently still change the pinned state of a row.
      * @agModule `PinnedRowModule`
      */
     isRowPinned?: IsRowPinned<TData>;
-    /**
-     * Pin the grand total row to the top of bottom of the grid. Requires `grandTotalRow` to be set.
-     * When multiple rows are pinned, the grid uses `grandTotalRow` to determine whether the grand total row should be
-     * displayed first or last in the list of pinned rows.
-     * @agModule `PinnedRowModule`
-     */
-    grandTotalRowPinned?: 'top' | 'bottom';
-
     // *** Row Model *** //
     /**
      * Sets the row model type.
@@ -1882,6 +1917,17 @@ export interface GridOptions<TData = any> {
     reactiveCustomComponents?: boolean;
 
     /**
+     *
+     * ** React only**.
+     *
+     * Enables fine grained control over the row rendering mechanism.
+     * - `default` - recommended rendering approach.
+     * - `legacy` - provided for backwards compatibility with previous versions of AG Grid (<= v33). Is susceptible to "Maximum Update Depth Exceeded" errors and so may be removed in a future version.
+     * @default 'default'
+     */
+    renderingMode?: 'default' | 'legacy';
+
+    /**
      * Theme to apply to the grid, or the string "legacy" to opt back into the
      * v32 style of theming where themes were imported as CSS files and applied
      * by setting a class name on the parent element.
@@ -2006,7 +2052,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    getChartToolbarItems?: GetChartToolbarItems;
+    getChartToolbarItems?: GetChartToolbarItems<TData>;
     /**
      * Callback to enable displaying the chart in an alternative chart container.
      * @initial
@@ -2075,6 +2121,13 @@ export interface GridOptions<TData = any> {
      */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /**
+     * Controls how expand/collapse operations affect all rows and group interactions.
+     * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
+     * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
+     * @agModule RowGroupingModule / TreeDataModule
+     */
+    ssrmExpandAllAffectsAllRows?: boolean | undefined;
+    /**
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */
@@ -2108,17 +2161,17 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ServerSideRowModelModule`
      */
-    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
+    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams;
     /**
      * Allows groups to be open by default.
      * @agModule `ServerSideRowModelModule`
      */
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean;
     /**
      * Allows cancelling transactions.
      * @agModule `ServerSideRowModelModule`
      */
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData>;
     /**
      * SSRM Tree Data: Allows specifying which rows are expandable.
      * @agModule `ServerSideRowModelModule`
@@ -2364,6 +2417,22 @@ export interface GridOptions<TData = any> {
      */
     onRowEditingStopped?(event: RowEditingStoppedEvent<TData>): void;
     /**
+     * Bulk editing has started.
+     */
+    onBulkEditingStarted?(event: BulkEditingStartedEvent<TData>): void;
+    /**
+     * Bulk editing has stopped.
+     */
+    onBulkEditingStopped?(event: BulkEditingStoppedEvent<TData>): void;
+    /**
+     * Batch editing has started (when batch editing is enabled).
+     */
+    onBatchEditingStarted?(event: BatchEditingStartedEvent<TData>): void;
+    /**
+     * Batch editing has stopped (when batch editing is enabled).
+     */
+    onBatchEditingStopped?(event: BatchEditingStoppedEvent<TData>): void;
+    /**
      * Undo operation has started.
      */
     onUndoStarted?(event: UndoStartedEvent<TData>): void;
@@ -2420,7 +2489,7 @@ export interface GridOptions<TData = any> {
      */
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /**
-     * Filter was modified but not applied. Used when filters have 'Apply' buttons.
+     * Filter was modified but not applied  (when using `enableFilterHandlers = false`). Used when filters have 'Apply' buttons.
      */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
     /**
@@ -2428,7 +2497,7 @@ export interface GridOptions<TData = any> {
      */
     onFilterUiChanged?(event: FilterUiChangedEvent<TData>): void;
     /**
-     * Floating filter UI modified (when using `enableFilterHandlers = true`.
+     * Floating filter UI modified (when using `enableFilterHandlers = true`).
      */
     onFloatingFilterUiChanged?(event: FloatingFilterUiChangedEvent<TData>): void;
     /**
@@ -2553,6 +2622,13 @@ export interface GridOptions<TData = any> {
     onRowDragCancel?(event: RowDragCancelEvent<TData>): void;
 
     /**
+     * Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
+     * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
+     * @agModule `RowDragModule`
+     */
+    isRowValidDropPosition?: IsRowValidDropPositionCallback<TData>;
+
+    /**
      * The row resize has started (Row Numbers Feature)
      */
     onRowResizeStarted?(event: RowResizeStartedEvent<TData>): void;
@@ -2560,7 +2636,7 @@ export interface GridOptions<TData = any> {
     /**
      * The row resize has ended (Row Numbers Feature)
      */
-    onRowResizeEnded?(event: RowResizeEndedEvent): void;
+    onRowResizeEnded?(event: RowResizeEndedEvent<TData>): void;
 
     // *** Row Grouping *** //
     /**
@@ -2692,20 +2768,20 @@ export interface IsServerSideGroup {
     (dataItem: any): boolean;
 }
 
-export interface IsRowFilterable<TData = any> {
-    (params: GetGroupAggFilteringParams<TData>): boolean;
+export interface IsRowFilterable<TData = any, TContext = any> {
+    (params: GetGroupAggFilteringParams<TData, TContext>): boolean;
 }
 
-export interface UseGroupFooter<TData = any> {
-    (params: GetGroupIncludeFooterParams<TData>): boolean;
+export interface UseGroupFooter<TData = any, TContext = any> {
+    (params: GetGroupIncludeFooterParams<TData, TContext>): boolean;
 }
 
-export interface UseGroupTotalRow<TData = any> {
-    (params: GetGroupIncludeTotalRowParams<TData>): 'top' | 'bottom' | undefined;
+export interface UseGroupTotalRow<TData = any, TContext = any> {
+    (params: GetGroupIncludeTotalRowParams<TData, TContext>): 'top' | 'bottom' | undefined;
 }
 
-export interface IsApplyServerSideTransaction {
-    (params: IsApplyServerSideTransactionParams): boolean;
+export interface IsApplyServerSideTransaction<TData = any, TContext = any> {
+    (params: IsApplyServerSideTransactionParams<TData, TContext>): boolean;
 }
 export interface GetServerSideGroupKey {
     (dataItem: any): string;
@@ -2727,8 +2803,8 @@ export interface IsRowPinned<TData = any> {
     (node: IRowNode<TData>): RowPinnedType;
 }
 
-export interface RowClassRules<TData = any> {
-    [cssClassName: string]: ((params: RowClassParams<TData>) => boolean) | string;
+export interface RowClassRules<TData = any, TContext = any> {
+    [cssClassName: string]: ((params: RowClassParams<TData, TContext>) => boolean) | string;
 }
 
 export interface RowStyle {
@@ -2760,8 +2836,13 @@ export interface GetContextMenuItems<TData = any, TContext = any> {
         | MenuCallbackReturn<DefaultMenuItem, TData, TContext>
         | Promise<MenuCallbackReturn<DefaultMenuItem, TData, TContext>>;
 }
-export interface GetChartToolbarItems {
-    (params: GetChartToolbarItemsParams): ChartToolbarMenuItemOptions[];
+
+export interface GetFullRowEditValidationErrors {
+    (params: FullRowEditValidationParams): string[] | null;
+}
+
+export interface GetChartToolbarItems<TData = any, TContext = any> {
+    (params: GetChartToolbarItemsParams<TData, TContext>): ChartToolbarMenuItemOptions[];
 }
 
 export interface GetMainMenuItems<TData = any, TContext = any> {
@@ -2776,8 +2857,8 @@ export interface GetRowNodeIdFunc<TData = any> {
     (data: TData): string;
 }
 
-export interface GetRowIdFunc<TData = any> {
-    (params: GetRowIdParams<TData>): string;
+export interface GetRowIdFunc<TData = any, TContext = any> {
+    (params: GetRowIdParams<TData, TContext>): string;
 }
 
 export interface ChartRef {
@@ -2802,9 +2883,13 @@ export interface ChartRef {
      * If opening the dialog via the API, the chart is not focused by default, and this method can be used.
      */
     focusChart: () => void;
+    /**
+     * If opening the chart in a dialog, sets the maximized status of the dialog, else does nothing.
+     */
+    setMaximized: (maximized: boolean) => void;
 }
 
-export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef {}
+export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2825,8 +2910,8 @@ export interface ServerSideGroupLevelParams {
  * @deprecated use ServerSideGroupLevelParams instead */
 export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
-export interface LoadingCellRendererSelectorFunc<TData = any> {
-    (params: ILoadingCellRendererParams<TData>): LoadingCellRendererSelectorResult | undefined;
+export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
+    (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;
 }
 export interface LoadingCellRendererSelectorResult {
     /**
@@ -2884,11 +2969,11 @@ export interface FillHandleOptions<TData = any> {
     setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
 }
 
-export type RowSelectionOptions<TData = any, TValue = any> =
-    | SingleRowSelectionOptions<TData, TValue>
-    | MultiRowSelectionOptions<TData>;
+export type RowSelectionOptions<TData = any, TValue = any, TContext = any> =
+    | SingleRowSelectionOptions<TData, TValue, TContext>
+    | MultiRowSelectionOptions<TData, TValue, TContext>;
 
-interface CommonRowSelectionOptions<TData = any, TValue = any> {
+interface CommonRowSelectionOptions<TData = any, TValue = any, TContext = any> {
     /**
      * Modifies the selection behaviour when clicking a row.
      *
@@ -2904,11 +2989,11 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * Set to `true` or return `true` from the callback to render a selection checkbox.
      * @default true
      */
-    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue, TContext>;
     /**
      * Configure where checkboxes are displayed.
      *
-     * Choosing 'selectionColumn' displays checkboxes in a dedicated selection column. Choosing 'autoGroupColumn'
+     * Choosing `'selectionColumn'` displays checkboxes in a dedicated selection column. Choosing `'autoGroupColumn'`
      * displays checkboxes in the autoGroupColumn. This applies to row checkboxes and header checkboxes.
      *
      * @default 'selectionColumn'
@@ -2947,14 +3032,16 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
 /**
  * Determines selection behaviour when only a single row can be selected at a time
  */
-export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface SingleRowSelectionOptions<TData = any, TValue = any, TContext = any>
+    extends CommonRowSelectionOptions<TData, TValue, TContext> {
     mode: 'singleRow';
 }
 
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = any>
+    extends CommonRowSelectionOptions<TData, TValue, TContext> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2971,6 +3058,11 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      * @default true
      */
     headerCheckbox?: boolean;
+    /**
+     * If `true`, using CTRL+A will select all rows when [Cell Selection](./cell-selection) is enabled
+     * @default false
+     */
+    ctrlASelectsRows?: boolean;
 }
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */
@@ -2991,6 +3083,8 @@ export type SelectionColumnDef = Pick<
     | 'headerClass'
     | 'headerComponent'
     | 'headerComponentParams'
+    | 'headerName'
+    | 'headerValueGetter'
     | 'mainMenuItems'
     | 'suppressHeaderContextMenu'
     | 'suppressHeaderMenuButton'

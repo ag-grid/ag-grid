@@ -7,8 +7,8 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
 
     private gridBodyCtrl: GridBodyCtrl;
 
-    private executeNextFuncs: ((...args: any[]) => any)[] = [];
-    private executeLaterFuncs: ((...args: any[]) => any)[] = [];
+    private readonly executeNextFuncs: ((...args: any[]) => any)[] = [];
+    private readonly executeLaterFuncs: ((...args: any[]) => any)[] = [];
 
     private active = false;
     // activeNext starts with active but it is reset earlier after the nextFuncs are cleared

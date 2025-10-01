@@ -1,5 +1,5 @@
-import { _setAriaRowIndex } from '../../utils/aria';
-import { _setDomChildOrder } from '../../utils/dom';
+import { _setAriaRowIndex } from '../../agStack/utils/aria';
+import { _setDomChildOrder } from '../../agStack/utils/dom';
 import { Component } from '../../widgets/component';
 import type { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
 import type { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
@@ -21,6 +21,8 @@ export class HeaderRowComp extends Component {
     }
 
     public postConstruct(): void {
+        const eGui = this.getGui();
+        eGui.setAttribute('tabindex', String(this.gos.get('tabIndex')));
         _setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {
@@ -28,6 +30,7 @@ export class HeaderRowComp extends Component {
             setTop: (top) => (this.getGui().style.top = top),
             setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
             setWidth: (width) => (this.getGui().style.width = width),
+            setRowIndex: (rowIndex) => _setAriaRowIndex(this.getGui(), rowIndex),
         };
 
         this.ctrl.setComp(compProxy, undefined);

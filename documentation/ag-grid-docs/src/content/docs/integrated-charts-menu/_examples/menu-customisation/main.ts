@@ -1,6 +1,7 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 
 import type {
+    DefaultChartMenuItem,
     FirstDataRenderedEvent,
     GetChartMenuItemsParams,
     GridApi,
@@ -50,12 +51,20 @@ const gridOptions: GridOptions = {
     onFirstDataRendered,
 };
 
-function chartMenuItems(params: GetChartMenuItemsParams): (string | MenuItemDef)[] {
+function chartMenuItems(params: GetChartMenuItemsParams): (DefaultChartMenuItem | MenuItemDef)[] {
     // Remove edit chart and advanced settings.
     // `defaultItems` will automatically update the link/unlink options based on the current state.
-    return params.defaultItems.filter((item: string) => {
+    const items: (DefaultChartMenuItem | MenuItemDef)[] = params.defaultItems.filter((item: string) => {
         return item !== 'chartEdit' && item !== 'chartAdvancedSettings';
     });
+    items.push({
+        name: 'Close Chart',
+        action: () => {
+            params.api.getChartRef(params.chartId)?.destroyChart();
+        },
+    });
+
+    return items;
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

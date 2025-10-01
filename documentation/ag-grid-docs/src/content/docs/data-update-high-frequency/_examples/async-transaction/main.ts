@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const UPDATE_COUNT = 500;
+const UPDATE_COUNT = 5000;
 
 const columnDefs: ColDef[] = [
     // these are the row groups, so they are all hidden (they are show in the group column)

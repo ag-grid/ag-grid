@@ -83,7 +83,7 @@ let latestId = 100000;
 function addToSelected() {
     const selected = gridApi!.getSelectedNodes()[0];
     if (!selected) {
-        console.warn('No row was selected.');
+        console.log('No row was selected.');
         return;
     }
 
@@ -100,7 +100,7 @@ function addToSelected() {
 function updateSelected() {
     const selected = gridApi!.getSelectedNodes()[0];
     if (!selected) {
-        console.warn('No row was selected.');
+        console.log('No row was selected.');
         return;
     }
 
@@ -111,7 +111,7 @@ function updateSelected() {
 function deleteSelected() {
     const selected = gridApi!.getSelectedNodes()[0];
     if (!selected) {
-        console.warn('No row was selected.');
+        console.log('No row was selected.');
         return;
     }
 
@@ -122,7 +122,7 @@ function deleteSelected() {
 function moveSelected() {
     const selected = gridApi!.getSelectedNodes()[0];
     if (!selected) {
-        console.warn('No row was selected.');
+        console.log('No row was selected.');
         return;
     }
 

@@ -1,5 +1,8 @@
 import type { GridApi, IRowNode, RowDataTransaction, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
+import { GridRows } from './gridRows/gridRows';
+import { GridRowsDiagramTree } from './gridRows/gridRowsDiagramTree';
+
 export function optionalEscapeString(s: string): string {
     return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);
 }
@@ -45,4 +48,26 @@ export function executeTransactionsAsync<TData = any>(
     );
     api.flushAsyncTransactions();
     return Promise.all(promises);
+}
+
+export function isAgHtmlElementVisible(element: Element | null | undefined): boolean {
+    let current = element;
+    while (current && current.role !== 'row') {
+        const classList = current.classList;
+        if (classList.contains('ag-hidden') || classList.contains('ag-invisible')) {
+            return false;
+        }
+        const computedStyle = getComputedStyle(current);
+        if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+            return false;
+        }
+        current = current.parentElement;
+    }
+    return true;
+}
+
+export function drawGrid(api: GridApi): void {
+    const gr = new GridRows(api);
+    const tr = new GridRowsDiagramTree(gr);
+    console.log(tr.diagramToString(false, null));
 }

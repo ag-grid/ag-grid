@@ -39,6 +39,10 @@
     .cellsIllustration {
         margin-left: auto;
         left: 1px;
+
+        @media screen and (max-width: 520px) {
+            left: -1px;
+        }
     }
 
     p,
@@ -81,18 +85,24 @@
     @media screen and (max-width: $breakpoint-pricing-large) {
         padding-top: $spacing-size-10;
         padding-bottom: $spacing-size-10;
-        border-bottom: 1px solid var(--color-border-secondary);
+
+        &:not(:last-child) {
+            border-bottom: 1px solid var(--color-border-secondary);
+        }
     }
 
     &:first-child {
         padding-left: $spacing-size-6;
+
         @media screen and (max-width: $breakpoint-pricing-large) {
             padding-left: $spacing-size-10;
         }
     }
 
-    &:not(:last-child) {
-        border-right: 1px solid var(--color-border-secondary);
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        &:not(:last-child) {
+            border-right: 1px solid var(--color-border-secondary);
+        }
     }
 
     h4 {
@@ -128,7 +138,10 @@
 
     &:first-child {
         padding: $spacing-size-6 $spacing-size-8 $spacing-size-6 $spacing-size-6;
-        border-right: 1px solid var(--color-border-secondary);
+
+        @media screen and (min-width: $breakpoint-pricing-medium) {
+            border-right: 1px solid var(--color-border-secondary);
+        }
 
         @media screen and (max-width: $breakpoint-pricing-medium) {
             border-bottom: 1px solid var(--color-border-secondary);

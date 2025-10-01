@@ -1,3 +1,5 @@
+import { _doOnce } from './agStack/utils/function';
+import { _missing } from './agStack/utils/generic';
 import type { GridApi } from './api/gridApi';
 import type { BeanCollection } from './context/context';
 import type {
@@ -35,9 +37,6 @@ import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { _getElementRectWithOffset } from './utils/dom';
-import { _doOnce } from './utils/function';
-import { _exists, _missing } from './utils/generic';
 import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
@@ -174,132 +173,6 @@ export function _setDomData(gos: GridOptionsService, element: Element, key: stri
     domData[key] = value;
 }
 
-export function _getDocument(beans: BeanCollection): Document {
-    // if user is providing document, we use the users one,
-    // otherwise we use the document on the global namespace.
-    const { gos, eGridDiv } = beans;
-    let result: Document | null = null;
-    const gridOptionsGetDocument = gos.get('getDocument');
-    if (gridOptionsGetDocument && _exists(gridOptionsGetDocument)) {
-        result = gridOptionsGetDocument();
-    } else if (eGridDiv) {
-        result = eGridDiv.ownerDocument;
-    }
-
-    if (result && _exists(result)) {
-        return result;
-    }
-
-    return document;
-}
-
-export function _getWindow(beans: BeanCollection) {
-    const eDocument = _getDocument(beans);
-    return eDocument.defaultView || window;
-}
-
-export function _getRootNode(beans: BeanCollection): Document | ShadowRoot {
-    return beans.eGridDiv.getRootNode() as Document | ShadowRoot;
-}
-
-export function _getActiveDomElement(beans: BeanCollection): Element | null {
-    return _getRootNode(beans).activeElement;
-}
-
-export function _getPageBody(beans: BeanCollection): HTMLElement | ShadowRoot {
-    let rootNode: Document | ShadowRoot | HTMLElement | null = null;
-    let targetEl: HTMLElement | ShadowRoot | null = null;
-
-    try {
-        rootNode = _getDocument(beans).fullscreenElement as HTMLElement;
-    } catch (e) {
-        // some environments like SalesForce will throw errors
-        // simply by trying to read the fullscreenElement property
-    } finally {
-        if (!rootNode) {
-            rootNode = _getRootNode(beans);
-        }
-        const body = rootNode.querySelector('body');
-        if (body) {
-            targetEl = body;
-        } else if (rootNode instanceof ShadowRoot) {
-            targetEl = rootNode;
-        } else if (rootNode instanceof Document) {
-            targetEl = rootNode?.documentElement;
-        } else {
-            targetEl = rootNode;
-        }
-    }
-
-    return targetEl;
-}
-
-function _getBodyWidth(beans: BeanCollection): number {
-    const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientWidth ?? (window.innerHeight || -1);
-}
-
-function _getBodyHeight(beans: BeanCollection): number {
-    const body = _getPageBody(beans) as HTMLElement;
-    return body?.clientHeight ?? (window.innerHeight || -1);
-}
-
-export function _anchorElementToMouseMoveEvent(
-    element: HTMLElement,
-    mouseMoveEvent: MouseEvent | Touch,
-    beans: BeanCollection
-): void {
-    const eRect = element.getBoundingClientRect();
-    const height = eRect.height;
-
-    const browserWidth = _getBodyWidth(beans) - 2; // 2px for 1px borderLeft and 1px borderRight
-    const browserHeight = _getBodyHeight(beans) - 2; // 2px for 1px borderTop and 1px borderBottom
-
-    const offsetParent = element.offsetParent;
-
-    if (!offsetParent) {
-        return;
-    }
-
-    const offsetParentSize = _getElementRectWithOffset(element.offsetParent as HTMLElement);
-
-    const { clientY, clientX } = mouseMoveEvent;
-
-    let top = clientY - offsetParentSize.top - height / 2;
-    let left = clientX - offsetParentSize.left - 10;
-
-    const eDocument = _getDocument(beans);
-    const win = eDocument.defaultView || window;
-    const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
-    const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
-
-    // check if the drag and drop image component is not positioned outside of the browser
-    if (browserWidth > 0 && left + element.clientWidth > browserWidth + windowScrollX) {
-        left = browserWidth + windowScrollX - element.clientWidth;
-    }
-
-    if (left < 0) {
-        left = 0;
-    }
-
-    if (browserHeight > 0 && top + element.clientHeight > browserHeight + windowScrollY) {
-        top = browserHeight + windowScrollY - element.clientHeight;
-    }
-
-    if (top < 0) {
-        top = 0;
-    }
-
-    element.style.left = `${left}px`;
-    element.style.top = `${top}px`;
-}
-
-export function _isNothingFocused(beans: BeanCollection): boolean {
-    const activeEl = _getActiveDomElement(beans);
-
-    return activeEl === null || activeEl === _getDocument(beans).body;
-}
-
 export function _isAnimateRows(gos: GridOptionsService) {
     // never allow animating if enforcing the row order
     if (gos.get('ensureDomOrder')) {
@@ -340,10 +213,6 @@ export function _getGroupAggFiltering(
 
 export function _getGrandTotalRow(gos: GridOptionsService): GridOptions['grandTotalRow'] {
     return gos.get('grandTotalRow');
-}
-
-export function _getGrandTotalRowPinned(gos: GridOptionsService): GridOptions['grandTotalRowPinned'] {
-    return gos.get('grandTotalRowPinned');
 }
 
 export function _getGroupTotalRowCallback(
@@ -430,7 +299,6 @@ export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): nu
     return res > 0 ? res : undefined;
 }
 
-/** Get the selection checkbox configuration. Defaults to enabled. */
 export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, isGrouped: boolean): boolean {
     const preventVisibilityChanges = gos.get('suppressGroupChangesColumnVisibility');
     if (preventVisibilityChanges === true) {
@@ -641,6 +509,12 @@ export function _getSelectAll(gos: GridOptionsService, defaultValue = true): Sel
     return rowSelection.mode === 'multiRow' ? rowSelection.selectAll : 'all';
 }
 
+export function _getCtrlASelectsRows(gos: GridOptionsService): boolean {
+    const rowSelection = gos.get('rowSelection');
+    if (typeof rowSelection === 'string') return false;
+    return rowSelection?.mode === 'multiRow' ? rowSelection.ctrlASelectsRows ?? false : false;
+}
+
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
     const groupSelection = _getGroupSelection(gos);
     return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';
@@ -661,14 +535,6 @@ export function _isLegacyMenuEnabled(gos: GridOptionsService): boolean {
 
 export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean {
     return !_isLegacyMenuEnabled(gos);
-}
-
-export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): boolean {
-    return gos.get('columnMenu') === 'new';
-}
-
-export function _getEnableRowPinning(gos: GridOptionsService): GridOptions['enableRowPinning'] {
-    return gos.get('enableRowPinning');
 }
 
 export function _getCallbackForEvent(eventName: string): string {
@@ -735,7 +601,7 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     gos: GridOptionsService,
     params: WithoutGridCommon<T>
 ): T {
-    return gos.addGridCommonParams(params);
+    return gos.addCommon(params);
 }
 
 export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
@@ -760,7 +626,12 @@ export function _getGridOption<K extends keyof GridOptions>(
 ): GridOptionOrDefault<K> {
     return (
         providedGridOptions[gridOption] ??
+        (providedGridOptions as any)[`gridOptions`]?.[gridOption] ??
         _getGlobalGridOption(gridOption) ??
         (GRID_OPTION_DEFAULTS[gridOption as keyof typeof GRID_OPTION_DEFAULTS] as any)
     );
+}
+
+export function _interpretAsRightClick({ gos }: BeanCollection, event: MouseEvent): boolean {
+    return event.button === 2 || (event.ctrlKey && gos.get('allowContextMenuWithControlKey'));
 }

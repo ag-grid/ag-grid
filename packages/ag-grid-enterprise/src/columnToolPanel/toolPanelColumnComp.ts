@@ -1,10 +1,11 @@
 import type {
-    AgCheckbox,
     AgColumn,
     DragItem,
-    DragSource,
     ElementParams,
+    GridCheckbox,
+    GridDragSource,
     ITooltipCtrl,
+    LongTapEvent,
     TooltipFeature,
 } from 'ag-grid-community';
 import {
@@ -13,6 +14,7 @@ import {
     DragSourceType,
     KeyCode,
     RefPlaceholder,
+    TouchListener,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
@@ -36,7 +38,7 @@ const ToolPanelColumnElement: ElementParams = {
 };
 export class ToolPanelColumnComp extends Component {
     private readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly cbSelect: AgCheckbox = RefPlaceholder;
+    private readonly cbSelect: GridCheckbox = RefPlaceholder;
 
     public readonly column: AgColumn;
     public readonly columnDepth: number;
@@ -78,7 +80,7 @@ export class ToolPanelColumnComp extends Component {
         const checkboxGui = cbSelect.getGui();
         const checkboxInput = cbSelect.getInputElement();
 
-        checkboxGui.insertAdjacentElement('afterend', eDragHandle);
+        checkboxGui.after(eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
         eLabel.textContent = displayName;
@@ -92,10 +94,12 @@ export class ToolPanelColumnComp extends Component {
 
         this.tooltipFeature = this.createOptionalManagedBean(
             beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
-                getGui: () => this.getGui(),
+                getGui: () => this.focusWrapper,
                 getLocation: () => 'columnToolPanelColumn',
-                getColDef: () => column.getColDef(),
                 shouldDisplayTooltip: _getShouldDisplayTooltip(gos, () => eLabel),
+                getAdditionalParams: () => ({
+                    colDef: column.getColDef(),
+                }),
             } as ITooltipCtrl)
         );
 
@@ -115,6 +119,12 @@ export class ToolPanelColumnComp extends Component {
             contextmenu: this.onContextMenu.bind(this),
         });
 
+        const touchListener = new TouchListener(focusWrapper);
+        this.addManagedListeners(touchListener, {
+            longTap: (e: LongTapEvent) => this.onContextMenu(e.touchStart),
+        });
+        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
+
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
 
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
@@ -126,7 +136,9 @@ export class ToolPanelColumnComp extends Component {
         this.setupTooltip();
 
         const classes = _getToolPanelClassesFromColDef(column.getColDef(), gos, column, null);
-        classes.forEach((c) => this.toggleCss(c, true));
+        for (const c of classes) {
+            this.toggleCss(c, true);
+        }
     }
 
     public getColumn(): AgColumn {
@@ -140,7 +152,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
-    private onContextMenu(e: MouseEvent): void {
+    private onContextMenu(e: MouseEvent | Touch): void {
         const { column, gos } = this;
 
         if (gos.get('functionsReadOnly')) {
@@ -217,7 +229,7 @@ export class ToolPanelColumnComp extends Component {
         const { gos, eventSvc, dragAndDrop } = beans;
 
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');
-        const dragSource: DragSource = {
+        const dragSource: GridDragSource = {
             type: DragSourceType.ToolPanel,
             eElement: eDragHandle,
             dragItemName: this.displayName,

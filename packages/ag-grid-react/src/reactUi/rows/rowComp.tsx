@@ -3,6 +3,7 @@ import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMe
 import type {
     CellCtrl,
     ICellRenderer,
+    ICellRendererParams,
     IRowComp,
     RowContainerType,
     RowCtrl,
@@ -11,15 +12,15 @@ import type {
 } from 'ag-grid-community';
 import { CssClassManager, _EmptyBean } from 'ag-grid-community';
 
-import { BeansContext, EnableDeferRenderContext } from '../beansContext';
+import { BeansContext, RenderModeContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
-import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../utils';
+import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos, editSvc } = useContext(BeansContext);
 
-    const enableCellDeferRender = useContext(EnableDeferRenderContext);
+    const enableUses = useContext(RenderModeContext) === 'default';
 
     const compBean = useRef<_EmptyBean>();
 
@@ -51,6 +52,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
+    const fullWidthParamsRef = useRef<ICellRendererParams>();
 
     const autoHeightSetup = useRef<boolean>(false);
     const [autoHeightSetupAttempt, setAutoHeightSetupAttempt] = useState<number>(0);
@@ -80,19 +82,24 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    let cellCtrlsMerged = cellCtrlsFlushSync;
+    // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
     const cellsChanged = useRef<any>(() => {});
-    if (enableCellDeferRender) {
-        const sub = useCallback((onStoreChange: any) => {
-            cellsChanged.current = onStoreChange;
-            return () => {
-                cellsChanged.current = () => {};
-            };
-        }, []);
-        cellCtrlsMerged = React.useSyncExternalStore(sub, () => {
+    const sub = useCallback((onStoreChange: any) => {
+        cellsChanged.current = onStoreChange;
+        return () => {
+            cellsChanged.current = () => {};
+        };
+    }, []);
+    const cellCtrlsUses = agUseSyncExternalStore(
+        sub,
+        () => {
             return cellCtrlsRef.current;
-        });
-    }
+        },
+        []
+    );
+
+    // Will only use useSyncExternalStore if it is supported by the React version and the rendering mode has not been set to 'legacy
+    const cellCtrlsMerged = enableUses ? cellCtrlsUses : cellCtrlsFlushSync;
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
@@ -106,7 +113,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         // because React is asynchronous, it's possible the RowCtrl is no longer a valid RowCtrl. This can
         // happen if user calls two API methods one after the other, with the second API invalidating the rows
         // the first call created. Thus the rows for the first call could still get created even though no longer needed.
-        if (!rowCtrl.isAlive()) {
+        if (!rowCtrl.isAlive() || context.isDestroyed()) {
             return;
         }
 
@@ -132,27 +139,33 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 const nextCells = getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current);
                 if (nextCells !== prevCellCtrls) {
                     cellCtrlsRef.current = nextCells;
-                    if (enableCellDeferRender) {
+                    if (enableUses) {
                         cellsChanged.current();
                     } else {
                         agFlushSync(useFlushSync, () => setCellCtrlsFlushSync(nextCells));
                     }
                 }
             },
-            showFullWidth: (compDetails) => setFullWidthCompDetails(compDetails),
+            showFullWidth: (compDetails) => {
+                fullWidthParamsRef.current = compDetails.params;
+                setFullWidthCompDetails(compDetails);
+            },
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
+            getFullWidthCellRendererParams: () => fullWidthParamsRef.current,
             refreshFullWidth: (getUpdatedParams) => {
+                const fullWidthParams = getUpdatedParams();
+                fullWidthParamsRef.current = fullWidthParams;
                 if (canRefreshFullWidthRef.current) {
                     setFullWidthCompDetails((prevFullWidthCompDetails) => ({
                         ...prevFullWidthCompDetails!,
-                        params: getUpdatedParams(),
+                        params: fullWidthParams,
                     }));
                     return true;
                 } else {
                     if (!fullWidthCompRef.current || !fullWidthCompRef.current.refresh) {
                         return false;
                     }
-                    return fullWidthCompRef.current.refresh(getUpdatedParams());
+                    return fullWidthCompRef.current.refresh(fullWidthParams);
                 }
             },
         };
@@ -191,7 +204,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
         cellCtrlsMerged?.map((cellCtrl) => (
             <CellComp
                 cellCtrl={cellCtrl}
-                editingRow={editSvc?.isRowEditing(rowCtrl) ?? false}
+                editingCell={editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false}
                 printLayout={rowCtrl.printLayout}
                 key={cellCtrl.instanceId}
             />

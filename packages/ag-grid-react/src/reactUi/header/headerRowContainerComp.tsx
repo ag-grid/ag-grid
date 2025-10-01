@@ -21,13 +21,13 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
 
     const setRef = useCallback((eRef: HTMLDivElement) => {
         eGui.current = eRef;
-        headerRowCtrlRef.current = eRef
-            ? context.createBean(new HeaderRowContainerCtrl(pinned))
-            : context.destroyBean(headerRowCtrlRef.current);
 
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
+            headerRowCtrlRef.current = context.destroyBean(headerRowCtrlRef.current);
             return;
         }
+
+        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(pinned));
 
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed,
@@ -71,8 +71,8 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
             {insertRowsJsx()}
         </div>
     ) : centre ? (
-        <div ref={setRef} className={'ag-header-viewport ' + className} role="presentation" tabIndex={-1}>
-            <div ref={eCenterContainer} className={'ag-header-container'} role="rowgroup">
+        <div ref={setRef} className={'ag-header-viewport ' + className} role="rowgroup" tabIndex={-1}>
+            <div ref={eCenterContainer} className={'ag-header-container'} role="presentation">
                 {insertRowsJsx()}
             </div>
         </div>

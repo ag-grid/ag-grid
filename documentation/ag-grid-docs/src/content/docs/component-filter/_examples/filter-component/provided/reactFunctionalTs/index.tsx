@@ -54,9 +54,9 @@ const GridExample = () => {
     }, []);
 
     const onClicked = useCallback(() => {
-        gridRef.current!.api.getColumnFilterInstance('name').then((instance) => {
+        gridRef.current!.api.getColumnFilterInstance<FilterDisplay>('name').then((instance) => {
             getInstance<FilterDisplay, FilterDisplay & { componentMethod(message: string): void }>(
-                instance as FilterDisplay,
+                instance!,
                 (component) => {
                     if (component) {
                         component.componentMethod('Hello World!');

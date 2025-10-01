@@ -33,7 +33,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
 
-    onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(params: RefreshModelParams): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
@@ -44,8 +43,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
         includeFooterNodes?: boolean,
         afterSort?: boolean
     ): void;
-    resetRowHeights(): void;
-    onRowHeightChanged(): void;
     batchUpdateRowData(
         rowDataTransaction: RowDataTransaction<TData>,
         callback?: (res: RowNodeTransaction<TData>) => void

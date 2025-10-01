@@ -23,9 +23,7 @@ import {
     _createIconNoSpan,
     _exists,
     _focusInto,
-    _getEnableRowPinning,
     _getGrandTotalRow,
-    _getGrandTotalRowPinned,
     _getPageBody,
     _getRootNode,
     _isIOSUserAgent,
@@ -33,10 +31,10 @@ import {
     _isNothingFocused,
     _isPromise,
     _isVisible,
-    _preserveRangesWhile,
     _warn,
 } from 'ag-grid-community';
 
+import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuList } from '../widgets/agMenuList';
 import type { MenuItemMapper } from './menuItemMapper';
@@ -90,15 +88,13 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         // if user clicks a cell
         if (_exists(node)) {
-            const enableRowPinning = _getEnableRowPinning(gos);
+            const enableRowPinning = gos.get('enableRowPinning');
             const isRowPinnable = gos.get('isRowPinnable');
-            const grandTotalRow = _getGrandTotalRow(gos);
-            const grandTotalRowPinned = _getGrandTotalRowPinned(gos);
             if (enableRowPinning) {
                 const isGroupTotalRow = node.level > -1 && node.footer;
                 const isGrandTotalRow = node.level === -1 && node.footer;
-                const isGrandTotalRowFixed =
-                    grandTotalRowPinned != null || grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
+                const grandTotalRow = _getGrandTotalRow(gos);
+                const isGrandTotalRowFixed = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
 
                 // We do not allow pinning of group total rows. As such, only show pinning related menu options for
                 // grand total rows that are not fixed in place, and normal rows that are not group total rows.
@@ -238,8 +234,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
                 const shouldShowMenu =
                     // check if there are actual menu items to be displayed
-                    menuItems &&
-                    menuItems.length &&
+                    menuItems?.length &&
                     // check if the element that triggered the context menu was removed from the DOM
                     (isFromFakeEvent || _isVisible(target as HTMLElement)) &&
                     // overlay was displayed
@@ -254,7 +249,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             return true;
         }
 
-        if (menuItems === undefined || !menuItems?.length) {
+        if (!menuItems?.length) {
             return false;
         }
 
@@ -453,7 +448,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 }
 
-export type ContextMenuEvent = 'closeMenu';
+type ContextMenuEvent = 'closeMenu';
 
 class ContextMenu extends Component<ContextMenuEvent> {
     private menuList: AgMenuList | null = null;

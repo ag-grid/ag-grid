@@ -18,7 +18,7 @@ html, body {
     background-color: transparent;
 }
 
-/* Apply "color-scheme: dark;" to all elements outside the grid */ 
+/* Apply "color-scheme: dark;" to all elements outside the grid */
 html[data-color-scheme='dark'] body > *:where(:not([class^=ag])) {
     color-scheme: dark;
 
@@ -57,6 +57,11 @@ html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, .ag-chart but
 
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):hover {
     background-color: rgba(0,0,0, 0.1);
+}
+
+html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):disabled {
+    opacity: 0.66;
+    pointer-events: none;
 }
 
 html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']),

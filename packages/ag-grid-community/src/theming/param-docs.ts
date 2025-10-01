@@ -1,4 +1,4 @@
-import type { Theme } from './Theme';
+import type { Theme } from '../agStack/theming/theme';
 import type { themeQuartz } from './parts/theme/themes';
 
 type ThemeParams<T> = T extends Theme<infer U> ? keyof U : never;
@@ -83,17 +83,20 @@ const docs: Record<AllThemeParams, string> = {
     columnSelectIndentSize:
         'Amount of indentation for each level of children when selecting grouped columns in the column select widget.',
     dataFontSize: 'Font size for data in grid rows',
-    dialogBorder: 'Border color popup dialogs such as the integrated charts and the advanced filter builder.',
-    dialogShadow: 'Shadow for popup dialogs such as the integrated charts and the advanced filter builder.',
+    dialogBorder: 'Border color popup dialogs such as the integrated charts panel and the advanced filter builder.',
+    dialogShadow: 'Shadow for popup dialogs such as the integrated charts panel and the advanced filter builder.',
     dragAndDropImageBackgroundColor: 'Background color of the cover element when dragging grid parts',
     dragAndDropImageBorder: 'Border color of the cover element when dragging grid parts',
+    dragAndDropImageNotAllowedBorder: 'Border color of the cover element when dropping grid parts is not allowed',
     dragAndDropImageShadow: 'Shadow for the drag cover element when dragging grid parts',
     dragHandleColor: 'Color of the drag handle on draggable rows and column markers',
     dropdownShadow: 'Default shadow for dropdown menus',
-    filterPanelApplyButtonColor: 'Color of new Filter Tool Panel apply button',
-    filterPanelApplyButtonBackgroundColor: 'Background color of new Filter Tool Panel apply button',
+    filterPanelApplyButtonColor: 'Color of new Filters Tool Panel apply button',
+    filterPanelApplyButtonBackgroundColor: 'Background color of new Filters Tool Panel apply button',
     filterPanelCardSubtleColor:
-        'Color of text and UI elements that should stand out less than the default in new Filter Tool Panel',
+        'Color of text and UI elements that should stand out less than the default in new Filters Tool Panel',
+    filterPanelCardSubtleHoverColor:
+        'Color of text and UI elements that should stand out less than the default in new Filters Tool Panel when hovered',
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
     findMatchColor: 'Color of matches used in Find',
     findMatchBackgroundColor: 'Background color of matches used in Find',
@@ -101,6 +104,8 @@ const docs: Record<AllThemeParams, string> = {
     findActiveMatchBackgroundColor: 'Background color of the active match used in Find',
     focusShadow:
         'Shadow around UI controls that have focus e.g. text inputs and buttons. The value must a valid CSS box-shadow.',
+    focusErrorShadow:
+        'Shadow around UI controls that have focus and contain validation errors e.g. text inputs, text-areas. The value must a valid CSS box-shadow.',
     fontFamily: 'Font family used for all text.',
     fontSize: 'Default font size for text in the grid',
     footerRowBorder: 'Horizontal borders above footer components like the pagination and status bars',
@@ -176,18 +181,20 @@ const docs: Record<AllThemeParams, string> = {
     menuTextColor: 'Text color for menus e.g. column menu and right-click context menu',
     modalOverlayBackgroundColor: 'Background color of the overlay shown over the grid e.g. a data loading indicator.',
     oddRowBackgroundColor: 'Background color applied to every other row',
+    paginationPanelHeight:
+        'Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.',
     panelBackgroundColor:
-        'Background color for panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Background color for panels and dialogs such as the the advanced filter builder. Note that for the integrated charts panel, the chart fully fills the panel so no background is visible behind it - set the chart theme to change its background.',
     panelTitleBarBackgroundColor:
-        'Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Background color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarTextColor:
-        'Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Text color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarIconColor:
-        'Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Icon color for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarFontWeight:
-        'Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Font weight for the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     panelTitleBarBorder:
-        'Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.',
+        'Border below the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.',
     statusBarLabelColor: 'Text color for labels in the status bar component',
     statusBarLabelFontWeight: 'Font weight for labels in the status bar component',
     statusBarValueColor: 'Text color for values in the status bar component',
@@ -321,6 +328,16 @@ const docs: Record<AllThemeParams, string> = {
     pinnedRowFontWeight: 'Font-weight for the rows that have been pinned to the top or bottom',
     pinnedRowBackgroundColor: 'Background color for the rows that have been pinned to the top or bottom',
     pinnedRowTextColor: 'Text color for rows that have been pinned to the top or bottom',
+    fullRowEditInvalidBackgroundColor: 'Background color for a row with invalid editor status',
+    cellBatchEditBackgroundColor: 'Background color for cells in batch edit mode',
+    cellBatchEditTextColor: 'Text color for cells in batch edit mode',
+    rowBatchEditBackgroundColor: 'Background color for rows in batch edit mode',
+    rowBatchEditTextColor: 'Text color for rows in batch edit mode',
+    colorPickerThumbSize: 'Size of thumb (the draggable item) in color picker popup',
+    colorPickerTrackSize: 'Size of track in color picker popup',
+    colorPickerThumbBorderWidth: 'Border width of thumb (the draggable item) in color picker popup',
+    colorPickerTrackBorderRadius: 'Border radius of track in color picker popup',
+    colorPickerColorBorderRadius: 'Border radius of selected/recent colors in color picker',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

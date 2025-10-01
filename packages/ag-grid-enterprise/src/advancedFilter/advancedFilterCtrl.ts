@@ -7,7 +7,7 @@ import type { AdvancedFilterExpressionService } from './advancedFilterExpression
 import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
-export type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
+type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
 export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
     private ctrlsSvc: CtrlsService;
     private popupSvc: PopupService;
@@ -42,11 +42,16 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
         });
 
         this.addManagedPropertyListener('advancedFilterParent', () => this.updateComps());
+        this.addManagedPropertyListener('advancedFilterBuilderParams', (event) => {
+            if (event.currentValue?.suppressFullScreenButton !== event.previousValue?.suppressFullScreenButton) {
+                this.eBuilderDialog?.setMaximizable(event.currentValue?.suppressFullScreenButton ?? true);
+            }
+        });
 
         this.addDestroyFunc(() => {
             this.destroyAdvancedFilterComp();
             this.destroyBean(this.eBuilderComp);
-            if (this.eBuilderDialog && this.eBuilderDialog.isAlive()) {
+            if (this.eBuilderDialog?.isAlive()) {
                 this.destroyBean(this.eBuilderDialog);
             }
         });
@@ -106,6 +111,11 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
         const { width, height, minWidth } = this.getBuilderDialogSize();
 
+        const { suppressFullScreenButton } = {
+            suppressFullScreenButton: false,
+            ...this.gos.get('advancedFilterBuilderParams'),
+        };
+
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(
             new AgDialog({
@@ -115,7 +125,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
                 height,
                 resizable: true,
                 movable: true,
-                maximizable: true,
+                maximizable: !suppressFullScreenButton,
                 centered: true,
                 closable: true,
                 minWidth,

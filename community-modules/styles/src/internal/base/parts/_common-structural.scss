@@ -853,7 +853,7 @@
         flex: 1 1 auto;
     }
 
-    .ag-cell-value,
+    .ag-cell-value:not(.ag-allow-overflow),
     .ag-group-value {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -911,6 +911,10 @@
             width: 100%;
             line-height: normal;
         }
+    }
+
+    .ag-row.ag-row-editing-invalid .ag-cell-inline-editing {
+        opacity: 0.8;
     }
 
     .ag-cell .ag-icon {
@@ -1704,6 +1708,11 @@
         height: 4px;
         width: 100%;
         cursor: ns-resize;
+    }
+
+    .ag-floating-bottom .ag-row-numbers-resizer {
+        bottom: unset;
+        top: -2px;
     }
 
     // /**

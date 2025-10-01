@@ -1,8 +1,6 @@
-import { createPart } from '../../Part';
-import { createTheme } from '../../Theme';
-import type { Theme } from '../../Theme';
-import type { CoreParams } from '../../core/core-css';
-import type { ColorValue } from '../../theme-types';
+import { createPart } from '../../../agStack/theming/partImpl';
+import type { Theme } from '../../../agStack/theming/theme';
+import type { ColorValue } from '../../../agStack/theming/themeTypes';
 import {
     accentColor,
     accentMix,
@@ -10,7 +8,10 @@ import {
     foregroundBackgroundMix,
     foregroundColor,
     foregroundMix,
-} from '../../theme-utils';
+} from '../../../agStack/theming/themeUtils';
+import type { CoreParams } from '../../core/core-css';
+import { createTheme } from '../../createTheme';
+import type { BatchEditStyleParams } from '../batch-edit/batch-edit-styles';
 import type { ButtonStyleParams } from '../button-style/button-styles';
 import { buttonStyleAlpine, buttonStyleBalham, buttonStyleBase } from '../button-style/button-styles';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
@@ -29,7 +30,8 @@ export type ThemeDefaultParams = CoreParams &
     ButtonStyleParams &
     CheckboxStyleParams &
     TabStyleParams &
-    InputStyleParams;
+    InputStyleParams &
+    BatchEditStyleParams;
 
 const makeThemeQuartzTreeShakeable = () =>
     createTheme()
@@ -99,6 +101,11 @@ const makeThemeAlpineTreeShakeable = () =>
             toggleButtonHeight: 18,
             toggleButtonSwitchInset: 1,
             toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.45),
+            colorPickerThumbSize: 13,
+            colorPickerTrackSize: 11,
+            colorPickerThumbBorderWidth: 2,
+            colorPickerTrackBorderRadius: 2,
+            colorPickerColorBorderRadius: 2,
         });
 
 export const themeAlpine: Theme<ThemeDefaultParams> =
@@ -156,6 +163,11 @@ const makeThemeBalhamTreeShakeable = () =>
             statusBarLabelFontWeight: 600,
             statusBarValueFontWeight: 600,
             panelTitleBarIconColor: foregroundColor,
+            colorPickerThumbSize: 13,
+            colorPickerTrackSize: 11,
+            colorPickerThumbBorderWidth: 2,
+            colorPickerTrackBorderRadius: 2,
+            colorPickerColorBorderRadius: 2,
         });
 
 export const themeBalham: Theme<ThemeDefaultParams> =
@@ -224,6 +236,13 @@ const makeStyleMaterialTreeShakeable = () => {
         valueChangeValueHighlightBackgroundColor: '#00acc1',
         panelTitleBarIconColor: foregroundColor,
         advancedFilterBuilderButtonBarBorder: false,
+        filterPanelApplyButtonColor: { ref: 'buttonTextColor' },
+        filterPanelApplyButtonBackgroundColor: { ref: 'buttonBackgroundColor' },
+        colorPickerThumbSize: 13,
+        colorPickerTrackSize: 11,
+        colorPickerThumbBorderWidth: 2,
+        colorPickerTrackBorderRadius: 2,
+        colorPickerColorBorderRadius: 2,
     };
 
     const lightParams = {

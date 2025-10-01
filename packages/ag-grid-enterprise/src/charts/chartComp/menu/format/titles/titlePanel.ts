@@ -1,4 +1,4 @@
-import type { AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
+import type { AgComponentSelectorType, AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
 import { AgInputTextField, Component } from 'ag-grid-community';
 
 import type { AgSliderParams } from '../../../../widgets/agSlider';
@@ -35,7 +35,7 @@ export class TitlePanel extends Component {
 
     protected hasTitle(): boolean {
         const title: any = this.chartOptions.getValue(this.key);
-        return title && title.enabled && title.text && title.text.length > 0;
+        return title?.enabled && title.text && title.text.length > 0;
     }
 
     private initFontPanel(): void {
@@ -58,7 +58,7 @@ export class TitlePanel extends Component {
         this.getGui().appendChild(this.fontPanel.getGui());
     }
 
-    protected getTextInputParams(): AgInputTextFieldParams {
+    protected getTextInputParams(): AgInputTextFieldParams<AgComponentSelectorType> {
         return this.chartMenuUtils.addValueParams(`${this.key}.text`, {
             label: this.chartTranslation.translate('title'),
             labelAlignment: 'top',

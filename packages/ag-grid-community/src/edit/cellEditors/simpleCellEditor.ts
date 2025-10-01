@@ -1,15 +1,15 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _isBrowserSafari } from '../../agStack/utils/browser';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../../interfaces/iCellEditor';
-import { _isBrowserSafari } from '../../utils/browser';
-import { AgAbstractCellEditor } from '../../widgets/agAbstractCellEditor';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
-import { RefPlaceholder } from '../../widgets/component';
+import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
+import { AgAbstractCellEditor } from './agAbstractCellEditor';
 import type { CellEditorInput } from './iCellEditorInput';
 
 export class SimpleCellEditor<
     TValue,
     P extends ICellEditorParams & DefaultProvidedCellEditorParams,
-    I extends AgInputTextField,
+    I extends GridInputTextField,
 > extends AgAbstractCellEditor<ICellEditorParams, TValue> {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
@@ -20,14 +20,21 @@ export class SimpleCellEditor<
     }
 
     public initialiseEditor(params: P): void {
+        const { cellEditorInput } = this;
+
         this.setTemplate(
-            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [this.cellEditorInput.getTemplate()] },
-            this.cellEditorInput.getAgComponents()
+            { tag: 'div', cls: 'ag-cell-edit-wrapper', children: [cellEditorInput.getTemplate()] },
+            cellEditorInput.getAgComponents()
         );
+
+        const { eEditor } = this;
         const { cellStartedEdit, eventKey, suppressPreventDefault } = params;
 
-        const eEditor = this.eEditor;
-        this.cellEditorInput.init(eEditor, params);
+        // disable initial tooltips added to the input field
+        // let the validation handle tooltips.
+        eEditor.getInputElement().setAttribute('title', '');
+
+        cellEditorInput.init(eEditor, params);
         let startValue: string | null | undefined;
         let shouldSetStartValue = true;
 
@@ -44,7 +51,7 @@ export class SimpleCellEditor<
                     startValue = eventKey;
                 }
             } else {
-                startValue = this.cellEditorInput.getStartValue();
+                startValue = cellEditorInput.getStartValue();
 
                 if (eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -52,7 +59,7 @@ export class SimpleCellEditor<
             }
         } else {
             this.focusAfterAttached = false;
-            startValue = this.cellEditorInput.getStartValue();
+            startValue = cellEditorInput.getStartValue();
         }
 
         if (shouldSetStartValue && startValue != null) {
@@ -115,7 +122,7 @@ export class SimpleCellEditor<
         return this.eEditor.getInputElement();
     }
 
-    public getErrors(): string[] | null {
-        return this.cellEditorInput.getErrors();
+    public getValidationErrors(): string[] | null {
+        return this.cellEditorInput.getValidationErrors();
     }
 }

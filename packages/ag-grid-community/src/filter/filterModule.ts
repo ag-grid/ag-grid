@@ -2,18 +2,19 @@ import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '
 import { FilterStage } from '../clientSideRowModel/filterStage';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 import type { FilterWrapperParams } from '../interfaces/iFilter';
-import type { _ModuleWithApi } from '../interfaces/iModule';
-import type { _ModuleWithoutApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
 import { columnFiltersCSS } from './column-filters.css-GENERATED';
 import {
     destroyFilter,
+    doFilterAction,
     getColumnFilterHandler,
     getColumnFilterInstance,
     getColumnFilterModel,
     getFilterModel,
+    hideColumnFilter,
     isColumnFilterPresent,
     setColumnFilterModel,
     setFilterModel,
@@ -41,7 +42,7 @@ import { QuickFilterService } from './quickFilterService';
 /**
  * @internal
  */
-export const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
+const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelFilter',
     version: VERSION,
     rowModels: ['clientSide'],
@@ -95,7 +96,9 @@ export const ColumnFilterModule: _ModuleWithApi<_ColumnFilterGridApi> = {
         getColumnFilterModel,
         setColumnFilterModel,
         showColumnFilter,
+        hideColumnFilter,
         getColumnFilterHandler,
+        doFilterAction,
     },
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule, SharedMenuModule],
 };

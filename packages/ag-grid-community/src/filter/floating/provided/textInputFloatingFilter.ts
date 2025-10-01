@@ -1,9 +1,10 @@
-import { KeyCode } from '../../../constants/keyCode';
-import type { ElementParams } from '../../../utils/dom';
-import { _clearElement } from '../../../utils/dom';
-import { _debounce } from '../../../utils/function';
-import { RefPlaceholder } from '../../../widgets/component';
+import { KeyCode } from '../../../agStack/constants/keyCode';
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _clearElement } from '../../../agStack/utils/dom';
+import { _debounce } from '../../../agStack/utils/function';
+import type { ElementParams } from '../../../utils/element';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
+import { _isUseApplyButton, getDebounceMs } from '../../provided/providedFilterUtils';
 import type {
     ITextInputFloatingFilterParams,
     TextFilterModel,
@@ -12,7 +13,6 @@ import type {
 import { trimInputForFilter } from '../../provided/text/textFilterUtils';
 import type { FloatingFilterDisplayParams } from '../floatingFilter';
 import type { FloatingFilterInputService } from './iFloatingFilterInputService';
-import { getDebounceMs, isUseApplyButton } from './providedFilterUtils';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
@@ -66,7 +66,7 @@ export abstract class TextInputFloatingFilter<
             autoComplete,
         });
 
-        this.applyActive = isUseApplyButton(params.filterParams as TextFilterParams);
+        this.applyActive = _isUseApplyButton(params.filterParams as TextFilterParams);
 
         if (!readOnly) {
             const debounceMs = getDebounceMs(params.filterParams as TextFilterParams, defaultDebounceMs);

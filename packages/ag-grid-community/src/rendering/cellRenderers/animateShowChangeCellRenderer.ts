@@ -1,7 +1,8 @@
-import type { ElementParams } from '../../utils/dom';
-import { _clearElement } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _clearElement } from '../../agStack/utils/dom';
+import { _exists } from '../../agStack/utils/generic';
+import type { ElementParams } from '../../utils/element';
+import { Component } from '../../widgets/component';
 import type { ICellRenderer } from './iCellRenderer';
 
 const ARROW_UP = '\u2191';
@@ -16,10 +17,10 @@ const AnimateShowChangeCellRendererElement: ElementParams = {
 };
 
 export class AnimateShowChangeCellRenderer extends Component implements ICellRenderer {
-    private lastValue: number;
+    private lastValue: any;
 
-    private eValue: HTMLElement = RefPlaceholder;
-    private eDelta: HTMLElement = RefPlaceholder;
+    private readonly eValue: HTMLElement = RefPlaceholder;
+    private readonly eDelta: HTMLElement = RefPlaceholder;
 
     private refreshCount = 0;
 
@@ -93,8 +94,16 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             return false;
         }
 
-        if (typeof value === 'number' && typeof lastValue === 'number') {
-            const delta = value - lastValue;
+        const numericValue = value && typeof value === 'object' && 'toNumber' in value ? value.toNumber() : value;
+        const numericLastValue =
+            lastValue && typeof lastValue === 'object' && 'toNumber' in lastValue ? lastValue.toNumber() : lastValue;
+
+        if (numericValue === numericLastValue) {
+            return false;
+        }
+
+        if (typeof numericValue === 'number' && typeof numericLastValue === 'number') {
+            const delta = numericValue - numericLastValue;
             this.showDelta(params, delta);
         }
 

@@ -78,11 +78,11 @@ export const AG_GRID_LOCALE_EN = {
     filterSummaryListShort: 'is (${variable})',
     filterSummaryListLong: 'is (${variable}) and ${variable} more',
     addFilterCard: 'Add Filter',
-    agTextColumnFilterDisplayName: 'Text Filter',
-    agNumberColumnFilterDisplayName: 'Number Filter',
-    agDateColumnFilterDisplayName: 'Date Filter',
-    agSetColumnFilterDisplayName: 'Set Filter',
-    agMultiColumnFilterDisplayName: 'Multi Filter',
+    agTextColumnFilterDisplayName: 'Simple Filter',
+    agNumberColumnFilterDisplayName: 'Simple Filter',
+    agDateColumnFilterDisplayName: 'Simple Filter',
+    agSetColumnFilterDisplayName: 'Selection Filter',
+    agMultiColumnFilterDisplayName: 'Combo Filter',
     addFilterPlaceholder: 'Search columns...',
 
     // Advanced Filter
@@ -105,6 +105,9 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterAnd: 'AND',
     advancedFilterOr: 'OR',
     advancedFilterApply: 'Apply',
+    advancedFilterReset: 'Reset',
+    advancedFilterCancel: 'Cancel',
+    advancedFilterClear: 'Clear',
     advancedFilterBuilder: 'Builder',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
@@ -123,6 +126,8 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterValidationMessageAtEnd: 'Expression has an error. ${variable} at end of expression.',
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
+    advancedFilterBuilderClear: 'Clear',
+    advancedFilterBuilderReset: 'Reset',
     advancedFilterBuilderCancel: 'Cancel',
     advancedFilterBuilderAddButtonTooltip: 'Add Filter or Group',
     advancedFilterBuilderRemoveButtonTooltip: 'Remove',
@@ -138,6 +143,15 @@ export const AG_GRID_LOCALE_EN = {
     advancedFilterBuilderValidationSelectColumn: 'Must select a column.',
     advancedFilterBuilderValidationSelectOption: 'Must select an option.',
     advancedFilterBuilderValidationEnterValue: 'Must enter a value.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Date must be after ${variable}',
+    maxDateValidation: 'Date must be before ${variable}',
+    maxLengthValidation: 'Must be ${variable} characters or fewer.',
+    minValueValidation: 'Must be greater than or equal to ${variable}',
+    maxValueValidation: 'Must be less than or equal to  ${variable}',
+    invalidSelectionValidation: 'Invalid selection.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Columns',
@@ -521,6 +535,10 @@ export const AG_GRID_LOCALE_EN = {
     dropOff: 'Drop-Off',
     stageLabels: 'Stage Labels',
     reverse: 'Reverse',
+    tooltipMode: 'Tooltip Mode',
+    tooltipModeSingle: 'Single',
+    tooltipModeShared: 'Multiple',
+    tooltipModeCompact: 'Compact',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit',
@@ -574,6 +592,9 @@ export const AG_GRID_LOCALE_EN = {
     ariaSkeletonCellLoading: 'Row data is loading',
     ariaDeferSkeletonCellLoading: 'Cell is loading',
 
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Pending Change',
+
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Row Groups',
     ariaValuesDropZonePanelLabel: 'Values',
@@ -591,8 +612,10 @@ export const AG_GRID_LOCALE_EN = {
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',
 
-    ariaLabelCellEditor: 'Cell Editor',
     ariaLabelSelectField: 'Select Field',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'Cell Editor Validation',
 
     // aria labels for async context menus
     ariaLabelLoadingContextMenu: 'Loading Context Menu',
@@ -617,9 +640,10 @@ export const AG_GRID_LOCALE_EN = {
     ariaColumnPanelList: 'Column List',
     ariaFilterPanelList: 'Filter List',
 
-    // ARIA labels for new Filter Tool Panel
+    // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Add Filter Field',
-    ariaLabelDeleteFilterCard: 'Delete Filter',
+    ariaLabelFilterCardDelete: 'Delete Filter',
+    ariaLabelFilterCardHasEdits: 'Has Edits',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
@@ -642,6 +666,16 @@ export const AG_GRID_LOCALE_EN = {
     october: 'October',
     november: 'November',
     december: 'December',
+
+    // Date-time parts
+    year: 'Year',
+    quarter: 'Quarter',
+    month: 'Month',
+    week: 'Week',
+    day: 'Day',
+    hour: 'Hour',
+    minute: 'Minute',
+    second: 'Second',
 
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',

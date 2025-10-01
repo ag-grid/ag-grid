@@ -1,3 +1,4 @@
+import type { AgPromise } from '../agStack/utils/promise';
 import type { AgColumn } from '../entities/agColumn';
 import type {
     CreateFilterHandlerFunc,
@@ -8,12 +9,12 @@ import type {
     FilterDisplayState,
     FilterHandler,
     FilterHandlerBaseParams,
+    FilterHandlerParams,
     FilterModel,
     IFilterComp,
     IFilterParams,
 } from '../interfaces/iFilter';
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
-import type { AgPromise } from '../utils/promise';
 
 export const FILTER_HANDLER_MAP = {
     agSetColumnFilter: 'agSetColumnFilterHandler',
@@ -104,14 +105,15 @@ export function _refreshHandlerAndUi(
     handlerParams: FilterHandlerBaseParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler',
+    additionalEventAttributes?: any
 ): AgPromise<void> {
-    handler.refresh?.({ ...handlerParams, model, source });
+    handler.refresh?.({ ...handlerParams, model, source, additionalEventAttributes } as FilterHandlerParams);
 
     return getFilterUi().then((filterUi) => {
         if (filterUi) {
             const { filter, filterParams } = filterUi;
-            _refreshFilterUi(filter, filterParams, model, state, source);
+            _refreshFilterUi(filter, filterParams, model, state, source, additionalEventAttributes);
         }
     });
 }
@@ -121,13 +123,15 @@ export function _refreshFilterUi(
     filterParams: FilterDisplayParams,
     model: any,
     state: FilterDisplayState,
-    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler' | 'init'
+    source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler' | 'init',
+    additionalEventAttributes?: any
 ): void {
     filter?.refresh?.({
         ...filterParams,
         model,
         state,
         source,
+        additionalEventAttributes,
     });
 }
 
@@ -151,7 +155,8 @@ export function _updateFilterModel(
     getModel: () => any,
     getState: () => FilterDisplayState | undefined,
     updateState: (state: FilterDisplayState) => void,
-    updateModel: (model: any) => void
+    updateModel: (model: any) => void,
+    processModelToApply?: (model: any) => any
 ): void {
     let state: FilterDisplayState;
     let shouldUpdateModel = false;
@@ -161,6 +166,9 @@ export function _updateFilterModel(
         case 'apply': {
             const oldState = getState();
             model = oldState?.model ?? null;
+            if (processModelToApply) {
+                model = processModelToApply(model);
+            }
             state = {
                 // keep the other UI state
                 state: oldState?.state,

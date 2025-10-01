@@ -1,8 +1,9 @@
 import type {
-    AgSelect,
+    AgComponentSelectorType,
     AgSelectParams,
     ElementParams,
     FilterPanelDetailState,
+    GridSelect,
     SelectableFilterDef,
 } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
@@ -14,11 +15,11 @@ const FilterDetailElement: ElementParams = {
 };
 
 export class FilterDetailComp extends Component<'filterTypeChanged'> {
-    private eFilterType: AgSelect<SelectableFilterDef> = RefPlaceholder;
+    private readonly eFilterType: GridSelect<SelectableFilterDef> = RefPlaceholder;
     private state?: FilterPanelDetailState;
 
     public postConstruct(): void {
-        const eFilterTypeParams: AgSelectParams = {
+        const eFilterTypeParams: AgSelectParams<AgComponentSelectorType> = {
             onValueChange: (filterDef) => this.dispatchLocalEvent({ type: 'filterTypeChanged', filterDef }),
         };
         this.setTemplate(FilterDetailElement, [AgSelectSelector], { eFilterType: eFilterTypeParams });
@@ -29,7 +30,13 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
         const oldState = this.state;
         this.state = newState;
 
-        const { activeFilterDef: newActiveFilterDef, filterDefs: newFilterDefs, detail: newDetail } = newState;
+        const {
+            activeFilterDef: newActiveFilterDef,
+            filterDefs: newFilterDefs,
+            detail: newDetail,
+            afterGuiAttached,
+            afterGuiDetached,
+        } = newState;
         const { activeFilterDef: oldActiveFilterDef, filterDefs: oldFilterDefs, detail: oldDetail } = oldState ?? {};
 
         const eFilterType = this.eFilterType;
@@ -46,8 +53,13 @@ export class FilterDetailComp extends Component<'filterTypeChanged'> {
         if (newDetail !== oldDetail) {
             if (oldDetail) {
                 _removeFromParent(oldDetail);
+                afterGuiDetached();
             }
             this.appendChild(newDetail);
+            afterGuiAttached({
+                container: 'newFiltersToolPanel',
+                suppressFocus: true,
+            });
         }
     }
 }

@@ -3,13 +3,15 @@ import type {
     FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
+    FilterHandler,
+    FilterWrapperParams,
     IComponent,
     IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
-import { AgPromise, _getFilterDetails, _refreshFilterUi } from 'ag-grid-community';
+import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi, _warn } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
@@ -31,12 +33,24 @@ export class MultiFilterUi
     private params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>;
     private filters: (FilterDisplayComp | null)[] = [];
     private filterParams: FilterDisplayParams[] = [];
-    private validity: (boolean | undefined)[] = [];
+    private readonly validity: (boolean | undefined)[] = [];
     private allState: FilterDisplayState<IMultiFilterModel, any[]>;
 
     public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {
         this.params = params;
-        this.filterDefs = getMultiFilterDefs(params);
+        const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
+            if (filterDef.filterParams?.buttons) {
+                _warn(292, { colId: params.column.getColId() });
+                const newParams = { ...filterDef.filterParams };
+                delete newParams.buttons;
+                return {
+                    ...filterDef,
+                    filterParams: newParams,
+                };
+            }
+            return filterDef;
+        });
+        this.filterDefs = filterDefs;
 
         this.allState = params.state;
 
@@ -91,6 +105,10 @@ export class MultiFilterUi
 
     public getChildFilterInstance(index: number): FilterDisplayComp | undefined {
         return this.filters[index] ?? undefined;
+    }
+
+    public getNumChildFilters(): number {
+        return this.filters.length;
     }
 
     public override destroy(): void {
@@ -159,7 +177,7 @@ export class MultiFilterUi
             const handler = this.getHandler();
             this.filters.forEach((filter, otherIndex) => {
                 if (index !== otherIndex) {
-                    handler.getHandler(otherIndex)?.onAnyFilterChanged?.();
+                    handler.getHandler<FilterHandler>(otherIndex)?.onAnyFilterChanged?.();
                     filter?.onAnyFilterChanged?.();
                 }
             });
@@ -191,6 +209,10 @@ export class MultiFilterUi
             onStateChange: (newState) => this.onStateChange(onStateChange, index, newState),
             getHandler: () => this.getHandler().getHandler(index)!,
             onAction: (action, additionalEventAttributes, event) => {
+                if (_isUseApplyButton(params as FilterWrapperParams)) {
+                    // child filters cannot perform actions within a multi filter
+                    return;
+                }
                 const isChange = action === 'apply' || action === 'reset';
                 if (isChange) {
                     this.updateActiveList(index, getFilterModelForIndex(this.params.state.model, index));

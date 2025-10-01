@@ -62,9 +62,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private groupField: string | undefined;
     private rowGroupColumn: AgColumn;
 
-    private idSequence = { value: 0 };
+    private readonly idSequence = { value: 0 };
     private cache: LazyCache;
-    private info: any;
+    private readonly info: any;
 
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode) {
         super();

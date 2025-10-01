@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_DK = {
     // Group Column Filter
     groupFilterSelect: 'Vælg felt:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'er (alle)',
+    filterSummaryContains: 'indeholder',
+    filterSummaryNotContains: 'indeholder ikke',
+    filterSummaryTextEquals: 'er lig med',
+    filterSummaryTextNotEqual: 'er ikke lig med',
+    filterSummaryStartsWith: 'begynder med',
+    filterSummaryEndsWith: 'slutter med',
+    filterSummaryBlank: 'er tom',
+    filterSummaryNotBlank: 'er ikke tom',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'mellem',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'er (alle)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'er (${variable})',
+    filterSummaryListLong: 'er (${variable}) og ${variable} mere',
+    addFilterCard: 'Tilføj filter',
+    agTextColumnFilterDisplayName: 'Simpelt filter',
+    agNumberColumnFilterDisplayName: 'Simpelt filter',
+    agDateColumnFilterDisplayName: 'Simpelt filter',
+    agSetColumnFilterDisplayName: 'Valgfilter',
+    agMultiColumnFilterDisplayName: 'Kombinationsfilter',
+    addFilterPlaceholder: 'Søg i kolonner...',
+
     // Advanced Filter
     advancedFilterContains: 'indeholder',
     advancedFilterNotContains: 'indeholder-ikke',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_DK = {
     advancedFilterAnd: 'OG',
     advancedFilterOr: 'ELLER',
     advancedFilterApply: 'Anvend',
+    advancedFilterReset: 'Nulstil',
+    advancedFilterCancel: 'Annuller',
+    advancedFilterClear: 'Ryd',
     advancedFilterBuilder: 'Builder',
     advancedFilterValidationMissingColumn: 'Kolonne mangler',
     advancedFilterValidationMissingOption: 'Valgmulighed mangler',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_DK = {
     advancedFilterValidationMessageAtEnd: 'Udtrykket har en fejl. ${variable} i slutningen af udtrykket.',
     advancedFilterBuilderTitle: 'Avanceret Filter',
     advancedFilterBuilderApply: 'Anvend',
+    advancedFilterBuilderClear: 'Ryd',
+    advancedFilterBuilderReset: 'Nulstil',
     advancedFilterBuilderCancel: 'Annuller',
     advancedFilterBuilderAddButtonTooltip: 'Tilføj Filter eller Gruppe',
     advancedFilterBuilderRemoveButtonTooltip: 'Fjern',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_DK = {
     advancedFilterBuilderValidationSelectColumn: 'Skal vælge en kolonne.',
     advancedFilterBuilderValidationSelectOption: 'Skal vælge en valgmulighed.',
     advancedFilterBuilderValidationEnterValue: 'Skal indtaste en værdi.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Dato skal være efter ${variable}',
+    maxDateValidation: 'Dato skal være før ${variable}',
+    maxLengthValidation: 'Må ikke have flere end ${variable} tegn.',
+    minValueValidation: 'Skal være større end eller lig med ${variable}',
+    maxValueValidation: 'Skal være mindre end eller lig med ${variable}',
+    invalidSelectionValidation: 'Ugyldigt valg.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Kolonner',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_DK = {
     dropOff: 'Frafald',
     stageLabels: 'Trinmærkater',
     reverse: 'Omvendt',
+    tooltipMode: 'Værktøjstiptilstand',
+    tooltipModeSingle: 'Enkelt',
+    tooltipModeShared: 'Flere',
+    tooltipModeCompact: 'Kompakt',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Tryk på ENTER for at redigere.',
@@ -540,6 +589,10 @@ export const AG_GRID_LOCALE_DK = {
     ariaChartSelected: 'Valgt',
     ariaSkeletonCellLoadingFailed: 'Række kunne ikke indlæses',
     ariaSkeletonCellLoading: 'Række data indlæses',
+    ariaDeferSkeletonCellLoading: 'Celle indlæses',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Afventende ændring',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Rækkegrupper',
@@ -556,8 +609,10 @@ export const AG_GRID_LOCALE_DK = {
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Kolonnemenu',
     ariaLabelColumnFilter: 'Kolonnefilter',
-    ariaLabelCellEditor: 'Celleredigering',
     ariaLabelSelectField: 'Vælg felt',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaLabelLoadingContextMenu: 'Indlæser kontekstmenu',
 
     // aria labels for rich select
@@ -578,6 +633,11 @@ export const AG_GRID_LOCALE_DK = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolonner Liste',
     ariaFilterPanelList: 'Filter Liste',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Tilføj filterfelt',
+    ariaLabelFilterCardDelete: 'Slet filter',
+    ariaLabelFilterCardHasEdits: 'Har redigeringer',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

@@ -1,7 +1,9 @@
-import type { ElementParams } from '../../utils/dom';
-import { _clearElement, _createElement } from '../../utils/dom';
-import { _exists, _missing } from '../../utils/generic';
-import { Component, RefPlaceholder } from '../../widgets/component';
+import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
+import { _exists, _missing } from '../../agStack/utils/generic';
+import { _clearElement } from '../../main';
+import type { ElementParams } from '../../utils/element';
+import { _createElement } from '../../utils/element';
+import { Component } from '../../widgets/component';
 import { animateSlideCellRendererCSS } from './animateSlideCellRenderer.css-GENERATED';
 import type { ICellRenderer } from './iCellRenderer';
 
@@ -11,7 +13,7 @@ const AnimateSlideCellRendererElement: ElementParams = {
 };
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
-    private eCurrent: HTMLElement = RefPlaceholder;
+    private readonly eCurrent: HTMLElement = RefPlaceholder;
     private ePrevious: HTMLElement | null;
 
     private lastValue: any;

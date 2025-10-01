@@ -1,8 +1,8 @@
+import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { ColDef } from '../../entities/colDef';
 import type { GetCellsParams } from '../../interfaces/iCellsParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
-import type { IComponent } from '../../interfaces/iComponent';
 import type { IRowNode } from '../../interfaces/iRowNode';
 
 export interface ICellRendererParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -86,3 +86,27 @@ export interface ICellRendererFunc<TData = any> {
 }
 
 export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {}
+
+export interface EventCellRendererParams<TData = any, TValue = any, TContext = any> {
+    /**
+     * Return `true` to prevent the grid from handling the following mouse events:
+     * `'click'`, `'dblclick'`, `'mousedown'`, `'touchstart'`.
+     *
+     * This will prevent actions performed via the mouse, such as focusing a cell,
+     * selecting a row, starting a cell selection, or starting an edit.
+     *
+     * This will not prevent the grid from firing events for these mouse events (e.g. `onCellClicked`),
+     * but the events will have the `isEventHandlingSuppressed` property set to match the return value.
+     */
+    suppressMouseEventHandling?: (params: SuppressMouseEventHandlingParams<TData, TValue, TContext>) => boolean;
+}
+
+export interface SuppressMouseEventHandlingParams<TData = any, TValue = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
+    /** Row node that the event was on. */
+    node: IRowNode<TData>;
+    /** Column that the event was on, or `undefined` for full width rows. */
+    column?: Column<TValue>;
+    /** Mouse event. */
+    event: MouseEvent;
+}

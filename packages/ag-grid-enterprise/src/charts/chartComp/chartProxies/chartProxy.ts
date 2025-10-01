@@ -9,7 +9,7 @@ import type {
     AgCrosshairOptions,
 } from 'ag-charts-types';
 
-import type { ChartType, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
+import type { ChartType, GridChartContext, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../agChartsExports';
 import type { CrossFilteringContext } from '../../chartService';
@@ -40,6 +40,7 @@ export interface ChartProxyParams {
     seriesChartTypes: SeriesChartType[];
     suppressFieldDotNotation?: boolean;
     translate: (toTranslate: string, defaultText?: string) => string;
+    context: GridChartContext;
 }
 
 export type ExtraPaddingDirection = 'top' | 'right' | 'bottom' | 'left';
@@ -57,6 +58,7 @@ export interface UpdateParams {
         id: string;
         name: string;
         chartDataType?: string;
+        convertTime?: (date: string | undefined) => Date | undefined;
     }[];
     fields: FieldDefinition[];
     chartId?: string;
@@ -121,7 +123,7 @@ export abstract class ChartProxy<
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {
         const { chart } = this;
         const rawChart = deproxy(chart);
-        const imageFileName = fileName || (rawChart.title ? rawChart.title.text : 'chart');
+        const imageFileName = fileName || rawChart.title.node.getPlainText();
         const { width, height } = dimensions || {};
 
         chart.download({ width, height, fileName: imageFileName, fileFormat });
@@ -170,7 +172,7 @@ export abstract class ChartProxy<
         // replace the values for the selected category with a complex object to allow for duplicated categories
         return data.map((d, index) => {
             const value = d[categoryKey];
-            const valueString = value && value.toString ? value.toString() : '';
+            const valueString = value?.toString ? value.toString() : '';
             const datum = { ...d };
 
             datum[categoryKey] = { id: index, value, toString: () => valueString };
@@ -247,6 +249,7 @@ export abstract class ChartProxy<
             enabled: false,
             height: 18,
         };
+        common.context = this.chartProxyParams.context;
         return {
             common,
             ...seriesChartOptions,

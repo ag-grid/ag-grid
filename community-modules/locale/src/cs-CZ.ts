@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_CZ = {
     // Group Column Filter
     groupFilterSelect: 'Vyberte pole:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'je (vše)',
+    filterSummaryContains: 'obsahuje',
+    filterSummaryNotContains: 'neobsahuje',
+    filterSummaryTextEquals: 'rovná se',
+    filterSummaryTextNotEqual: 'nerovná se',
+    filterSummaryStartsWith: 'začíná s',
+    filterSummaryEndsWith: 'končí s',
+    filterSummaryBlank: 'je prázdné',
+    filterSummaryNotBlank: 'není prázdné',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'mezi',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'je (vše)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'je (${variable})',
+    filterSummaryListLong: 'je (${variable}) a ${variable} dalších',
+    addFilterCard: 'Přidat filtr',
+    agTextColumnFilterDisplayName: 'Jednoduchý filtr',
+    agNumberColumnFilterDisplayName: 'Jednoduchý filtr',
+    agDateColumnFilterDisplayName: 'Jednoduchý filtr',
+    agSetColumnFilterDisplayName: 'Filtr výběru',
+    agMultiColumnFilterDisplayName: 'Kombinovaný filtr',
+    addFilterPlaceholder: 'Hledat ve sloupcích...',
+
     // Advanced Filter
     advancedFilterContains: 'obsahuje',
     advancedFilterNotContains: 'neobsahuje',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterAnd: 'A',
     advancedFilterOr: 'NEBO',
     advancedFilterApply: 'Použít',
+    advancedFilterReset: 'Obnovit',
+    advancedFilterCancel: 'Zrušit',
+    advancedFilterClear: 'Vymazat',
     advancedFilterBuilder: 'Stavitel',
     advancedFilterValidationMissingColumn: 'Chybí sloupec',
     advancedFilterValidationMissingOption: 'Chybí možnost',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterValidationMessageAtEnd: 'Výraz obsahuje chybu. ${variable} na konci výrazu.',
     advancedFilterBuilderTitle: 'Pokročilý filtr',
     advancedFilterBuilderApply: 'Použít',
+    advancedFilterBuilderClear: 'Vymazat',
+    advancedFilterBuilderReset: 'Obnovit',
     advancedFilterBuilderCancel: 'Zrušit',
     advancedFilterBuilderAddButtonTooltip: 'Přidat filtr nebo skupinu',
     advancedFilterBuilderRemoveButtonTooltip: 'Odebrat',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_CZ = {
     advancedFilterBuilderValidationSelectColumn: 'Musíte vybrat sloupec.',
     advancedFilterBuilderValidationSelectOption: 'Musíte vybrat možnost.',
     advancedFilterBuilderValidationEnterValue: 'Musíte zadat hodnotu.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Datum musí být po ${variable}',
+    maxDateValidation: 'Datum musí být před ${variable}',
+    maxLengthValidation: 'Musí mít ${variable} znaků nebo méně.',
+    minValueValidation: 'Musí být větší nebo rovno ${variable}',
+    maxValueValidation: 'Musí být menší nebo rovno ${variable}',
+    invalidSelectionValidation: 'Neplatný výběr.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Sloupce',
@@ -206,7 +251,7 @@ export const AG_GRID_LOCALE_CZ = {
     pageSizeSelectorLabel: 'Velikost stránky:',
     footerTotal: 'Celkem',
     statusBarLastRowUnknown: '?',
-    scrollColumnIntoView: "Přejít na '${variable}'",
+    scrollColumnIntoView: 'Přejít na ${variable}',
 
     // Pivoting
     pivotColumnGroupTotals: 'Celkem',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_CZ = {
     dropOff: 'Pokles',
     stageLabels: 'Popisky Fází',
     reverse: 'Obrátit',
+    tooltipMode: 'Mód popisku',
+    tooltipModeSingle: 'Jednotlivý',
+    tooltipModeShared: 'Vícečetný',
+    tooltipModeCompact: 'Kompaktní',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Úroveň ${variable}. Stiskněte ENTER pro úpravu.',
@@ -539,6 +588,10 @@ export const AG_GRID_LOCALE_CZ = {
     ariaChartSelected: 'Vybráno',
     ariaSkeletonCellLoadingFailed: 'Řádek se nepodařilo načíst',
     ariaSkeletonCellLoading: 'Data řádku se načítají',
+    ariaDeferSkeletonCellLoading: 'Načítá se buňka',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Čekající změna',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Skupiny řádků',
@@ -555,8 +608,10 @@ export const AG_GRID_LOCALE_CZ = {
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Nabídka sloupců',
     ariaLabelColumnFilter: 'Filtr sloupců',
-    ariaLabelCellEditor: 'Editor buňky',
     ariaLabelSelectField: 'Vyberte pole',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'Ověření editoru buňky',
     ariaLabelLoadingContextMenu: 'Načítání kontextové nabídky',
 
     // aria labels for rich select
@@ -577,6 +632,11 @@ export const AG_GRID_LOCALE_CZ = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Seznam sloupců',
     ariaFilterPanelList: 'Seznam filtrů',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Přidat filtr',
+    ariaLabelFilterCardDelete: 'Smazat filtr',
+    ariaLabelFilterCardHasEdits: 'Má úpravy',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '‚',

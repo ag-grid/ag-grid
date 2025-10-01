@@ -228,9 +228,7 @@ It may be desirable to refresh the values at a later point, for example to refle
 ```{% frameworkTransform=true %}
 const gridOptions = {
     onFilterChanged: params => {
-        params.api.getColumnFilterInstance('columnName').then(setFilter => {
-            setFilter.refreshFilterValues();
-        });
+        params.api.getColumnFilterHandler('columnName').refreshFilterValues();
     }
 }
 ```
@@ -254,6 +252,8 @@ const gridOptions = {
 ```
 
 When you refresh the values, any values that were selected in the filter that still exist in the new values will stay selected, but any other selected values will be discarded.
+
+Additionally, if all the new values are selected (and the filter was previously active), the filter model will be cleared (reset to `null`). This behaviour can be prevented by setting the filter param `suppressClearModelOnRefreshValues = true`. This can be useful if using [Server-Side Row Model Filtering](./server-side-model-filtering/#set-filtering) and updating the filter values based on other column filters
 
 The following example demonstrates refreshing values. Note the following:
 

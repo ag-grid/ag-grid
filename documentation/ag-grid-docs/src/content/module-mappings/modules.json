@@ -1,9 +1,14 @@
 {
     "groups": [
         {
-            "moduleName": "ValidationModule",
-            "name": "Validation (Dev Mode)",
-            "path": "modules/#validation"
+            "name": "Development and Testing",
+            "children": [
+                {
+                    "moduleName": "ValidationModule",
+                    "name": "Validation (Dev Mode)",
+                    "path": "modules/#development-validations"
+                }
+            ]
         },
         {
             "name": "Columns",
@@ -244,6 +249,12 @@
                     "moduleName": "UndoRedoEditModule",
                     "name": "Undo / Redo Edits",
                     "path": "undo-redo-edits"
+                },
+                {
+                    "moduleName": "BatchEditModule",
+                    "name": "Batch Edit",
+                    "path": "cell-batch-edit",
+                    "isEnterprise": true
                 }
             ]
         },
@@ -349,7 +360,7 @@
                         {
                             "moduleName": "NewFiltersToolPanelModule",
                             "name": "New Filters Tool Panel",
-                            "path": "tool-panel-filters/#new-filters-tool-panel",
+                            "path": "tool-panel-filters-new",
                             "isEnterprise": true
                         }
                     ]

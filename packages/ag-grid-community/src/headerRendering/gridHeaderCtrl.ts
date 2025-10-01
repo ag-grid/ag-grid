@@ -1,11 +1,11 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _getActiveDomElement } from '../agStack/utils/document';
+import { _requestAnimationFrame } from '../agStack/utils/dom';
+import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';
-import { _requestAnimationFrame } from '../utils/dom';
-import { _focusNextGridCoreContainer } from '../utils/focus';
-import { _exists } from '../utils/generic';
+import { _focusNextGridCoreContainer } from '../utils/gridFocus';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 
@@ -68,7 +68,7 @@ export class GridHeaderCtrl extends BeanStub {
         );
 
         this.addManagedEventListeners({
-            displayedColumnsChanged: listener,
+            headerRowsChanged: listener,
             columnHeaderHeightChanged: listener,
             // add this to the animation frame to avoid a feedback loop
             columnGroupHeaderHeightChanged: () => _requestAnimationFrame(this.beans, () => listener()),
@@ -164,7 +164,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = 'DOWN';
                 }
-                if (headerNavigation!.navigateVertically(direction, null, e)) {
+                if (headerNavigation!.navigateVertically(direction, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }

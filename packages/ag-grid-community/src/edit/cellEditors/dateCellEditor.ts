@@ -1,9 +1,10 @@
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _serialiseDate } from '../../agStack/utils/date';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputDateFieldSelector } from '../../agStack/widgets/agInputDateField';
 import type { DataTypeService } from '../../columns/dataTypeService';
-import { _serialiseDate } from '../../utils/date';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import type { AgInputDateField } from '../../widgets/agInputDateField';
-import { AgInputDateFieldSelector } from '../../widgets/agInputDateField';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputDateField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { IDateCellEditorParams } from './iDateCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -13,12 +14,15 @@ const DateCellElement: ElementParams = {
     ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
-class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    private eEditor: AgInputDateField;
+class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, GridInputDateField> {
+    private eEditor: GridInputDateField;
     private params: IDateCellEditorParams;
     private includeTime: boolean | undefined;
 
-    constructor(private getDataTypeService: () => DataTypeService | undefined) {}
+    constructor(
+        private readonly getDataTypeService: () => DataTypeService | undefined,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc
+    ) {}
 
     public getTemplate(): ElementParams {
         return DateCellElement;
@@ -28,7 +32,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         return [AgInputDateFieldSelector];
     }
 
-    public init(eEditor: AgInputDateField, params: IDateCellEditorParams): void {
+    public init(eEditor: GridInputDateField, params: IDateCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
 
@@ -52,18 +56,34 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         }
     }
 
-    public getErrors(): string[] | null {
-        const value = this.getValue();
+    public getValidationErrors(): string[] | null {
+        const eInput = this.eEditor.getInputElement();
+        const value = eInput.valueAsDate;
+
         const { params } = this;
-        const { min, max, getErrors } = params;
+        const { min, max, getValidationErrors } = params;
         let internalErrors: string[] | null = [];
+        const translate = this.getLocaleTextFunc();
 
         if (value instanceof Date && !isNaN(value.getTime())) {
-            if (min instanceof Date && value < min) {
-                internalErrors.push(`Date must be after ${min.toLocaleDateString()}`);
+            if (min) {
+                const minValue = min instanceof Date ? min : new Date(min);
+                if (value < minValue) {
+                    const minDateString = minValue.toLocaleDateString();
+                    internalErrors.push(
+                        translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString])
+                    );
+                }
             }
-            if (max instanceof Date && value > max) {
-                internalErrors.push(`Date must be before ${max.toLocaleDateString()}`);
+
+            if (max) {
+                const maxValue = max instanceof Date ? max : new Date(max);
+                if (value > maxValue) {
+                    const maxDateString = maxValue.toLocaleDateString();
+                    internalErrors.push(
+                        translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString])
+                    );
+                }
             }
         }
 
@@ -71,8 +91,8 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({ value, cellEditorParams: params, internalErrors });
+        if (getValidationErrors) {
+            return getValidationErrors({ value, cellEditorParams: params, internalErrors });
         }
 
         return internalErrors;
@@ -96,8 +116,13 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
     }
 }
 
-export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams, AgInputDateField> {
+export class DateCellEditor extends SimpleCellEditor<Date, IDateCellEditorParams, GridInputDateField> {
     constructor() {
-        super(new DateCellEditorInput(() => this.beans.dataTypeSvc));
+        super(
+            new DateCellEditorInput(
+                () => this.beans.dataTypeSvc,
+                () => this.getLocaleTextFunc()
+            )
+        );
     }
 }

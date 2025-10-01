@@ -1,15 +1,13 @@
+import { _last } from '../../agStack/utils/array';
+import { _exists } from '../../agStack/utils/generic';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import { createUniqueColumnGroupId, isColumnGroup } from '../../entities/agColumnGroup';
-import { AgColumnGroup } from '../../entities/agColumnGroup';
-import { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
-import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
+import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../../entities/agColumnGroup';
+import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColGroupDef } from '../../entities/colDef';
 import type { ColumnEventType } from '../../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
-import { _last } from '../../utils/array';
-import { _exists } from '../../utils/generic';
 import { _recursivelyCreateColumns, depthFirstOriginalTreeSearch } from '../columnFactoryUtils';
 import type { IColumnKeyCreator } from '../columnKeyCreator';
 import type { GroupInstanceIdCreator } from '../groupInstanceIdCreator';
@@ -389,11 +387,11 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
                 let currentPaddedGroup: AgProvidedColumnGroup | undefined;
 
                 // this for loop will NOT run any loops if no padded column groups are needed
-                for (let j = columnDepth - 1; j >= currentDepth; j--) {
+                for (let j = currentDepth; j < columnDepth; j++) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = createMergedColGroupDef(this.beans, null, newColId);
 
-                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDepth);
+                    const paddedGroup = new AgProvidedColumnGroup(colGroupDefMerged, newColId, true, j);
                     this.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
@@ -432,7 +430,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         let depth = 0;
         let pointer = balancedColumnTree;
 
-        while (pointer && pointer[0] && isProvidedColumnGroup(pointer[0])) {
+        while (pointer?.[0] && isProvidedColumnGroup(pointer[0])) {
             depth++;
             pointer = (pointer[0] as AgProvidedColumnGroup).getChildren();
         }
@@ -571,6 +569,10 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         parent: AgColumnGroup | null
     ): void {
         columnsOrGroups!.forEach((columnsOrGroup) => {
+            if (columnsOrGroup.parent !== parent) {
+                // parent has explicitly changed - force viewport headers now needed.
+                this.beans.colViewport.colsWithinViewportHash = '';
+            }
             columnsOrGroup.parent = parent;
             if (isColumnGroup(columnsOrGroup)) {
                 const columnGroup = columnsOrGroup;

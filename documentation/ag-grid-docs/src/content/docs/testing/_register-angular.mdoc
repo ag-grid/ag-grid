@@ -1,0 +1,223 @@
+{% if isFramework("angular") %}
+## Configuring the Test Module
+
+We will walk through how you can use testing AG Grid as part of your Angular application, using default build tools provided when using the [Angular CLI](https://angular.dev/cli).
+
+Before we can test our component we need to configure the `TestBed`. In this example we have a `TestHostComponent` that wraps `AgGridAngular` so we pass that to the `TestBed`.
+
+```ts
+@Component({
+    selector: 'app-grid-wrapper',
+    standalone: true,
+    imports: [AgGridAngular],
+    template: `<ag-grid-angular
+        [rowData]="rowData"
+        [columnDefs]="columnDefs" />`,
+})
+export class TestHostComponent {
+
+    rowData: any[] = [{ name: 'Test Name', number: 42 }];
+    columnDefs: ColDef[] = [
+        { field: 'name' },
+        { field: 'number', colId: 'raw', headerName: 'Raw Number', editable: true, cellEditor: EditorComponent },
+        { field: 'number', colId: 'renderer', headerName: 'Renderer Value', cellRenderer: PoundRenderer },
+    ];
+
+    @ViewChild(AgGridAngular) public agGrid: AgGridAngular;
+}
+
+
+beforeEach(async () => {
+    await TestBed.configureTestingModule({
+        imports: [TestHostComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(TestHostComponent);
+    component = fixture.componentInstance;
+});
+```
+
+## Testing via the Grid API
+
+The grid api will be available after `detectChanges()` has run and the fixture is stable. This is true if you store a reference to the `api` within `onGridReady` or use a `ViewChild` to access the `AgGridAngular` component.
+
+```js
+it('ViewChild not available until `detectChanges`', () => {
+    expect(component.agGrid).not.toBeTruthy();
+});
+
+it('ViewChild is available after `detectChanges`', async () => {
+    // Detect changes triggers the AgGridAngular lifecycle hooks
+    fixture.detectChanges();
+    // Wait for the fixture to stabilise
+    await fixture.whenStable();
+    // ViewChild now has a reference to the component
+    expect(component.agGrid.api).toBeTruthy();
+});
+```
+
+## Testing Grid Contents
+
+One way to check the grid contents is to access the `nativeElement` and query DOM elements from there:
+
+```js
+it('the grid cells should be as expected', async () => {
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const cellElements =  fixture.nativeElement.querySelectorAll('.ag-cell-value');
+
+    expect(cellElements.length).toEqual(3);
+    expect(cellElements[0].textContent).toEqual("Test Name");
+    expect(cellElements[1].textContent).toEqual("42");
+    expect(cellElements[2].textContent).toEqual("£42");
+});
+```
+
+## Testing User Supplied Components
+
+To test user supplied components you can access them via the grid API.
+
+For example, given the following code:
+
+```ts
+
+@Component({
+    standalone: true,
+    template: `£{{params?.value}}`,
+})
+export class PoundRenderer implements ICellRendererAngularComp {
+    params: ICellRendererParams | undefined;
+
+    agInit(params: ICellRendererParams): void {
+        this.params = params;
+    }
+
+    refresh(params: ICellRendererParams) {
+        this.params = params;
+        return true;
+    }
+}
+
+@Component({
+    selector: 'editor-cell',
+    template: `<input #input [(ngModel)]="value" style="width: 100%">`
+    }
+)
+export class EditorComponent implements ICellEditorAngularComp {
+    private params: ICellEditorParams;
+    public value: number;
+
+    @ViewChild('input', {read: ViewContainerRef}) public input;
+
+    agInit(params: ICellEditorParams): void {
+        this.params = params;
+        this.value = this.params.value;
+    }
+
+    getValue(): any {
+        return this.value;
+    }
+
+    // for testing
+    setValue(newValue: any) {
+        this.value = newValue;
+    }
+
+    isCancelBeforeStart(): boolean {
+        return false;
+    }
+
+    isCancelAfterEnd(): boolean {
+        return false;
+    };
+}
+
+@Component({
+    template:
+        `<div>
+            <ag-grid-angular
+                style="width: 100%; height: 350px;"
+                [columnDefs]="columnDefs"
+                [rowData]="rowData"
+                [stopEditingWhenCellsLoseFocus]="false"
+                (gridReady)="onGridReady($event)" />
+        </div>`
+})
+class TestHostComponent {
+    rowData: any[] = [{name: 'Test Name', number: 42}];
+
+    columnDefs: ColDef[] = [
+        {field: "name"},
+        {field: "number", colId: "raw", headerName: "Raw Number", editable: true, cellEditor: EditorComponent},
+        {field: "number", colId: "renderer", headerName: "Renderer Value", cellRenderer: PoundRenderer}
+    ];
+
+    api: GridApi;
+
+    public onGridReady(params: GridReadyEvent) {
+        this.api = params.api;
+    }
+}
+```
+
+We can test that the `EditorComponent` works as follows:
+```js
+it('cell should be editable and editor component usable', async () => {
+    // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+    // As part of the creation the grid apis will be attached to the gridOptions property.
+      fixture.autoDetectChanges();
+      await fixture.whenStable();
+
+    // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
+    component.api.startEditingCell({
+            rowIndex: 0,
+            colKey: 'raw'
+        });
+
+    const instances = component.api.getCellEditorInstances();
+    expect(instances.length).toEqual(1);
+
+    const editorComponent = instances[0];
+    editorComponent.setValue(100);
+
+    component.api.stopEditing();
+
+    await fixture.whenStable();
+
+    const cellElements = fixture.nativeElement.querySelectorAll('.ag-cell-value');
+    expect(cellElements.length).toEqual(3);
+    expect(cellElements[0].textContent).toEqual("Test Name");
+    expect(cellElements[1].textContent).toEqual("100");
+    expect(cellElements[2].textContent).toEqual("£100");
+});
+```
+
+## Testing with Angular Testing Library
+It is also possible to use [Angular Testing Library](https://testing-library.com/docs/angular-testing-library/intro/) to test AG Grid. Here is one example showing how to test a row click handler that displays the last clicked row above the grid.
+
+```js
+<div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}</div>
+<ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)" />
+```
+
+```js
+import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
+
+it('Test cell clicked run row handler', async () => {
+  render(GridWrapperComponent);
+
+  const row = await screen.findByText('Ford');
+
+  await userEvent.click(row);
+
+  const rowClicked = await screen.findByTestId('rowClicked');
+  expect(rowClicked.textContent).toBe('Row Clicked: Ford');
+});
+```
+
+All the tests above and more can be found in the following [GitHub Repo](https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests).
+
+{% /if %}

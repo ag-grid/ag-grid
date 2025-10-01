@@ -1,7 +1,8 @@
+import { _isNodeOrElement, _loadTemplate } from '../agStack/utils/dom';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _warn } from '../validation/logging';
-import { _createElement, _isNodeOrElement, _loadTemplate } from './dom';
+import { _createElement } from './element';
 
 //
 // IMPORTANT NOTE!
@@ -53,6 +54,7 @@ export type IconName =
     | 'filterAdd'
     | 'filterCardExpand'
     | 'filterCardCollapse'
+    | 'filterCardEditing'
     | 'filterTab'
     | 'filtersToolPanel'
     | 'columns'
@@ -181,7 +183,8 @@ export type IconValue =
     | 'chevron-up'
     | 'chevron-down'
     | 'chevron-left'
-    | 'chevron-right';
+    | 'chevron-right'
+    | 'edit';
 
 /**
  * If icon provided, use this (either a string, or a function callback).
@@ -228,7 +231,7 @@ export function _createIconNoSpan(
     }
 
     // check col for icon first
-    const icons: any = column && column.getColDef().icons;
+    const icons: any = column?.getColDef().icons;
 
     if (icons) {
         userProvidedIcon = icons[iconName];
@@ -266,7 +269,7 @@ export function _createIconNoSpan(
         _warn(133, { iconName });
         return undefined;
     } else {
-        const iconValue = beans.registry.getIcon(iconName as IconName);
+        const iconValue = beans.registry.getIcon(iconName);
         if (!iconValue) {
             beans.validation?.validateIcon(iconName);
         }

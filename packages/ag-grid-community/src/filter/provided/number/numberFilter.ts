@@ -1,8 +1,9 @@
+import { _makeNull } from '../../../agStack/utils/generic';
+import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
+import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
-import { _createElement } from '../../../utils/dom';
-import { _makeNull } from '../../../utils/generic';
-import { AgInputNumberField } from '../../../widgets/agInputNumberField';
-import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { _createElement } from '../../../utils/element';
+import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
@@ -16,11 +17,11 @@ type NumberFilterDisplayParams = INumberFilterParams &
 export class NumberFilter extends SimpleFilter<
     NumberFilterModel,
     number,
-    AgInputTextField | AgInputNumberField,
+    GridInputTextField | GridInputNumberField,
     NumberFilterDisplayParams
 > {
-    private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
-    private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
+    private readonly eValuesFrom: (GridInputTextField | GridInputNumberField)[] = [];
+    private readonly eValuesTo: (GridInputTextField | GridInputNumberField)[] = [];
 
     public readonly filterType = 'number' as const;
 
@@ -31,7 +32,7 @@ export class NumberFilter extends SimpleFilter<
     protected override defaultDebounceMs: number = 500;
 
     protected override setElementValue(
-        element: AgInputTextField | AgInputNumberField,
+        element: GridInputTextField | GridInputNumberField,
         value: number | null,
         fromFloatingFilter?: boolean
     ): void {
@@ -54,11 +55,11 @@ export class NumberFilter extends SimpleFilter<
 
     private createFromToElement(
         eCondition: HTMLElement,
-        eValues: (AgInputTextField | AgInputNumberField)[],
+        eValues: (GridInputTextField | GridInputNumberField)[],
         fromTo: string,
         allowedCharPattern: string | null
     ): void {
-        const eValue = this.createManagedBean(
+        const eValue = this.createManagedBean<GridInputTextField | GridInputNumberField>(
             allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField()
         );
         eValue.addCss(`ag-filter-${fromTo}`);
@@ -68,7 +69,7 @@ export class NumberFilter extends SimpleFilter<
     }
 
     protected removeEValues(startPosition: number, deleteCount?: number): void {
-        const removeComps = (eGui: (AgInputTextField | AgInputNumberField)[]) =>
+        const removeComps = (eGui: (GridInputTextField | GridInputNumberField)[]) =>
             this.removeComponents(eGui, startPosition, deleteCount);
 
         removeComps(this.eValuesFrom);
@@ -129,7 +130,7 @@ export class NumberFilter extends SimpleFilter<
         return model;
     }
 
-    protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField> {
+    protected getInputs(position: number): Tuple<GridInputTextField | GridInputNumberField> {
         const { eValuesFrom, eValuesTo } = this;
         if (position >= eValuesFrom.length) {
             return [null, null];

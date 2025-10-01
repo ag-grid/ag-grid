@@ -51,6 +51,10 @@ function isApiDocsHeadingNode(node: Node) {
     return node.tag === 'apiDocumentation' && !node.attributes.section;
 }
 
+function isIfNode(node: Node) {
+    return node.tag === 'if';
+}
+
 function hasApiDocsHeadingAttribute(node?: Node) {
     return node?.attributes?.[API_DOC_HEADINGS_ATTR_NAME];
 }
@@ -241,6 +245,16 @@ export function getTopHeading(title: string) {
     return { slug: 'top', depth: 1, text: title };
 }
 
+function updateWithApiDocsHeadings(node: Node): Node {
+    if (isIfNode(node)) {
+        node.children = node.children.map(updateWithApiDocsHeadings);
+        return node;
+    } else if (isApiDocsHeadingNode(node)) {
+        addAttributeToNode({ node, name: API_DOC_HEADINGS_ATTR_NAME, value: true });
+    }
+    return node;
+}
+
 /**
  * Get headings within markdoc content, resolving headings shown based on framework and adding
  * tab headings
@@ -278,12 +292,7 @@ export async function getHeadings({
     }
 
     const transformAst = (ast: Node) => {
-        ast.children = ast.children.map((node) => {
-            if (isApiDocsHeadingNode(node)) {
-                addAttributeToNode({ node, name: API_DOC_HEADINGS_ATTR_NAME, value: true });
-            }
-            return node;
-        });
+        ast.children = ast.children.map(updateWithApiDocsHeadings);
 
         resolvePartials({ pageName, ast, framework });
     };

@@ -1,6 +1,8 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
+import { onRowHeightChanged, resetRowHeights } from 'ag-grid-community';
 import {
     _CsrmSsrmSharedApiModule,
+    _RowModelSharedApiModule,
     _SharedRowSelectionModule,
     _SortModule,
     _SsrmInfiniteSharedApiModule,
@@ -86,6 +88,8 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
         flushServerSideAsyncTransactions,
         refreshServerSide,
         getServerSideGroupLevelState,
+        resetRowHeights,
+        onRowHeightChanged,
     },
-    dependsOn: [EnterpriseCoreModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
+    dependsOn: [EnterpriseCoreModule, _RowModelSharedApiModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
 };

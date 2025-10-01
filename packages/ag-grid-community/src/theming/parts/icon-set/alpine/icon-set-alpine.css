@@ -245,3 +245,7 @@
 .ag-icon-filter-add::before {
     mask-image: url('./alpine-svg-icons/filter-add.svg');
 }
+
+.ag-icon-edit::before {
+    mask-image: url('./alpine-svg-icons/edit.svg');
+}

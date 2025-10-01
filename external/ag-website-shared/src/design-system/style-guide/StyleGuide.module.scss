@@ -191,7 +191,8 @@
 .checkboxList,
 .radioList,
 .switchList,
-.selectList {
+.selectList,
+.textareaList {
     div {
         display: flex;
         align-items: center;
@@ -208,6 +209,10 @@
     input {
         top: unset; // Fix for existing odd behavior.
     }
+}
+
+.textareaList label {
+    margin-right: 0.5rem;
 }
 
 // Icons

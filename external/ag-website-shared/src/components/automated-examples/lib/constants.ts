@@ -13,6 +13,7 @@ export const AG_HEADER_CELL_SELECTOR = '.ag-header-cell';
 export const AG_HEADER_CELL_TEXT_SELECTOR = '.ag-header-cell .ag-header-cell-text'; // NOTE: Need header cell, so that filter text is not selected
 
 export const AG_DND_GHOST_SELECTOR = '.ag-dnd-ghost';
+export const AG_DND_GHOST_NOT_ALLOWED_SELECTOR = '.ag-dnd-ghost-not-allowed';
 export const AG_COLUMN_DROP_SELECTOR = '.ag-column-drop-wrapper';
 
 export const AG_MENU_OPTION_SELECTOR = '.ag-menu-option';

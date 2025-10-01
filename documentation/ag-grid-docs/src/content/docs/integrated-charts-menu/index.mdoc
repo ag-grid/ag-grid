@@ -20,11 +20,11 @@ The following items are displayed within the Chart Menu by default:
 
 The Chart Menu list can be customised via the grid option `chartMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
 
-The menu item list should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from the built-in menu items (listed above) and use `MenuItemDef` for your own menu items.
+The menu item list should be a list with each item either a) a `DefaultChartMenuItem` string or b) a `MenuItemDef`. Use `DefaultChartMenuItem` to pick from the built-in menu items (listed above) and use `MenuItemDef` for your own menu items.
 
 {% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartMenuItems"] /%}
 
-The following example demonstrates hiding the Edit Chart and Advanced Settings menu items:
+The following example demonstrates hiding the Edit Chart and Advanced Settings menu items, and adding a custom menu item that uses the `chartId` to close the chart:
 
 {% gridExampleRunner title="Customising the Chart Menu Items" name="menu-customisation" /%}
 

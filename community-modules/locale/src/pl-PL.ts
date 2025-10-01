@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_PL = {
     // Group Column Filter
     groupFilterSelect: 'Wybierz pole:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'jest (Wszystkie)',
+    filterSummaryContains: 'zawiera',
+    filterSummaryNotContains: 'nie zawiera',
+    filterSummaryTextEquals: 'jest równe',
+    filterSummaryTextNotEqual: 'nie jest równe',
+    filterSummaryStartsWith: 'zaczyna się od',
+    filterSummaryEndsWith: 'kończy się na',
+    filterSummaryBlank: 'jest puste',
+    filterSummaryNotBlank: 'nie jest puste',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'pomiędzy',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'jest (Wszystkie)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'jest (${variable})',
+    filterSummaryListLong: 'jest (${variable}) i ${variable} więcej',
+    addFilterCard: 'Dodaj filtr',
+    agTextColumnFilterDisplayName: 'Prosty filtr',
+    agNumberColumnFilterDisplayName: 'Prosty filtr',
+    agDateColumnFilterDisplayName: 'Prosty filtr',
+    agSetColumnFilterDisplayName: 'Filtr wyboru',
+    agMultiColumnFilterDisplayName: 'Filtr złożony',
+    addFilterPlaceholder: 'Szukaj w kolumnach...',
+
     // Advanced Filter
     advancedFilterContains: 'zawiera',
     advancedFilterNotContains: 'nie zawiera',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterAnd: 'AND',
     advancedFilterOr: 'OR',
     advancedFilterApply: 'Zastosuj',
+    advancedFilterReset: 'Resetuj',
+    advancedFilterCancel: 'Anuluj',
+    advancedFilterClear: 'Wyczyść',
     advancedFilterBuilder: 'Kreator',
     advancedFilterValidationMissingColumn: 'Brak kolumny',
     advancedFilterValidationMissingOption: 'Brak opcji',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterValidationMessageAtEnd: 'Wyrażenie zawiera błąd. ${variable} na końcu wyrażenia.',
     advancedFilterBuilderTitle: 'Zaawansowany filtr',
     advancedFilterBuilderApply: 'Zastosuj',
+    advancedFilterBuilderClear: 'Wyczyść',
+    advancedFilterBuilderReset: 'Resetuj',
     advancedFilterBuilderCancel: 'Anuluj',
     advancedFilterBuilderAddButtonTooltip: 'Dodaj filtr lub grupę',
     advancedFilterBuilderRemoveButtonTooltip: 'Usuń',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_PL = {
     advancedFilterBuilderValidationSelectColumn: 'Musisz wybrać kolumnę.',
     advancedFilterBuilderValidationSelectOption: 'Musisz wybrać opcję.',
     advancedFilterBuilderValidationEnterValue: 'Musisz wpisać wartość.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Data musi być po ${variable}',
+    maxDateValidation: 'Data musi być przed ${variable}',
+    maxLengthValidation: 'Musi mieć ${variable} znaków lub mniej.',
+    minValueValidation: 'Musi być większa lub równa ${variable}',
+    maxValueValidation: 'Musi być mniejsza lub równa ${variable}',
+    invalidSelectionValidation: 'Nieprawidłowy wybór.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Kolumny',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_PL = {
     dropOff: 'Spadek',
     stageLabels: 'Etykiety Etapu',
     reverse: 'Odwróć',
+    tooltipMode: 'Tryb podpowiedzi',
+    tooltipModeSingle: 'Pojedynczy',
+    tooltipModeShared: 'Wielokrotny',
+    tooltipModeCompact: 'Kompaktowy',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Poziom ${variable}. Naciśnij ENTER, aby edytować',
@@ -540,6 +589,10 @@ export const AG_GRID_LOCALE_PL = {
     ariaChartSelected: 'Wybrane',
     ariaSkeletonCellLoadingFailed: 'Wiersz nie udało się załadować',
     ariaSkeletonCellLoading: 'Dane wiersza ładują się',
+    ariaDeferSkeletonCellLoading: 'Komórka się ładuje',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Zmiana oczekująca',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupy wierszy',
@@ -556,8 +609,10 @@ export const AG_GRID_LOCALE_PL = {
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Menu kolumny',
     ariaLabelColumnFilter: 'Filtr kolumny',
-    ariaLabelCellEditor: 'Edytor komórek',
     ariaLabelSelectField: 'Wybierz pole',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'Walidacja edytora komórek',
     ariaLabelLoadingContextMenu: 'Ładowanie menu kontekstowego',
 
     // aria labels for rich select
@@ -578,6 +633,11 @@ export const AG_GRID_LOCALE_PL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista kolumn',
     ariaFilterPanelList: 'Lista filtrów',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Dodaj pole filtru',
+    ariaLabelFilterCardDelete: 'Usuń filtr',
+    ariaLabelFilterCardHasEdits: 'Ma edycje',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

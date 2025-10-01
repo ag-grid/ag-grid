@@ -1,0 +1,19 @@
+/* NOTE: this list of root selectors is present in _reset.css too, if you update
+   one then don't forget the other */
+.ag-root-wrapper,
+.ag-popup,
+.ag-dnd-ghost,
+.ag-external,
+.ag-chart {
+    line-height: normal;
+    cursor: default;
+    white-space: normal;
+    -webkit-font-smoothing: antialiased;
+    font-family: var(--ag-font-family);
+    font-size: var(--ag-font-size);
+    color-scheme: var(--ag-browser-color-scheme);
+    color: var(--ag-text-color);
+    background-color: var(--ag-background-color);
+
+    --ag-indentation-level: 0;
+}

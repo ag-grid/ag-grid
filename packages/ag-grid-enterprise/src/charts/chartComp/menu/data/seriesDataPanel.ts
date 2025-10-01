@@ -1,3 +1,4 @@
+import type { GridToggleButton } from 'ag-grid-community';
 import { AgToggleButton } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
@@ -13,8 +14,8 @@ export class SeriesDataPanel extends DragDataPanel {
         private readonly title: string,
         allowMultipleSelect: boolean,
         maxSelection: number | undefined,
-        private valueCols: ColState[],
-        private isOpen?: boolean
+        private readonly valueCols: ColState[],
+        private readonly isOpen?: boolean
     ) {
         super(chartController, allowMultipleSelect, maxSelection, /* html */ `<div id="seriesGroup"></div>`);
     }
@@ -31,7 +32,7 @@ export class SeriesDataPanel extends DragDataPanel {
             })
         );
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.groupComp.createManagedBean(
+            const pairedModeToggle = this.groupComp.createManagedBean<GridToggleButton>(
                 new AgToggleButton({
                     label: this.chartTranslation.translate('paired'),
                     labelAlignment: 'left',

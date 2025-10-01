@@ -1,6 +1,6 @@
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ValueGetterFunc } from '../entities/colDef';
 import type { IProvidedFilter, ProvidedFilterModel } from '../filter/provided/iProvidedFilter';
-import type { AgPromise } from '../utils/promise';
 import type {
     ColumnFilter,
     IFilter,
@@ -16,7 +16,11 @@ export interface IMultiFilter extends IProvidedFilter {
     readonly filterType: 'multi';
 
     /** @returns the child filter instance at the given index. */
-    getChildFilterInstance(index: number): IFilter | undefined;
+    getChildFilterInstance<TFilter = IFilter>(index: number): TFilter | undefined;
+}
+
+export interface MultiFilterHandler {
+    getHandler<TFilterHandler>(index: number): TFilterHandler | undefined;
 }
 
 export interface IMultiFilterDef extends IFilterDef {

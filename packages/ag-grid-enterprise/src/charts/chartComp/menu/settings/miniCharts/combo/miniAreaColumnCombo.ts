@@ -10,12 +10,12 @@ export interface Coordinate {
     y: number;
 }
 export class MiniAreaColumnComboClass extends MiniChartWithAxes {
-    private columns: Rect[];
-    private areas: Path[];
+    private readonly columns: Rect[];
+    private readonly areas: Path[];
 
-    private columnData = [3, 4.5];
+    private readonly columnData = [3, 4.5];
 
-    private areaData = [[5, 4, 6, 5, 4]];
+    private readonly areaData = [[5, 4, 6, 5, 4]];
 
     constructor(container: HTMLElement, agChartsExports: AgChartsExports, fills: string[], strokes: string[]) {
         super(container, agChartsExports, 'areaColumnComboTooltip');

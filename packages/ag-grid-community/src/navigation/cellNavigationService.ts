@@ -1,4 +1,6 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _last } from '../agStack/utils/array';
+import { _missing } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -8,8 +10,6 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RowSpanService } from '../rendering/spanning/rowSpanService';
-import { _last } from '../utils/array';
-import { _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
@@ -42,9 +42,21 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         let column: AgColumn | undefined;
         let rowIndex: number;
 
-        const { pageBounds, gos, visibleCols } = this.beans;
+        const { pageBounds, gos, visibleCols, pinnedRowModel } = this.beans;
+        const { rowPinned } = focusedCell;
         if (upKey || downKey) {
-            rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
+            if (rowPinned && pinnedRowModel) {
+                if (upKey) {
+                    rowIndex = 0;
+                } else {
+                    rowIndex =
+                        rowPinned === 'top'
+                            ? pinnedRowModel.getPinnedTopRowCount() - 1
+                            : pinnedRowModel.getPinnedBottomRowCount() - 1;
+                }
+            } else {
+                rowIndex = upKey ? pageBounds.getFirstRow() : pageBounds.getLastRow();
+            }
             column = focusedCell.column as AgColumn;
         } else {
             const isRtl = gos.get('enableRtl');
@@ -63,7 +75,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         return column
             ? {
                   rowIndex,
-                  rowPinned: null,
+                  rowPinned,
                   column,
               }
             : null;
@@ -177,7 +189,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         // adjust spanned cell so when moving down asserts use of last row in cell
         const adjustedLastCell = this.rowSpanSvc?.getCellEnd(lastCell) ?? lastCell;
 
-        const rowBelow = _getRowBelow(this.beans, adjustedLastCell);
+        const rowBelow = _getRowBelow(this.beans, adjustedLastCell, true);
         if (rowBelow) {
             return {
                 rowIndex: rowBelow.rowIndex,
@@ -197,10 +209,14 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         // adjust spanned cell so when moving up asserts use of first row in cell
         const adjustedLastCell = this.rowSpanSvc?.getCellStart(lastCell) ?? lastCell;
 
-        const rowAbove = _getRowAbove(this.beans, {
-            rowIndex: adjustedLastCell.rowIndex,
-            rowPinned: adjustedLastCell.rowPinned,
-        });
+        const rowAbove = _getRowAbove(
+            this.beans,
+            {
+                rowIndex: adjustedLastCell.rowIndex,
+                rowPinned: adjustedLastCell.rowPinned,
+            },
+            true
+        );
 
         if (rowAbove) {
             return {
@@ -235,7 +251,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         if (!newColumn) {
             newColumn = displayedColumns[0];
 
-            const rowBelow = _getRowBelow(this.beans, gridCell);
+            const rowBelow = _getRowBelow(this.beans, gridCell, true);
             if (_missing(rowBelow)) {
                 return null;
             }
@@ -266,7 +282,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         if (!newColumn) {
             newColumn = _last(displayedColumns);
 
-            const rowAbove = _getRowAbove(beans, { rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned });
+            const rowAbove = _getRowAbove(beans, { rowIndex: gridCell.rowIndex, rowPinned: gridCell.rowPinned }, true);
 
             if (_missing(rowAbove)) {
                 return null;

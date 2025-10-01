@@ -1,0 +1,25 @@
+---
+title: "Theming Test"
+---
+
+This is an internal page that contains examples that can be used to validate themes with theming API and legacy themes.
+
+{% if isFramework("angular", "react", "vue") %}
+{% warning %}
+Examples only work in TS/JS.
+{% /warning %}
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% note %}
+Launch examples in Plunker.
+{% /note %}
+
+## Theming API
+
+{% gridExampleRunner title="Theming API" name="theming-api" /%}
+
+## Legacy Themes
+
+{% gridExampleRunner title="Legacy Themes" name="legacy-themes" /%}
+{% /if %}

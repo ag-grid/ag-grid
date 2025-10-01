@@ -90,11 +90,8 @@ function onFilterChanged(e: FilterChangedEvent) {
 
 function onFilterModified(e: FilterModifiedEvent) {
     console.log('onFilterModified', e);
-    console.log('filterInstance.getModel() =>', e.filterInstance.getModel());
-    console.log(
-        'filterInstance.getModelFromUi() =>',
-        (e.filterInstance as unknown as IProvidedFilter).getModelFromUi()
-    );
+    console.log('applied model =>', e.api.getColumnFilterModel(e.column));
+    console.log('unapplied model =>', (e.filterInstance as unknown as IProvidedFilter).getModelFromUi());
 }
 
 // setup the grid after the page has finished loading

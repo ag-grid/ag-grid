@@ -16,11 +16,13 @@ import type {
     PartialCellRange,
     PopupService,
     SeriesChartType,
+    SortModelItem,
     UpdateChartParams,
 } from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
+    _addGridCommonParams,
     _clearElement,
     _errMsg,
     _focusGridInnerElement,
@@ -71,6 +73,7 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    crossFilteringSort?: SortModelItem[] | boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
@@ -117,7 +120,7 @@ export class GridChartComp extends Component {
     private readonly params: GridChartParams;
 
     // function to clean up the 'color-scheme-change' event listener
-    private onDestroyColorSchemeChangeListener: () => void;
+    private readonly onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
         super(/* html */ `
@@ -222,6 +225,7 @@ export class GridChartComp extends Component {
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
             suppressFieldDotNotation: this.gos.get('suppressFieldDotNotation'),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
+            context: _addGridCommonParams(this.gos, {}),
         };
 
         // ensure 'restoring' options are not reused when switching chart types
@@ -539,6 +543,10 @@ export class GridChartComp extends Component {
         this.chartProxy.crossFilteringReset();
     }
 
+    public setMaximized(maximized: boolean): void {
+        this.chartDialog?.setMaximized(maximized);
+    }
+
     private setActiveChartCellRange(focusEvent: FocusEvent): void {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
             return;
@@ -628,7 +636,7 @@ export class GridChartComp extends Component {
         this.destroyBean(this.chartMenu);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
-        if (this.chartDialog && this.chartDialog.isAlive()) {
+        if (this.chartDialog?.isAlive()) {
             this.destroyBean(this.chartDialog);
         }
 

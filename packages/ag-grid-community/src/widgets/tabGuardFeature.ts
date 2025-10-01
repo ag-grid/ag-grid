@@ -1,7 +1,7 @@
+import { _setAriaRole } from '../agStack/utils/aria';
+import { _getDocument } from '../agStack/utils/document';
+import { _clearElement, _isNodeOrElement, _removeFromParent } from '../agStack/utils/dom';
 import { BeanStub } from '../context/beanStub';
-import { _getDocument } from '../gridOptionsUtils';
-import { _setAriaRole } from '../utils/aria';
-import { _clearElement, _isNodeOrElement, _removeFromParent } from '../utils/dom';
 import type { Component } from './component';
 import type { ITabGuard } from './tabGuardCtrl';
 import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
@@ -10,11 +10,11 @@ export interface TabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     shouldStopEventPropagation?: () => boolean;
     /**
-     * @return `true` to prevent the default onFocusIn behavior
+     * @returns `true` to prevent the default onFocusIn behavior
      */
     onFocusIn?: (e: FocusEvent) => void;
     /**
-     * @return `true` to prevent the default onFocusOut behavior
+     * @returns `true` to prevent the default onFocusOut behavior
      */
     onFocusOut?: (e: FocusEvent) => void;
     onTabKeyDown?: (e: KeyboardEvent) => void;

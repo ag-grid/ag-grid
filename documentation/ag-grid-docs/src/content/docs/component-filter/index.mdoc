@@ -58,7 +58,7 @@ will be additionally added to the params object, overriding items of the same na
 
 {% if isFramework("vue") %}
 When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
-row values available to you via `this.params` - the interface for which is provided is documented below.
+row values available to you via `this.params` - the interface for this is documented below.
 
 If custom params are provided via the `colDef.filterParams` property, these
 will be additionally added to the params object, overriding items of the same name if a name clash exists.
@@ -154,6 +154,10 @@ The filter handler is useful for when the filter model needs parsing to allow fo
 
 {% interfaceDocumentation interfaceName="FilterHandler" config={ "description": "" } /%}
 
+It is also possible to define filter handlers in the `filterHandlers` grid option, and then refer to them by the string key in the column definition.
+
+{% apiDocumentation source="grid-options/properties.json" section="filter" names=["filterHandlers"] /%}
+
 ## Using Buttons
 
 It is possible to use the [Filter Buttons](./filter-applying/) for grid-provided filters with custom filter components.
@@ -171,7 +175,7 @@ The buttons are configured by passing additional parameters to the filter (inter
 
 When the buttons are pressed, the custom filter `state` parameter will be updated via the `refresh(params)` method, with `state.model` being the model that should be displayed in the filter.
 
-With the `Apply` button present, the filter component no longer needs to call `onModelChange` as the grid will apply the model when the button is clicked (although it can still be called if the component wants to apply a model in some other way). Instead, the filter component will call `onStateChange` with the model that is currently displayed in the filter component. This is the model that the grid will apply when the button is clicked. If the filter is being used without buttons, it can also call `onAction('apply')` to apply the model set via the state.
+With the `Apply` button present, the filter component no longer needs to call `onModelChange(model)` as the grid will apply the model when the button is clicked (although it can still be called if the component wants to apply a model in some other way). Instead, the filter component will call `onStateChange({ model })` with the model that is currently displayed in the filter component. This is the model that the grid will apply when the button is clicked. If the filter is being used without buttons, it can also call `onAction('apply')` to apply the model set via the state.
 
 ## Associating Floating Filter
 
@@ -192,6 +196,33 @@ There are two ways you can get fix this problem:
   This is the best solution, but you can only do this if you are writing the component yourself.
 * Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](./filter-date/#custom-selection-component)
 
+## Using Custom Filters with Grid-Provided Filter Logic
+
+It is possible to use the grid-provided filter logic with custom filter components.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            filter: {
+                component: YearFilter, // custom filter component
+                handler: 'agNumberColumnFilterHandler', // grid-provided Number Filter handler
+            },
+        }
+    ],
+}
+```
+
+The grid-provided handlers are:
+- `'agTextColumnFilterHandler'` - [Text Filter](./filter-text/) handler.
+- `'agNumberColumnFilterHandler'` - [Number Filter](./filter-number/) handler.
+- `'agDateColumnFilterHandler'` - [Date Filter](./filter-date/) handler.
+
+The example below demonstrates using the Number Filter handler with a custom filter component:
+
+{% gridExampleRunner title="Use Grid Handlers" name="use-grid-handlers" /%}
+
 ## Accessing the Component Instance
 
 {% if isFramework("angular", "vue", "javascript") %}
@@ -202,7 +233,7 @@ AG Grid allows you to get a reference to the filter component instances via the 
 AG Grid allows you to get a reference to the filter component instances via `api.getColumnFilterInstance(colKey)`. This returns a wrapper component that matches the provided grid filter components that implement `FilterDisplay`. To get the React custom filter component, the helper function `getInstance` can be used with this. As React components are created asynchronously, it is necessary to use a callback for both methods.
 {% /if %}
 
-Similarly, you can get a reference to the filter evaluator via `api.getColumnFilterEvaluator(colKey)`.
+Similarly, you can get a reference to the filter handler via `api.getColumnFilterHandler(colKey)`.
 
 {% if isFramework("angular") %}
 ```ts

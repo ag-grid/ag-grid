@@ -56,3 +56,8 @@
 .ag-header-highlight-after::after {
     background-color: var(--ag-primary-color);
 }
+
+.ag-filter-add-button,
+.ag-filter-add-button:hover {
+    border-bottom: 2px solid var(--ag-primary-color);
+}

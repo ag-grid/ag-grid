@@ -6,7 +6,7 @@ import { MiniChartWithAxes } from '../miniChartWithAxes';
 export class MiniColumnClass extends MiniChartWithAxes {
     private readonly columns: any[];
 
-    private columnData = [2, 3, 4];
+    private readonly columnData = [2, 3, 4];
 
     constructor(container: HTMLElement, agChartsExports: AgChartsExports, fills: string[], strokes: string[]) {
         super(container, agChartsExports, 'groupedColumnTooltip');

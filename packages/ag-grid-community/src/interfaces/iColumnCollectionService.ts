@@ -1,6 +1,7 @@
 import type { ColKey, ColumnCollections } from '../columns/columnModel';
 import type { AgColumn } from '../entities/agColumn';
 import type { GridOptions } from '../entities/gridOptions';
+import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 
 export interface IColumnCollectionService {
@@ -10,7 +11,8 @@ export interface IColumnCollectionService {
 
     createColumns(
         cols: ColumnCollections,
-        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
+        updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void,
+        source: ColumnEventType
     ): void;
 
     updateColumns(event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void;

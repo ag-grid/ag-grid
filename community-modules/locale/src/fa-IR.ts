@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_IR = {
     // Group Column Filter
     groupFilterSelect: 'انتخاب فیلد:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: '(همه) است',
+    filterSummaryContains: 'شامل می‌شود',
+    filterSummaryNotContains: 'شامل نمی‌شود',
+    filterSummaryTextEquals: 'برابر است با',
+    filterSummaryTextNotEqual: 'برابر نیست با',
+    filterSummaryStartsWith: 'شروع می‌شود با',
+    filterSummaryEndsWith: 'پایان می‌یابد با',
+    filterSummaryBlank: 'خالی است',
+    filterSummaryNotBlank: 'خالی نیست',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'بین',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: '(همه) است',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: '(${variable}) است',
+    filterSummaryListLong: '(${variable}) است و ${variable} مورد دیگر',
+    addFilterCard: 'افزودن فیلتر',
+    agTextColumnFilterDisplayName: 'فیلتر ساده',
+    agNumberColumnFilterDisplayName: 'فیلتر ساده',
+    agDateColumnFilterDisplayName: 'فیلتر ساده',
+    agSetColumnFilterDisplayName: 'فیلتر انتخاب',
+    agMultiColumnFilterDisplayName: 'فیلتر ترکیبی',
+    addFilterPlaceholder: 'جستجوی ستون‌ها...',
+
     // Advanced Filter
     advancedFilterContains: 'شامل می‌شود',
     advancedFilterNotContains: 'شامل نمی‌شود',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterAnd: 'و',
     advancedFilterOr: 'یا',
     advancedFilterApply: 'اعمال',
+    advancedFilterReset: 'بازنشانی',
+    advancedFilterCancel: 'لغو',
+    advancedFilterClear: 'پاک کردن',
     advancedFilterBuilder: 'سازنده',
     advancedFilterValidationMissingColumn: 'ستون گمشده است',
     advancedFilterValidationMissingOption: 'گزینه گمشده است',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterValidationMessageAtEnd: 'عبارت حاوی یک خطاست. ${variable} در پایان عبارت.',
     advancedFilterBuilderTitle: 'عنوان',
     advancedFilterBuilderApply: 'اعمال',
+    advancedFilterBuilderClear: 'پاک کردن',
+    advancedFilterBuilderReset: 'بازنشانی',
     advancedFilterBuilderCancel: 'لغو',
     advancedFilterBuilderAddButtonTooltip: 'افزودن فیلتر یا گروه',
     advancedFilterBuilderRemoveButtonTooltip: 'حذف',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_IR = {
     advancedFilterBuilderValidationSelectColumn: 'باید یک ستون انتخاب شود.',
     advancedFilterBuilderValidationSelectOption: 'باید یک گزینه انتخاب شود.',
     advancedFilterBuilderValidationEnterValue: 'باید یک مقدار وارد شود.',
+
+    // Editor Validation Errors
+    minDateValidation: 'تاریخ باید بعد از ${variable} باشد',
+    maxDateValidation: 'تاریخ باید قبل از ${variable} باشد',
+    maxLengthValidation: 'باید ${variable} کاراکتر یا کمتر باشد.',
+    minValueValidation: 'باید بیشتر یا مساوی با ${variable} باشد',
+    maxValueValidation: 'باید کمتر یا مساوی با ${variable} باشد',
+    invalidSelectionValidation: 'انتخاب نامعتبر.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'ستون‌ها',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_IR = {
     dropOff: 'کاهش',
     stageLabels: 'برچسب‌های مرحله',
     reverse: 'برعکس',
+    tooltipMode: 'حالت راهنمای ابزار',
+    tooltipModeSingle: 'تکی',
+    tooltipModeShared: 'چندگانه',
+    tooltipModeCompact: 'فشرده',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. کلید ENTER را فشار دهید تا ویرایش شود.',
@@ -540,6 +589,10 @@ export const AG_GRID_LOCALE_IR = {
     ariaChartSelected: 'انتخاب شده',
     ariaSkeletonCellLoadingFailed: 'بارگیری ردیف ناموفق بود',
     ariaSkeletonCellLoading: 'داده‌های ردیف در حال بارگیری است',
+    ariaDeferSkeletonCellLoading: 'در حال بارگذاری سلول',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'تغییر در انتظار',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'گروه‌های ردیفی',
@@ -556,8 +609,10 @@ export const AG_GRID_LOCALE_IR = {
     ariaLabelDialog: 'گفتگو',
     ariaLabelColumnMenu: 'منوی ستون',
     ariaLabelColumnFilter: 'فیلتر ستون',
-    ariaLabelCellEditor: 'ویرایشگر سلول',
     ariaLabelSelectField: 'انتخاب فیلد',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'اعتبارسنجی ویرایشگر سلول',
     ariaLabelLoadingContextMenu: 'در حال بارگذاری فهرست زمینه',
 
     // aria labels for rich select
@@ -578,6 +633,11 @@ export const AG_GRID_LOCALE_IR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'فهرست ستون‌ها',
     ariaFilterPanelList: 'فهرست فیلترها',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'افزودن فیلد فیلتر',
+    ariaLabelFilterCardDelete: 'حذف فیلتر',
+    ariaLabelFilterCardHasEdits: 'دارای ویرایش‌ها',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: '،',

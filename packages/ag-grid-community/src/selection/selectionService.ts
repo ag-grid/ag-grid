@@ -27,7 +27,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     private selectedNodes = new Map<string, RowNode>();
     /** Only used to track detail grid selection state when master/detail is enabled */
-    private detailSelection = new Map<string, Set<string>>();
+    private readonly detailSelection = new Map<string, Set<string>>();
 
     private groupSelectsDescendants: boolean;
     private groupSelectsFiltered: boolean;
@@ -93,9 +93,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
             return this.selectRange(selection.select, true, source);
         } else {
+            const newValue = selection.checkFilteredNodes
+                ? recursiveCanNodesBeSelected(selection.node)
+                : selection.newValue;
+
             return this.setNodesSelected({
                 nodes: [selection.node],
-                newValue: selection.newValue,
+                newValue,
                 clearSelection: selection.clearSelection,
                 keepDescendants: selection.keepDescendants,
                 event,
@@ -113,12 +117,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source,
         keepDescendants = false,
     }: ISetNodesSelectedParams & { keepDescendants?: boolean }): number {
-        if (!_isRowSelection(this.gos) && newValue) {
+        if (nodes.length === 0) return 0;
+
+        const { gos } = this;
+        if (!_isRowSelection(gos) && newValue) {
             _warn(132);
             return 0;
         }
-
-        if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiSelect()) {
             _warn(130);
@@ -132,12 +137,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             // to the sibling (the parent of the group)
             const node = _normaliseSiblingRef(rowNode);
 
-            // when groupSelectsFiltered, then this node may end up indeterminate despite
-            // trying to set it to true / false. this group will be calculated further on
-            // down when we call updateGroupsFromChildrenSelections(). we need to skip it
-            // here, otherwise the updatedCount would include it.
-            const skipThisNode = this.groupSelectsFiltered && node.group;
-
             if (node.rowPinned && !_isManualPinnedRow(node)) {
                 _warn(59);
                 continue;
@@ -147,6 +146,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 _warn(60);
                 continue;
             }
+
+            const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
 
             if (!skipThisNode) {
                 const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
@@ -233,7 +234,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public getSelectedRows(): any[] {
         const selectedRows: any[] = [];
-        this.selectedNodes.forEach((rowNode) => selectedRows.push(rowNode.data));
+        this.selectedNodes.forEach((rowNode) => rowNode.data && selectedRows.push(rowNode.data));
         return selectedRows;
     }
 
@@ -850,4 +851,10 @@ function isDescendantOf(root: RowNode, child: RowNode): boolean {
         parent = parent.parent;
     }
     return false;
+}
+
+function recursiveCanNodesBeSelected(root: RowNode): boolean {
+    const rootCanBeSelected = root.isSelected() === false;
+    const childrenCanBeSelected = root.childrenAfterFilter?.some(recursiveCanNodesBeSelected) ?? false;
+    return rootCanBeSelected || childrenCanBeSelected;
 }

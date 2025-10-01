@@ -70,4 +70,14 @@ export interface IRowModel {
     /** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData
      * from gridOptions, the other row models will start calling their datasources. */
     start(): void;
+
+    /**
+     * Tells the grid to recalculate the row heights.
+     */
+    resetRowHeights(): void;
+
+    /**
+     * Tells the grid to reposition the rows after their heights have changed.
+     */
+    onRowHeightChanged(): void;
 }

@@ -1,13 +1,13 @@
+import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import { _exists } from '../utils/generic';
 import { _warn } from '../validation/logging';
 
-export type QuickFilterServiceEvent = 'quickFilterChanged';
+type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilter' as const;
 

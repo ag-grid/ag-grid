@@ -50,13 +50,6 @@ const gridOptions: GridOptions = {
                     },
                 },
             },
-            series: {
-                tooltip: {
-                    renderer: ({ datum, xKey, yKey }) => {
-                        return `${formatTime(datum[xKey])}: ${datum[yKey]}%`;
-                    },
-                },
-            },
         },
     },
     chartToolPanelsDef: {

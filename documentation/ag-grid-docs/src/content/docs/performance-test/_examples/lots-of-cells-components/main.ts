@@ -3,6 +3,9 @@ import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid 
 
 import { MissionResultRenderer } from './missionResultRenderer_typescript';
 
+// Fallback for Safari and other browsers that do not support requestIdleCallback
+const _requestIdleCallback = window.requestIdleCallback ?? setTimeout;
+
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -45,7 +48,7 @@ function outputText(time?: number) {
 function onScroll() {
     const start = performance.now();
     outputText();
-    requestIdleCallback(() => {
+    _requestIdleCallback(() => {
         outputText(performance.now() - start);
     });
     const eBodyViewport = document.querySelector<HTMLElement>('.ag-body-viewport')!;
@@ -56,7 +59,7 @@ function onScroll() {
 function onClearData() {
     const start = performance.now();
     outputText();
-    requestIdleCallback(() => {
+    _requestIdleCallback(() => {
         outputText(Math.round(performance.now() - start));
     });
     gridApi!.setGridOption('rowData', []);
@@ -65,7 +68,7 @@ function onClearData() {
 function onSetData() {
     const start = performance.now();
     outputText();
-    requestIdleCallback(() => {
+    _requestIdleCallback(() => {
         outputText(performance.now() - start);
     });
     gridApi!.setGridOption('rowData', repeat(data, 100));

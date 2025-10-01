@@ -1,21 +1,23 @@
+import { _addStylesToElement, _setDomChildOrder } from '../../agStack/utils/dom';
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _addStylesToElement, _createElement, _setDomChildOrder } from '../../utils/dom';
+import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
-import type { ICellRendererComp } from '../cellRenderers/iCellRenderer';
+import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { IRowComp, RowCtrl } from './rowCtrl';
 
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
+    private fullWidthCellRendererParams: ICellRendererParams | undefined;
 
-    private rowCtrl: RowCtrl;
+    private readonly rowCtrl: RowCtrl;
 
     private domOrder: boolean;
-    private cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
+    private readonly cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
 
     constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
         super();
@@ -35,6 +37,7 @@ export class RowComp extends Component {
             setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
             showFullWidth: (compDetails) => this.showFullWidth(compDetails),
             getFullWidthCellRenderer: () => this.fullWidthCellRenderer,
+            getFullWidthCellRendererParams: () => this.fullWidthCellRendererParams,
             toggleCss: (name, on) => this.toggleCss(name, on),
             setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(rowDiv, styles),
             setTop: (top) => (style.top = top),
@@ -42,7 +45,11 @@ export class RowComp extends Component {
             setRowIndex: (rowIndex) => rowDiv.setAttribute('row-index', rowIndex),
             setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
             setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
-            refreshFullWidth: (getUpdatedParams) => this.fullWidthCellRenderer?.refresh?.(getUpdatedParams()) ?? false,
+            refreshFullWidth: (getUpdatedParams) => {
+                const params = getUpdatedParams();
+                this.fullWidthCellRendererParams = params;
+                return this.fullWidthCellRenderer?.refresh?.(params) ?? false;
+            },
         };
 
         ctrl.setComp(compProxy, this.getGui(), containerType, undefined);
@@ -70,7 +77,7 @@ export class RowComp extends Component {
                 const eGui = cellRenderer.getGui();
                 this.getGui().appendChild(eGui);
                 this.rowCtrl.setupDetailRowAutoHeight(eGui);
-                this.setFullWidthRowComp(cellRenderer);
+                this.setFullWidthRowComp(cellRenderer, compDetails.params);
             } else {
                 this.beans.context.destroyBean(cellRenderer);
             }
@@ -116,7 +123,7 @@ export class RowComp extends Component {
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
-        const editing = this.beans.editSvc?.isEditing(cellCtrl) ?? false;
+        const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
         const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, this.getGui(), editing);
         this.cellComps.set(cellCtrl.instanceId, cellComp);
         this.getGui().appendChild(cellComp.getGui());
@@ -128,10 +135,12 @@ export class RowComp extends Component {
         this.destroyCells(this.cellComps);
     }
 
-    private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
+    private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp, params: ICellRendererParams): void {
         this.fullWidthCellRenderer = fullWidthRowComponent;
+        this.fullWidthCellRendererParams = params;
         this.addDestroyFunc(() => {
             this.fullWidthCellRenderer = this.beans.context.destroyBean(this.fullWidthCellRenderer);
+            this.fullWidthCellRendererParams = undefined;
         });
     }
 

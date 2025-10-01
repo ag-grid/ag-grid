@@ -102,7 +102,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
                 if (value == null) {
                     return;
                 }
-                let [_, HH, mm, ss, dd, MM, yyyy] = (value.match(dateTimeRegex) || Array(7).fill('0')).map(
+                let [_, dd, MM, yyyy, HH, mm, ss] = (value.match(dateTimeRegex) || Array(7).fill('0')).map(
                     (e) => e || '0'
                 );
                 return new Date(

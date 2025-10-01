@@ -27,7 +27,7 @@ export class AgColorPanel extends Component {
     private spectrumAlphaRect?: ClientRect | DOMRect;
     private isSpectrumAlphaDragging = false;
 
-    private picker: Component;
+    private readonly picker: Component;
     private _Color: _IUtil['Color'];
 
     private colorChanged = false;

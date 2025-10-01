@@ -2,6 +2,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
+import type { IEditService } from '../interfaces/iEditService';
 import { mock } from '../test-utils/mock';
 import type { ExpressionService } from './expressionService';
 import { ValueService } from './valueService';
@@ -18,12 +19,16 @@ describe('formatValue', () => {
         column = mock<AgColumn>('getColDef');
         column.getColDef.mockReturnValue(colDef);
 
-        gos = mock<GridOptionsService>('get', 'addGridCommonParams');
-        gos.addGridCommonParams.mockImplementation((params) => params as any);
+        gos = mock<GridOptionsService>('get', 'addCommon');
+        gos.addCommon.mockImplementation((params) => params as any);
         expressionSvc = mock<ExpressionService>('evaluate');
         valueSvc = new ValueService();
         (valueSvc as any).gos = gos;
         (valueSvc as any).expressionSvc = expressionSvc;
+        (valueSvc as any).beans = {
+            editSvc: mock<IEditService>('isEditing'),
+            expressionSvc,
+        };
     });
 
     it('uses supplied formatter if provided', () => {

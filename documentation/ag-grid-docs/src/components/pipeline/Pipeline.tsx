@@ -22,25 +22,20 @@ const COLUMN_DEFS = [
     {
         field: 'status',
         width: 135,
+        minWidth: 180,
         valueGetter: (params) => {
             const fixVersionsArr = params.data.versions;
             const hasFixVersion = fixVersionsArr.length > 0;
             if (hasFixVersion) {
                 const latestFixVersion = fixVersionsArr.length - 1;
                 const fixVersion = fixVersionsArr[latestFixVersion];
-                if (fixVersion === 'Next' && (params.data.status === 'Backlog' || params.data.status === 'Done')) {
-                    return 'Next Release';
+                if (fixVersion.toUpperCase() === 'NEXT') {
+                    return 'Scheduled';
+                } else {
+                    return `Scheduled for ${fixVersion}`;
                 }
             }
-            if (params.data.status === 'Done' && params.data.resolution !== 'Done') {
-                return params.data.resolution;
-            }
-
-            if (params.data.status !== 'Done' && params.data.status !== 'Backlog') {
-                return 'Scheduled';
-            } else {
-                return 'Backlog';
-            }
+            return 'Backlog';
         },
     },
 ];
@@ -74,42 +69,10 @@ const detailCellRendererParams = (params) => {
     ]
         .filter(Boolean)
         .join('\n\n');
-    let message = newLinesToBreaks(combinedMessages);
-
-    function makeLinksFunctional(message) {
-        let msgArr = message.split(' ');
-        const linkStrIdx = msgArr.findIndex((word) => word.includes('https://'));
-        if (linkStrIdx > 0) {
-            msgArr = msgArr.map((element) => {
-                if (element.includes('https://')) {
-                    const beginningIndex = element.indexOf('http');
-                    const endIndex = element.indexOf('<', beginningIndex);
-                    const isEndIndex = endIndex >= 0;
-                    let length = 0;
-                    if (isEndIndex) {
-                        length = endIndex - beginningIndex;
-                    }
-
-                    const httpIdx = element.indexOf('http');
-                    const link = length ? element.substring(httpIdx, httpIdx + length) : element.substring(httpIdx);
-                    const htmlLink = isEndIndex
-                        ? `<a class=${styles.link} href="${link}"
-          target="_blank">${link}</a>${element.substring(endIndex)}`
-                        : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                    return element.substring(0, beginningIndex) + htmlLink;
-                }
-                return element;
-            });
-            message = msgArr.join(' ');
-        }
-        return message;
-    }
-
-    message = makeLinksFunctional(message);
-    const res = {};
-    res.message = message;
-
-    return res;
+    const message = newLinesToBreaks(combinedMessages);
+    return {
+        message,
+    };
 };
 
 function useSearchQuery() {

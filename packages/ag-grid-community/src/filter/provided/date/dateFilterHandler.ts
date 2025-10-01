@@ -20,6 +20,7 @@ function defaultDateComparator(filterDate: Date, cellValue: any): number {
 }
 
 export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date, IDateFilterParams> {
+    public readonly filterType = 'date' as const;
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
 
     constructor() {

@@ -1,10 +1,12 @@
+import { AgHighlightTooltipFeature } from '../agStack/tooltip/agHighlightTooltipFeature';
+import { AgTooltipComponent } from '../agStack/tooltip/agTooltipComponent';
+import { AgTooltipFeature } from '../agStack/tooltip/agTooltipFeature';
+import { tooltipCSS } from '../agStack/tooltip/tooltip.css-GENERATED';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
-import { tooltipCSS } from './tooltip.css-GENERATED';
-import { TooltipComponent } from './tooltipComponent';
-import { TooltipFeature } from './tooltipFeature';
 import { TooltipService } from './tooltipService';
+import { TooltipStateManager } from './tooltipStateManager';
 
 /**
  * @feature Tooltips
@@ -15,10 +17,12 @@ export const TooltipModule: _ModuleWithoutApi = {
     version: VERSION,
     beans: [TooltipService],
     dynamicBeans: {
-        tooltipFeature: TooltipFeature as any,
+        tooltipFeature: AgTooltipFeature as any,
+        highlightTooltipFeature: AgHighlightTooltipFeature as any,
+        tooltipStateManager: TooltipStateManager as any,
     },
     userComponents: {
-        agTooltipComponent: TooltipComponent,
+        agTooltipComponent: AgTooltipComponent,
     },
     dependsOn: [PopupModule],
     css: [tooltipCSS],

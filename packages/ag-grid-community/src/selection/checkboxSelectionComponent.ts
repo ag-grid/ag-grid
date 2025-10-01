@@ -1,14 +1,15 @@
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _getAriaCheckboxStateName } from '../agStack/utils/aria';
+import { AgCheckboxSelector } from '../agStack/widgets/agCheckbox';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _getCheckboxes, _getHideDisabledCheckboxes, _getIsRowSelectable } from '../gridOptionsUtils';
 import type { GroupCheckboxSelectionCallback } from '../interfaces/groupCellRenderer';
-import { _getAriaCheckboxStateName } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
-import { _stopPropagationForAgGrid } from '../utils/event';
-import type { AgCheckbox } from '../widgets/agCheckbox';
-import { AgCheckboxSelector } from '../widgets/agCheckbox';
-import { Component, RefPlaceholder } from '../widgets/component';
+import type { ElementParams } from '../utils/element';
+import { _stopPropagationForAgGrid } from '../utils/gridEvent';
+import { Component } from '../widgets/component';
+import type { GridCheckbox } from '../widgets/gridWidgetTypes';
 
 const CheckboxSelectionComponentElement: ElementParams = {
     tag: 'div',
@@ -24,7 +25,7 @@ const CheckboxSelectionComponentElement: ElementParams = {
 };
 
 export class CheckboxSelectionComponent extends Component {
-    private readonly eCheckbox: AgCheckbox = RefPlaceholder;
+    private readonly eCheckbox: GridCheckbox = RefPlaceholder;
 
     private rowNode: RowNode;
     private column: AgColumn | undefined;
@@ -40,10 +41,6 @@ export class CheckboxSelectionComponent extends Component {
 
     public postConstruct(): void {
         this.eCheckbox.setPassive(true);
-    }
-
-    public getCheckboxId(): string {
-        return this.eCheckbox.getInputElement().id;
     }
 
     private onDataChanged(): void {
@@ -132,44 +129,42 @@ export class CheckboxSelectionComponent extends Component {
     private showOrHideSelect(): void {
         const { column, rowNode, overrides, gos } = this;
         // if the isRowSelectable() is not provided the row node is selectable by default
-        let selectable = rowNode.selectable;
+        const selectable = rowNode.selectable;
 
-        // checkboxSelection callback is deemed a legacy solution however we will still consider it's result.
-        // If selectable, then also check the colDef callback. if not selectable, this it short circuits - no need
-        // to call the colDef callback.
         const isVisible = this.getIsVisible();
-        if (selectable) {
-            if (typeof isVisible === 'function') {
-                const extraParams = overrides?.callbackParams;
-
-                if (!column) {
-                    // full width row
-                    selectable = isVisible({ ...extraParams, node: rowNode, data: rowNode.data });
-                } else {
-                    const params = column.createColumnFunctionCallbackParams(rowNode);
-                    selectable = isVisible({ ...extraParams, ...params });
-                }
+        let checkboxes = undefined;
+        if (typeof isVisible === 'function') {
+            const extraParams = overrides?.callbackParams;
+            if (!column) {
+                // full width row
+                checkboxes = isVisible({ ...extraParams, node: rowNode, data: rowNode.data });
             } else {
-                selectable = isVisible ?? false;
+                const params = column.createColumnFunctionCallbackParams(rowNode);
+                checkboxes = isVisible({ ...extraParams, ...params });
             }
+        } else {
+            checkboxes = isVisible ?? false;
         }
 
+        const disabled = (selectable && !checkboxes) || (!selectable && checkboxes);
+        const visible = selectable || checkboxes;
+
         const so = gos.get('rowSelection');
-        const disableInsteadOfHide =
-            so && typeof so !== 'string' ? !_getHideDisabledCheckboxes(so) : column?.getColDef().showDisabledCheckboxes;
-        if (disableInsteadOfHide) {
-            this.eCheckbox.setDisabled(!selectable);
-            this.setVisible(true);
-            this.setDisplayed(true);
-            return;
+        const showDisabledCheckboxes =
+            so && typeof so !== 'string'
+                ? !_getHideDisabledCheckboxes(so)
+                : !!column?.getColDef().showDisabledCheckboxes;
+
+        this.setVisible(visible && (disabled ? showDisabledCheckboxes : true));
+        this.setDisplayed(visible && (disabled ? showDisabledCheckboxes : true));
+        if (visible) {
+            this.eCheckbox.setDisabled(disabled);
         }
 
         if (overrides?.removeHidden) {
-            this.setDisplayed(selectable);
+            this.setDisplayed(visible);
             return;
         }
-
-        this.setVisible(selectable);
     }
 
     private getIsVisible(): boolean | CheckboxSelectionCallback<any> | undefined {

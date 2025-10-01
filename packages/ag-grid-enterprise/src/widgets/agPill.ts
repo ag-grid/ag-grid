@@ -1,8 +1,7 @@
 import type { ElementParams } from 'ag-grid-community';
-import { RefPlaceholder } from 'ag-grid-community';
-import { Component } from 'ag-grid-community';
+import { Component, RefPlaceholder } from 'ag-grid-community';
 
-export interface PillConfig {
+interface PillConfig {
     onKeyDown?: (e?: KeyboardEvent) => void;
     onButtonClick?: (e?: MouseEvent) => void;
 }

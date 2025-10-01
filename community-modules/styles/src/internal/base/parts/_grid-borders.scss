@@ -142,7 +142,7 @@
     }
 
     .ag-fill-handle {
-        cursor: cell;
+        cursor: crosshair;
     }
 
     .ag-range-handle {
@@ -151,5 +151,8 @@
 
     .ag-cell-inline-editing {
         border-color: var(--ag-input-focus-border-color) !important;
+        &.ag-cell-editing-error {
+            border-color: var(--ag-invalid-color) !important;
+        }
     }
 }

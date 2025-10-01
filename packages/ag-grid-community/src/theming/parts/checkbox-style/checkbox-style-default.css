@@ -64,6 +64,11 @@
     }
 }
 
+/* stylelint-disable-next-line */
+.ag-cell-editing-error .ag-checkbox-input-wrapper:focus-within {
+    box-shadow: var(--ag-focus-error-shadow);
+}
+
 .ag-radio-button-input-wrapper {
     border-radius: 100%;
 

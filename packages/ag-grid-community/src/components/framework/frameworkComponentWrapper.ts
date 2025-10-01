@@ -1,4 +1,4 @@
-import type { IComponent } from '../../interfaces/iComponent';
+import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 

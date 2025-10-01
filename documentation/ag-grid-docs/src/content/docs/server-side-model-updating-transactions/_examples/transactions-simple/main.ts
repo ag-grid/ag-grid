@@ -75,7 +75,7 @@ function getServerSideDatasource(server: any) {
 function addRow() {
     const selectedRows = gridApi!.getSelectedNodes();
     if (selectedRows.length === 0) {
-        console.warn('[Example] No row selected.');
+        console.log('[Example] No row selected.');
         return;
     }
 
@@ -92,7 +92,7 @@ function addRow() {
 function updateRow() {
     const selectedRows = gridApi!.getSelectedNodes();
     if (selectedRows.length === 0) {
-        console.warn('[Example] No row selected.');
+        console.log('[Example] No row selected.');
         return;
     }
 
@@ -107,7 +107,7 @@ function updateRow() {
 function removeRow() {
     const selectedRows = gridApi!.getSelectedNodes();
     if (selectedRows.length === 0) {
-        console.warn('[Example] No row selected.');
+        console.log('[Example] No row selected.');
         return;
     }
 

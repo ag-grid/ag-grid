@@ -1,8 +1,8 @@
 import type {
     AgColumn,
-    AgInputTextField,
     ElementParams,
     FloatingFilterDisplayParams,
+    GridInputTextField,
     IFloatingFilter,
     IFloatingFilterParams,
     SetFilterModel,
@@ -25,10 +25,11 @@ const SetFloatingFilterElement: ElementParams = {
 };
 
 export class SetFloatingFilterComp<V = string> extends Component implements IFloatingFilter {
-    private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
+    private readonly eFloatingFilterText: GridInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
-    private availableValuesListenerAdded = false;
+    private listenerAdded = false;
+    private destroyListeners?: (() => void)[];
 
     constructor() {
         super(SetFloatingFilterElement, [AgInputTextFieldSelector]);
@@ -76,13 +77,21 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private addAvailableValuesListener(): void {
         const addListener = (handler: SetFilterHandler<V>) => {
+            if (!handler?.isAlive()) {
+                return;
+            }
+            const valueModel = handler.valueModel;
             // unlike other filters, what we show in the floating filter can be different, even
             // if another filter changes. this is due to how set filter restricts its values based
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addManagedListeners(handler.valueModel, {
+            this.destroyListeners = valueModel.addManagedListeners(valueModel, {
                 availableValuesChanged: () => this.updateFloatingFilterText(handler.params.model),
+                destroyed: () => {
+                    this.listenerAdded = false;
+                    this.destroyListeners = undefined;
+                },
             });
         };
         if (this.gos.get('enableFilterHandlers')) {
@@ -93,17 +102,17 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
             });
         }
 
-        this.availableValuesListenerAdded = true;
+        this.listenerAdded = true;
     }
 
     private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
-        if (!this.availableValuesListenerAdded) {
-            this.addAvailableValuesListener();
-        }
-
         if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
         } else {
+            // listener is only needed if there is an active model
+            if (!this.listenerAdded) {
+                this.addAvailableValuesListener();
+            }
             if (this.gos.get('enableFilterHandlers')) {
                 this.eFloatingFilterText.setValue(
                     (this.params as unknown as FloatingFilterDisplayParams)
@@ -116,5 +125,14 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
                 });
             }
         }
+    }
+
+    public override destroy(): void {
+        const destroyListeners = this.destroyListeners;
+        if (destroyListeners) {
+            destroyListeners.forEach((destroyFunc) => destroyFunc());
+            destroyListeners.length = 0;
+        }
+        super.destroy();
     }
 }

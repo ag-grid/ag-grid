@@ -1,0 +1,36 @@
+{
+  "name": "ag-grid-csp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/csp",
+  "projectType": "application",
+  "targets": {
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium"],
+        "parallel": false,
+        "cwd": "testing/csp"
+      }
+    },
+    "test:e2e:csp": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["setup"],
+      "options": {
+        "commands": ["npx playwright test"],
+        "parallel": false,
+        "cwd": "testing/csp",
+        "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+      },
+      "configurations": {
+        "production": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
+        },
+        "staging": {},
+        "dev": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
+        }
+      }
+    }
+  },
+  "tags": ["security", "csp", "testing"]
+}

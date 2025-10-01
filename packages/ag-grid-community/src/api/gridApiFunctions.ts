@@ -1,9 +1,9 @@
 import type { ValidationModuleName } from '../interfaces/iModule';
-import type { _FindApi } from './gridApi';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
     _AggregationGridApi,
+    _BatchEditApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -25,6 +25,7 @@ import type {
     _EventGridApi,
     _ExcelExportGridApi,
     _FilterGridApi,
+    _FindApi,
     _GridChartsGridApi,
     _HighlightChangesGridApi,
     _InfiniteRowModelGridApi,
@@ -218,13 +219,17 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
     ...mod<_EditGridApi<any>>('EditCore', {
         getCellEditorInstances: 0,
         getEditingCells: 0,
+        getEditRowValues: 0,
         stopEditing: 0,
         startEditingCell: 0,
         isEditing: 0,
-        setEditingCells: 0,
-        enableBatchEditing: 0,
-        disableBatchEditing: 0,
-        batchEditingEnabled: 0,
+        validateEdit: 0,
+    }),
+    ...mod<_BatchEditApi>('BatchEdit', {
+        startBatchEdit: 0,
+        cancelBatchEdit: 0,
+        commitBatchEdit: 0,
+        isBatchEditing: 0,
     }),
     ...mod<_UndoRedoGridApi>('UndoRedoEdit', {
         undoCellEditing: 0,
@@ -245,7 +250,9 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         getColumnFilterModel: 0,
         setColumnFilterModel: 0,
         showColumnFilter: 0,
+        hideColumnFilter: 0,
         getColumnFilterHandler: 0,
+        doFilterAction: 0,
     }),
     ...mod<_QuickFilterGridApi>('QuickFilter', {
         isQuickFilterPresent: 0,
@@ -275,17 +282,16 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         paginationGoToLastPage: 0,
         paginationGoToPage: 0,
     }),
+
     ...mod<_CsrmSsrmSharedGridApi>('CsrmSsrmSharedApi', {
         expandAll: 0,
         collapseAll: 0,
-        onRowHeightChanged: 0,
     }),
     ...mod<_SsrmInfiniteSharedGridApi>('SsrmInfiniteSharedApi', {
         setRowCount: 0,
         getCacheBlockState: 0,
         isLastRowIndexKnown: 0,
     }),
-
     ...mod<_ClientSideRowModelGridApi<any>>('ClientSideRowModelApi', {
         onGroupExpandedOrCollapsed: 0,
         refreshClientSideRowModel: 0,
@@ -293,11 +299,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         forEachLeafNode: 0,
         forEachNodeAfterFilter: 0,
         forEachNodeAfterFilterAndSort: 0,
-        resetRowHeights: 0,
         applyTransaction: 0,
         applyTransactionAsync: 0,
         flushAsyncTransactions: 0,
         getBestCostNodeSelection: 0,
+        onRowHeightChanged: 0,
+        resetRowHeights: 0,
     }),
 
     ...mod<_CsvExportGridApi>('CsvExport', {
@@ -411,6 +418,8 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         flushServerSideAsyncTransactions: 0,
         refreshServerSide: 0,
         getServerSideGroupLevelState: 0,
+        onRowHeightChanged: 0,
+        resetRowHeights: 0,
     }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {

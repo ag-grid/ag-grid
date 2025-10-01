@@ -1,3 +1,5 @@
+import { _exists, _missing } from '../agStack/utils/generic';
+import { _getValueUsingField } from '../agStack/utils/value';
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { NamedBean } from '../context/bean';
@@ -14,9 +16,8 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _exists, _missing } from '../utils/generic';
-import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
@@ -28,12 +29,16 @@ export class ValueService extends BeanStub implements NamedBean {
     private colModel: ColumnModel;
     private valueCache?: ValueCache;
     private dataTypeSvc?: DataTypeService;
+    private editSvc?: IEditService;
+    private hasEditSvc: boolean = false;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
         this.colModel = beans.colModel;
         this.valueCache = beans.valueCache;
         this.dataTypeSvc = beans.dataTypeSvc;
+        this.editSvc = beans.editSvc;
+        this.hasEditSvc = !!beans.editSvc;
     }
 
     private cellExpressions: boolean;
@@ -70,8 +75,8 @@ export class ValueService extends BeanStub implements NamedBean {
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        this.eventSvc.addEventListener('cellValueChanged', listener, true);
-        this.addDestroyFunc(() => this.eventSvc.removeEventListener('cellValueChanged', listener, true));
+        this.eventSvc.addListener('cellValueChanged', listener, true);
+        this.addDestroyFunc(() => this.eventSvc.removeListener('cellValueChanged', listener, true));
 
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
@@ -171,11 +176,12 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
         const data = rowNode.data;
 
-        const { editSvc, rowGroupColsSvc } = this.beans;
+        if (this.hasEditSvc && source === 'ui') {
+            const editSvc = this.editSvc!;
 
-        if (editSvc && source === 'ui') {
-            if (editSvc?.isEditing({ rowNode, column })) {
-                const newValue = editSvc?.getCellDataValue({ rowNode, column });
+            // if the row is editing, we want to return the new value, if available
+            if (editSvc.isEditing()) {
+                const newValue = editSvc.getCellDataValue({ rowNode, column }, true);
                 if (newValue !== undefined) {
                     return newValue;
                 }
@@ -188,7 +194,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
             // if multiple columns, don't show values in cells grouped at a higher level
-            const colRowGroupIndex = rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
+            const colRowGroupIndex = this.beans.rowGroupColsSvc?.getColumnIndex(rowGroupColId) ?? -1;
             if (colRowGroupIndex > rowNode.level) {
                 return null;
             }
@@ -202,12 +208,12 @@ export class ValueService extends BeanStub implements NamedBean {
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
-        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
+        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
         const ssrmFooterGroupCol =
             this.isSsrm &&
             rowNode.footer &&
             rowNode.field &&
-            (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
+            (colDef.showRowGroup === true || colDef.showRowGroup === rowNode.field);
 
         if (this.isTreeData && aggDataExists) {
             result = rowNode.aggData[colId];
@@ -219,7 +225,7 @@ export class ValueService extends BeanStub implements NamedBean {
             result = rowNode.groupData![colId];
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
-        } else if (colDef.valueGetter) {
+        } else if (colDef.valueGetter && !ignoreSsrmAggData) {
             if (!allowUserValuesForCell) {
                 return result;
             }
@@ -280,6 +286,7 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        const { expressionSvc } = this.beans;
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
@@ -293,17 +300,19 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         if (formatter) {
+            const data = node ? node.data : null;
+
             const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
                 value,
                 node,
-                data: node ? node.data : null,
+                data,
                 colDef,
                 column,
             });
             if (typeof formatter === 'function') {
                 result = formatter(params);
             } else {
-                result = this.expressionSvc ? this.expressionSvc.evaluate(formatter, params) : null;
+                result = expressionSvc ? expressionSvc.evaluate(formatter, params) : null;
             }
         } else if (colDef.refData) {
             return colDef.refData[value] || '';
@@ -391,6 +400,20 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const savedValue = this.getValue(column, rowNode);
 
+        this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
+        if ((rowNode as RowNode).pinnedSibling) {
+            this.dispatchCellValueChangedEvent((rowNode as RowNode).pinnedSibling!, params, savedValue, eventSource);
+        }
+
+        return true;
+    }
+
+    private dispatchCellValueChangedEvent(
+        rowNode: IRowNode,
+        params: ValueSetterParams,
+        value: any,
+        source?: string
+    ): void {
         this.eventSvc.dispatchEvent({
             type: 'cellValueChanged',
             event: null,
@@ -401,12 +424,10 @@ export class ValueService extends BeanStub implements NamedBean {
             data: rowNode.data,
             node: rowNode,
             oldValue: params.oldValue,
-            newValue: savedValue,
-            value: savedValue,
-            source: eventSource,
+            newValue: value,
+            value,
+            source,
         });
-
-        return true;
     }
 
     private callColumnCellValueChangedHandler(event: CellValueChangedEvent) {

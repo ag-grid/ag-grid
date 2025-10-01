@@ -32,6 +32,10 @@
                             "path": "modules"
                         },
                         {
+                            "title": "MCP Server",
+                            "path": "mcp-server"
+                        },
+                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
@@ -209,6 +213,11 @@
                             "type": "item",
                             "title": "Icons",
                             "path": "custom-icons"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Master Detail",
+                            "path": "theming-master-detail"
                         },
                         {
                             "type": "item",
@@ -625,6 +634,21 @@
                             "children": [
                                 {
                                     "type": "item",
+                                    "title": "Managed Row Dragging",
+                                    "path": "row-dragging-managed"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Unmanaged Row Dragging",
+                                    "path": "row-dragging-unmanaged"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Row Dragging Customisation",
+                                    "path": "row-dragging-customisation"
+                                },
+                                {
+                                    "type": "item",
                                     "title": "External DropZone",
                                     "path": "row-dragging-to-external-dropzone"
                                 },
@@ -980,6 +1004,17 @@
                             "type": "item",
                             "title": "Full Row",
                             "path": "cell-editing-full-row"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Validation",
+                            "path": "cell-editing-validation"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Batch Editing",
+                            "path": "cell-editing-batch",
+                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1244,6 +1279,12 @@
                             "title": "Filtering",
                             "path": "tree-data-filtering",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Tree Row Dragging",
+                            "path": "tree-data-row-dragging",
+                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1321,6 +1362,12 @@
                                     "type": "item",
                                     "title": "Columns Tool Panel",
                                     "path": "tool-panel-columns",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Filters Tool Panel (New)",
+                                    "path": "tool-panel-filters-new",
                                     "isEnterprise": true
                                 },
                                 {
@@ -1489,14 +1536,14 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Master Detail",
-                                    "path": "server-side-model-master-detail",
+                                    "title": "Tree Data",
+                                    "path": "server-side-model-tree-data",
                                     "isEnterprise": true
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Tree Data",
-                                    "path": "server-side-model-tree-data",
+                                    "title": "Master Detail",
+                                    "path": "server-side-model-master-detail",
                                     "isEnterprise": true
                                 },
                                 {
@@ -1665,6 +1712,27 @@
                             "type": "item",
                             "title": "Import Excel",
                             "path": "excel-import"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "State & Lifecycle",
+                    "children": [
+                        {
+                            "type": "item",
+                            "title": "Grid State",
+                            "path": "grid-state"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Grid Context",
+                            "path": "context"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Grid Lifecycle",
+                            "path": "grid-lifecycle"
                         }
                     ]
                 },

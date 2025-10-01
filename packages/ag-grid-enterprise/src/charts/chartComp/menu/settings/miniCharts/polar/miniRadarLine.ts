@@ -10,7 +10,7 @@ export class MiniRadarLineClass extends MiniChartWithPolarAxes {
     private readonly markers: Marker[];
     private readonly markerSize: number = 4;
 
-    private data = [
+    private readonly data = [
         [8, 7, 8, 7, 8, 8, 7, 8],
         [6, 8, 5, 10, 6, 7, 4, 6],
         [0, 3, 3, 5, 4, 4, 2, 0],

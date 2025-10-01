@@ -58,7 +58,7 @@ const AgStatusBarElement: ElementParams = {
         },
     ],
 };
-export class AgStatusBar extends Component {
+class AgStatusBar extends Component {
     private userCompFactory: UserComponentFactory;
     private statusBarSvc: StatusBarService;
     private updateQueued: boolean = false;

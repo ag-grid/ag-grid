@@ -3,11 +3,16 @@ import { AllCommunityModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
+import { waitForEvent } from './test-utils-events';
 import { ignoreConsoleLicenseKeyError } from './utils';
 
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */
     modules?: Module[] | null | undefined;
+
+    includeDefaultModules?: boolean;
+
+    mockGridLayout?: boolean;
 }
 
 const gridApiHtmlElementsMap = new WeakMap<GridApi, HTMLElement>();
@@ -33,11 +38,18 @@ export class TestGridsManager {
     };
 
     private gridsMap = new Map<HTMLElement, GridApi>();
+    private includeDefaultModules: boolean = true;
     private modulesToRegister: Module[] | null | undefined;
 
     public constructor(options: TestGridManagerOptions = {}) {
         this.modulesToRegister = options.modules;
-        mockGridLayout.init();
+
+        if (options.mockGridLayout !== false) {
+            mockGridLayout.init();
+        }
+        if (options.includeDefaultModules === false) {
+            this.includeDefaultModules = false;
+        }
     }
 
     public getGrid<TData = any>(eGridDiv: HTMLElement): GridApi<TData> | undefined {
@@ -52,6 +64,7 @@ export class TestGridsManager {
     /** Destroys all created grids, and eventually created html elements */
     public destroyAllGrids(): void {
         for (const grid of this.getAllGrids()) {
+            grid.stopEditing(true);
             grid.destroy();
         }
     }
@@ -93,9 +106,11 @@ export class TestGridsManager {
 
         ignoreConsoleLicenseKeyError();
 
-        const modules = unique(this.modulesToRegister ?? [])
-            .concat(params?.modules ?? [])
-            .concat([AllCommunityModule, ServerSideRowModelApiModule]);
+        let modules = unique(this.modulesToRegister ?? []).concat(params?.modules ?? []);
+
+        if (this.includeDefaultModules) {
+            modules = modules.concat([AllCommunityModule, ServerSideRowModelApiModule]);
+        }
         const api = createGrid(
             element,
             { ...TestGridsManager.defaultGridOptions, ...gridOptions },
@@ -124,6 +139,19 @@ export class TestGridsManager {
         };
 
         return api;
+    }
+
+    public async createGridAndWait<TData = any>(
+        eGridDiv: HTMLElement | string | null | undefined,
+        gridOptions: GridOptions,
+        params?: Params
+    ): Promise<GridApi<TData>> {
+        const api = this.createGrid<TData>(eGridDiv, gridOptions, params);
+
+        // Wait for the first data rendered event to ensure the grid is fully initialized
+        await waitForEvent('firstDataRendered', api);
+
+        return Promise.resolve(api);
     }
 
     public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {

@@ -29,7 +29,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
 
         let topLevelMenuItem: MenuItemDefWithKey | null = builder.getMenuItem();
 
-        if (topLevelMenuItem && topLevelMenuItem.subMenu && !isEnterprise) {
+        if (topLevelMenuItem?.subMenu && !isEnterprise) {
             // Filter out enterprise-only menu items if 'Community Integrated'
             const filterEnterpriseItems = (m: MenuItemDefWithKey): MenuItemDefWithKey => ({
                 ...m,
@@ -151,7 +151,7 @@ interface MenuItemDefWithKey<MenuItemKey extends string = any> extends MenuItemD
     subMenu?: MenuItemDefWithKey<MenuItemKey>[];
 }
 
-export type PivotMenuOptionName =
+type PivotMenuOptionName =
     | 'pivotChart'
     | 'pivotColumnChart'
     | 'pivotGroupedColumn'
@@ -188,9 +188,9 @@ export type PivotMenuOptionName =
 
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
-        private beans: BeanCollection,
-        private chartSvc: IChartService,
-        private getLocaleTextFunc: () => LocaleTextFunc
+        private readonly beans: BeanCollection,
+        private readonly chartSvc: IChartService,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<PivotMenuOptionName> {
@@ -373,7 +373,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     }
 }
 
-export type RangeMenuOptionName =
+type RangeMenuOptionName =
     | 'chartRange'
     | 'rangeColumnChart'
     | 'rangeGroupedColumn'
@@ -422,9 +422,9 @@ export type RangeMenuOptionName =
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
-        private beans: BeanCollection,
-        private chartSvc: IChartService,
-        private getLocaleTextFunc: () => LocaleTextFunc
+        private readonly beans: BeanCollection,
+        private readonly chartSvc: IChartService,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<RangeMenuOptionName> {

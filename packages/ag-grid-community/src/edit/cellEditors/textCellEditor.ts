@@ -1,7 +1,9 @@
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import type { AgInputTextField } from '../../widgets/agInputTextField';
-import { AgInputTextFieldSelector } from '../../widgets/agInputTextField';
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _isBrowserSafari } from '../../agStack/utils/browser';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputTextFieldSelector } from '../../agStack/widgets/agInputTextField';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputTextField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { ITextCellEditorParams } from './iTextCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -12,10 +14,12 @@ const TextCellEditorElement: ElementParams = {
     cls: 'ag-cell-editor',
 };
 class TextCellEditorInput<TValue = any>
-    implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, AgInputTextField>
+    implements CellEditorInput<TValue, ITextCellEditorParams<any, TValue>, GridInputTextField>
 {
-    private eEditor: AgInputTextField;
+    private eEditor: GridInputTextField;
     private params: ITextCellEditorParams<any, TValue>;
+
+    constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
     public getTemplate(): ElementParams {
         return TextCellEditorElement;
@@ -25,7 +29,7 @@ class TextCellEditorInput<TValue = any>
         return [AgInputTextFieldSelector];
     }
 
-    public init(eEditor: AgInputTextField, params: ITextCellEditorParams<any, TValue>): void {
+    public init(eEditor: GridInputTextField, params: ITextCellEditorParams<any, TValue>): void {
         this.eEditor = eEditor;
         this.params = params;
         const maxLength = params.maxLength;
@@ -34,22 +38,27 @@ class TextCellEditorInput<TValue = any>
         }
     }
 
-    public getErrors(): string[] | null {
-        const value = this.getValue();
+    public getValidationErrors(): string[] | null {
         const { params } = this;
-        const { maxLength, getErrors } = params;
+        const { maxLength, getValidationErrors } = params;
+        const value = this.getValue();
+
+        const translate = this.getLocaleTextFunc();
+
         let internalErrors: string[] | null = [];
 
         if (maxLength != null && typeof value === 'string' && value.length > maxLength) {
-            internalErrors.push(`Must be ${maxLength} characters or fewer.`);
+            internalErrors.push(
+                translate('maxLengthValidation', `Must be ${maxLength} characters or fewer.`, [String(maxLength)])
+            );
         }
 
         if (!internalErrors.length) {
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({ value, cellEditorParams: params, internalErrors });
+        if (getValidationErrors) {
+            return getValidationErrors({ value, cellEditorParams: params, internalErrors });
         }
 
         return internalErrors;
@@ -71,6 +80,13 @@ class TextCellEditorInput<TValue = any>
     }
 
     public setCaret(): void {
+        if (_isBrowserSafari()) {
+            // If not safari, input is already focused.
+            // For safari we need to focus only for this use case to avoid AG-3238,
+            // but still ensure the input has focus.
+            this.eEditor.getInputElement().focus({ preventScroll: true });
+        }
+
         // when we started editing, we want the caret at the end, not the start.
         // this comes into play in two scenarios:
         //   a) when user hits F2
@@ -85,8 +101,8 @@ class TextCellEditorInput<TValue = any>
     }
 }
 
-export class TextCellEditor extends SimpleCellEditor<any, ITextCellEditorParams, AgInputTextField> {
+export class TextCellEditor extends SimpleCellEditor<any, ITextCellEditorParams, GridInputTextField> {
     constructor() {
-        super(new TextCellEditorInput());
+        super(new TextCellEditorInput(() => this.getLocaleTextFunc()));
     }
 }

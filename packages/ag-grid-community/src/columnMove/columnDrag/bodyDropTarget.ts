@@ -1,5 +1,5 @@
 import { BeanStub } from '../../context/beanStub';
-import type { DragAndDropIcon, DraggingEvent, DropTarget } from '../../dragAndDrop/dragAndDropService';
+import type { DragAndDropIcon, DropTarget, GridDraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { BodyDropPivotTarget } from './bodyDropPivotTarget';
@@ -7,10 +7,10 @@ import { MoveColumnFeature } from './moveColumnFeature';
 
 export interface DropListener {
     getIconName(): DragAndDropIcon | null;
-    onDragEnter(params: DraggingEvent): void;
-    onDragLeave(params: DraggingEvent): void;
-    onDragging(params: DraggingEvent): void;
-    onDragStop(params: DraggingEvent): void;
+    onDragEnter(params: GridDraggingEvent): void;
+    onDragLeave(params: GridDraggingEvent): void;
+    onDragging(params: GridDraggingEvent): void;
+    onDragStop(params: GridDraggingEvent): void;
     onDragCancel(): void;
 }
 
@@ -89,14 +89,14 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     // we want to use the bodyPivotTarget if the user is dragging columns in from the toolPanel
     // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
     // dropped into the grid's body.
-    private isDropColumnInPivotMode(draggingEvent: DraggingEvent): boolean {
+    private isDropColumnInPivotMode(draggingEvent: GridDraggingEvent): boolean {
         // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
         // a standard column move, however if it came from the toolpanel, then we are introducing
         // dimensions or values to the grid
         return this.beans.colModel.isPivotMode() && draggingEvent.dragSource.type === DragSourceType.ToolPanel;
     }
 
-    public onDragEnter(draggingEvent: DraggingEvent): void {
+    public onDragEnter(draggingEvent: GridDraggingEvent): void {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are
         // in pivot mode, then dropping cols changes the row group, pivot, value stats. otherwise
         // we change visibility state and position.
@@ -106,15 +106,15 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.currentDropListener.onDragEnter(draggingEvent);
     }
 
-    public onDragLeave(params: DraggingEvent): void {
+    public onDragLeave(params: GridDraggingEvent): void {
         this.currentDropListener.onDragLeave(params);
     }
 
-    public onDragging(params: DraggingEvent): void {
+    public onDragging(params: GridDraggingEvent): void {
         this.currentDropListener.onDragging(params);
     }
 
-    public onDragStop(params: DraggingEvent): void {
+    public onDragStop(params: GridDraggingEvent): void {
         this.currentDropListener.onDragStop(params);
     }
 

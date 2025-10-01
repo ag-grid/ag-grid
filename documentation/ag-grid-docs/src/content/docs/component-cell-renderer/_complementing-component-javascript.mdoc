@@ -1,10 +1,10 @@
 {% if isFramework("javascript") %}
 ```js
-// define Cell Component to be reused
-const myCellComp = params => `<span style="color: ${params.color}">${params.value}</span>`;
+// define Cell renderer to be reused
+const myCellRenderer = params => `<span style="color: ${params.color}">${params.value}</span>`;
 
 // use with a colour
-colDef.cellRenderer = myCellComp;
+colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'guinnessBlack'
 }

@@ -26,6 +26,7 @@ const ICONS = [
     'csv',
     'desc',
     'down',
+    'edit',
     'excel',
     'expanded',
     'eye-slash',

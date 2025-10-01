@@ -194,7 +194,7 @@ List values can be provided asynchronously to the editor as shown below:
 The `values` property can receive a Promise that **resolves** an array of values.
 
 ```ts
-function getValueFromServer(params: ICellEditorParams): Promise<string[]> {
+function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
   });
@@ -206,7 +206,7 @@ columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            values: getValueFromServer(),
+            values: getValueFromServer,
         }
         // ...other props
     }

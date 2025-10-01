@@ -8,12 +8,14 @@ import {
     addLicenseManager,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getFunctionName,
     getPropertyInterfaces,
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
     removeCreateGridImport,
+    wrapTearDownExample,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -60,6 +62,8 @@ function getModuleImports(
     }
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
+
+    imports.push(getEnableAGTestIdLogic());
 
     if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);
@@ -379,7 +383,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<StrictMode><GridExample /></StrictMode>);
-(window as any).tearDownExample = () => root.unmount();
+${wrapTearDownExample('(window as any).tearDownExample = () => root.unmount();')}
 `;
 
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {

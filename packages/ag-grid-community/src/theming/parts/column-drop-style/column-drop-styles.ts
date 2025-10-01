@@ -1,4 +1,4 @@
-import { createPart } from '../../Part';
+import { createPart } from '../../../agStack/theming/partImpl';
 import { columnDropStyleBorderedCSS } from './column-drop-style-bordered.css-GENERATED';
 import { columnDropStylePlainCSS } from './column-drop-style-plain.css-GENERATED';
 

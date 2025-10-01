@@ -16,7 +16,7 @@
       "inputs": [
         "^production",
         "production",
-        "!{projectRoot}/vitest.config.mjs",
+        "!{projectRoot}/vitest.config.ts",
         "{workspaceRoot}/external/ag-website-shared/**",
         "charts",
         { "env": "PUBLIC_PACKAGE_VERSION" }
@@ -120,7 +120,7 @@
       "dependsOn": ["ag-grid-community:build:css", "ag-grid-enterprise:build:css", "generate-doc-references"],
       "options": {
         "cwd": "{projectRoot}",
-        "config": "vitest.config.mjs",
+        "config": "vitest.config.ts",
         "watch": false
       },
       "configurations": {
@@ -133,6 +133,35 @@
         },
         "update": {
           "update": true
+        }
+      }
+    },
+    "test:interactive:setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["npx playwright install --with-deps chromium firefox webkit"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "cache": true
+    },
+    "test:interactive": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["test:interactive:setup", "ag-grid-community:build"],
+      "options": {
+        "commands": ["npx playwright test"],
+        "parallel": false,
+        "cwd": "documentation/ag-grid-docs"
+      },
+      "configurations": {
+        "production": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.production"
+        },
+        "staging": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.build.staging"
+        },
+        "dev": {
+          "envFile": "{workspaceRoot}/documentation/ag-grid-docs/.env.dev"
         }
       }
     },

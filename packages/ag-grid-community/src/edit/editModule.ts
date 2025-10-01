@@ -1,6 +1,6 @@
 import type { _EditGridApi, _UndoRedoGridApi } from '../api/gridApi';
-import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
+import { TooltipModule } from '../tooltip/tooltipModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
@@ -13,18 +13,16 @@ import { NumberCellEditor } from './cellEditors/numberCellEditor';
 import { SelectCellEditor } from './cellEditors/selectCellEditor';
 import { TextCellEditor } from './cellEditors/textCellEditor';
 import {
-    batchEditingEnabled,
-    disableBatchEditing,
-    enableBatchEditing,
     getCurrentRedoSize,
     getCurrentUndoSize,
+    getEditRowValues,
     getEditingCells,
     isEditing,
     redoCellEditing,
-    setEditingCells,
     startEditingCell,
     stopEditing,
     undoCellEditing,
+    validateEdit,
 } from './editApi';
 import { EditModelService } from './editModelService';
 import { EditService } from './editService';
@@ -41,20 +39,18 @@ export const EditCoreModule: _ModuleWithApi<_EditGridApi<any>> = {
     beans: [EditModelService, EditService],
     apiFunctions: {
         getEditingCells,
+        getEditRowValues,
         getCellEditorInstances,
         startEditingCell,
         stopEditing,
         isEditing,
-        setEditingCells,
-        enableBatchEditing,
-        disableBatchEditing,
-        batchEditingEnabled,
+        validateEdit,
     },
     dynamicBeans: {
         singleCell: SingleCellEditStrategy,
         fullRow: FullRowEditStrategy,
     },
-    dependsOn: [PopupModule],
+    dependsOn: [PopupModule, TooltipModule],
     css: [cellEditingCSS],
 };
 
@@ -93,9 +89,6 @@ export const NumberEditorModule: _ModuleWithoutApi = {
     userComponents: {
         agNumberCellEditor: {
             classImp: NumberCellEditor,
-            params: {
-                suppressPreventDefault: true,
-            } as DefaultProvidedCellEditorParams,
         },
     },
     dependsOn: [EditCoreModule],

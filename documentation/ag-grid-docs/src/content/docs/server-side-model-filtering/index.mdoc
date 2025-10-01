@@ -127,7 +127,8 @@ For more details on setting values, see [Supplying Filter Values](./filter-set-f
 
 The example below demonstrates Server-side Filtering using the Set Filter. Note the following:
 
-* The **Country** and **Sport** columns have Set Filters defined using `filter: 'agSetColumnFilter'`.
+* The **Country** column has a Set Filter defined using `filter: 'agSetColumnFilter'`.
+* The **Sport** column has a [Multi Filter](./filter-multi/) defined using `filter: 'agMultiColumnFilter'`, it combines a Set Filter and a [Text Filter](./filter-text/).
 * Set Filter values are fetched asynchronously and supplied via the `params.success(values)` callback.
 * The filter for the **Country** column is using [complex objects](./filter-set-filter-list/#complex-objects). The country name is shown in the Filter List, but the `filterModel` (and request) use the country code.
 * The filter for the **Sport** column only shows the values which are available for the selected countries.
@@ -136,6 +137,14 @@ The example below demonstrates Server-side Filtering using the Set Filter. Note 
 * Open the browser's dev console to view the `filterModel` supplied in the request to the datasource.
 
 {% gridExampleRunner title="Set Filter Server Side Filtering" name="infinite-set" /%}
+
+## Batching Filter Requests
+
+The [New Filters Tool Panel](./tool-panel-filters-new/) allows for filter changes to be batched together before a new `getRows` request is sent to the datasource.
+
+This is possible by configuring the Filters Tool Panel to [Use Buttons](./tool-panel-filters-new/#using-buttons). Each filter can then be edited in the tool panel, and one request will be sent when the global apply button is clicked.
+
+{% gridExampleRunner title="Set Filter Server Side Filtering" name="global-apply" /%}
 
 ## Advanced Filter
 

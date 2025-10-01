@@ -33,7 +33,6 @@ export interface GridSerializingParams {
     colNames: ColumnNameService;
     valueSvc: ValueService;
     gos: GridOptionsService;
-    includePendingEdits?: boolean;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;

@@ -1,18 +1,25 @@
-import { KeyCode } from '../constants/keyCode';
-import type { AgEvent } from '../events';
+import { KeyCode } from '../agStack/constants/keyCode';
+import type { AgEvent } from '../agStack/interfaces/agEvent';
+import { _clearElement, _setDisabled } from '../agStack/utils/dom';
 import type { FilterAction } from '../interfaces/iFilter';
-import type { ElementParams } from '../utils/dom';
-import { _clearElement, _createElement, _setDisabled } from '../utils/dom';
+import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
+import type { ElementParams } from '../utils/element';
+import { _createElement } from '../utils/element';
 import { _warn } from '../validation/logging';
+import type { ComponentSelector } from '../widgets/component';
 import { Component } from '../widgets/component';
-import { translateForFilter } from './filterLocaleText';
 
-export interface FilterButtonCompParams {
+interface FilterButtonCompParams {
     className?: string;
 }
 
 export interface FilterButtonEvent extends AgEvent<FilterAction> {
     event?: Event;
+}
+
+export interface FilterButton {
+    type: FilterAction;
+    label: string;
 }
 
 function getElement(className: string): ElementParams {
@@ -23,9 +30,12 @@ function getElement(className: string): ElementParams {
 }
 
 export class FilterButtonComp extends Component<FilterAction> {
-    private buttons: FilterAction[];
+    private buttons: FilterButton[];
     private listeners: (() => void)[] = [];
     private eApply?: HTMLElement;
+
+    private validationTooltipFeature?: TooltipFeature;
+    private validationMessage: string | null = null;
     private readonly className: string;
 
     constructor(config?: FilterButtonCompParams) {
@@ -34,7 +44,7 @@ export class FilterButtonComp extends Component<FilterAction> {
         this.className = className;
     }
 
-    public updateButtons(buttons: FilterAction[], useForm?: boolean): void {
+    public updateButtons(buttons: FilterButton[], useForm?: boolean): void {
         const oldButtons = this.buttons;
         this.buttons = buttons;
 
@@ -53,9 +63,7 @@ export class FilterButtonComp extends Component<FilterAction> {
 
         const className = this.className;
 
-        const addButton = (type: FilterAction): void => {
-            const localeKey = `${type}Filter` as const;
-            const text = type ? translateForFilter(this, localeKey) : undefined;
+        const addButton = ({ type, label }: FilterButton): void => {
             const clickListener = (event?: Event) => {
                 this.dispatchLocalEvent<FilterButtonEvent>({
                     type,
@@ -73,38 +81,66 @@ export class FilterButtonComp extends Component<FilterAction> {
                 attrs: { type: buttonType },
                 ref: `${type}FilterButton`,
                 cls: `ag-button ag-standard-button ${className}-button${isApply ? ' ' + className + '-apply-button' : ''}`,
-                children: text,
+                children: label,
             });
+            this.activateTabIndex([button]);
+
             if (isApply) {
                 eApplyButton = button;
             }
 
-            button.addEventListener('click', clickListener);
-            button.addEventListener('keydown', (event) => {
+            const keydownListener = (event: KeyboardEvent) => {
                 if (event.key === KeyCode.ENTER) {
                     // this is needed to ensure a keyboard event is passed through, rather than a click event.
                     // otherwise focus won't be restored if a popup is closed
                     event.preventDefault();
                     clickListener(event);
                 }
-            });
-            this.listeners.push(() => button.removeEventListener('click', clickListener));
+            };
+
+            const listeners = this.listeners;
+
+            button.addEventListener('click', clickListener);
+            listeners.push(() => button.removeEventListener('click', clickListener));
+            button.addEventListener('keydown', keydownListener);
+            listeners.push(() => button.removeEventListener('keydown', keydownListener));
+
             fragment.append(button);
         };
 
-        buttons.forEach((type) => addButton(type));
+        buttons.forEach((button) => addButton(button));
 
         this.eApply = eApplyButton;
+
+        const tooltip = this.validationTooltipFeature;
+
+        if (eApplyButton && !tooltip) {
+            this.validationTooltipFeature = this.createOptionalManagedBean(
+                this.beans.registry.createDynamicBean<TooltipFeature>('tooltipFeature', false, {
+                    getGui: () => this.eApply,
+                    getLocation: () => 'advancedFilter',
+                    getTooltipShowDelayOverride: () => 1000,
+                } as ITooltipCtrl)
+            );
+        } else if (!eApplyButton && tooltip) {
+            this.validationTooltipFeature = this.destroyBean(tooltip);
+        }
 
         eGui.append(fragment);
     }
 
-    public updateValidity(valid?: boolean): void {
+    public getApplyButton(): HTMLElement | undefined {
+        return this.eApply;
+    }
+
+    public updateValidity(valid: boolean, message: string | null = null): void {
         const eApplyButton = this.eApply;
         if (!eApplyButton) {
             return;
         }
         _setDisabled(eApplyButton, valid === false);
+        this.validationMessage = message ?? null;
+        this.validationTooltipFeature?.setTooltipAndRefresh(this.validationMessage);
     }
 
     private destroyListeners(): void {
@@ -117,3 +153,8 @@ export class FilterButtonComp extends Component<FilterAction> {
         super.destroy();
     }
 }
+
+export const AgFilterButtonSelector: ComponentSelector = {
+    selector: 'AG-FILTER-BUTTON',
+    component: FilterButtonComp,
+};

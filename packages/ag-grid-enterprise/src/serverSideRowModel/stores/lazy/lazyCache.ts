@@ -87,8 +87,8 @@ export class LazyCache extends BeanStub {
     /**
      * Sibling services - 1-1 relationships.
      */
-    private store: LazyStore;
-    private storeParams: ServerSideGroupLevelParams;
+    private readonly store: LazyStore;
+    private readonly storeParams: ServerSideGroupLevelParams;
 
     /**
      * Grid options properties - stored locally for access speed.
@@ -218,8 +218,7 @@ export class LazyCache extends BeanStub {
 
         // if the node before this node is expanded, this node might be a child of that node
         if (
-            previousNode &&
-            previousNode.node.expanded &&
+            previousNode?.node.expanded &&
             (previousNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
         ) {
             return (previousNode.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
@@ -316,7 +315,11 @@ export class LazyCache extends BeanStub {
             this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
             const isFirstChild = numericIndex === 0;
-            node.setFirstChild(isFirstChild);
+            if (node.firstChild !== isFirstChild) {
+                node.firstChild = isFirstChild;
+                node.dispatchRowEvent('firstChildChanged');
+            }
+
             // if hiding open parents, then the first node should inherit the group values
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
@@ -534,11 +537,7 @@ export class LazyCache extends BeanStub {
             const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
-            // don't allow the SSRM to listen to the dispatched row event, as it will
-            // compute extra unnecessary row updates
-            this.serverSideRowModel.setPaused(true);
             this.blockUtils.checkOpenByDefault(newNode);
-            this.serverSideRowModel.setPaused(false);
             this.nodeManager.addRowNode(newNode);
         }
 
@@ -798,8 +797,13 @@ export class LazyCache extends BeanStub {
     }
 
     private isNodeCached(node: RowNode): boolean {
+        // expanded groups are preserved as clearing these would cause lower rows to jump up
+        const isExpandedGroup = node.isExpandable() && node.expanded;
+        // unbalanced nodes are preserved as they are always expanded
         const isUnbalancedNode = this.gos.get('groupAllowUnbalanced') && node.key === '';
-        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node) || isUnbalancedNode;
+        // Editing rows remain cached as if they're editing we would lose edit state/context/popups
+        const isEditing = !!this.beans.editSvc?.isRowEditing(node);
+        return isExpandedGroup || this.isNodeFocused(node) || isUnbalancedNode || isEditing;
     }
 
     private extractDuplicateIds(rows: any[]) {
@@ -960,7 +964,7 @@ export class LazyCache extends BeanStub {
             if (node) {
                 this.nodesToRefresh.delete(node);
             }
-            if (!node || !node.stub) {
+            if (!node?.stub) {
                 if (node && !node.stub) {
                     // if node is not a stub, we destroy it and recreate as nodes can't go from data to stub
                     this.destroyRowAtIndex(i);

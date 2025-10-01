@@ -1,6 +1,12 @@
-import { createPart } from '../../Part';
-import { defaultLightColorSchemeParams } from '../../core/core-css';
-import { accentMix, backgroundColor, foregroundBackgroundMix, foregroundColor } from '../../theme-utils';
+import { createPart } from '../../../agStack/theming/partImpl';
+import { defaultLightColorSchemeParams } from '../../../agStack/theming/shared/shared-css';
+import {
+    accentMix,
+    backgroundColor,
+    foregroundBackgroundMix,
+    foregroundColor,
+} from '../../../agStack/theming/themeUtils';
+import { baseDarkBatchEditParams } from '../batch-edit/batch-edit-styles';
 
 const makeColorSchemeLightTreeShakeable = () =>
     createPart({
@@ -38,6 +44,7 @@ export const colorSchemeLightCold = /*#__PURE__*/ makeColorSchemeLightColdTreeSh
 const darkParams = () =>
     ({
         ...defaultLightColorSchemeParams,
+        ...baseDarkBatchEditParams,
         backgroundColor: 'hsl(217, 0%, 17%)',
         foregroundColor: '#FFF',
         chromeBackgroundColor: foregroundBackgroundMix(0.05),
@@ -56,6 +63,7 @@ const darkParams = () =>
         findActiveMatchColor: backgroundColor,
         checkboxUncheckedBorderColor: foregroundBackgroundMix(0.4),
         toggleButtonOffBackgroundColor: foregroundBackgroundMix(0.4),
+        rowBatchEditBackgroundColor: foregroundBackgroundMix(0.1),
     }) as const;
 
 const makeColorSchemeDarkTreeShakeable = () =>

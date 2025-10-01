@@ -6,7 +6,7 @@ Highlight changes by flashing or animating cells.
 
 {% gridExampleRunner title="Animated Flashing Cells" name="animated-flashing-cells" /%}
 
-In the example above, to show changing values:
+The example above shows changing values:
 
 * Columns A and B use [Flashing Cells](./change-cell-renderers/#flashing-cells).
 * Columns C and D use the [Animate Show Change](./change-cell-renderers/#animate-show-changed-cells) cell renderer.
@@ -24,12 +24,12 @@ Set Column attribute `enableCellChangeFlash=true` to flash the cells when data c
 
 In the example above:
 
-* All columns have `enableCellChangeFlash=true` so changes to the columns values will flash the cell.
+* All columns have `enableCellChangeFlash=true` so changes to the cell values will flash the cell.
 * Clicking **Update Some Data** will randomly update some data. The grid will then flash the cells where data has changed.
 
 To change the length of the effect, use the grid options `cellFlashDuration` and `cellFadeDuration`.
 
-By default, value changes caused by updates to column filters are not highlighted with cell flashing. This behaviour can be toggled by enabling the grid option `allowShowChangeAfterFilter`
+By default, value changes caused by updates to column filters are not highlighted with cell flashing. This behaviour can be toggled by enabling the grid option `allowShowChangeAfterFilter`.
 
 ### Flash Cells using the API
 
@@ -49,11 +49,11 @@ In the example above, all three buttons use the `flashCells(params)` API. Note t
 
 ### Customise Flash Colour
 
-Each time the cell value is changed, the grid adds the CSS class `ag-cell-data-changed` for 500ms by default, and then the CSS class `ag-cell-data-changed-animation` for 1,000ms by default. The grid-provided themes use this to apply a background color. To override the flash background color, override the relevant CSS class.
+Each time the cell value is changed, the grid adds the CSS class `ag-cell-data-changed` for 500ms by default, and then the CSS class `ag-cell-data-changed-animation` for 1,000ms by default. The grid-provided themes use this to apply a background colour. To override the flash background colour, override the relevant CSS class.
 
 {% gridExampleRunner title="Customising Flashing" name="customising-flashing" /%}
 
-The example above demonstrates customising the flashing cell background color using the `--ag-value-change-value-highlight-background-color` CSS variable.
+The example above demonstrates customising the flashing cell background colour using the `--ag-value-change-value-highlight-background-color` CSS variable.
 
 ## Animated Cell Renderers
 

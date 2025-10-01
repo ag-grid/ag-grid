@@ -1,24 +1,24 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import { _setAriaDisabled } from '../agStack/utils/aria';
 import type { BeanCollection } from '../context/context';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
-import { _setAriaDisabled } from '../utils/aria';
-import type { ElementParams } from '../utils/dom';
-import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/focus';
+import type { ElementParams } from '../utils/element';
+import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import { _createIconNoSpan } from '../utils/icon';
 import { _formatNumberCommas } from '../utils/number';
-import type { ComponentSelector } from '../widgets/component';
-import { RefPlaceholder } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
 import { paginationCompCSS } from './paginationComp.css-GENERATED';
 import type { PaginationService } from './paginationService';
 
-export class PaginationComp extends TabGuardComp implements FocusableContainer {
+class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
     private pagination: PaginationService;
     private ariaAnnounce?: AriaAnnouncementService;
@@ -400,19 +400,9 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             this.ariaAnnounce?.announceValue(ariaPageStatus, 'paginationPage');
         }
     }
-
-    private setTotalLabelsToZero() {
-        const strZero = this.formatNumber(0);
-        this.lbFirstRowOnPage.textContent = strZero;
-        this.lbCurrent.textContent = strZero;
-        this.lbLastRowOnPage.textContent = strZero;
-        this.lbTotal.textContent = strZero;
-        this.lbRecordCount.textContent = strZero;
-        this.announceAriaStatus(strZero, strZero, strZero, strZero, strZero);
-    }
 }
 
-export const PaginationSelector: ComponentSelector = {
+export const PaginationSelector: ComponentSelector<Component> = {
     selector: 'AG-PAGINATION',
     component: PaginationComp,
 };

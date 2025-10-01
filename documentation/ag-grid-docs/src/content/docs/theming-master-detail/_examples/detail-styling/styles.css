@@ -1,0 +1,19 @@
+.ag-details-row {
+    background: #f442;
+    padding: 5px 5px 5px 40px;
+}
+
+/* Apply styles only to detail grids by wrapping them in .ag-details-grid: */
+.ag-details-grid {
+    --ag-row-height: 20px;
+
+    .ag-header-cell {
+        color: #f80;
+        font-weight: bold;
+    }
+
+    .ag-details-grid {
+        /* If you have nested detail grids, these styles would only apply
+           from the second level down */
+    }
+}

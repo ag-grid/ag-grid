@@ -1,10 +1,10 @@
+import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
+import { _removeAriaSort, _setAriaSort } from '../../../agStack/utils/aria';
+import { _addStylesToElement } from '../../../agStack/utils/dom';
 import type { HeaderStyle } from '../../../entities/colDef';
 import type { IHeaderComp } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
-import type { ElementParams } from '../../../utils/dom';
-import { _addStylesToElement } from '../../../utils/dom';
-import { RefPlaceholder } from '../../../widgets/component';
+import type { ElementParams } from '../../../utils/element';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
 
@@ -32,14 +32,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
     public postConstruct(): void {
         const eGui = this.getGui();
 
-        const setAttribute = (name: string, value: string | null | undefined) => {
-            if (value != null && value != '') {
-                eGui.setAttribute(name, value);
-            } else {
-                eGui.removeAttribute(name);
-            }
-        };
-
         const refreshSelectAllGui = () => {
             const selectAllGui = this.ctrl.getSelectAllGui();
             if (selectAllGui) {
@@ -47,8 +39,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
                 this.addDestroyFunc(() => selectAllGui.remove());
             }
         };
-
-        setAttribute('col-id', this.ctrl.column.getColId());
 
         const compProxy: IHeaderCellComp = {
             setWidth: (width) => (eGui.style.width = width),

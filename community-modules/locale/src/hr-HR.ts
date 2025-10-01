@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_HR = {
     // Group Column Filter
     groupFilterSelect: 'Odaberite polje:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'je (sve)',
+    filterSummaryContains: 'sadrži',
+    filterSummaryNotContains: 'ne sadrži',
+    filterSummaryTextEquals: 'jednako je',
+    filterSummaryTextNotEqual: 'nije jednako',
+    filterSummaryStartsWith: 'započinje s',
+    filterSummaryEndsWith: 'završava s',
+    filterSummaryBlank: 'je prazno',
+    filterSummaryNotBlank: 'nije prazno',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'između',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'je (sve)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'je (${variable})',
+    filterSummaryListLong: 'je (${variable}) i ${variable} više',
+    addFilterCard: 'Dodaj filtriranje',
+    agTextColumnFilterDisplayName: 'Jednostavan filter',
+    agNumberColumnFilterDisplayName: 'Jednostavan filter',
+    agDateColumnFilterDisplayName: 'Jednostavan filter',
+    agSetColumnFilterDisplayName: 'Filter za odabir',
+    agMultiColumnFilterDisplayName: 'Kombinirani filter',
+    addFilterPlaceholder: 'Pretraži stupce...',
+
     // Advanced Filter
     advancedFilterContains: 'sadrži',
     advancedFilterNotContains: 'ne sadrži',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterAnd: 'I',
     advancedFilterOr: 'ILI',
     advancedFilterApply: 'Primijeni',
+    advancedFilterReset: 'Ponovno postavi',
+    advancedFilterCancel: 'Otkaži',
+    advancedFilterClear: 'Očisti',
     advancedFilterBuilder: 'Graditelj',
     advancedFilterValidationMissingColumn: 'Nedostaje stupac',
     advancedFilterValidationMissingOption: 'Nedostaje opcija',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterValidationMessageAtEnd: 'Izraz ima grešku. ${variable} na kraju izraza.',
     advancedFilterBuilderTitle: 'Napredni filter',
     advancedFilterBuilderApply: 'Primijeni',
+    advancedFilterBuilderClear: 'Očisti',
+    advancedFilterBuilderReset: 'Ponovno postavi',
     advancedFilterBuilderCancel: 'Odustani',
     advancedFilterBuilderAddButtonTooltip: 'Dodaj filter ili grupu',
     advancedFilterBuilderRemoveButtonTooltip: 'Ukloni',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_HR = {
     advancedFilterBuilderValidationSelectColumn: 'Moraš odabrati stupac.',
     advancedFilterBuilderValidationSelectOption: 'Moraš odabrati opciju.',
     advancedFilterBuilderValidationEnterValue: 'Moraš unijeti vrijednost.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Datum mora biti nakon ${variable}',
+    maxDateValidation: 'Datum mora biti prije ${variable}',
+    maxLengthValidation: 'Mora imati ${variable} znakova ili manje.',
+    minValueValidation: 'Mora biti veće ili jednako ${variable}',
+    maxValueValidation: 'Mora biti manje ili jednako ${variable}',
+    invalidSelectionValidation: 'Nevažeći odabir.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Stupci',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_HR = {
     dropOff: 'Odljev',
     stageLabels: 'Oznake faza',
     reverse: 'Obrnuto',
+    tooltipMode: 'Način alata',
+    tooltipModeSingle: 'Jedan',
+    tooltipModeShared: 'Višestruki',
+    tooltipModeCompact: 'Kompaktni',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Razina ${variable}. Pritisnite ENTER za uređivanje.',
@@ -540,6 +589,10 @@ export const AG_GRID_LOCALE_HR = {
     ariaChartSelected: 'Odabrano',
     ariaSkeletonCellLoadingFailed: 'Redak nije uspješno učitan',
     ariaSkeletonCellLoading: 'Podaci retka se učitavaju',
+    ariaDeferSkeletonCellLoading: 'Ćelija se učitava',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Promjena na čekanju',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupe redaka',
@@ -556,8 +609,10 @@ export const AG_GRID_LOCALE_HR = {
     ariaLabelDialog: 'Dijalog',
     ariaLabelColumnMenu: 'Izbornik stupca',
     ariaLabelColumnFilter: 'Filtar stupca',
-    ariaLabelCellEditor: 'Uređivač ćelija',
     ariaLabelSelectField: 'Odaberi polje',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
     ariaLabelLoadingContextMenu: 'Učitavanje kontekstnog izbornika',
 
     // aria labels for rich select
@@ -578,6 +633,11 @@ export const AG_GRID_LOCALE_HR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Popis stupaca',
     ariaFilterPanelList: 'Popis filtara',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Dodaj polje filtera',
+    ariaLabelFilterCardDelete: 'Izbriši filter',
+    ariaLabelFilterCardHasEdits: 'Ima izmjene',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

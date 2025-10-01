@@ -377,7 +377,7 @@ export class ExcelCreator
 
         const applicableStyles: string[] = ['cell'];
 
-        if (!styles || !styles.length) {
+        if (!styles?.length) {
             return applicableStyles;
         }
 

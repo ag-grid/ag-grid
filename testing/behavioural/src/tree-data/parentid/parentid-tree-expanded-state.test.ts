@@ -9,11 +9,6 @@ describe('ag-grid parentId tree expanded state', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    const gridRowsOptions: GridRowsOptions = {
-        checkDom: true,
-        columns: ['ag-Grid-AutoColumn'],
-    };
-
     beforeEach(() => {
         gridsManager.reset();
     });
@@ -55,6 +50,11 @@ describe('ag-grid parentId tree expanded state', () => {
         });
 
         await asyncSetTimeout(1);
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: ['ag-Grid-AutoColumn'],
+        };
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
@@ -119,6 +119,108 @@ describe('ag-grid parentId tree expanded state', () => {
             · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett"
             · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers"
         `);
+    });
+
+    test('groupDefaultExpanded = 1', async () => {
+        const rowData = [
+            { x: 'A', parentId: null },
+            { x: 'B', parentId: 'A' },
+            { x: 'C', parentId: undefined },
+            { x: 'D', parentId: 'C' },
+            { x: 'E' },
+            { x: 'F', parentId: 'E' },
+            { x: 'G', parentId: 'F' },
+            { x: 'H', parentId: 'G' },
+        ];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            autoGroupColumnDef: { headerName: 'tree' },
+            animateRows: false,
+            groupDefaultExpanded: 1,
+            rowData,
+            getRowId: (params) => params.data.x,
+        });
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+        };
+
+        const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
+
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:A
+            │ └── B LEAF id:B
+            ├─┬ C GROUP id:C
+            │ └── D LEAF id:D
+            └─┬ E GROUP id:E
+            · └─┬ F GROUP collapsed id:F
+            · · └─┬ G GROUP collapsed hidden id:G
+            · · · └── H LEAF hidden id:H
+        `);
+    });
+
+    test('groupDefaultExpanded callback', async () => {
+        const rowData = [
+            { x: 'A', parentId: null },
+            { x: 'B', parentId: 'A' },
+            { x: 'C', parentId: 'B' },
+            { x: 'D', parentId: 'C' },
+            { x: 'E' },
+            { x: 'F', parentId: 'E' },
+            { x: 'G', parentId: 'F' },
+            { x: 'H', parentId: 'G' },
+        ];
+
+        const calls: { key: string; level: number }[] = [];
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'x' }],
+            treeData: true,
+            treeDataParentIdField: 'parentId',
+            autoGroupColumnDef: { headerName: 'tree' },
+            animateRows: false,
+            isGroupOpenByDefault: (params) => {
+                calls.push({ key: params.key, level: params.level });
+                return params.level < 2;
+            },
+            rowData,
+            getRowId: (params) => params.data.x,
+        });
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+        };
+
+        const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
+
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ A GROUP id:A
+            │ └─┬ B GROUP id:B
+            │ · └─┬ C GROUP collapsed id:C
+            │ · · └── D LEAF hidden id:D
+            └─┬ E GROUP id:E
+            · └─┬ F GROUP id:F
+            · · └─┬ G GROUP collapsed id:G
+            · · · └── H LEAF hidden id:H
+        `);
+
+        calls.sort((a, b) => a.key.localeCompare(b.key));
+
+        const callsObj = Object.fromEntries(calls.map((call) => [call.key, call.level]));
+
+        expect(callsObj).toEqual({
+            A: 0,
+            B: 1,
+            C: 2,
+            E: 0,
+            F: 1,
+            G: 2,
+        });
     });
 });
 

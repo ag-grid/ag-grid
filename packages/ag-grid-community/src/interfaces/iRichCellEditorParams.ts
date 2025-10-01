@@ -1,14 +1,18 @@
-import type { AgPickerFieldParams } from './agFieldParams';
+import type { AgPickerFieldParams } from '../agStack/widgets/agPickerFieldParams';
+import type { AgComponentSelectorType } from '../widgets/component';
 import type { ICellEditorParams } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
-export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
+export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {
+    cellRendererParams: any;
+}
 
-export interface RichSelectParams<TValue = any> extends AgPickerFieldParams {
+export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
     allowTyping?: boolean;
     cellRenderer?: any;
+    cellRendererParams?: any;
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
@@ -39,6 +43,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     cellHeight?: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
     cellRenderer?: any;
+    /** The custom parameters to be used by the cell render. */
+    cellRendererParams?: any;
+
     /**
      * Set to `true` to be able to type values in the display area.
      * @default false

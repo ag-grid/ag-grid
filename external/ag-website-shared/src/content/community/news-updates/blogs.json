@@ -1,30 +1,30 @@
 [
     {
         "title": "Optimising Large Data Set Visualisations with the M4 Algorithm",
-        "description": "A deep dive into how we implemented the M4 algorithm to create a line chart that can support over a million data points at 60fps.",
+        "description": "Using the M4 algorithm to create line charts that support 1m+ data points at 60fps.",
         "image": "/community/events/news/charts.png",
         "link": "https://blog.ag-grid.com/optimizing-large-data-set-visualisations-with-the-m4-algorithm/",
         "linkText": "Read article"
     },
     {
-        "title": "What's New in AG Grid 33",
-        "description": "What's New in AG Grid 33 - Bundle size improvements, Async Context Menu support, and Default Column Header customisation.",
+        "title": "What's New in AG Grid 34",
+        "description": "New filters tool panel, cell editor validation, batch & bulk cell editing, and tree data drag and drop.",
         "image": "/community/events/news/grid-table.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-33/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-grid-34/",
         "linkText": "Read article"
     },
     {
-        "title": "What's New in AG Charts 11",
-        "description": "What's New in AG Charts 11 - Fibonacci Tools for Financial Charts, Grouped Category Axis, and Save/Restore Chart State.",
+        "title": "What's New in AG Charts 12",
+        "description": "Major theming updates, including axis band highlighting, label wrapping, global formatting, and more.",
         "image": "/community/events/news/integrated.png",
-        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-11/",
+        "link": "https://blog.ag-grid.com/whats-new-in-ag-charts-12/",
         "linkText": "Read article"
     },
     {
-        "title": "Writing E2E Tests for AG Grid React Tables with Playwright",
-        "description": "Learn how to write E2E tests for AG Grid with Playwright, including how to test rendering, user interaction, and accessibility.",
+        "title": "AG Grid Showcase: Sample Apps, Demos, Examples & Extensions",
+        "description": "Examples of the features and functionality that you can add to your application with AG Grid, along with live demos and sample code.",
         "image": "/community/events/news/grid-2.png",
-        "link": "https://blog.ag-grid.com/writing-e2e-tests-for-ag-grid-react-tables-with-playwright/",
+        "link": "https://blog.ag-grid.com/ag-grid-showcase-examples-demos-samples-and-extensions/",
         "linkText": "Read article"
     }
 ]

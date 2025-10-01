@@ -1,8 +1,9 @@
+import type { IPopupComponent } from '../agStack/interfaces/iPopupComponent';
 import type { ColDef } from '../entities/colDef';
 import type { Column } from '../interfaces/iColumn';
 import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
-import type { IPopupComponent } from './iPopupComponent';
+import type { EditState } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 
@@ -30,15 +31,25 @@ export interface BaseCellEditor {
      */
     focusOut?(): void;
 
-    /** Optional: The element which will contain Edit Validation errors.
-     * This element will display a Tooltip with the validation error.
+    /**
+     * Optional: Returns the element to use for validation feedback.
+     *
+     * Called by the grid in two contexts:
+     * - `tooltip: true` → used as the anchor for validation tooltips.
+     * - `tooltip: false` → receives the `invalid` CSS class for visual feedback.
+     *
+     * If omitted, the grid falls back to the cell element for inline editors.
+     * Popup editors that do not implement this will not show validation styles or tooltips.
+     *
+     * @param tooltip - Whether the element is for a tooltip or direct styling.
+     * @returns An HTML element for feedback, or `null`/`undefined` to use default behavior.
      */
-    getValidationElement?(): HTMLElement;
+    getValidationElement?(tooltip: boolean): HTMLElement;
 
     /**
      * Optional: The error messages associated with the Editor
      */
-    getErrors?(): string[] | null;
+    getValidationErrors?(): string[] | null;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
@@ -71,6 +82,12 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor {
      * cell value visible. If this method is not present, the default is "over".
      */
     getPopupPosition?(): 'over' | 'under' | undefined;
+}
+
+export interface IErrorValidationParams<TData = any, TValue = any, TContext = any> {
+    value: TValue | null | undefined;
+    internalErrors: string[] | null;
+    cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
 }
 
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -110,15 +127,10 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     formatValue: (value: TValue | null | undefined) => string;
 
     /**
-     * Optional validation callback that will override the `getError()` of Provided Editors.
-     * Use this to return your own custom errors.
-     * @return An array of strings containing the editor error messages, or `null` if the editor is valid.
+     * Optional validation callback that will override the `getValidationErrors()` of Provided Editors. Use this to return your own custom errors.
+     * @returns An array of strings containing the editor error messages, or `null` if the editor is valid.
      */
-    getErrors?: (params: {
-        value: TValue | null | undefined;
-        internalErrors: string[] | null;
-        cellEditorParams: ICellEditorParams<TData, TValue, TContext>;
-    }) => string[] | null;
+    getValidationErrors?: (params: IErrorValidationParams<TData, TValue, TContext>) => string[] | null;
 
     /**
      * Runs the Editor Validation.
@@ -137,33 +149,30 @@ export interface DefaultProvidedCellEditorParams {
 
 export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> {}
 
-export interface GetEditingCellsParams {
-    includePending?: boolean;
-}
-
-export interface SetEditingCellsParams {
-    /** Update existing cells, omit or set `false` to replace currently editing cells. */
-    update?: boolean;
-}
-
 export interface EditingCellPosition extends RowPosition {
-    /** Column key */
-    colKey: string;
+    /** Column id */
+    colId: string;
 
     /**
      * Column instance.
-     * @deprecated Use `colKey` instead.
+     * @deprecated Use `colId` instead.
      */
     column?: Column;
 
-    /** New pending value */
+    /**
+     * Column instance.
+     * @deprecated Use `colId` instead.
+     */
+    colKey?: string | Column;
+
+    /** New pending value, use `null` to delete cell content */
     newValue?: any;
 
-    /** Existing value, used only when retrieving current editing state */
+    /** Existing value, used only when retrieving current editing state, ignored when setting new editing state. */
     oldValue?: any;
 
     /** Current editing state */
-    state?: 'editing' | 'changed';
+    state?: EditState;
 }
 
 export interface ICellEditorValidationError extends RowPosition {

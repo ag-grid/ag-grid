@@ -12,12 +12,16 @@ import type {
 } from '../interfaces/exportParams';
 import type { IColsService } from '../interfaces/iColsService';
 import type { ValueService } from '../valueService/valueService';
-import type { RowAccumulator, RowSpanningAccumulator } from './iGridSerializer';
-import type { GridSerializingParams, GridSerializingSession } from './iGridSerializer';
+import type {
+    GridSerializingParams,
+    GridSerializingSession,
+    RowAccumulator,
+    RowSpanningAccumulator,
+} from './iGridSerializer';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
-    private colNames: ColumnNameService;
+    private readonly colNames: ColumnNameService;
     public rowGroupColsSvc?: IColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
@@ -68,18 +72,17 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         currentColumnIndex: number,
         accumulatedRowIndex: number,
         type: string,
-        node: RowNode,
-        includePendingEdits: boolean = false
+        node: RowNode
     ): { value: any; valueFormatted?: string | null } {
+        const isFullWidthGroup =
+            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         if (
             this.processRowGroupCallback &&
             (this.gos.get('treeData') || node.group) &&
-            (!node.rowGroupColumn || column.isRowGroupDisplayed(node.rowGroupColumn.getColId()))
+            (column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '') || isFullWidthGroup)
         ) {
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
         }
-
-        const rawSource = includePendingEdits ? 'ui' : 'api';
 
         if (this.processCellCallback) {
             return {
@@ -89,15 +92,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined, rawSource)
-                                .value,
+                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined).value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
                                     column,
                                     node,
                                     valueToParse,
-                                    this.valueSvc.getValue(column, node, undefined, rawSource)
+                                    this.valueSvc.getValue(column, node, undefined)
                                 ),
                             formatValue: (valueToFormat: any) =>
                                 this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
@@ -110,8 +112,6 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const valueService = this.valueSvc;
 
         const isGrandTotalRow = node.level === -1 && node.footer;
-        const isFullWidthGroup =
-            currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         const isMultiAutoCol = column.colDef.showRowGroup === true && (node.group || isTreeData);
         // when using single auto group column or group row, create arrow separated string of group vals
         if (!isGrandTotalRow && (isFullWidthGroup || isMultiAutoCol)) {
@@ -134,7 +134,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true, rawSource);
+        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
         return {
             value: value ?? '',
             valueFormatted,

@@ -27,27 +27,27 @@ const borderFactory: ExcelOOXMLTemplate = {
             children: [
                 {
                     name: 'left',
-                    properties: { rawMap: { style: left && left.style } },
+                    properties: { rawMap: { style: left?.style } },
                     children: leftChildren,
                 },
                 {
                     name: 'right',
-                    properties: { rawMap: { style: right && right.style } },
+                    properties: { rawMap: { style: right?.style } },
                     children: rightChildren,
                 },
                 {
                     name: 'top',
-                    properties: { rawMap: { style: top && top.style } },
+                    properties: { rawMap: { style: top?.style } },
                     children: topChildren,
                 },
                 {
                     name: 'bottom',
-                    properties: { rawMap: { style: bottom && bottom.style } },
+                    properties: { rawMap: { style: bottom?.style } },
                     children: bottomChildren,
                 },
                 {
                     name: 'diagonal',
-                    properties: { rawMap: { style: diagonal && diagonal.style } },
+                    properties: { rawMap: { style: diagonal?.style } },
                     children: diagonalChildren,
                 },
             ],

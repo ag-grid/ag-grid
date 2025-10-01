@@ -1,8 +1,8 @@
+import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { IEditService } from '../interfaces/iEditService';
-import { _exists } from '../utils/generic';
-import type { ComponentSelector } from '../widgets/component';
+import type { Component, ComponentSelector } from '../widgets/component';
 import { PaginationSelector } from './paginationComp';
 
 export class PaginationService extends BeanStub implements NamedBean {
@@ -20,7 +20,7 @@ export class PaginationService extends BeanStub implements NamedBean {
     private pageSizeFromPageSizeSelector?: number; // When user selects page size from page size selector.
     private pageSizeFromInitialState?: number; // When the initial grid state is loaded, and a page size rehydrated
     private pageSizeFromGridOptions?: number; // When user sets gridOptions.paginationPageSize.
-    private defaultPageSize: 100; // When nothing else set, default page size is 100.
+    private readonly defaultPageSize: 100; // When nothing else set, default page size is 100.
 
     private totalPages: number;
     private currentPage = 0;
@@ -30,7 +30,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private masterRowCount: number = 0;
 
-    private editSvc?: IEditService;
+    private readonly editSvc?: IEditService;
 
     public postConstruct() {
         const gos = this.gos;
@@ -42,7 +42,7 @@ export class PaginationService extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('paginationPageSize', this.onPageSizeGridOptionChanged.bind(this));
     }
 
-    public getPaginationSelector(): ComponentSelector {
+    public getPaginationSelector(): ComponentSelector<Component> {
         return PaginationSelector;
     }
 
@@ -78,11 +78,13 @@ export class PaginationService extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.editSvc?.isEditing()) {
-            if (this.editSvc.batch) {
-                this.editSvc.cleanupEditors();
+        const { editSvc } = this.beans;
+
+        if (editSvc?.isEditing()) {
+            if (editSvc.isBatchEditing()) {
+                editSvc.cleanupEditors();
             } else {
-                this.editSvc.stopEditing(undefined, { source: 'api' });
+                editSvc.stopEditing(undefined, { source: 'api' });
             }
         }
 
@@ -346,9 +348,5 @@ export class PaginationService extends BeanStub implements NamedBean {
             newPageSize,
             keepRenderedRows,
         });
-
-        if (this.editSvc?.batch && this.editSvc?.isEditing()) {
-            this.editSvc?.updateCells();
-        }
     }
 }

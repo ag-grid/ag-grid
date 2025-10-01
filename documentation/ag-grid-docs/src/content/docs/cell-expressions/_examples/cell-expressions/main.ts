@@ -32,7 +32,7 @@ const rowDataLeft: LeftData[] = [
     { function: 'Sum A', value: '=ctx.sum("a")' },
     { function: 'Sum B', value: '=ctx.sum("b")' },
 ];
-let leftGridApi: GridApi;
+let leftApi: GridApi;
 const gridOptionsLeft: GridOptions<LeftData> = {
     columnDefs: [
         { headerName: 'Function', field: 'function', minWidth: 150 },
@@ -65,7 +65,7 @@ const rowDataRight: RightData[] = [
     { a: 6, b: 77 },
     { a: 7, b: 88 },
 ];
-let rightGridApi: GridApi;
+let rightApi: GridApi;
 const gridOptionsRight: GridOptions<RightData> = {
     columnDefs: [{ field: 'a' }, { field: 'b' }],
     defaultColDef: {
@@ -88,18 +88,18 @@ gridOptionsLeft.context.sum = function (field: keyof RightData) {
 // tell Left grid to refresh when number changes
 function onNewNumber(value: string) {
     gridOptionsLeft.context.theNumber = new Number(value);
-    leftGridApi!.refreshCells();
+    leftApi!.refreshCells();
 }
 
 // we want to tell the Left grid to refresh when the Right grid values change
 function cellValueChanged() {
-    leftGridApi!.refreshCells();
+    leftApi!.refreshCells();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!;
-    leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);
+    leftApi = createGrid(gridDivLeft, gridOptionsLeft);
     const gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!;
-    rightGridApi = createGrid(gridDivRight, gridOptionsRight);
+    rightApi = createGrid(gridDivRight, gridOptionsRight);
 });

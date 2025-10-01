@@ -1,3 +1,4 @@
+import { _last } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -7,7 +8,6 @@ import { isColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
-import { _last } from '../utils/array';
 import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
@@ -44,6 +44,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     // all three lists above combined
     public allCols: AgColumn[] = [];
 
+    public headerGroupRowCount: number = 0; // number of header rows to render
+
     public autoHeightCols: AgColumn[];
 
     // used by:
@@ -77,17 +79,43 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.joinColsAriaOrder(colModel);
         this.joinCols();
 
+        this.headerGroupRowCount = this.getHeaderRowCount();
+
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
         colFlex?.refreshFlexedColumns();
         this.updateBodyWidths();
-        colViewport.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(colModel, this.leftCols, this.rightCols, source);
+        colViewport.checkViewportColumns(false);
 
         this.eventSvc.dispatchEvent({
             type: 'displayedColumnsChanged',
             source,
         });
+    }
+
+    private getHeaderRowCount(): number {
+        if (!this.gos.get('hidePaddedHeaderRows')) {
+            return this.beans.colModel.cols!.treeDepth;
+        }
+
+        let headerGroupRowCount = 0;
+        for (const col of this.allCols) {
+            let parent = col.getParent();
+            while (parent) {
+                if (!parent.isPadding()) {
+                    const level = parent.getProvidedColumnGroup().getLevel() + 1;
+                    if (level > headerGroupRowCount) {
+                        headerGroupRowCount = level;
+                    }
+                    break;
+                }
+
+                parent = parent.getParent();
+            }
+        }
+
+        return headerGroupRowCount;
     }
 
     // after setColumnWidth or updateGroupsAndPresentedCols

@@ -22,7 +22,7 @@ function getRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getValueFromServer(params: ICellEditorParams): Promise<string[]> {
+function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
     return new Promise((resolve) => {
         setTimeout(() => resolve(languages), 1000);
     });

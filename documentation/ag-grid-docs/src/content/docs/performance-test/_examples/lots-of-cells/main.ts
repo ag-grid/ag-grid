@@ -2,6 +2,9 @@ import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
+// Fallback for Safari and other browsers that do not support requestIdleCallback
+const _requestIdleCallback = window.requestIdleCallback ?? setTimeout;
+
 ModuleRegistry.registerModules([
     AllEnterpriseModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -43,7 +46,7 @@ function outputText(time?: number) {
 function onClearData() {
     const start = performance.now();
     outputText();
-    requestIdleCallback(() => {
+    _requestIdleCallback(() => {
         outputText(Math.round(performance.now() - start));
     });
     gridApi!.updateGridOptions({
@@ -55,7 +58,7 @@ function onClearData() {
 function onSetData() {
     const start = performance.now();
     outputText();
-    requestIdleCallback(() => {
+    _requestIdleCallback(() => {
         outputText(performance.now() - start);
     });
     gridApi!.updateGridOptions({
@@ -67,7 +70,7 @@ function onSetData() {
 function onScroll() {
     const start = performance.now();
     outputText();
-    requestIdleCallback(() => {
+    _requestIdleCallback(() => {
         outputText(performance.now() - start);
     });
     const eBodyViewport = document.querySelector<HTMLElement>('.ag-body-viewport')!;

@@ -10,7 +10,9 @@ import {
     _createElement,
     _debounce,
     _destroyColumnTree,
+    _getFirstRow,
     _getRowNode,
+    _interpretAsRightClick,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
@@ -46,13 +48,19 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     private isSuppressCellSelectionIntegration: boolean;
 
     private rowNumberOverrides: RowNumbersOptions;
+    private lastColumnResized: number = 0;
 
     public postConstruct(): void {
-        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this, false, true), 10);
+        const refreshCells_debounced = _debounce(this, this.refreshCells.bind(this), 10);
         this.addManagedEventListeners({
-            modelUpdated: refreshCells_debounced,
+            columnResized: () => {
+                this.lastColumnResized = Date.now();
+            },
+            modelUpdated: (params) => {
+                refreshCells_debounced(false, !params.keepRenderedRows);
+            },
             rangeSelectionChanged: () => this.refreshCells(true),
-            pinnedRowsChanged: refreshCells_debounced,
+            pinnedRowsChanged: () => refreshCells_debounced(false, true),
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
@@ -76,14 +84,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
-        if (!this.gos.get('rowNumbers')) {
-            return;
-        }
-
         const destroyCollection = () => {
             _destroyColumnTree(this.beans, this.columns?.tree);
             this.columns = null;
         };
+
+        if (!this.gos.get('rowNumbers')) {
+            destroyCollection();
+            return;
+        }
 
         const newTreeDepth = cols.treeDepth;
         const oldTreeDepth = this.columns?.treeDepth ?? -1;
@@ -127,10 +136,8 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             return false;
         }
 
-        if (!mouseEvent.shiftKey) {
-            setTimeout(() => {
-                this.focusFirstRenderedCellAtRowPosition(cellPosition);
-            });
+        if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
+            this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
 
         return true;
@@ -242,14 +249,23 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         if (!this.isIntegratedWithSelection || e.key !== KeyCode.SPACE) {
             return;
         }
-        _selectAllCells(this.beans);
+        this.handleFocusAllCellsFromHeader();
     }
 
-    private onHeaderClick(): void {
-        if (!this.isIntegratedWithSelection) {
+    private onHeaderClick(_e: MouseEvent): void {
+        if (
+            Date.now() - this.lastColumnResized < 100 ||
+            !this.isIntegratedWithSelection ||
+            this.getColumn()?.resizing
+        ) {
             return;
         }
+        this.handleFocusAllCellsFromHeader();
+    }
+
+    private handleFocusAllCellsFromHeader(): void {
         _selectAllCells(this.beans);
+        this.focusFirstRenderedCellAtRowPosition();
     }
 
     private refreshCells(force?: boolean, runAutoSize?: boolean): void {
@@ -409,8 +425,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     // focus is disabled on the Row Numbers cells, when a click happens on it,
-    // it should focus the first cell of that row.
-    private focusFirstRenderedCellAtRowPosition(rowPosition: RowPosition) {
+    // it should focus the first cell of that row or first cell of the grid (from header).
+    private focusFirstRenderedCellAtRowPosition(rowPosition?: RowPosition | null) {
+        if (!rowPosition) {
+            rowPosition = _getFirstRow(this.beans);
+            if (!rowPosition) {
+                return;
+            }
+        }
+
         const { beans, gos } = this;
         const { visibleCols, colViewport } = beans;
         const pinnedCols = gos.get('enableRtl') ? visibleCols.rightCols : visibleCols.leftCols;
@@ -435,12 +458,15 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
         const { rowPinned, rowIndex } = rowPosition;
 
-        beans.focusSvc.setFocusedCell({
-            rowIndex,
-            rowPinned,
-            column,
-            forceBrowserFocus: true,
-            preventScrollOnBrowserFocus: true,
+        // to avoid conflict with setting the range, add a setTimeout here
+        setTimeout(() => {
+            beans.focusSvc.setFocusedCell({
+                rowIndex,
+                rowPinned,
+                column,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: true,
+            });
         });
     }
 

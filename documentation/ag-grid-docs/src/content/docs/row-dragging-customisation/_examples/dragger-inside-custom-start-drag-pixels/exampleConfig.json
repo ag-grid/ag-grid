@@ -1,0 +1,4 @@
+{
+    "extras": ["fontawesome"],
+    "hideConsoleLogger": true
+}

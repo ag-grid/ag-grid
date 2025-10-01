@@ -7,6 +7,7 @@ import {
     addRelativeImports,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getFunctionName,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
@@ -15,6 +16,7 @@ import {
     preferParamsApi,
     removeCreateGridImport,
     replaceGridReadyRowData,
+    wrapTearDownExample,
 } from './parser-utils';
 import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
 
@@ -186,6 +188,8 @@ function getImports(
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
+    imports.push(getEnableAGTestIdLogic());
+
     if (bindings.moduleRegistration) {
         imports.push(bindings.moduleRegistration);
     }
@@ -264,8 +268,9 @@ const VueExample = defineComponent({
     }
 })
 
-createApp(VueExample)
-    .mount("#app")
+const app = createApp(VueExample);
+app.mount("#app");
+${wrapTearDownExample('(window as any).tearDownExample = () => app.unmount();')}
 `,
             bindings.tData
         );

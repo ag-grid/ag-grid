@@ -5,7 +5,7 @@ import type { ColDef, ColGroupDef, SortDirection } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import { _mergeDeep } from '../utils/object';
+import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import { createMergedColGroupDef } from './columnGroups/columnGroupUtils';
 import type { IColumnKeyCreator } from './columnKeyCreator';
@@ -53,13 +53,12 @@ export function _createColumnTreeWithIds(
         const colId = def.colId!;
 
         let column = colIdMap.get(colId);
+        const colDefMerged = _addColumnDefaultAndTypes(beans, def, column?.getColId() ?? colId);
         if (!column) {
             // no existing column, need to create one
-            const colDefMerged = _addColumnDefaultAndTypes(beans, def, colId);
             column = new AgColumn(colDefMerged, def, colId, primaryColumns);
             beans.context.createBean(column);
         } else {
-            const colDefMerged = _addColumnDefaultAndTypes(beans, def, column.getColId());
             column.setColDef(colDefMerged, def, source);
             _updateColumnState(beans, column, colDefMerged, source);
         }
@@ -363,8 +362,15 @@ export function _addColumnDefaultAndTypes(
         assignColumnTypes(beans, columnType, res);
     }
 
+    const cellDataType = res.cellDataType;
+
     // merge properties from column definitions
     _mergeDeep(res, colDef, false, true);
+
+    if (cellDataType !== undefined) {
+        // `cellDataType: true` in provided def will overwrite inferred result type otherwise
+        res.cellDataType = cellDataType;
+    }
 
     const autoGroupColDef = gos.get('autoGroupColumnDef');
     const isSortingCoupled = _isColumnsSortingCoupledToGroup(gos);

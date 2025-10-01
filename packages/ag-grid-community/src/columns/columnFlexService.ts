@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
+import type { ColumnDelayRenderService } from '../rendering/columnDelayRenderService';
 import { dispatchColumnResizedEvent } from './columnEventUtils';
 
 type FlexItem = {
@@ -20,6 +21,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
     beanName = 'colFlex' as const;
 
     private flexViewportWidth: number;
+    private columnsHidden = false;
 
     public refreshFlexedColumns(
         params: {
@@ -39,11 +41,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
 
         const totalSpace = this.flexViewportWidth;
 
-        if (!totalSpace) {
-            return [];
-        }
-
-        const { visibleCols } = this.beans;
+        const { visibleCols, colDelayRenderSvc } = this.beans;
 
         const visibleCenterCols = visibleCols.centerCols;
         let flexAfterDisplayIndex = -1;
@@ -79,8 +77,17 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                 targetSize: 0,
             };
         });
+        // hide all columns and cells because we are going to flex them after they are displayed
+        if (hasFlexItems) {
+            colDelayRenderSvc?.hideColumns('colFlex');
+            this.columnsHidden = true;
+        } else if (this.columnsHidden) {
+            // If columns were previously hidden, but now there are no flex columns, we need to remove the colFlex hide request
+            // This can happen if columns are auto sized before the grid has rendered the flex columns. i.e autoSizeStrategy in React
+            this.revealColumns(colDelayRenderSvc);
+        }
 
-        if (!hasFlexItems) {
+        if (!totalSpace || !hasFlexItems) {
             return [];
         }
 
@@ -198,7 +205,16 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexingColumns);
         }
 
+        this.revealColumns(colDelayRenderSvc);
+
         return unconstrainedFlexColumns;
+    }
+
+    private revealColumns(colDelayRenderSvc: ColumnDelayRenderService | undefined) {
+        if (this.columnsHidden) {
+            colDelayRenderSvc?.revealColumns('colFlex');
+            this.columnsHidden = false;
+        }
     }
 
     public initCol(column: AgColumn): void {

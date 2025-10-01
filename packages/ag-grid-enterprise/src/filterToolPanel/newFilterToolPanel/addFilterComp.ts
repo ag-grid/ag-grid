@@ -13,7 +13,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
     private eSelect?: AgRichSelect;
     private removeButton?: () => undefined;
 
-    private options: Map<string, string> = new Map();
+    private readonly options: Map<string, string> = new Map();
 
     constructor(options: { id: string; name: string }[]) {
         super(AddFilterElement);
@@ -37,7 +37,7 @@ export class AddFilterComp extends Component<'filterSelected'> {
         this.destroySelect();
         const eButton = _createElement({
             tag: 'button',
-            cls: 'ag-button ag-filter-add-button',
+            cls: 'ag-button ag-standard-button ag-filter-add-button',
             children: [
                 { tag: 'span', children: [() => _createIconNoSpan('filterAdd', this.beans)!] },
                 {

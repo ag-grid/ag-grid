@@ -1,3 +1,5 @@
+import { _setAriaSelected } from '../agStack/utils/aria';
+import { _getActiveDomElement } from '../agStack/utils/document';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -6,7 +8,6 @@ import type { RowNode } from '../entities/rowNode';
 import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
-    _getActiveDomElement,
     _getCheckboxes,
     _getEnableDeselection,
     _getEnableSelection,
@@ -22,7 +23,6 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import { _isManualPinnedRow } from '../pinnedRowModel/pinnedRowUtils';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
-import { _setAriaSelected } from '../utils/aria';
 import type { ChangedPath } from '../utils/changedPath';
 import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
@@ -45,6 +45,11 @@ export abstract class BaseSelectionService extends BeanStub {
         });
 
         this.isRowSelectable = _getIsRowSelectable(gos);
+
+        this.addManagedEventListeners({
+            cellValueChanged: (e) => this.updateRowSelectable(e.node as RowNode),
+            rowNodeDataChanged: (e) => this.updateRowSelectable(e.node),
+        });
     }
 
     public override destroy(): void {
@@ -112,7 +117,13 @@ export abstract class BaseSelectionService extends BeanStub {
     }
 
     public updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean {
-        const selectable = this.isRowSelectable?.(rowNode) ?? true;
+        const selectable =
+            rowNode.rowPinned && rowNode.pinnedSibling
+                ? // If row node is pinned sibling, copy selectable status over from sibling row node
+                  rowNode.pinnedSibling.selectable
+                : // otherwise calculate selectable state directly
+                  this.isRowSelectable?.(rowNode) ?? true;
+
         this.setRowSelectable(rowNode, selectable, suppressSelectionUpdate);
         return selectable;
     }
@@ -218,7 +229,7 @@ export abstract class BaseSelectionService extends BeanStub {
         }
 
         const pinnedSibling = rowNode.pinnedSibling;
-        if (pinnedSibling && pinnedSibling.rowPinned && pinnedSibling.__localEventService) {
+        if (pinnedSibling?.rowPinned && pinnedSibling.__localEventService) {
             pinnedSibling.dispatchRowEvent('rowSelected');
         }
 
@@ -333,12 +344,17 @@ export abstract class BaseSelectionService extends BeanStub {
             const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
             const shouldClear = isRowClicked && (!enableSelectionWithoutKeys || !enableClickSelection);
 
-            // Indeterminate states need to be handled differently if `groupSelects: 'filteredDescendants'` in CSRM.
-            // Specifically, clicking should toggle them _off_ instead of _on_
+            // Indeterminate states need to be handled differently if `groupSelects: 'filteredDescendants'` in CSRM...
             if (groupSelectsFiltered && currentSelection === undefined && _isClientSideRowModel(gos)) {
+                // ...Specifically:
+                // - when only nodes that pass the filter are selected, clicking the group node should toggle everything _off_ instead of _on_
+                // - when some nodes that don't pass the filter are selected, clicking the group node should toggle everything _on_ instead of _off_
+                // The necessity of this check is signalled to the caller via the `checkFilteredNodes` flag because this class is shared with SSRM selection
+                // so we don't want to add too much CSRM-only code here.
                 return {
                     node,
                     newValue: false,
+                    checkFilteredNodes: true,
                     clearSelection: !isMultiSelect || shouldClear,
                 };
             }
@@ -377,6 +393,7 @@ interface SingleNodeSelection {
     newValue: boolean;
     clearSelection: boolean;
     keepDescendants?: boolean;
+    checkFilteredNodes?: boolean;
 }
 
 interface MultiNodeSelection {

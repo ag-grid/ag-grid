@@ -24,8 +24,8 @@ The following example illustrates a basic multi-row selection configuration.
 Click checkboxes to select or deselect a row. Alternatively, you can do this via the keyboard by focusing the row and pressing the {% kbd "␣ Space" /%} key.
 Users can hold {% kbd "⇧ Shift" /%} and then click a checkbox to add a range of adjacent rows to the selection.
 
-Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on rows. 
-This behaviour also applies when [Checkbox Selection](#removing-selection-checkbox) is enabled, and in [Group Selection](./grouping-row-selection).
+Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on checkboxes. 
+This behaviour also applies when [Click Selection](#enable-click-selection--deselection) is enabled, and in [Group Selection](./grouping-row-selection).
 
 ## Removing Selection Checkboxes
 
@@ -36,7 +36,7 @@ Setting both to `false` will disable the checkbox column. You will also need to 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowSelection: {
-        mode: 'singleRow',
+        mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,
         enableClickSelection: true,
@@ -48,19 +48,20 @@ const gridOptions = {
 
 {% note %}
 You may pass a function to `rowSelection.checkboxes` to dynamically enable or disable checkboxes for given rows.
+For rows where both `isRowSelectable` and `rowSelection.checkboxes` return `false`, checkboxes will be hidden, rather than disabled.
 {% /note %}
 
 ## Configure Selectable Rows
 
 It is possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
 
-For instance if we only wanted to allow selection for rows where the 'year' property is less than 2004, we could implement the following:
+For instance if we only wanted to allow selection for rows where the 'year' property is less than 2007, we could implement the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     rowSelection: {
         mode: 'multiRow',
-        isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2004 : false,
+        isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2007 : false,
     }
 }
 ```
@@ -69,7 +70,7 @@ Rows for which `isRowSelectable` returns `false` cannot be selected at all, whet
 
 {% gridExampleRunner title="Checkbox Selection: Hiding Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 
-Note that this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.
+Note that this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off. 
 
 ## Selecting All Rows
 
@@ -106,7 +107,11 @@ The checkbox column may be customised in a similar way to any other column, by s
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
 The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
-The example below demonstrates allowing sorting using the default sort order (selected first) via the header, changing the default width of the column, allowing resizing, and pinning it to the left.
+The example below demonstrates the following configuration:
+- allowing sorting using the default sort order (selected first) via the header
+- changing the default width of the column
+- allowing resizing
+- pinning it to the left
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

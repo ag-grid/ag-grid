@@ -16,7 +16,7 @@ The following themes are provided to Integrated Charts by default.
 These themes correspond to [AG Charts Base Themes](https://www.ag-grid.com/charts/themes-api/#reference-AgChartTheme-baseTheme).
 
 {% note %}
-When using a dark color scheme for the grid, the application must provide the dark equivalents of the chart themes. If a default AG Chart theme is used, the dark themes are named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
+When using a dark colour scheme for the grid, the application must provide the dark equivalents of the chart themes. If a default AG Chart theme is used, the dark themes are named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
 {% /note %}
 
 The selected theme can be changed by the user via the [Chart Tool Panel](./integrated-charts-chart-tool-panels/) or
@@ -116,7 +116,11 @@ alongside a custom theme, and are unaffected by the settings in the custom theme
 
 {% gridExampleRunner title="Custom Chart Theme" name="custom-chart-theme"  exampleHeight=660 /%}
 
-## Label Formatting
+## Formatting
+
+Chart values can be formatted in several different ways.
+
+### Label Formatting
 
 {% note %}
 The `valueFormatter` is not automatically applied to the chart axes. If you wish to use the grid's value formatters, you must apply them manually.
@@ -151,6 +155,56 @@ this example demonstrates the use of the `domain` property passed through to the
 {% gridExampleRunner title="Label Formatting" name="label-formatting"  exampleHeight=660 /%}
 
 For more information on the `formatter` property for axes labels, see AG Charts Axis Labels [Label Text Formatting](https://www.ag-grid.com/charts/javascript/axes-labels/#label-text-formatting).
+
+### Global Formatter
+
+A single, top‑level `formatter` can be used to control the text for every label‑bearing element, e.g. axes, series labels, legend items, callouts, etc. The formatter will run for each element, unless that element defines its own `formatter`.
+
+The callback receives the similar `params` object provided to element‑level formatters, providing access to properties such as `value`, `type`, and `elementId`. See the [AG Charts API Reference](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-common-formatter) for more information.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    chartThemeOverrides: {
+        common: {
+            formatter: (params) => {
+                if (params.type === 'number') {
+                    return `£${params.value}`;
+                    // prefix with `£` sign
+                }
+                const gridApi = params.context.api;
+                // do something with the grid API
+            }
+        }
+    }
+}
+```
+
+The example below shows a global formatter that prefixes all number values with a `£` symbol.
+
+{% gridExampleRunner title="Global Label Formatter" name="global-label-formatter"  exampleHeight=850 /%}
+
+The order of formatting is as follows:
+
+1. Element‑specific `label.formatter` (axis, series, legend, callout, etc.)
+2. Global `formatter`
+3. Default AG Charts formatting rules
+
+### Accessing Grid Context in Formatters
+
+The grid will pass the grid API and context into the `context` property of the formatter parameters.
+
+{% interfaceDocumentation interfaceName="GridChartContext" /%}
+
+For formatters that are directly linked to row data, the row node will be passed in the `datum.node` property (note that `datum` may be undefined).
+
+For formatters related to columns, the `key` property will usually contain the column ID. In some instances this will be in the `key` property of the corresponding series in the `boundSeries` property.
+
+In the example below, the global formatter is used to access the `valueFormatter` in each of the columns:
+- The x axis uses the **Financial Period** column value formatter.
+- The y axis does not use a formatter as it belongs to multiple columns.
+- The tooltip (when mousing over the series) uses the value formatters from each of the three columns.
+
+{% gridExampleRunner title="Formatter Context" name="formatter-context"  exampleHeight=850 /%}
 
 ## Next Up
 

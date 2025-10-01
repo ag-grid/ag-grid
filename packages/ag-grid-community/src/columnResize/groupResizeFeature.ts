@@ -25,10 +25,10 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private resizeTakeFromRatios?: number[];
 
     constructor(
-        private comp: IHeaderGroupCellComp,
-        private eResize: HTMLElement,
-        private pinned: ColumnPinnedType,
-        private columnGroup: AgColumnGroup
+        private readonly comp: IHeaderGroupCellComp,
+        private readonly eResize: HTMLElement,
+        private readonly pinned: ColumnPinnedType,
+        private readonly columnGroup: AgColumnGroup
     ) {
         super();
     }

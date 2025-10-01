@@ -1,5 +1,5 @@
-import type { ElementParams } from '../../utils/dom';
-import { _makeNull } from '../../utils/generic';
+import { _makeNull } from '../../agStack/utils/generic';
+import type { ElementParams } from '../../utils/element';
 import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
@@ -22,11 +22,10 @@ export class NoRowsOverlayComponent
 
         if (!customTemplate) {
             const localeTextFunc = this.getLocaleTextFunc();
-            // setTimeout is used because some screen readers only announce `aria-live` text when
-            // there is a "text change", so we force a change from empty.
-            setTimeout(() => {
-                this.getGui().textContent = localeTextFunc('noRowsToShow', 'No Rows To Show');
-            });
+            const noRowsText = localeTextFunc('noRowsToShow', 'No Rows To Show');
+            this.getGui().textContent = noRowsText;
+
+            this.beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
         }
     }
 }

@@ -118,6 +118,7 @@ async function warnOfUnknownCssVariables() {
     const allowedVariables = new Set(Object.keys(getThemeDefaultParams(theme)).map(paramToVariableName));
     allowedVariables.add('--ag-line-height');
     allowedVariables.add('--ag-indentation-level');
+    allowedVariables.add('--ag-row-highlight-level');
 
     // This uses vite's glob import feature to import all generated CSS files in the source tree
     const cssFiles = (

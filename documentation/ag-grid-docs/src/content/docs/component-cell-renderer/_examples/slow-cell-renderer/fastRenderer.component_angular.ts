@@ -5,6 +5,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
+    selector: 'fast-renderer',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `<span>{{ value() }}</span>`,
 })

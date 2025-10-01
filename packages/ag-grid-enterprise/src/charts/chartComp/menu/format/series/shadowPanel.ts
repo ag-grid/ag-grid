@@ -17,7 +17,7 @@ export class ShadowPanel extends Component {
     }
     constructor(
         private readonly chartMenuUtils: ChartMenuParamsFactory,
-        private propertyKey: string = 'shadow'
+        private readonly propertyKey: string = 'shadow'
     ) {
         super();
     }

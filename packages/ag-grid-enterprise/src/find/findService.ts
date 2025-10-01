@@ -23,8 +23,7 @@ import {
     _jsonEquals,
     _missing,
     _toString,
-    isColumnSelectionCol,
-    isRowNumberCol,
+    isSpecialCol,
 } from 'ag-grid-community';
 
 import {
@@ -86,15 +85,15 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
      */
     private active: boolean = false;
     /** pinned top matches */
-    private topMatches: Matches = new Map();
+    private readonly topMatches: Matches = new Map();
     /** same nodes as keys in `topMatches`, but kept separate for performance when moving backwards and forwards through the matches */
     private topNodes: IRowNode[] = [];
     /** total number of matches in pinned top */
     private topNumMatches: number = 0;
-    private centerMatches: Matches = new Map();
+    private readonly centerMatches: Matches = new Map();
     private centerNodes: IRowNode[] = [];
     private centerNumMatches: number = 0;
-    private bottomMatches: Matches = new Map();
+    private readonly bottomMatches: Matches = new Map();
     private bottomNodes: IRowNode[] = [];
 
     /** switches based on grid options */
@@ -468,7 +467,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 node.parent?.getFirstChild() === node &&
                 !node.parent?.expanded;
             for (const column of allCols) {
-                if (isRowNumberCol(column) || isColumnSelectionCol(column)) {
+                if (isSpecialCol(column)) {
                     continue;
                 }
                 const cellSpan = rowSpanSvc?.getCellSpan(column, node);

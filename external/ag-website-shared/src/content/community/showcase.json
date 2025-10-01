@@ -1,7 +1,7 @@
 {
     "favourites": [
         {
-            "link": "https://docs.openbb.co/terminal/widgets#widget-structure",
+            "link": "https://docs.openbb.co/workspace/data-widgets/aggrid-table-charts",
             "repo": "https://github.com/OpenBB-finance/OpenBBTerminal",
             "title": "Terminal Pro @ OpenBB",
             "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
@@ -144,7 +144,7 @@
             "open_source": true,
             "stars": 140,
             "type": "Integration",
-            "link": "https://ix.siemens.io/docs/controls/grid",
+            "link": "https://ix.siemens.io/docs/components/grid/code",
             "favourite": true,
             "img": "siemens.webp",
             "frameworks": ["React", "Angular", "Vue"],

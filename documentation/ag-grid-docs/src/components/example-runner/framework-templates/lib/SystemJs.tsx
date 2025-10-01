@@ -20,6 +20,7 @@ interface Props {
     isEnterprise: boolean;
     isDev: boolean;
     usesMathRandom?: boolean;
+    nonce?: string;
 }
 
 type Paths = Record<string, string>;
@@ -126,6 +127,7 @@ export const SystemJs = ({
     isEnterprise,
     isDev,
     usesMathRandom,
+    nonce,
 }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
@@ -156,25 +158,21 @@ export const SystemJs = ({
     return (
         <>
             <script
+                nonce={nonce}
                 dangerouslySetInnerHTML={{
                     __html: `
             var appLocation = '${appLocation}';
             var boilerplatePath = '${boilerplatePath}';
+            var startFile = '${startFile}';
             var systemJsMap = ${format(systemJsMap)};
             ${Object.keys(systemJsPaths).length > 0 ? `var systemJsPaths = ${format(systemJsPaths)};` : ''}
         `,
                 }}
             />
-            <script src={systemJsVersion} />
-            <script src={systemJsPath} />
+            {usesMathRandom && <SeedRandom nonce={nonce} />}
 
-            {usesMathRandom && <SeedRandom />}
-
-            <script
-                dangerouslySetInnerHTML={{
-                    __html: `System.import('${startFile}').catch(function(err) { document.body.innerHTML = '<div class="example-error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>'; console.error(err); });`,
-                }}
-            />
+            <script nonce={nonce} src={systemJsVersion} />
+            <script nonce={nonce} src={systemJsPath} />
         </>
     );
 };

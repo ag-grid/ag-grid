@@ -1,12 +1,13 @@
 import type {
     AgColumn,
-    AgInputTextField,
     AgPromise,
     ComponentSelector,
     ElementParams,
     FilterDisplayParams,
+    GridInputTextField,
     IAfterGuiAttachedParams,
     ISetFilter,
+    SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
     SetFilterModel,
     SetFilterModelValue,
@@ -25,6 +26,7 @@ import {
     _getActiveDomElement,
     _makeNull,
     _setDisplayed,
+    _warn,
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../widgets/iVirtualList';
@@ -45,11 +47,11 @@ import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
-    implements ISetFilter<V>, SetFilterUi
+    implements ISetFilter<V>, SetFilterUi<V>
 {
     public readonly filterType = 'set' as const;
 
-    private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
+    private readonly eMiniFilter: GridInputTextField = RefPlaceholder;
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
     private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
@@ -103,6 +105,9 @@ export class SetFilter<V = string>
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
+            if (!this.isAlive()) {
+                return;
+            }
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
@@ -146,7 +151,7 @@ export class SetFilter<V = string>
         if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
             this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
         }
-        this.handler.refreshFilterValues();
+        this.handler.refreshFilterValues(true);
     }
 
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
@@ -296,7 +301,8 @@ export class SetFilter<V = string>
     }
 
     protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
-        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null);
+        // model is being updated, so set mini filter UI state only
+        this.setMiniFilter(this.params.state.state?.miniFilterValue ?? null, true);
 
         const values = model == null ? null : model.values;
         return this.setModelAndRefresh(values);
@@ -472,6 +478,7 @@ export class SetFilter<V = string>
                 hasIndeterminateExpandState: false,
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent) => {
                     this.addCurrentSelectionToFilter = e.isSelected;
+                    this.refreshAfterSelection();
                 },
             };
         }
@@ -525,6 +532,7 @@ export class SetFilter<V = string>
                 value: () => this.getAddSelectionToFilterLabel(),
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) => {
                     this.addCurrentSelectionToFilter = e.isSelected;
+                    this.refreshAfterSelection();
                 },
             };
         }
@@ -611,7 +619,7 @@ export class SetFilter<V = string>
 
         eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
 
-        if (!params || !params.suppressFocus) {
+        if (!params?.suppressFocus) {
             if (eMiniFilter.isDisplayed()) {
                 eMiniFilter.getFocusableElement().focus();
             } else {
@@ -623,7 +631,12 @@ export class SetFilter<V = string>
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
-        const { excelMode, model, onStateChange } = this.params;
+        const { column, excelMode, model, onStateChange } = this.params;
+
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(column)) {
+            return;
+        }
+
         // discard any unapplied UI state (reset to model)
         if (excelMode) {
             this.resetMiniFilter();
@@ -645,13 +658,14 @@ export class SetFilter<V = string>
      * @deprecated v34 Internal method - should only be called by the grid.
      */
     public override onNewRowsLoaded(): void {
-        // do nothing
+        // we don't warn here because the multi filter can call this
     }
 
     /**
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public setFilterValues(values: (V | null)[]): void {
+        _warn(283);
         this.handler.setFilterValues(values);
     }
 
@@ -659,6 +673,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public resetFilterValues(): void {
+        _warn(283);
         this.handler.resetFilterValues();
     }
 
@@ -666,6 +681,11 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public refreshFilterValues(): void {
+        _warn(283);
+        this.doRefreshFilterValues();
+    }
+
+    private doRefreshFilterValues(): void {
         this.handler.refreshFilterValues();
     }
 
@@ -673,11 +693,16 @@ export class SetFilter<V = string>
      * @deprecated v34 Internal method - should only be called by the grid.
      */
     public onAnyFilterChanged(): void {
-        // do nothing
+        // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput() {
+    private onMiniFilterInput(silent?: boolean) {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
+            return;
+        }
+        if (silent) {
+            // update UI state only
+            this.showOrHideResults();
             return;
         }
 
@@ -691,7 +716,13 @@ export class SetFilter<V = string>
 
     private updateUiAfterMiniFilterChange(updateSelections: boolean, apply?: 'immediately' | 'debounce'): void {
         if (updateSelections) {
-            this.selectAllMatchingMiniFilter(true);
+            const { excelMode, readOnly, model } = this.params;
+            if (excelMode && !readOnly && this.miniFilterText == null) {
+                // reset to applied model
+                this.setModelAndRefresh(model?.values ?? null);
+            } else {
+                this.selectAllMatchingMiniFilter(true);
+            }
         }
         this.checkAndRefreshVirtualList();
         this.onUiChanged(updateSelections ? apply : 'prevent');
@@ -807,9 +838,9 @@ export class SetFilter<V = string>
         this.focusRowIfAlive(focusedRow);
     }
 
-    public setMiniFilter(newMiniFilter: string | null): void {
-        this.eMiniFilter.setValue(newMiniFilter);
-        this.onMiniFilterInput();
+    public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
+        this.eMiniFilter.setValue(newMiniFilter, silent);
+        this.onMiniFilterInput(silent);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
@@ -859,6 +890,7 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public getFilterKeys(): SetFilterModelValue {
+        _warn(283);
         return this.handler.getFilterKeys();
     }
 
@@ -866,12 +898,13 @@ export class SetFilter<V = string>
      * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
      */
     public getFilterValues(): (V | null)[] {
+        _warn(283);
         return this.handler.getFilterValues();
     }
 
     private refreshVirtualList(): void {
         if (this.params.refreshValuesOnOpen) {
-            this.refreshFilterValues();
+            this.doRefreshFilterValues();
         } else {
             this.checkAndRefreshVirtualList();
         }
@@ -1136,6 +1169,10 @@ export class SetFilter<V = string>
         } else {
             this.selectedKeys = new Set(keys);
         }
+    }
+
+    public getFilterHandler(): ISetFilterHandler<V> {
+        return this.handler;
     }
 
     public override destroy(): void {

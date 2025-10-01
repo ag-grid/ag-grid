@@ -32,6 +32,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('31.0.0', model, migrateV31);
     model = migrateIfBefore('32.0.0', model, migrateV32);
     model = migrateIfBefore('33.0.0', model, migrateV33);
+    model = migrateIfBefore('34.0.0', model, migrateV34);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -339,6 +340,34 @@ function migrateV33(model: ChartModel) {
     model = jsonDelete('chartOptions.*.zoom.ratioY', model);
     model = jsonDelete('chartOptions.*.zoom.rangeX', model);
     model = jsonDelete('chartOptions.*.zoom.rangeY', model);
+    return model;
+}
+
+function migrateV34(model: ChartModel) {
+    const highlightUpdate = (parent: any, targetProp: string) => {
+        const highlightStyle = parent[targetProp];
+        if (highlightStyle == null) return;
+
+        const highlight: any = {};
+        if (highlightStyle.item) {
+            highlight.highlightedItem = highlightStyle.item;
+        }
+        if (highlightStyle.series) {
+            const { dimOpacity, ...seriesOpts } = highlightStyle.series;
+            if (dimOpacity != null) {
+                highlight.unhighlightedSeries = { opacity: dimOpacity };
+            }
+            if (Object.keys(seriesOpts).length > 0) {
+                highlight.highlightedSeries = seriesOpts;
+            }
+        }
+
+        delete parent[targetProp];
+        parent.highlight = highlight;
+    };
+
+    jsonMutateProperty('chartOptions.series[].highlightStyle', true, model, highlightUpdate);
+
     return model;
 }
 

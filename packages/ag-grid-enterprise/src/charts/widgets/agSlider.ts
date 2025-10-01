@@ -1,4 +1,15 @@
-import type { AgInputNumberField, AgLabelParams, ComponentSelector, LabelAlignment } from 'ag-grid-community';
+import type {
+    AgComponentSelectorType,
+    AgEventTypeParams,
+    AgGridCommon,
+    AgLabelParams,
+    BeanCollection,
+    ComponentSelector,
+    GridInputNumberField,
+    GridOptionsService,
+    GridOptionsWithDefaults,
+    LabelAlignment,
+} from 'ag-grid-community';
 import { AgAbstractLabel, AgInputNumberFieldSelector, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgInputRange } from './agInputRange';
@@ -13,11 +24,20 @@ export interface AgSliderParams extends AgLabelParams {
     onValueChange?: (newValue: number) => void;
 }
 
-export type AgSliderEvent = 'fieldValueChanged';
-export class AgSlider extends AgAbstractLabel<AgSliderParams, AgSliderEvent> {
+type AgSliderEvent = 'fieldValueChanged';
+export class AgSlider extends AgAbstractLabel<
+    BeanCollection,
+    GridOptionsWithDefaults,
+    AgEventTypeParams,
+    AgGridCommon<any, any>,
+    GridOptionsService,
+    AgComponentSelectorType,
+    AgSliderParams,
+    AgSliderEvent
+> {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
     private readonly eSlider: AgInputRange = RefPlaceholder;
-    private readonly eText: AgInputNumberField = RefPlaceholder;
+    private readonly eText: GridInputNumberField = RefPlaceholder;
 
     protected override labelAlignment: LabelAlignment = 'top';
 

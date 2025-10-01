@@ -60,7 +60,7 @@ const gridOptions: GridOptions = {
         gridApi.setFilterModel({
             size: {
                 filterType: 'number',
-                type: 'equal',
+                type: 'equals',
                 filter: 5193728,
             },
         });

@@ -1,10 +1,14 @@
+import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
-import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
+import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragTypes';
+import type {
+    RowDropPositionIndicator,
+    SetRowDropPositionIndicatorParams,
+} from '../dragAndDrop/rowDropHighlightService';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
-    AgEvent,
     AgEventListener,
     AgGlobalEventListener,
     ColumnEventType,
@@ -24,10 +28,6 @@ import type {
     UpdateChartParams,
 } from '../interfaces/IChartService';
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
-import type {
-    RowDropPositionIndicator,
-    SetRowDropPositionIndicatorParams,
-} from '../interfaces/IRowDropHighlightService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
@@ -41,9 +41,8 @@ import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
     GetCellEditorInstancesParams,
-    GetEditingCellsParams,
     ICellEditor,
-    SetEditingCellsParams,
+    ICellEditorValidationError,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -53,7 +52,7 @@ import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from 
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
-import type { FilterDisplay, FilterModel, IFilter } from '../interfaces/iFilter';
+import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
@@ -449,7 +448,7 @@ export interface _SortGridApi {
     onSortChanged(): void;
 }
 
-export interface _ClientSideRowModelGridApi<TData> {
+export interface _ClientSideRowModelGridApi<TData> extends _RowModelSharedApi {
     /**
      * Informs the grid that row group expanded state has changed and it needs to rerender the group nodes.
      * Typically called after updating the row node expanded state explicitly, i.e `rowNode.expanded = false`,
@@ -485,12 +484,6 @@ export interface _ClientSideRowModelGridApi<TData> {
      * @agModule `ClientSideRowModelApiModule`
      */
     forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void): void;
-
-    /**
-     * Tells the grid to recalculate the row heights.
-     * @agModule `ClientSideRowModelApiModule`
-     */
-    resetRowHeights(): void;
 
     /**
      * Update row data. Pass a transaction object with lists for `add`, `remove` and `update`.
@@ -529,13 +522,32 @@ export interface _ClientSideRowModelGridApi<TData> {
 }
 
 export interface _CsrmSsrmSharedGridApi {
-    /** Expand all groups. */
+    /**
+     * Expand all groups.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
+     */
     expandAll(): void;
 
-    /** Collapse all groups. */
+    /**
+     * Collapse all groups.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
+     */
     collapseAll(): void;
+}
 
-    /** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */
+export interface _RowModelSharedApi {
+    /**
+     * Tells the grid to recalculate the row heights.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
+     */
+    resetRowHeights(): void;
+
+    /**
+     * Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`.
+     */
     onRowHeightChanged(): void;
 }
 
@@ -827,7 +839,7 @@ export interface _DragGridApi<TData> {
     getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 
     /**
-     * Gets the currently highlighted drop target row, previously set by `setRowDropHighlight`.
+     * Gets the currently highlighted drop target row, set by `setRowDropPositionIndicator` or managed drag ad drop.
      * @agModule `RowDragModule`
      */
     getRowDropPositionIndicator(): RowDropPositionIndicator<TData>;
@@ -851,10 +863,13 @@ export interface _EditGridApi<TData> {
      * If the grid is editing, returns back details of the editing cell(s).
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
-    getEditingCells(params?: GetEditingCellsParams): EditingCellPosition[];
+    getEditingCells(): EditingCellPosition[];
 
-    /** Set currently pending cell updates when in batch editing mode. Specify `update=true` to update current state, otherwise pending state will be replaced. */
-    setEditingCells(cellPositions: EditingCellPosition[], params?: SetEditingCellsParams): void;
+    /**
+     * If the grid is editing, returns back edit values of the row if any.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    getEditRowValues(rowNode: IRowNode<TData>): Record<string, any> | undefined;
 
     /**
      * If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).
@@ -868,21 +883,43 @@ export interface _EditGridApi<TData> {
      */
     startEditingCell(params: StartEditingCellParams): void;
 
-    /** Returns `true` if the grid is editing a cell */
-    isEditing(rowId?: string, colId?: string): boolean;
+    /**
+     * Returns `true` if the grid is editing a cell
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    isEditing(cellPosition: CellPosition): boolean;
 
+    /**
+     * Run validation for every instantiated editor.
+     * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
+     */
+    validateEdit(): ICellEditorValidationError[] | null;
+}
+
+export interface _BatchEditApi {
     /**
      * Start batch editing.
+     * @agModule `BatchEditModule`
      */
-    enableBatchEditing(): void;
+    startBatchEdit(): void;
 
     /**
-     * Stop batch editing.
+     * Commit Batch Editing.
+     * @agModule `BatchEditModule`
      */
-    disableBatchEditing(): void;
+    commitBatchEdit(): void;
 
-    /** Returns `true` if batch editing is enabled */
-    batchEditingEnabled(): boolean;
+    /**
+     * Cancel Batch Editing.
+     * @agModule `BatchEditModule`
+     */
+    cancelBatchEdit(): void;
+
+    /**
+     * Returns whether batch editing is currently active.
+     * @agModule `BatchEditModule`
+     */
+    isBatchEditing(): boolean;
 }
 
 export interface _UndoRedoGridApi {
@@ -939,9 +976,7 @@ export interface _ColumnFilterGridApi {
      * `key` can be a column ID or a `Column` object.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterInstance<TFilter extends IFilter | FilterDisplay>(
-        key: string | Column
-    ): Promise<TFilter | null | undefined>;
+    getColumnFilterInstance<TFilter = IFilter>(key: string | Column): Promise<TFilter | null | undefined>;
 
     /**
      * Returns the filter handler instance for a column.
@@ -977,9 +1012,10 @@ export interface _ColumnFilterGridApi {
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if no active filter.
+     * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
-    getColumnFilterModel<TModel>(column: string | Column): TModel | null;
+    getColumnFilterModel<TModel>(column: string | Column, useUnapplied?: boolean): TModel | null;
 
     /**
      * Sets the filter model for the specified column.
@@ -994,6 +1030,19 @@ export interface _ColumnFilterGridApi {
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     showColumnFilter(colKey: string | Column): void;
+
+    /**
+     * Hide the filter popup if it is open.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    hideColumnFilter(): void;
+
+    /**
+     * Perform the provided filter action for the column specified, or all columns.
+     * Requires `enableFilterHandlers = true`.
+     * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
+     */
+    doFilterAction(params: FilterActionParams): void;
 }
 
 export interface _QuickFilterGridApi {
@@ -1271,9 +1320,10 @@ export interface _SideBarGridApi<TData> {
 
     /**
      * Opens a particular tool panel. Provide the ID of the tool panel to open.
+     * Optionally, provide a parent element to attach the tool panel to.
      * @agModule `SideBarModule`
      */
-    openToolPanel(key: string): void;
+    openToolPanel(key: string, parent?: HTMLElement | null): void;
 
     /**
      * Closes the currently open tool panel (if any).
@@ -1524,7 +1574,7 @@ export interface _CellSelectionGridApi {
     clearCellSelection(): void;
 }
 
-export interface _ServerSideRowModelGridApi<TData> {
+export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
@@ -1839,6 +1889,7 @@ export interface GridApi<TData = any>
         _QuickFilterGridApi,
         _FindApi<TData>,
         _PaginationGridApi,
+        _RowModelSharedApi,
         _CsrmSsrmSharedGridApi,
         _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
@@ -1857,6 +1908,7 @@ export interface GridApi<TData = any>
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
-        _AdvancedFilterGridApi {
+        _AdvancedFilterGridApi,
+        _BatchEditApi {
     dispatchEvent(event: AgEvent): void;
 }

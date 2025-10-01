@@ -1,18 +1,18 @@
-import { KeyCode } from '../../constants/keyCode';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
+import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
+import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { _getCellCtrlForEventTarget } from '../../rendering/cell/cellCtrl';
+import { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from '../../rendering/renderUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { DOM_DATA_KEY_ROW_CTRL } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
-import { _getCtrlForEventTarget, _isEventSupported, _isStopPropagationForAgGrid } from '../../utils/event';
-import { _isEventFromPrintableCharacter, _isUserSuppressingKeyboardEvent } from '../../utils/keyboard';
+import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
+import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import { _selectAllCells } from '../../utils/selection';
-import { _isEventFromThisGrid } from '../mouseEventUtils';
 
 const A_KEYCODE = 65;
 const C_KEYCODE = 67;
@@ -82,7 +82,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!_isEventFromThisGrid(this.gos, mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
+        if (!_isEventFromThisInstance(this.beans, mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
 
@@ -110,7 +110,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const { gos } = this;
         return {
             cellCtrl: _getCellCtrlForEventTarget(gos, target),
-            rowCtrl: _getCtrlForEventTarget(gos, target, DOM_DATA_KEY_ROW_CTRL),
+            rowCtrl: _getRowCtrlForEventTarget(gos, target),
         };
     }
 
@@ -218,7 +218,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         // for copy / paste, we don't want to execute when the event
         // was from a child grid (happens in master detail)
-        if (!_isEventFromThisGrid(this.gos, keyboardEvent)) {
+        if (!_isEventFromThisInstance(this.beans, keyboardEvent)) {
             return;
         }
 
@@ -255,10 +255,10 @@ export class RowContainerEventsFeature extends BeanStub {
             gos,
         } = this;
 
-        if (rangeSvc && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
+        if (rangeSvc && _isCellSelectionEnabled(gos) && !_getCtrlASelectsRows(gos) && rowModel.isRowsToRender()) {
             _selectAllCells(this.beans);
         } else if (selectionSvc) {
-            selectionSvc?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
+            selectionSvc.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
         }
 
         event.preventDefault();

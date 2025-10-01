@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_IL = {
     // Group Column Filter
     groupFilterSelect: 'בחר שדה:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'הוא (הכל)',
+    filterSummaryContains: 'מכיל',
+    filterSummaryNotContains: 'לא מכיל',
+    filterSummaryTextEquals: 'שווה',
+    filterSummaryTextNotEqual: 'לא שווה',
+    filterSummaryStartsWith: 'מתחיל ב',
+    filterSummaryEndsWith: 'מסתיים ב',
+    filterSummaryBlank: 'ריק',
+    filterSummaryNotBlank: 'לא ריק',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'בין',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'הוא (הכל)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'הוא (${variable})',
+    filterSummaryListLong: 'הוא (${variable}) ו-${variable} נוספים',
+    addFilterCard: 'הוסף מסנן',
+    agTextColumnFilterDisplayName: 'מסנן פשוט',
+    agNumberColumnFilterDisplayName: 'מסנן פשוט',
+    agDateColumnFilterDisplayName: 'מסנן פשוט',
+    agSetColumnFilterDisplayName: 'מסנן בחירה',
+    agMultiColumnFilterDisplayName: 'מסנן משולב',
+    addFilterPlaceholder: 'חפש עמודות...',
+
     // Advanced Filter
     advancedFilterContains: 'מכיל',
     advancedFilterNotContains: 'לא מכיל',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterAnd: 'וגם',
     advancedFilterOr: 'או',
     advancedFilterApply: 'החל',
+    advancedFilterReset: 'איפוס',
+    advancedFilterCancel: 'ביטול',
+    advancedFilterClear: 'נקה',
     advancedFilterBuilder: 'בונה',
     advancedFilterValidationMissingColumn: 'עמודה חסרה',
     advancedFilterValidationMissingOption: 'אפשרות חסרה',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterValidationMessageAtEnd: 'יש שגיאה בביטוי. ${variable} בסוף הביטוי.',
     advancedFilterBuilderTitle: 'מסנן מתקדם',
     advancedFilterBuilderApply: 'החל',
+    advancedFilterBuilderClear: 'נקה',
+    advancedFilterBuilderReset: 'איפוס',
     advancedFilterBuilderCancel: 'בטל',
     advancedFilterBuilderAddButtonTooltip: 'הוסף מסנן או קבוצה',
     advancedFilterBuilderRemoveButtonTooltip: 'הסר',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_IL = {
     advancedFilterBuilderValidationSelectColumn: 'חובה לבחור עמודה.',
     advancedFilterBuilderValidationSelectOption: 'חובה לבחור אפשרות.',
     advancedFilterBuilderValidationEnterValue: 'חובה להזין ערך.',
+
+    // Editor Validation Errors
+    minDateValidation: 'התאריך חייב להיות אחרי ${variable}',
+    maxDateValidation: 'התאריך חייב להיות לפני ${variable}',
+    maxLengthValidation: 'חייב להיות ${variable} תווים או פחות.',
+    minValueValidation: 'חייב להיות גדול או שווה ל-${variable}',
+    maxValueValidation: 'חייב להיות קטן או שווה ל-${variable}',
+    invalidSelectionValidation: 'בחירה לא חוקית.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'עמודות',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_IL = {
     dropOff: 'נשירה',
     stageLabels: 'תוויות שלבים',
     reverse: 'היפוך',
+    tooltipMode: 'מצב תצוגה',
+    tooltipModeSingle: 'בודד',
+    tooltipModeShared: 'רבים',
+    tooltipModeCompact: 'תמציתי',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. רמה ${variable}. לחץ על ENTER כדי לערוך.',
@@ -539,6 +588,10 @@ export const AG_GRID_LOCALE_IL = {
     ariaChartSelected: 'נבחר',
     ariaSkeletonCellLoadingFailed: 'הטעינת השורה נכשלה',
     ariaSkeletonCellLoading: 'נתוני השורה נטענים',
+    ariaDeferSkeletonCellLoading: 'התא נטען',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'שינוי בהמתנה',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'קבוצות שורות',
@@ -555,8 +608,10 @@ export const AG_GRID_LOCALE_IL = {
     ariaLabelDialog: 'דיאלוג',
     ariaLabelColumnMenu: 'תפריט עמודה',
     ariaLabelColumnFilter: 'מסנן עמודה',
-    ariaLabelCellEditor: 'עורך תא',
     ariaLabelSelectField: 'שדה בחירה',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'אימות עורך תא',
     ariaLabelLoadingContextMenu: 'טוען תפריט קיצור דרך',
 
     // aria labels for rich select
@@ -577,6 +632,11 @@ export const AG_GRID_LOCALE_IL = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'רשימת עמודות',
     ariaFilterPanelList: 'רשימת מסננים',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'הוסף שדה סינון',
+    ariaLabelFilterCardDelete: 'מחק סינון',
+    ariaLabelFilterCardHasEdits: 'יש עריכות',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

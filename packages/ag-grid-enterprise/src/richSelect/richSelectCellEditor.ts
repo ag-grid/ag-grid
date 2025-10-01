@@ -55,13 +55,16 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         // there is an issue with focus handling when we call `stopEditing` while the
         // picker list is still collapsing, so we make this call async to guarantee that.
-        setTimeout(() => this.params.stopEditing(!e.fromEnterKey));
+        if (this.gos.get('editType') !== 'fullRow') {
+            setTimeout(() => this.params.stopEditing(!e.fromEnterKey));
+        }
     }
 
     private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
         const params = this.params;
         const {
             cellRenderer,
+            cellRendererParams,
             cellHeight,
             value,
             values,
@@ -84,6 +87,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         const ret: RichSelectParams = {
             value: value,
             cellRenderer,
+            cellRendererParams,
             cellRowHeight: cellHeight,
             searchDebounceDelay,
             valueFormatter: formatValue,
@@ -171,7 +175,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             }
 
             const richSelect = this.eEditor;
-            const { allowTyping, eventKey } = params;
+            const { allowTyping, eventKey, cellStartedEdit } = params;
 
             if (focusAfterAttached) {
                 const focusableEl = richSelect.getFocusableElement() as HTMLInputElement;
@@ -182,7 +186,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 }
             }
 
-            richSelect.showPicker();
+            if (cellStartedEdit) {
+                richSelect.showPicker();
+            }
 
             if (!this.isAsync) {
                 this.processEventKey(eventKey);
@@ -219,15 +225,15 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         return this.eEditor.getAriaElement() as HTMLElement;
     }
 
-    public getErrors() {
+    public getValidationErrors() {
         const { params } = this;
-        const { getErrors } = params;
+        const { getValidationErrors } = params;
 
-        if (!getErrors) {
+        if (!getValidationErrors) {
             return null;
         }
 
-        return getErrors({
+        return getValidationErrors({
             value: this.getValue(),
             internalErrors: null,
             cellEditorParams: params as unknown as ICellEditorParams<TData, TValue, TContext>,

@@ -13,8 +13,6 @@ import {
     type ValueFormatterFunc,
     type ValueGetterParams,
 } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
     AdvancedFilterModule,
     CellSelectionModule,
@@ -37,7 +35,6 @@ import { AgGridReact } from 'ag-grid-react';
 import styles from './FinanceExample.module.css';
 import { getData } from './data';
 import { getTickerCellRenderer } from './renderers/getTickerCellRenderer';
-import { sparklineTooltipRenderer } from './renderers/sparklineTooltipRenderer';
 
 export interface Props {
     gridTheme?: string;
@@ -134,7 +131,7 @@ export const FinanceExample: React.FC<Props> = ({
 }) => {
     const [rowData, setRowData] = useState(getData());
     const gridRef = useRef<AgGridReact>(null);
-    const gridWrapperRef = useRef<AgGridReact>(null);
+    const gridWrapperRef = useRef<HTMLDivElement>(null);
     const intervalId = useRef<ReturnType<typeof setInterval>>();
     const [breakpoint, setBreakpoint] = useState<Breakpoint>('xlarge');
     const createUpdater = useCallback(() => {
@@ -211,9 +208,6 @@ export const FinanceExample: React.FC<Props> = ({
                         direction: 'vertical',
                         axis: {
                             strokeWidth: 0,
-                        },
-                        tooltip: {
-                            renderer: sparklineTooltipRenderer,
                         },
                     },
                 },
@@ -329,7 +323,6 @@ export const FinanceExample: React.FC<Props> = ({
             className={`${themeClass} ${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
         >
             <AgGridReact
-                theme="legacy"
                 chartThemes={chartThemes}
                 ref={gridRef}
                 getRowId={getRowId}

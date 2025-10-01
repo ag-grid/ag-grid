@@ -259,7 +259,7 @@ function getSelectedTheme(chartProxyParams: ChartProxyParams): string {
 
 export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name: string): AgChartTheme {
     const { customChartThemes } = chartProxyParams;
-    const customChartTheme = customChartThemes && customChartThemes[name];
+    const customChartTheme = customChartThemes?.[name];
 
     if (!customChartTheme) {
         _warn(140, { name });

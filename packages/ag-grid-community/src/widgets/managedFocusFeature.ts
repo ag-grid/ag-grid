@@ -1,7 +1,7 @@
-import { KeyCode } from '../constants/keyCode';
+import { KeyCode } from '../agStack/constants/keyCode';
+import { _findNextFocusableElement } from '../agStack/utils/focus';
 import { BeanStub } from '../context/beanStub';
-import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/event';
-import { _findNextFocusableElement } from '../utils/focus';
+import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../utils/gridEvent';
 
 export interface ManagedFocusCallbacks {
     shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;
@@ -16,7 +16,7 @@ export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 export class ManagedFocusFeature extends BeanStub {
     constructor(
         private readonly eFocusable: HTMLElement,
-        private callbacks: ManagedFocusCallbacks = {}
+        private readonly callbacks: ManagedFocusCallbacks = {}
     ) {
         super();
         this.callbacks = {

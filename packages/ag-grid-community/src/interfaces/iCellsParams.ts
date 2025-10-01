@@ -8,12 +8,16 @@ export interface GetCellsParams<TData = any> {
     columns?: (string | Column)[];
 }
 
-export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
+interface RefreshParams<TData = any> extends GetCellsParams<TData> {
     /** Skip change detection, refresh everything. */
     force?: boolean;
     /** Skip cell flashing, if cell flashing is enabled. */
     suppressFlash?: boolean;
 }
+
+export interface RefreshCellsParams<TData = any> extends RefreshParams<TData> {}
+
+export interface RefreshRowsParams<TData = any> extends RefreshParams<TData> {}
 
 export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
     /** The duration in milliseconds of how long a cell should remain in its "flashed" state. */

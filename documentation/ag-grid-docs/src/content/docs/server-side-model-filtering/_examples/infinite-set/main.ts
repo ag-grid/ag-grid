@@ -4,8 +4,9 @@ import type {
     GridOptions,
     IMultiFilter,
     IServerSideDatasource,
-    ISetFilter,
     KeyCreatorParams,
+    SetFilterHandler,
+    SetFilterUi,
     SetFilterValuesFuncParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
@@ -40,6 +41,8 @@ const columnDefs: ColDef[] = [
             keyCreator: countryCodeKeyCreator,
             valueFormatter: countryValueFormatter,
             comparator: countryComparator,
+            suppressClearModelOnRefreshValues: true,
+            buttons: ['apply'],
         },
     },
     {
@@ -57,6 +60,7 @@ const columnDefs: ColDef[] = [
                     filter: 'agSetColumnFilter',
                     filterParams: {
                         values: getSportValuesAsync,
+                        suppressClearModelOnRefreshValues: true,
                     },
                 },
             ],
@@ -121,12 +125,12 @@ function onFilterChanged() {
         textFilterStored = textFilter;
 
         console.log('Refreshing sports filter');
+        // By default, the Multi Filter does not use a filter handler, so retrieve via `getColumnFilterInstance`.
+        // If using `enableFilterHandlers = true`, the Multi Filter handler can be retrieved via `getColumnFilterHandler`.
         gridApi.getColumnFilterInstance<IMultiFilter>('sport').then((filter) => {
-            filter!.getChildFilterInstance(1).refreshFilterValues();
+            filter!.getChildFilterInstance<SetFilterUi>(1)!.getFilterHandler().refreshFilterValues();
         });
-        gridApi.getColumnFilterInstance<ISetFilter>('country').then((filter) => {
-            filter!.refreshFilterValues();
-        });
+        gridApi.getColumnFilterHandler<SetFilterHandler>('country')!.refreshFilterValues();
     }
 }
 

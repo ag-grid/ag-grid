@@ -22,6 +22,20 @@ const gridOptions = {
 }
 ```
 
+## Header Value Getters
+
+Use `headerValueGetter` instead of `colDef.headerName` to provide column header names dynamically.
+
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerValueGetter"] /%}
+
+The parameters for `headerValueGetter` differ from a [Cell Value Getter](./value-getters) as follows:
+
+* Only one of column or columnGroup will be present, depending on whether it's a column or a column group.
+* Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the toolbar.
+
+See the [Column Tool Panel Example](./tool-panel-columns/#columns-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
+
+
 ## Header Styling
 
 This section will show different ways of manually styling the Grid Header.
@@ -129,6 +143,14 @@ The example below demonstrates using the `autoHeaderHeight` property in conjunct
 
 {% gridExampleRunner title="Auto Header Height" name="auto-height" /%}
 
+## Hide Padded Column Headers
+
+When using column groups the grid adds padding to columns to ensure the column tree is balanced. When a column with a deeper tree is hidden, this can lead to
+header rows consisting entirely of padding. Set the `hidePaddedHeaderRows` grid option to `true` to hide rows consisting of only padding.
+
+{% gridExampleRunner title="Hide Padded Header Rows" name="hide-padded-header-rows" /%}
+
+The example above demonstrates a grid with hidden column groups, causing the grid headers to be taller than necessary when the parent group is collapsed.
 
 ## Selecting Components
 

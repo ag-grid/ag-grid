@@ -1,7 +1,7 @@
 export type CATEGORY_LABEL_KEY = 'AG-GRID-DEFAULT-LABEL-KEY';
 export const CATEGORY_LABEL_KEY: CATEGORY_LABEL_KEY = 'AG-GRID-DEFAULT-LABEL-KEY';
 
-export type CategoryItem<T extends object> = {
+type CategoryItem<T extends object> = {
     [CATEGORY_LABEL_KEY]: string | null;
     children?: Array<CategoryItem<T>>;
 } & T;
@@ -39,10 +39,7 @@ export function createAutoGroupHierarchy<T extends object>(
 
     function getItemGroupLabel(item: T, groupIndex: number): string | null {
         const labels = getItemLabels(item);
-        if (!labels) return null;
-        // Autogroup label values are ordered from the leaf outwards
-        const labelIndex = labels.length - 1 - groupIndex;
-        return labels[labelIndex];
+        return labels ? labels[groupIndex] : labels;
     }
 }
 

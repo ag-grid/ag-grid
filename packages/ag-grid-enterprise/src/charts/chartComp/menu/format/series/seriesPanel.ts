@@ -1,7 +1,7 @@
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 
-import type { AgToggleButtonParams, BeanCollection, ListOption } from 'ag-grid-community';
-import { AgSelect, AgToggleButton, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
+import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
+import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
@@ -22,6 +22,7 @@ import { SeriesItemsPanel } from './seriesItemsPanel';
 import { getShapeSelectOptions } from './seriesUtils';
 import { ShadowPanel } from './shadowPanel';
 import { TileSpacingPanel } from './tileSpacingPanel';
+import { TooltipPanel } from './tooltipPanel';
 import { WhiskersPanel } from './whiskersPanel';
 
 const tooltips = 'tooltips';
@@ -49,7 +50,7 @@ export class SeriesPanel extends Component {
     }
     private chartMenuUtils: ChartMenuParamsFactory;
 
-    private activePanels: Component<any>[] = [];
+    private readonly activePanels: Component<any>[] = [];
     private seriesType: ChartSeriesType;
 
     private readonly widgetFuncs = {
@@ -63,7 +64,7 @@ export class SeriesPanel extends Component {
         [labels]: () => this.initLabels(),
         sectorLabels: () => this.initSectorLabels(),
         [shadow]: () => new ShadowPanel(this.chartMenuUtils),
-        [tooltips]: () => this.initTooltips(),
+        [tooltips]: () => new TooltipPanel(this.options.chartMenuParamsFactory),
         bins: () => this.initBins(),
         whiskers: () => new WhiskersPanel(this.chartMenuUtils),
         caps: () => new CapsPanel(this.chartMenuUtils),
@@ -180,7 +181,7 @@ export class SeriesPanel extends Component {
     }
 
     private initSeriesSelect() {
-        const seriesSelect = this.createBean(
+        const seriesSelect = this.createBean<GridSelect>(
             new AgSelect(
                 this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams(
                     'seriesType',
@@ -197,17 +198,6 @@ export class SeriesPanel extends Component {
         this.seriesGroup.addItem(seriesSelect);
 
         this.activePanels.push(seriesSelect);
-    }
-
-    private initTooltips(): AgToggleButton {
-        return new AgToggleButton(
-            this.chartMenuUtils.addValueParams<AgToggleButtonParams>('tooltip.enabled', {
-                label: this.translate('tooltips'),
-                labelAlignment: 'left',
-                labelWidth: 'flex',
-                inputWidth: 'flex',
-            })
-        );
     }
 
     private initLineColor(): AgColorPicker {
@@ -286,7 +276,7 @@ export class SeriesPanel extends Component {
                     { value: 'inside', text: this.translate('inside') },
                     { value: 'outside', text: this.translate('outside') },
                 ];
-                const placementSelect = labelPanelComp.createManagedBean(
+                const placementSelect = labelPanelComp.createManagedBean<GridSelect>(
                     new AgSelect(
                         this.chartMenuUtils.getDefaultSelectParams('label.placement', 'labelPlacement', options)
                     )
@@ -340,7 +330,7 @@ export class SeriesPanel extends Component {
         return new AgSlider(params);
     }
 
-    private initShape(): AgSelect {
+    private initShape(): GridSelect {
         return new AgSelect(
             this.chartMenuUtils.getDefaultSelectParams('shape', 'shape', getShapeSelectOptions(this.chartTranslation))
         );

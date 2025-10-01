@@ -10,6 +10,8 @@ export const DYNAMIC_BEAN_MODULES: Record<DynamicBeanName, ValidationModuleName>
     headerGroupCellCtrl: 'ColumnGroup',
     rangeHandle: 'CellSelection',
     tooltipFeature: 'Tooltip',
+    highlightTooltipFeature: 'Tooltip',
+    tooltipStateManager: 'Tooltip',
     groupStrategy: 'RowGrouping',
     treeGroupStrategy: 'TreeData',
     rowNumberRowResizer: 'RowNumbers',

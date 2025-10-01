@@ -223,6 +223,12 @@
     },
     "unlink": {
       "command": "./scripts/removeLocalDeps.sh"
+    },
+    "snykIgnore": {
+      "command": "node ./external/ag-shared/scripts/snyk/getSnykIgnore.mjs",
+      "options": {
+        "cwd": "{workspaceRoot}"
+      }
     }
   },
   "implicitDependencies": [
@@ -238,6 +244,7 @@
     "external/ag-shared",
     "testing/behavioural",
     "testing/accessibility",
+    "testing/csp",
     "ag-grid-generate-example-files"
   ],
   "tags": []

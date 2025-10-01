@@ -26,6 +26,8 @@ const EVENT_NAME = {
     reactLandingPageFaqExpand: 'React Landing Page - FAQ Expand',
     trialLicenseFormSuccess: 'Trial License Form - Success',
     trialLicenseFormError: 'Trial License Form - Error',
+    // RTS Campaign Landing Page Conversion Events
+    returnToServiceMailToButton: 'Return To Service - Clicked Mailto',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -162,4 +164,18 @@ export const trackTrialLicenseFormError = (props: object) => {
 export const trackOnceTrialLicenseFormError = createTrackPlausibleOnce(
     EVENT_NAME.trialLicenseFormError,
     trackTrialLicenseFormError
+);
+
+/* Return To Service Landing Page Events */
+
+export const trackClickRenewMailto = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.trialLicenseFormSuccess,
+        props,
+    });
+};
+
+export const trackOnceClickRenewMailto = createTrackPlausibleOnce(
+    EVENT_NAME.returnToServiceMailToButton,
+    trackClickRenewMailto
 );

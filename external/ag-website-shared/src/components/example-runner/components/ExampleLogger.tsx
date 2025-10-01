@@ -37,7 +37,10 @@ const REACT_JSON_VIEW_CONFIG = {
     displayArrayKey: false,
     quotesOnKeys: false,
 };
-const IGNORED_MESSAGES = ['Angular is running in development mode.'];
+const IGNORED_MESSAGES = [
+    'Angular is running in development mode.',
+    '[vite] server connection lost. Polling for restart...',
+];
 
 // Styles using base16: https://github.com/chriskempson/base16/blob/main/styling.md
 const JSON_VIEWER_THEME = {
@@ -191,7 +194,7 @@ export const ExampleLogger: FunctionComponent<Props> = ({ exampleName, bufferSiz
     useEffect(() => {
         const updateLogs = (event: MessageEvent) => {
             const log = event.data;
-            if (log?.type === 'console-log' && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
+            if (log?.type?.startsWith('console-') && log.exampleName === exampleName && !containsIgnoredMessage(log)) {
                 setLogs((prevLogs) => {
                     if (isRepeatedLog({ prevLogs, log })) {
                         const lastLog = prevLogs[prevLogs.length - 1];

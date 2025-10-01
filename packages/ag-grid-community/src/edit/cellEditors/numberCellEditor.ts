@@ -1,9 +1,10 @@
-import { KeyCode } from '../../constants/keyCode';
-import { _isBrowserSafari } from '../../utils/browser';
-import type { ElementParams } from '../../utils/dom';
-import { _exists } from '../../utils/generic';
-import type { AgInputNumberField } from '../../widgets/agInputNumberField';
-import { AgInputNumberFieldSelector } from '../../widgets/agInputNumberField';
+import { KeyCode } from '../../agStack/constants/keyCode';
+import type { LocaleTextFunc } from '../../agStack/interfaces/iLocaleService';
+import { _isBrowserSafari } from '../../agStack/utils/browser';
+import { _exists } from '../../agStack/utils/generic';
+import { AgInputNumberFieldSelector } from '../../agStack/widgets/agInputNumberField';
+import type { ElementParams } from '../../utils/element';
+import type { GridInputNumberField } from '../../widgets/gridWidgetTypes';
 import type { CellEditorInput } from './iCellEditorInput';
 import type { INumberCellEditorParams } from './iNumberCellEditor';
 import { SimpleCellEditor } from './simpleCellEditor';
@@ -13,9 +14,11 @@ const NumberCellElement: ElementParams = {
     ref: 'eEditor',
     cls: 'ag-cell-editor',
 };
-class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
-    private eEditor: AgInputNumberField;
+class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, GridInputNumberField> {
+    private eEditor: GridInputNumberField;
     private params: INumberCellEditorParams;
+
+    constructor(private readonly getLocaleTextFunc: () => LocaleTextFunc) {}
 
     public getTemplate(): ElementParams {
         return NumberCellElement;
@@ -24,7 +27,7 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         return [AgInputNumberFieldSelector];
     }
 
-    public init(eEditor: AgInputNumberField, params: INumberCellEditorParams): void {
+    public init(eEditor: GridInputNumberField, params: INumberCellEditorParams): void {
         this.eEditor = eEditor;
         this.params = params;
         const { max, min, precision, step } = params;
@@ -49,18 +52,27 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         }
     }
 
-    public getErrors(): string[] | null {
-        const value = this.getValue();
+    public getValidationErrors(): string[] | null {
         const { params } = this;
-        const { min, max, getErrors } = params;
+        const { min, max, getValidationErrors } = params;
+
+        const eInput = this.eEditor.getInputElement();
+        const value = eInput.valueAsNumber;
+
+        const translate = this.getLocaleTextFunc();
+
         let internalErrors: string[] | null = [];
 
         if (typeof value === 'number') {
             if (min != null && value < min) {
-                internalErrors.push(`Must be greater than or equal to ${min}.`);
+                internalErrors.push(
+                    translate('minValueValidation', `Must be greater than or equal to ${min}.`, [String(min)])
+                );
             }
             if (max != null && value > max) {
-                internalErrors.push(`Must be less than or equal to ${max}.`);
+                internalErrors.push(
+                    translate('maxValueValidation', `Must be less than or equal to ${max}.`, [String(max)])
+                );
             }
         }
 
@@ -68,8 +80,8 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
             internalErrors = null;
         }
 
-        if (getErrors) {
-            return getErrors({
+        if (getValidationErrors) {
+            return getValidationErrors({
                 value,
                 cellEditorParams: params,
                 internalErrors,
@@ -118,8 +130,8 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
     }
 }
 
-export class NumberCellEditor extends SimpleCellEditor<number, INumberCellEditorParams, AgInputNumberField> {
+export class NumberCellEditor extends SimpleCellEditor<number, INumberCellEditorParams, GridInputNumberField> {
     constructor() {
-        super(new NumberCellEditorInput());
+        super(new NumberCellEditorInput(() => this.getLocaleTextFunc()));
     }
 }

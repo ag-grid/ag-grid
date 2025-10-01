@@ -13,7 +13,7 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
     toolPanelId: string;
 }
 
-export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
+type AgSideBarButtonsEvent = 'sideBarButtonClicked';
 
 const SideBarElement: ElementParams = { tag: 'div', cls: 'ag-side-buttons', role: 'tablist' };
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
@@ -65,7 +65,6 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     public clearButtons(): void {
         this.buttonComps = this.destroyBeans(this.buttonComps);
         _clearElement(this.getGui());
-        super.destroy();
     }
 
     public override destroy(): void {

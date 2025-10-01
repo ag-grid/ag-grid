@@ -64,6 +64,37 @@ export const AG_GRID_LOCALE_RO = {
     // Group Column Filter
     groupFilterSelect: 'Selectează câmp:',
 
+    // New Filter Tool Panel
+    filterSummaryInactive: 'este (Toate)',
+    filterSummaryContains: 'conține',
+    filterSummaryNotContains: 'nu conține',
+    filterSummaryTextEquals: 'este egal cu',
+    filterSummaryTextNotEqual: 'nu este egal cu',
+    filterSummaryStartsWith: 'începe cu',
+    filterSummaryEndsWith: 'se termină cu',
+    filterSummaryBlank: 'este gol',
+    filterSummaryNotBlank: 'nu este gol',
+    filterSummaryEquals: '=',
+    filterSummaryNotEqual: '!=',
+    filterSummaryGreaterThan: '>',
+    filterSummaryGreaterThanOrEqual: '>=',
+    filterSummaryLessThan: '<',
+    filterSummaryLessThanOrEqual: '<=',
+    filterSummaryInRange: 'între',
+    filterSummaryInRangeValues: '(${variable}, ${variable})',
+    filterSummaryTextQuote: '"${variable}"',
+    filterSummaryListInactive: 'este (Toate)',
+    filterSummaryListSeparator: ', ',
+    filterSummaryListShort: 'este (${variable})',
+    filterSummaryListLong: 'este (${variable}) și ${variable} mai mult',
+    addFilterCard: 'Adaugă filtru',
+    agTextColumnFilterDisplayName: 'Filtru simplu',
+    agNumberColumnFilterDisplayName: 'Filtru simplu',
+    agDateColumnFilterDisplayName: 'Filtru simplu',
+    agSetColumnFilterDisplayName: 'Filtru de selecție',
+    agMultiColumnFilterDisplayName: 'Filtru combinat',
+    addFilterPlaceholder: 'Caută coloane...',
+
     // Advanced Filter
     advancedFilterContains: 'conține',
     advancedFilterNotContains: 'nu conține',
@@ -84,6 +115,9 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterAnd: 'ȘI',
     advancedFilterOr: 'SAU',
     advancedFilterApply: 'Aplică',
+    advancedFilterReset: 'Resetare',
+    advancedFilterCancel: 'Anulează',
+    advancedFilterClear: 'Șterge',
     advancedFilterBuilder: 'Constructor',
     advancedFilterValidationMissingColumn: 'Lipsă coloană',
     advancedFilterValidationMissingOption: 'Lipsă opțiune',
@@ -102,6 +136,8 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterValidationMessageAtEnd: 'Expresia are o eroare. ${variable} la sfârșitul expresiei.',
     advancedFilterBuilderTitle: 'Filtru Avansat',
     advancedFilterBuilderApply: 'Aplică',
+    advancedFilterBuilderClear: 'Șterge',
+    advancedFilterBuilderReset: 'Resetare',
     advancedFilterBuilderCancel: 'Anulează',
     advancedFilterBuilderAddButtonTooltip: 'Adaugă Filtru sau Grup',
     advancedFilterBuilderRemoveButtonTooltip: 'Elimină',
@@ -117,6 +153,15 @@ export const AG_GRID_LOCALE_RO = {
     advancedFilterBuilderValidationSelectColumn: 'Trebuie să selectați o coloană.',
     advancedFilterBuilderValidationSelectOption: 'Trebuie să selectați o opțiune.',
     advancedFilterBuilderValidationEnterValue: 'Trebuie să introduceți o valoare.',
+
+    // Editor Validation Errors
+    minDateValidation: 'Data trebuie să fie după ${variable}',
+    maxDateValidation: 'Data trebuie să fie înainte de ${variable}',
+    maxLengthValidation: 'Trebuie să fie cel mult ${variable} caractere.',
+    minValueValidation: 'Trebuie să fie mai mare sau egal cu ${variable}',
+    maxValueValidation: 'Trebuie să fie mai mic sau egal cu ${variable}',
+    invalidSelectionValidation: 'Selecție invalidă.',
+    tooltipValidationErrorSeparator: '. ',
 
     // Side Bar
     columns: 'Coloane',
@@ -488,6 +533,10 @@ export const AG_GRID_LOCALE_RO = {
     dropOff: 'Coborâre',
     stageLabels: 'Etichete Etapă',
     reverse: 'Invers',
+    tooltipMode: 'Modul Tooltip',
+    tooltipModeSingle: 'Unic',
+    tooltipModeShared: 'Multiplu',
+    tooltipModeCompact: 'Compact',
 
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Apăsați ENTER pentru a edita.',
@@ -540,6 +589,10 @@ export const AG_GRID_LOCALE_RO = {
     ariaChartSelected: 'Selectat',
     ariaSkeletonCellLoadingFailed: 'Încărcarea rândului a eșuat',
     ariaSkeletonCellLoading: 'Datele rândului se încarcă',
+    ariaDeferSkeletonCellLoading: 'Celula se încarcă',
+
+    // ARIA for Batch Edit
+    ariaPendingChange: 'Modificare în așteptare',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Grupuri de rânduri',
@@ -556,8 +609,10 @@ export const AG_GRID_LOCALE_RO = {
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Meniu Coloană',
     ariaLabelColumnFilter: 'Filtru Coloană',
-    ariaLabelCellEditor: 'Editor de Celule',
     ariaLabelSelectField: 'Selectează Câmp',
+
+    // Cell Editor
+    ariaValidationErrorPrefix: 'Validare editor de celule',
     ariaLabelLoadingContextMenu: 'Încărcare Meniu Contextual',
 
     // aria labels for rich select
@@ -578,6 +633,11 @@ export const AG_GRID_LOCALE_RO = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Listă de coloane',
     ariaFilterPanelList: 'Listă de filtre',
+
+    // ARIA labels for new Filters Tool Panel
+    ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
+    ariaLabelFilterCardDelete: 'Șterge Filtrul',
+    ariaLabelFilterCardHasEdits: 'Are Modificări',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

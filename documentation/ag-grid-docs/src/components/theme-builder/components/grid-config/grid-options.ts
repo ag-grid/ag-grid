@@ -12,6 +12,7 @@ export const productionConfigFields = [
     'cellSelectionHeaderHighlight',
     'rowNumbers',
     'rowDrag',
+    'rowPinning',
     'rowSelection',
     'rightToLeft',
     'floatingFilters',
@@ -56,6 +57,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         }
     }
 
+    const rowData = defaultRowData();
+    const allSports = [...new Set(rowData.map((row) => row.sport))];
+
     const defaultColDef: ColDef = {
         sortable: true,
         resizable: config.columnResizing,
@@ -64,9 +68,8 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         editable: true,
         flex: 1,
         filter: true,
-        aggFunc: 'sum',
     };
-    const columnDefs = buildSimpleColumnDefs();
+    const columnDefs = buildSimpleColumnDefs(allSports);
     const sideBar: string[] = [];
     const options: GridOptions = {
         defaultColDef,
@@ -76,7 +79,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         cellSelection: {
             enableHeaderHighlight: config.cellSelectionHeaderHighlight,
         },
-        rowData: defaultRowData(),
+        rowData,
         columnDefs: config.columnGroupsDeep
             ? buildDeepGroupColumnDefs(columnDefs)
             : config.columnGroups
@@ -92,6 +95,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
             minWidth: 250,
         },
         rowNumbers: config.rowNumbers,
+        enableRowPinning: config.rowPinning,
         popupParent: config.popupParentIsBody ? document.body : undefined,
         grandTotalRow: config.grandTotalRow ? 'bottom' : undefined,
     };
@@ -159,30 +163,46 @@ const cashFormatter = (params: any) => {
     return '$' + params.value.toLocaleString();
 };
 
-const buildSimpleColumnDefs = (): ColDef[] => [
-    { field: 'country' },
-    { field: 'sport', cellEditor: 'agRichSelectCellEditor' },
-    { field: 'name' },
+const buildSimpleColumnDefs = (allSports: string[]): ColDef[] => [
+    { field: 'country', enablePivot: true },
+    {
+        field: 'sport',
+        enablePivot: true,
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: allSports,
+        },
+    },
+    { field: 'name', enablePivot: true },
     {
         field: 'winningsTotal',
         headerName: 'Total winnings',
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        aggFunc: 'sum',
     },
     {
         field: 'winnings2023',
-        headerName: '2023 winnings',
+        headerName: '2023 winnings (> 0)',
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        cellEditorParams: {
+            min: 0,
+        },
+        aggFunc: 'sum',
     },
     {
         field: 'winnings2022',
-        headerName: '2022 winnings',
+        headerName: '2022 winnings (> 0)',
         type: 'rightAligned',
         valueFormatter: cashFormatter,
         filter: 'agNumberColumnFilter',
+        cellEditorParams: {
+            min: 0,
+        },
+        aggFunc: 'sum',
     },
 ];
 

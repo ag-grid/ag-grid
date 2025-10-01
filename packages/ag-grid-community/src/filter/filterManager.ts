@@ -1,3 +1,4 @@
+import { AgPromise } from '../agStack/utils/promise';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -10,8 +11,7 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnFilterState, FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _mergeDeep } from '../utils/object';
-import { AgPromise } from '../utils/promise';
+import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import type { ColumnFilterService } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';
@@ -168,8 +168,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private refreshFiltersForAggregations() {
-        const isAggFiltering = _getGroupAggFiltering(this.gos);
-        if (isAggFiltering) {
+        if (_getGroupAggFiltering(this.gos) && this.isAnyFilterPresent()) {
             this.onFilterChanged();
         }
     }

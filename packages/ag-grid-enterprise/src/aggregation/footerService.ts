@@ -1,12 +1,5 @@
 import type { Column, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _getGrandTotalRow,
-    _getGrandTotalRowPinned,
-    _getGroupTotalRowCallback,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
 
@@ -21,23 +14,21 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         isRootNode: boolean,
         position: 'top' | 'bottom'
     ): number {
-        const { gos, beans } = this;
         let index = startIndex;
 
         if (isRootNode) {
-            const grandTotal = includeFooterNodes && _getGrandTotalRow(gos);
-            const grandTotalPinned = includeFooterNodes && _getGrandTotalRowPinned(gos);
-            if (_positionMatchesGrandTotalRow(position, grandTotal, grandTotalPinned)) {
-                _createRowNodeFooter(node, beans);
+            const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
+            if (_positionMatchesGrandTotalRow(position, grandTotal)) {
+                _createRowNodeFooter(node, this.beans);
                 callback(node.sibling, index++);
             }
             return index;
         }
 
-        const isGroupIncludeFooter = _getGroupTotalRowCallback(gos);
+        const isGroupIncludeFooter = _getGroupTotalRowCallback(this.gos);
         const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node });
         if (groupTotal === position) {
-            _createRowNodeFooter(node, beans);
+            _createRowNodeFooter(node, this.beans);
             callback(node.sibling, index++);
         }
         return index;
@@ -86,7 +77,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         }
 
         // otherwise, show in relevant group column
-        return !!node.rowGroupColumn && col && col.isRowGroupDisplayed(node.rowGroupColumn.getId());
+        return !!node.rowGroupColumn && col?.isRowGroupDisplayed(node.rowGroupColumn.getId());
     }
 
     public applyTotalPrefix(value: any, formattedValue: string | null, node: IRowNode, column: Column): string {
@@ -119,13 +110,8 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
 function _positionMatchesGrandTotalRow(
     position: 'top' | 'bottom',
-    grandTotaRow: GridOptions['grandTotalRow'] | false,
-    grandTotalRowPinned: GridOptions['grandTotalRowPinned'] | false
+    grandTotaRow: GridOptions['grandTotalRow'] | false
 ): boolean {
-    if (grandTotalRowPinned) {
-        return grandTotalRowPinned === position;
-    }
-
     switch (grandTotaRow) {
         case 'top':
         case 'pinnedTop':

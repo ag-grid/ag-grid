@@ -65,7 +65,8 @@
     > ol,
     > table {
         font-size: var(--text-fs-base);
-        line-height: var(--text-lh-xs);
+        // Set as integer px value to fix fractional y position examples border issues
+        line-height: 27px;
     }
 }
 

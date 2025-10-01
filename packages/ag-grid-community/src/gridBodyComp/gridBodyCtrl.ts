@@ -1,3 +1,6 @@
+import { _isInvisibleScrollbar } from '../agStack/utils/browser';
+import { _isElementChildOfClass, _isVerticalScrollShowing, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _isEventFromThisInstance } from '../agStack/utils/event';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -9,11 +12,8 @@ import type { IColsService } from '../interfaces/iColsService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
-import { _isInvisibleScrollbar } from '../utils/browser';
-import { _isElementChildOfClass, _isVerticalScrollShowing, _requestAnimationFrame } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
-import { _isEventFromThisGrid } from './mouseEventUtils';
 import { _getRowContainerClass, _getRowViewportClass } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
@@ -379,7 +379,7 @@ export class GridBodyCtrl extends BeanStub {
         const { deltaX, deltaY, shiftKey } = e;
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
 
-        if (isHorizontalScroll && _isEventFromThisGrid(this.gos, e)) {
+        if (isHorizontalScroll && _isEventFromThisInstance(this.beans, e)) {
             this.scrollGridBodyToMatchEvent(e);
         }
     }
@@ -387,8 +387,10 @@ export class GridBodyCtrl extends BeanStub {
     private onStickyWheel(e: WheelEvent): void {
         const { deltaY } = e;
 
-        e.preventDefault();
-        this.scrollVertically(deltaY);
+        const scrolled = this.scrollVertically(deltaY);
+        if (scrolled > 0) {
+            e.preventDefault();
+        }
     }
 
     private onHorizontalWheel(e: WheelEvent): void {

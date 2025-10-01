@@ -6,6 +6,6 @@ interface CustomButtonParams extends CustomCellRendererProps {
     onClick: () => void;
 }
 
-export default (params: CustomButtonParams) => {
-    return <button onClick={params.onClick}>Launch!</button>;
+export default ({ onClick, data }: CustomButtonParams) => {
+    return <button onClick={onClick}>{data?.company ? `Launch ${data.company}!` : 'Launch!'}</button>;
 };

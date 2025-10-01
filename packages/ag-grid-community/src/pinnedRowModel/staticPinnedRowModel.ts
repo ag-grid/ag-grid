@@ -19,8 +19,8 @@ interface OrderedCache<T extends { id: string | undefined }> {
 
 export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private nextId = 0;
-    private pinnedTopRows: OrderedCache<RowNode> = { cache: {}, order: [] };
-    private pinnedBottomRows: OrderedCache<RowNode> = { cache: {}, order: [] };
+    private readonly pinnedTopRows: OrderedCache<RowNode> = { cache: {}, order: [] };
+    private readonly pinnedBottomRows: OrderedCache<RowNode> = { cache: {}, order: [] };
 
     public postConstruct(): void {
         const gos = this.gos;

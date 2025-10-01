@@ -9,9 +9,9 @@ import { _addGridCommonParams } from '../gridOptionsUtils';
 /**
  * Converts a camelCase string into startCase
  * @param {string} camelCase
- * @return {string}
+ * @returns {string}
  */
-export function _camelCaseToHumanText(camelCase: string | undefined): string | null {
+function _camelCaseToHumanText(camelCase: string | undefined): string | null {
     if (!camelCase || camelCase == null) {
         return null;
     }

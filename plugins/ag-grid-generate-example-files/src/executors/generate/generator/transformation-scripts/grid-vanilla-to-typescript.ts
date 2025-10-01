@@ -3,8 +3,10 @@ import {
     addBindingImports,
     addGenericInterfaceImport,
     findLocaleImport,
+    getEnableAGTestIdLogic,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
+    wrapTearDownExample,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
@@ -36,9 +38,22 @@ function getImports(bindings: ParsedBindings, currFile: string): string[] {
         addBindingImports(bImports, imports, false);
     }
 
+    imports.push(getEnableAGTestIdLogic());
+
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     return imports;
+}
+
+function getTearDownCode(exampleCode: string): string {
+    const apisPresent = ['gridApi', 'topApi', 'bottomApi', 'leftApi', 'rightApi'].filter((api) =>
+        exampleCode.includes(api)
+    );
+    if (apisPresent.length === 0) {
+        return '';
+    }
+
+    return `(<any>window).tearDownExample = () => [${apisPresent.join()}].forEach(api => api?.destroy());`;
 }
 
 export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: string, tsFile: string): () => string {
@@ -53,6 +68,7 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
             "if (typeof window !== 'undefined') {",
             '// Attach external event handlers to window so they can be called from index.html',
             ...externalBindings,
+            wrapTearDownExample(getTearDownCode(tsFile)),
             '}',
         ].join('\n');
     }
@@ -78,7 +94,13 @@ export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: stri
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
-        const result = `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi') ?? ''}`;
+        let result = `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi') ?? ''}`;
+
+        // Add test tearDown method
+        if (!result.includes('tearDownExample')) {
+            result += wrapTearDownExample(`if (typeof window !== 'undefined') {${getTearDownCode(result)} }`);
+        }
+
         return result;
     };
 }

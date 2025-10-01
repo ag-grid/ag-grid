@@ -115,6 +115,10 @@
 .CTAWithFrameworks {
     display: flex;
     align-items: flex-end;
+
+    @media screen and (max-width: 440px) {
+        transform: translateX(-10%) scale(0.8);
+    }
 }
 
 .frameworkSelector {

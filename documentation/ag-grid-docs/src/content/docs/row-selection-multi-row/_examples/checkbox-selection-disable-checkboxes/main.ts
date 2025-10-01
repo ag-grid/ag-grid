@@ -29,14 +29,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowSelection: {
         mode: 'multiRow',
         hideDisabledCheckboxes: true,
-        isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
+        isRowSelectable: (node) => (node.data ? node.data.year < 2007 : false),
     },
 };
 
 function toggleHideCheckbox() {
     gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
-        isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
+        isRowSelectable: (node) => (node.data ? node.data.year < 2007 : false),
         hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
     });
 }

@@ -5,16 +5,19 @@ enterprise: true
 
 This section covers how to configure the Side Bar which contains Tool Panels.
 
+{% imageCaption imagePath="resources/sidebar.webp" alt="Side Bar" centered=true /%}
+
+
 ## Configuring the Side Bar
 
 The Side Bar is configured using the grid property `sideBar`. The property takes multiple forms to allow easy configuration or more advanced configuration. The different forms for the `sideBar` property are as follows:
 
-| Type                         | Description                                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| `undefined` / `null`         | No Side Bar provided.                                                                              |
-| `boolean`                    | Set to `true` to display the Side Bar with default configuration.                       |
-| `string` / `string[]`        | Set to `'columns'` or `'filters'` to display the Side Bar with just one of [Columns](./tool-panel-columns/) or [Filters](./tool-panel-filters/) Tool Panels or an array of one or both of these values. |
-| `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels. |
+| Type                             | Description                                                                                                                                                                                                                                                       |
+|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `undefined` / `null`             | No Side Bar provided.                                                                                                                                                                                                                                             |
+| `boolean`                        | Set to `true` to display the Side Bar with default configuration.                                                                                                                                                                                                 |
+| `string` / `string[]`            | Set to `'columns'`, `'filters'` or `'filters-new'` to display the Side Bar with just one of [Columns](./tool-panel-columns/), [Filters](./tool-panel-filters/) or [New Filters](./tool-panel-filters-new) Tool Panels or an array of some or all of these values. |
+| `SideBarDef`{% br /%}(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the Side Bar. Use this to configure the provided Tool Panels (e.g. pass parameters to the columns or filters panel) or to include custom Tool Panels.                         |
 
 ### Boolean Configuration
 
@@ -26,7 +29,7 @@ The default configuration doesn't allow customisation of the Tool Panels.
 
 ### String Configuration
 
-To display just one of the provided Tool Panels, set either `sideBar='columns'` or `sideBar='filters'`. This will display the desired item with default configuration. Alternatively pass one or both as a `string[]`, i.e `sideBar=['columns','filters']`.
+To display just one of the provided Tool Panels, set either `sideBar='columns'`, `sideBar='filters'` or `sideBar='filters-new'`. This will display the desired item with default configuration. Alternatively pass some or all of these values as a `string[]`, i.e `sideBar=['columns','filters', 'filters-new']`.
 
 The example below demonstrates using the string configuration. Note the following:
 
@@ -73,7 +76,7 @@ const gridOptions = {
             }
         ],
         position: 'left',
-        defaultToolPanel: 'filters'
+        defaultToolPanel: 'filters',
     }
 }
 ```
@@ -81,6 +84,14 @@ const gridOptions = {
 The snippet above is demonstrated in the following example:
 
 {% gridExampleRunner title="SideBarDef" name="sideBarDef"  exampleHeight=600 /%}
+
+{% note %}
+Calling `setSideBarVisible(true)` when `sideBarDef.hideButtons` is set to true and no tool panel is open will not display anything.
+{% /note %}
+
+{% note %}
+The [Popup Parent](./context-menu/#popup-parent) must be set to an element that contains both the tool parent parent and the grid to ensure all popups (e.g., Columns Tool Panel context menus) are fully visible.
+{% /note %}
 
 ## Configuration Shortcuts
 
@@ -147,7 +158,7 @@ const gridOptions = {
 }
 ```
 
-You can also use shortcuts inside the `toolPanel.items` array for specifying the Columns and Filters items.
+You can also use shortcuts inside the `sideBar.toolPanels` array for specifying the Columns and Filters items.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -187,6 +198,19 @@ const gridOptions = {
 If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below changes the filter label and icon.
 
 {% gridExampleRunner title="Side Bar Fine Tuning" name="fine-tuning" /%}
+
+### Tool Panel Parent
+
+By default, Tool Panels are rendered inside the Side Bar. If you want to render Tool Panels in a different location, you can set the [parent](./side-bar#reference-ToolPanelDef-parent) property in the `ToolPanelDef`. This is useful if you want to render Tool Panel in a different part of your application, such as a popup window or a separate section of your page.
+
+The [Popup Parent](./context-menu/#popup-parent) must also be set to an element that contains both the Tool Panel parent and the grid.
+
+You can also provide a parent for the tool panel in the call to openToolPanel method:
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["openToolPanel"] /%}
+
+{% gridExampleRunner title="Tool Panel Parent" name="tool-panel-parent" exampleHeight=600 /%}
+
 
 ## Providing Parameters to Tool Panels
 
@@ -237,4 +261,4 @@ The example below demonstrates different usages of the Tool Panel API methods. T
 
 ## Next Up
 
-Now that we covered the Side Bar, continue to the next section to learn about the [Columns Tool Panel](./tool-panel-columns/).
+Continue to the next section to learn about the [Columns Tool Panel](./tool-panel-columns/).

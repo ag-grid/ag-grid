@@ -18,6 +18,7 @@ export default [
             '**/.angular',
             '**/systemjs.config.js',
             '**/systemjs.config.dev.js',
+            '.playwright-network-cache/',
         ],
     },
     {
@@ -54,6 +55,7 @@ export default [
                 System: 'readonly',
                 systemJsPaths: 'readonly',
                 boilerplatePath: 'readonly',
+                startFile: 'readonly',
                 appLocation: 'readonly',
                 systemJsMap: 'readonly',
             },

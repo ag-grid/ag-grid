@@ -244,3 +244,7 @@
 .ag-icon-filter-add::before {
     mask-image: url('./balham-svg-icons/filter-add.svg');
 }
+
+.ag-icon-edit::before {
+    mask-image: url('./balham-svg-icons/edit.svg');
+}

@@ -15,6 +15,15 @@ interface Params {
 }
 
 export function transformMarkdoc({ framework, markdocContent, transformAst }: Params) {
+    if (!markdocContent) {
+        return {
+            ast: null,
+            renderTree: null,
+            partialAst: null,
+            partialRenderTree: null,
+            MarkdocContent: () => null,
+        };
+    }
     const ast = Markdoc.parse(markdocContent);
     if (transformAst) {
         transformAst(ast);

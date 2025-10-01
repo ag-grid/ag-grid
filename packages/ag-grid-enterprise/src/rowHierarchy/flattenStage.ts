@@ -47,7 +47,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
 
         // we do not want the footer total if the grid is empty
         const atLeastOneRowPresent = result.length > 0;
-        const { grandTotalRow, grandTotalRowPinned } = details;
+        const grandTotalRow = details.grandTotalRow;
 
         const includeGrandTotalRow =
             !showRootNode &&
@@ -58,9 +58,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         if (includeGrandTotalRow) {
             _createRowNodeFooter(rootNode, this.beans);
             // want to not render the footer row here if pinned via grid options
-            if (grandTotalRowPinned || grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
-                const float = grandTotalRowPinned ?? (grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
-                this.beans.pinnedRowModel?.setGrandTotalPinned(float);
+            if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
+                this.beans.pinnedRowModel?.setGrandTotalPinned(grandTotalRow === 'pinnedBottom' ? 'bottom' : 'top');
             } else {
                 const addToTop = grandTotalRow === 'top';
                 this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
@@ -80,6 +79,8 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
         if (!rowsToFlatten?.length) {
             return;
         }
+
+        const masterDetailSvc = this.beans.masterDetailSvc;
 
         for (let i = 0; i < rowsToFlatten!.length; i++) {
             const rowNode = rowsToFlatten![i];
@@ -127,6 +128,11 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
                     }
 
+                    const detailNode = masterDetailSvc?.getDetail(rowNode);
+                    if (detailNode) {
+                        this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
+                    }
+
                     this.recursivelyAddToRowsToDisplay(
                         details,
                         rowNode.childrenAfterSort,
@@ -141,7 +147,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, 
                     }
                 }
             } else {
-                const detailNode = this.beans.masterDetailSvc?.getDetail(rowNode);
+                const detailNode = masterDetailSvc?.getDetail(rowNode);
                 if (detailNode) {
                     this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
                 }

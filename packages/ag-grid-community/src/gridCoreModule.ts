@@ -30,6 +30,7 @@ import { GridOptionsService } from './gridOptionsService';
 import { ColumnGroupHeaderCompModule, ColumnHeaderCompModule } from './headerRendering/cells/headerModule';
 import type { _ModuleWithApi } from './interfaces/iModule';
 import { AnimationFrameModule } from './misc/animationFrameModule';
+import { IconService } from './misc/iconService';
 import { TouchModule } from './misc/touchModule';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
@@ -37,6 +38,7 @@ import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedColumnModule } from './pinnedColumns/pinnedColumnModule';
 import { AriaModule } from './rendering/ariaModule';
 import { SkeletonCellRendererModule } from './rendering/cellRenderers/cellRendererModule';
+import { ColumnDelayRenderModule } from './rendering/columnDelayRenderService';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
@@ -73,6 +75,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         SyncService,
         ColumnNameService,
         ColumnViewportService,
+        IconService,
     ],
     icons: {
         // icon on select dropdowns (select cell editor, charts tool panels)
@@ -127,5 +130,6 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         ColumnFlexModule,
         ExpressionModule,
         SkeletonCellRendererModule,
+        ColumnDelayRenderModule,
     ],
 };

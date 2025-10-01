@@ -1,17 +1,22 @@
+import { _setAriaColIndex } from '../../agStack/utils/aria';
+import { _getActiveDomElement } from '../../agStack/utils/document';
+import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../agStack/utils/dom';
+import { _findFocusableElements } from '../../agStack/utils/focus';
+import { _makeNull } from '../../agStack/utils/generic';
+import { AgPromise } from '../../agStack/utils/promise';
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
+import { _populateModelValidationErrors } from '../../edit/utils/editors';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
-import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _addGridCommonParams,
-    _getActiveDomElement,
     _getCheckboxLocation,
     _getCheckboxes,
     _isCellSelectionEnabled,
@@ -22,6 +27,8 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
+import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
+import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
@@ -32,14 +39,10 @@ import { _isManualPinnedRow } from '../../pinnedRowModel/pinnedRowUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
-import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../utils/dom';
-import { _getCtrlForEventTarget } from '../../utils/event';
-import { _findFocusableElements, _isCellFocusSuppressed } from '../../utils/focus';
-import { _makeNull } from '../../utils/generic';
-import { AgPromise } from '../../utils/promise';
+import { _isCellFocusSuppressed } from '../../utils/gridFocus';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from '../dndSourceComp';
+import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
@@ -83,12 +86,6 @@ export interface ICellComp {
     refreshEditStyles: (editing: boolean, isPopup: boolean) => void;
 }
 
-export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
-
-export function _getCellCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): CellCtrl | null {
-    return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_CELL_CTRL);
-}
-
 let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
@@ -105,12 +102,11 @@ export class CellCtrl extends BeanStub {
     public value: any;
     public valueFormatted: any;
 
-    private rangeFeature: ICellRangeFeature | undefined = undefined;
+    public rangeFeature: ICellRangeFeature | undefined = undefined;
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
-    private tooltipFeature: TooltipFeature | undefined = undefined;
-    private editorTooltipFeature: TooltipFeature | undefined = undefined;
+    public editStyleFeature: ICellStyleFeature | undefined = undefined;
     private mouseListener: CellMouseListenerFeature | undefined = undefined;
     private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
@@ -133,7 +129,11 @@ export class CellCtrl extends BeanStub {
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
-    private editSvc?: IEditService;
+    private readonly editSvc?: IEditService;
+    private readonly hasEdit: boolean = false;
+
+    public tooltipFeature: TooltipFeature | undefined = undefined;
+    public editorTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -145,6 +145,7 @@ export class CellCtrl extends BeanStub {
         this.beans = beans;
         this.gos = beans.gos;
         this.editSvc = beans.editSvc;
+        this.hasEdit = !!beans.editSvc;
 
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
@@ -158,13 +159,12 @@ export class CellCtrl extends BeanStub {
         const { beans } = this;
         this.positionFeature = new CellPositionFeature(this, beans);
         this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this, beans);
+        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this, beans);
         this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
-        if (this.column.isTooltipEnabled()) {
-            this.enableTooltipFeature();
-        }
+        this.enableTooltipFeature();
 
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
@@ -190,6 +190,7 @@ export class CellCtrl extends BeanStub {
         this.positionFeature = context.destroyBean(this.positionFeature);
         this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
+        this.editStyleFeature = context.destroyBean(this.editStyleFeature);
         this.mouseListener = context.destroyBean(this.mouseListener);
         this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
@@ -210,12 +211,9 @@ export class CellCtrl extends BeanStub {
         if (this.editorTooltipFeature) {
             this.disableEditorTooltipFeature();
         }
-        this.editorTooltipFeature = this.beans.tooltipSvc?.setupEditorTooltip(this, editor);
-        this.refreshEditorTooltip();
-    }
+        this.editorTooltipFeature = this.beans.tooltipSvc?.setupCellEditorTooltip(this, editor);
 
-    public refreshEditorTooltip(): void {
-        this.editorTooltipFeature?.refreshTooltip();
+        _populateModelValidationErrors(this.beans);
     }
 
     public disableEditorTooltipFeature(): void {
@@ -258,13 +256,22 @@ export class CellCtrl extends BeanStub {
 
         this.positionFeature?.init();
         this.customStyleFeature?.setComp(comp);
+        this.editStyleFeature?.setComp(comp);
         this.tooltipFeature?.refreshTooltip();
         this.keyboardListener?.init();
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
-        if (startEditing && this.isCellEditable()) {
-            this.editSvc?.startEditing(this, { startedEdit: true });
+        if (
+            (startEditing && this.isCellEditable()) ||
+            (this.hasEdit && this.editSvc?.isEditing(this, { withOpenEditor: true }))
+        ) {
+            this.editSvc?.startEditing(this, {
+                startedEdit: false,
+                source: 'api',
+                silent: true,
+                continueEditing: true,
+            });
         } else {
             // We can skip refreshing the range handle as this is done in this.rangeFeature.setComp above
             this.showValue(false, true);
@@ -350,8 +357,12 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (beans?.editSvc?.batch && beans?.editSvc?.isRowEditing({ rowNode }, { checkSiblings: true })) {
-            const result = beans.editSvc.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
+        if (
+            this.hasEdit &&
+            this.editSvc!.isBatchEditing() &&
+            this.editSvc!.isRowEditing(rowNode, { checkSiblings: true })
+        ) {
+            const result = this.editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
                     compDetails = result.compDetails;
@@ -362,6 +373,8 @@ export class CellCtrl extends BeanStub {
         }
 
         this.comp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
+
+        this.customRowDragComp?.refreshVisibility();
 
         // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
@@ -385,6 +398,18 @@ export class CellCtrl extends BeanStub {
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
         return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
+    }
+
+    public getCellValueClass(): string {
+        const prefix = 'ag-cell-value';
+        const isCheckboxRenderer = this.column.getColDef().cellRenderer === 'agCheckboxCellRenderer';
+        let suffix = '';
+
+        if (isCheckboxRenderer) {
+            suffix = ' ag-allow-overflow';
+        }
+
+        return `${prefix}${suffix}`;
     }
 
     /**
@@ -429,14 +454,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public onPopupEditorClosed(): void {
-        if (!this.editSvc?.isEditing(this)) {
+        const { editSvc } = this.beans;
+        if (!editSvc?.isEditing(this, { withOpenEditor: true })) {
             return;
         }
 
         // note: this happens because of a click outside of the grid or if the popupEditor
         // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
-        this.editSvc?.stopEditing(this);
+        editSvc?.stopEditing(this, { source: editSvc?.isBatchEditing() ? 'ui' : 'api' });
     }
 
     /**
@@ -445,7 +471,8 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
-        return this.editSvc?.stopEditing(this, { cancel }) ?? false;
+        const { editSvc } = this.beans;
+        return editSvc?.stopEditing(this, { cancel, source: editSvc?.isBatchEditing() ? 'ui' : 'api' }) ?? false;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -463,7 +490,7 @@ export class CellCtrl extends BeanStub {
             valueFormatted: valueFormatted,
             getValue: () => valueSvc.getValueForDisplay(column, rowNode).value,
             setValue: (value: any) =>
-                editSvc?.setDataValue({ rowNode, column }, value) || valueSvc.setValue(rowNode, column, value),
+                editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
             data: rowNode.data,
             node: rowNode,
@@ -501,29 +528,36 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public refreshOrDestroyCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {
+    public refreshOrDestroyCell(params?: RefreshCellsParams): void {
         if (this.refreshShouldDestroy()) {
             this.rowCtrl?.recreateCell(this);
         } else {
             this.refreshCell(params);
         }
+
+        if (this.hasEdit && this.editCompDetails) {
+            const { editSvc, comp } = this;
+
+            if (!comp?.getCellEditor() && editSvc!.isEditing(this, { withOpenEditor: true })) {
+                // editor was cleaned up by virtualisation, needs to be re-created
+                editSvc!.startEditing(this, { startedEdit: false, source: 'api', silent: true });
+            }
+        }
     }
 
-    // + stop editing {forceRefresh: true, suppressFlash: true}
+    // + stop editing {force: true, suppressFlash: true}
     // + event cellChanged {}
     // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
     // + rowCtrl: event dataChanged {suppressFlash: !update, newData: !update}
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }) {
+    public refreshCell({ force, suppressFlash, newData }: RefreshCellsParams & { newData?: boolean } = {}): void {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell) {
             return;
         }
 
         const colDef = this.column.getColDef();
-        const newData = params != null && !!params.newData;
-        const suppressFlash = params != null && !!params.suppressFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -531,7 +565,7 @@ export class CellCtrl extends BeanStub {
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
-        const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
+        const forceRefresh = force || noValueProvided || newData;
 
         const isCellCompReady = !!this.comp;
         // Only worth comparing values if the cellComp is ready
@@ -548,7 +582,7 @@ export class CellCtrl extends BeanStub {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            this.showValue(newData, false);
+            this.showValue(!!newData, false);
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
@@ -559,6 +593,8 @@ export class CellCtrl extends BeanStub {
             if (flashCell) {
                 this.beans.cellFlashSvc?.flashCell(this);
             }
+
+            this.editStyleFeature?.applyCellStyles?.();
 
             this.customStyleFeature?.applyUserStyles();
             this.customStyleFeature?.applyClassesFromColDef();
@@ -688,6 +724,12 @@ export class CellCtrl extends BeanStub {
     }
 
     public focusCell(forceBrowserFocus = false, sourceEvent?: Event): void {
+        const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
+        // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
+        if (allowedTarget && allowedTarget !== this) {
+            return;
+        }
+
         this.beans.focusSvc.setFocusedCell({
             ...this.getFocusedCellPosition(),
             forceBrowserFocus,
@@ -810,7 +852,7 @@ export class CellCtrl extends BeanStub {
         this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused && event?.forceBrowserFocus) {
             let focusEl = this.comp.getFocusableElement();
 
             if (editing) {
@@ -872,7 +914,7 @@ export class CellCtrl extends BeanStub {
         if (this.editSvc?.isEditing(this)) {
             this.editSvc?.handleColDefChanged(this);
         } else {
-            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+            this.refreshOrDestroyCell({ force: true, suppressFlash: true });
         }
     }
 
@@ -947,18 +989,14 @@ export class CellCtrl extends BeanStub {
         return dndSourceComp;
     }
 
-    public registerRowDragger(
-        customElement: HTMLElement,
-        dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
-    ): void {
+    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number, alwaysVisible?: boolean): void {
         // if previously existed, then we are only updating
         if (this.customRowDragComp) {
             this.customRowDragComp.setDragElement(customElement, dragStartPixels);
             return;
         }
 
-        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
+        const newComp = this.createRowDragComp(customElement, dragStartPixels, alwaysVisible);
 
         if (newComp) {
             this.customRowDragComp = newComp;
@@ -966,13 +1004,14 @@ export class CellCtrl extends BeanStub {
                 this.beans.context.destroyBean(newComp);
                 (this.customRowDragComp as any) = null;
             });
+            newComp.refreshVisibility();
         }
     }
 
     public createRowDragComp(
         customElement?: HTMLElement,
         dragStartPixels?: number,
-        suppressVisibilityChange?: boolean
+        alwaysVisible?: boolean
     ): RowDragComp | undefined {
         const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
@@ -980,7 +1019,7 @@ export class CellCtrl extends BeanStub {
             () => this.value,
             customElement,
             dragStartPixels,
-            suppressVisibilityChange
+            alwaysVisible
         );
         if (!rowDragComp) {
             return undefined;

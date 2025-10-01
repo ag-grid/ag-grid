@@ -1,5 +1,8 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
+import type { AgEvent } from './agStack/interfaces/agEvent';
+import type { ScrollDirection } from './agStack/interfaces/baseEvents';
+import type { RowsDropParams } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -8,18 +11,19 @@ import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
 import type { ChartType } from './interfaces/iChartOptions';
-import type { RefreshModelParams } from './interfaces/iClientSideRowModel';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
-import type { BuildEventTypeMap } from './interfaces/iEventEmitter';
 import type { IFilterComp } from './interfaces/iFilter';
 import type { FindMatch } from './interfaces/iFind';
 import type { IRowNode, RowPinnedType } from './interfaces/iRowNode';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
+import type { CellValueChange } from './interfaces/iUndoRedo';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
 
 export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
+
+export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;
 
 export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     AgPublicEventType | AgInternalEventType,
@@ -127,7 +131,6 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowResizeStarted: RowResizeStartedEvent<TData, TContext>;
         rowResizeEnded: RowResizeEndedEvent<TData, TContext>;
         // Internal events
-        beforeRefreshModel: BeforeRefreshModelEvent<TData, TContext>;
         scrollbarWidthChanged: ScrollbarWidthChangedEvent<TData, TContext>;
         keyShortcutChangedCellStart: KeyShortcutChangedCellStartEvent<TData, TContext>;
         keyShortcutChangedCellEnd: KeyShortcutChangedCellEndEvent<TData, TContext>;
@@ -159,6 +162,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
         filterDestroyed: FilterDestroyedEvent<TData, TContext>;
+        filterClosed: FilterClosedEvent<TData, TContext>;
         rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
         rowCountReady: RowCountReadyEvent<TData, TContext>;
         advancedFilterEnabledChanged: AdvancedFilterEnabledChangedEvent<TData, TContext>;
@@ -178,6 +182,12 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         columnsReset: ColumnsResetEvent<TData, TContext>;
         cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
+        batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
+        batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
+        bulkEditingStarted: BulkEditingStartedEvent<TData, TContext>;
+        bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
+        headerRowsChanged: AgEvent<'headerRowsChanged'>;
+        rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
     }
 >;
 
@@ -190,11 +200,6 @@ export type AllEventsWithoutGridCommon<TData = any, TContext = any> = {
 export type AllEvents<TData = any, TContext = any> = {
     [K in keyof AgEventTypeParams<TData, TContext>]: AgEventTypeParams<TData, TContext>[K];
 }[keyof AgEventTypeParams];
-
-export interface AgEvent<TEventType extends string = string> {
-    /** Event identifier */
-    type: TEventType;
-}
 
 export interface AgGridEvent<TData = any, TContext = any, TEventType extends string = string>
     extends AgGridCommon<TData, TContext>,
@@ -215,8 +220,8 @@ export type AgGlobalEventListener<TData = any, TContext = any, T extends AgEvent
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'modelUpdated', TData, TContext> {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean | undefined;
-    /** If true, the grid has new data loaded, eg user called setRowData(), otherwise
-     * it's the same data but sorted or filtered, in which case this is true, and rows
+    /** If the grid has new data loaded, eg user called setRowData(), this will be false,
+     * otherwise it's the same data but sorted or filtered, in which case this is true, and rows
      * can animate around (eg rowNode id 24 is the same row node as last time). */
     keepRenderedRows: boolean | undefined;
     /** If true, then this update was a result of setRowData() getting called. This
@@ -287,13 +292,6 @@ export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
 
-/** Raised by ClientSideRowModel */
-export interface BeforeRefreshModelEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'beforeRefreshModel', TData, TContext> {
-    params: RefreshModelParams<TData>;
-    groupsChanged: boolean;
-}
-
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdateStarted', TData, TContext> {
     firstRowData: TData | null;
@@ -348,7 +346,7 @@ export interface SelectionChangedEvent<TData = any, TContext = any>
     /** The source that triggered the selection change event. */
     source: SelectionEventSourceType;
     /** The row nodes that are selected at the time the event is generated. When selecting all nodes in SSRM or when group selecting in SSRM, this will be `null`. */
-    selectedNodes: IRowNode[] | null;
+    selectedNodes: IRowNode<TData>[] | null;
     /** The SSRM selection state. This can be referred to when `selectedNodes` is `null`. This will be `null` when using a row model other than SSRM. */
     serverSideState: IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
@@ -511,7 +509,9 @@ export interface RowResizeStartedEvent<TData = any, TContext = any>
 export interface RowResizeEndedEvent<TData = any, TContext = any>
     extends RowResizeEvent<TData, TContext, 'rowResizeEnded'> {}
 
-export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType = any>
+export type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDragEnd' | 'rowDragCancel';
+
+export interface RowDragEvent<TData = any, TContext = any, T extends RowDragEventType = RowDragEventType>
     extends AgGlobalEvent<T, TData, TContext> {
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
     node: IRowNode<TData>;
@@ -533,6 +533,9 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
      * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'
      */
     y: number;
+
+    /** Details about the row dragging drop target. */
+    rowsDrop: RowsDropParams<TData, TContext> | null;
 }
 
 export interface RowDragEnterEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragEnter'> {}
@@ -695,8 +698,6 @@ export interface ColumnGroupOpenedEvent<TData = any, TContext = any>
     columnGroup?: ProvidedColumnGroup;
     columnGroups: ProvidedColumnGroup[];
 }
-
-export type ScrollDirection = 'horizontal' | 'vertical';
 
 interface BaseBodyScrollEvent<T extends AgEventType, TData = any, TContext = any>
     extends AgGlobalEvent<T, TData, TContext> {
@@ -948,6 +949,34 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
     columnGroup?: ProvidedColumnGroup | null;
 }
 
+/**--------------*/
+/** BATCH EVENTS */
+/**--------------*/
+interface BatchEditingEvent<T extends AgEventType, TData = any, TContext = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    changes?: CellValueChange[];
+}
+
+export interface BatchEditingStartedEvent<TData = any, TContext = any>
+    extends BatchEditingEvent<'batchEditingStarted', TData, TContext> {}
+
+export interface BatchEditingStoppedEvent<TData = any, TContext = any>
+    extends BatchEditingEvent<'batchEditingStopped', TData, TContext> {}
+
+/**---------------------*/
+/** BULK EDITING EVENTS */
+/**---------------------*/
+interface BulkEditingEvent<T extends AgEventType, TData = any, TContext = any>
+    extends AgGlobalEvent<T, TData, TContext> {
+    changes?: CellValueChange[];
+}
+
+export interface BulkEditingStartedEvent<TData = any, TContext = any>
+    extends BulkEditingEvent<'bulkEditingStarted', TData, TContext> {}
+
+export interface BulkEditingStoppedEvent<TData = any, TContext = any>
+    extends BulkEditingEvent<'bulkEditingStopped', TData, TContext> {}
+
 /**------------*/
 /** ROW EVENTS */
 /**------------*/
@@ -991,10 +1020,16 @@ export interface RowSelectedEvent<TData = any, TContext = any> extends RowEvent<
 export interface VirtualRowRemovedEvent<TData = any, TContext = any>
     extends RowEvent<'virtualRowRemoved', TData, TContext> {}
 
-export interface RowClickedEvent<TData = any, TContext = any> extends RowEvent<'rowClicked', TData, TContext> {}
+interface RowMouseEvent<TEventType extends 'rowClicked' | 'rowDoubleClicked', TData = any, TContext = any>
+    extends RowEvent<TEventType, TData, TContext> {
+    /** `true` if `suppressMouseEventHandling` has been implemented in the corresponding cell renderer params and has returned `true`. */
+    isEventHandlingSuppressed: boolean;
+}
+
+export interface RowClickedEvent<TData = any, TContext = any> extends RowMouseEvent<'rowClicked', TData, TContext> {}
 
 export interface RowDoubleClickedEvent<TData = any, TContext = any>
-    extends RowEvent<'rowDoubleClicked', TData, TContext> {}
+    extends RowMouseEvent<'rowDoubleClicked', TData, TContext> {}
 
 export interface RowEditingStartedEvent<TData = any, TContext = any>
     extends RowEvent<'rowEditingStarted', TData, TContext> {}
@@ -1009,7 +1044,8 @@ export interface FullWidthCellKeyDownEvent<TData = any, TContext = any>
 
 /** CELL EVENTS */
 /**------------*/
-export interface CellEvent<T extends AgEventType, TData = any, TValue = any> extends RowEvent<T, TData> {
+export interface CellEvent<T extends AgEventType, TData = any, TValue = any, TContext = any>
+    extends RowEvent<T, TData, TContext> {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
     /** The value for the cell if available otherwise undefined. */
@@ -1017,33 +1053,50 @@ export interface CellEvent<T extends AgEventType, TData = any, TValue = any> ext
 }
 
 /** Use for cell events that will always have a data property. */
-interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any> extends RowWithDataEvent<T, TData> {
+interface CellWithDataEvent<T extends AgEventType, TData = any, TValue = any, TContext = any>
+    extends RowWithDataEvent<T, TData, TContext> {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
     /** The value for the cell */
     value: TValue | null | undefined;
 }
 
-export interface CellKeyDownEvent<TData = any, TValue = any> extends CellEvent<'cellKeyDown', TData, TValue> {}
+export interface CellKeyDownEvent<TData = any, TValue = any, TContext = any>
+    extends CellEvent<'cellKeyDown', TData, TValue, TContext> {}
 
-export interface CellClickedEvent<TData = any, TValue = any> extends CellEvent<'cellClicked', TData, TValue> {}
+interface CellMouseEvent<
+    TEventType extends 'cellClicked' | 'cellMouseDown' | 'cellDoubleClicked',
+    TData = any,
+    TValue = any,
+    TContext = any,
+> extends CellEvent<TEventType, TData, TValue, TContext> {
+    /** `true` if `suppressMouseEventHandling` has been implemented in the corresponding cell renderer params and has returned `true`. */
+    isEventHandlingSuppressed: boolean;
+}
 
-export interface CellMouseDownEvent<TData = any, TValue = any> extends CellEvent<'cellMouseDown', TData, TValue> {}
+export interface CellClickedEvent<TData = any, TValue = any, TContext = any>
+    extends CellMouseEvent<'cellClicked', TData, TValue, TContext> {}
 
-export interface CellDoubleClickedEvent<TData = any, TValue = any>
-    extends CellEvent<'cellDoubleClicked', TData, TValue> {}
+export interface CellMouseDownEvent<TData = any, TValue = any, TContext = any>
+    extends CellMouseEvent<'cellMouseDown', TData, TValue, TContext> {}
 
-export interface CellMouseOverEvent<TData = any, TValue = any> extends CellEvent<'cellMouseOver', TData, TValue> {}
+export interface CellDoubleClickedEvent<TData = any, TValue = any, TContext = any>
+    extends CellMouseEvent<'cellDoubleClicked', TData, TValue, TContext> {}
 
-export interface CellMouseOutEvent<TData = any, TValue = any> extends CellEvent<'cellMouseOut', TData, TValue> {}
+export interface CellMouseOverEvent<TData = any, TValue = any, TContext = any>
+    extends CellEvent<'cellMouseOver', TData, TValue, TContext> {}
 
-export interface CellContextMenuEvent<TData = any, TValue = any> extends CellEvent<'cellContextMenu', TData, TValue> {}
+export interface CellMouseOutEvent<TData = any, TValue = any, TContext = any>
+    extends CellEvent<'cellMouseOut', TData, TValue, TContext> {}
 
-export interface CellEditingStartedEvent<TData = any, TValue = any>
-    extends CellEvent<'cellEditingStarted', TData, TValue> {}
+export interface CellContextMenuEvent<TData = any, TValue = any, TContext = any>
+    extends CellEvent<'cellContextMenu', TData, TValue, TContext> {}
 
-export interface CellEditingStoppedEvent<TData = any, TValue = any>
-    extends CellEvent<'cellEditingStopped', TData, TValue> {
+export interface CellEditingStartedEvent<TData = any, TValue = any, TContext = any>
+    extends CellEvent<'cellEditingStarted', TData, TValue, TContext> {}
+
+export interface CellEditingStoppedEvent<TData = any, TValue = any, TContext = any>
+    extends CellEvent<'cellEditingStopped', TData, TValue, TContext> {
     /** The old value before editing */
     oldValue: TValue | null | undefined;
     /** The new value after editing */
@@ -1052,18 +1105,22 @@ export interface CellEditingStoppedEvent<TData = any, TValue = any>
     valueChanged: boolean;
 }
 
-export interface CellValueChangedEvent<TData = any, TValue = any>
-    extends CellWithDataEvent<'cellValueChanged', TData, TValue> {
+export interface CellValueChangedEvent<TData = any, TValue = any, TContext = any>
+    extends CellWithDataEvent<'cellValueChanged', TData, TValue, TContext> {
     oldValue: TValue | null | undefined;
     newValue: TValue | null | undefined;
     source: string | undefined;
 }
 
-export interface CellEditValuesChangedEvent<TData = any, TValue = any>
-    extends AgGlobalEvent<'cellEditValuesChanged', TData, TValue> {}
+export interface CellEditValuesChangedEvent<TData = any, TValue = any, TContext = any>
+    extends CellWithDataEvent<'cellEditValuesChanged', TData, TValue, TContext> {
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
+    source: string | undefined;
+}
 
-export interface CellEditRequestEvent<TData = any, TValue = any>
-    extends CellWithDataEvent<'cellEditRequest', TData, TValue> {
+export interface CellEditRequestEvent<TData = any, TValue = any, TContext = any>
+    extends CellWithDataEvent<'cellEditRequest', TData, TValue, TContext> {
     oldValue: TValue | null | undefined;
     newValue: TValue | null | undefined;
     source: string | undefined;
@@ -1227,5 +1284,9 @@ export interface ColumnsResetEvent<TData = any, TContext = any> extends AgGlobal
 }
 export interface FilterSwitchedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'filterSwitched', TData, TContext> {
+    column: Column;
+}
+
+export interface FilterClosedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterClosed', TData, TContext> {
     column: Column;
 }

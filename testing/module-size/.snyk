@@ -1,0 +1,17 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+    SNYK-JS-ESLINTPLUGINKIT-8340627:
+        - eslint@9.14.0 > @eslint/plugin-kit@0.2.5:
+              reason: >-
+                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
+              expires: 2025-09-21T12:00:00.000Z
+              created: 2025-07-22T10:35:00.007Z
+    SNYK-JS-ESLINTPLUGINKIT-10847878:
+        - eslint@9.18.0 > @eslint/plugin-kit@0.2.5:
+              reason: >-
+                  Only used for testing packages, so ReDos attack would only affect developer machines and CI
+              expires: 2025-09-21T12:00:00.000Z
+              created: 2025-07-22T10:35:00.007Z
+patch: {}

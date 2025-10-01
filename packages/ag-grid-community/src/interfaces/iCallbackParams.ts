@@ -1,3 +1,4 @@
+import type { EditingCellPosition } from './iCellEditor';
 import type { CellPosition } from './iCellPosition';
 import type { ChartToolbarMenuItemOptions, DefaultChartMenuItem } from './iChartOptions';
 import type { Column, ProvidedColumnGroup } from './iColumn';
@@ -32,6 +33,8 @@ export interface GetMainMenuItemsParams<TData = any, TContext = any> extends AgG
 export interface GetChartMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** List of the items that would be displayed by default */
     defaultItems: DefaultChartMenuItem[];
+    /** Chart ID that the menu is displayed for */
+    chartId: string;
 }
 
 export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -66,6 +69,10 @@ export interface SendToClipboardParams<TData = any, TContext = any> extends AgGr
 export interface ProcessDataFromClipboardParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** 2D array of all cells from the clipboard */
     data: string[][];
+}
+
+export interface FullRowEditValidationParams {
+    editorsState: EditingCellPosition[];
 }
 
 export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -142,7 +149,8 @@ export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends
     key: string;
 }
 
-export interface GetServerSideGroupLevelParamsParams extends AgGridCommon<any, any> {
+export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     /** The level of the store. Top level is 0. */
     level: number;
     /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
@@ -155,12 +163,13 @@ export interface GetServerSideGroupLevelParamsParams extends AgGridCommon<any, a
     pivotMode: boolean;
 }
 
-export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon<any, any> {
+export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = any>
+    extends AgGridCommon<TData, TContext> {
     data: any;
     rowNode: IRowNode;
 }
 
-export interface IsApplyServerSideTransactionParams extends AgGridCommon<any, any> {
+export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The transaction getting applied. */
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */

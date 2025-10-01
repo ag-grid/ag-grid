@@ -1,15 +1,28 @@
+import { BaseRegistry } from '../../agStack/core/baseRegistry';
+import type { AgBaseComponent } from '../../agStack/interfaces/agComponent';
 import type { NamedBean } from '../../context/bean';
-import { BeanStub } from '../../context/beanStub';
 import { isComponentMetaFunc } from '../../context/context';
-import type { DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
+import type { BeanCollection, DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
+import type { AgEventTypeParams } from '../../events';
+import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { Module } from '../../interfaces/iModule';
 import type { IconName, IconValue } from '../../utils/icon';
 import { _errMsg } from '../../validation/logging';
-import type { AgComponentSelector, ComponentSelector } from '../../widgets/component';
+import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 
-export class Registry extends BeanStub implements NamedBean {
-    beanName = 'registry' as const;
-
+export class Registry
+    extends BaseRegistry<
+        BeanCollection,
+        GridOptionsWithDefaults,
+        AgEventTypeParams,
+        AgGridCommon<any, any>,
+        GridOptionsService,
+        DynamicBeanName
+    >
+    implements NamedBean
+{
     private agGridDefaults: { [key in UserComponentName]?: any } = {};
 
     private agGridDefaultOverrides: {
@@ -18,9 +31,7 @@ export class Registry extends BeanStub implements NamedBean {
 
     private jsComps: { [key: string]: any } = {};
 
-    private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object };
-
-    private selectors: { [name in AgComponentSelector]?: ComponentSelector } = {};
+    private selectors: { [name in AgComponentSelectorType]?: ComponentSelector<any> } = {};
 
     private icons: { [K in IconName]?: IconValue } = {};
 
@@ -62,13 +73,7 @@ export class Registry extends BeanStub implements NamedBean {
             }
         }
 
-        if (dynamicBeans) {
-            // initialise the dynamic beans registry on first use
-            this.dynamicBeans ??= {};
-            for (const name of Object.keys(dynamicBeans) as DynamicBeanName[]) {
-                this.dynamicBeans[name] = dynamicBeans[name];
-            }
-        }
+        this.registerDynamicBeans(dynamicBeans);
 
         selectors?.forEach((selector) => {
             this.selectors[selector.selector] = selector;
@@ -124,29 +129,20 @@ export class Registry extends BeanStub implements NamedBean {
         return null;
     }
 
-    public createDynamicBean<T>(name: DynamicBeanName, mandatory: boolean, ...args: any[]): T | undefined {
-        if (!this.dynamicBeans) {
-            // this happens when a module tries to init a dynamic bean during module initialization lifecycle
-            throw new Error(_errMsg(279, { name }));
-        }
-
-        const BeanClass = this.dynamicBeans[name];
-
-        if (BeanClass == null) {
-            if (mandatory) {
-                throw new Error(this.beans.validation?.missingDynamicBean(name) ?? _errMsg(256));
-            }
-            return undefined;
-        }
-
-        return new BeanClass(...args) as any;
-    }
-
-    public getSelector(name: AgComponentSelector): ComponentSelector | undefined {
+    public getSelector<TComponent extends AgBaseComponent<BeanCollection>>(
+        name: AgComponentSelectorType
+    ): ComponentSelector<TComponent> | undefined {
         return this.selectors[name];
     }
 
     public getIcon(name: IconName): IconValue | undefined {
         return this.icons[name];
+    }
+
+    protected override getDynamicError(name: DynamicBeanName, init: boolean): string {
+        if (init) {
+            return _errMsg(279, { name });
+        }
+        return this.beans.validation?.missingDynamicBean(name) ?? _errMsg(256);
     }
 }

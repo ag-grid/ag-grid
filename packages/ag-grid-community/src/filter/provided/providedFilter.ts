@@ -1,3 +1,5 @@
+import { _debounce } from '../../agStack/utils/function';
+import type { AgPromise } from '../../agStack/utils/promise';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import type {
@@ -7,21 +9,20 @@ import type {
     IFilterComp,
 } from '../../interfaces/iFilter';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
-import type { ElementParams } from '../../utils/dom';
-import { _debounce } from '../../utils/function';
-import type { AgPromise } from '../../utils/promise';
+import type { ElementParams } from '../../utils/element';
+import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
-import { getDebounceMs, isUseApplyButton } from '../floating/provided/providedFilterUtils';
 import type {
     IProvidedFilter,
     IProvidedFilterParams,
     ProvidedFilterModel,
     ProvidedFilterParams,
 } from './iProvidedFilter';
+import { _isUseApplyButton, getDebounceMs } from './providedFilterUtils';
 
 /** temporary type until `ProvidedFilterParams` is updated as breaking change */
 type ProvidedFilterDisplayParams<M extends ProvidedFilterModel> = IProvidedFilterParams &
@@ -51,6 +52,7 @@ export abstract class ProvidedFilter<
     private applyDebounced: () => void;
     private debouncePending = false;
     protected state: FilterDisplayState<M>;
+    protected lastContainerType?: ContainerType;
 
     private positionableFeature: PositionableFeature | undefined;
 
@@ -138,11 +140,15 @@ export abstract class ProvidedFilter<
     }
 
     private commonUpdateParams(newParams: P, _oldParams?: P): void {
-        this.applyActive = isUseApplyButton(newParams);
+        this.applyActive = _isUseApplyButton(newParams);
         this.setupApplyDebounced();
     }
 
+    /**
+     * @deprecated v34 Use the same method on the filter handler (`api.getColumnFilterHandler()`) instead.
+     */
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
+        _warn(283);
         const { getHandler, model, column } = this.params;
         return getHandler().doesFilterPass({
             ...params,
@@ -155,7 +161,11 @@ export abstract class ProvidedFilter<
         return this.translate(this.filterNameKey);
     }
 
+    /**
+     * @deprecated v34 Filters are active when they have a model. Use `api.getColumnFilterModel()` instead.
+     */
     public isFilterActive(): boolean {
+        _warn(284);
         return this.params.model != null;
     }
 
@@ -179,11 +189,19 @@ export abstract class ProvidedFilter<
         }
     }
 
+    /**
+     * @deprecated v34 Use (`api.getColumnFilterModel()`) instead.
+     */
     public getModel(): M | null {
+        _warn(285);
         return this.params.model;
     }
 
+    /**
+     * @deprecated v34 Use (`api.setColumnFilterModel()`) instead.
+     */
     public setModel(model: M | null): AgPromise<void> {
+        _warn(286);
         const { beans, params } = this;
         return beans.colFilter!.setModelForColumnLegacy(params.column as AgColumn, model);
     }
@@ -208,7 +226,12 @@ export abstract class ProvidedFilter<
         return changed;
     }
 
-    public onNewRowsLoaded(): void {}
+    /**
+     * @deprecated v34 Internal method - should only be called by the grid.
+     */
+    public onNewRowsLoaded(): void {
+        // we don't warn here because the multi filter can call this
+    }
 
     /**
      * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
@@ -228,6 +251,14 @@ export abstract class ProvidedFilter<
         params.onStateChange(state);
         params.onUiChange(this.getUiChangeEventParams());
 
+        if (!this.gos.get('enableFilterHandlers')) {
+            this.eventSvc.dispatchEvent({
+                type: 'filterModified',
+                column: params.column,
+                filterInstance: this,
+            });
+        }
+
         apply ??= this.applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
             this.doApplyModel({ afterFloatingFilter, afterDataChange: false });
@@ -245,6 +276,7 @@ export abstract class ProvidedFilter<
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        this.lastContainerType = params?.container;
         this.refreshFilterResizer(params?.container);
     }
 
@@ -268,7 +300,7 @@ export abstract class ProvidedFilter<
             positionableFeature.removeSizeFromEl();
             positionableFeature.setResizable(false);
         }
-        positionableFeature.constrainSizeToAvailableHeight(true);
+        positionableFeature.constrainSizeToAvailableHeight(isResizable);
     }
 
     public afterGuiDetached(): void {

@@ -1,13 +1,14 @@
+import { _getDocument } from '../../agStack/utils/document';
+import { _getElementSize, _observeResize } from '../../agStack/utils/dom';
+import { _debounce } from '../../agStack/utils/function';
 import type { ColumnCollections } from '../../columns/columnModel';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { _getDocument, _getRowHeightForNode } from '../../gridOptionsUtils';
+import { _getRowHeightForNode } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
-import { _getElementSize, _observeResize } from '../../utils/dom';
-import { _debounce } from '../../utils/function';
 import type { CellCtrl } from '../cell/cellCtrl';
 
 export class RowAutoHeightService extends BeanStub implements NamedBean {
@@ -28,7 +29,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         this._debouncedCalculateRowHeights();
     }
 
-    private _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
+    private readonly _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
         const { visibleCols, rowModel, rowSpanSvc, pinnedRowModel } = this.beans;
         const displayedAutoHeightCols = visibleCols.autoHeightCols;
@@ -170,7 +171,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
                 const doc = _getDocument(beans);
-                const notYetInDom = !doc || !doc.contains(eCellWrapper);
+                const notYetInDom = !doc?.contains(eCellWrapper);
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway

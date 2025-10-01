@@ -31,7 +31,7 @@ return (
                         <span className={styles.featureDetail}>
                             Customise our <a href="./react-data-grid/themes/">Built-in Themes</a> with the{' '}
                             <a href="./react-data-grid/theming/">Theming API</a>. Define a{' '}
-                            <a href="./react-data-grid/theming-colors/#color-schemes">Color Scheme</a>, modify{' '}
+                            <a href="./react-data-grid/theming-colors/#colour-schemes">Color Scheme</a>, modify{' '}
                             <a href="/react-data-grid/theming-parameters/">Theme Parameters</a>, mix and match{' '}
                             <a href=".react-data-grid/theming-parts/">Theme Parts</a>, and use{' '}
                             <a href="./react-data-grid/theming-css/">CSS</a> for unlimited control.

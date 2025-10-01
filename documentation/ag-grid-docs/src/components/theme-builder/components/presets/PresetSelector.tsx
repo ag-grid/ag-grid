@@ -1,3 +1,4 @@
+import { getAdditionalCss } from '@components/theme-builder/api';
 import { getChangedModelItemCount } from '@components/theme-builder/model/changed-model-items';
 import styled from '@emotion/styled';
 import { useStore } from 'jotai';
@@ -61,10 +62,11 @@ const SelectButton = ({ preset, scrollerRef, presetClass }: SelectButtonProps) =
                 loadThemeGoogleFonts: true,
                 cssLayer: undefined,
                 nonce: undefined,
+                moduleCss: getAdditionalCss(),
             });
             setThemeClass(theme._getCssClass());
 
-            style.textContent = theme._getPerGridCss(presetClass) || '';
+            style.textContent = theme._getPerInstanceCss(presetClass) || '';
         }
     }, [preset, presetClass]);
 

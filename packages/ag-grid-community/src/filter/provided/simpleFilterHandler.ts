@@ -5,6 +5,7 @@ import type {
     FilterHandlerParams,
     IDoesFilterPassParams,
 } from '../../interfaces/iFilter';
+import { isCombinedFilterModel } from './iSimpleFilter';
 import type {
     ICombinedSimpleModel,
     ISimpleFilterModel,
@@ -25,6 +26,9 @@ export abstract class SimpleFilterHandler<
     extends BeanStub
     implements FilterHandler<any, any, TModel | ICombinedSimpleModel<TModel>, TParams>
 {
+    /** Used to get the filter type for filter models. */
+    public abstract readonly filterType: 'text' | 'number' | 'date';
+
     protected abstract readonly FilterModelFormatterClass: new (
         optionsFactory: OptionsFactory,
         filterParams: ISimpleFilterParams
@@ -124,7 +128,13 @@ export abstract class SimpleFilterHandler<
             filterParams: { filterOptions, maxNumConditions },
         } = params;
 
-        const conditions: TModel[] | null = model ? (<ICombinedSimpleModel<TModel>>model).conditions ?? [model] : null;
+        if (model == null) {
+            return;
+        }
+
+        const isCombined = isCombinedFilterModel(model);
+
+        let conditions: TModel[] | null = isCombined ? model.conditions : [model];
 
         // Invalid when one of the existing condition options is not in new options list
         const newOptionsList =
@@ -144,12 +154,37 @@ export abstract class SimpleFilterHandler<
             return;
         }
 
+        let needsUpdate = false;
+
+        const filterType = this.filterType;
+
+        if (
+            (conditions && !conditions.every((condition) => condition.filterType === filterType)) ||
+            model.filterType !== filterType
+        ) {
+            // need to add filterType to model
+            conditions = conditions!.map((condition) => ({ ...condition, filterType }));
+            needsUpdate = true;
+        }
+
         // Check number of conditions vs maxNumConditions
         if (typeof maxNumConditions === 'number' && conditions && conditions.length > maxNumConditions) {
-            const updatedModel = {
-                ...(model as ICombinedSimpleModel<TModel>),
-                conditions: conditions.slice(0, maxNumConditions),
-            };
+            conditions = conditions.slice(0, maxNumConditions);
+            needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+            const updatedModel =
+                conditions.length > 1
+                    ? {
+                          ...(model as ICombinedSimpleModel<TModel>),
+                          filterType,
+                          conditions,
+                      }
+                    : {
+                          ...conditions[0],
+                          filterType,
+                      };
             this.params = {
                 ...params,
                 model: updatedModel,

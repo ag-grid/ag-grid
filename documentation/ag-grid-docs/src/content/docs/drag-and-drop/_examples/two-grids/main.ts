@@ -153,10 +153,10 @@ function gridDrop(event: any, grid: string) {
         return;
     }
 
-    const gridApi = grid == 'left' ? leftApi! : rightApi!;
+    const api = grid == 'left' ? leftApi! : rightApi!;
 
     // do nothing if row is already in the grid, otherwise we would have duplicates
-    const rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
+    const rowAlreadyInGrid = !!api!.getRowNode(data.id);
     if (rowAlreadyInGrid) {
         console.log('not adding row to avoid duplicates in the grid');
         return;
@@ -165,7 +165,7 @@ function gridDrop(event: any, grid: string) {
     const transaction = {
         add: [data],
     };
-    gridApi.applyTransaction(transaction);
+    api.applyTransaction(transaction);
 }
 
 const leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;

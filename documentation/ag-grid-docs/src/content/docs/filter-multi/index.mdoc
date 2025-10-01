@@ -139,6 +139,20 @@ The example below shows a Custom Filter in use on the **Year** column, used alon
 
 {% gridExampleRunner title="Custom Filters" name="custom-filter"  exampleHeight=635 /%}
 
+## Applying Multi Filters
+
+Similar to [Applying Provided Filters](./filter-applying/), the Multi Filter can have buttons that will control all the child filters together.
+
+To configure buttons for the Multi Filter, first enable the grid option `enableFilterHandlers`. Note that if you have custom filter components, these will need to have been written to [Support Filter Handlers](./component-filter/#implementing-a-filter-component).
+
+Note that when `enableFilterHandlers = true`, buttons can only be set against the parent Multi Filter parameters; they cannot be set against the individual child filters.
+
+The following options can be specified on the `filterParams`:
+
+{% interfaceDocumentation interfaceName="FilterWrapperParams" names=["buttons", "closeOnApply"] config={ "description": "" } /%}
+
+{% gridExampleRunner title="Applying Multi Filters" name="applying-multi-filters"  exampleHeight=635 /%}
+
 ## Multi Filter Model
 
 The model for the Multi Filter wraps the models for all the child filters inside it. It has the `IMultiFilterModel` interface:
@@ -169,7 +183,6 @@ The Multi Filter acts as a wrapper around a list of child filters inside it. The
 
 The example below shows how you can access child filter instances and call methods on them:
 
-* Clicking the **Print Text Filter model** button will access the Text Filter inside the Multi Filter and print the current model to the console.
 * Clicking the **Print Set Filter search text** button will access the Set Filter inside the Multi Filter and print the current search text to the console.
 
 {% gridExampleRunner title="Accessing Child Filters" name="accessing-child-filters"  exampleHeight=624 /%}

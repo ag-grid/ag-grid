@@ -17,6 +17,7 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     NumberEditorModule,
+    NumberFilterModule,
     TextEditorModule,
     TextFilterModule,
     ValidationModule,
@@ -35,6 +36,7 @@ ModuleRegistry.registerModules([
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
     RowGroupingModule,
     HighlightChangesModule,
+    NumberFilterModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

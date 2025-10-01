@@ -6,10 +6,8 @@ import type { ServerSideTransaction, ServerSideTransactionResult } from './serve
 
 export interface IServerSideRowModel<TData = any> extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
-    onRowHeightChanged(): void;
     getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
-    expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource<TData>): void;
     forEachNodeAfterFilterAndSort(
         callback: (node: IRowNode<TData>, index: number) => void,

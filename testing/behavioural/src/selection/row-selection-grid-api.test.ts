@@ -4,15 +4,15 @@ import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager } from '../test-utils';
-import { GROUP_ROW_DATA, fakeFetch } from './group-data';
 import {
-    GridActions,
+    TestGridsManager,
     assertSelectedRowElementsById,
     assertSelectedRowNodes,
     assertSelectedRowsByIndex,
     waitForEvent,
-} from './utils';
+} from '../test-utils';
+import { GROUP_ROW_DATA, fakeFetch } from './group-data';
+import { GridActions } from './utils';
 
 describe('Row Selection Grid API', () => {
     let consoleErrorSpy: MockInstance;
@@ -25,6 +25,12 @@ describe('Row Selection Grid API', () => {
     function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
         const api = gridMgr.createGrid('myGrid', gridOptions);
         const actions = new GridActions(api, '#myGrid');
+        return [api, actions];
+    }
+
+    async function createGridAndWait(gridOptions: GridOptions): Promise<[GridApi, GridActions]> {
+        const [api, actions] = createGrid(gridOptions);
+        await waitForEvent('firstDataRendered', api);
         return [api, actions];
     }
 
@@ -336,6 +342,37 @@ describe('Row Selection Grid API', () => {
                     assertSelectedRowsByIndex([3, 4, 5], api);
                 });
             });
+        });
+    });
+
+    describe('Group Row Selection', () => {
+        const groupGridOptions: Partial<GridOptions> = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sport', rowGroup: true, hide: true },
+                { field: 'age' },
+                { field: 'year' },
+                { field: 'date' },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Athlete',
+                field: 'athlete',
+                cellRenderer: 'agGroupCellRenderer',
+            },
+            rowData: GROUP_ROW_DATA,
+            groupDefaultExpanded: -1,
+        };
+
+        test('getSelectedRows does not return group rows', async () => {
+            const [api, actions] = await createGridAndWait({
+                ...groupGridOptions,
+                rowSelection: { mode: 'multiRow', checkboxes: true },
+            });
+
+            actions.toggleCheckboxById('row-group-country-United States');
+
+            expect(api.getSelectedRows()).toHaveLength(0);
+            expect(api.getSelectedNodes()).toHaveLength(1);
         });
     });
 

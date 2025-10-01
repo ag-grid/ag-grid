@@ -1,17 +1,16 @@
+import { _isIOSUserAgent } from '../agStack/utils/browser';
+import { _isEventFromThisInstance, _isEventSupported } from '../agStack/utils/event';
+import { _exists } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
-import { _isEventFromThisGrid } from '../gridBodyComp/mouseEventUtils';
 import type { RowContainerEventsFeature } from '../gridBodyComp/rowContainer/rowContainerEventsFeature';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
 import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
-import { _isIOSUserAgent } from '../utils/browser';
-import { _isEventSupported } from '../utils/event';
-import { _exists } from '../utils/generic';
 import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -78,15 +77,22 @@ export class TouchService extends BeanStub implements NamedBean {
         const { params, eMenu, eFilterButton } = comp;
 
         const touchListener = new TouchListener(comp.getGui(), true);
+        comp.addDestroyFunc(() => touchListener.destroy());
+
         const suppressMenuHide = comp.shouldSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && _exists(eMenu) && params.enableMenu;
-        const menuTouchListener = tapMenuButton ? new TouchListener(eMenu, true) : touchListener;
+        let menuTouchListener = touchListener;
+        if (tapMenuButton) {
+            menuTouchListener = new TouchListener(eMenu, true);
+            comp.addDestroyFunc(() => menuTouchListener.destroy());
+        }
 
         if (params.enableMenu || menuSvc?.isHeaderContextMenuEnabled(params.column as AgColumn)) {
             const eventType: TouchListenerEvent = tapMenuButton ? 'tap' : 'longTap';
             const showMenuFn = (event: TapEvent | LongTapEvent) =>
                 params.showColumnMenuAfterMouseClick(event.touchStart);
             comp.addManagedListeners(menuTouchListener, { [eventType]: showMenuFn });
+            comp.addManagedListeners(touchListener, { longTap: showMenuFn });
         }
 
         if (params.enableSorting) {
@@ -110,14 +116,6 @@ export class TouchService extends BeanStub implements NamedBean {
                 tap: () => params.showFilter(eFilterButton),
             });
             comp.addDestroyFunc(() => filterButtonTouchListener.destroy());
-        }
-
-        // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
-        // so we need to make sure to destroy both listeners here
-        comp.addDestroyFunc(() => touchListener.destroy());
-
-        if (tapMenuButton) {
-            comp.addDestroyFunc(() => menuTouchListener.destroy());
         }
     }
 
@@ -158,7 +156,7 @@ export class TouchService extends BeanStub implements NamedBean {
 
         const touchListener = new TouchListener(element);
         const longTapListener = (event: LongTapEvent) => {
-            if (!_isEventFromThisGrid(this.gos, event.touchEvent)) {
+            if (!_isEventFromThisInstance(this.beans, event.touchEvent)) {
                 return;
             }
             listener(undefined, event.touchStart, event.touchEvent);

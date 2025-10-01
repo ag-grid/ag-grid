@@ -1,7 +1,13 @@
 (function (global) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const config = {
+        version: urlParams.get('version') ?? '20.0.0',
+        prod: urlParams.get('prod') === 'false' ? false : urlParams.get('prod') ?? true,
+    };
+
     process = { env: { NODE_ENV: 'development' } };
-    var ANGULAR_VERSION = '20.0.0';
-    window.ENABLE_PROD_MODE = true;
+    var ANGULAR_VERSION = config.version;
+    window.ENABLE_PROD_MODE = config.prod;
 
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
@@ -97,8 +103,14 @@
             },
         },
     });
-})(this);
 
-window.addEventListener('error', (e) => {
-    console.error('ERROR', e.message, e.filename);
-});
+    window.addEventListener('error', (e) => {
+        console.error('ERROR', e.message, e.filename);
+    });
+
+    System.import(startFile).catch(function (err) {
+        document.body.innerHTML =
+            '<div class="example-error" style="background:#fdb022;padding:1rem;">' + 'Example Error: ' + err + '</div>';
+        console.error(err);
+    });
+})(this);

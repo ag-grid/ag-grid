@@ -52,8 +52,15 @@ export class ChartSettingsPanel extends Component {
     public postConstruct() {
         this.resetPalettes();
 
-        this.ePrevBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('chartsThemePrevious', this.beans)!);
-        this.eNextBtn.insertAdjacentElement('afterbegin', _createIconNoSpan('chartsThemeNext', this.beans)!);
+        const isRtl = this.gos.get('enableRtl');
+        this.ePrevBtn.insertAdjacentElement(
+            'afterbegin',
+            _createIconNoSpan(isRtl ? 'chartsThemeNext' : 'chartsThemePrevious', this.beans)!
+        );
+        this.eNextBtn.insertAdjacentElement(
+            'afterbegin',
+            _createIconNoSpan(isRtl ? 'chartsThemePrevious' : 'chartsThemeNext', this.beans)!
+        );
 
         this.addManagedElementListeners(this.ePrevBtn, { click: () => this.setActivePalette(this.getPrev(), 'left') });
         this.addManagedElementListeners(this.eNextBtn, { click: () => this.setActivePalette(this.getNext(), 'right') });

@@ -161,21 +161,24 @@ function patchConsoleLog() {
         return args.map(getConsoleValue);
     }
 
-    const originalConsoleLog = console.log;
-    console.log = (...args) => {
-        try {
-            window.parent.postMessage({
-                type: 'console-log',
-                pageName: '${pageName}',
-                exampleName: '${exampleName}',
-                data: getConsoleLogData(args),
-            });
-        } catch(error) {
-            // Posting is best-effort and shouldn't block normal console logging.
-            ${logError ? 'console.error(error);' : undefined}
-        }
-        originalConsoleLog(...args);
-    };
+    // we ignore console.error to avoid printing license messages, as well as infinite try catch loop below
+    ['log', 'info', 'warn', 'table', 'debug'].map(name => [name, console[name]]).forEach(([name, originalMethod]) => {
+        console[name] = (...args) => {
+            try {
+                window.parent.postMessage({
+                    type: 'console-' + name,
+                    pageName: '${pageName}',
+                    exampleName: '${exampleName}',
+                    data: getConsoleLogData(args)
+                });
+            } catch(error) {
+                // Posting is best-effort and shouldn't block normal console logging.
+                ${logError ? 'console.error(error);' : undefined}
+            }
+            originalMethod(...args);
+        };
+        console[name]._original = originalMethod;
+    });
 }
 patchConsoleLog();
 

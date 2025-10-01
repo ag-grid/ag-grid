@@ -1,5 +1,8 @@
+import { _isIOSUserAgent } from '../../agStack/utils/browser';
+import { _requestAnimationFrame } from '../../agStack/utils/dom';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { isColumn } from '../../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
@@ -9,8 +12,6 @@ import type { HeaderCellCtrl } from '../../headerRendering/cells/column/headerCe
 import type { ContainerType } from '../../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { IMenuFactory } from '../../interfaces/iMenuFactory';
-import { _isIOSUserAgent } from '../../utils/browser';
-import { _requestAnimationFrame } from '../../utils/dom';
 
 interface BaseShowColumnMenuParams {
     column?: Column;
@@ -36,10 +37,10 @@ interface AutoShowMenuParams {
     positionBy: 'auto';
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
     BaseShowColumnMenuParams;
 
-export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
+type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
     BaseShowFilterMenuParams;
 
 export class MenuService extends BeanStub implements NamedBean {
@@ -57,10 +58,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const { enterpriseMenuFactory, filterMenuFactory } = this.beans;
-        const menuFactory =
-            enterpriseMenuFactory && _isLegacyMenuEnabled(this.gos) ? enterpriseMenuFactory : filterMenuFactory;
-        this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
+        this.showColumnMenuCommon(getFilterMenuFactory(this.beans), params, params.containerType, true);
     }
 
     public showHeaderContextMenu(
@@ -76,6 +74,10 @@ export class MenuService extends BeanStub implements NamedBean {
         this.beans.contextMenuSvc?.hideActiveMenu();
         // and hide the column menu always
         this.activeMenuFactory?.hideActiveMenu();
+    }
+
+    public hideFilterMenu(): void {
+        getFilterMenuFactory(this.beans)?.hideActiveMenu();
     }
 
     public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
@@ -191,4 +193,9 @@ export function _setColMenuVisible(column: AgColumn, visible: boolean, source: C
         column.menuVisible = visible;
         column.dispatchColEvent('menuVisibleChanged', source);
     }
+}
+
+function getFilterMenuFactory(beans: BeanCollection): IMenuFactory | undefined {
+    const { enterpriseMenuFactory, filterMenuFactory, gos } = beans;
+    return enterpriseMenuFactory && _isLegacyMenuEnabled(gos) ? enterpriseMenuFactory : filterMenuFactory;
 }

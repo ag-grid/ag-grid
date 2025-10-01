@@ -1,6 +1,6 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { IMenuActionParams } from './iCallbackParams';
 import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
 
 export interface MenuItemLeafDef<TData = any, TContext = any> {
     /** Name of the menu item. */
@@ -63,8 +63,8 @@ export interface IMenuConfigParams {
     /** Suppress handling of mouse down events. */
     suppressMouseDown?: boolean;
     /**
-     * Suppress handling of mouseenter and mouseleave events, If `true`,
-     * The grid will no longer update the active status of the menu item or open sub menus.
+     * Suppress handling of mouseenter and mouseleave events. If `true`,
+     * the grid will no longer update the active status of the menu item or open sub menus.
      */
     suppressMouseOver?: boolean;
     /**

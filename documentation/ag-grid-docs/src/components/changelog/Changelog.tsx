@@ -44,6 +44,19 @@ function useSearchQuery() {
     };
 }
 
+const compareSemver = (a: any, b: any) => {
+    // versions are in the format 'x.y.z', so we need to compare them as numbers
+    const [aMajor, aMinor, aPatch] = a.split('.').map((num: string) => parseInt(num, 10));
+    const [bMajor, bMinor, bPatch] = b.split('.').map((num: string) => parseInt(num, 10));
+    if (aMajor !== bMajor) {
+        return bMajor - aMajor; // Sort by major version descending
+    } else if (aMinor !== bMinor) {
+        return bMinor - aMinor; // Sort by minor version descending
+    } else {
+        return bPatch - aPatch;
+    }
+};
+
 export const Changelog = () => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
@@ -293,7 +306,6 @@ export const Changelog = () => {
                 tooltipField: 'summary',
                 width: 300,
                 minWidth: 200,
-                flex: 1,
                 filter: 'agTextColumnFilter',
                 wrapText: true,
                 autoHeight: true,
@@ -307,7 +319,9 @@ export const Changelog = () => {
                 sort: 'desc',
                 filterParams: {
                     suppressSorting: true,
+                    comparator: compareSemver,
                 },
+                comparator: (a, b) => compareSemver(b, a), // Reverse order for descending
             },
             IssueTypeColDef,
             {

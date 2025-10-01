@@ -1,0 +1,86 @@
+---
+title: 'Batch Editing'
+enterprise: true
+---
+
+Batch editing allows you to edit multiple cells or rows in the grid before committing or reverting these edits. This is useful for scenarios where you want to make several edits at once without immediately updating the data source.
+
+{% note %}
+Batch editing is an advanced feature only available via the API to allow you to tailor it to your specific needs.
+{% /note %}
+
+## Enabling Batch Editing
+
+Batch Editing is enabled by calling the grid API method `startBatchEdit()`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    onGridReady: (params) => {
+        params.api.startBatchEdit();
+    }
+}
+```
+
+Once enabled, `api.commitBatchEdit()` or `api.cancelBatchEdit()` can be called to complete the batch edit operation.
+
+{% note %}
+Batch Edit is only compatible with the [Client-Side Row Model](./row-models/).
+{% /note %}
+
+## Batch Editing API
+
+Using the following API calls, you can build your own experience around AG Grid's batch editing functionality.
+
+The following example demonstrates a simple batch editing scenario: starting a batch, queuing edits and then either committing them or discarding them.
+
+{% gridExampleRunner title="Batch Editing API" name="batch-editing-api" exampleHeight=560 /%}
+
+The grid API methods `startEditingCell()` and `stopEditing()` can be used to control the editing state of individual cells. When you start editing a cell after enabling Batch Editing, the grid enters a batch editing mode where it can track changes. `isBatchEditing()` can be used to check if the grid is currently in batch editing mode. In this mode, `startEditingCell()` and `stopEditing()` affect only the cell editors, not the overall batch.
+
+{% apiDocumentation source="grid-api/api.json" section="batch-editing" names=["isBatchEditing", "startBatchEdit", "commitBatchEdit", "cancelBatchEdit"] /%}
+
+## Full Row Batch Editing
+
+[Full Row](./cell-editing-full-row/) is supported in Batch Editing, adding each cell's pending value to the batch.
+
+{% gridExampleRunner title="Batch Editing FullRow" name="batch-editing-fullrow" exampleHeight=560 /%}
+
+## Batch Editing Lifecycle
+
+As in default editing, cell and row editing events get fired as normal when edit starts and ends, following the lifecycle of the editors.
+
+When in Batch Editing, the `cellValueChanged`, `rowValueChanged` events are fired **after** the batch edit is committed.
+
+## Customisation
+
+### Custom Renderers & Editors
+
+The `ICellRendererComp` interface provides a means for your cell renderer to update when edits are batched, to reflect the pending nature of the values. The `refresh` method that the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
+
+{% interfaceDocumentation interfaceName="ICellRendererComp" names=["refresh"] /%}
+
+As with custom renderers, the `ICellEditor` interface includes the `refresh` method, which the grid calls when the cell needs to be re-rendered. The parameters include the latest pending value.
+
+{% interfaceDocumentation interfaceName="ICellEditor" names=["refresh"] /%}
+
+{% gridExampleRunner title="Batch Editing Customization" name="batch-editing-custom" exampleHeight=560 /%}
+
+### Styling
+
+Pending edit styles can be overridden using css, via the `.ag-cell-edit-color` and `.ag-row-batch-edit` classes.
+
+```scss
+.ag-cell-batch-edit {
+    background-color: var(--ag-cell-batch-edit-background-color);
+    color: var(--ag-cell-batch-edit-text-color);
+}
+
+.ag-row-batch-edit {
+    background-color: var(--ag-row-batch-edit-background-color);
+    color: var(--ag-row-batch-edit-text-color);
+}
+```
+
+The following example demonstrates custom batch editing styling:
+
+{% gridExampleRunner title="Batch Editing Styles" name="batch-editing-styles" exampleHeight=560 /%}

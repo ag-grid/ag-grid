@@ -77,7 +77,7 @@ Instead use `useMemo` or `useState` to ensure a consistent reference is maintain
 ```jsx
 const App = () => {
     // GOOD - only one instance created
-    const defaultColDef = useMemo( ()=> { filter: true }, []);
+    const defaultColDef = useMemo( ()=> ({ filter: true }), []);
 
     return <AgGridReact defaultColDef={defaultColDef} />;
 };

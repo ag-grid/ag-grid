@@ -370,8 +370,14 @@
         "isAnyFilterPresent": {},
         "getColumnFilterInstance": {
             "more": {
-                "name": "Accessing Individual Filter Component Instances",
-                "url": "./filter-api/#accessing-individual-filter-component-instances"
+                "name": "Accessing Individual Filters",
+                "url": "./filter-api/#accessing-individual-filters"
+            }
+        },
+        "getColumnFilterHandler": {
+            "more": {
+                "name": "Accessing Individual Filters",
+                "url": "./filter-api/#accessing-individual-filters"
             }
         },
         "getFilterModel": {
@@ -405,6 +411,12 @@
             }
         },
         "destroyFilter": {},
+        "doFilterAction": {
+            "more": {
+                "name": "Applying the UI Model",
+                "url": "./filter-applying/#applying-the-ui-model"
+            }
+        },
         "getAdvancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
@@ -455,6 +467,39 @@
         },
         "setFocusedHeader": {}
     },
+    "batch-editing": {
+        "meta": {
+            "displayName": "Batch Editing",
+            "page": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch/"
+            }
+        },
+        "startBatchEdit": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "commitBatchEdit": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "cancelBatchEdit": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        },
+        "isBatchEditing": {
+            "more": {
+                "name": "Batch Editing",
+                "url": "./cell-editing-batch"
+            }
+        }
+    },
     "editing": {
         "meta": {
             "displayName": "Editing",
@@ -489,6 +534,12 @@
             "interfaceHierarchyOverrides": {
                 "exclude": ["ICellEditor"],
                 "include": []
+            }
+        },
+        "validateEdit": {
+            "more": {
+                "name": "Edit Validation",
+                "url": "./cell-editing-validation"
             }
         }
     },
@@ -572,7 +623,7 @@
     "rowExpansion": {
         "meta": {
             "displayName": "Row Expand and Collapse",
-            "description": "See [Row Grouping](./grouping-opening-groups/) or [Tree Data](./tree-data-opening-groups/) for more information"
+            "description": "See [Row Grouping](./grouping-opening-groups/), [Master Detail](./master-detail/) or [Tree Data](./tree-data-opening-groups/) for more information"
         },
         "expandAll": {},
         "collapseAll": {},
@@ -652,6 +703,18 @@
                     "RowDragCancelEvent"
                 ],
                 "include": []
+            }
+        },
+        "setRowDropPositionIndicator": {
+            "more": {
+                "name": "Row Drag and Drop Usage",
+                "url": "./row-dragging"
+            }
+        },
+        "getRowDropPositionIndicator": {
+            "more": {
+                "name": "Row Drag and Drop Usage",
+                "url": "./row-dragging"
             }
         }
     },
@@ -838,6 +901,12 @@
                 "url": "./column-menu/#column-menu-api--events"
             }
         },
+        "hideColumnFilter": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "./column-menu/#column-menu-api--events"
+            }
+        },
         "showColumnMenu": {
             "more": {
                 "name": "Column Menu API",
@@ -846,7 +915,7 @@
         },
         "showContextMenu": {},
         "hidePopupMenu": {
-            "description": "Hides any visible [context menu](./context-menu/) or [column menu](./column-menu/)."
+            "description": "Hides any visible [Context Menu](./context-menu/) or [Column Menu](./column-menu/)."
         },
         "hideColumnChooser": {
             "more": {
@@ -1167,7 +1236,13 @@
                 "url": "./server-side-model-configuration/#debug-info"
             }
         },
-        "isLastRowIndexKnown": {}
+        "isLastRowIndexKnown": {},
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "./row-height/#changing-row-height"
+            }
+        }
     },
     "find": {
         "meta": {

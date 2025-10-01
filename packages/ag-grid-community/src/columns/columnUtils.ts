@@ -1,13 +1,13 @@
+import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties';
+import { _areEqual } from '../agStack/utils/array';
+import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
-import type { PropertyChangedSource } from '../gridOptionsService';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _areEqual } from '../utils/array';
-import { _exists } from '../utils/generic';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
 import type { ColKey, ColumnCollections } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
@@ -15,6 +15,7 @@ import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn' as const;
 export const ROW_NUMBERS_COLUMN_ID = 'ag-Grid-RowNumbersColumn' as const;
+export const GROUP_HIERARCHY_COLUMN_ID_PREFIX = 'ag-Grid-HierarchyColumn' as const;
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
 export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
@@ -83,6 +84,10 @@ export function isRowNumberCol(col: ColKey): boolean {
     return id?.startsWith(ROW_NUMBERS_COLUMN_ID) ?? false;
 }
 
+export function isSpecialCol(col: ColKey): boolean {
+    return isColumnSelectionCol(col) || isRowNumberCol(col);
+}
+
 export function convertColumnTypes(type: string | string[]): string[] {
     let typeKeys: string[] = [];
 
@@ -103,9 +108,9 @@ export function _updateColsMap(cols: ColumnCollections): void {
     cols.list.forEach((col) => (cols.map[col.getId()] = col));
 }
 
-export function _convertColumnEventSourceType(source: PropertyChangedSource): ColumnEventType {
+export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // unfortunately they do not match so need to perform conversion
-    return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
+    return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
 }
 
 export function _columnsMatch(column: AgColumn, key: ColKey): boolean {

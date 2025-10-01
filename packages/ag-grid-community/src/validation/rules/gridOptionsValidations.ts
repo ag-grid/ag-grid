@@ -1,11 +1,10 @@
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import type { ValidationModuleName } from '../../interfaces/iModule';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
-import { _mergeDeep } from '../../utils/object';
+import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -88,6 +87,11 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         message:
             '`gridOptions` and `columnDefs` both have a `context` property that should be used for arbitrary user data. This means that column definitions and gridOptions should only contain valid properties making this property redundant.',
     },
+
+    suppressAdvancedFilterEval: {
+        version: '34',
+        message: 'Advanced filter no longer uses function evaluation, so this option has no effect.',
+    },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | null {
@@ -100,7 +104,7 @@ function toConstrainedNum(key: keyof GridOptions, value: any, min: number): stri
     return `${key}: value should be a number`;
 }
 
-export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationModuleName>> = {
+export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredModule<GridOptions>>> = {
     alignedGrids: 'AlignedGrids',
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
@@ -109,22 +113,25 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, ValidationM
     datasource: 'InfiniteRowModel',
     doesExternalFilterPass: 'ExternalFilter',
     editType: 'EditCore',
+    invalidEditValueMode: 'EditCore',
     enableAdvancedFilter: 'AdvancedFilter',
     enableCellSpan: 'CellSpan',
     enableCharts: 'IntegratedCharts',
     enableRangeSelection: 'CellSelection',
     enableRowPinning: 'PinnedRow',
     findSearchValue: 'Find',
+    getFullRowEditValidationErrors: 'EditCore',
     getContextMenuItems: 'ContextMenu',
     getLocaleText: 'Locale',
     getMainMenuItems: 'ColumnMenu',
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: 'SharedRowGrouping',
-    grandTotalRow: 'SharedRowGrouping',
+    grandTotalRow: 'ClientSideRowModelHierarchy',
     initialState: 'GridState',
     isExternalFilterPresent: 'ExternalFilter',
     isRowPinnable: 'PinnedRow',
+    isRowPinned: 'PinnedRow',
     localeText: 'Locale',
     masterDetail: 'SharedMasterDetail',
     pagination: 'Pagination',
@@ -212,27 +219,24 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         isRowPinnable: {
             supportedRowModels: ['clientSide'],
-            validate({ isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
+            validate({ enableRowPinning, isRowPinnable, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinnable && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinnable`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
+                }
+                if (!enableRowPinning && isRowPinnable) {
+                    return '`isRowPinnable` requires `enableRowPinning` to be set.';
                 }
                 return null;
             },
         },
         isRowPinned: {
             supportedRowModels: ['clientSide'],
-            validate({ isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
+            validate({ enableRowPinning, isRowPinned, pinnedTopRowData, pinnedBottomRowData }) {
                 if (isRowPinned && (pinnedTopRowData || pinnedBottomRowData)) {
                     return 'Manual row pinning cannot be used together with pinned row data. Either remove `isRowPinned`, or remove `pinnedTopRowData` and `pinnedBottomRowData`.';
                 }
-                return null;
-            },
-        },
-
-        grandTotalRow: {
-            validate({ grandTotalRow }) {
-                if (grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop') {
-                    return `Using \`grandTotalRow=${grandTotalRow}\` is deprecated as of v34. Use \`grandTotalRowPinned\` instead.`;
+                if (!enableRowPinning && isRowPinned) {
+                    return '`isRowPinned` requires `enableRowPinning` to be set.';
                 }
                 return null;
             },
@@ -273,6 +277,14 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowSelection: { required: ['multiple'] },
             },
         },
+        groupHierarchyConfig: {
+            validate({ groupHierarchyConfig = {} }, gridOptions, beans) {
+                for (const k of Object.keys(groupHierarchyConfig)) {
+                    beans.validation?.validateColDef(groupHierarchyConfig[k]);
+                }
+                return null;
+            },
+        },
         icons: {
             validate: ({ icons }) => {
                 if (icons) {
@@ -297,7 +309,20 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         initialGroupOrderComparator: {
             supportedRowModels: ['clientSide'],
         },
+        ssrmExpandAllAffectsAllRows: {
+            validate: (options) => {
+                if (typeof options.ssrmExpandAllAffectsAllRows === 'boolean') {
+                    if (options.rowModelType !== 'serverSide') {
+                        return "'ssrmExpandAllAffectsAllRows' is only supported with the Server Side Row Model.";
+                    }
+                    if (options.ssrmExpandAllAffectsAllRows && typeof options.getRowId !== 'function') {
+                        return `'getRowId' callback must be provided for Server Side Row Model grouping to work correctly.`;
+                    }
+                }
 
+                return null;
+            },
+        },
         keepDetailRowsCount: {
             validate({ keepDetailRowsCount }) {
                 return toConstrainedNum('keepDetailRowsCount', keepDetailRowsCount, 1);
@@ -487,6 +512,35 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (autoGroupColumnDef?.valueGetter && showOpenedGroup) {
                     return 'autoGroupColumnDef.valueGetter and showOpenedGroup are not supported when used together.';
+                }
+                return null;
+            },
+        },
+        renderingMode: {
+            validate: (options) => {
+                const renderingMode = options.renderingMode;
+                const validModes: GridOptions['renderingMode'][] = ['default', 'legacy'];
+                if (renderingMode && !validModes.includes(renderingMode)) {
+                    return `renderingMode must be one of [${validModes.join()}], currently it's ${renderingMode}`;
+                }
+                return null;
+            },
+        },
+        autoSizeStrategy: {
+            validate: ({ autoSizeStrategy }) => {
+                if (!autoSizeStrategy) return null;
+
+                const validModes: NonNullable<GridOptions['autoSizeStrategy']>['type'][] = [
+                    'fitCellContents',
+                    'fitGridWidth',
+                    'fitProvidedWidth',
+                ];
+                const type = autoSizeStrategy.type;
+                if (type !== 'fitCellContents' && type !== 'fitGridWidth' && type !== 'fitProvidedWidth') {
+                    return `Invalid Auto-size strategy. \`autoSizeStrategy\` must be one of ${validModes.map((m) => '"' + m + '"').join(', ')}, currently it's ${type}`;
+                }
+                if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
+                    return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
                 }
                 return null;
             },

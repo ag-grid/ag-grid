@@ -1,14 +1,13 @@
+import { _getTabIndex } from '../../agStack/utils/browser';
 import type { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { _getRowById } from '../../entities/positionUtils';
-import type { RowNode } from '../../entities/rowNode';
-import { _isElementInThisGrid } from '../../gridBodyComp/mouseEventUtils';
 import type { Column } from '../../interfaces/iColumn';
 import type { IRowNode, RowPinnedType } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
-import { _getTabIndex } from '../../utils/browser';
+import { _destroyEditors } from './editors';
 
 type ResolveRowControllerType = {
     rowIndex?: number | null;
@@ -28,11 +27,6 @@ type ResolveCellControllerType = {
 
 type ResolveControllerType = ResolveRowControllerType & ResolveCellControllerType;
 
-type ResolvedControllersType = {
-    rowCtrl?: RowCtrl;
-    cellCtrl?: CellCtrl;
-};
-
 export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerType = {}): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
 
@@ -43,7 +37,13 @@ export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerT
     const { rowModel, rowRenderer } = beans;
 
     let { rowNode } = inputs;
-    rowNode ??= rowId ? _getRowById(beans, rowId, rowPinned) : rowModel.getRow(rowIndex!);
+    if (!rowNode) {
+        if (rowId) {
+            rowNode = _getRowById(beans, rowId, rowPinned);
+        } else if (rowIndex != null) {
+            rowNode = rowModel.getRow(rowIndex);
+        }
+    }
 
     return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }
@@ -55,25 +55,43 @@ export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerTyp
         return cellCtrl;
     }
 
+    const actualColumn = beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!;
+
     const rowCtrl = inputs.rowCtrl ?? _getRowCtrl(beans, inputs);
-    return rowCtrl?.getCellCtrl(beans.colModel.getCol(colId ?? columnId ?? _getColId(column))!) ?? undefined;
+    const result = rowCtrl?.getCellCtrl(actualColumn) ?? undefined;
+
+    if (result) {
+        // if we found a cellCtrl, return it
+        return result;
+    }
+
+    const rowNode = inputs.rowNode ?? rowCtrl?.rowNode;
+
+    if (rowNode) {
+        // can occur in spannedRow settings
+
+        return beans.rowRenderer.getCellCtrls([rowNode], [actualColumn])?.[0];
+    }
+
+    return undefined;
 }
 
-export function _getCtrls(beans: BeanCollection, inputs: ResolveControllerType = {}): ResolvedControllersType {
-    const rowCtrl = _getRowCtrl(beans, inputs);
-    const cellCtrl = _getCellCtrl(beans, inputs);
-
-    return {
-        rowCtrl,
-        cellCtrl,
-    };
+function _stopEditing(beans: BeanCollection): void {
+    const { editSvc } = beans;
+    if (editSvc?.isBatchEditing()) {
+        _destroyEditors(beans);
+    } else {
+        editSvc?.stopEditing(undefined, { source: 'api' });
+    }
 }
 
 export function _addStopEditingWhenGridLosesFocus(
     bean: BeanStub,
-    { editSvc, gos, popupSvc }: BeanCollection,
+    beans: BeanCollection,
     viewports: HTMLElement[]
 ): void {
+    const { gos, popupSvc } = beans;
+
     if (!gos.get('stopEditingWhenCellsLoseFocus')) {
         return;
     }
@@ -83,7 +101,7 @@ export function _addStopEditingWhenGridLosesFocus(
         const elementWithFocus = event.relatedTarget as HTMLElement;
 
         if (_getTabIndex(elementWithFocus) === null) {
-            editSvc?.stopEditing();
+            _stopEditing(beans);
             return;
         }
 
@@ -91,7 +109,7 @@ export function _addStopEditingWhenGridLosesFocus(
             // see if click came from inside the viewports
             viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
             // and also that it's not from a detail grid
-            _isElementInThisGrid(gos, elementWithFocus);
+            gos.isElementInThisInstance(elementWithFocus);
 
         if (!clickInsideGrid) {
             clickInsideGrid =
@@ -101,7 +119,7 @@ export function _addStopEditingWhenGridLosesFocus(
         }
 
         if (!clickInsideGrid) {
-            editSvc?.stopEditing(undefined, { source: 'api' });
+            _stopEditing(beans);
         }
     };
 
@@ -117,34 +135,4 @@ export function _getColId(column?: Column | string | null): string | undefined {
         return column;
     }
     return column.getColId();
-}
-
-export function _getSiblingRows(
-    beans: BeanCollection,
-    rowNode: IRowNode,
-    includeSource = false,
-    includeParents = false
-): IRowNode[] {
-    const pinned = (rowNode as RowNode).pinnedSibling;
-    const sibling = rowNode.sibling;
-
-    const result: IRowNode[] = [];
-    includeSource && result.push(rowNode);
-    pinned && result.push(pinned);
-    sibling && result.push(sibling);
-    includeParents && result.push(..._getParentRows(beans, rowNode));
-
-    return result;
-}
-
-export function _getParentRows(beans: BeanCollection, rowNode: IRowNode): IRowNode[] {
-    const result: IRowNode[] = [];
-    let parent = rowNode.parent;
-
-    while (parent) {
-        result.push(parent);
-        parent = parent.parent;
-    }
-
-    return result;
 }

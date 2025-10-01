@@ -2,6 +2,7 @@ import type { Framework } from '@ag-grid-types';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import type { InterfaceEntry, Properties, PropertyType } from '../types';
+import { getAllPotentialTypesFromString } from './getAllPotentialTypesFromString';
 import { getTypeLink } from './type-links';
 
 const paramReg = /\* @param (\w+) (.*)\n/g;
@@ -88,15 +89,13 @@ export function getLinkedType(type: string | string[], framework: Framework) {
     }
 
     // Extract all the words to enable support for Union types
-    const typeRegex = /\w+/g;
     const formattedTypes = type
         .filter((t) => typeof t === 'string')
         .map((t) => {
-            const definitionTypes = [...t.matchAll(typeRegex)];
+            const definitionTypes = getAllPotentialTypesFromString(t);
 
             const typesToLink = definitionTypes
-                .map((regMatch) => {
-                    const typeName = regMatch[0];
+                .map((typeName) => {
                     const url = getTypeUrl(typeName, framework);
 
                     return url
@@ -343,11 +342,15 @@ export function extractInterfaces(
 
     if (allDefs.length > 1000) {
         // eslint-disable-next-line no-console
-        console.warn('AG Charts - Possible recursion error on type: ', definitionOrArray, allDefs);
+        console.warn(
+            'AG Charts - Possible recursion error on type: ',
+            definitionOrArray,
+            allDefs.map((x) => (typeof x === 'object' ? (x as any).name ?? x : x))
+        );
         return allDefs;
     }
 
-    const alreadyIncluded = {};
+    const alreadyIncluded: Record<string, boolean> = {};
     allDefs.forEach((v) => {
         alreadyIncluded[v.name] = true;
     });
@@ -388,10 +391,8 @@ export function extractInterfaces(
     const definition = definitionOrArray;
 
     if (typeof definition == 'string') {
-        const typeRegex = /\w+/g;
-        const definitionTypes = [...definition.matchAll(typeRegex)];
-        definitionTypes.forEach((regMatch) => {
-            const type = regMatch[0];
+        const definitionTypes = getAllPotentialTypesFromString(definition);
+        definitionTypes.forEach((type) => {
             // If we have the actual interface use that definition
             const interfaceType = interfaceLookup[type];
             if (!interfaceType) {
@@ -424,7 +425,7 @@ export function extractInterfaces(
 
                 // Now if this is a top level interface see if we should include any interfaces for its properties
                 if (interfaceType.type) {
-                    const interfacesToInclude = {};
+                    const interfacesToInclude: Record<string, boolean> = {};
 
                     if (typeof interfaceType.type === 'string') {
                         interfacesToInclude[interfaceType.type] = true;
@@ -438,7 +439,9 @@ export function extractInterfaces(
                             })
                             .map(([k, i]) => {
                                 // Extract all the words from the type to handle unions and functions and params cleanly.
-                                const words = [...k.matchAll(typeRegex), ...i.matchAll(typeRegex)].map((ws) => ws[0]);
+                                const words = getAllPotentialTypesFromString(k).concat(
+                                    getAllPotentialTypesFromString(i as string)
+                                );
                                 return words.filter((w) => !getTypeLink(w) && interfaceLookup[w]);
                             })
                             .forEach((s) => {

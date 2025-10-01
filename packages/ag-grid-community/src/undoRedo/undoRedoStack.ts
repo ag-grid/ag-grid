@@ -1,5 +1,5 @@
 import type { CellRange } from '../interfaces/IRangeService';
-import type { CellValueChange } from './iUndoRedo';
+import type { CellValueChange } from '../interfaces/iUndoRedo';
 
 export class UndoRedoAction {
     cellValueChanges: CellValueChange[];

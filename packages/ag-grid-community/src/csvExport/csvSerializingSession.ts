@@ -16,10 +16,10 @@ interface CsvSerializingParams extends GridSerializingParams {
 export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
     private isFirstLine = true;
     private result: string = '';
-    private suppressQuotes: boolean;
-    private columnSeparator: string;
+    private readonly suppressQuotes: boolean;
+    private readonly columnSeparator: string;
 
-    constructor(private config: CsvSerializingParams) {
+    constructor(private readonly config: CsvSerializingParams) {
         super(config);
 
         const { suppressQuotes, columnSeparator } = config;
@@ -106,14 +106,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        const rowCellValue = this.extractRowCellValue(
-            column,
-            index,
-            index,
-            'csv',
-            node,
-            this.config.includePendingEdits
-        );
+        const rowCellValue = this.extractRowCellValue(column, index, index, 'csv', node);
         this.result += this.putInQuotes(rowCellValue.valueFormatted ?? rowCellValue.value);
     }
 

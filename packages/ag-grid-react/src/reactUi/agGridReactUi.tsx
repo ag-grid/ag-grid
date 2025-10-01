@@ -54,7 +54,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
-import { BeansContext, EnableDeferRenderContext } from './beansContext';
+import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
@@ -74,7 +74,6 @@ const reactPropsNotGridOptions: ReactCompProps = {
     className: undefined,
     passGridApi: undefined,
     componentWrappingElement: undefined,
-    suppressDeferCellRender: undefined,
     ...deprecatedProps,
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
@@ -150,23 +149,23 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             setThemeOnGridDiv: true,
         };
 
-        const createUiCallback = (context: Context) => {
-            setContext(context);
-            context.createBean(renderStatus);
+        const createUiCallback = (ctx: Context) => {
+            setContext(ctx);
+            ctx.createBean(renderStatus);
 
             destroyFuncs.current.push(() => {
-                context.destroy();
+                ctx.destroy();
             });
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            context.getBean('ctrlsSvc').whenReady(
+            ctx.getBean('ctrlsSvc').whenReady(
                 {
                     addDestroyFunc: (func) => {
                         destroyFuncs.current.push(func);
                     },
                 },
                 () => {
-                    if (context.isDestroyed()) {
+                    if (ctx.isDestroyed()) {
                         return;
                     }
 
@@ -239,14 +238,16 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         });
     }, [props]);
 
-    const enableCellDeferRender = !props.suppressDeferCellRender && !!React.useSyncExternalStore;
-
+    const renderMode =
+        !(React as any).useSyncExternalStore || _getGridOption(props, 'renderingMode') === 'legacy'
+            ? 'legacy'
+            : 'default';
     return (
         <div style={style} className={props.className} ref={setRef}>
-            <EnableDeferRenderContext.Provider value={enableCellDeferRender}>
-                {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
+            <RenderModeContext.Provider value={renderMode}>
+                {context && !context.isDestroyed() ? <GridComp key={context.instanceId} context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}
-            </EnableDeferRenderContext.Provider>
+            </RenderModeContext.Provider>
         </div>
     );
 };
@@ -377,7 +378,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGuiRef.current = eRef;
 
-        if (!eRef) {
+        if (!eRef || context.isDestroyed()) {
             ctrlRef.current = context.destroyBean(ctrlRef.current);
             resizeObserverDestroyFunc.current?.();
             return;

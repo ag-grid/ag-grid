@@ -1,3 +1,4 @@
+import { _areEqual, _forAll } from '../agStack/utils/array';
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -11,7 +12,6 @@ import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
-import { _areEqual, _forAll } from '../utils/array';
 import { _createColumnTree } from './columnFactoryUtils';
 import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';
@@ -21,6 +21,8 @@ import {
     _destroyColumnTree,
     _getColumnsFromTree,
     isColumnGroupAutoCol,
+    isColumnSelectionCol,
+    isRowNumberCol,
 } from './columnUtils';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -69,7 +71,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
-            ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
+            [
+                'groupDisplayType',
+                'treeData',
+                'treeDataDisplayType',
+                'groupHideOpenParents',
+                'rowNumbers',
+                'hidePaddedHeaderRows',
+            ],
             (event) => this.refreshAll(_convertColumnEventSourceType(event.source))
         );
         this.addManagedPropertyListeners(
@@ -91,8 +100,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             pivotColsSvc,
             valueColsSvc,
             visibleCols,
-            colViewport,
             eventSvc,
+            groupHierarchyColSvc,
         } = beans;
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs ? _compareColumnStatesAndDispatchEvents(beans, source) : undefined;
@@ -116,16 +125,19 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.colDefCols = { tree, treeDepth, list, map };
 
+        // Must create dateHierarchy columns before rowGroupSvc and pivotSvc run
+        // so that any groupable date columns exist beforehand.
+        this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
+
         rowGroupColsSvc?.extractCols(source, oldCols);
         pivotColsSvc?.extractCols(source, oldCols);
         valueColsSvc?.extractCols(source, oldCols);
 
         this.ready = true;
 
-        this.refreshCols(true);
+        this.refreshCols(true, source);
 
         visibleCols.refresh(source);
-        colViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
@@ -157,7 +169,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
     // pivotResultCols.setPivotResultCols
-    public refreshCols(newColDefs: boolean): void {
+    public refreshCols(newColDefs: boolean, source: ColumnEventType): void {
         if (!this.colDefCols) {
             return;
         }
@@ -181,7 +193,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
 
-        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols);
+        this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -210,16 +222,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    private createColumnsForService(services: (IColumnCollectionService | undefined)[], cols: ColumnCollections): void {
+    private createColumnsForService(
+        services: (IColumnCollectionService | undefined)[],
+        cols: ColumnCollections,
+        source: ColumnEventType
+    ): void {
         for (const service of services) {
             if (!service) {
                 continue;
             }
 
-            service.createColumns(cols, (updateOrder) => {
-                this.lastOrder = updateOrder(this.lastOrder);
-                this.lastPivotOrder = updateOrder(this.lastPivotOrder);
-            });
+            service.createColumns(
+                cols,
+                (updateOrder) => {
+                    this.lastOrder = updateOrder(this.lastOrder);
+                    this.lastPivotOrder = updateOrder(this.lastPivotOrder);
+                },
+                source
+            );
             service.addColumns(cols);
         }
     }
@@ -256,16 +276,24 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return [];
         }
         // pivot mode is on, but we are not pivoting, so we only
-        // show columns we are aggregating on
+        // show columns we are aggregating on and possibly the selection/row numbers column
 
+        const { valueColsSvc, selectionColSvc, gos } = this.beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
-        const valueColumns = this.beans.valueColsSvc?.columns;
+        const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
+        const showRowNumbers = gos.get('rowNumbers');
+        const valueColumns = valueColsSvc?.columns;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
-                return isAutoGroupCol || isValueCol;
+                return (
+                    isAutoGroupCol ||
+                    isValueCol ||
+                    (showSelectionColumn && isColumnSelectionCol(col)) ||
+                    (showRowNumbers && isRowNumberCol(col))
+                );
             } else {
                 // keep col if a) it's auto-group or b) it's visible
                 return isAutoGroupCol || col.isVisible();
@@ -280,7 +308,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!this.ready) {
             return;
         }
-        this.refreshCols(false);
+        this.refreshCols(false, source);
         this.beans.visibleCols.refresh(source);
     }
 
@@ -516,7 +544,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateCols() to check it autoGroupCol needs to be added / removed
-        this.refreshCols(false);
+        this.refreshCols(false, source);
         const { visibleCols, eventSvc } = this.beans;
         visibleCols.refresh(source);
 
@@ -574,10 +602,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public forAllCols(callback: (column: AgColumn) => void): void {
-        const { pivotResultCols, autoColSvc, selectionColSvc } = this.beans;
+        const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
         _forAll(this.colDefCols?.list, callback);
         _forAll(autoColSvc?.columns?.list, callback);
         _forAll(selectionColSvc?.columns?.list, callback);
+        _forAll(groupHierarchyColSvc?.columns?.list, callback);
         _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
     }
 
@@ -630,6 +659,12 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
         }
 
-        return this.beans.autoColSvc?.getColumn(key) ?? this.beans.selectionColSvc?.getColumn(key) ?? null;
+        const { autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
+        return (
+            autoColSvc?.getColumn(key) ??
+            selectionColSvc?.getColumn(key) ??
+            groupHierarchyColSvc?.getColumn(key) ??
+            null
+        );
     }
 }

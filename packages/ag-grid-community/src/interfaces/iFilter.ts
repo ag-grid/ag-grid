@@ -1,10 +1,10 @@
+import type { IComponent } from '../agStack/interfaces/iComponent';
+import type { AgPromise } from '../agStack/utils/promise';
 import type { ColDef } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
-import type { AgPromise } from '../utils/promise';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 import type { AgGridCommon } from './iCommon';
-import type { IComponent } from './iComponent';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 
@@ -32,6 +32,11 @@ export interface FilterHandlerParams<TData = any, TContext = any, TModel = any, 
     extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
     model: TModel | null;
     source: FilterHandlerSource;
+    /**
+     * If this refresh was as a result of the filter triggering an update
+     * with additional event attributes, these will be set here
+     */
+    additionalEventAttributes?: any;
 }
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
@@ -52,23 +57,28 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * filter.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
+    /**
+     * Optional: When using an apply button with the filter, this method will be called before the apply happens,
+     * The returned model will be applied, allowing for any validation or updates to be performed.
+     */
+    processModelToApply?(model: TModel | null): TModel | null;
     /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
     destroy?(): void;
 }
 
-export interface CreateFilterHandlerFuncParams<TData = any, TContext = any, TValue = any>
+export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     colDef: ColDef<TData, TValue>;
     column: Column<TValue>;
 }
 
-export interface CreateFilterHandlerFunc<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
+export interface CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     (
-        params: CreateFilterHandlerFuncParams<TData, TContext, TValue>
+        params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
     ): FilterHandler<TData, TContext, TModel, TCustomParams>;
 }
 
-export interface ColumnFilter<TData = any, TContext = any, TValue = any, TModel = any, TCustomParams = any> {
+export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**
      * Filter component to use for this column.
      * - Set to the name of a provided filter: `agNumberColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
@@ -89,7 +99,7 @@ export interface ColumnFilter<TData = any, TContext = any, TValue = any, TModel 
      *
      * Not required if providing `doesFilterPass` (but will take precedence), or if not using Client-Side Row Model.
      */
-    handler?: string | CreateFilterHandlerFunc<TData, TContext, TValue, TModel, TCustomParams>;
+    handler?: string | CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;
 }
 
 export function isColumnFilterComp(filter: any): filter is ColumnFilter {
@@ -241,8 +251,10 @@ export interface FilterWrapperParams {
      */
     buttons?: FilterAction[];
     /**
-     * If the Apply button is present, the filter popup will be closed immediately when the Apply
-     * or Reset button is clicked if this is set to `true`.
+     * When this is set to `true`, the following will happen after clicking a filter button:
+     * - Apply closes popup.
+     * - Reset closes popup if Apply button is present.
+     * - Cancel closes popup.
      *
      * @default false
      */
@@ -358,6 +370,11 @@ export interface FilterDisplayParams<TData = any, TContext = any, TModel = any, 
      */
     getHandler: () => FilterHandler<TData, TContext, TModel>;
     source: FilterDisplaySource;
+    /**
+     * If this refresh was as a result of the filter triggering an update
+     * with additional event attributes, these will be set here
+     */
+    additionalEventAttributes?: any;
 }
 
 /**
@@ -374,5 +391,16 @@ export interface FilterModel {
  * This excludes the filter model.
  */
 export interface ColumnFilterState {
+    /**
+     * Filter state keyed by the column id.
+     * The values will be passed into each of the filter component params as `state.state`.
+     */
     [colId: string]: any;
+}
+
+export interface FilterActionParams {
+    /** Column ID to perform action on. If `undefined`, will run for all columns. */
+    colId?: string;
+    /** Action to perform */
+    action: FilterAction;
 }

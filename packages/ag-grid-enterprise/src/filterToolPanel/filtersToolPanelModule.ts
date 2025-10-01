@@ -44,6 +44,8 @@ export const NewFiltersToolPanelModule: _ModuleWithoutApi = {
         filterCardExpand: 'chevron-down',
         // button to collapse filter card in new filter tool panel
         filterCardCollapse: 'chevron-up',
+        // indicates filter card in new filter tool panel has edits
+        filterCardEditing: 'edit',
     },
     dependsOn: [SideBarModule, EnterpriseCoreModule, _ColumnFilterModule],
 };

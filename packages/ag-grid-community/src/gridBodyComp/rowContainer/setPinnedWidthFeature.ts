@@ -1,5 +1,5 @@
+import { _setDisplayed, _setFixedWidth } from '../../agStack/utils/dom';
 import { BeanStub } from '../../context/beanStub';
-import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
 
 export class SetPinnedWidthFeature extends BeanStub {
     public readonly getWidth: () => number;

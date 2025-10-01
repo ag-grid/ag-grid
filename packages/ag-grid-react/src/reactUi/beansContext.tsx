@@ -1,7 +1,7 @@
 import React from 'react';
 
-import type { BeanCollection } from 'ag-grid-community';
+import type { BeanCollection, GridOptions } from 'ag-grid-community';
 
 export const BeansContext = React.createContext<BeanCollection>({} as BeanCollection);
 
-export const EnableDeferRenderContext = React.createContext<boolean>(true);
+export const RenderModeContext = React.createContext<Required<GridOptions['renderingMode']>>('default');
