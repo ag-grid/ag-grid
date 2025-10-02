@@ -80,7 +80,7 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: vanilla
-          browsers: chromium
+          browsers: all
           test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-typescript:
@@ -97,7 +97,7 @@ jobs:
       - uses: ./.github/actions/test-framework-examples
         with:
           framework: typescript
-          browsers: all
+          browsers: chromium
           test-pattern: ${{github.event.inputs.test-pattern}}
 
   test-reactFunctionalTs:
