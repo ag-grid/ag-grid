@@ -38,15 +38,15 @@ export const capturePointer = (eElement: HTMLElement, mouseEvent: Event | Touch)
     return capture;
 };
 
-export const releasePointerCapture = (capture: PointerCapture | null): null => {
+export const releasePointerCapture = (capture: PointerCapture | null): void => {
     if (!capture) {
-        return null;
+        return;
     }
     removeLostHandler(capture);
 
     const { eElement, pointerId } = capture;
     if (!eElement) {
-        return null;
+        return;
     }
 
     try {
@@ -55,7 +55,6 @@ export const releasePointerCapture = (capture: PointerCapture | null): null => {
         // do nothing, just means pointer capture is not supported
     }
     capture.eElement = null;
-    return null;
 };
 
 const removeLostHandler = (capture: PointerCapture) => {

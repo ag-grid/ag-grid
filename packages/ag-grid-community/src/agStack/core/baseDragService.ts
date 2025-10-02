@@ -375,7 +375,7 @@ export class BaseDragService<
         if (!this.dragging) {
             const start = drag.start;
             const dragStartPixels = dragSource.dragStartPixels;
-            const requiredPixelDiff = dragStartPixels != null ? dragStartPixels : 4;
+            const requiredPixelDiff = dragStartPixels ?? 4;
 
             // if pointer hasn't travelled from the start position enough, do nothing
             if (_areEventsNear(currentEvent, start, requiredPixelDiff)) {
