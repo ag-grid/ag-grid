@@ -162,7 +162,7 @@ export class ValueService extends BeanStub implements NamedBean {
         column: AgColumn,
         rowNode?: IRowNode | null,
         ignoreAggData = false,
-        source: 'ui' | 'api' | 'edit' | string = 'ui',
+        source: 'ui' | 'api' | 'edit' | string = 'ui'
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???

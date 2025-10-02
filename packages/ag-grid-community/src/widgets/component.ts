@@ -51,4 +51,4 @@ export class Component<TLocalEvent extends string = AgComponentEvent> extends Ag
     GridOptionsService,
     AgComponentSelectorType,
     TLocalEvent
-> { }
+> {}

@@ -1,11 +1,10 @@
-import type { BeanCollection } from "../../context/context";
-import type { AgColumn } from "../../entities/agColumn";
-import type { RowNode } from "../../entities/rowNode";
-import type { Cell, CellRef, FormulaNode } from "../ast/utils";
-import { FormulaError } from "../ast/utils";
+import type { BeanCollection } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
+import type { Cell, CellRef, FormulaNode } from '../ast/utils';
+import { FormulaError } from '../ast/utils';
 
-export const parseErr = (name: string, msg: string) =>
-    new FormulaError(`${name}: ${msg}`, '#PARSE!');
+export const parseErr = (name: string, msg: string) => new FormulaError(`${name}: ${msg}`, '#PARSE!');
 
 function isRangeCell(cell: Cell): boolean {
     return !!(cell.endColumn && cell.endRow);
@@ -35,13 +34,9 @@ type CellAddress = { row: RowNode; column: AgColumn };
 function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
     const { row, column } = cell;
 
-    const rowNode = row.absolute
-        ? beans.rowModel.getRow(Number(row.id) - 1)
-        : beans.rowModel.getRowNode(row.id);
+    const rowNode = row.absolute ? beans.rowModel.getRow(Number(row.id) - 1) : beans.rowModel.getRowNode(row.id);
 
-    const agCol = column.absolute
-        ? beans.formulae!.getColByRef(column.id)
-        : beans.colModel.getColById(column.id);
+    const agCol = column.absolute ? beans.formulae!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
     if (!rowNode || !agCol) return null;
     return { row: rowNode, column: agCol };
@@ -93,9 +88,7 @@ export function* expandRangeAddresses(
 }
 
 const isCellOperand = (v: unknown): v is Cell =>
-    !!v && typeof v === 'object' && v !== null &&
-    'row' in (v as any) && 'column' in (v as any);
-
+    !!v && typeof v === 'object' && v !== null && 'row' in (v as any) && 'column' in (v as any);
 
 function makeArgIterator(
     beans: BeanCollection,
@@ -146,7 +139,9 @@ function makeArgIterator(
     };
 
     // iterable for for...of
-    (it as any)[Symbol.iterator] = function () { return this; };
+    (it as any)[Symbol.iterator] = function () {
+        return this;
+    };
     return it;
 }
 
@@ -187,8 +182,7 @@ export function* iterateCellAddresses(
     const seen = new Set<string>();
     const stack: FormulaNode[] = [root];
 
-    const colKey = (c: AgColumn) =>
-        (c as any).getId?.() ?? (c as any).colId ?? String(c);
+    const colKey = (c: AgColumn) => (c as any).getId?.() ?? (c as any).colId ?? String(c);
 
     while (stack.length) {
         const node = stack.pop()!;
@@ -221,51 +215,40 @@ export function* iterateCellAddresses(
     }
 }
 
-
-
 // Helpers for funcs below
-const isFiniteNumber = (v: unknown): v is number =>
-    typeof v === "number" && Number.isFinite(v);
+const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 
 /** Convert a value to a finite number, allowing numeric strings; else throw. */
 function coerceFiniteNumber(fname: string, v: unknown): number {
     if (isFiniteNumber(v)) return v;
 
-    if (typeof v === "string") {
+    if (typeof v === 'string') {
         const n = Number(v.trim());
         if (Number.isFinite(n)) return n;
     }
 
-    throw new FormulaError(`${fname}: values must be numeric`, "#PARSE!");
+    throw new FormulaError(`${fname}: values must be numeric`, '#PARSE!');
 }
 
 /** Iterate all iterator values; call `onValue(num)` for each numeric (with coercion). */
-export function forEachNumber(
-    it: Iterator<unknown>,
-    fname: string,
-    onValue: (num: number) => void
-): void {
+export function forEachNumber(it: Iterator<unknown>, fname: string, onValue: (num: number) => void): void {
     for (let t = it.next(); !t.done; t = it.next()) {
         onValue(coerceFiniteNumber(fname, t.value));
     }
 }
 
 /** Read exactly N numeric values from the iterator; error on too few or too many. */
-export function readExactlyN(
-    it: Iterator<unknown>,
-    fname: string,
-    n: number
-): number[] {
+export function readExactlyN(it: Iterator<unknown>, fname: string, n: number): number[] {
     const out: number[] = [];
     for (let i = 0; i < n; i++) {
         const t = it.next();
         if (t.done) {
-            throw new FormulaError(`${fname}: requires exactly ${n} value(s)`, "#PARSE!");
+            throw new FormulaError(`${fname}: requires exactly ${n} value(s)`, '#PARSE!');
         }
         out.push(coerceFiniteNumber(fname, t.value));
     }
     if (!it.next().done) {
-        throw new FormulaError(`${fname}: too many values`, "#PARSE!");
+        throw new FormulaError(`${fname}: too many values`, '#PARSE!');
     }
     return out;
 }
@@ -291,7 +274,7 @@ export function reduceAtLeastOne(
     }
 
     if (!have) {
-        throw new FormulaError(`${fname}: requires at least one value`, "#PARSE!");
+        throw new FormulaError(`${fname}: requires at least one value`, '#PARSE!');
     }
     return acc;
 }

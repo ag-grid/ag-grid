@@ -88,12 +88,16 @@ function tokenize(expr: string): string[] {
         const dollar = () => (s[j] === '$' ? (j++, true) : false);
         const letters = () => {
             const k = j;
-            while (j < s.length && /[A-Za-z]/.test(s[j])) j++;
+            while (j < s.length && /[A-Za-z]/.test(s[j])) {
+                j++;
+            }
             return j > k;
         };
         const digits = () => {
             const k = j;
-            while (j < s.length && /[0-9]/.test(s[j])) j++;
+            while (j < s.length && /[0-9]/.test(s[j])) {
+                j++;
+            }
             return j > k;
         };
 
