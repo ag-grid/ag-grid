@@ -8,9 +8,14 @@ export interface IDragService {
     addDragSource(params: DragListenerParams): void;
 
     cancelDrag(el?: Element): void;
+
+    /** Returns true if the pointer is currently captured. See https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events */
+    hasPointerCapture(): boolean;
 }
 
 export interface DragListenerParams {
+    /** If true, the pointer will be captured, see https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events */
+    capturePointer?: boolean;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */
