@@ -156,7 +156,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 }
                 if (node.data !== data) {
                     nodesUpdated = true;
-                    node.updateData(data);
+                    node.updateDataInternal(data);
                     changedRowNodes.update(node);
                 }
             }
@@ -400,7 +400,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 return;
             }
 
-            rowNode.updateData(item);
+            rowNode.updateDataInternal(item);
             if (!rowNode.selectable && rowNode.isSelected()) {
                 nodesToUnselect.push(rowNode);
             }

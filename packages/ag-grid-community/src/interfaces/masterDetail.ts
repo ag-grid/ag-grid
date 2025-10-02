@@ -64,7 +64,7 @@ export interface IMasterDetailService {
     store: { [id: string]: DetailGridInfo | undefined };
 
     setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void;
-
+    setMaster(row: RowNode, created: boolean, updated: boolean): void;
     /** Used by flatten stage to get or create a detail node from a master node */
     getDetail(masterNode: RowNode): RowNode | null;
     refreshModel(params: RefreshModelParams): void;

@@ -50,59 +50,58 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         }
     }
 
-    private setMasters(changedRowNodes: IChangedRowNodes | null | undefined): void {
+    public setMaster(row: RowNode, created: boolean, updated: boolean): void {
+        const oldMaster = row.master;
         const enabled = this.isEnabled();
-        this.enabled = enabled;
+        let newMaster = enabled;
 
         const gos = this.gos;
-        const isRowMaster = gos.get('isRowMaster');
+        const isRowMaster = gos.get('isRowMaster') as ((data: any) => unknown) | undefined;
         const treeData = gos.get('treeData');
 
-        const setMaster = (row: RowNode, created: boolean, updated: boolean) => {
-            const oldMaster = row.master;
-
-            let newMaster = enabled;
-
-            if (enabled) {
-                if (created || updated) {
-                    if (isRowMaster) {
-                        const data = row.data;
-                        newMaster = !!data && !!isRowMaster(data);
-                    }
-                } else {
-                    newMaster = oldMaster;
+        if (enabled) {
+            if (created || updated) {
+                if (isRowMaster) {
+                    const data = row.data;
+                    newMaster = !!data && !!isRowMaster(data);
                 }
+            } else {
+                newMaster = oldMaster;
             }
+        }
 
-            if (!treeData) {
-                // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
-                if (newMaster && created) {
-                    const level = this.beans.rowGroupColsSvc?.columns.length ?? 0;
-                    row.expanded = _getRowDefaultExpanded(this.beans, row, level, false);
-                } else if (!newMaster && oldMaster) {
-                    // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
-                    row.expanded = false;
-                }
+        if (!treeData) {
+            const beans = this.beans;
+            // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
+            if (newMaster && created) {
+                const level = beans.rowGroupColsSvc?.columns.length ?? 0;
+                row.expanded = _getRowDefaultExpanded(beans, row, level, false);
+            } else if (!newMaster && oldMaster) {
+                // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
+                row.expanded = false;
             }
+        }
 
-            if (newMaster !== oldMaster) {
-                row.master = newMaster;
-                row.dispatchRowEvent('masterChanged');
-            }
-        };
+        if (newMaster !== oldMaster) {
+            row.master = newMaster;
+            row.dispatchRowEvent('masterChanged');
+        }
+    }
 
+    private setMasters(changedRowNodes: IChangedRowNodes | null | undefined): void {
+        this.enabled = this.isEnabled();
         if (changedRowNodes) {
             for (const node of changedRowNodes.updates) {
-                setMaster(node, false, true);
+                this.setMaster(node, false, true);
             }
             for (const node of changedRowNodes.adds) {
-                setMaster(node, true, false);
+                this.setMaster(node, true, false);
             }
         } else {
             const allLeafChildren = _getClientSideRowModel(this.beans)?.rootNode?.allLeafChildren;
             if (allLeafChildren) {
                 for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
-                    setMaster(allLeafChildren[i], true, false);
+                    this.setMaster(allLeafChildren[i], true, false);
                 }
             }
         }

@@ -880,27 +880,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public refreshRow(params: RefreshRowsParams & { newData?: boolean }): void {
-        const gos = this.gos;
-        const hasRowMasterFunc = gos.get('isRowMaster');
-        const isRowMaster = gos.get('masterDetail');
-        const redraw = () => this.beans.rowRenderer.redrawRow(this.rowNode);
-
-        /**
-         * If we have isRowMaster cb, we need to always refresh, as the result of the function
-         *   could have changed, eg row was master and now isn't, or vice versa.
-         * There are two parts to this, and this is the second bit.
-         * First part is in rowNode.ts where row.master is set on same conditions.
-         */
-        if (hasRowMasterFunc && isRowMaster) {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell(params));
-            redraw();
-            return;
-        }
-
+        const rowRenderer = this.beans.rowRenderer;
         // if the row is rendered incorrectly, as the requirements for whether this i s a FW row have changed, we force re-render this row.
         const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
-            redraw();
+            rowRenderer.redrawRow(this.rowNode);
             return;
         }
 
@@ -908,7 +892,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (this.isFullWidth()) {
             const refresh = this.refreshFullWidth();
             if (!refresh) {
-                redraw();
+                rowRenderer.redrawRow(this.rowNode);
             }
             return;
         }

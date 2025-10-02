@@ -144,7 +144,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setMasterDetailInfo(rowNode: RowNode): void {
         const isMasterFunc = this.gos.get('isRowMaster');
-        if (isMasterFunc != null) {
+        if (isMasterFunc) {
             rowNode.master = isMasterFunc(rowNode.data);
         } else {
             rowNode.master = true;
@@ -152,7 +152,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
-        rowNode.updateData(data);
+        rowNode.updateDataInternal(data);
 
         if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
@@ -165,10 +165,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
         } else if (this.gos.get('masterDetail')) {
-            // if we have isRowMaster cb, we need to redraw row, as the result of the function
+            // if we have isRowMaster cb, we need to redraw the row, as the result of the function
             // could have changed, eg row was master and now isn't.
-            // this.setMasterDetailInfo(rowNode);
-            // this.beans.rowRenderer.redrawRow(rowNode);
         }
     }
 
@@ -203,9 +201,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
-        const isTreeOrNotAGroup = treeData || !group;
+        const canBeMaster = !!rowNode.data;
         const isMasterDetail = gos.get('masterDetail');
-        if (isTreeOrNotAGroup && isMasterDetail) {
+        if (canBeMaster && isMasterDetail) {
             this.setMasterDetailInfo(rowNode);
         }
 
