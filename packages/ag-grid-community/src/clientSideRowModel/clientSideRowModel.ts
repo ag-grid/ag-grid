@@ -5,14 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
-import type { GroupingApproach } from '../gridOptionsUtils';
-import {
-    _getGroupSelectsDescendants,
-    _getGroupingApproach,
-    _getRowHeightForNode,
-    _isAnimateRows,
-    _isDomLayout,
-} from '../gridOptionsUtils';
+import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type {
     ClientSideRowModelStage,
     IClientSideRowModel,
@@ -26,7 +19,7 @@ import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
-import { initRootNode } from './clientSideRootNode';
+import { initRootNode } from './clientSideRowNode';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
@@ -43,7 +36,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
-    private groupingApproach: GroupingApproach = 'group';
     private nodeMgr: ClientSideNodeManager<any> | null | undefined = undefined;
 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
@@ -67,7 +59,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public postConstruct(): void {
         const beans = this.beans;
-        this.rootNode = initRootNode(new RowNode(beans));
+        const rootNode = initRootNode(new RowNode(beans));
+        this.rootNode = rootNode;
         this.orderedStages = [
             beans.groupStage,
             beans.filterStage,
@@ -102,37 +95,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // doesn't need done if doing full reset
         // Property listeners which call `refreshModel` at different stages
         this.addPropertyListeners();
-    }
 
-    private loadNodeManager(): ClientSideNodeManager<any> | null {
-        let bean = this.nodeMgr;
-        if (bean === null) {
-            return null; // Destroyed
-        }
-        const newApproach = _getGroupingApproach(this.gos);
-        if (this.groupingApproach !== newApproach) {
-            this.groupingApproach = newApproach;
-        } else if (bean) {
-            return bean; // no change
-        }
-        const rootNode = this.rootNode;
-        const registry = this.beans.registry;
-        if (!registry.ready || !rootNode) {
-            return null; // destroyed or not ready
-        }
-        if (newApproach === 'treeNested') {
-            bean = registry.createDynamicBean<ClientSideNodeManager>('csrmNodeNestedMgr', false, rootNode);
-            if (bean) {
-                this.createBean(bean);
-            }
-        } else {
-            bean = null;
-        }
-        if (!bean) {
-            bean = this.createBean(new ClientSideNodeManager(rootNode));
-        }
-        this.nodeMgr = bean;
-        return bean ?? null;
+        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
     }
 
     private addPropertyListeners() {
@@ -246,6 +210,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onPropChange(properties: (keyof GridOptions)[]): void {
+        const nodeManager = this.nodeMgr;
+        if (!nodeManager) {
+            return; // Destroyed
+        }
+
         const gos = this.gos;
         const changedProps = new Set(properties);
         const params: RefreshModelParams = {
@@ -253,18 +222,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             changedProps,
         };
 
-        const oldNodeManager = this.nodeMgr;
-        let reset = oldNodeManager?.onPropChange(changedProps);
-
-        const nodeManager =
-            changedProps.has('treeDataChildrenField') || changedProps.has('treeData')
-                ? this.loadNodeManager()
-                : oldNodeManager;
-        reset ||= oldNodeManager !== nodeManager;
+        const reload = nodeManager.onPropChange(changedProps);
 
         let newRowData: any[] | null | undefined;
         const rowDataChanged = changedProps.has('rowData');
-        if (reset || rowDataChanged) {
+        if (rowDataChanged) {
             newRowData = gos.get('rowData');
 
             if (newRowData != null && !Array.isArray(newRowData)) {
@@ -273,23 +235,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         }
 
-        if (reset) {
+        if (reload) {
             // If we are here, it means that the row manager need to be changed or fully reloaded
             if (!rowDataChanged) {
                 // No new rowData was passed, so to include user executed transaction we need to extract
                 // the row data from the node manager as it might be different from the original rowData
-                newRowData = oldNodeManager?.extractRowData() ?? newRowData;
-            }
-
-            if (oldNodeManager !== nodeManager) {
-                this.destroyBean(oldNodeManager);
+                newRowData = nodeManager.extractRowData() ?? newRowData;
             }
             initRootNode(this.rootNode!);
         }
 
         if (newRowData && nodeManager) {
             const immutable =
-                !reset &&
+                !reload &&
                 !this.isEmpty() &&
                 newRowData.length > 0 &&
                 gos.exists('getRowId') &&
@@ -600,7 +558,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        if (!this.nodeMgr && !this.loadNodeManager()) {
+        if (!this.nodeMgr) {
             return; // destroyed or not ready
         }
 
@@ -1089,7 +1047,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * Called by gridApi & rowDragFeature
      */
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
-        const nodeManager = this.nodeMgr ?? this.loadNodeManager();
+        const nodeManager = this.nodeMgr;
         if (!nodeManager) {
             return null; // destroyed or not ready
         }
