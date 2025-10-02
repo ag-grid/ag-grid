@@ -152,7 +152,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
-        rowNode.updateDataInternal(data);
+        // this is triggered on refreshModel(), so we need to use 'external' updateData, instead of 'internal' to trigger refreshes
+        rowNode.updateData(data);
 
         if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
