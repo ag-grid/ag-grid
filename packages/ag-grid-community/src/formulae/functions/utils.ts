@@ -38,7 +38,9 @@ function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | n
 
     const agCol = column.absolute ? beans.formulae!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
-    if (!rowNode || !agCol) return null;
+    if (!rowNode || !agCol) {
+        return null;
+    }
     return { row: rowNode, column: agCol };
 }
 
@@ -48,7 +50,9 @@ export function* expandRangeAddresses(
 ): Generator<{ row: RowNode; column: AgColumn }> {
     const startRow = getRowNode(beans, cell.row);
     const startCol = getColumn(beans, cell.column);
-    if (!startRow || !startCol) return;
+    if (!startRow || !startCol) {
+        return;
+    }
 
     // Single cell
     if (!cell.endColumn || !cell.endRow) {
@@ -59,13 +63,17 @@ export function* expandRangeAddresses(
     // Range
     const endRow = getRowNode(beans, cell.endRow);
     const endCol = getColumn(beans, cell.endColumn);
-    if (!endRow || !endCol) return;
+    if (!endRow || !endCol) {
+        return;
+    }
 
     // Column indices from current column order
     const cols = beans.colModel.getCols();
     const startColIdx = cols.indexOf(startCol);
     const endColIdx = cols.indexOf(endCol);
-    if (startColIdx == null || endColIdx == null) return;
+    if (startColIdx == null || endColIdx == null) {
+        return;
+    }
 
     // Prefer native rowIndex on RowNode (display index)
     const startRowIdx = (startRow as any).rowIndex ?? 0;
@@ -78,10 +86,14 @@ export function* expandRangeAddresses(
 
     for (let ri = rowLo; ri <= rowHi; ri++) {
         const r = beans.rowModel.getRow(ri);
-        if (!r) continue;
+        if (!r) {
+            continue;
+        }
         for (let ci = colLo; ci <= colHi; ci++) {
             const c = cols[ci];
-            if (!c) continue;
+            if (!c) {
+                continue;
+            }
             yield { row: r, column: c };
         }
     }
@@ -103,12 +115,16 @@ function makeArgIterator(
             // drain inner (e.g., a range) first
             if (inner) {
                 const step = inner.next();
-                if (!step.done) return step;
+                if (!step.done) {
+                    return step;
+                }
                 inner = null;
             }
 
             // move to next operand
-            if (i >= operands.length) return { done: true, value: undefined };
+            if (i >= operands.length) {
+                return { done: true, value: undefined };
+            }
             const node = operands[i++];
 
             if (node.type === 'operand') {
@@ -124,7 +140,9 @@ function makeArgIterator(
                         return it.next(); // return first range value
                     } else {
                         const addr = resolveRefToAddress(beans, v);
-                        if (!addr) throw new FormulaError('Unknown reference to cell', '#REF!');
+                        if (!addr) {
+                            throw new FormulaError('Unknown reference to cell', '#REF!');
+                        }
                         return { done: false, value: getCellValue(addr) };
                     }
                 } else {
@@ -158,14 +176,18 @@ export function evalAst(
                 throw new FormulaError('Range is not allowed in scalar context', '#PARSE!');
             }
             const addr = resolveRefToAddress(beans, v);
-            if (!addr) throw new FormulaError('Unknown reference to cell', '#REF!');
+            if (!addr) {
+                throw new FormulaError('Unknown reference to cell', '#REF!');
+            }
             return getCellValue(addr);
         }
         return v; // primitive literal
     }
 
     const fn = beans.formulae?.getFunction(node.operation);
-    if (!fn) throw new FormulaError(`Unsupported operation ${node.operation}`, '#NAME?');
+    if (!fn) {
+        throw new FormulaError(`Unsupported operation ${node.operation}`, '#NAME?');
+    }
 
     const argIter = makeArgIterator(beans, node.operands, getCellValue);
     return fn(argIter);
@@ -210,7 +232,9 @@ export function* iterateCellAddresses(
             }
         } else {
             const ops = node.operands;
-            for (let i = ops.length - 1; i >= 0; i--) stack.push(ops[i]);
+            for (let i = ops.length - 1; i >= 0; i--) {
+                stack.push(ops[i]);
+            }
         }
     }
 }
@@ -220,11 +244,15 @@ const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Num
 
 /** Convert a value to a finite number, allowing numeric strings; else throw. */
 function coerceFiniteNumber(fname: string, v: unknown): number {
-    if (isFiniteNumber(v)) return v;
+    if (isFiniteNumber(v)) {
+        return v;
+    }
 
     if (typeof v === 'string') {
         const n = Number(v.trim());
-        if (Number.isFinite(n)) return n;
+        if (Number.isFinite(n)) {
+            return n;
+        }
     }
 
     throw new FormulaError(`${fname}: values must be numeric`, '#PARSE!');

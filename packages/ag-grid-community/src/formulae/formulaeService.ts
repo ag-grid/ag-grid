@@ -1,9 +1,9 @@
 import { _getClientSideRowModel } from '../api/rowModelApiUtils';
-import { NamedBean } from '../context/bean';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { BeanCollection } from '../context/context';
-import { AgColumn } from '../entities/agColumn';
-import { RowNode } from '../entities/rowNode';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
 import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
 import type { Cell, CellRef, FormulaNode } from './ast/utils';
@@ -16,7 +16,9 @@ import { evalAst, iterateCellAddresses } from './functions/utils';
 
 /** Return the cell's formula string if present (starts with '='); otherwise null. */
 const getFormula = (column: AgColumn, node: RowNode): string | null => {
-    if (!node.data) return null;
+    if (!node.data) {
+        return null;
+    }
 
     const { valueGetter, field } = column.colDef;
 
@@ -86,7 +88,9 @@ class CellFormula {
 
     /** Ensure we have an up-to-date AST (no evaluation here). */
     public ensureAst(): FormulaNode | null {
-        if (!this.astStale) return this.ast;
+        if (!this.astStale) {
+            return this.ast;
+        }
         const ast = parseFormula(this.beans, this.formulaString);
         this.ast = ast ?? null;
         this.astStale = false;
@@ -249,7 +253,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
             // generate a column label (A, B, C, ..., Z, AA, AB, ...)
             while (true) {
                 label = alphabet[n % base] + label;
-                if (n < base) break;
+                if (n < base) {
+                    break;
+                }
                 n = Math.floor(n / base) - 1;
             }
             map.set(label.toUpperCase(), col);
@@ -268,7 +274,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
     /** Find the A1-style label for a given column (reverse lookup). */
     public getColRef(col: AgColumn): string | null {
         for (const [label, value] of this.colRefMap.entries()) {
-            if (value === col) return label;
+            if (value === col) {
+                return label;
+            }
         }
         return null;
     }
@@ -359,7 +367,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
         if (!str) {
             // Not a formula cell — clear any stale entry
             // (Optional) if you want to keep stale CFs for diagnostics, remove the delete.
-            if (cf) rowMap.delete(col);
+            if (cf) {
+                rowMap.delete(col);
+            }
             return null;
         }
 
@@ -388,12 +398,18 @@ export class FormulaeService extends BeanStub implements NamedBean {
     public resolveValue(column: AgColumn, node: RowNode): unknown {
         // If start cell isn't a formula, return raw value.
         const startHolder = this.ensureCellFormula(node, column);
-        if (!startHolder) return this.fetchRawValue(column, node);
+        if (!startHolder) {
+            return this.fetchRawValue(column, node);
+        }
 
         // Fast path: cached value / cached error on start.
-        const cached = startHolder.tryGetCachedValue?.();
-        if (cached && cached.hit) return cached.value;
-        if (startHolder.error) return startHolder.error.type;
+        const cached = startHolder.tryGetCachedValue();
+        if (cached.hit) {
+            return cached.value;
+        }
+        if (startHolder.error) {
+            return startHolder.error.type;
+        }
 
         // Visitation state for formula cells: 0=unseen, 1=visiting, 2=done
         type Status = 0 | 1 | 2;
@@ -440,8 +456,8 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
                     // Check cached value / cached error.
                     {
-                        const cached = holder.tryGetCachedValue?.();
-                        if (cached && cached.hit) {
+                        const cached = holder.tryGetCachedValue();
+                        if (cached.hit) {
                             setStatus(row, col, 2);
                             stack.pop();
                             continue;
@@ -451,9 +467,13 @@ export class FormulaeService extends BeanStub implements NamedBean {
                             const err = holder.error;
                             for (let k = stack.length - 1; k >= 0; k--) {
                                 const anc = stack[k];
-                                if (anc.phase !== 'compute') continue;
+                                if (anc.phase !== 'compute') {
+                                    continue;
+                                }
                                 const ancCF = this.ensureCellFormula(anc.addr.row, anc.addr.column);
-                                if (ancCF) ancCF.setError(err);
+                                if (ancCF) {
+                                    ancCF.setError(err);
+                                }
                             }
                             throw err;
                         }
@@ -461,7 +481,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
                     // Parse AST and create a lazy dependency iterator.
                     const ast = holder.ensureAst();
-                    if (!ast) throw new FormulaError('Formula parsing error', '#PARSE!');
+                    if (!ast) {
+                        throw new FormulaError('Formula parsing error', '#PARSE!');
+                    }
 
                     f.ast = ast;
                     f.depIter = iterateCellAddresses(this.beans, ast);
@@ -475,7 +497,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
                     while (true) {
                         const it = f.depIter!;
                         const step = it.next();
-                        if (step.done) break;
+                        if (step.done) {
+                            break;
+                        }
 
                         const d = step.value;
                         const depHolder = this.ensureCellFormula(d.row, d.column);
@@ -485,7 +509,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
                         }
 
                         const stDep = getStatus(d.row, d.column);
-                        if (stDep === 1) throw new FormulaError('Circular reference', '#CIRCREF!');
+                        if (stDep === 1) {
+                            throw new FormulaError('Circular reference', '#CIRCREF!');
+                        }
                         if (stDep !== 2) {
                             stack.push({ addr: d, phase: 'discover' });
                             scheduled = true;
@@ -493,16 +519,22 @@ export class FormulaeService extends BeanStub implements NamedBean {
                         }
                         // else already done - keep pulling next dep
                     }
-                    if (scheduled) continue;
+                    if (scheduled) {
+                        continue;
+                    }
 
                     // All deps consumed - evaluate this AST now.
                     const ast = f.ast!;
                     const val = evalAst(this.beans, ast, (addr) => {
                         const depHolder = this.ensureCellFormula(addr.row, addr.column);
                         if (depHolder) {
-                            if (depHolder.error) throw depHolder.error;
-                            const hit = depHolder.tryGetCachedValue?.();
-                            if (hit && hit.hit) return hit.value;
+                            if (depHolder.error) {
+                                throw depHolder.error;
+                            }
+                            const hit = depHolder.tryGetCachedValue();
+                            if (hit.hit) {
+                                return hit.value;
+                            }
                             // Shouldn't happen: any formula dep should have been scheduled & computed.
                             throw new FormulaError('Internal scheduling error', '#PARSE!');
                         }
@@ -520,14 +552,20 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
                     // Mark failing cell
                     const currCF = this.ensureCellFormula(row, col);
-                    if (currCF) currCF.setError(err);
+                    if (currCF) {
+                        currCF.setError(err);
+                    }
 
                     // Mark all ancestors waiting to compute
                     for (let k = stack.length - 1; k >= 0; k--) {
                         const anc = stack[k];
-                        if (anc.phase !== 'compute') continue;
+                        if (anc.phase !== 'compute') {
+                            continue;
+                        }
                         const ancCF = this.ensureCellFormula(anc.addr.row, anc.addr.column);
-                        if (ancCF) ancCF.setError(err);
+                        if (ancCF) {
+                            ancCF.setError(err);
+                        }
                     }
 
                     throw err;
@@ -535,8 +573,8 @@ export class FormulaeService extends BeanStub implements NamedBean {
             }
 
             // Success: start cell should now have a cached value.
-            const hit = startHolder.tryGetCachedValue?.();
-            return hit && hit.hit ? hit.value : undefined;
+            const cached = startHolder.tryGetCachedValue();
+            return cached.hit ? cached.value : undefined;
         } catch (e: any) {
             const err = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e), '#PARSE!');
             startHolder.setError(err);
@@ -547,13 +585,19 @@ export class FormulaeService extends BeanStub implements NamedBean {
     /** True if the user is currently typing a formula into a focused text input. */
     public isWritingFormula = (): boolean => {
         const active = document.activeElement as HTMLInputElement | null;
-        if (!active || active.tagName !== 'INPUT' || active.type !== 'text') return false;
+        if (!active || active.tagName !== 'INPUT' || active.type !== 'text') {
+            return false;
+        }
 
         const v = active.value ?? '';
-        if (!v.startsWith('=')) return false;
+        if (!v.startsWith('=')) {
+            return false;
+        }
 
         const last = v.trim().slice(-1);
-        if (last !== '(' && last !== ',' && last !== '=') return false;
+        if (last !== '(' && last !== ',' && last !== '=') {
+            return false;
+        }
 
         return this.beans.focusSvc.doesRowOrCellHaveBrowserFocus();
     };

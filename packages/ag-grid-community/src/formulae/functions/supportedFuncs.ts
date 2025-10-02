@@ -13,7 +13,9 @@ export const PRODUCT = MULTIPLY; // alias
 
 export const DIVIDE = (it: Iterator<unknown>): number => {
     const [a, b] = readExactlyN(it, 'DIV', 2);
-    if (b === 0) throw new FormulaError('DIV: division by zero', '#PARSE!');
+    if (b === 0) {
+        throw new FormulaError('DIV: division by zero', '#PARSE!');
+    }
     return a / b;
 };
 export const DIV = DIVIDE; // alias

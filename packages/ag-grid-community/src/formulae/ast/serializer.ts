@@ -1,6 +1,6 @@
-import { ColumnModel } from '../../columns/columnModel';
+import type { ColumnModel } from '../../columns/columnModel';
 import type { BeanCollection } from '../../context/context';
-import { AgColumn } from '../../entities/agColumn';
+import type { AgColumn } from '../../entities/agColumn';
 import type { FormulaNode, FormulaOperation } from './utils';
 import type { Cell, CellRef } from './utils';
 
@@ -66,14 +66,20 @@ function quoteString(s: string): string {
 function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
     const looksLetters = /^[A-Za-z]+$/.test(ref.id);
     if (ref.absolute) {
-        if (looksLetters) return ref.id.toUpperCase();
+        if (looksLetters) {
+            return ref.id.toUpperCase();
+        }
         const label = colLabelFromId(beans, ref.id);
-        if (label) return label.toUpperCase();
+        if (label) {
+            return label.toUpperCase();
+        }
         throw `Cannot produce absolute COLUMN label from id '${ref.id}'`;
     } else {
         if (looksLetters) {
             const id = colIdFromLabel(beans, ref.id);
-            if (id) return id;
+            if (id) {
+                return id;
+            }
         }
         return ref.id;
     }
@@ -82,14 +88,20 @@ function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
 function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
     const looksDigits = /^\d+$/.test(ref.id);
     if (ref.absolute) {
-        if (looksDigits) return ref.id;
+        if (looksDigits) {
+            return ref.id;
+        }
         const idx = rowIndexFromId(beans, ref.id);
-        if (idx != null) return String(idx);
+        if (idx != null) {
+            return String(idx);
+        }
         throw `Cannot produce absolute ROW index from id '${ref.id}'`;
     } else {
         if (looksDigits) {
             const id = rowIdFromIndex(beans, Number(ref.id));
-            if (id) return id;
+            if (id) {
+                return id;
+            }
         }
         return ref.id;
     }
@@ -97,17 +109,25 @@ function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
 
 function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
     const looksLetters = /^[A-Za-z]+$/.test(ref.id);
-    if (looksLetters) return ref.id.toUpperCase();
+    if (looksLetters) {
+        return ref.id.toUpperCase();
+    }
     const label = colLabelFromId(beans, ref.id);
-    if (label) return label.toUpperCase();
+    if (label) {
+        return label.toUpperCase();
+    }
     throw `Cannot map column id '${ref.id}' to A1 label`;
 }
 
 function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
     const looksDigits = /^\d+$/.test(ref.id);
-    if (looksDigits) return Number(ref.id);
+    if (looksDigits) {
+        return Number(ref.id);
+    }
     const idx = rowIndexFromId(beans, ref.id);
-    if (idx != null) return idx;
+    if (idx != null) {
+        return idx;
+    }
     throw `Cannot map row id '${ref.id}' to A1 index`;
 }
 
@@ -142,25 +162,41 @@ function precedenceOf(op: BinaryOperator): number {
 }
 
 function needsParensInBinary(parentOp: BinaryOperator, child: FormulaNode, side: 'left' | 'right'): boolean {
-    if (!isOperationNode(child)) return false;
+    if (!isOperationNode(child)) {
+        return false;
+    }
     if (!isBinaryOp(child.operation)) {
-        if (child.operation === '%') return false;
+        if (child.operation === '%') {
+            return false;
+        }
         return false;
     }
     const pParent = precedenceOf(parentOp);
     const pChild = precedenceOf(child.operation);
-    if (pChild < pParent) return true;
-    if (pChild > pParent) return false;
+    if (pChild < pParent) {
+        return true;
+    }
+    if (pChild > pParent) {
+        return false;
+    }
 
-    if (parentOp === '^') return side === 'left' && child.operation === '^';
-    if (parentOp === '-' || parentOp === '/') return side === 'right';
+    if (parentOp === '^') {
+        return side === 'left' && child.operation === '^';
+    }
+    if (parentOp === '-' || parentOp === '/') {
+        return side === 'right';
+    }
     return false; // '+' and '*'
 }
 
 function needsParensForUnaryMinus(child: FormulaNode): boolean {
-    if (!isOperationNode(child)) return false;
+    if (!isOperationNode(child)) {
+        return false;
+    }
     if (isBinaryOp(child.operation)) {
-        if (child.operation === '^') return false; // -a^b means -(a^b)
+        if (child.operation === '^') {
+            return false;
+        } // -a^b means -(a^b)
         return true; // + - * /
     }
     return false;
@@ -183,9 +219,15 @@ export function serializeFormula(beans: BeanCollection, root: FormulaNode, useRe
     function emit(node: FormulaNode): string {
         if (node.type === 'operand') {
             const v = node.value;
-            if (typeof v === 'string') return quoteString(v);
-            if (typeof v === 'number') return String(v);
-            if (typeof v === 'boolean') return v ? 'TRUE' : 'FALSE';
+            if (typeof v === 'string') {
+                return quoteString(v);
+            }
+            if (typeof v === 'number') {
+                return String(v);
+            }
+            if (typeof v === 'boolean') {
+                return v ? 'TRUE' : 'FALSE';
+            }
             return emitCell(v as Cell);
         }
 

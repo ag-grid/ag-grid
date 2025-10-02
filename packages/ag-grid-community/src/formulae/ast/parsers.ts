@@ -26,12 +26,18 @@ export const parseOperand = (beans: BeanCollection, operand: string): string | n
     }
 
     // booleans
-    if (trimmed.toLowerCase() === 'true') return true;
-    if (trimmed.toLowerCase() === 'false') return false;
+    if (trimmed.toLowerCase() === 'true') {
+        return true;
+    }
+    if (trimmed.toLowerCase() === 'false') {
+        return false;
+    }
 
     // numbers
     const num = Number(trimmed);
-    if (!isNaN(num)) return num;
+    if (!isNaN(num)) {
+        return num;
+    }
 
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
@@ -117,7 +123,9 @@ function tokenize(expr: string): string[] {
             return true;
         };
 
-        if (!parseCell()) return 0; // not a cell/range here
+        if (!parseCell()) {
+            return 0;
+        } // not a cell/range here
 
         // Optional ":<cell>" for a range
         if (s[j] === ':') {
@@ -144,8 +152,12 @@ function tokenize(expr: string): string[] {
         // string literal "..."
         if (ch === '"') {
             let j = i + 1;
-            while (j < expr.length && expr[j] !== '"') j++;
-            if (j >= expr.length) throw new FormulaParseError('Unterminated string', i, expr.length);
+            while (j < expr.length && expr[j] !== '"') {
+                j++;
+            }
+            if (j >= expr.length) {
+                throw new FormulaParseError('Unterminated string', i, expr.length);
+            }
             tokens.push(expr.slice(i, j + 1));
             i = j + 1;
             continue;
@@ -154,7 +166,9 @@ function tokenize(expr: string): string[] {
         // numbers (simple)
         if (/[0-9]/.test(ch) || (ch === '.' && /[0-9]/.test(expr[i + 1]))) {
             let j = i + 1;
-            while (j < expr.length && /[0-9.]/.test(expr[j])) j++;
+            while (j < expr.length && /[0-9.]/.test(expr[j])) {
+                j++;
+            }
             tokens.push(expr.slice(i, j));
             i = j;
             continue;
@@ -170,7 +184,9 @@ function tokenize(expr: string): string[] {
             }
             // fall back to IDENT (function names, named refs)
             let j = i + 1;
-            while (j < expr.length && /[A-Za-z0-9]/.test(expr[j])) j++;
+            while (j < expr.length && /[A-Za-z0-9]/.test(expr[j])) {
+                j++;
+            }
             tokens.push(expr.slice(i, j));
             i = j;
             continue;
@@ -197,7 +213,9 @@ type OperatorFrame =
 
 /** '^' is right-associative: do not reduce a stacked '^' when a new '^' arrives. */
 function shouldReduceBinary(top: BinaryOperator, incoming: BinaryOperator): boolean {
-    if (top === '^' && incoming === '^') return false;
+    if (top === '^' && incoming === '^') {
+        return false;
+    }
     return BINARY_PRECEDENCE[top] >= BINARY_PRECEDENCE[incoming];
 }
 
@@ -226,19 +244,25 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
 
     const applyTop = () => {
         const frame = ops.pop();
-        if (!frame) throw new FormulaParseError('Operator stack underflow', 0, 0);
+        if (!frame) {
+            throw new FormulaParseError('Operator stack underflow', 0, 0);
+        }
 
         switch (frame.kind) {
             case 'unaryMinus': {
                 const right = output.pop();
-                if (!right) throw new FormulaParseError("Missing operand for unary '-'", 0, 0);
+                if (!right) {
+                    throw new FormulaParseError("Missing operand for unary '-'", 0, 0);
+                }
                 output.push({ type: 'operation', operation: '-', operands: [{ type: 'operand', value: 0 }, right] });
                 return;
             }
             case 'binary': {
                 const right = output.pop();
                 const left = output.pop();
-                if (!left || !right) throw new FormulaParseError(`Missing operand for '${frame.operator}'`, 0, 0);
+                if (!left || !right) {
+                    throw new FormulaParseError(`Missing operand for '${frame.operator}'`, 0, 0);
+                }
                 output.push({ type: 'operation', operation: frame.operator, operands: [left, right] });
                 return;
             }
@@ -261,7 +285,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Postfix %
         if (token === '%') {
             const last = output.pop();
-            if (!last) throw new FormulaParseError("Misplaced '%'", i, i + 1);
+            if (!last) {
+                throw new FormulaParseError("Misplaced '%'", i, i + 1);
+            }
             output.push({ type: 'operation', operation: '%', operands: [last] });
             i++;
             continue;
@@ -273,7 +299,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             const isUnary = i === 0 || prev === '(' || prev === ',' || (prev !== undefined && isBinaryOp(prev));
 
             if (isUnary) {
-                if (token === '-') ops.push({ kind: 'unaryMinus' }); // unary '+': no-op
+                if (token === '-') {
+                    ops.push({ kind: 'unaryMinus' });
+                } // unary '+': no-op
                 i++;
                 continue;
             }
@@ -334,7 +362,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // reduce until '('
             for (;;) {
                 const top = ops[ops.length - 1];
-                if (!top || top.kind === 'parenthesis') break;
+                if (!top || top.kind === 'parenthesis') {
+                    break;
+                }
                 if (top.kind === 'binary' || top.kind === 'unaryMinus') {
                     applyTop();
                 } else {
@@ -350,7 +380,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
                 throw new FormulaParseError('Comma outside of a function call', i, i + 1);
             }
             const argNode = output.pop();
-            if (argNode) maybeFunction.args.push(argNode); // ignore empty arg if none
+            if (argNode) {
+                maybeFunction.args.push(argNode);
+            } // ignore empty arg if none
             i++;
             continue;
         }
@@ -360,7 +392,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // reduce until '('
             for (;;) {
                 const top = ops[ops.length - 1];
-                if (!top || top.kind === 'parenthesis') break;
+                if (!top || top.kind === 'parenthesis') {
+                    break;
+                }
                 if (top.kind === 'binary' || top.kind === 'unaryMinus') {
                     applyTop();
                 } else {
@@ -376,7 +410,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             if (ops[ops.length - 1]?.kind === 'function') {
                 const fn = ops.pop() as Extract<OperatorFrame, { kind: 'function' }>;
                 const lastArg = output.pop();
-                if (lastArg) fn.args.push(lastArg);
+                if (lastArg) {
+                    fn.args.push(lastArg);
+                }
                 output.push({ type: 'operation', operation: fn.name, operands: fn.args });
             }
 
@@ -433,31 +469,49 @@ function isOperation(node: FormulaNode, name: string): node is FormulaOperation 
 }
 
 function asBool(node: FormulaNode | undefined, def = false): boolean {
-    if (!node) return def;
-    if (node.type !== 'operand') return def;
+    if (!node) {
+        return def;
+    }
+    if (node.type !== 'operand') {
+        return def;
+    }
     return !!node.value;
 }
 
 function asStringish(node: FormulaNode | undefined): string | null {
-    if (!node || node.type !== 'operand') return null;
+    if (!node || node.type !== 'operand') {
+        return null;
+    }
     const v = node.value;
-    if (typeof v === 'string') return v;
-    if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+    if (typeof v === 'string') {
+        return v;
+    }
+    if (typeof v === 'number' || typeof v === 'boolean') {
+        return String(v);
+    }
     return null;
 }
 
 export function extractColumnRef(node: FormulaNode): CellRef | null {
-    if (!isOperation(node, 'COLUMN')) return null;
+    if (!isOperation(node, 'COLUMN')) {
+        return null;
+    }
     const id = asStringish(node.operands[0]);
-    if (id == null) return null;
+    if (id == null) {
+        return null;
+    }
     const absolute = asBool(node.operands[1], false);
     return { id, absolute };
 }
 
 export function extractRowRef(node: FormulaNode): CellRef | null {
-    if (!isOperation(node, 'ROW')) return null;
+    if (!isOperation(node, 'ROW')) {
+        return null;
+    }
     const id = asStringish(node.operands[0]);
-    if (id == null) return null;
+    if (id == null) {
+        return null;
+    }
     const absolute = asBool(node.operands[1], false);
     return { id, absolute };
 }
@@ -468,20 +522,28 @@ export function extractRowRef(node: FormulaNode): CellRef | null {
  *  REF( COLUMN(id[,abs]), ROW(id[,abs]), COLUMN(id[,abs]), ROW(id[,abs]) ) // range
  */
 function tryFoldRefToCell(node: FormulaNode): FormulaNode | null {
-    if (!isOperation(node, 'REF')) return null;
+    if (!isOperation(node, 'REF')) {
+        return null;
+    }
     const ops = node.operands;
-    if (ops.length !== 2 && ops.length !== 4) return null;
+    if (ops.length !== 2 && ops.length !== 4) {
+        return null;
+    }
 
     const col1 = extractColumnRef(ops[0]);
     const row1 = extractRowRef(ops[1]);
-    if (!col1 || !row1) return null;
+    if (!col1 || !row1) {
+        return null;
+    }
 
     const cell: Cell = { column: col1, row: row1 };
 
     if (ops.length === 4) {
         const col2 = extractColumnRef(ops[2]);
         const row2 = extractRowRef(ops[3]);
-        if (!col2 || !row2) return null;
+        if (!col2 || !row2) {
+            return null;
+        }
         cell.endColumn = col2;
         cell.endRow = row2;
     }
