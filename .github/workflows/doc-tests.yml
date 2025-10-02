@@ -44,11 +44,16 @@ on:
         type: boolean
         required: true
         default: true
-      test-pattern:
+      test_pattern:
         description: 'Run only tests matching this pattern'
         type: string
         required: false
         default: ''
+      base_url:
+        description: 'Override base URL'
+        type: string
+        required: false
+        default: 'https://grid-staging.ag-grid.com/'
       notify:
         description: 'Notify Slack channel'
         type: boolean
@@ -79,9 +84,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
         with:
+          base_url: ${{github.event.inputs.base_url}}
           framework: vanilla
-          browsers: chromium
-          test-pattern: ${{github.event.inputs.test-pattern}}
+          browsers: all
+          test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-typescript:
     if: ${{ github.event.inputs.skip_typescript != 'true' }}
@@ -90,15 +96,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+        shardIndex: [1]
+        shardTotal: [1]
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
         with:
+          base_url: ${{github.event.inputs.base_url}}
           framework: typescript
-          browsers: all
-          test-pattern: ${{github.event.inputs.test-pattern}}
+          browsers: chromium
+          test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-reactFunctionalTs:
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
@@ -113,9 +120,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
         with:
+          base_url: ${{github.event.inputs.base_url}}
           framework: reactFunctionalTs
           browsers: all
-          test-pattern: ${{github.event.inputs.test-pattern}}
+          test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-vue3:
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
@@ -130,9 +138,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
         with:
+          base_url: ${{github.event.inputs.base_url}}
           framework: vue3
           browsers: chromium
-          test-pattern: ${{github.event.inputs.test-pattern}}
+          test_pattern: ${{github.event.inputs.test_pattern}}
 
   test-angular:
     if: ${{ github.event.inputs.skip_angular != 'true' }}
@@ -147,9 +156,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/test-framework-examples
         with:
+          base_url: ${{github.event.inputs.base_url}}
           framework: angular
           browsers: chromium
-          test-pattern: ${{github.event.inputs.test-pattern}}
+          test_pattern: ${{github.event.inputs.test_pattern}}
 
 
   test-recipes:

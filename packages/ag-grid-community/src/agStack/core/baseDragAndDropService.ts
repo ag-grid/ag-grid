@@ -1,5 +1,3 @@
-import type { MouseCapture } from '../events/mouseCapture';
-import { captureMouse, releaseMouseCapture } from '../events/mouseCapture';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -57,7 +55,6 @@ export abstract class BaseDragAndDropService<
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
-    private mouseCapture: MouseCapture | null = null;
 
     private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
@@ -78,6 +75,7 @@ export abstract class BaseDragAndDropService<
 
     public addDragSource(dragSource: TDragSource, allowTouch = false): void {
         const entry: DragSourceAndParams<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource> = {
+            capturePointer: true,
             dragSource,
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
@@ -138,10 +136,6 @@ export abstract class BaseDragAndDropService<
         this.dragInitialSourcePointerOffsetY = mouseEvent.clientY - rect.top;
 
         dragSource.onDragStarted?.();
-
-        if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
-            this.mouseCapture = captureMouse(this.beans.eRootDiv, mouseEvent);
-        }
 
         this.createAndUpdateDragImageComp(dragSource);
     }
@@ -213,7 +207,6 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
-        this.mouseCapture = releaseMouseCapture(this.mouseCapture);
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
         this.dragImageParent = null;
@@ -226,7 +219,6 @@ export abstract class BaseDragAndDropService<
         this.dragInitialSourcePointerOffsetX = 0;
         this.dragInitialSourcePointerOffsetY = 0;
         this.dragSource = null;
-        this.mouseCapture = null;
     }
 
     private getAllContainersFromDropTarget(
@@ -419,8 +411,8 @@ export abstract class BaseDragAndDropService<
 
         style.position = 'absolute';
         style.zIndex = '9999';
-        if (this.mouseCapture != null) {
-            style.pointerEvents = 'none';
+        if (this.beans.dragSvc?.hasPointerCapture()) {
+            style.pointerEvents = 'none'; // stops the ghost image from interfering with scrolling
         }
 
         this.gos.setInstanceDomData(eGui);
