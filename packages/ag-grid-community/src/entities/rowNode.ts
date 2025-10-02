@@ -300,7 +300,15 @@ export class RowNode<TData = any>
         const isRowMaster = gos.get('masterDetail');
 
         if (isRowMaster && hasMasterFunc) {
-            // this allows for master flag to be dynamic in runtime
+            /**
+             * this allows for master flag to be dynamic in runtime
+             * There are two parts to this, and this is the first bit.
+             * Second part is in rowCtrl.ts where we always refresh the row if it has a isRowMaster cb
+             *
+             * If this is ever a performance concern, we could add a property
+             * to the rowNode to say if master flag has changed here, and only
+             * then refresh the row in rowCtrl.ts
+             */
             this.master = hasMasterFunc(data);
         }
 

@@ -888,7 +888,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         /**
          * If we have isRowMaster cb, we need to always refresh, as the result of the function
          *   could have changed, eg row was master and now isn't, or vice versa.
-         * There are two parts to this, and this is a second bit.
+         * There are two parts to this, and this is the second bit.
          * First part is in rowNode.ts where row.master is set on same conditions.
          */
         if (hasRowMasterFunc && isRowMaster) {
