@@ -3,7 +3,7 @@ import { test } from '@utils/grid/test-utils';
 // Empty test file to satisfy example spec requirement
 
 test.agExample(import.meta, () => {
-    test.typescript('Example', async ({}) => {
+    test.vanilla('Example', async ({}) => {
         // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
         // await ensureGridReady(page);
         // await waitForGridContent(page);
