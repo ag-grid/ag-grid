@@ -522,10 +522,18 @@ export interface _ClientSideRowModelGridApi<TData> extends _RowModelSharedApi {
 }
 
 export interface _CsrmSsrmSharedGridApi {
-    /** Expand all groups. */
+    /**
+     * Expand all groups.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
+     */
     expandAll(): void;
 
-    /** Collapse all groups. */
+    /**
+     * Collapse all groups.
+     *
+     * @agModule `ClientSideRowModelApiModule / ServerSideRowModelApiModule`
+     */
     collapseAll(): void;
 }
 

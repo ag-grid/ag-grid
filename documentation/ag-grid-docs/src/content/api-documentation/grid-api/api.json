@@ -623,7 +623,7 @@
     "rowExpansion": {
         "meta": {
             "displayName": "Row Expand and Collapse",
-            "description": "See [Row Grouping](./grouping-opening-groups/) or [Tree Data](./tree-data-opening-groups/) for more information"
+            "description": "See [Row Grouping](./grouping-opening-groups/), [Master Detail](./master-detail/) or [Tree Data](./tree-data-opening-groups/) for more information"
         },
         "expandAll": {},
         "collapseAll": {},

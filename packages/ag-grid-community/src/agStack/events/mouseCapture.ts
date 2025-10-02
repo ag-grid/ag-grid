@@ -1,43 +1,76 @@
 export interface MouseCapture {
-    eRoot: HTMLElement;
+    eElement: HTMLElement | null;
     pointerId: number;
-    touchAction: string;
+    onLost: ((event: PointerEvent) => void) | null;
 }
 
-export const captureMouse = (eRoot: HTMLElement, mouseEvent: MouseEvent): MouseCapture | null => {
+const tryPointerCapture = (eElement: HTMLElement | null | undefined, pointerId: number | null | undefined): boolean => {
+    if (pointerId != null && eElement?.setPointerCapture) {
+        try {
+            eElement.setPointerCapture(pointerId);
+            return eElement.hasPointerCapture(pointerId);
+        } catch {
+            // Capture failed
+        }
+    }
+    return false;
+};
+
+export const captureMouse = (eElement: HTMLElement, mouseEvent: MouseEvent): MouseCapture | null => {
     if (typeof PointerEvent === 'undefined' || !(mouseEvent instanceof PointerEvent)) {
         return null;
     }
 
     const pointerId = mouseEvent.pointerId;
-    if (pointerId == null) {
+    if (!tryPointerCapture(eElement, pointerId)) {
         return null;
     }
 
-    try {
-        eRoot.setPointerCapture(pointerId);
-        const style = eRoot.style;
-        const touchAction = style.touchAction;
-        style.touchAction = 'none'; // stop touch scrolling while dragging
-        return { eRoot: eRoot, pointerId, touchAction };
-    } catch {
-        return null; // Capture failed
-    }
+    const capture = {
+        eElement: eElement,
+        pointerId,
+        onLost(pointerEvent: PointerEvent) {
+            pointerLostHandler(capture, pointerEvent);
+        },
+    } satisfies MouseCapture;
+
+    eElement.addEventListener('lostpointercapture', capture.onLost);
+    return capture;
 };
 
 export const releaseMouseCapture = (capture: MouseCapture | null): null => {
     if (!capture) {
         return null;
     }
+    removeLostHandler(capture);
 
-    const { eRoot, pointerId, touchAction } = capture;
+    const { eElement, pointerId } = capture;
+    if (!eElement) {
+        return null;
+    }
+
     try {
-        eRoot.releasePointerCapture(pointerId);
-        if (touchAction != null) {
-            eRoot.style.touchAction = touchAction;
-        }
+        eElement.releasePointerCapture(pointerId);
     } catch {
         // do nothing, just means pointer capture is not supported
     }
+    capture.eElement = null;
     return null;
+};
+
+const removeLostHandler = (capture: MouseCapture) => {
+    const { eElement, onLost } = capture;
+    if (eElement && onLost) {
+        eElement.removeEventListener('lostpointercapture', onLost);
+        capture.onLost = null;
+    }
+};
+
+/** When using touch, we might receive a lostpointercapture, try to recapture the pointer once */
+const pointerLostHandler = (capture: MouseCapture, pointerEvent: PointerEvent) => {
+    removeLostHandler(capture); // Only once
+    const { eElement, pointerId } = capture;
+    if (eElement && pointerEvent.pointerId === pointerId) {
+        tryPointerCapture(eElement, pointerId);
+    }
 };

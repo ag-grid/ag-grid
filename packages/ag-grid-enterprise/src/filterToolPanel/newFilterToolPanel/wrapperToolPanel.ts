@@ -52,7 +52,7 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
     }
 
     public refresh(params: ToolPanelNewFiltersCompParams): boolean | void {
-        this.updateParams(params);
+        this.updateParams(params, params.initialState);
         return true;
     }
 

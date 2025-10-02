@@ -1,4 +1,6 @@
 import type {
+    AgEventTypeParams,
+    AgModuleName,
     BeanCollection,
     DetailGridInfo,
     Environment,
@@ -8,6 +10,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    ModuleName,
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
@@ -116,7 +119,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc },
+            beans: { selectionSvc, findSvc, expansionSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -147,6 +150,15 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
         }
 
+        function adjustDetailsOnExpandOrCollapseAll({ source }: AgEventTypeParams['expandOrCollapseAll']) {
+            if (source === 'expandAll') {
+                return api.expandAll();
+            }
+            if (source === 'collapseAll') {
+                return api.collapseAll();
+            }
+        }
+
         function onMasterRowSelected({ node, source }: RowSelectedEvent) {
             if (node !== masterNode || source === 'masterDetail' || api.isDestroyed()) {
                 return;
@@ -155,7 +167,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
         }
 
-        // initialise selection state
+        // initialise selection and expandAll state
         api.addEventListener('firstDataRendered', () => {
             if (api.isDestroyed() || masterGridApi.isDestroyed()) return;
 
@@ -163,6 +175,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
+            const sharedApiModuleName = 'CsrmSsrmSharedApi' satisfies ModuleName;
+            const asAgModuleName = `${sharedApiModuleName}Module` as AgModuleName;
+            if (api.isModuleRegistered(asAgModuleName)) {
+                masterGridApi.addEventListener('expandOrCollapseAll', adjustDetailsOnExpandOrCollapseAll);
+                expansionSvc?.setDetailsExpansionState(api);
+            }
         });
 
         this.addDestroyFunc(() => {

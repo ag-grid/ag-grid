@@ -80,7 +80,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 33.16,
     SparklinesModule: 20,
     StatusBarModule: 27,
-    TreeDataModule: 88.17,
+    TreeDataModule: 90.17,
     ViewportRowModelModule: 27,
 };
 
@@ -134,7 +134,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 495.72 };
+export const baseModule = { modules: [], expectedSize: 501.06 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

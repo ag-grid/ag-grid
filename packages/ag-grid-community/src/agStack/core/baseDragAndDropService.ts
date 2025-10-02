@@ -46,6 +46,8 @@ export abstract class BaseDragAndDropService<
     >[] = [];
 
     private dragItem: TDragItem | null = null;
+    private dragInitialSourcePointerOffsetX: number = 0;
+    private dragInitialSourcePointerOffsetY: number = 0;
     private lastMouseEvent: MouseEvent | null = null;
     private lastDraggingEvent: TDraggingEvent | null = null;
     private dragSource: TDragSource | null = null;
@@ -130,6 +132,10 @@ export abstract class BaseDragAndDropService<
         this.lastMouseEvent = mouseEvent;
         this.dragSource = dragSource;
         this.dragItem = dragSource.getDragItem();
+
+        const rect = dragSource.eElement.getBoundingClientRect();
+        this.dragInitialSourcePointerOffsetX = mouseEvent.clientX - rect.left;
+        this.dragInitialSourcePointerOffsetY = mouseEvent.clientY - rect.top;
 
         dragSource.onDragStarted?.();
 
@@ -217,6 +223,8 @@ export abstract class BaseDragAndDropService<
         this.lastDraggingEvent = null;
         this.lastDropTarget = null;
         this.dragItem = null;
+        this.dragInitialSourcePointerOffsetX = 0;
+        this.dragInitialSourcePointerOffsetY = 0;
         this.dragSource = null;
         this.mouseCapture = null;
     }
@@ -328,7 +336,14 @@ export abstract class BaseDragAndDropService<
         mouseEvent: MouseEvent,
         fromNudge: boolean
     ): TDraggingEvent {
-        const { dragSource, dragItem, lastDraggingEvent, lastMouseEvent } = this;
+        const {
+            dragSource,
+            dragItem,
+            lastDraggingEvent,
+            lastMouseEvent,
+            dragInitialSourcePointerOffsetX,
+            dragInitialSourcePointerOffsetY,
+        } = this;
         const dropZoneTarget = dropTarget.getContainer();
         const rect = dropZoneTarget.getBoundingClientRect();
         const { clientX, clientY } = mouseEvent;
@@ -341,6 +356,8 @@ export abstract class BaseDragAndDropService<
             y: clientY - rect.top, // relative y
             vDirection: yDir > 0 ? 'down' : yDir < 0 ? 'up' : null,
             hDirection: xDir < 0 ? 'left' : xDir > 0 ? 'right' : null,
+            initialSourcePointerOffsetX: dragInitialSourcePointerOffsetX,
+            initialSourcePointerOffsetY: dragInitialSourcePointerOffsetY,
             dragSource: dragSource!,
             fromNudge,
             dragItem: dragItem!,
