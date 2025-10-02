@@ -102,7 +102,7 @@
     },
     "test": {
       "executor": "nx:noop",
-      "dependsOn": ["test:vitest"],
+      "dependsOn": ["test:vitest", "test:validate-example-specs"],
       "inputs": [],
       "outputs": [],
       "options": {
@@ -222,6 +222,14 @@
       "cache": true,
       "options": {
         "commands": ["npx tsc -p {projectRoot}/tsconfig.examples.json"]
+      }
+    },
+    "test:validate-example-specs": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": ["npx tsx scripts/validate-example-specs.ts"]
       }
     },
     "update-algolia": {
