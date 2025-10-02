@@ -54,10 +54,10 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     }
 
     public createColumns(cols: _ColumnCollections): void {
-        this.sourceColumnMap = new WeakMap();
-        this.inverseColumnMap = new WeakMap();
+        const newSourceColumnMap = new WeakMap();
+        const newInverseColumnMap = new WeakMap();
 
-        const list = this.createGroupHierarchyColumns(cols);
+        const list = this.createGroupHierarchyColumns(cols, newSourceColumnMap, newInverseColumnMap);
         const areSame = _areColIdsEqual(list, this.columns?.list ?? []);
 
         if (areSame) {
@@ -75,6 +75,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
             treeDepth,
             map: {},
         };
+        this.sourceColumnMap = newSourceColumnMap;
+        this.inverseColumnMap = newInverseColumnMap;
     }
 
     public updateColumns(_event: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
@@ -182,7 +184,11 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return colDefs;
     }
 
-    private createGroupHierarchyColumns(cols: _ColumnCollections): AgColumn[] {
+    private createGroupHierarchyColumns(
+        cols: _ColumnCollections,
+        sourceColMap: WeakMap<AgColumn, AgColumn[]>,
+        inverseColMap: WeakMap<AgColumn, AgColumn>
+    ): AgColumn[] {
         if (!this.isGroupHierarchyColsEnabled(cols)) {
             return [];
         }
@@ -196,8 +202,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                 const newCol = new AgColumn(colDef, null, colId, true);
                 this.createBean(newCol);
                 newCols.push(newCol);
-                updateMap(this.sourceColumnMap, col, newCol);
-                this.inverseColumnMap.set(newCol, col);
+                updateMap(sourceColMap, col, newCol);
+                inverseColMap.set(newCol, col);
             });
         }
 
