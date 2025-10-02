@@ -151,11 +151,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    public shouldSetMasterDetailFlag(rowNode: RowNode): boolean {
-        const treeData = this.gos.get('treeData');
-        return (treeData || !rowNode.group) && this.gos.get('masterDetail');
-    }
-
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
@@ -203,12 +198,14 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const treeData = this.gos.get('treeData');
+        const gos = this.gos;
+        const treeData = gos.get('treeData');
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
-
-        if (this.shouldSetMasterDetailFlag(rowNode)) {
+        const isTreeOrNotAGroup = treeData || !group;
+        const isMasterDetail = gos.get('masterDetail');
+        if (isTreeOrNotAGroup && isMasterDetail) {
             this.setMasterDetailInfo(rowNode);
         }
 
