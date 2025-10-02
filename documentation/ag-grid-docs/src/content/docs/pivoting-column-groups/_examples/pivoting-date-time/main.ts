@@ -24,11 +24,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         {
             field: 'date',
-            rowGroup: true,
             pivot: true,
             groupHierarchy: ['year', 'formattedMonth'],
         },
-        { field: 'country' },
+        { field: 'country', rowGroup: true },
         { field: 'sport' },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
