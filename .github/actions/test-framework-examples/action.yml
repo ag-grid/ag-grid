@@ -12,7 +12,8 @@ inputs:
   base_url:
     description: 'Override base URL'
     type: string
-    required: true
+    required: false
+    default: 'https://grid-staging.ag-grid.com/'
   test_pattern:
     description: 'Test pattern to run'
     required: false
@@ -35,7 +36,7 @@ runs:
     - name: Run ${{ inputs.framework }} Examples
       env:
         FRAMEWORK: ${{ inputs.framework }}
-        BASE_URL: ${{inputs.base_url}}
+        BASE_URL: ${{ inputs.base_url || 'https://grid-staging.ag-grid.com/' }}
       shell: bash
       run: yarn nx run ag-grid-docs:test:interactive:${{ inputs.browsers }} ${{inputs.test_pattern}} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
     

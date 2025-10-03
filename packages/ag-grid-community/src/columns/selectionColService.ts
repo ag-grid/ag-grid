@@ -1,5 +1,4 @@
 import { _removeFromArray } from '../agStack/utils/array';
-import { _addColumnDefaultAndTypes } from '../columns/columnFactoryUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
@@ -130,18 +129,12 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
     }
 
     private createSelectionColDef(def?: SelectionColumnDef): ColDef {
-        const { gos, beans } = this;
+        const { gos } = this;
         const selectionColumnDef = def ?? gos.get('selectionColumnDef');
         const enableRTL = gos.get('enableRtl');
 
-        const colId = SELECTION_COLUMN_ID;
-
         // We don't support row spanning in the selection column
-        const {
-            rowSpan: _,
-            spanRows: __,
-            ...filteredSelColDef
-        } = _addColumnDefaultAndTypes(beans, selectionColumnDef ?? {}, colId) as ColDef;
+        const { rowSpan: _, spanRows: __, ...filteredSelColDef } = (selectionColumnDef ?? {}) as ColDef;
 
         return {
             // overridable properties
@@ -162,7 +155,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             // overrides
             ...filteredSelColDef,
             // non-overridable properties
-            colId,
+            colId: SELECTION_COLUMN_ID,
             chartDataType: 'excluded',
         };
     }
