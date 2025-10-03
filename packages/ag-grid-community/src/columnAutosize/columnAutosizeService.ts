@@ -22,6 +22,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import { _isClientSideRowModel } from '../main';
 import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
@@ -47,7 +48,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private resizeOperationQueue: (() => void)[] = [];
 
     public postConstruct(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
+        const { gos } = this;
+        const autoSizeStrategy = gos.get('autoSizeStrategy');
 
         if (autoSizeStrategy) {
             let shouldHideColumns = false;
@@ -56,6 +58,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 shouldHideColumns = true;
             } else if (type === 'fitCellContents') {
                 this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
+                const rowData = gos.get('rowData');
+                shouldHideColumns = rowData != null && rowData.length > 0 && _isClientSideRowModel(gos);
             }
             if (shouldHideColumns) {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
@@ -539,6 +543,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             } else {
                 this.autoSizeAllColumns({ ...params, source });
             }
+            this.beans.colDelayRenderSvc?.revealColumns(params.type);
         });
     }
 
