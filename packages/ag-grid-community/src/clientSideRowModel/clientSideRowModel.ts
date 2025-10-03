@@ -16,8 +16,10 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { ChangedPath } from '../utils/changedPath';
+import { _fieldGetter } from '../utils/fieldGetter';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
+import type { NestedDataGetter } from './clientSideNodeManager';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { initRootNode } from './clientSideRowNode';
 import { updateRowNodeAfterFilter } from './filterStage';
@@ -33,6 +35,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     // top most node of the tree. the children are the user provided data.
     public rootNode: RowNode | null = null;
+    public rowCountReady: boolean = false;
 
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
@@ -54,8 +57,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      */
     private isRefreshingModel: boolean = false;
     private rowNodesCountReady: boolean = false;
-    private rowCountReady: boolean = false;
     private orderedStages: IRowNodeStage[];
+    private treeData = false;
 
     public postConstruct(): void {
         const beans = this.beans;
@@ -96,7 +99,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Property listeners which call `refreshModel` at different stages
         this.addPropertyListeners();
 
-        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
+        this.treeData = this.gos.get('treeData');
+        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode, this.loadNestedDataGetter()));
     }
 
     private addPropertyListeners() {
@@ -209,6 +213,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return res;
     }
 
+    private loadNestedDataGetter(): NestedDataGetter | null {
+        const gos = this.gos;
+        const field = this.treeData && gos.isModuleRegistered('TreeData') && gos.get('treeDataChildrenField');
+        return field ? _fieldGetter(field) : null;
+    }
+
     private onPropChange(properties: (keyof GridOptions)[]): void {
         const nodeManager = this.nodeMgr;
         if (!nodeManager) {
@@ -222,30 +232,32 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             changedProps,
         };
 
-        const reload = nodeManager.onPropChange(changedProps);
+        const oldNestedDataGetter = nodeManager.nestedDataGetter;
+        let nestedDataGetter = oldNestedDataGetter;
+        if (changedProps.has('treeData') || changedProps.has('treeDataChildrenField')) {
+            this.treeData = gos.get('treeData');
+            nestedDataGetter = this.loadNestedDataGetter();
+        }
+        const reload = oldNestedDataGetter !== nestedDataGetter;
 
         let newRowData: any[] | null | undefined;
         const rowDataChanged = changedProps.has('rowData');
         if (rowDataChanged) {
             newRowData = gos.get('rowData');
-
-            if (newRowData != null && !Array.isArray(newRowData)) {
+            if (newRowData && !Array.isArray(newRowData)) {
                 newRowData = null;
                 _warn(1);
             }
-        }
-
-        if (reload) {
+        } else if (reload) {
             // If we are here, it means that the row manager need to be changed or fully reloaded
-            if (!rowDataChanged) {
-                // No new rowData was passed, so to include user executed transaction we need to extract
-                // the row data from the node manager as it might be different from the original rowData
-                newRowData = nodeManager.extractRowData() ?? newRowData;
-            }
-            initRootNode(this.rootNode!);
+            // No new rowData was passed, so to include user executed transaction we need to extract
+            // the row data from the node manager as it might be different from the original rowData
+            newRowData = nodeManager.extractRowData();
         }
 
-        if (newRowData && nodeManager) {
+        nodeManager.nestedDataGetter = nestedDataGetter;
+
+        if (newRowData) {
             const immutable =
                 !reload &&
                 !this.isEmpty() &&
@@ -257,7 +269,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             if (immutable) {
                 params.keepRenderedRows = true;
-                params.animate = !this.gos.get('suppressAnimationFrame');
+                params.animate = !gos.get('suppressAnimationFrame');
                 params.changedRowNodes = new ChangedRowNodes();
                 nodeManager.setImmutableRowData(params, newRowData);
             } else {
@@ -1162,10 +1174,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // App can start using API to add transactions, so need to add data into the node manager if not started
             this.setInitialData();
         }
-    }
-
-    public isRowDataLoaded(): boolean {
-        return this.rowCountReady;
     }
 
     public override destroy(): void {

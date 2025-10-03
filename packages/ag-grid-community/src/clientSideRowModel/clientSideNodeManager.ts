@@ -1,11 +1,10 @@
 import { BeanStub } from '../context/beanStub';
-import type { GetRowIdFunc, GridOptions } from '../entities/gridOptions';
+import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _fieldGetter } from '../utils/fieldGetter';
 import { _error, _warn } from '../validation/logging';
 import type { ChangedRowNodes } from './changedRowNodes';
 import { filterRootLeafs, initRootSibling, lookupNodeByData, setAllLeafs, updateRootLeafs } from './clientSideRowNode';
@@ -20,53 +19,17 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     rowsInserted: boolean;
 }
 
-type NestedDataGetter<TData> = (data: TData | null | undefined) => TData[] | null | undefined;
+export type NestedDataGetter<TData = any> = (data: TData | null | undefined) => TData[] | null | undefined;
 
 export class ClientSideNodeManager<TData = any> extends BeanStub {
     private nextId = 0;
     private allNodesMap: { [id: string]: RowNode<TData> } = {};
-    private oldNested = false;
-    private nestedDataGetter: NestedDataGetter<TData> | null | undefined = undefined;
 
-    public constructor(public readonly rootNode: RowNode<TData>) {
+    public constructor(
+        public readonly rootNode: RowNode<TData>,
+        public nestedDataGetter: NestedDataGetter<TData> | null
+    ) {
         super();
-    }
-
-    public onPropChange(changedProps: ReadonlySet<keyof GridOptions>): boolean {
-        const fieldChanged = changedProps.has('treeDataChildrenField');
-        if (fieldChanged) {
-            this.nestedDataGetter = undefined;
-            if (this.gos.get('treeData')) {
-                return true;
-            }
-        }
-
-        if (fieldChanged || changedProps.has('treeData')) {
-            const nested = !!this.getNestedDataGetter();
-            if (this.oldNested !== nested) {
-                return true;
-            }
-            // if ((this.oldNested || this.nestedDataGetter) && this.gos.get('treeData')) {
-            //     return true;
-            // }
-        }
-        if (fieldChanged && this.oldNested) {
-            return true;
-        }
-        // if (this.oldNested && changedProps.has('treeData')) {
-        //     return true;
-        // }
-        return false;
-    }
-
-    private getNestedDataGetter(): NestedDataGetter<TData> | null {
-        let getter = this.nestedDataGetter;
-        const gos = this.gos;
-        if (getter === undefined) {
-            const field = gos.isModuleRegistered('TreeData') && gos.get('treeDataChildrenField');
-            this.nestedDataGetter = getter = field ? _fieldGetter(field) : null;
-        }
-        return gos.get('treeData') ? getter : null;
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -75,9 +38,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     public extractRowData(): TData[] | null | undefined {
         const rootNode = this.rootNode;
-        const nodes = this.oldNested ? rootNode.childrenAfterGroup : rootNode.allLeafChildren;
+        const nodes = this.nestedDataGetter ? rootNode.childrenAfterGroup : rootNode.allLeafChildren;
         if (!nodes) {
-            return null;
+            return this.gos.get('rowData');
         }
         const len = nodes.length;
         const result = new Array<TData>(len);
@@ -111,12 +74,14 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const allLeafs = new Array<RowNode<TData>>(rowData.length);
         setAllLeafs(rootNode, allLeafs);
 
-        const nestedDataGetter = this.getNestedDataGetter();
-        this.oldNested = !!nestedDataGetter;
+        const nestedDataGetter = this.nestedDataGetter;
         let writeIdx = 0;
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
+                if (!data) {
+                    continue;
+                }
                 const node = this.createRowNode(data);
                 node.sourceRowIndex = writeIdx;
                 allLeafs[writeIdx++] = node;
@@ -136,16 +101,14 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
+        const nestedDataGetter = this.nestedDataGetter;
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
         const processedNodes = new Set<RowNode<TData>>();
         const nodesToUnselect: RowNode<TData>[] = [];
-        const nestedDataGetter = this.getNestedDataGetter();
-        this.oldNested = !!nestedDataGetter;
 
-        let added = false;
         let updated = false;
         let reordered = false;
         let prevIndex = -1;
@@ -153,12 +116,15 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
+                if (!data) {
+                    continue;
+                }
                 let node = this.getRowNode(getRowIdFunc({ data, level }));
                 if (node) {
                     if (!reordered && reorder) {
                         const oldIndex = node.sourceRowIndex;
                         reordered =
-                            added || // There was an update after an insertion, so order changed
+                            adds.size > 0 || // There was an update after an insertion, so order changed
                             oldIndex <= prevIndex; // A node was moved up, so order changed
                         prevIndex = oldIndex;
                     }
@@ -174,7 +140,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     }
                     updated ||= !!nestedDataGetter && node.treeParent !== parent;
                 } else {
-                    added = true;
                     node = this.createRowNode(data);
                     adds.add(node);
                 }
@@ -193,7 +158,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const rootNode = this.rootNode;
         processChildren(rootNode, rowData, 0);
 
-        const changed = this.deleteUnusedNodes(processedNodes, nodesToUnselect, changedRowNodes) || added || reordered;
+        const changed =
+            this.deleteUnusedNodes(processedNodes, nodesToUnselect, changedRowNodes) || reordered || adds.size > 0;
 
         if (changed && updateRootLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
             params.rowNodesOrderChanged = true;
@@ -252,7 +218,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             rowsInserted: false,
         };
 
-        if (this.getNestedDataGetter()) {
+        if (this.nestedDataGetter) {
             _warn(268); // transactions not supported with treeDataChildrenField
             return updateRowDataResult;
         }
@@ -277,10 +243,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         const allLeafs = this.rootNode.allLeafChildren!;
         const allLeafsLen = allLeafs.length;
-
         let addIndex = allLeafsLen;
         if (typeof rowDataTran.addIndex === 'number') {
-            addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
+            addIndex = sanitizeAddIndex(allLeafsLen, rowDataTran.addIndex);
             const gos = this.gos;
             if (addIndex > 0 && gos.get('treeData') && gos.get('getDataPath')) {
                 addIndex = adjustAddIndexForDataPath(allLeafs, addIndex);
@@ -385,8 +350,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     private deselect(nodesToUnselect: RowNode<TData>[]): void {
         const source = 'rowDataChanged';
         const selectionSvc = this.beans.selectionSvc;
-        const selectionChanged = nodesToUnselect.length > 0;
-        if (selectionChanged) {
+        if (nodesToUnselect.length) {
             selectionSvc?.setNodesSelected({
                 newValue: false,
                 nodes: nodesToUnselect,
@@ -401,7 +365,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         // all other selected children).
         selectionSvc?.updateGroupsFromChildrenSelections?.(source);
 
-        if (selectionChanged) {
+        if (nodesToUnselect.length) {
             this.eventSvc.dispatchEvent({
                 type: 'selectionChanged',
                 source: source,
@@ -409,19 +373,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 serverSideState: null,
             });
         }
-    }
-
-    private sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
-            return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
-        }
-
-        // Ensure index is a whole number and not a floating point.
-        // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
-        // If the array has an odd number of elements, the addIndex need to be rounded up.
-        // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
-        return Math.ceil(addIndex);
     }
 
     private createRowNode(data: TData): RowNode<TData> {
@@ -458,6 +409,18 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return null;
     }
 }
+
+const sanitizeAddIndex = (allLeafsLen: number, addIndex: number): number => {
+    if (addIndex < 0 || addIndex >= allLeafsLen || Number.isNaN(addIndex)) {
+        return allLeafsLen; // Append. Also for negative values, as it was historically the behavior.
+    }
+
+    // Ensure index is a whole number and not a floating point.
+    // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
+    // If the array has an odd number of elements, the addIndex need to be rounded up.
+    // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
+    return Math.ceil(addIndex);
+};
 
 /**
  * Adjusts addIndex for treeData scenarios (AG-6231 workaround).

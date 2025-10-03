@@ -32,6 +32,7 @@ export type ClientSideRowModelStage =
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
+    readonly rowCountReady: boolean;
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(params: RefreshModelParams): void;
@@ -50,7 +51,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     flushAsyncTransactions(): void;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
-    isRowDataLoaded(): boolean;
 
     /**
      * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead
