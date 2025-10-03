@@ -214,14 +214,13 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const allLeafs = this.rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafs.length; i < len; i++) {
             const node = allLeafs[i];
-            if (processedNodes.has(node)) {
-                continue;
-            }
-            nodesRemoved = true;
-            this.deleteNode(node);
-            changedRowNodes.remove(node);
-            if (node.isSelected()) {
-                nodesToUnselect.push(node);
+            if (!processedNodes.has(node)) {
+                nodesRemoved = true;
+                this.deleteNode(node);
+                changedRowNodes.remove(node);
+                if (node.isSelected()) {
+                    nodesToUnselect.push(node);
+                }
             }
         }
         return nodesRemoved;
