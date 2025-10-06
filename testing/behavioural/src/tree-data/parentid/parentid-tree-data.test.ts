@@ -203,7 +203,6 @@ describe('ag-grid tree data parent id', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        console.log('update grid options');
         api.updateGridOptions({
             rowData: rowData1,
             treeData: true,
