@@ -927,12 +927,12 @@ export interface Props<TData> {
     aggFuncs?: { [key: string]: IAggFunc<TData> } | undefined,
     /** A map of 'function name' to 'function' for custom functions that are used for formulae.
          * @initial
-         * @agModule ?
+         * @agModule `FormulaeModule`
          */
     formulaeFuncs?: ({ [key: string]: (args: any[]) => any }) | undefined,
     /** Enable or disable the processing of cell formulae
          * @initial
-         * @agModule ?
+         * @agModule `FormulaeModule`
          */
     enableFormulae?: boolean | undefined,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
