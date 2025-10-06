@@ -69,6 +69,10 @@
             {
                 "name": "Sitemap",
                 "url": "/sitemap"
+            },
+            {
+                "name": "Contact Us",
+                "url": "/about#contact-section"
             }
         ]
     },
