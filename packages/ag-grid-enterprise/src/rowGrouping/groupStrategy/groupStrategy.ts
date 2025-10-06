@@ -98,33 +98,39 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
         changedPath.forEachChangedNodeDepthFirst((group: RowNode) => {
-            const childrenAfterGroup = group.childrenAfterGroup;
-            const childrenAfterGroupLen = childrenAfterGroup?.length;
-            if (!childrenAfterGroupLen) {
+            const children = group.childrenAfterGroup;
+            const childrenLen = children?.length;
+            if (!childrenLen) {
                 return;
             }
-            const leafNodes: RowNode[] = [];
-            const groupNodes: RowNode[] = [];
+            const newChildren = new Array<RowNode>(childrenLen); // preallocate
+            let writeIdx = 0;
+            let changed = false;
             let unbalancedNode: RowNode | undefined;
-            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                const row = childrenAfterGroup[i];
-                if (!row.childrenAfterGroup?.length) {
-                    leafNodes.push(row);
-                } else if (row.key === '' && !unbalancedNode) {
-                    unbalancedNode = row;
-                } else {
-                    groupNodes.push(row);
+            for (let readIdx = 0; readIdx < childrenLen; ++readIdx) {
+                const node = children[readIdx];
+                if (!node.childrenAfterGroup?.length) {
+                    changed ||= writeIdx !== readIdx;
+                    newChildren[writeIdx++] = node; // append the leaf nodes
+                } else if (!unbalancedNode && node.key === '') {
+                    unbalancedNode = node;
+                    const last = childrenLen - 1;
+                    changed ||= readIdx !== last;
+                    newChildren[last] = node; // first unbalanced at the end
                 }
             }
-
-            if (unbalancedNode) {
-                groupNodes.push(unbalancedNode);
-            }
-
-            group.childrenAfterGroup = [...leafNodes, ...groupNodes];
-            const sibling = group.sibling;
-            if (sibling) {
-                sibling.childrenAfterGroup = group.childrenAfterGroup;
+            if (changed) {
+                for (let readIdx = 0; readIdx < childrenLen; ++readIdx) {
+                    const node = children[readIdx];
+                    if (node.childrenAfterGroup?.length && node !== unbalancedNode) {
+                        newChildren[writeIdx++] = node; // append the group nodes
+                    }
+                }
+                group.childrenAfterGroup = newChildren;
+                const sibling = group.sibling;
+                if (sibling) {
+                    sibling.childrenAfterGroup = newChildren;
+                }
             }
         }, false);
     }
