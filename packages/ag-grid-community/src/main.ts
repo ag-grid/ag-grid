@@ -1186,10 +1186,10 @@ export {
 } from './interfaces/iContextMenu';
 export type {
     IRowNodeStage,
-    NestedDataGetter,
-    ParentIdGetter,
     IRowGroupStage,
     StageExecuteParams,
+    NestedDataGetter,
+    ParentIdGetter,
 } from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
