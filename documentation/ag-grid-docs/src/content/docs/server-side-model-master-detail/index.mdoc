@@ -109,9 +109,10 @@ const gridOptions = {
     ]
 }
 ```
+When you want to expand all master rows and their corresponding detail grids, you can use the grid API method `expandAll()`. However, keep in mind that expanding all rows in a hierarchy of master-detail grids requires additional configuration for nested grids. See [SSRM Expand All / Collapse All](./server-side-model-grouping/#expand-all--collapse-all) for more details.
 
 {% note %}
-Note that `ssrmExpandAllAffectsAllRows` is not automatically propagated to nested detail grids. Even if set to `true` on the master grid, it only controls expansion at the master level. To expand all rows in nested detail grids (e.g., in a hierarchy of master-detail grids), you must explicitly set `ssrmExpandAllAffectsAllRows: true` on each detail grid’s `detailGridOptions`. See [SSRM Expand All / Collapse All](./server-side-model-grouping/#expand-all--collapse-all) for more details. 
+Note that `ssrmExpandAllAffectsAllRows` is not automatically propagated to nested detail grids. Even if set to `true` on the master grid, it only controls expansion at the master level. To expand all rows in nested detail grids (e.g., in a hierarchy of master-detail grids), you must explicitly set `ssrmExpandAllAffectsAllRows: true` on each detail grid’s `detailGridOptions`. 
 {% /note %}
 
 ## Combining Tree Data with Master Detail
