@@ -7,7 +7,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
 import type { ChangedRowNodes } from './changedRowNodes';
-import { filterRootLeafs, initRootSibling, lookupNodeByData, setAllLeafs, updateRootLeafs } from './clientSideRowNode';
+import { filterRootLeafs, initRootNode, lookupNodeByData, setAllLeafs, updateRootLeafs } from './clientSideRowNode';
 
 export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     changedRowNodes: ChangedRowNodes<TData>;
@@ -49,13 +49,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
-        rootNode.childrenAfterFilter = null;
-        rootNode.childrenAfterGroup = null;
-        rootNode.childrenAfterAggFilter = null;
-        rootNode.childrenAfterSort = null;
-        rootNode.childrenMapped = null;
-        rootNode.updateHasChildren();
-        initRootSibling(rootNode);
+        initRootNode(rootNode);
 
         // Clear internal maps
         this.allNodesMap = {};

@@ -11,8 +11,8 @@ export const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TDa
     rootNode.childrenAfterSort = [];
     rootNode.childrenAfterAggFilter = [];
     rootNode.childrenAfterFilter = [];
-
     initRootSibling(rootNode);
+    rootNode.updateHasChildren();
     return rootNode;
 };
 
