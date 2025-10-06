@@ -147,8 +147,8 @@ export class ValueService extends BeanStub implements NamedBean {
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
         let value = this.getValue(column, node, ignoreAggData, source);
 
-        if (this.beans.formulae?.isFormula(value)) {
-            value = this.beans.formulae.resolveValue(column, node as RowNode);
+        if (this.beans.formula?.isFormula(value)) {
+            value = this.beans.formula.resolveValue(column, node as RowNode);
         }
 
         const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);

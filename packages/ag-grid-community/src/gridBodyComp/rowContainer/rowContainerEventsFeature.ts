@@ -87,7 +87,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         // probably a better place to do this
-        if (this.beans.formulae?.isWritingFormula()) {
+        if (this.beans.formula?.isWritingFormula()) {
             mouseEvent.preventDefault();
             mouseEvent.stopImmediatePropagation();
             return;

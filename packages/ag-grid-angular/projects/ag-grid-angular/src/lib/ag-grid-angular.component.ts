@@ -1105,16 +1105,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
-    /** A map of 'function name' to 'function' for custom functions that are used for formulae.
+    /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
-     * @agModule `FormulaeModule`
+     * @agModule `FormulaModule`
      */
-    @Input() public formulaeFuncs: { [key: string]: (args: any[]) => any } | undefined = undefined;
-    /** Enable or disable the processing of cell formulae
+    @Input() public formulaFuncs: { [key: string]: (args: any[]) => any } | undefined = undefined;
+    /** Enable or disable the processing of cell formulas
      * @initial
-     * @agModule `FormulaeModule`
+     * @agModule `FormulaModule`
      */
-    @Input({ transform: booleanAttribute }) public enableFormulae: boolean | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public enableFormulas: boolean | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`

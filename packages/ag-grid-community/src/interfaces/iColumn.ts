@@ -73,7 +73,7 @@ export type ColumnEventName =
     | 'headerHighlightChanged'
     | 'sortChanged'
     | 'colDefChanged'
-    | 'formulaeRefChanged'
+    | 'formulaRefChanged'
     | 'menuVisibleChanged'
     | 'columnRowGroupChanged'
     | 'columnPivotChanged'
@@ -89,8 +89,8 @@ export enum ColumnHighlightPosition {
 
 export interface Column<TValue = any>
     extends IHeaderColumn<TValue, ColumnEventName>,
-        IProvidedColumn,
-        IEventEmitter<ColumnEventName> {
+    IProvidedColumn,
+    IEventEmitter<ColumnEventName> {
     /**
      * Returns the column definition provided by the application.
      * This may not be correct, as items can be superseded by default column options.

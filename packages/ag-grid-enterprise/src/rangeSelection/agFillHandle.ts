@@ -441,7 +441,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         rowNode: RowNode;
         idx: number;
     }): { value: any; fromUserFunction: boolean; sourceCol?: AgColumn; sourceRowNode?: RowNode } {
-        const { formulae, valueSvc } = this.beans;
+        const { formula, valueSvc } = this.beans;
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
 
@@ -500,8 +500,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
             // Compute the cyclic source for this target cell (fallback when not using a formula)
             const { value: cyclicValue, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
 
-            const processedValue = formulae?.isFormula(valueForFunctions)
-                ? formulae.updateFormulaByOffset(valueForFunctions, direction)
+            const processedValue = formula?.isFormula(valueForFunctions)
+                ? formula.updateFormulaByOffset(valueForFunctions, direction)
                 : cyclicValue;
 
             return { value: processedValue, fromUserFunction: false, sourceCol, sourceRowNode };

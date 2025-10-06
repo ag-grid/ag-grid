@@ -285,7 +285,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private checkFormulaError() {
-        const isFormulaError = !!this.beans.formulae?.getFormulaError(this.column, this.rowNode);
+        const isFormulaError = !!this.beans.formula?.getFormulaError(this.column, this.rowNode);
         this.eGui.classList.toggle('formula-error', isFormulaError);
     }
 
@@ -1051,7 +1051,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // used by spannedCellCtrl
-    public refreshAriaRowIndex(): void {}
+    public refreshAriaRowIndex(): void { }
 
     /**
      * Returns the root element of the cell, could be a span container rather than the cell element.

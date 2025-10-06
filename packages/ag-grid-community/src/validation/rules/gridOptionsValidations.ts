@@ -155,7 +155,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
-    enableFormulae: 'Formulae',
+    enableFormulas: 'Formula',
 };
 
 /**
@@ -546,18 +546,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
-        enableFormulae: {
+        enableFormulas: {
             supportedRowModels: ['clientSide'],
             validate: (options) => {
                 if (!options.getRowId) {
-                    return '`getRowId` is required when `enableFormulae` is true.';
+                    return '`getRowId` is required when `enableFormulas` is true.';
                 }
                 if (options.pivotMode) {
-                    return '`pivotMode` cannot be used with `enableFormulae`.';
+                    return '`pivotMode` cannot be used with `enableFormulas`.';
                 }
                 return null;
-            },
-        },
+            }
+        }
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {

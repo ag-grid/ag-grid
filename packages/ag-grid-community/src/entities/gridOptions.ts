@@ -1098,17 +1098,17 @@ export interface GridOptions<TData = any> {
     aggFuncs?: { [key: string]: IAggFunc<TData> };
 
     /**
-     * A map of 'function name' to 'function' for custom functions that are used for formulae.
+     * A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
-     * @agModule `FormulaeModule`
+     * @agModule `FormulaModule`
      */
-    formulaeFuncs?: { [key: string]: (args: any[]) => any };
+    formulaFuncs?: { [key: string]: (args: any[]) => any };
     /**
-     * Enable or disable the processing of cell formulae
+     * Enable or disable the processing of cell formulas
      * @initial
-     * @agModule `FormulaeModule`
+     * @agModule `FormulaModule`
      */
-    enableFormulae?: boolean;
+    enableFormulas?: boolean;
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
@@ -2902,7 +2902,7 @@ export interface ChartRef {
     setMaximized: (maximized: boolean) => void;
 }
 
-export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
+export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef { }
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2921,7 +2921,7 @@ export interface ServerSideGroupLevelParams {
 
 /**
  * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
 export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
     (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;

@@ -51,7 +51,7 @@ class CellFormula {
         public readonly column: AgColumn,
         public formulaString: string,
         private readonly beans: BeanCollection
-    ) {}
+    ) { }
 
     public setFormulaString(next: string) {
         if (this.formulaString === next) {
@@ -98,8 +98,8 @@ class CellFormula {
     }
 }
 
-export class FormulaeService extends BeanStub implements NamedBean {
-    public readonly beanName = 'formulae' as const;
+export class FormulaService extends BeanStub implements NamedBean {
+    public readonly beanName = 'formula' as const;
 
     /** Cache: row -> (column -> CellFormula) */
     private cachedResult: WeakMap<RowNode, WeakMap<AgColumn, CellFormula>> = new WeakMap();
@@ -107,15 +107,15 @@ export class FormulaeService extends BeanStub implements NamedBean {
     /** Map "A", "B", ..., "AA" -> actual AgColumn */
     private colRefMap: Map<string, AgColumn> = new Map();
 
-    /** Built-in operations (extendable via gridOptions.formulaeFuncs). */
+    /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     // eslint-disable-next-line @typescript-eslint/ban-types
     private supportedOperations: Map<string, Function>;
 
-    private formulaeEnabled = false;
+    private formulasEnabled = false;
 
     public postConstruct(): void {
-        this.formulaeEnabled = this.gos.get('enableFormulae') === true;
-        if (!this.formulaeEnabled) {
+        this.formulasEnabled = this.gos.get('enableFormulas') === true;
+        if (!this.formulasEnabled) {
             return;
         }
 
@@ -240,7 +240,7 @@ export class FormulaeService extends BeanStub implements NamedBean {
         this.supportedOperations.set('%', SUPPORTED_FUNCTIONS.PERCENT);
 
         // Register custom functions, not reactive.
-        const customFuncs = this.gos.get('formulaeFuncs');
+        const customFuncs = this.gos.get('formulaFuncs');
         if (customFuncs) {
             Object.keys(customFuncs).forEach((name) => {
                 this.supportedOperations.set(name, customFuncs[name]!);
@@ -269,9 +269,9 @@ export class FormulaeService extends BeanStub implements NamedBean {
                 }
                 n = Math.floor(n / base) - 1;
             }
-            if (col.formulaeRef !== label.toUpperCase()) {
-                col.formulaeRef = label.toUpperCase();
-                col.dispatchColEvent('formulaeRefChanged', 'api');
+            if (col.formulaRef !== label.toUpperCase()) {
+                col.formulaRef = label.toUpperCase();
+                col.dispatchColEvent('formulaRefChanged', 'api');
             }
             map.set(label.toUpperCase(), col);
         });
@@ -318,7 +318,7 @@ export class FormulaeService extends BeanStub implements NamedBean {
      * Is a value a formula string (starts with '=')
      **/
     public isFormula(value: unknown): value is string {
-        return this.formulaeEnabled && typeof value === 'string' && value.startsWith('=');
+        return this.formulasEnabled && typeof value === 'string' && value.startsWith('=');
     }
 
     /**

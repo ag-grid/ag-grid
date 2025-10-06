@@ -158,7 +158,8 @@ export type CommunityModuleName =
     | 'UndoRedoEdit'
     | 'Validation'
     | 'ValueCache'
-    | 'CellSpan';
+    | 'CellSpan'
+    | 'Formula';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -172,7 +173,6 @@ export type EnterpriseModuleName =
     | 'ExcelExport'
     | 'FiltersToolPanel'
     | 'Find'
-    | 'Formulae'
     | 'GridCharts'
     | 'IntegratedCharts'
     | 'GroupFilter'
@@ -239,7 +239,7 @@ export type AgModuleName =
     | 'UndoRedoEditModule'
     | 'ValidationModule'
     | 'ValueCacheModule'
-    | 'FormulaeModule'
+    | 'FormulaModule'
     | 'CellSpanModule'
     // Enterprise
     | 'AdvancedFilterModule'

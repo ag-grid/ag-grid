@@ -144,7 +144,7 @@ export class TooltipService extends BeanStub implements NamedBean {
             const colDef = column.getColDef();
             const data = rowNode.data;
 
-            const error = this.beans.formulae?.getFormulaError(column, rowNode);
+            const error = this.beans.formula?.getFormulaError(column, rowNode);
             if (error) {
                 return error.message;
             }

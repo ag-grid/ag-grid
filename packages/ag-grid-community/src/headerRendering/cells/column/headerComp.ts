@@ -94,7 +94,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.workOutTemplate(params, !!this.beans?.sortSvc) != this.currentTemplate ||
             this.workOutShowMenu() != this.currentShowMenu ||
             params.enableSorting != this.currentSort ||
-            (params.column as AgColumn).formulaeRef != this.currentRef ||
+            (params.column as AgColumn).formulaRef != this.currentRef ||
             (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
             oldParams.enableFilterButton != params.enableFilterButton ||
             oldParams.enableFilterIcon != params.enableFilterIcon
@@ -120,8 +120,8 @@ export class HeaderComp extends Component implements IHeaderComp {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         } else {
-            const isFormulae = this.beans.gos.get('enableFormulae');
-            return getHeaderCompElementParams(isFormulae, isSorting);
+            const isFormulas = this.beans.gos.get('enableFormulas');
+            return getHeaderCompElementParams(isFormulas, isSorting);
         }
     }
 
@@ -293,7 +293,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (!eColRef) {
             return;
         }
-        this.currentRef = (params.column as AgColumn).formulaeRef;
+        this.currentRef = (params.column as AgColumn).formulaRef;
         eColRef.textContent = this.currentRef;
         _setDisplayed(eColRef, !!this.currentRef);
     }

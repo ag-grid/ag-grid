@@ -48,7 +48,7 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
         const [, absCol1, col1, absRow1, row1, absCol2, col2, absRow2, row2] = match;
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string): Cell => {
-            const col = colAbs ? colStr.toUpperCase() : beans.formulae?.getColByRef(colStr)?.colId;
+            const col = colAbs ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
             const row = rowAbs ? rowStr : beans.rowModel?.getRow(Number(rowStr) - 1)?.id; // TODO handle NaN
 
             if (col == null || row == null) {
@@ -309,7 +309,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // binary '+' / '-'
             reducePendingUnaryMinus();
 
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -327,7 +327,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         if (isBinaryOp(token)) {
             reducePendingUnaryMinus();
 
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -360,7 +360,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -390,7 +390,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;

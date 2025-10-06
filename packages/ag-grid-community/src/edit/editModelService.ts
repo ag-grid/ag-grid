@@ -288,8 +288,8 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const { rowNode, column } = position;
         if (column && !map.has(column)) {
             let value = this.beans.valueSvc.getValue(column as AgColumn, rowNode, false, 'api');
-            if (this.beans.formulae?.isFormula(value)) {
-                value = this.beans.formulae?.normaliseFormula(value, true);
+            if (this.beans.formula?.isFormula(value)) {
+                value = this.beans.formula?.normaliseFormula(value, true);
             }
 
             map.set(column, {

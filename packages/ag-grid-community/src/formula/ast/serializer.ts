@@ -22,12 +22,12 @@ const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'o
 function colLabelFromId(beans: BeanCollection, colId: string): string | null {
     const col = beans.colModel.getColById(colId);
     if (col) {
-        return beans.formulae?.getColRef(col) ?? null;
+        return beans.formula?.getColRef(col) ?? null;
     }
     return null;
 }
 function colIdFromLabel(beans: BeanCollection, label: string): string | null {
-    return beans.formulae?.getColByRef?.(label)?.colId ?? null;
+    return beans.formula?.getColByRef?.(label)?.colId ?? null;
 }
 
 export function colIndexFromId(colModel: ColumnModel, cols: AgColumn[], colId: string): number | null {

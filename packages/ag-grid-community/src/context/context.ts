@@ -37,7 +37,7 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
-import type { FormulaeService } from '../formulae/formulaeService';
+import type { FormulaService } from '../formula/formulaService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -123,7 +123,7 @@ import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
 
-export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> {}
+export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> { }
 
 export type DynamicBeanName =
     | 'detailCellRendererCtrl'
@@ -197,8 +197,7 @@ export type UserComponentName =
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
     | 'agTotalAndFilteredRowCountComponent'
-    | 'agFindCellRenderer'
-    | 'agFormulaEditor';
+    | 'agFindCellRenderer';
 
 interface ComponentMetaWithParams {
     classImp: ClassImp;
@@ -358,7 +357,7 @@ interface CoreBeanCollection
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
-    formulae?: FormulaeService;
+    formula?: FormulaService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -397,4 +396,4 @@ type UntypedBeanNames =
     | 'ssrmStoreUtils'
     | 'statusBarSvc'
     | 'testIdSvc'
-    | 'formulae';
+    | 'formula';

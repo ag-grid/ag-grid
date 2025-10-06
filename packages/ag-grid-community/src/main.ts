@@ -1334,6 +1334,7 @@ export { RenderApiModule } from './rendering/renderModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 export { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 export { CellSpanModule } from './rendering/spanning/cellSpanModule';
+export { FormulaModule } from './formula/formulaModule';
 export { ValueCacheModule, CellApiModule } from './valueService/valueModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { ColumnHoverModule } from './columns/columnHover/columnHoverModule';

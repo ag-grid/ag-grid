@@ -19,7 +19,7 @@ function getRowNode(beans: BeanCollection, cellRef: CellRef): RowNode | undefine
 
 function getColumn(beans: BeanCollection, cellRef: CellRef): AgColumn | undefined {
     if (cellRef.absolute) {
-        return beans.formulae?.getColByRef(cellRef.id) ?? undefined;
+        return beans.formula?.getColByRef(cellRef.id) ?? undefined;
     } else {
         return beans.colModel.getColById(cellRef.id) ?? undefined;
     }
@@ -34,7 +34,7 @@ function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | n
 
     const rowNode = row.absolute ? beans.rowModel.getRow(Number(row.id) - 1) : beans.rowModel.getRowNode(row.id);
 
-    const agCol = column.absolute ? beans.formulae!.getColByRef(column.id) : beans.colModel.getColById(column.id);
+    const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
     if (!rowNode || !agCol) {
         return null;
@@ -179,7 +179,7 @@ export function evalAst(
         return v; // primitive literal
     }
 
-    const fn = beans.formulae?.getFunction(node.operation);
+    const fn = beans.formula?.getFunction(node.operation);
     if (!fn) {
         throw new FormulaError(`Unsupported operation ${node.operation}`, '#NAME?');
     }

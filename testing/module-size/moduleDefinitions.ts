@@ -6,7 +6,7 @@ import type {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 6.88,
-    AllCommunityModule: 482.0,
+    AllCommunityModule: 506.53,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 64.61,
@@ -40,18 +40,19 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowSelectionModule: 34.59,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
-    SelectEditorModule: 78.75,
+    SelectEditorModule: 81.29,
     TextEditorModule: 66.67,
     TextFilterModule: 124,
-    TooltipModule: 23.68,
+    TooltipModule: 24.69,
     UndoRedoEditModule: 69.34,
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
+    FormulaModule: 19.08,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1498.82,
+    AllEnterpriseModule: 1520.3,
     BatchEditModule: 81.15,
     CellSelectionModule: 55,
     ClipboardModule: 46.04,

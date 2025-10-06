@@ -247,9 +247,9 @@ function _createEditorParams(
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;
-    if (beans.formulae?.isFormula(paramsValue)) {
+    if (beans.formula?.isFormula(paramsValue)) {
         // normalise to shorthand for editing
-        paramsValue = beans.formulae?.normaliseFormula(paramsValue, true) ?? paramsValue;
+        paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
     }
 
     return _addGridCommonParams(gos, {
@@ -376,8 +376,8 @@ export function _syncFromEditor(
         });
     }
 
-    const normalised = beans.formulae?.isFormula(editorValue)
-        ? beans.formulae?.normaliseFormula(editorValue, true) ?? editorValue
+    const normalised = beans.formula?.isFormula(editorValue)
+        ? beans.formula?.normaliseFormula(editorValue, true) ?? editorValue
         : editorValue;
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
@@ -391,7 +391,7 @@ export function _syncFromEditor(
 }
 
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
-    const { editModelSvc, formulae } = beans;
+    const { editModelSvc, formula } = beans;
 
     const edit = editModelSvc?.getEdit(position, true);
 
@@ -400,9 +400,9 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
     /**
      * Formulas, if the input value has relative references, the formula needs to be normalised.
      */
-    if (formulae?.isFormula(value)) {
+    if (formula?.isFormula(value)) {
         // don't save modified version if formula did not parse
-        const normalisedFormula = formulae.normaliseFormula(value);
+        const normalisedFormula = formula.normaliseFormula(value);
         if (normalisedFormula) {
             value = normalisedFormula;
         }
@@ -458,10 +458,10 @@ export function _destroyEditor(
             const args = enableGroupEditing
                 ? groupEditOverrides(params, edit)
                 : {
-                      valueChanged: false,
-                      newValue: undefined,
-                      oldValue: edit.sourceValue,
-                  };
+                    valueChanged: false,
+                    newValue: undefined,
+                    oldValue: edit.sourceValue,
+                };
             dispatchEditingStopped(beans, position, args, params);
         }
 
@@ -492,13 +492,13 @@ export function _destroyEditor(
         const args = enableGroupEditing
             ? groupEditOverrides(params, latest)
             : {
-                  valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-                  newValue:
-                      params?.cancel || latest.editorState.isCancelAfterEnd
-                          ? undefined
-                          : latest?.editorValue ?? edit?.pendingValue,
-                  oldValue: latest?.sourceValue,
-              };
+                valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
+                newValue:
+                    params?.cancel || latest.editorState.isCancelAfterEnd
+                        ? undefined
+                        : latest?.editorValue ?? edit?.pendingValue,
+                oldValue: latest?.sourceValue,
+            };
 
         dispatchEditingStopped(beans, position, args, params);
     }
@@ -509,17 +509,17 @@ type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' |
 function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Readonly<EditValue>): EditingStoppedArgs {
     return params?.cancel
         ? {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: undefined,
-              value: latest.sourceValue,
-          }
+            valueChanged: false,
+            oldValue: latest.sourceValue,
+            newValue: undefined,
+            value: latest.sourceValue,
+        }
         : {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: latest.pendingValue,
-              value: latest.sourceValue,
-          };
+            valueChanged: false,
+            oldValue: latest.sourceValue,
+            newValue: latest.pendingValue,
+            value: latest.sourceValue,
+        };
 }
 
 function dispatchEditingStopped(
