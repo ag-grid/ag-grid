@@ -61,6 +61,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const beans = this.beans;
         const rootNode = initRootNode(new RowNode(beans));
         this.rootNode = rootNode;
+        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
+
         this.orderedStages = [
             beans.groupStage,
             beans.filterStage,
@@ -95,8 +97,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // doesn't need done if doing full reset
         // Property listeners which call `refreshModel` at different stages
         this.addPropertyListeners();
-
-        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
     }
 
     private addPropertyListeners() {
