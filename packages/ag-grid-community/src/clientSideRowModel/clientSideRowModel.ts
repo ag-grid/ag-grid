@@ -19,7 +19,6 @@ import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
-import { initRootNode } from './clientSideRowNode';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
@@ -59,7 +58,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public postConstruct(): void {
         const beans = this.beans;
-        const rootNode = initRootNode(new RowNode(beans));
+        const rootNode = new RowNode(beans);
         this.rootNode = rootNode;
         this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
 
