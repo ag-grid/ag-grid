@@ -1100,13 +1100,13 @@ export interface GridOptions<TData = any> {
     /**
      * A map of 'function name' to 'function' for custom functions that are used for formulae.
      * @initial
-     * @agModule ?
+     * @agModule `FormulaeModule`
      */
     formulaeFuncs?: { [key: string]: (args: any[]) => any };
     /**
      * Enable or disable the processing of cell formulae
      * @initial
-     * @agModule ?
+     * @agModule `FormulaeModule`
      */
     enableFormulae?: boolean;
     /**
@@ -2902,7 +2902,7 @@ export interface ChartRef {
     setMaximized: (maximized: boolean) => void;
 }
 
-export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
+export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef { }
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2921,7 +2921,7 @@ export interface ServerSideGroupLevelParams {
 
 /**
  * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
 
 export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
     (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;
