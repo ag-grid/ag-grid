@@ -32,8 +32,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     public treeData: boolean = false;
 
     private approachChanged = true;
+    private oldTreeData: boolean | null = null;
     private parentIdGetter: ((data: TData) => string | null | undefined) | null = null;
-    private strategyBeanName: string | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
 
     public postConstruct(): void {
@@ -101,7 +101,6 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
 
     public execute(params: StageExecuteParams<TData>): boolean | undefined {
         const approachChanged = this.approachChanged;
-        this.approachChanged = false;
         const strategy = approachChanged ? this.changeApproach(params) : this.strategy;
         if (!strategy) {
             return undefined; // Stage not executed if no strategy is available
@@ -110,26 +109,20 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     }
 
     private changeApproach({ rowNode }: StageExecuteParams<TData>): IRowGroupingStrategy<TData> | undefined {
-        const newBeanName = this.treeData ? 'treeGroupStrategy' : 'groupStrategy';
         const oldStrategy = this.strategy;
+        const treeData = this.treeData;
+        this.approachChanged = false;
         let strategy = oldStrategy;
-        if (this.strategyBeanName !== newBeanName) {
+        if (this.oldTreeData !== treeData) {
+            this.oldTreeData = treeData;
             this.destroyBean(strategy);
-            strategy = undefined;
-            if (newBeanName) {
-                strategy = this.beans.registry.createDynamicBean(newBeanName, false);
-                if (strategy) {
-                    this.createBean(strategy);
-                }
-            }
-            this.strategy = strategy;
-            this.strategyBeanName = newBeanName;
+            strategy = this.beans.registry.createDynamicBean(treeData ? 'treeGroupStrategy' : 'groupStrategy', false);
+            this.strategy = strategy && this.createBean(strategy);
         } else {
             strategy?.reset?.();
         }
         if (oldStrategy) {
             resetGrouping(rowNode, !this.nestedDataGetter);
-            this.destroyBean(oldStrategy);
         }
         return strategy;
     }
