@@ -58,25 +58,25 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         setAllLeafs(rootNode, allLeafs);
 
         let writeIdx = 0;
-        const processChildren = (parent: RowNode, childrenData: TData[]) => {
+        const processChildren = (parent: RowNode, childrenData: TData[], level: number) => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
                 if (data) {
-                    const node = this.createRowNode(data);
+                    const node = this.createRowNode(data, level);
                     node.sourceRowIndex = writeIdx;
                     allLeafs[writeIdx++] = node;
                     if (nestedDataGetter) {
                         node.treeParent = parent;
                         const children = nestedDataGetter(data);
                         if (children) {
-                            processChildren(node, children);
+                            processChildren(node, children, level + 1);
                         }
                     }
                 }
             }
         };
 
-        processChildren(this.rootNode, rowData);
+        processChildren(this.rootNode, rowData, 0);
         allLeafs.length = writeIdx;
     }
 
@@ -102,7 +102,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 }
                 let node = this.getRowNode(getRowIdFunc({ data, level }));
                 if (!node) {
-                    node = this.createRowNode(data);
+                    node = this.createRowNode(data, level);
                     adds.add(node);
                 }
                 if (!reordered && reorder) {
@@ -120,14 +120,19 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                         nodesToUnselect.push(node);
                     }
                 }
+                if (!nestedDataGetter) {
+                    processedNodes.add(node);
+                    continue;
+                }
+                if (processedNodes.has(node)) {
+                    continue;
+                }
                 processedNodes.add(node);
-                if (nestedDataGetter) {
-                    updated ||= node.treeParent !== parent;
-                    node.treeParent = parent;
-                    const children = nestedDataGetter(data);
-                    if (children) {
-                        processChildren(node, children, level + 1);
-                    }
+                updated ||= node.treeParent !== parent;
+                node.treeParent = parent;
+                const children = nestedDataGetter(data);
+                if (children) {
+                    processChildren(node, children, level + 1);
                 }
             }
         };
@@ -236,7 +241,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         const adds = result.changedRowNodes.adds;
         for (let i = 0; i < addLength; i++) {
-            const node = this.createRowNode(add[i]);
+            const node = this.createRowNode(add[i], 0);
             adds.add(node);
             node.sourceRowIndex = writeIdx;
             newAllLeafs[writeIdx++] = node; // Insert new nodes
@@ -341,10 +346,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         }
     }
 
-    private createRowNode(data: TData): RowNode<TData> {
+    private createRowNode(data: TData, level: number): RowNode<TData> {
         const node: RowNode<TData> = new RowNode<TData>(this.beans);
         node.parent = this.rootNode;
-        node.level = 0;
+        node.level = level;
         node.group = false;
         node.expanded = false;
 
