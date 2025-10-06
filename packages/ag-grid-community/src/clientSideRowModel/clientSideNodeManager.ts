@@ -58,20 +58,23 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         setAllLeafs(rootNode, allLeafs);
 
         let writeIdx = 0;
+        const processedNested = nestedDataGetter ? new Set<TData>() : null;
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             const level = parent.level + 1;
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
-                if (data) {
-                    const node = this.createRowNode(data, level);
-                    node.sourceRowIndex = writeIdx;
-                    allLeafs[writeIdx++] = node;
-                    if (nestedDataGetter) {
-                        node.treeParent = parent;
-                        const children = nestedDataGetter(data);
-                        if (children) {
-                            processChildren(node, children);
-                        }
+                if (!data) {
+                    continue;
+                }
+                const node = this.createRowNode(data, level);
+                node.sourceRowIndex = writeIdx;
+                allLeafs[writeIdx++] = node;
+                if (processedNested && !processedNested.has(data)) {
+                    processedNested!.add(data);
+                    node.treeParent = parent;
+                    const children = nestedDataGetter!(data);
+                    if (children) {
+                        processChildren(node, children);
                     }
                 }
             }
