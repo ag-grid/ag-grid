@@ -516,8 +516,7 @@ export class RowNode<TData = any>
 
     public updateHasChildren(): void {
         // in CSRM, the group property is set before the childrenAfterGroup property, check both to prevent flickering
-        let newValue: boolean | null =
-            (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        let newValue: boolean | null = (this.group && !this.footer) || !!this.childrenAfterGroup?.length;
 
         const { rowChildrenSvc } = this.beans;
         if (rowChildrenSvc) {

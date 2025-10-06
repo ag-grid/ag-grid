@@ -6,26 +6,27 @@ export const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TDa
     rootNode.group = true;
     rootNode.level = -1;
     rootNode.id = 'ROOT_NODE_ID';
-    rootNode.allLeafChildren = [];
-    rootNode.childrenAfterGroup = [];
-    rootNode.childrenAfterSort = [];
-    rootNode.childrenAfterAggFilter = [];
-    rootNode.childrenAfterFilter = [];
-    initRootSibling(rootNode);
-    rootNode.updateHasChildren();
-    return rootNode;
-};
-
-export const initRootSibling = <TData = any>(rootNode: RowNode<TData>): void => {
+    const allLeafChildren: RowNode<TData>[] = [];
+    const childrenAfterGroup: RowNode<TData>[] = [];
+    const childrenAfterSort: RowNode<TData>[] = [];
+    const childrenAfterAggFilter: RowNode<TData>[] = [];
+    const childrenAfterFilter: RowNode<TData>[] = [];
+    rootNode.allLeafChildren = allLeafChildren;
+    rootNode.childrenAfterGroup = childrenAfterGroup;
+    rootNode.childrenAfterSort = childrenAfterSort;
+    rootNode.childrenAfterAggFilter = childrenAfterAggFilter;
+    rootNode.childrenAfterFilter = childrenAfterFilter;
     const sibling = rootNode.sibling;
     if (sibling) {
-        sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
-        sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-        sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
-        sibling.childrenAfterSort = rootNode.childrenAfterSort;
+        sibling.childrenAfterFilter = childrenAfterFilter;
+        sibling.childrenAfterGroup = childrenAfterGroup;
+        sibling.childrenAfterAggFilter = childrenAfterAggFilter;
+        sibling.childrenAfterSort = childrenAfterSort;
         sibling.childrenMapped = rootNode.childrenMapped;
-        sibling.allLeafChildren = rootNode.allLeafChildren;
+        sibling.allLeafChildren = allLeafChildren;
     }
+    rootNode.updateHasChildren();
+    return rootNode;
 };
 
 /**
