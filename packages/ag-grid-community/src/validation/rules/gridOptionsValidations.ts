@@ -556,8 +556,8 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return '`pivotMode` cannot be used with `enableFormulas`.';
                 }
                 return null;
-            }
-        }
+            },
+        },
     };
     const validations: Validations<GridOptions> = {};
     _BOOLEAN_GRID_OPTIONS.forEach((key) => {

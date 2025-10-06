@@ -123,7 +123,7 @@ import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
 import type { PopupService } from '../widgets/popupService';
 
-export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> { }
+export interface SingletonBean extends AgSingletonBeanClass<BeanCollection> {}
 
 export type DynamicBeanName =
     | 'detailCellRendererCtrl'

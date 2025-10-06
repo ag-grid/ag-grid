@@ -191,8 +191,8 @@ const allValidKeys: AllValidGridOptionsKeys = true;
 // validate each default value is the right type
 type AllTypesValid = {
     [K in keyof typeof GRID_OPTION_DEFAULTS]: (typeof GRID_OPTION_DEFAULTS)[K] extends NonNullable<GridOptions[K]>
-    ? 'V'
-    : 'X';
+        ? 'V'
+        : 'X';
 }[keyof typeof GRID_OPTION_DEFAULTS];
 type AllTypeValid = Exclude<AllTypesValid, 'V'> extends never ? 'V' : false;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
