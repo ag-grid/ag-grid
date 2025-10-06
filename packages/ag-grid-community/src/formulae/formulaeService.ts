@@ -8,7 +8,7 @@ import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
 import type { Cell, CellRef, FormulaNode } from './ast/utils';
 import { FormulaError } from './ast/utils';
-import * as SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
+import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 import { evalAst, iterateCellAddresses } from './functions/utils';
 
 // plunker: https://plnkr.co/edit/8idB7tTubExLB58S?open=main.js
@@ -51,7 +51,7 @@ class CellFormula {
         public readonly column: AgColumn,
         public formulaString: string,
         private readonly beans: BeanCollection
-    ) {}
+    ) { }
 
     public setFormulaString(next: string) {
         if (this.formulaString === next) {
