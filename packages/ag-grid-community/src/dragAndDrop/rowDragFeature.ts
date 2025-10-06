@@ -640,7 +640,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
-        clientSideRowModel!.refreshModel({
+        clientSideRowModel.refreshModel({
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
