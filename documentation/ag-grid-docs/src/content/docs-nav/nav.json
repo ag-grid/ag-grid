@@ -734,6 +734,11 @@
                         },
                         {
                             "type": "item",
+                            "title": "Formulae",
+                            "path": "formulae"
+                        },
+                        {
+                            "type": "item",
                             "title": "Find",
                             "path": "find",
                             "isEnterprise": true
