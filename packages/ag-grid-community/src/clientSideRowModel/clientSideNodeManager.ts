@@ -95,6 +95,26 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         let reordered = false;
         let prevIndex = -1;
 
+        const updateNode = (node: RowNode<TData>, data: TData): void => {
+            if (!reordered && reorder) {
+                const oldIndex = node.sourceRowIndex;
+                reordered =
+                    oldIndex <= prevIndex || // A node was moved up, so order changed
+                    adds.size > 0; // There was an update after an insertion, so order changed
+                prevIndex = oldIndex;
+            }
+            if (node.data !== data) {
+                updated = true;
+                node.updateData(data);
+                if (!adds.has(node)) {
+                    updates.add(node);
+                }
+                if (!node.selectable && node.isSelected()) {
+                    nodesToUnselect.push(node);
+                }
+            }
+        };
+
         const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
@@ -103,23 +123,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 }
                 let node = this.getRowNode(getRowIdFunc({ data, level }));
                 if (node) {
-                    if (!reordered && reorder) {
-                        const oldIndex = node.sourceRowIndex;
-                        reordered =
-                            oldIndex <= prevIndex || // A node was moved up, so order changed
-                            adds.size > 0; // There was an update after an insertion, so order changed
-                        prevIndex = oldIndex;
-                    }
-                    if (node.data !== data) {
-                        updated = true;
-                        node.updateData(data);
-                        if (!adds.has(node)) {
-                            updates.add(node);
-                        }
-                        if (!node.selectable && node.isSelected()) {
-                            nodesToUnselect.push(node);
-                        }
-                    }
+                    updateNode(node, data);
                     updated ||= !!nestedDataGetter && node.treeParent !== parent;
                 } else {
                     node = this.createRowNode(data, level);
