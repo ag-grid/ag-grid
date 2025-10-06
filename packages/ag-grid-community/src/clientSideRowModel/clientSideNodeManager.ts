@@ -58,7 +58,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         setAllLeafs(rootNode, allLeafs);
 
         let writeIdx = 0;
-        const processChildren = (parent: RowNode, childrenData: TData[], level: number) => {
+        const processChildren = (parent: RowNode, childrenData: TData[]) => {
+            const level = parent.level + 1;
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
                 if (data) {
@@ -69,14 +70,14 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                         node.treeParent = parent;
                         const children = nestedDataGetter(data);
                         if (children) {
-                            processChildren(node, children, level + 1);
+                            processChildren(node, children);
                         }
                     }
                 }
             }
         };
 
-        processChildren(this.rootNode, rowData, 0);
+        processChildren(this.rootNode, rowData);
         allLeafs.length = writeIdx;
     }
 
@@ -90,26 +91,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const nodesToUnselect: RowNode<TData>[] = [];
         const nestedDataGetter = this.beans.groupStage?.nestedDataGetter;
 
-        let treeUpdated = false;
+        let updated = false;
         let reordered = false;
         let prevIndex = -1;
-
-        const processNested = nestedDataGetter
-            ? (parent: RowNode<TData>, node: RowNode<TData>, level: number) => {
-                  if (processedNodes.has(node)) {
-                      return;
-                  }
-                  processedNodes.add(node);
-                  if (node.treeParent !== parent) {
-                      node.treeParent = parent;
-                      treeUpdated = true;
-                  }
-                  const children = nestedDataGetter(node.data);
-                  if (children) {
-                      processChildren(node, children, level + 1);
-                  }
-              }
-            : null;
 
         const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
@@ -118,40 +102,53 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     continue;
                 }
                 let node = this.getRowNode(getRowIdFunc({ data, level }));
-                if (!node) {
+                if (node) {
+                    if (!reordered && reorder) {
+                        const oldIndex = node.sourceRowIndex;
+                        reordered =
+                            oldIndex <= prevIndex || // A node was moved up, so order changed
+                            adds.size > 0; // There was an update after an insertion, so order changed
+                        prevIndex = oldIndex;
+                    }
+                    if (node.data !== data) {
+                        updated = true;
+                        node.updateData(data);
+                        if (!adds.has(node)) {
+                            updates.add(node);
+                        }
+                        if (!node.selectable && node.isSelected()) {
+                            nodesToUnselect.push(node);
+                        }
+                    }
+                    updated ||= !!nestedDataGetter && node.treeParent !== parent;
+                } else {
                     node = this.createRowNode(data, level);
                     adds.add(node);
                 }
-                if (!reordered && reorder) {
-                    const oldIndex = node.sourceRowIndex;
-                    reordered =
-                        (oldIndex >= 0 && oldIndex <= prevIndex) || // A node was moved up, so order changed
-                        adds.size > 0; // There was an update after an insertion, so order changed
-                    prevIndex = oldIndex;
+                if (!nestedDataGetter || processedNodes.has(node)) {
+                    processedNodes.add(node);
+                    continue;
                 }
-                if (node.data !== data) {
-                    node.updateData(data);
-                    if (!adds.has(node)) {
-                        updates.add(node);
-                    }
-                    if (!node.selectable && node.isSelected()) {
-                        nodesToUnselect.push(node);
-                    }
-                }
-                processNested?.(parent, node, level);
                 processedNodes.add(node);
+                node.treeParent = parent;
+                const children = nestedDataGetter(data);
+                if (children) {
+                    processChildren(node, children, level + 1);
+                }
             }
         };
 
         const rootNode = this.rootNode;
         processChildren(rootNode, rowData, 0);
 
-        const changed = this.deleteUnusedNodes(processedNodes, nodesToUnselect, changedRowNodes) || reordered;
+        const changed =
+            this.deleteUnusedNodes(processedNodes, nodesToUnselect, changedRowNodes) || reordered || adds.size > 0;
+
         if (changed && updateRootLeafs(rootNode, processedNodes, reorder, changedRowNodes)) {
             params.rowNodesOrderChanged = true;
         }
 
-        if (changed || updates.size || treeUpdated) {
+        if (changed || updated) {
             params.rowDataUpdated = true;
             this.deselect(nodesToUnselect);
         }
