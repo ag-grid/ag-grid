@@ -73,6 +73,7 @@ export type ColumnEventName =
     | 'headerHighlightChanged'
     | 'sortChanged'
     | 'colDefChanged'
+    | 'formulaeRefChanged'
     | 'menuVisibleChanged'
     | 'columnRowGroupChanged'
     | 'columnPivotChanged'

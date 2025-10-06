@@ -155,6 +155,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
+    enableFormulae: 'Formulae',
 };
 
 /**
@@ -541,6 +542,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
+                }
+                return null;
+            },
+        },
+        enableFormulae: {
+            supportedRowModels: ['clientSide'],
+            validate: (options) => {
+                if (!options.getRowId) {
+                    return '`getRowId` is required when `enableFormulae` is true.';
+                }
+                if (options.pivotMode) {
+                    return '`pivotMode` cannot be used with `enableFormulae`.';
                 }
                 return null;
             },

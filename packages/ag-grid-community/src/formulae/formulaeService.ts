@@ -123,7 +123,7 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
         this.addManagedListeners(this.beans.eventSvc, {
             newColumnsLoaded: this.setupColRefMap.bind(this),
-            columnOrderChanged: this.setupColRefMap.bind(this),
+            columnMoved: this.setupColRefMap.bind(this),
             cellValueChanged: this.reset.bind(this),
         });
     }
@@ -224,8 +224,8 @@ export class FormulaeService extends BeanStub implements NamedBean {
 
         shiftNode(ast);
 
-        // Serialize back to a formula string (A1 format for user-facing)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ false);
+        // Serialize back to a formula string (REF format)
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ true);
     }
 
     private setupFunctions() {
@@ -251,12 +251,16 @@ export class FormulaeService extends BeanStub implements NamedBean {
     private setupColRefMap() {
         const alphabet = 'abcdefghijklmnopqrstuvwxyz';
         const base = alphabet.length;
-        const list = this.beans.colModel.colDefCols?.list;
+        const list = this.beans.colModel.getCols();
         const map = new Map<string, AgColumn>();
 
-        list?.forEach((col, idx) => {
+        let idx = 0;
+        list?.forEach((col) => {
+            if (!col.isPrimary()) {
+                return;
+            }
             let label = '';
-            let n = idx;
+            let n = idx++;
             // generate a column label (A, B, C, ..., Z, AA, AB, ...)
             while (true) {
                 label = alphabet[n % base] + label;
@@ -264,6 +268,10 @@ export class FormulaeService extends BeanStub implements NamedBean {
                     break;
                 }
                 n = Math.floor(n / base) - 1;
+            }
+            if (col.formulaeRef !== label.toUpperCase()) {
+                col.formulaeRef = label.toUpperCase();
+                col.dispatchColEvent('formulaeRefChanged', 'api');
             }
             map.set(label.toUpperCase(), col);
         });

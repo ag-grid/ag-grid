@@ -238,14 +238,22 @@ function _createEditorParams(
     const { rowNode, column } = position;
 
     const editor = cellCtrl.comp?.getCellEditor();
+
     const initialNewValue =
         editSvc?.getCellDataValue(position, false) ??
         (editor ? _valueFromEditor(beans, editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
+    // if formula, normalise the value to shorthand for users.
+    let paramsValue = enableGroupEditing ? initialNewValue : value;
+    if (beans.formulae?.isFormula(paramsValue)) {
+        // normalise to shorthand for editing
+        paramsValue = beans.formulae?.normaliseFormula(paramsValue, true) ?? paramsValue;
+    }
+
     return _addGridCommonParams(gos, {
-        value: enableGroupEditing ? initialNewValue : value,
+        value: paramsValue,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),
@@ -368,10 +376,13 @@ export function _syncFromEditor(
         });
     }
 
+    const normalised = beans.formulae?.isFormula(editorValue)
+        ? beans.formulae?.normaliseFormula(editorValue, true) ?? editorValue
+        : editorValue;
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
+        editorValue: valueSameAsSource ? edit.sourceValue : normalised,
     });
 
     if (params?.persist) {
