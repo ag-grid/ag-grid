@@ -125,27 +125,27 @@ export class ServerSideExpansionService
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
-        const { gridApi: masterGridApi, gos: masterGos } = this.beans;
-
-        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
-            switch (source) {
-                case 'expandAll':
-                    return detailGridApi.expandAll();
-                case 'collapseAll':
-                    return detailGridApi.collapseAll();
-            }
-        });
+        const { gos: masterGos } = this.beans;
 
         // to prevent massive server side queries, we only propagate if the master is using a special flag
+        // this flag also indicates that we are using the expandAll strategy, and it's safe to cast the state to RowGroupBulkExpansionState
         if (!masterGos.get('ssrmExpandAllAffectsAllRows')) {
             return;
         }
 
         // ideally, we would want to combine these strategies / states some day so there is no need in type cast here
-        if ((this.getExpansionState() as RowGroupBulkExpansionState).expandAll) {
-            return detailGridApi.expandAll();
+        const masterExpansionState = this.getExpansionState() as RowGroupBulkExpansionState;
+        const isInitial = masterExpansionState.expandAll === undefined;
+        if (isInitial) {
+            return;
         }
-        return detailGridApi.collapseAll();
+        const allExpanded = masterExpansionState.expandAll! && masterExpansionState.invertedRowGroupIds.length === 0;
+        const allCollapsed = !masterExpansionState.expandAll! && masterExpansionState.invertedRowGroupIds.length === 0;
+
+        if (allCollapsed === allExpanded) {
+            return;
+        }
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {

@@ -8,7 +8,12 @@ export interface RowGroupExpansionState {
 }
 
 export interface RowGroupBulkExpansionState {
-    expandAll: boolean;
+    /**
+     * If true, all groups are expanded except those in `invertedRowGroupIds`.
+     * If false, all groups are collapsed except those in `invertedRowGroupIds`.
+     * If undefined, the grid is in its initial state (no groups expanded or collapsed).
+     */
+    expandAll: boolean | undefined;
     invertedRowGroupIds: string[];
 }
 
