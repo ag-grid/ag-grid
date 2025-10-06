@@ -500,7 +500,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     ): RowDragEvent<any, any, T> {
         const beans = this.beans;
         const { dragItem, dropTarget: rowsDrop, event, vDirection } = draggingEvent;
-        const withRowsDrop = rowsDrop?.rootNode && rowsDrop?.rootNode === this.beans.rowModel.rootNode;
+        const rowsDropRootNode = rowsDrop?.rootNode;
+        const withRowsDrop = rowsDropRootNode && rowsDropRootNode === this.beans.rowModel.rootNode;
         const y = withRowsDrop ? rowsDrop.y : _getNormalisedMousePosition(beans, draggingEvent).y;
         const overNode = withRowsDrop ? rowsDrop.overNode : this.getOverNode(y);
         const overIndex = withRowsDrop ? rowsDrop.overIndex : overNode?.rowIndex ?? -1;
