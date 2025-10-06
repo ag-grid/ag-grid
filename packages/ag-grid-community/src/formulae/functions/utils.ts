@@ -4,8 +4,6 @@ import type { RowNode } from '../../entities/rowNode';
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
 
-export const parseErr = (name: string, msg: string) => new FormulaError(`${name}: ${msg}`, '#PARSE!');
-
 function isRangeCell(cell: Cell): boolean {
     return !!(cell.endColumn && cell.endRow);
 }
@@ -44,7 +42,7 @@ function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | n
     return { row: rowNode, column: agCol };
 }
 
-export function* expandRangeAddresses(
+function* expandRangeAddresses(
     beans: BeanCollection,
     cell: Cell
 ): Generator<{ row: RowNode; column: AgColumn }> {

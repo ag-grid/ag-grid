@@ -172,6 +172,7 @@ export type EnterpriseModuleName =
     | 'ExcelExport'
     | 'FiltersToolPanel'
     | 'Find'
+    | 'Formulae'
     | 'GridCharts'
     | 'IntegratedCharts'
     | 'GroupFilter'
@@ -238,6 +239,7 @@ export type AgModuleName =
     | 'UndoRedoEditModule'
     | 'ValidationModule'
     | 'ValueCacheModule'
+    | 'FormulaeModule'
     | 'CellSpanModule'
     // Enterprise
     | 'AdvancedFilterModule'

@@ -107,11 +107,18 @@ export class FormulaeService extends BeanStub implements NamedBean {
     /** Map "A", "B", ..., "AA" -> actual AgColumn */
     private colRefMap: Map<string, AgColumn> = new Map();
 
-    /** Built-in operations (extendable via gridOptions.formulaFuncs). */
+    /** Built-in operations (extendable via gridOptions.formulaeFuncs). */
     // eslint-disable-next-line @typescript-eslint/ban-types
     private supportedOperations: Map<string, Function>;
 
+    private formulaeEnabled = false;
+
     public postConstruct(): void {
+        this.formulaeEnabled = this.gos.get('enableFormulae') === true;
+        if (!this.formulaeEnabled) {
+            return;
+        }
+
         this.setupFunctions();
 
         this.addManagedListeners(this.beans.eventSvc, {
@@ -233,7 +240,7 @@ export class FormulaeService extends BeanStub implements NamedBean {
         this.supportedOperations.set('%', SUPPORTED_FUNCTIONS.PERCENT);
 
         // Register custom functions, not reactive.
-        const customFuncs = this.gos.get('formulaFuncs');
+        const customFuncs = this.gos.get('formulaeFuncs');
         if (customFuncs) {
             Object.keys(customFuncs).forEach((name) => {
                 this.supportedOperations.set(name, customFuncs[name]!);
@@ -303,17 +310,17 @@ export class FormulaeService extends BeanStub implements NamedBean {
      * Is a value a formula string (starts with '=')
      **/
     public isFormula(value: unknown): value is string {
-        return typeof value === 'string' && value.startsWith('=');
+        return this.formulaeEnabled && typeof value === 'string' && value.startsWith('=');
     }
 
     /**
      * Normalise a formula by parsing and serializing it (REF(COLUMN(), ROW()) format).
      * @returns null if the formula is invalid.
      */
-    public normaliseFormula(value: string): string | null {
+    public normaliseFormula(value: string, shorthand: boolean = false): string | null {
         try {
             const parsedAST = parseFormula(this.beans, value);
-            const serialized = serializeFormula(this.beans, parsedAST, true);
+            const serialized = serializeFormula(this.beans, parsedAST, !shorthand);
             return serialized;
         } catch {
             return null;

@@ -24,6 +24,7 @@ import {
     QuickFilterModule,
     TextFilterModule,
 } from './filter/filterModule';
+import { FormulaeModule } from './formulae/formulaeModule';
 import { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
@@ -91,5 +92,6 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         DragAndDropModule,
         ClientSideRowModelApiModule,
         CellSpanModule,
+        FormulaeModule,
     ],
 };

@@ -17,7 +17,7 @@ import { FormulaParseError } from './utils';
  *  parseOperand(beans, '42')      // => 42
  *  parseOperand(beans, 'A1')      // => { column:{...}, row:{...} }
  */
-export const parseOperand = (beans: BeanCollection, operand: string): string | number | boolean | Cell | null => {
+const parseOperand = (beans: BeanCollection, operand: string): string | number | boolean | Cell | null => {
     const trimmed = operand.trim();
 
     // string literal
@@ -309,7 +309,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // binary '+' / '-'
             reducePendingUnaryMinus();
 
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -327,7 +327,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         if (isBinaryOp(token)) {
             reducePendingUnaryMinus();
 
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -360,7 +360,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -390,7 +390,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -492,7 +492,7 @@ function asStringish(node: FormulaNode | undefined): string | null {
     return null;
 }
 
-export function extractColumnRef(node: FormulaNode): CellRef | null {
+function extractColumnRef(node: FormulaNode): CellRef | null {
     if (!isOperation(node, 'COLUMN')) {
         return null;
     }
@@ -504,7 +504,7 @@ export function extractColumnRef(node: FormulaNode): CellRef | null {
     return { id, absolute };
 }
 
-export function extractRowRef(node: FormulaNode): CellRef | null {
+function extractRowRef(node: FormulaNode): CellRef | null {
     if (!isOperation(node, 'ROW')) {
         return null;
     }

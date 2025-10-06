@@ -1,4 +1,4 @@
-export interface FormulaOperand {
+interface FormulaOperand {
     type: 'operand';
     value: string | number | boolean | Cell;
 }

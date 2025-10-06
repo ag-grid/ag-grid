@@ -287,10 +287,15 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const map = this.getEditRow(position.rowNode) ?? new Map<Column, EditValue>();
         const { rowNode, column } = position;
         if (column && !map.has(column)) {
+            let value = this.beans.valueSvc.getValue(column as AgColumn, rowNode, false, 'api');
+            if (this.beans.formulae?.isFormula(value)) {
+                value = this.beans.formulae?.normaliseFormula(value, true);
+            }
+
             map.set(column, {
                 editorValue: undefined,
                 pendingValue: UNEDITED,
-                sourceValue: this.beans.valueSvc.getValue(column as AgColumn, rowNode, false, 'api'),
+                sourceValue: value,
                 state: 'editing',
                 editorState: {
                     isCancelAfterEnd: undefined,

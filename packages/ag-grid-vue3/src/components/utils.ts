@@ -925,6 +925,16 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
     aggFuncs?: { [key: string]: IAggFunc<TData> } | undefined,
+    /** A map of 'function name' to 'function' for custom functions that are used for formulae.
+         * @initial
+         * @agModule ?
+         */
+    formulaeFuncs?: ({ [key: string]: (args: any[]) => any }) | undefined,
+    /** Enable or disable the processing of cell formulae
+         * @initial
+         * @agModule ?
+         */
+    enableFormulae?: boolean | undefined,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -2053,6 +2063,8 @@ export function getProps() {
         suppressExpandablePivotGroups: undefined,
         functionsReadOnly: undefined,
         aggFuncs: undefined,
+        formulaeFuncs: undefined,
+        enableFormulae: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,
         aggregateOnlyChangedColumns: undefined,
