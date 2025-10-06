@@ -309,7 +309,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // binary '+' / '-'
             reducePendingUnaryMinus();
 
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -327,7 +327,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         if (isBinaryOp(token)) {
             reducePendingUnaryMinus();
 
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
                     applyTop();
@@ -360,7 +360,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -390,7 +390,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;

@@ -42,10 +42,7 @@ function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | n
     return { row: rowNode, column: agCol };
 }
 
-function* expandRangeAddresses(
-    beans: BeanCollection,
-    cell: Cell
-): Generator<{ row: RowNode; column: AgColumn }> {
+function* expandRangeAddresses(beans: BeanCollection, cell: Cell): Generator<{ row: RowNode; column: AgColumn }> {
     const startRow = getRowNode(beans, cell.row);
     const startCol = getColumn(beans, cell.column);
     if (!startRow || !startCol) {
