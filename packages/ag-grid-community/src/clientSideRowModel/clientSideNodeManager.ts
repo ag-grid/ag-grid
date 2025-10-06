@@ -48,8 +48,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
-        const rootNode = this.rootNode;
-        initRootNode(rootNode);
+        const rootNode = initRootNode(this.rootNode);
 
         // Clear internal maps
         this.allNodesMap = {};
@@ -62,17 +61,16 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
-                if (!data) {
-                    continue;
-                }
-                const node = this.createRowNode(data);
-                node.sourceRowIndex = writeIdx;
-                allLeafs[writeIdx++] = node;
-                if (nestedDataGetter) {
-                    node.treeParent = parent;
-                    const children = nestedDataGetter(data);
-                    if (children) {
-                        processChildren(node, children);
+                if (data) {
+                    const node = this.createRowNode(data);
+                    node.sourceRowIndex = writeIdx;
+                    allLeafs[writeIdx++] = node;
+                    if (nestedDataGetter) {
+                        node.treeParent = parent;
+                        const children = nestedDataGetter(data);
+                        if (children) {
+                            processChildren(node, children);
+                        }
                     }
                 }
             }
@@ -127,7 +125,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     adds.add(node);
                 }
                 processedNodes.add(node);
-
                 if (nestedDataGetter) {
                     node.treeParent = parent;
                     const children = nestedDataGetter(data);
@@ -223,7 +220,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         if (!add?.length) {
             return;
         }
-
         const allLeafs = this.rootNode.allLeafChildren!;
         const allLeafsLen = allLeafs.length;
         let addIndex = allLeafsLen;
@@ -324,31 +320,23 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private dispatchRowDataUpdateStartedEvent(rowData?: TData[] | null): void {
-        this.eventSvc.dispatchEvent({
-            type: 'rowDataUpdateStarted',
-            firstRowData: rowData?.length ? rowData[0] : null,
-        });
+        const firstRowData = rowData?.length ? rowData[0] : null;
+        this.eventSvc.dispatchEvent({ type: 'rowDataUpdateStarted', firstRowData });
     }
 
-    private deselect(nodesToUnselect: RowNode<TData>[]): void {
+    private deselect(nodes: RowNode<TData>[]): void {
         const source = 'rowDataChanged';
         const selectionSvc = this.beans.selectionSvc;
-        if (nodesToUnselect.length) {
-            selectionSvc?.setNodesSelected({
-                newValue: false,
-                nodes: nodesToUnselect,
-                suppressFinishActions: true,
-                source,
-            });
+        if (nodes.length) {
+            selectionSvc?.setNodesSelected({ newValue: false, nodes, suppressFinishActions: true, source });
         }
 
         // we do this regardless of nodes to unselect or not, as it's possible
-        // a new node was inserted, so a parent that was previously selected (as all
-        // children were selected) should not be tri-state (as new one unselected against
-        // all other selected children).
+        // a new node was inserted, so a parent that was previously selected (as all children
+        // were selected) should not be tri-state (as new one unselected against all other selected children).
         selectionSvc?.updateGroupsFromChildrenSelections?.(source);
 
-        if (nodesToUnselect.length) {
+        if (nodes.length) {
             this.eventSvc.dispatchEvent({
                 type: 'selectionChanged',
                 source: source,
@@ -365,14 +353,11 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         node.group = false;
         node.expanded = false;
 
-        node.setDataAndId(data, String(this.nextId));
-
+        node.setDataAndId(data, String(this.nextId++));
         if (this.allNodesMap[node.id!]) {
             _warn(2, { nodeId: node.id });
         }
         this.allNodesMap[node.id!] = node;
-
-        this.nextId++;
 
         return node;
     }
