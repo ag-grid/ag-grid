@@ -2,14 +2,19 @@ import type {
     Bean,
     BeanCollection,
     GridOptionsService,
-    GroupingApproach,
     IRowNode,
+    NestedDataGetter,
+    ParentIdGetter,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
-    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean | undefined | void;
+    execute(
+        params: StageExecuteParams<TData>,
+        parentIdGetter: ParentIdGetter<TData> | null | undefined,
+        nestedDataGetter: NestedDataGetter<TData> | null | undefined
+    ): boolean | undefined | void;
 
     /** Called to reset the state when the strategy changes */
     reset?(): void;

@@ -5,7 +5,7 @@ import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
-import { _getGroupingApproach, _getRowIdCallback } from '../gridOptionsUtils';
+import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
@@ -170,7 +170,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         moving: boolean,
         dropping: boolean
     ): RowsDrop | null {
-        const { beans, gos, clientSideRowModel } = this;
+        const { beans, clientSideRowModel } = this;
         const rowsDrop = this.newRowsDrop(draggingEvent, dropping);
         draggingEvent.dropTarget = rowsDrop;
         draggingEvent.changed = false;
@@ -182,10 +182,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         target ??= clientSideRowModel.getRow(clientSideRowModel.getRowCount() - 1) ?? null;
 
-        const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
             // We don't yet support drag and drop with grouping
-            groupingApproach !== 'group' &&
+            !!this.beans.groupStage?.treeData &&
             // We don't yet support moving tree rows from a different grid in a structured way
             sameGrid;
 

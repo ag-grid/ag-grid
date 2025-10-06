@@ -19,16 +19,11 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     rowsInserted: boolean;
 }
 
-export type NestedDataGetter<TData = any> = (data: TData | null | undefined) => TData[] | null | undefined;
-
 export class ClientSideNodeManager<TData = any> extends BeanStub {
     private nextId = 0;
     private allNodesMap: { [id: string]: RowNode<TData> } = {};
 
-    public constructor(
-        public readonly rootNode: RowNode<TData>,
-        public nestedDataGetter: NestedDataGetter<TData> | null
-    ) {
+    public constructor(public readonly rootNode: RowNode<TData>) {
         super();
     }
 
@@ -36,26 +31,21 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         return this.allNodesMap[id];
     }
 
-    public extractRowData(): TData[] | null | undefined {
-        const rootNode = this.rootNode;
-        const nodes = this.nestedDataGetter ? rootNode.childrenAfterGroup : rootNode.allLeafChildren;
-        if (!nodes) {
-            return this.gos.get('rowData');
-        }
-        const len = nodes.length;
-        const result = new Array<TData>(len);
-        let writeIdx = 0;
-        for (let i = 0; i < len; ++i) {
-            const data = nodes[i].data;
-            if (data != null) {
-                result[writeIdx++] = data;
-            }
-        }
-        result.length = writeIdx;
-        return result;
-    }
-
     public setNewRowData(rowData: TData[]): void {
+        // no need to invalidate cache, as the cache is stored on the rowNode,
+        // so new rowNodes means the cache is wiped anyway.
+
+        const { selectionSvc, pinnedRowModel, groupStage } = this.beans;
+        const nestedDataGetter = groupStage?.nestedDataGetter;
+
+        // - clears selection, done before we set row data to ensure it isn't readded via `selectionSvc.syncInOldRowNode`
+        selectionSvc?.reset('rowDataChanged');
+
+        // only clear pinned rows if using manual pinning
+        if (pinnedRowModel?.isManual()) {
+            pinnedRowModel.reset();
+        }
+
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
@@ -74,7 +64,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const allLeafs = new Array<RowNode<TData>>(rowData.length);
         setAllLeafs(rootNode, allLeafs);
 
-        const nestedDataGetter = this.nestedDataGetter;
         let writeIdx = 0;
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
@@ -101,13 +90,13 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     public setImmutableRowData(params: RefreshModelParams<TData>, rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
-        const nestedDataGetter = this.nestedDataGetter;
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
         const reorder = !this.gos.get('suppressMaintainUnsortedOrder');
         const changedRowNodes = params.changedRowNodes!;
         const { adds, updates } = changedRowNodes;
         const processedNodes = new Set<RowNode<TData>>();
         const nodesToUnselect: RowNode<TData>[] = [];
+        const nestedDataGetter = this.beans.groupStage?.nestedDataGetter;
 
         let updated = false;
         let reordered = false;
@@ -124,8 +113,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     if (!reordered && reorder) {
                         const oldIndex = node.sourceRowIndex;
                         reordered =
-                            adds.size > 0 || // There was an update after an insertion, so order changed
-                            oldIndex <= prevIndex; // A node was moved up, so order changed
+                            oldIndex <= prevIndex || // A node was moved up, so order changed
+                            adds.size > 0; // There was an update after an insertion, so order changed
                         prevIndex = oldIndex;
                     }
                     if (node.data !== data) {
@@ -218,7 +207,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             rowsInserted: false,
         };
 
-        if (this.nestedDataGetter) {
+        if (this.beans.groupStage?.nestedDataGetter) {
             _warn(268); // transactions not supported with treeDataChildrenField
             return updateRowDataResult;
         }

@@ -929,12 +929,10 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
-    _getGroupingApproach as _getGroupingApproach,
     _getGridOption,
     _isSetFilterByDefault,
     _interpretAsRightClick,
 } from './gridOptionsUtils';
-export type { GroupingApproach as GroupingApproach } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export { SortedRowNode } from './sort/rowNodeSorter';
@@ -1186,7 +1184,13 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interfaces/iRowNodeStage';
+export type {
+    IRowNodeStage,
+    NestedDataGetter,
+    ParentIdGetter,
+    IRowGroupStage,
+    StageExecuteParams,
+} from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -1243,7 +1247,6 @@ export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
-export { _fieldGetter } from './utils/fieldGetter';
 export { _addFocusableContainerListener, _focusGridInnerElement, _focusNextGridCoreContainer } from './utils/gridFocus';
 
 // charts

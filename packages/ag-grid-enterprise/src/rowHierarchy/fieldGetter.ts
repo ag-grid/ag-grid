@@ -1,5 +1,5 @@
 /** Precompiles a fast field getter function able to get a deep field from an object. Meant to be cached. */
-export const _fieldGetter = <T = any, R = unknown>(
+export const fieldGetter = <T = any, R = unknown>(
     path: string
 ): ((data: T | null | undefined) => R | null | undefined) => {
     const segments = path.split('.');

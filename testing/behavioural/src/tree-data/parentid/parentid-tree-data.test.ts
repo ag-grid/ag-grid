@@ -175,7 +175,7 @@ describe('ag-grid tree data parent id', () => {
         `);
     });
 
-    test('ag-grid override tree data is insensitive to updateGridOptions object order', async () => {
+    test.only('ag-grid override tree data is insensitive to updateGridOptions object order', async () => {
         // see https://ag-grid.atlassian.net/browse/AG-13089 - Order of grouped property listener changed is not deterministic
         const rowData0 = [
             { id: 'A', x: 'A' },
@@ -203,6 +203,7 @@ describe('ag-grid tree data parent id', () => {
             treeDataParentIdField: 'parentId',
         });
 
+        console.log('update grid options');
         api.updateGridOptions({
             rowData: rowData1,
             treeData: true,

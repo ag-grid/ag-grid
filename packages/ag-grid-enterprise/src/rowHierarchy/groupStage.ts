@@ -1,35 +1,91 @@
 import type {
     ClientSideRowModelStage,
     GridOptions,
-    GroupingApproach,
+    IClientSideRowModel,
     IRowGroupStage,
     NamedBean,
+    NestedDataGetter,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub, _getGroupingApproach } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
+import { fieldGetter } from './fieldGetter';
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupStage {
     beanName = 'groupStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
-        'groupDefaultExpanded',
         'groupAllowUnbalanced',
-        'initialGroupOrderComparator',
-        'groupHideOpenParents',
+        'groupDefaultExpanded',
         'groupDisplayType',
+        'groupHideOpenParents',
+        'initialGroupOrderComparator',
         'treeData',
         'treeDataChildrenField',
         'treeDataParentIdField',
     ]);
 
     public step: ClientSideRowModelStage = 'group';
+    public nestedDataGetter: NestedDataGetter<TData> | null = null;
+    public treeData: boolean = false;
 
-    private approach: GroupingApproach | null = null;
+    private approachChanged = true;
+    private parentIdGetter: ((data: TData) => string | null | undefined) | null = null;
     private strategyBeanName: string | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
+
+    public postConstruct(): void {
+        this.onPropChange(null);
+    }
+
+    public onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void {
+        const gos = this.gos;
+        const treeDataChanged = !changedProps || changedProps.has('treeData');
+        const treeDataParentIdFieldChanged = !changedProps || changedProps.has('treeDataParentIdField');
+        const treeDataChildrenFieldChanged = !changedProps || changedProps.has('treeDataChildrenField');
+
+        if (treeDataChanged) {
+            this.treeData = gos.get('treeData') && gos.isModuleRegistered('TreeData');
+        }
+        let parentIdField: string | null | undefined;
+        let dataChildrenField: string | null | undefined;
+        if (treeDataChanged || treeDataParentIdFieldChanged || treeDataChildrenFieldChanged) {
+            this.approachChanged = true;
+            if (this.treeData) {
+                parentIdField = gos.get('treeDataParentIdField');
+                if (!parentIdField) {
+                    dataChildrenField = gos.get('treeDataChildrenField');
+                }
+            }
+        }
+        if (treeDataChanged || treeDataChildrenFieldChanged) {
+            this.nestedDataGetter = dataChildrenField ? fieldGetter(dataChildrenField) : null;
+        }
+        if (treeDataChanged || treeDataParentIdFieldChanged) {
+            this.parentIdGetter = parentIdField ? fieldGetter(parentIdField) : null;
+        }
+    }
+
+    public extractData(nestedDataGetter: NestedDataGetter<TData> | null | undefined): TData[] {
+        const rootNode = (this.beans.rowModel as IClientSideRowModel).rootNode;
+        const nodes = nestedDataGetter ? rootNode?.childrenAfterGroup : rootNode?.allLeafChildren;
+        if (!nodes) {
+            return this.gos.get('rowData') ?? [];
+        }
+        const len = nodes.length;
+        const result = new Array<TData>(len);
+        let writeIdx = 0;
+        for (let i = 0; i < len; ++i) {
+            const data = nodes[i].data;
+            if (data != null) {
+                result[writeIdx++] = data;
+            }
+        }
+        result.length = writeIdx;
+        return result;
+    }
 
     /** Gets a filler row by id */
     public getNode(id: string): RowNode<TData> | undefined {
@@ -38,39 +94,23 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
 
     public override destroy(): void {
         super.destroy();
-        this.strategy = undefined;
+        this.strategy = this.destroyBean(this.strategy);
+        this.nestedDataGetter = null;
+        this.parentIdGetter = null;
     }
 
     public execute(params: StageExecuteParams<TData>): boolean | undefined {
-        const approach = _getGroupingApproach(this.gos);
-        const approachChanged = this.approach !== approach;
-        const strategy = approachChanged ? this.changeApproach(params, approach) : this.strategy;
+        const approachChanged = this.approachChanged;
+        this.approachChanged = false;
+        const strategy = approachChanged ? this.changeApproach(params) : this.strategy;
         if (!strategy) {
-            // Stage not executed if no strategy is available
-            return undefined;
+            return undefined; // Stage not executed if no strategy is available
         }
-        return strategy.execute(params, approach) || approachChanged;
+        return strategy.execute(params, this.parentIdGetter, this.nestedDataGetter) || approachChanged;
     }
 
-    private getStrategyBeanName(approach: GroupingApproach | null) {
-        switch (approach) {
-            case 'group':
-                return 'groupStrategy';
-            case 'treePath':
-            case 'treeNested':
-            case 'treeSelfRef':
-                return 'treeGroupStrategy';
-            default:
-                return null;
-        }
-    }
-
-    private changeApproach(
-        { rowNode }: StageExecuteParams<TData>,
-        approach: GroupingApproach
-    ): IRowGroupingStrategy<TData> | undefined {
-        this.approach = approach;
-        const newBeanName = this.getStrategyBeanName(approach);
+    private changeApproach({ rowNode }: StageExecuteParams<TData>): IRowGroupingStrategy<TData> | undefined {
+        const newBeanName = this.treeData ? 'treeGroupStrategy' : 'groupStrategy';
         const oldStrategy = this.strategy;
         let strategy = oldStrategy;
         if (this.strategyBeanName !== newBeanName) {
@@ -78,7 +118,9 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
             strategy = undefined;
             if (newBeanName) {
                 strategy = this.beans.registry.createDynamicBean(newBeanName, false);
-                this.createOptionalManagedBean(strategy);
+                if (strategy) {
+                    this.createBean(strategy);
+                }
             }
             this.strategy = strategy;
             this.strategyBeanName = newBeanName;
@@ -86,7 +128,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
             strategy?.reset?.();
         }
         if (oldStrategy) {
-            resetGrouping(rowNode, approach !== 'treeNested');
+            resetGrouping(rowNode, !this.nestedDataGetter);
+            this.destroyBean(oldStrategy);
         }
         return strategy;
     }

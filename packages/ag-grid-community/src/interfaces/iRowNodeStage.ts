@@ -23,6 +23,14 @@ export interface IRowNodeStage<TResult = any, TData = any> {
     execute(params: StageExecuteParams<TData>): TResult;
 }
 
+export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | undefined;
+
+export type ParentIdGetter<TData> = (data: TData | null | undefined) => string | null | undefined;
+
 export interface IRowGroupStage<TResult = any, TData = any> extends IRowNodeStage<TResult, TData> {
+    readonly treeData: boolean;
+    readonly nestedDataGetter: NestedDataGetter<TData> | null;
+    onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): void;
+    extractData(nestedDataGetter: NestedDataGetter<TData> | null | undefined): TData[];
     getNode(id: string): RowNode<TData> | undefined;
 }

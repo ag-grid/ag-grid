@@ -16,10 +16,8 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { ChangedPath } from '../utils/changedPath';
-import { _fieldGetter } from '../utils/fieldGetter';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
-import type { NestedDataGetter } from './clientSideNodeManager';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { initRootNode } from './clientSideRowNode';
 import { updateRowNodeAfterFilter } from './filterStage';
@@ -58,7 +56,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private isRefreshingModel: boolean = false;
     private rowNodesCountReady: boolean = false;
     private orderedStages: IRowNodeStage[];
-    private treeData = false;
 
     public postConstruct(): void {
         const beans = this.beans;
@@ -99,8 +96,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Property listeners which call `refreshModel` at different stages
         this.addPropertyListeners();
 
-        this.treeData = this.gos.get('treeData');
-        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode, this.loadNestedDataGetter()));
+        this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
     }
 
     private addPropertyListeners() {
@@ -135,8 +131,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - non memoised correctly.
 
         const allProps: (keyof GridOptions)[] = [
-            'treeData',
-            'treeDataChildrenField',
             ...this.orderedStages.flatMap(({ refreshProps }) => [...refreshProps]),
         ];
 
@@ -213,12 +207,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return res;
     }
 
-    private loadNestedDataGetter(): NestedDataGetter | null {
-        const gos = this.gos;
-        const field = this.treeData && gos.isModuleRegistered('TreeData') && gos.get('treeDataChildrenField');
-        return field ? _fieldGetter(field) : null;
-    }
-
     private onPropChange(properties: (keyof GridOptions)[]): void {
         const nodeManager = this.nodeMgr;
         if (!nodeManager) {
@@ -232,34 +220,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             changedProps,
         };
 
-        const oldNestedDataGetter = nodeManager.nestedDataGetter;
-        let nestedDataGetter = oldNestedDataGetter;
-        if (changedProps.has('treeData') || changedProps.has('treeDataChildrenField')) {
-            this.treeData = gos.get('treeData');
-            nestedDataGetter = this.loadNestedDataGetter();
-        }
-        const reload = oldNestedDataGetter !== nestedDataGetter;
+        const groupStage = this.beans.groupStage;
+        const oldNestedDataGetter = groupStage?.nestedDataGetter;
+        groupStage?.onPropChange(changedProps);
+        const fullReload = oldNestedDataGetter !== groupStage?.nestedDataGetter;
 
         let newRowData: any[] | null | undefined;
-        const rowDataChanged = changedProps.has('rowData');
-        if (rowDataChanged) {
-            newRowData = gos.get('rowData');
-            if (newRowData && !Array.isArray(newRowData)) {
-                newRowData = null;
-                _warn(1);
-            }
-        } else if (reload) {
-            // If we are here, it means that the row manager need to be changed or fully reloaded
-            // No new rowData was passed, so to include user executed transaction we need to extract
-            // the row data from the node manager as it might be different from the original rowData
-            newRowData = nodeManager.extractRowData();
+        if (changedProps.has('rowData')) {
+            newRowData = gos.get('rowData'); // new rowData to load or update
+        } else if (fullReload) {
+            // Row manager needs reload; extract row data to include user changes,
+            // as it may differ from the original rowData
+            newRowData = groupStage?.extractData(oldNestedDataGetter);
         }
 
-        nodeManager.nestedDataGetter = nestedDataGetter;
+        if (newRowData && !Array.isArray(newRowData)) {
+            newRowData = null;
+            _warn(1); // `rowData` must be an array
+        }
 
         if (newRowData) {
             const immutable =
-                !reload &&
+                !fullReload &&
                 !this.isEmpty() &&
                 newRowData.length > 0 &&
                 gos.exists('getRowId') &&
@@ -275,39 +257,31 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             } else {
                 params.rowDataUpdated = true;
                 params.newData = true;
-
-                // no need to invalidate cache, as the cache is stored on the rowNode,
-                // so new rowNodes means the cache is wiped anyway.
-
-                const { selectionSvc, pinnedRowModel } = this.beans;
-
-                // - clears selection, done before we set row data to ensure it isn't readded via `selectionSvc.syncInOldRowNode`
-                selectionSvc?.reset('rowDataChanged');
-
-                // only clear pinned rows if using manual pinning
-                if (pinnedRowModel?.isManual()) {
-                    pinnedRowModel.reset();
-                }
-
-                this.rowNodesCountReady = true;
                 nodeManager.setNewRowData(newRowData);
+                this.rowNodesCountReady = true;
             }
         }
 
         if (params.rowDataUpdated) {
             params.step = 'group';
         } else if (params.step === 'nothing') {
-            for (const { refreshProps, step } of this.orderedStages) {
-                if (properties.some((prop) => refreshProps.has(prop))) {
-                    params.step = step;
-                    break;
-                }
-            }
+            params.step = this.stagePropChanged(properties);
         }
 
         if (params.step !== 'nothing') {
             this.refreshModel(params);
         }
+    }
+
+    private stagePropChanged(properties: (keyof GridOptions)[]): ClientSideRowModelStage {
+        for (const { refreshProps, step } of this.orderedStages) {
+            for (let i = 0, len = properties.length; i < len; ++i) {
+                if (refreshProps.has(properties[i])) {
+                    return step;
+                }
+            }
+        }
+        return 'nothing';
     }
 
     private setRowTopAndRowIndex(): Set<string> {
