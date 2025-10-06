@@ -90,9 +90,26 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const nodesToUnselect: RowNode<TData>[] = [];
         const nestedDataGetter = this.beans.groupStage?.nestedDataGetter;
 
-        let updated = false;
+        let treeUpdated = false;
         let reordered = false;
         let prevIndex = -1;
+
+        const processNested = nestedDataGetter
+            ? (parent: RowNode<TData>, node: RowNode<TData>, level: number) => {
+                  if (processedNodes.has(node)) {
+                      return;
+                  }
+                  processedNodes.add(node);
+                  if (node.treeParent !== parent) {
+                      node.treeParent = parent;
+                      treeUpdated = true;
+                  }
+                  const children = nestedDataGetter(node.data);
+                  if (children) {
+                      processChildren(node, children, level + 1);
+                  }
+              }
+            : null;
 
         const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
@@ -113,27 +130,16 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                     prevIndex = oldIndex;
                 }
                 if (node.data !== data) {
-                    updated = true;
                     node.updateData(data);
-                    updates.add(node);
+                    if (!adds.has(node)) {
+                        updates.add(node);
+                    }
                     if (!node.selectable && node.isSelected()) {
                         nodesToUnselect.push(node);
                     }
                 }
-                if (!nestedDataGetter) {
-                    processedNodes.add(node);
-                    continue;
-                }
-                if (processedNodes.has(node)) {
-                    continue;
-                }
+                processNested?.(parent, node, level);
                 processedNodes.add(node);
-                updated ||= node.treeParent !== parent;
-                node.treeParent = parent;
-                const children = nestedDataGetter(data);
-                if (children) {
-                    processChildren(node, children, level + 1);
-                }
             }
         };
 
@@ -145,7 +151,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             params.rowNodesOrderChanged = true;
         }
 
-        if (changed || updated) {
+        if (changed || updates.size || treeUpdated) {
             params.rowDataUpdated = true;
             this.deselect(nodesToUnselect);
         }
