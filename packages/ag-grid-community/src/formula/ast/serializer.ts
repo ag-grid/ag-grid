@@ -1,11 +1,12 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { getDefBySymbol } from './operators';
+import type { OperatorDef } from './operators';
 import type { FormulaNode, FormulaOperation } from './utils';
 import type { Cell, CellRef } from './utils';
 
-import { getDefBySymbol } from './operators';
-import type { OperatorDef } from './operators'; // shared, symbol-only
+// shared, symbol-only
 
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 

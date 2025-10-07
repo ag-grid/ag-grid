@@ -1,8 +1,8 @@
 import type { BeanCollection } from '../../context/context';
-import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
-import { FormulaParseError } from './utils';
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
+import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
+import { FormulaParseError } from './utils';
 
 /**
  * Converts a single operand string into a JS primitive or Cell object.
@@ -231,7 +231,6 @@ function shouldReduce(top: OperatorDef, incoming: OperatorDef): boolean {
     return top.precedence >= incoming.precedence;
 }
 
-
 /** Choose prefix/infix/postfix meaning for an ambiguous symbol based on context. */
 function pickOpDefForContext(symbol: string, prevToken: string | undefined): OperatorDef | null {
     const defs = OP_BY_SYMBOL.get(symbol);
@@ -243,16 +242,15 @@ function pickOpDefForContext(symbol: string, prevToken: string | undefined): Ope
     const prevIsOpenOrComma = prevToken === '(' || prevToken === ',';
 
     // if previous token is value or ')' or postfix-result, prefer infix/postfix
-    const prevIsValueLike =
-        prevToken !== undefined && !prevIsOperator && !prevIsOpenOrComma && prevToken !== '(';
+    const prevIsValueLike = prevToken !== undefined && !prevIsOperator && !prevIsOpenOrComma && prevToken !== '(';
 
     if (prevIsValueLike || prevToken === ')') {
         // prefer postfix if available, else infix
-        return defs.find(d => d.fixity === 'postfix') ?? defs.find(d => d.fixity === 'infix') ?? null;
+        return defs.find((d) => d.fixity === 'postfix') ?? defs.find((d) => d.fixity === 'infix') ?? null;
     }
 
     // otherwise (start of expr, or after '(' , ',' , or another operator): prefix first, then infix
-    return defs.find(d => d.fixity === 'prefix') ?? defs.find(d => d.fixity === 'infix') ?? null;
+    return defs.find((d) => d.fixity === 'prefix') ?? defs.find((d) => d.fixity === 'infix') ?? null;
 }
 
 /**
@@ -350,7 +348,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -380,7 +378,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -411,13 +409,11 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         }
 
         // Operator?
-        const incoming = OP_BY_SYMBOL.has(token)
-            ? pickOpDefForContext(token, tokens[i - 1])
-            : null;
+        const incoming = OP_BY_SYMBOL.has(token) ? pickOpDefForContext(token, tokens[i - 1]) : null;
 
         if (incoming) {
             // Reduce while top-of-stack operator outranks incoming
-            for (; ;) {
+            for (;;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind !== 'op') {
                     break;

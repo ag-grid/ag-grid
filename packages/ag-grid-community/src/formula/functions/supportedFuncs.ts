@@ -1,12 +1,17 @@
 import { FormulaError } from '../ast/utils';
-import { forEach, readExactlyN, reduceAtLeastOne, coerceFiniteNumber } from './utils';
+import { coerceFiniteNumber, forEach, readExactlyN, reduceAtLeastOne } from './utils';
 
 const MULTIPLY = (it: Iterator<unknown>): number => {
     // Empty multiplication returns 1
     let acc = 1;
-    forEach(it, 'MULTIPLY', (num) => {
-        acc *= num;
-    }, coerceFiniteNumber);
+    forEach(
+        it,
+        'MULTIPLY',
+        (num) => {
+            acc *= num;
+        },
+        coerceFiniteNumber
+    );
     return acc;
 };
 
@@ -20,9 +25,14 @@ const DIVIDE = (it: Iterator<unknown>): number => {
 
 const SUM = (it: Iterator<unknown>): number => {
     let acc = 0;
-    forEach(it, 'SUM', (num) => {
-        acc += num;
-    }, coerceFiniteNumber);
+    forEach(
+        it,
+        'SUM',
+        (num) => {
+            acc += num;
+        },
+        coerceFiniteNumber
+    );
     return acc;
 };
 
@@ -52,10 +62,15 @@ const MAX = (it: Iterator<unknown>): number => {
 const AVG = (it: Iterator<unknown>): number => {
     let count = 0;
     let sum = 0;
-    forEach(it, 'AVG', (num) => {
-        sum += num;
-        count++;
-    }, coerceFiniteNumber);
+    forEach(
+        it,
+        'AVG',
+        (num) => {
+            sum += num;
+            count++;
+        },
+        coerceFiniteNumber
+    );
     if (count === 0) {
         throw new FormulaError('AVG: requires at least one value', '#PARSE!');
     }
@@ -114,8 +129,6 @@ const LTE = (it: Iterator<unknown>): boolean => {
     const [a, b] = readExactlyN(it, 'LTE', 2);
     return a <= b;
 };
-
-
 
 export default {
     MULTIPLY,

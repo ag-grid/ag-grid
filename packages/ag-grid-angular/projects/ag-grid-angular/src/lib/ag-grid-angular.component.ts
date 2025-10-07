@@ -139,7 +139,6 @@ import type {
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
-    Iterable,
     LoadingCellRendererSelectorFunc,
     MenuItemDef,
     ModelUpdatedEvent,
@@ -235,8 +234,7 @@ import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
     encapsulation: ViewEncapsulation.None,
 })
 export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>>
-    implements AfterViewInit, OnChanges, OnDestroy
-{
+    implements AfterViewInit, OnChanges, OnDestroy {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -538,8 +536,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public dataTypeDefinitions:
         | {
-              [cellDataType: string]: DataTypeDefinition<TData>;
-          }
+            [cellDataType: string]: DataTypeDefinition<TData>;
+        }
         | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
      *

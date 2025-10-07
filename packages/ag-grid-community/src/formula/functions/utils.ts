@@ -254,21 +254,31 @@ export function coerceFiniteNumber(fname: string, v: unknown): number {
 }
 
 /** Iterate all iterator values; call `onValue(num)` for each value. */
-export function forEach<T = any>(it: Iterator<unknown>, fname: string, onValue: (num: T) => void, coerce?: (fname: string, v: unknown) => T): void {
+export function forEach<T = any>(
+    it: Iterator<unknown>,
+    fname: string,
+    onValue: (num: T) => void,
+    coerce?: (fname: string, v: unknown) => T
+): void {
     for (let t = it.next(); !t.done; t = it.next()) {
-        onValue(coerce ? coerce(fname, t.value) : t.value as T);
+        onValue(coerce ? coerce(fname, t.value) : (t.value as T));
     }
 }
 
 /** Read exactly N numeric values from the iterator; error on too few or too many. */
-export function readExactlyN<T = any>(it: Iterator<unknown>, fname: string, n: number, coerce?: (fname: string, v: unknown) => T): T[] {
+export function readExactlyN<T = any>(
+    it: Iterator<unknown>,
+    fname: string,
+    n: number,
+    coerce?: (fname: string, v: unknown) => T
+): T[] {
     const out: T[] = [];
     for (let i = 0; i < n; i++) {
         const t = it.next();
         if (t.done) {
             throw new FormulaError(`${fname}: requires exactly ${n} value(s)`, '#PARSE!');
         }
-        out.push(coerce ? coerce(fname, t.value) : t.value as T);
+        out.push(coerce ? coerce(fname, t.value) : (t.value as T));
     }
     if (!it.next().done) {
         throw new FormulaError(`${fname}: too many values`, '#PARSE!');

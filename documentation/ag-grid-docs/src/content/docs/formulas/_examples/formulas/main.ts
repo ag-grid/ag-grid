@@ -1,6 +1,14 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, FormulaModule, TextEditorModule, TooltipModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
-import { RowNumbersModule, CellSelectionModule } from 'ag-grid-enterprise';
+import {
+    ClientSideRowModelModule,
+    FormulaModule,
+    ModuleRegistry,
+    TextEditorModule,
+    TooltipModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
+import { CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -47,7 +55,7 @@ const rowData = [
     { rid: '7', A: 7, B: 14, C: 21 },
     { rid: '8', A: 8, B: 16, C: 24 },
     { rid: '9', A: '=A1+A2', B: '=B1+B2', C: '=C1+C2' },
-]
+];
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
@@ -71,14 +79,13 @@ const gridOptions: GridOptions<any> = {
     rowNumbers: true,
     defaultColDef: {
         headerName: '',
-        tooltipValueGetter: () => { },
+        tooltipValueGetter: () => {},
         editable: true,
         width: 150,
         cellDataType: 'text',
     },
     rowData,
 };
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
