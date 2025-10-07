@@ -258,8 +258,12 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                     </table>
                 </div>
 
-                <h2>Contact us</h2>
-                <ContactForm />
+                 <RenewNowButton
+                    href={mailto}
+                    className={`button-tertiary ${styles.button}`}
+                    plausibleEventType="renew-body-cta"
+                    text="Contact us at info@ag-grid.com"
+                />
             </section>
 
             <ReleasesSection
