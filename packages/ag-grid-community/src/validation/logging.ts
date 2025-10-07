@@ -161,7 +161,7 @@ export function _logPreInitWarn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_warnOnce, id!, args as any, false, defaultMessage);
+    getMsgOrDefault(_warnOnce, id!, args as any, true, defaultMessage);
 }
 
 function getErrMsg<TId extends ErrorId>(
