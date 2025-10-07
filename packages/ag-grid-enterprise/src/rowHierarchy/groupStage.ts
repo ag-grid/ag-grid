@@ -5,6 +5,7 @@ import type {
     IRowGroupStage,
     NamedBean,
     NestedDataGetter,
+    ParentIdGetter,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
@@ -30,9 +31,12 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     public step: ClientSideRowModelStage = 'group';
     public nestedDataGetter: NestedDataGetter<TData> | null = null;
     public treeData: boolean = false;
+    private parentIdField: string | undefined;
+    private cachedParentIdGetter: ParentIdGetter<TData> | null = null;
+    private cachedNestedDataGetter: NestedDataGetter<TData> | null = null;
+    private childrenField: string | undefined;
 
-    private approachChanged = true;
-    private oldTreeData: boolean | null = null;
+    private approachChanged: boolean | 'full' = 'full';
     private parentIdGetter: ((data: TData) => string | null | undefined) | null = null;
     private strategy: IRowGroupingStrategy<TData> | undefined = undefined;
 
@@ -41,30 +45,40 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     }
 
     public onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void {
-        const gos = this.gos;
-        const treeDataChanged = !changedProps || changedProps.has('treeData');
-        const treeDataParentIdFieldChanged = !changedProps || changedProps.has('treeDataParentIdField');
-        const treeDataChildrenFieldChanged = !changedProps || changedProps.has('treeDataChildrenField');
-
-        if (treeDataChanged) {
-            this.treeData = gos.get('treeData') && gos.isModuleRegistered('TreeData');
-        }
-        let parentIdField: string | null | undefined;
-        let dataChildrenField: string | null | undefined;
-        if (treeDataChanged || treeDataParentIdFieldChanged || treeDataChildrenFieldChanged) {
-            this.approachChanged = true;
-            if (this.treeData) {
-                parentIdField = gos.get('treeDataParentIdField');
-                if (!parentIdField) {
-                    dataChildrenField = gos.get('treeDataChildrenField');
-                }
+        let { gos, treeData, parentIdField, childrenField } = this;
+        let cachedFieldGettersChanged = false;
+        if (!changedProps || changedProps.has('treeData')) {
+            treeData = gos.get('treeData') && gos.isModuleRegistered('TreeData');
+            if (this.treeData !== treeData) {
+                this.treeData = treeData;
+                this.approachChanged = 'full';
+                cachedFieldGettersChanged = true;
             }
         }
-        if (treeDataChanged || treeDataChildrenFieldChanged) {
-            this.nestedDataGetter = dataChildrenField ? fieldGetter(dataChildrenField) : null;
+        if (!changedProps || changedProps.has('treeDataParentIdField')) {
+            parentIdField = gos.get('treeDataParentIdField') || undefined;
+            if (this.parentIdField !== parentIdField) {
+                this.parentIdField = parentIdField;
+                this.cachedParentIdGetter = parentIdField ? fieldGetter(parentIdField) : null;
+                cachedFieldGettersChanged = true;
+            }
         }
-        if (treeDataChanged || treeDataParentIdFieldChanged) {
-            this.parentIdGetter = parentIdField ? fieldGetter(parentIdField) : null;
+        if (!changedProps || changedProps.has('treeDataChildrenField')) {
+            childrenField = gos.get('treeDataChildrenField') || undefined;
+            if (this.childrenField !== childrenField) {
+                this.childrenField = childrenField;
+                this.cachedNestedDataGetter = childrenField ? fieldGetter(childrenField) : null;
+                cachedFieldGettersChanged = true;
+            }
+        }
+        if (cachedFieldGettersChanged) {
+            const parentIdGetter = treeData && parentIdField ? this.cachedParentIdGetter : null;
+            const nestedDataGetter = treeData && !parentIdField && childrenField ? this.cachedNestedDataGetter : null;
+            if (this.parentIdGetter !== parentIdGetter || this.nestedDataGetter !== nestedDataGetter) {
+                this.nestedDataGetter = nestedDataGetter;
+                this.parentIdGetter = parentIdGetter;
+                this.approachChanged ||= true;
+            }
         }
     }
 
@@ -100,30 +114,27 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     }
 
     public execute(params: StageExecuteParams<TData>): boolean | undefined {
-        const approachChanged = this.approachChanged;
+        const approachChanged = !!this.approachChanged;
         const strategy = approachChanged ? this.changeApproach(params) : this.strategy;
         if (!strategy) {
             return undefined; // Stage not executed if no strategy is available
         }
-        return strategy.execute(params, this.parentIdGetter, this.nestedDataGetter) || approachChanged;
+        return strategy.execute(params, approachChanged, this.parentIdGetter, this.nestedDataGetter) || approachChanged;
     }
 
     private changeApproach({ rowNode }: StageExecuteParams<TData>): IRowGroupingStrategy<TData> | undefined {
-        const oldStrategy = this.strategy;
-        const treeData = this.treeData;
+        let { treeData, approachChanged, strategy } = this;
         this.approachChanged = false;
-        let strategy = oldStrategy;
-        if (this.oldTreeData !== treeData) {
-            this.oldTreeData = treeData;
+        if (approachChanged === 'full') {
+            if (strategy) {
+                resetGrouping(rowNode, !this.nestedDataGetter);
+            }
             this.destroyBean(strategy);
             strategy = this.beans.registry.createDynamicBean(treeData ? 'treeGroupStrategy' : 'groupStrategy', false);
             this.strategy = strategy && this.createBean(strategy);
-        } else {
-            strategy?.reset?.();
+            return strategy;
         }
-        if (oldStrategy) {
-            resetGrouping(rowNode, !this.nestedDataGetter);
-        }
+        strategy?.reset?.();
         return strategy;
     }
 }

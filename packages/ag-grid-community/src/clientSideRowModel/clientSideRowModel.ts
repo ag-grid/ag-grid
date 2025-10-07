@@ -899,7 +899,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doRowGrouping(params: RefreshModelParams): boolean {
-        const rootNode: RowNode = this.rootNode!;
+        const rootNode = this.rootNode!;
         const groupStageExecuted = this.beans.groupStage?.execute({
             rowNode: rootNode,
             changedRowNodes: params.changedRowNodes,
@@ -912,7 +912,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return groupStageExecuted;
         }
 
-        const sibling: RowNode = rootNode.sibling;
+        const sibling = rootNode.sibling;
         rootNode.childrenAfterGroup = rootNode.allLeafChildren;
         if (sibling) {
             sibling.childrenAfterGroup = rootNode.childrenAfterGroup;

@@ -12,6 +12,7 @@ import type {
 export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(
         params: StageExecuteParams<TData>,
+        fullReload: boolean,
         parentIdGetter: ParentIdGetter<TData> | null | undefined,
         nestedDataGetter: NestedDataGetter<TData> | null | undefined
     ): boolean | undefined | void;

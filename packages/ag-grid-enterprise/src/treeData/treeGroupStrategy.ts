@@ -48,7 +48,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private groupColsChanged: boolean = true;
     private fillerNodesById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
-    private parentIdGetter: ParentIdGetter<TData> | null = null;
 
     public override destroy(): void {
         super.destroy();
@@ -60,7 +59,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public reset(): void {
         this.destroyFillerRows();
         this.deselectHiddenNodes(false);
-        this.parentIdGetter = null;
         this.groupColsIds = '';
         this.groupColsChanged = true;
     }
@@ -71,6 +69,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     public execute(
         params: StageExecuteParams<TData>,
+        fullReload: boolean,
         parentIdGetter: ParentIdGetter<TData> | null,
         nestedDataGetter: NestedDataGetter<TData> | null
     ): boolean {
@@ -80,8 +79,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const rootNode = params.rowNode;
 
         const activeChangedPath = changedPath?.active ? changedPath : undefined;
-        const fullReload = (!changedRowNodes && !activeChangedPath) || this.parentIdGetter !== parentIdGetter;
-        this.parentIdGetter = parentIdGetter;
+        fullReload ||= !changedRowNodes && !activeChangedPath;
 
         const hasUpdates = !!changedRowNodes && this.flagUpdatedNodes(changedRowNodes);
         if (fullReload || hasUpdates) {
