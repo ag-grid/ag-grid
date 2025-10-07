@@ -213,10 +213,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const gos = this.gos;
         const changedProps = new Set(properties);
-        const params: RefreshModelParams = {
-            step: 'nothing',
-            changedProps,
-        };
+        const params: RefreshModelParams = { step: 'nothing', changedProps };
 
         const groupStage = this.beans.groupStage;
         const oldNestedDataGetter = groupStage?.nestedDataGetter;
@@ -278,16 +275,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private setRowTopAndRowIndex(): Set<string> {
+    private setRowTopAndRowIndex(outputDisplayedRowsMapped?: Set<string>): void {
         const { beans, rowsToDisplay } = this;
         const defaultRowHeight = beans.environment.getDefaultRowHeight();
         let nextRowTop = 0;
-
-        // mapping displayed rows is not needed for this method, however it's used in
-        // clearRowTopAndRowIndex(), and given we are looping through this.rowsToDisplay here,
-        // we create the map here for performance reasons, so we don't loop a second time
-        // in clearRowTopAndRowIndex()
-        const displayedRowsMapped = new Set<string>();
 
         // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
         // with these two layouts.
@@ -296,8 +287,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         for (let i = 0, len = rowsToDisplay.length; i < len; ++i) {
             const rowNode = rowsToDisplay[i];
 
-            if (rowNode.id != null) {
-                displayedRowsMapped.add(rowNode.id);
+            const id = rowNode.id;
+            if (id != null) {
+                outputDisplayedRowsMapped?.add(id);
             }
 
             if (rowNode.rowHeight == null) {
@@ -309,8 +301,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNode.setRowIndex(i);
             nextRowTop += rowNode.rowHeight!;
         }
-
-        return displayedRowsMapped;
     }
 
     private clearRowTopAndRowIndex(changedPath: ChangedPath, displayedRowsMapped: Set<string>): void {
@@ -322,36 +312,36 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         };
 
-        const recurse = (rowNode: RowNode | null) => {
-            if (rowNode === null) {
-                return;
-            }
-
+        const recurse = (rowNode: RowNode) => {
             clearIfNotDisplayed(rowNode);
             clearIfNotDisplayed(rowNode.detailNode);
             clearIfNotDisplayed(rowNode.sibling);
 
-            if (rowNode.hasChildren()) {
-                if (rowNode.childrenAfterGroup) {
-                    // if a changedPath is active, it means we are here because of a transaction update or
-                    // a change detection. neither of these impacts the open/closed state of groups. so if
-                    // a group is not open this time, it was not open last time. so we know all closed groups
-                    // already have their top positions cleared. so there is no need to traverse all the way
-                    // when changedPath is active and the rowNode is not expanded.
-                    const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
-                    // as expanded=undefined for root node
-                    const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
-                    if (!skipChildren) {
-                        const childrenAfterGroup = rowNode.childrenAfterGroup;
-                        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-                            recurse(childrenAfterGroup[i]);
-                        }
-                    }
-                }
+            const childrenAfterGroup = rowNode.childrenAfterGroup;
+            if (!rowNode.hasChildren() || !childrenAfterGroup) {
+                return;
+            }
+
+            // if a changedPath is active, it means we are here because of a transaction update or
+            // a change detection. neither of these impacts the open/closed state of groups. so if
+            // a group is not open this time, it was not open last time. so we know all closed groups
+            // already have their top positions cleared. so there is no need to traverse all the way
+            // when changedPath is active and the rowNode is not expanded.
+            const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
+            // as expanded=undefined for root node
+            const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
+            if (skipChildren) {
+                return;
+            }
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                recurse(childrenAfterGroup[i]);
             }
         };
 
-        recurse(this.rootNode);
+        const rootNode = this.rootNode;
+        if (rootNode) {
+            recurse(rootNode);
+        }
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -359,11 +349,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getRowCount(): number {
-        if (this.rowsToDisplay) {
-            return this.rowsToDisplay.length;
-        }
-
-        return 0;
+        return this.rowsToDisplay.length;
     }
 
     /**
@@ -541,20 +527,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return; // destroyed
         }
 
-        // this goes through the pipeline of stages. what's in my head is similar
-        // to the diagram on this page:
-        // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
-        // however we want to keep the results of each stage, hence we manually call
-        // each step rather than have them chain each other.
-
-        // fallthrough in below switch is on purpose,
-        // eg if STEP_FILTER, then all steps below this
-        // step get done
-        // let start: number;
-        // console.log('======= start =======');
-
         const beans = this.beans;
-
         let rowDataUpdated = !!params.rowDataUpdated;
         const changedPath = (params.changedPath ??= this.createChangePath(!params.newData && rowDataUpdated));
 
@@ -586,6 +559,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             beans.colFilter?.refreshModel();
         }
 
+        // this goes through the pipeline of stages. what's in my head is similar to the diagram on this page:
+        // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
+        // however we want to keep the results of each stage, hence we manually call each step
+        // rather than have them chain each other.
+        // fallthrough in below switch is on purpose, eg if STEP_FILTER, then all steps after runs too
         /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group': {
@@ -613,10 +591,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         /* eslint-enable no-fallthrough */
 
-        // set all row tops to null, then set row tops on all visible rows. if we don't
-        // do this, then the algorithm below only sets row tops, old row tops from old rows
-        // will still lie around
-        const displayedNodesMapped = this.setRowTopAndRowIndex();
+        // set all row tops to null, then set row tops on all visible rows. if we don't do this,
+        // then the algorithm below only sets row tops, old row tops from old rows will still lie around
+        const displayedNodesMapped = new Set<string>();
+        this.setRowTopAndRowIndex(displayedNodesMapped);
         this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
         this.isRefreshingModel = false;
@@ -875,10 +853,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const filterAggStage = this.beans.filterAggStage;
         if (filterAggStage) {
             filterAggStage.execute({ rowNode: rootNode, changedPath: changedPath });
-        } else {
-            // If filterAggStage is undefined, then so is the grouping stage, so all children should be on the rootNode.
-            rootNode.childrenAfterAggFilter = rootNode.childrenAfterFilter;
+            return;
         }
+
+        // If filterAggStage is undefined, then so is the grouping stage, so all children should be on the rootNode.
+        rootNode.childrenAfterAggFilter = rootNode.childrenAfterFilter;
     }
 
     private doSort(changedRowNodes: ChangedRowNodes | undefined, changedPath: ChangedPath) {
@@ -889,13 +868,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 changedRowNodes,
                 changedPath: changedPath,
             });
-        } else {
-            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
-                rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
-
-                updateRowNodeAfterSort(rowNode);
-            });
+            return;
         }
+        changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+            rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
+            updateRowNodeAfterSort(rowNode);
+        });
     }
 
     private doRowGrouping(params: RefreshModelParams): boolean {
@@ -962,9 +940,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public flushAsyncTransactions(): void {
-        const timer = this.asyncTransactionsTimer;
-        if (timer) {
-            clearTimeout(timer);
+        const asyncTransactionsTimer = this.asyncTransactionsTimer;
+        if (asyncTransactionsTimer) {
+            clearTimeout(asyncTransactionsTimer);
             this.executeBatchUpdateRowData();
         }
     }
@@ -972,8 +950,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private executeBatchUpdateRowData(): void {
         const nodeManager = this.nodeMgr;
         if (!nodeManager) {
-            this.asyncTransactionsTimer = 0;
-            this.asyncTransactions = null;
             return; // destroyed
         }
         this.beans.valueCache?.onDataChanged();
@@ -1008,10 +984,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (rowNodeTrans.length > 0) {
-            this.eventSvc.dispatchEvent({
-                type: 'asyncTransactionsFlushed',
-                results: rowNodeTrans,
-            });
+            this.eventSvc.dispatchEvent({ type: 'asyncTransactionsFlushed', results: rowNodeTrans });
         }
         this.asyncTransactionsTimer = 0;
         this.asyncTransactions = null;
@@ -1132,11 +1105,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public override destroy(): void {
         super.destroy();
-        this.flushAsyncTransactions();
+        this.nodeMgr = this.destroyBean(this.nodeMgr);
         this.started = false;
         this.rootNode = null;
         this.rowsToDisplay = [];
-        this.nodeMgr = this.destroyBean(this.nodeMgr);
+        this.asyncTransactions = null;
+        clearTimeout(this.asyncTransactionsTimer);
     }
 
     private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
