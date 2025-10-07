@@ -6,6 +6,7 @@ import type {
     NamedBean,
     RefreshModelParams,
     RowCtrl,
+    RowNodeDataChangedEvent,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -34,6 +35,10 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         if (_isClientSideRowModel(this.gos)) {
             this.enabled = this.isEnabled();
         }
+
+        this.addManagedListeners(this.beans.eventSvc, {
+            rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
+        });
     }
 
     public refreshModel(params: RefreshModelParams) {

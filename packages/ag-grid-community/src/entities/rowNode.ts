@@ -291,18 +291,10 @@ export class RowNode<TData = any>
         this.setDataCommon(data, true);
     }
 
-    public updateDataInternal(data: TData): void {
-        this.setDataCommon(data, true, true);
-    }
-
-    private setDataCommon(data: TData, update: boolean, internal = false): void {
+    private setDataCommon(data: TData, update: boolean): void {
         const { valueCache, eventSvc } = this.beans;
         const oldData = this.data;
         this.data = data;
-
-        if (!internal) {
-            this.beans.masterDetailSvc?.setMaster(this, false, true);
-        }
 
         valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
