@@ -16,7 +16,7 @@ import {
     _areColIdsEqual,
     _columnsMatch,
     _destroyColumnTree,
-    _removeFromArray,
+    _removeAllFromArray,
     _updateColsMap,
 } from 'ag-grid-community';
 
@@ -133,7 +133,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         // For simplicity, reset the `columns` array by removing all associated
         // virtual columns first
-        hierarchyCols.forEach((hCol) => _removeFromArray(columns, hCol));
+        _removeAllFromArray(columns, hierarchyCols);
 
         // Insert the virtual columns in the given order
         columns.splice(idxCol, 0, ...hierarchyCols);
