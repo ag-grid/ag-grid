@@ -65,30 +65,10 @@
 
 .heroCustomerLogos {
     margin-top: $spacing-size-6;
-    position: relative;
-    overflow: visible;
 
-    // Target the div nested through astro-island (customerLogos div)
-    astro-island > div > div {
-        transform: scale(0.6);
-        transform-origin: left;
-    }
-
-    // Override gradient widths
-    astro-island > div {
-        &::before,
-        &::after {
-            width: 8vw;
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        astro-island > div {
-            &::before,
-            &::after {
-                width: 5vw;
-            }
-        }
+    div {
+        height: 56px;
+        background-size: auto 56px;
     }
 }
 
@@ -217,35 +197,5 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         font-size: var(--text-fs-4xl);
-    }
-}
-
-.customerLogosWrapper {
-    margin-top: $spacing-size-8;
-    margin-bottom: $spacing-size-4;
-    position: relative;
-    overflow: visible;
-
-    // Target the div nested two levels deep (customerLogos div)
-    > div > div {
-        transform: scale(0.6);
-        transform-origin: center;
-    }
-
-    // Override gradient widths
-    > div {
-        &::before,
-        &::after {
-            width: 8vw;
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        > div {
-            &::before,
-            &::after {
-                width: 5vw;
-            }
-        }
     }
 }

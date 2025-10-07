@@ -458,31 +458,6 @@
 .customerLogosWrapper {
     margin-top: $spacing-size-8;
     margin-bottom: $spacing-size-4;
-    position: relative;
-    overflow: visible;
-
-    // Target the div nested two levels deep (customerLogos div)
-    > div > div {
-        transform: scale(0.6);
-        transform-origin: center;
-    }
-
-    // Override gradient widths on the first nested div
-    > div {
-        &::before,
-        &::after {
-            width: 8vw;
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        > div {
-            &::before,
-            &::after {
-                width: 5vw;
-            }
-        }
-    }
 }
 
 .salesContactsubHeading {
