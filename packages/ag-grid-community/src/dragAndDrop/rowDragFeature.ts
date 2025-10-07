@@ -555,10 +555,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     /** Drag and drop. Returns false if at least a row was moved, otherwise true */
     private dropRows(rowsDrop: RowsDrop): boolean {
-        return rowsDrop.sameGrid ? this.moveRows(rowsDrop) : this.addRows(rowsDrop);
+        return rowsDrop.sameGrid ? this.csrmMoveRows(rowsDrop) : this.csrmAddRows(rowsDrop);
     }
 
-    private addRows({ position, target, rows }: RowsDrop): boolean {
+    private csrmAddRows({ position, target, rows }: RowsDrop): boolean {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
 
@@ -602,7 +602,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return filtered ?? rows; // If all rows are valid, return the original array
     }
 
-    private moveRows({ position, target, rows, newParent, rootNode }: RowsDrop): boolean {
+    private csrmMoveRows({ position, target, rows, newParent, rootNode }: RowsDrop): boolean {
         let changed = false;
 
         const leafs = new Set<WritableRowNode>();
