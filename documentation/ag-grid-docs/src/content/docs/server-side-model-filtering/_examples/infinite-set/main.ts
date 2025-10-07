@@ -138,14 +138,13 @@ function areEqual(a: null | string[], b: null | string[]) {
     if (a == null && b == null) {
         return true;
     }
-    if (a != null || b != null) {
+    if (a == null || b == null) {
         return false;
     }
-
     return (
-        a!.length === b!.length &&
-        a!.every(function (v, i) {
-            return b![i] === v;
+        a.length === b.length &&
+        a.every(function (v, i) {
+            return b[i] === v;
         })
     );
 }
