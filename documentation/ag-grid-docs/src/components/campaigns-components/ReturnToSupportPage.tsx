@@ -258,7 +258,7 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                     </table>
                 </div>
 
-                 <RenewNowButton
+                <RenewNowButton
                     href={mailto}
                     className={`button-tertiary ${styles.button}`}
                     plausibleEventType="renew-body-cta"
