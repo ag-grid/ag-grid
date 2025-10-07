@@ -32,32 +32,27 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     public setNewRowData(rowData: TData[]): void {
-        // no need to invalidate cache, as the cache is stored on the rowNode,
-        // so new rowNodes means the cache is wiped anyway.
-
         const { selectionSvc, pinnedRowModel, groupStage } = this.beans;
-        const nestedDataGetter = groupStage?.nestedDataGetter;
 
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionSvc.syncInOldRowNode`
         selectionSvc?.reset('rowDataChanged');
 
-        // only clear pinned rows if using manual pinning
         if (pinnedRowModel?.isManual()) {
-            pinnedRowModel.reset();
+            pinnedRowModel.reset(); // only clear pinned rows if using manual pinning
         }
 
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
-        const rootNode = initRootNode(this.rootNode);
-
         // Clear internal maps
         this.allNodesMap = {};
         this.nextId = 0;
+        const rootNode = initRootNode(this.rootNode);
 
         const allLeafs = new Array<RowNode<TData>>(rowData.length);
         setAllLeafs(rootNode, allLeafs);
 
         let writeIdx = 0;
+        const nestedDataGetter = groupStage?.nestedDataGetter;
         const processedNested = nestedDataGetter ? new Set<TData>() : null;
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             const level = parent.level + 1;
@@ -93,7 +88,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const processedNodes = new Set<RowNode<TData>>();
         const nodesToUnselect: RowNode<TData>[] = [];
         const nestedDataGetter = this.beans.groupStage?.nestedDataGetter;
-
         let updated = false;
         let reordered = false;
         let prevIndex = -1;
