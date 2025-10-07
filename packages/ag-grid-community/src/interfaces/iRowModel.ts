@@ -9,7 +9,11 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
-    /** The root row containing all the rows */
+    /**
+     * The root row.
+     * - in Client Side Row Model and Server Side Row Model, this is the top level node above all groups and rows.
+     * - in Infinite Row Model and Viewport Row Model, this is a dummy empty node with no children as these row models do not have a concept of hierarchy.
+     */
     readonly rootNode: RowNode | null;
 
     /** Returns the rowNode at the given index. */
