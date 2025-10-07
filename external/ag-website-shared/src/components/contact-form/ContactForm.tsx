@@ -33,14 +33,6 @@ export const ContactForm: FunctionComponent = () => {
         mode: 'onBlur',
     });
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm<FormValues>({
-        mode: 'onBlur',
-    });
-
     useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
         const hasDebugFlag = searchParams.has('debug');
