@@ -1,6 +1,15 @@
-import type { ColDef, ColGroupDef } from 'ag-grid-community';
+import type { BeanCollection } from '../context/context';
+import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { StructuredSchema } from './aiToolkitModule';
+import { createEnumSchema, createObjectSchema } from './schemaTypes';
+import type { JSONSchema } from './schemaTypes';
 
-import { type JSONSchema, createEnumSchema, createObjectSchema } from './schema';
+export function getStructuredSchema(beans: BeanCollection): StructuredSchema {
+    const columnModel = beans.colModel;
+    const columnDefs = columnModel.getColumnDefs() || [];
+
+    return generateChatGPTSchema(columnDefs);
+}
 
 /**
  * Column analysis result for schema generation

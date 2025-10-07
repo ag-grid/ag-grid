@@ -116,6 +116,7 @@ type InternalModuleName =
     | 'Testing';
 
 export type CommunityModuleName =
+    | 'AiToolkit'
     | 'AlignedGrids'
     | 'AllCommunity'
     | 'CellApi'
@@ -196,6 +197,7 @@ export type EnterpriseModuleName =
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
+    | 'AiToolkitModule'
     | 'AlignedGridsModule'
     | 'AllCommunityModule'
     | 'CellApiModule'

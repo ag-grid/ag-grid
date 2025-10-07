@@ -4,7 +4,6 @@ import { generateChatGPTSchema } from './chatgptSchema';
 import type { ChatGPTGridStateResponse } from './gridStateSchema';
 
 // OpenAI API configuration
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_API_URL = 'https://api.openai.com/v1/responses';
 const MODEL = 'gpt-4.1-mini';
 
@@ -15,16 +14,18 @@ const MODEL = 'gpt-4.1-mini';
 export function callChatGPT(
     userRequest: string,
     currentState: any,
-    gridApi: GridApi
+    gridApi: GridApi,
+    apiKey: string
 ): Promise<ChatGPTGridStateResponse> {
     return new Promise((resolve, reject) => {
-        const columnDefs = gridApi.getColumnDefs();
-        if (!columnDefs) {
-            reject(new Error('Column definitions not available'));
+        if (!apiKey || apiKey.trim() === '') {
+            reject(new Error('OpenAI API key is required'));
             return;
         }
 
-        const schema = generateChatGPTSchema(columnDefs);
+        const schema = gridApi.getStructuredSchema();
+
+        console.log(schema);
 
         const systemPrompt = `You are an AG-Grid state management assistant. You help users modify grid configuration using natural language commands.
 
@@ -71,7 +72,7 @@ Important: Only modify the properties that the user specifically requested. If t
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${OPENAI_API_KEY}`,
+                Authorization: `Bearer ${apiKey}`,
             },
             body: JSON.stringify(requestBody),
         })

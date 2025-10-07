@@ -127,12 +127,22 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function processNaturalLanguageRequest() {
     const inputElement = document.getElementById('naturalLanguageInput') as HTMLInputElement;
+    const apiKeyElement = document.getElementById('apiKeyInput') as HTMLInputElement;
     const outputElement = document.getElementById('aiResponse') as HTMLDivElement;
     const statusElement = document.getElementById('processingStatus') as HTMLDivElement;
 
     const userRequest = inputElement.value.trim();
+    const apiKey = apiKeyElement.value.trim();
+
+    if (!apiKey) {
+        outputElement.innerHTML = '<p style="color: red;">Please enter your OpenAI API key</p>';
+        outputElement.style.display = 'block';
+        return;
+    }
+
     if (!userRequest) {
         outputElement.innerHTML = '<p style="color: red;">Please enter a request</p>';
+        outputElement.style.display = 'block';
         return;
     }
 
@@ -141,7 +151,7 @@ function processNaturalLanguageRequest() {
 
     const currentState = gridApi.getState();
 
-    callChatGPT(userRequest, currentState, gridApi)
+    callChatGPT(userRequest, currentState, gridApi, apiKey)
         .then(function (response) {
             // Apply the state changes
             if (Object.keys(response.gridState).length > 0) {
@@ -194,10 +204,27 @@ function resetGrid() {
     currentState.style.display = 'none';
 }
 
+function toggleApiKeyVisibility() {
+    const apiKeyElement = document.getElementById('apiKeyInput') as HTMLInputElement;
+    if (apiKeyElement.type === 'password') {
+        apiKeyElement.type = 'text';
+    } else {
+        apiKeyElement.type = 'password';
+    }
+}
+
 // Setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    // Check for API key in URL parameters and populate the input field
+    const urlParams = new URLSearchParams(window.location.search);
+    const apiKeyFromUrl = urlParams.get('apiKey') || urlParams.get('api_key');
+    if (apiKeyFromUrl) {
+        const apiKeyElement = document.getElementById('apiKeyInput') as HTMLInputElement;
+        apiKeyElement.value = apiKeyFromUrl;
+    }
 
     // Allow Enter key to submit request
     const inputElement = document.getElementById('naturalLanguageInput') as HTMLInputElement;
@@ -221,3 +248,4 @@ document.addEventListener('DOMContentLoaded', () => {
 (window as any).processNaturalLanguageRequest = processNaturalLanguageRequest;
 (window as any).getCurrentState = getCurrentState;
 (window as any).resetGrid = resetGrid;
+(window as any).toggleApiKeyVisibility = toggleApiKeyVisibility;

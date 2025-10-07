@@ -1,4 +1,5 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
+import type { StructuredSchema } from '../aiToolkit/aiToolkitModule';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragTypes';
 import type {
@@ -1859,6 +1860,15 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
+export interface _AiToolkitGridApi {
+    /**
+     * Returns the structured schema of the grid, which includes information about columns, data types, and relationships.
+     * This schema can be passed to AT services to ensure the response is of the correct format.
+     * @agModule `AiToolkitModule`
+     */
+    getStructuredSchema(): StructuredSchema;
+}
+
 export interface GridApi<TData = any>
     extends _CoreGridApi<TData>,
         _StateGridApi,
@@ -1909,6 +1919,7 @@ export interface GridApi<TData = any>
         _ClipboardGridApi,
         _GridChartsGridApi,
         _AdvancedFilterGridApi,
-        _BatchEditApi {
+        _BatchEditApi,
+        _AiToolkitGridApi {
     dispatchEvent(event: AgEvent): void;
 }

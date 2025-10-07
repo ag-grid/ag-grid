@@ -1,5 +1,18 @@
 <div class="example-wrapper">
     <div>
+        <div class="input-group" style="margin-bottom: 15px;">
+            <input 
+                type="password" 
+                id="apiKeyInput" 
+                placeholder="Enter your OpenAI API Key (required)"
+                autocomplete="off"
+                style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px;"
+            />
+            <button onclick="toggleApiKeyVisibility()" style="padding: 8px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                👁️
+            </button>
+        </div>
+        
         <div class="input-group">
             <input 
                 type="text" 
@@ -13,8 +26,9 @@
             </button>
         </div>
         
-        <div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 15px; border-radius: 4px; margin: 15px 0;">
-            <strong>Setup Required:</strong> This example requires an OpenAI API key to be configured. Set the <code>OPENAI_API_KEY</code> environment variable or update the API key in the source code.
+        <div style="background: #e7f3ff; border: 1px solid #b3d9ff; color: #004085; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 14px;">
+            <strong>ℹ️ API Key Required:</strong> Enter your OpenAI API key above to use the natural language processing features.<br>
+            <small>Tip: You can also pass the API key as a URL parameter: <code>?apiKey=your-key-here</code></small>
         </div>
         
         <div class="examples" style="background: #e7f3ff; padding: 15px; border-radius: 4px; margin: 15px 0; border-left: 4px solid #007bff;">
