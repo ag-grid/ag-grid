@@ -139,6 +139,7 @@ import type {
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
+    Iterable,
     LoadingCellRendererSelectorFunc,
     MenuItemDef,
     ModelUpdatedEvent,
@@ -1109,7 +1110,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `FormulaModule`
      */
-    @Input() public formulaFuncs: { [key: string]: (args: any[]) => any } | undefined = undefined;
+    @Input() public formulaFuncs: { [key: string]: { func: (iterable: Iterable<unknown>) => any } } | undefined =
+        undefined;
     /** Enable or disable the processing of cell formulas
      * @initial
      * @agModule `FormulaModule`

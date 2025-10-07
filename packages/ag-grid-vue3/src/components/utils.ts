@@ -56,6 +56,7 @@ import type {
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
+    Iterable,
     LoadingCellRendererSelectorFunc,
     MenuItemDef,
     NavigateToNextCellParams,
@@ -929,7 +930,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `FormulaModule`
          */
-    formulaFuncs?: ({ [key: string]: (args: any[]) => any }) | undefined,
+    formulaFuncs?: ({ [key: string]: { func: (iterable: Iterable<unknown>) => any } }) | undefined,
     /** Enable or disable the processing of cell formulas
          * @initial
          * @agModule `FormulaModule`

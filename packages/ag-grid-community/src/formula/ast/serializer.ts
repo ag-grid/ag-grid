@@ -4,18 +4,8 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { FormulaNode, FormulaOperation } from './utils';
 import type { Cell, CellRef } from './utils';
 
-export type BinaryOperator = '+' | '-' | '*' | '/' | '^';
-
-export const BINARY_PRECEDENCE: Record<BinaryOperator, number> = {
-    '+': 1,
-    '-': 1,
-    '*': 2,
-    '/': 2,
-    '^': 3,
-};
-
-export const isBinaryOp = (op: string): op is BinaryOperator =>
-    op === '+' || op === '-' || op === '*' || op === '/' || op === '^';
+import { getDefBySymbol } from './operators';
+import type { OperatorDef } from './operators'; // shared, symbol-only
 
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 
@@ -157,22 +147,42 @@ function serializeCellREF(beans: BeanCollection, cell: Cell): string {
     return `${start})`;
 }
 
-function precedenceOf(op: BinaryOperator): number {
-    return BINARY_PRECEDENCE[op];
+/** Detects if unary - by checking if first child is 0 */
+function isUnaryMinusNode(node: FormulaNode): FormulaNode | null {
+    if (!isOperationNode(node) || node.operation !== '-' || node.operands.length !== 2) {
+        return null;
+    }
+    const [left, right] = node.operands;
+    if (left.type === 'operand' && left.value === 0) {
+        return right;
+    }
+    return null;
 }
 
-function needsParensInBinary(parentOp: BinaryOperator, child: FormulaNode, side: 'left' | 'right'): boolean {
+/** True if this node is an infix operation that's in the operator table. */
+function isInfixOpNode(node: FormulaNode): boolean {
+    if (!isOperationNode(node)) {
+        return false;
+    }
+    return !!getDefBySymbol(node.operation, 'infix');
+}
+
+function needsParensInBinary(parentDef: OperatorDef, child: FormulaNode, side: 'left' | 'right'): boolean {
     if (!isOperationNode(child)) {
         return false;
     }
-    if (!isBinaryOp(child.operation)) {
-        if (child.operation === '%') {
-            return false;
-        }
+
+    // if child is unary-minus-encoded, let the unary emit decide its own parens.
+    if (isUnaryMinusNode(child)) {
         return false;
     }
-    const pParent = precedenceOf(parentOp);
-    const pChild = precedenceOf(child.operation);
+
+    const childDef = getDefBySymbol(child.operation, 'infix');
+    if (!childDef) return false; // functions or non-infix -> no parens
+
+    const pParent = parentDef.precedence;
+    const pChild = childDef.precedence;
+
     if (pChild < pParent) {
         return true;
     }
@@ -180,26 +190,35 @@ function needsParensInBinary(parentOp: BinaryOperator, child: FormulaNode, side:
         return false;
     }
 
-    if (parentOp === '^') {
-        return side === 'left' && child.operation === '^';
+    // Equal precedence:
+    if (parentDef.associativity === 'right') {
+        // e.g., '^': parenthesize LEFT child if also '^'
+        const sameOp = childDef.symbol === parentDef.symbol;
+        return side === 'left' && sameOp;
     }
-    if (parentOp === '-' || parentOp === '/') {
+
+    // Left-assoc at equal precedence: add parens on RIGHT if not associative (e.g., '-', '/')
+    const parentAssociative = parentDef.isAssociative === true;
+    if (!parentAssociative) {
         return side === 'right';
     }
-    return false; // '+' and '*'
+
+    return false; // associative like '+' or '*'
 }
 
-function needsParensForUnaryMinus(child: FormulaNode): boolean {
-    if (!isOperationNode(child)) {
+/** Decide if inner of unary minus (-x) needs parentheses for surface syntax. */
+function needsParensForUnaryMinus(rhs: FormulaNode): boolean {
+    if (!isOperationNode(rhs)) {
         return false;
     }
-    if (isBinaryOp(child.operation)) {
-        if (child.operation === '^') {
-            return false;
-        } // -a^b means -(a^b)
-        return true; // + - * /
+
+    // If inner is an infix op, we mirror original behavior: wrap for +, -, *, /; don't wrap for '^'
+    const innerInfix = getDefBySymbol(rhs.operation, 'infix');
+    if (!innerInfix) {
+        return false;
     }
-    return false;
+    const isPow = innerInfix.symbol === '^';
+    return !isPow;
 }
 
 /**
@@ -231,34 +250,51 @@ export function serializeFormula(beans: BeanCollection, root: FormulaNode, useRe
             return emitCell(v as Cell);
         }
 
+        // Unary minus special-case: represented as '-' with [0, expr]
+        const unaryMinusInner = isUnaryMinusNode(node);
+        if (unaryMinusInner) {
+            const s = emit(unaryMinusInner);
+            return needsParensForUnaryMinus(unaryMinusInner) ? `-(${s})` : `-${s}`;
+        }
+
         const op = node.operation;
 
-        // unary minus: represented as '-' with [0, expr]
-        if (
-            op === '-' &&
-            node.operands.length === 2 &&
-            node.operands[0].type === 'operand' &&
-            node.operands[0].value === 0
-        ) {
-            const rhs = node.operands[1];
-            const s = emit(rhs);
-            return needsParensForUnaryMinus(rhs) ? `-(${s})` : `-${s}`;
+        // unary +-% (prefix or postfix)
+        if (node.operands.length === 1) {
+            const rhs = node.operands[0];
+
+            // Prefer postfix if defined for this symbol (e.g., '%')
+            const post = getDefBySymbol(op, 'postfix');
+            if (post) {
+                return `${emit(rhs)}${post.symbol}`;
+            }
+
+            // Otherwise prefix (if you add real prefix ops later)
+            const pre = getDefBySymbol(op, 'prefix');
+            if (pre) {
+                const inner = emit(rhs);
+                // Conservative: add parens if inner is an infix expression
+                const need = isInfixOpNode(rhs);
+                return need ? `${pre.symbol}(${inner})` : `${pre.symbol}${inner}`;
+            }
+
+            // Fallback: function-style
+            return `${op}(${emit(rhs)})`;
         }
 
-        // postfix percent
-        if (op === '%' && node.operands.length === 1) {
-            return `${emit(node.operands[0])}%`;
+        // infix binary operator
+        if (node.operands.length === 2) {
+            const def = getDefBySymbol(op, 'infix');
+
+            if (def) {
+                const [l, r] = node.operands;
+                const Ls = needsParensInBinary(def, l, 'left') ? `(${emit(l)})` : emit(l);
+                const Rs = needsParensInBinary(def, r, 'right') ? `(${emit(r)})` : emit(r);
+                return `${Ls}${def.symbol}${Rs}`;
+            }
         }
 
-        // binary operators
-        if (isBinaryOp(op) && node.operands.length === 2) {
-            const [l, r] = node.operands;
-            const Ls = needsParensInBinary(op, l, 'left') ? `(${emit(l)})` : emit(l);
-            const Rs = needsParensInBinary(op, r, 'right') ? `(${emit(r)})` : emit(r);
-            return `${Ls}${op}${Rs}`;
-        }
-
-        // function call or other op
+        // function call or unknown operation: OP(arg1,arg2,...)
         return `${op}(${node.operands.map(emit).join(',')})`;
     }
 

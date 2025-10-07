@@ -1,4 +1,167 @@
 ---
 title: "Formulas"
 ---
-A single cell can be used to represent multiple contiguous leaf rows with equal values.
+Formulas can be provided to cells in the grid, similarly to spreadsheet applications.
+
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=450 /%}
+
+## Enabling Formulas
+
+To enable formulas, set the `gridOption` property `enableFormulas` to `true`.
+Formulas require getRowId to work.
+
+When enabling formulas, the grid automatically prepends a letter representing the column reference to each column header, and rowNumbers is enabled.
+
+When enabling formulas, row grouping, sorting and aggregation (grandTotalRow) are disabled.
+
+When enabling formulas, range selection and fill handle are automatically enabled. (?)
+
+When enabling formulas, cellDataType is no longer automatically detected, and should be explicitly defined if required.
+
+When enabling formulas, cell tooltips are enabled by default.
+
+## Formula Syntax
+
+Formulas must start with an equals sign (`=`). The formula can contain:
+
+- Cell references (e.g. `=A1 + B1`)
+- Functions (e.g. `=SUM(A1, 2)`)
+- Cell Ranges (e.g. `=SUM(A1:A10)`)
+- Operators (e.g. `=A1 * 2`)
+- Constants (e.g. `=3.14` or `="Hello"`)
+
+Formulas can reference other cells using their column letter and row number. Columns are labeled alphabetically (A, B, C, ..., Z, AA, AB, etc.), and rows are numbered starting from 1.
+
+### Editing Formulas
+When editing formulas, the application user will likely prefer the syntax of the form `A1` to refer to the first column and row.
+When the user edits a formula using references in this format, they are converted to a long hand format using IDs (e.g `=A1` becomes `=REF(COL('athlete'), ROW('a'))`).
+
+When this is a static reference, for example $A$1, the long hand format uses A and 1 in place of IDs, but adds a true to indicate the value is absolute (e.g `=$A$1` becomes `=REF(COL('a', true), ROW('1', true))`).
+
+When the reference is dynamic, for example A1, the long hand format uses the column ID and row ID (e.g `=A1` becomes `=REF(COL('athlete'), ROW('a'))`).
+
+This format is used by the grid to ensure that changes in the source data allow the grid to continue to refer to the correct cells when the data changes without
+the grid being open. 
+
+When providing formulas directly in your data source, or application via a valueGetter, we suggest using the long hand format, as there is no guarantee that the formulas will be
+parsed immediately upon the grid opening, as these are computed lazily.
+
+### Symbols
+The following symbols are supported in formulas:
+| Symbol | Description |
+| ------ | ----------- |
+| `+` | Addition |
+| `-` | Subtraction |
+| `*` | Multiplication |
+| `/` | Division |
+| `^` | Exponentiation |
+| `&` | Concatenation |
+| `=` | Equal to |
+| `<>` | Not equal to |
+| `>` | Greater than |
+| `<` | Less than |
+| `>=` | Greater than or equal to |
+| `<=` | Less than or equal to |
+
+### Provided Functions
+
+The following functions are available in formulas:
+| Function | Description |
+| -------- | ----------- |
+| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
+| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
+| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
+| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
+| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
+| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
+| `AVG(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
+| `PERCENT(arg1, arg2)` | Returns the percentage of the first argument relative to the second argument. |
+| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
+| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
+| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
+| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
+| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
+| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
+| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
+| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
+
+### Custom Functions
+
+Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
+
+The following snippet demonstrates providing a custom function `ADD` which adds the provided values.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'a' },
+        { field: 'b' },
+        { field: 'c' },
+    ],
+    enableFormulas: true,
+    formulaFuncs: {
+        ADD: {
+            func: (iterator) => {
+                let total = 0;
+                for (const value of iterator) {
+                    return total += value;
+                }
+                return total;
+            },
+        },
+    },
+}
+```
+
+In this snippet note how the function is provided an iterator for navigating the values provided to the function, and it
+traverses and aggregates the values using the iterator.
+
+### Handling Errors
+
+It is the responsibility of the function implementation to throw errors when the arguments are not as expected.
+
+In the example below, two cells have been configured to use the custom ADD function with incorrect params, one passes in a string and the other provides
+no parameters.
+
+{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=450 /%}
+
+{% note %}
+When a function throws an error, the cell displays `#PARSE!` and hovering over the cell displays the thrown error message.
+{% /note %}
+
+The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'a' },
+        { field: 'b' },
+        { field: 'c' },
+    ],
+    enableFormulas: true,
+    formulaFuncs: {
+        ADD: {
+            func: (iterator) => {
+                let total = 0;
+                let count = 0;
+                for (const value of iterator) {
+                    if (typeof value !== 'number') {    
+                        throw 'ADD only supports numbers';
+                    }
+                    count++;
+                    total += value;
+                }
+                if (count === 0) {
+                    throw 'ADD requires at least one argument';
+                }
+                return total;
+            },
+        },
+    },
+}
+```
+
+When a function throws an error, the cell displays `#PARSE!` and hovering over the cell displays the thrown error message.
+
+## Hidden Columns
+
+When hiding columns, the column letters are not updated, to ensure formulas continue to work as expected.
+This also occurs when columns are hidden due to column group expand state.

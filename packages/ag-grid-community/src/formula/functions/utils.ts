@@ -238,7 +238,7 @@ export function* iterateCellAddresses(
 const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 
 /** Convert a value to a finite number, allowing numeric strings; else throw. */
-function coerceFiniteNumber(fname: string, v: unknown): number {
+export function coerceFiniteNumber(fname: string, v: unknown): number {
     if (isFiniteNumber(v)) {
         return v;
     }
@@ -253,22 +253,22 @@ function coerceFiniteNumber(fname: string, v: unknown): number {
     throw new FormulaError(`${fname}: values must be numeric`, '#PARSE!');
 }
 
-/** Iterate all iterator values; call `onValue(num)` for each numeric (with coercion). */
-export function forEachNumber(it: Iterator<unknown>, fname: string, onValue: (num: number) => void): void {
+/** Iterate all iterator values; call `onValue(num)` for each value. */
+export function forEach<T = any>(it: Iterator<unknown>, fname: string, onValue: (num: T) => void, coerce?: (fname: string, v: unknown) => T): void {
     for (let t = it.next(); !t.done; t = it.next()) {
-        onValue(coerceFiniteNumber(fname, t.value));
+        onValue(coerce ? coerce(fname, t.value) : t.value as T);
     }
 }
 
 /** Read exactly N numeric values from the iterator; error on too few or too many. */
-export function readExactlyN(it: Iterator<unknown>, fname: string, n: number): number[] {
-    const out: number[] = [];
+export function readExactlyN<T = any>(it: Iterator<unknown>, fname: string, n: number, coerce?: (fname: string, v: unknown) => T): T[] {
+    const out: T[] = [];
     for (let i = 0; i < n; i++) {
         const t = it.next();
         if (t.done) {
             throw new FormulaError(`${fname}: requires exactly ${n} value(s)`, '#PARSE!');
         }
-        out.push(coerceFiniteNumber(fname, t.value));
+        out.push(coerce ? coerce(fname, t.value) : t.value as T);
     }
     if (!it.next().done) {
         throw new FormulaError(`${fname}: too many values`, '#PARSE!');

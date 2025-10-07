@@ -1065,8 +1065,8 @@
         "alwaysAggregateAtRootLevel": {},
         "getGroupRowAgg": {},
 
-        "enableFormulae": {},
-        "formulaeFuncs": {}
+        "enableFormulas": {},
+        "formulaFuncs": {}
     },
     "rowPivoting": {
         "meta": {

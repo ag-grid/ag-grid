@@ -1,8 +1,8 @@
 import type { BeanCollection } from '../../context/context';
-import type { BinaryOperator } from './serializer';
-import { BINARY_PRECEDENCE, isBinaryOp } from './serializer';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 import { FormulaParseError } from './utils';
+import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
+import type { OperatorDef } from './operators';
 
 /**
  * Converts a single operand string into a JS primitive or Cell object.
@@ -140,7 +140,7 @@ function tokenize(expr: string): string[] {
         return j - start; // length of cell or range token
     };
 
-    while (i < expr.length) {
+    main: while (i < expr.length) {
         const ch = expr[i];
 
         // skip whitespace
@@ -192,11 +192,20 @@ function tokenize(expr: string): string[] {
             continue;
         }
 
-        // single-char operators/delimiters
-        if ('+-*/^(),%'.includes(ch)) {
+        // delimiters: parentheses and comma
+        if (ch === '(' || ch === ')' || ch === ',') {
             tokens.push(ch);
             i++;
             continue;
+        }
+
+        // operators (greedy longest-first match)
+        for (const sym of OP_SYMBOLS_DESC) {
+            if (expr.startsWith(sym, i)) {
+                tokens.push(sym);
+                i += sym.length;
+                continue main;
+            }
         }
 
         throw new FormulaParseError('Unexpected character: ' + ch, i, i + 1);
@@ -206,28 +215,49 @@ function tokenize(expr: string): string[] {
 }
 
 type OperatorFrame =
-    | { kind: 'binary'; operator: BinaryOperator }
-    | { kind: 'unaryMinus' }
+    | { kind: 'op'; def: OperatorDef }
     | { kind: 'parenthesis' }
     | { kind: 'function'; name: string; args: FormulaNode[] };
 
-/** '^' is right-associative: do not reduce a stacked '^' when a new '^' arrives. */
-function shouldReduceBinary(top: BinaryOperator, incoming: BinaryOperator): boolean {
-    if (top === '^' && incoming === '^') {
+function shouldReduce(top: OperatorDef, incoming: OperatorDef): boolean {
+    if (top.fixity !== 'infix' || incoming.fixity !== 'infix') {
+        return true;
+    }
+
+    if (top.associativity === 'right' && top.precedence === incoming.precedence) {
         return false;
     }
-    return BINARY_PRECEDENCE[top] >= BINARY_PRECEDENCE[incoming];
+
+    return top.precedence >= incoming.precedence;
 }
 
-/** Type guard for narrowing */
-function isBinaryFrame(f: OperatorFrame | undefined): f is Extract<OperatorFrame, { kind: 'binary' }> {
-    return !!f && f.kind === 'binary';
+
+/** Choose prefix/infix/postfix meaning for an ambiguous symbol based on context. */
+function pickOpDefForContext(symbol: string, prevToken: string | undefined): OperatorDef | null {
+    const defs = OP_BY_SYMBOL.get(symbol);
+    if (!defs) {
+        return null;
+    }
+
+    const prevIsOperator = prevToken !== undefined && OP_BY_SYMBOL.has(prevToken);
+    const prevIsOpenOrComma = prevToken === '(' || prevToken === ',';
+
+    // if previous token is value or ')' or postfix-result, prefer infix/postfix
+    const prevIsValueLike =
+        prevToken !== undefined && !prevIsOperator && !prevIsOpenOrComma && prevToken !== '(';
+
+    if (prevIsValueLike || prevToken === ')') {
+        // prefer postfix if available, else infix
+        return defs.find(d => d.fixity === 'postfix') ?? defs.find(d => d.fixity === 'infix') ?? null;
+    }
+
+    // otherwise (start of expr, or after '(' , ',' , or another operator): prefix first, then infix
+    return defs.find(d => d.fixity === 'prefix') ?? defs.find(d => d.fixity === 'infix') ?? null;
 }
 
 /**
  * Turn a tokenized math/formula string into an AST (tree) using only stacks.
- * Handles + - * / ^, unary minus, postfix %, parentheses, and nested functions.
- *.
+ * Handles + - * / ^, unary +/-, postfix %, parentheses, and nested functions.
  *
  * @param expr The formula body (without the leading '=').
  * @returns A FormulaNode AST representing the expression.
@@ -248,98 +278,58 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             throw new FormulaParseError('Operator stack underflow', 0, 0);
         }
 
-        switch (frame.kind) {
-            case 'unaryMinus': {
+        if (frame.kind === 'op') {
+            const def = frame.def;
+
+            if (def.fixity !== 'infix') {
                 const right = output.pop();
                 if (!right) {
-                    throw new FormulaParseError("Missing operand for unary '-'", 0, 0);
+                    throw new FormulaParseError(`Missing operand for '${def.symbol}'`, 0, 0);
                 }
-                output.push({ type: 'operation', operation: '-', operands: [{ type: 'operand', value: 0 }, right] });
-                return;
-            }
-            case 'binary': {
-                const right = output.pop();
-                const left = output.pop();
-                if (!left || !right) {
-                    throw new FormulaParseError(`Missing operand for '${frame.operator}'`, 0, 0);
-                }
-                output.push({ type: 'operation', operation: frame.operator, operands: [left, right] });
-                return;
-            }
-            case 'parenthesis':
-            case 'function':
-                throw new FormulaParseError('Internal error: unexpected frame during reduction', 0, 0);
-        }
-    };
 
-    const reducePendingUnaryMinus = () => {
-        while (ops[ops.length - 1]?.kind === 'unaryMinus') {
-            applyTop();
+                // unary plus is a no-op
+                if (def.symbol === '+' && def.fixity === 'prefix') {
+                    output.push(right);
+                    return;
+                }
+
+                // postfix percent
+                if (def.fixity === 'postfix' && def.symbol === '%') {
+                    output.push({ type: 'operation', operation: def.symbol, operands: [right] });
+                    return;
+                }
+
+                // generic unary (prefix)
+                if (def.symbol === '-' && def.fixity === 'prefix') {
+                    // represent as 0 - x to keep evaluator consistent with binary '-'
+                    output.push({
+                        type: 'operation',
+                        operation: '-',
+                        operands: [{ type: 'operand', value: 0 }, right],
+                    });
+                } else {
+                    output.push({ type: 'operation', operation: def.symbol, operands: [right] });
+                }
+                return;
+            }
+
+            // arity 2 (infix)
+            const right = output.pop();
+            const left = output.pop();
+            if (!left || !right) {
+                throw new FormulaParseError(`Missing operand for '${def.symbol}'`, 0, 0);
+            }
+            output.push({ type: 'operation', operation: def.symbol, operands: [left, right] });
+            return;
         }
+
+        // parenthesis/function should not be reduced directly here
+        throw new FormulaParseError('Internal error: unexpected frame during reduction', 0, 0);
     };
 
     let i = 0;
     while (i < tokens.length) {
         const token = tokens[i];
-
-        // Postfix %
-        if (token === '%') {
-            const last = output.pop();
-            if (!last) {
-                throw new FormulaParseError("Misplaced '%'", i, i + 1);
-            }
-            output.push({ type: 'operation', operation: '%', operands: [last] });
-            i++;
-            continue;
-        }
-
-        // '+' / '-' unary vs binary
-        if (token === '+' || token === '-') {
-            const prev = tokens[i - 1];
-            const isUnary = i === 0 || prev === '(' || prev === ',' || (prev !== undefined && isBinaryOp(prev));
-
-            if (isUnary) {
-                if (token === '-') {
-                    ops.push({ kind: 'unaryMinus' });
-                } // unary '+': no-op
-                i++;
-                continue;
-            }
-
-            // binary '+' / '-'
-            reducePendingUnaryMinus();
-
-            for (;;) {
-                const top = ops[ops.length - 1];
-                if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
-                    applyTop();
-                } else {
-                    break;
-                }
-            }
-
-            ops.push({ kind: 'binary', operator: token });
-            i++;
-            continue;
-        }
-
-        // other binary operators
-        if (isBinaryOp(token)) {
-            reducePendingUnaryMinus();
-
-            for (;;) {
-                const top = ops[ops.length - 1];
-                if (isBinaryFrame(top) && shouldReduceBinary(top.operator, token)) {
-                    applyTop();
-                } else {
-                    break;
-                }
-            }
-
-            ops.push({ kind: 'binary', operator: token });
-            i++;
-            continue;
-        }
 
         // Function start: IDENT '('
         if (/[A-Za-z]/.test(token[0] || '') && tokens[i + 1] === '(') {
@@ -360,12 +350,12 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
                 }
-                if (top.kind === 'binary' || top.kind === 'unaryMinus') {
+                if (top.kind === 'op') {
                     applyTop();
                 } else {
                     throw new FormulaParseError("Internal error: unexpected frame before '('", i, i + 1);
@@ -390,12 +380,12 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (;;) {
+            for (; ;) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
                 }
-                if (top.kind === 'binary' || top.kind === 'unaryMinus') {
+                if (top.kind === 'op') {
                     applyTop();
                 } else {
                     throw new FormulaParseError("Internal error: unexpected frame before ')'", i, i + 1);
@@ -420,6 +410,30 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             continue;
         }
 
+        // Operator?
+        const incoming = OP_BY_SYMBOL.has(token)
+            ? pickOpDefForContext(token, tokens[i - 1])
+            : null;
+
+        if (incoming) {
+            // Reduce while top-of-stack operator outranks incoming
+            for (; ;) {
+                const top = ops[ops.length - 1];
+                if (!top || top.kind !== 'op') {
+                    break;
+                }
+                if (shouldReduce(top.def, incoming)) {
+                    applyTop();
+                } else {
+                    break;
+                }
+            }
+
+            ops.push({ kind: 'op', def: incoming });
+            i++;
+            continue;
+        }
+
         // Operand
         const parsed = parseOperand(beans, token);
         if (parsed == null) {
@@ -430,10 +444,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
     }
 
     // Drain
-    reducePendingUnaryMinus();
     while (ops.length) {
         const top = ops[ops.length - 1];
-        if (top.kind === 'binary' || top.kind === 'unaryMinus') {
+        if (top.kind === 'op') {
             applyTop();
         } else {
             throw new FormulaParseError('Mismatched parentheses or unfinished function call', 0, 0);

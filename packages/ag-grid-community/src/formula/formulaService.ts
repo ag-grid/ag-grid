@@ -51,7 +51,7 @@ class CellFormula {
         public readonly column: AgColumn,
         public formulaString: string,
         private readonly beans: BeanCollection
-    ) {}
+    ) { }
 
     public setFormulaString(next: string) {
         if (this.formulaString === next) {
@@ -232,18 +232,11 @@ export class FormulaService extends BeanStub implements NamedBean {
         // eslint-disable-next-line no-restricted-properties
         this.supportedOperations = new Map(Object.entries(SUPPORTED_FUNCTIONS));
 
-        this.supportedOperations.set('+', SUPPORTED_FUNCTIONS.SUM);
-        this.supportedOperations.set('-', SUPPORTED_FUNCTIONS.MINUS);
-        this.supportedOperations.set('*', SUPPORTED_FUNCTIONS.MULTIPLY);
-        this.supportedOperations.set('/', SUPPORTED_FUNCTIONS.DIVIDE);
-        this.supportedOperations.set('^', SUPPORTED_FUNCTIONS.POWER);
-        this.supportedOperations.set('%', SUPPORTED_FUNCTIONS.PERCENT);
-
         // Register custom functions, not reactive.
         const customFuncs = this.gos.get('formulaFuncs');
         if (customFuncs) {
             Object.keys(customFuncs).forEach((name) => {
-                this.supportedOperations.set(name, customFuncs[name]!);
+                this.supportedOperations.set(name, customFuncs[name].func);
             });
         }
     }
