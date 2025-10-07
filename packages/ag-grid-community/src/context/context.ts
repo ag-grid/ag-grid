@@ -29,6 +29,7 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { RowDropHighlightService } from '../dragAndDrop/rowDropHighlightService';
 import type { GridOptions } from '../entities/gridOptions';
+import type { RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
 import type { GridSerializer } from '../export/gridSerializer';
@@ -317,7 +318,7 @@ interface CoreBeanCollection
     advancedFilter: IAdvancedFilterService;
     filterStage?: IRowNodeStage;
     sortStage?: IRowNodeStage;
-    flattenStage?: IRowNodeStage;
+    flattenStage?: IRowNodeStage<RowNode[]>;
     groupStage?: IRowGroupStage;
     aggStage?: IRowNodeStage;
     pivotStage?: IRowNodeStage;

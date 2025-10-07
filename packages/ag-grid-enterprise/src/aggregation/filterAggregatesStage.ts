@@ -13,8 +13,8 @@ import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'filterAggStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([]);
-    public step: ClientSideRowModelStage = 'filter_aggregates';
+    public readonly step: ClientSideRowModelStage = 'filter_aggregates';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [];
 
     private filterManager?: FilterManager;
 

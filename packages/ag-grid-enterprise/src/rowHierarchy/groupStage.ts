@@ -17,7 +17,8 @@ import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupStage {
     beanName = 'groupStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+    public step: ClientSideRowModelStage = 'group';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'groupAllowUnbalanced',
         'groupDefaultExpanded',
         'groupDisplayType',
@@ -26,9 +27,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         'treeData',
         'treeDataChildrenField',
         'treeDataParentIdField',
-    ]);
+    ];
 
-    public step: ClientSideRowModelStage = 'group';
     public nestedDataGetter: NestedDataGetter<TData> | null = null;
     public treeData: boolean = false;
     private parentIdField: string | undefined;

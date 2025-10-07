@@ -17,17 +17,17 @@ export interface StageExecuteParams<TData = any> {
     afterColumnsChanged?: boolean;
 }
 
-export interface IRowNodeStage<TResult = any, TData = any> {
-    step: ClientSideRowModelStage;
-    refreshProps: Set<keyof GridOptions>;
+export interface IRowNodeStage<TResult = void, TData = any> {
+    readonly step: ClientSideRowModelStage;
+    readonly refreshProps: (keyof GridOptions<any>)[];
     execute(params: StageExecuteParams<TData>): TResult;
 }
 
 export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | undefined;
 
-export type ParentIdGetter<TData> = (data: TData | null | undefined) => string | null | undefined;
+export type ParentIdGetter<TData = any> = (data: TData | null | undefined) => string | null | undefined;
 
-export interface IRowGroupStage<TResult = any, TData = any> extends IRowNodeStage<TResult, TData> {
+export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeStage<TResult, TData> {
     readonly treeData: boolean;
     readonly nestedDataGetter: NestedDataGetter<TData> | null;
     onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): void;

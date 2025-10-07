@@ -10,6 +10,8 @@ import { SimplePRNG, TestGridsManager } from '../../test-utils';
 suite('row grouping', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule],
+        includeDefaultModules: false,
+        mockGridLayout: false,
     });
 
     let api!: GridApi<GroupingData>;
@@ -33,6 +35,10 @@ suite('row grouping', () => {
                 groupDefaultExpanded: -1,
                 suppressAggFuncInHeader: true,
                 getRowId: ({ data }: { data: { id: string } }) => data.id,
+
+                suppressRowVirtualisation: false,
+                suppressColumnVirtualisation: false,
+                ensureDomOrder: false,
             });
         },
         teardown: () => {

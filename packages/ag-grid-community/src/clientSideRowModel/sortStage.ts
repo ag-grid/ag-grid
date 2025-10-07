@@ -43,8 +43,8 @@ export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
 export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'sortStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set(['postSortRows', 'groupDisplayType', 'accentedSort']);
-    public step: ClientSideRowModelStage = 'sort';
+    public readonly step: ClientSideRowModelStage = 'sort';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
     public execute(params: StageExecuteParams): void {
         const sortOptions = this.beans.sortSvc!.getSortOptions();
