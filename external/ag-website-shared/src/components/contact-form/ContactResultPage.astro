@@ -1,10 +1,10 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { getEntry, type CollectionEntry } from 'astro:content';
-import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
-import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import type { ResultType } from './constants';
-import { ResultContent } from './ResultContent';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import styles from './ContactResultPage.module.scss';
 
 interface Props {
     type: ResultType;
@@ -12,21 +12,81 @@ interface Props {
 
 const { type } = Astro.props as Props;
 
-const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 const { data: contactResultsData } = (await getEntry('contactResults', 'result')) as CollectionEntry<'contactResults'>;
 
+const resources = [
+    {
+        title: 'See our docs',
+        description: 'Learn how to get set-up AG Grid with your framework',
+        linkText: 'Learn more',
+        linkUrl: urlWithBaseUrl('/documentation'),
+    },
+    {
+        title: 'Enterprise pricing',
+        description: 'See our enterprise billing plans and compare features',
+        linkText: 'Learn more',
+        linkUrl: urlWithBaseUrl('/license-pricing'),
+    },
+    {
+        title: "See what's new",
+        description: "Check out recent releases and see what we've improved",
+        linkText: 'Learn more',
+        linkUrl: urlWithBaseUrl('/whats-new'),
+    },
+];
+
 const title = contactResultsData[type].title;
-const pageName = contactResultsData[type].name;
-const message = contactResultsData[type].message;
+const description = contactResultsData[type].description;
+const heroTag = contactResultsData[type].heroTag;
+const heroHeading = contactResultsData[type].heroHeading;
 ---
 
-<Layout title={title} showDocsNav={true} showSearchBar={true}>
-    <div class="layout-grid">
-        <!-- NOTE: Result page is used for all paths, so will need to get framework from localstorage -->
-        <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
+<Layout title={title} description={description} showSearchBar={true} showDocsNav={false}>
+    <div class={styles.contactSuccessPage}>
+        <div class="layout-max-width-small">
+            <section class={styles.heroSection}>
+                <div class={styles.heroContent}>
+                    <div class={styles.heroHeadingContainer}>
+                        <h2 class={styles.heroTag}>{heroTag}</h2>
+                        <h1 class={styles.heroHeading} set:html={heroHeading} />
+                    </div>
+                    <p class={styles.heroDescription}>
+                        In the meantime, check out our resources and see why <b>AG Grid</b> and <b>AG Charts</b> are used
+                        by millions every day
+                    </p>
+                    <div class={styles.heroCustomerLogos}>
+                        <CustomerLogos client:load />
+                    </div>
+                </div>
+                <div class={styles.heroImage}>
+                    <img
+                        src={urlWithBaseUrl('/images/grid-success.png')}
+                        alt="AG Grid preview"
+                        class={`${styles.gridPreview} ${styles.gridPreviewLight}`}
+                    />
+                    <img
+                        src={urlWithBaseUrl('/images/grid-success-dark.png')}
+                        alt="AG Grid preview"
+                        class={`${styles.gridPreview} ${styles.gridPreviewDark}`}
+                    />
+                </div>
+            </section>
 
-        <div id="doc-content" class:list={[styles.docPage, styles.noSideMenu]}>
-            <ResultContent client:load name={pageName} message={message} />
+            <section class={styles.resourcesSection}>
+                <div class={styles.resourcesGrid}>
+                    {
+                        resources.map(({ title, description, linkText, linkUrl }) => (
+                            <div class={styles.resourceCard}>
+                                <h3>{title}</h3>
+                                <p>{description}</p>
+                                <a href={linkUrl} class={styles.resourceLink}>
+                                    {linkText} →
+                                </a>
+                            </div>
+                        ))
+                    }
+                </div>
+            </section>
         </div>
     </div>
 </Layout>
