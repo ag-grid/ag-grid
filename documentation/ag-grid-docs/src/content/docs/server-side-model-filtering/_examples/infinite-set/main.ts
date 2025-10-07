@@ -134,7 +134,7 @@ function onFilterChanged() {
     }
 }
 
-export function areEqual<T>(a: readonly T[] | null | undefined, b: readonly T[] | null | undefined): boolean {
+export function areEqual(a: readonly any[] | null | undefined, b: readonly any[] | null | undefined): boolean {
     if (a === b) {
         return true; // Same instance, no need to compare
     }
