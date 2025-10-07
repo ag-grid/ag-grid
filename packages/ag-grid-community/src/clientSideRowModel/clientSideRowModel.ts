@@ -12,7 +12,6 @@ import type {
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
-import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { ChangedPath } from '../utils/changedPath';
@@ -34,16 +33,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public rootNode: RowNode | null = null;
     public rowCountReady: boolean = false;
 
-    private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
-
     private nodeMgr: ClientSideNodeManager<any> | null | undefined = undefined;
-
-    private rowDataTransactionBatch: BatchTransactionItem[] | null;
+    private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
     private rowDataUpdatedPending: boolean = false;
+    private rowDataTransactionBatch: BatchTransactionItem[] | null = null;
 
-    private applyAsyncTransactionsTimeout: number | undefined;
+    private applyAsyncTransactionsTimeout: number = 0;
     /** Has the start method been called */
     private started: boolean = false;
     /**
@@ -54,7 +51,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      */
     private isRefreshingModel: boolean = false;
     private rowNodesCountReady: boolean = false;
-    private orderedStages: IRowNodeStage[];
+    private readonly propChangeSteps = new Map<keyof GridOptions, ClientSideRowModelStage>();
 
     public postConstruct(): void {
         const beans = this.beans;
@@ -62,15 +59,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rootNode = rootNode;
         this.nodeMgr = this.createBean(new ClientSideNodeManager(rootNode));
 
-        this.orderedStages = [
-            beans.groupStage,
-            beans.filterStage,
-            beans.pivotStage,
-            beans.aggStage,
-            beans.sortStage,
-            beans.filterAggStage,
-            beans.flattenStage,
-        ].filter((stage) => !!stage) as IRowNodeStage[];
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: 'group' });
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
             step: 'group', // after cols change, row grouping (the first stage) could of changed
@@ -93,9 +81,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
 
-        // doesn't need done if doing full reset
-        // Property listeners which call `refreshModel` at different stages
-        this.addPropertyListeners();
+        this.addPropertyListeners(); // Property listeners which call `refreshModel` at different stages
     }
 
     private addPropertyListeners() {
@@ -129,12 +115,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - the application would change these functions, far more likely the functions were
         //                       - non memoised correctly.
 
-        const allProps: (keyof GridOptions)[] = [];
-        for (const stage of this.orderedStages) {
-            allProps.push(...stage.refreshProps);
+        const { beans, propChangeSteps } = this;
+        const orderedStagesInReverse = [
+            beans.flattenStage,
+            beans.filterAggStage,
+            beans.sortStage,
+            beans.aggStage,
+            beans.pivotStage,
+            beans.filterStage,
+            beans.groupStage,
+        ];
+        for (const stage of orderedStagesInReverse) {
+            if (stage) {
+                for (const propertyName of stage.refreshProps) {
+                    propChangeSteps.set(propertyName, stage.step);
+                }
+            }
         }
-
-        this.addManagedPropertyListeners(allProps, (params) => {
+        this.addManagedPropertyListeners([...propChangeSteps.keys()], (params) => {
             const properties = params.changeSet?.properties;
             if (properties) {
                 this.onPropChange(properties);
@@ -265,23 +263,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (params.rowDataUpdated) {
             params.step = 'group';
         } else if (params.step === 'nothing') {
-            params.step = this.stagePropChanged(properties);
+            const propChangeStages = this.propChangeSteps;
+            for (let i = 0, len = properties.length; i < len; ++i) {
+                const step = propChangeStages.get(properties[i]);
+                if (step !== undefined) {
+                    params.step = step;
+                    break;
+                }
+            }
         }
 
         if (params.step !== 'nothing') {
             this.refreshModel(params);
         }
-    }
-
-    private stagePropChanged(properties: (keyof GridOptions)[]): ClientSideRowModelStage {
-        for (const { refreshProps, step } of this.orderedStages) {
-            for (let i = 0, len = properties.length; i < len; ++i) {
-                if (refreshProps.has(properties[i])) {
-                    return step;
-                }
-            }
-        }
-        return 'nothing';
     }
 
     private setRowTopAndRowIndex(): Set<string> {
@@ -958,27 +952,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowDataTransaction: RowDataTransaction,
         callback?: (res: RowNodeTransaction) => void
     ): void {
-        if (this.applyAsyncTransactionsTimeout == null) {
+        if (!this.applyAsyncTransactionsTimeout) {
             this.rowDataTransactionBatch = [];
             const waitMillis = this.gos.get('asyncTransactionWaitMillis');
-            this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
-                if (this.isAlive()) {
-                    // Handle case where grid is destroyed before timeout is triggered
-                    this.executeBatchUpdateRowData();
-                }
-            }, waitMillis);
+            this.applyAsyncTransactionsTimeout = window.setTimeout(() => this.executeBatchUpdateRowData(), waitMillis);
         }
         this.rowDataTransactionBatch!.push({ rowDataTransaction: rowDataTransaction, callback });
     }
 
     public flushAsyncTransactions(): void {
-        if (this.applyAsyncTransactionsTimeout != null) {
-            clearTimeout(this.applyAsyncTransactionsTimeout);
+        const timer = this.applyAsyncTransactionsTimeout;
+        if (timer) {
+            clearTimeout(timer);
             this.executeBatchUpdateRowData();
         }
     }
 
     private executeBatchUpdateRowData(): void {
+        this.applyAsyncTransactionsTimeout = 0;
         const nodeManager = this.nodeMgr;
         if (!nodeManager) {
             return; // Destroyed
@@ -1024,7 +1015,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         this.rowDataTransactionBatch = null;
-        this.applyAsyncTransactionsTimeout = undefined;
     }
 
     /**
@@ -1158,9 +1148,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rootNode = null;
         this.nodeMgr = null;
         this.rowDataTransactionBatch = null;
-        this.orderedStages = [];
         this.rowsToDisplay = [];
         this.nodeMgr = this.destroyBean(this.nodeMgr);
+        clearTimeout(this.applyAsyncTransactionsTimeout);
     }
 
     private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
