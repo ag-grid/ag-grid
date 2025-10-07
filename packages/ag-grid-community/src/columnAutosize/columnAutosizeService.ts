@@ -58,6 +58,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 shouldHideColumns = true;
             } else if (type === 'fitCellContents') {
                 this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
+                // Hide columns when we already have row data to display. This avoids jittering when we initially
+                // render columns at default width, only to immediately resize them when rows are rendered.
                 const rowData = gos.get('rowData');
                 shouldHideColumns = rowData != null && rowData.length > 0 && _isClientSideRowModel(gos);
             }
