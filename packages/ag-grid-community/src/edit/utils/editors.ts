@@ -612,7 +612,7 @@ export function _populateModelValidationErrors(beans: BeanCollection, force?: bo
         for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
             cellCtrl.tooltipFeature?.refreshTooltip(true);
             cellCtrl.editorTooltipFeature?.refreshTooltip(true);
-            cellCtrl.editStyleFeature?.applyCellStyles?.();
+            beans.editSvc?.applyCellStyles?.(cellCtrl);
         }
     }
 }

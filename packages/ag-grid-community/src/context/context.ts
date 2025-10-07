@@ -101,6 +101,8 @@ import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { CellFlashService } from '../rendering/cell/cellFlashService';
+import type { CellKeyboardListenerService } from '../rendering/cell/cellKeyboardListenerService';
+import type { CellMouseListenerService } from '../rendering/cell/cellMouseListenerService';
 import type { ColumnDelayRenderService } from '../rendering/columnDelayRenderService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
@@ -335,6 +337,8 @@ interface CoreBeanCollection
     csrmNodeSvc?: IClientSideNodeManager;
     csrmChildrenTreeNodeSvc?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
+    cellKeyboardSvc?: CellKeyboardListenerService;
+    cellMouseSvc?: CellMouseListenerService;
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
     colGroupSvc?: ColumnGroupService;

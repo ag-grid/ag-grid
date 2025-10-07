@@ -37,6 +37,7 @@ import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { PinnedColumnModule } from './pinnedColumns/pinnedColumnModule';
 import { AriaModule } from './rendering/ariaModule';
+import { CellMouseListenerService } from './rendering/cell/cellMouseListenerService';
 import { SkeletonCellRendererModule } from './rendering/cellRenderers/cellRendererModule';
 import { ColumnDelayRenderModule } from './rendering/columnDelayRenderService';
 import { OverlayModule } from './rendering/overlays/overlayModule';
@@ -76,6 +77,7 @@ export const CommunityCoreModule: _ModuleWithApi<_CoreGridApi> = {
         ColumnNameService,
         ColumnViewportService,
         IconService,
+        CellMouseListenerService,
     ],
     icons: {
         // icon on select dropdowns (select cell editor, charts tool panels)

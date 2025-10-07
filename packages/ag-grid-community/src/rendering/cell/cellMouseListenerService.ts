@@ -1,61 +1,52 @@
 import { _isBrowserSafari } from '../../agStack/utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../agStack/utils/dom';
 import { isRowNumberCol } from '../../columns/columnUtils';
+import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
 import type { CellClickedEvent, CellDoubleClickedEvent, CellMouseDownEvent } from '../../events';
 import { _interpretAsRightClick } from '../../gridOptionsUtils';
+import type { IEditModelService } from '../../interfaces/iEditModelService';
+import type { IEditService } from '../../interfaces/iEditService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
 
-export class CellMouseListenerFeature extends BeanStub {
-    public lastIPadMouseClickEvent: number;
+export class CellMouseListenerService extends BeanStub implements NamedBean {
+    beanName = 'cellMouseSvc' as const;
 
-    constructor(
-        private readonly cellCtrl: CellCtrl,
-        beans: BeanCollection,
-        private readonly column: AgColumn
-    ) {
-        super();
-        this.beans = beans;
-    }
-
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+    public onMouseEvent(cellCtrl: CellCtrl, eventName: string, mouseEvent: MouseEvent): void {
         if (_isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
 
         switch (eventName) {
             case 'click':
-                this.onCellClicked(mouseEvent);
+                this.onCellClicked(cellCtrl, mouseEvent);
                 break;
             case 'mousedown':
             case 'touchstart':
-                this.onMouseDown(mouseEvent);
+                this.onMouseDown(cellCtrl, mouseEvent);
                 break;
             case 'dblclick':
-                this.onCellDoubleClicked(mouseEvent);
+                this.onCellDoubleClicked(cellCtrl, mouseEvent);
                 break;
             case 'mouseout':
-                this.onMouseOut(mouseEvent);
+                this.onMouseOut(cellCtrl, mouseEvent);
                 break;
             case 'mouseover':
-                this.onMouseOver(mouseEvent);
+                this.onMouseOver(cellCtrl, mouseEvent);
                 break;
         }
     }
 
-    private onCellClicked(event: MouseEvent): void {
+    private onCellClicked(cellCtrl: CellCtrl, event: MouseEvent): void {
+        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides, gos, touchSvc } = this.beans;
         // iPad doesn't have double click - so we need to mimic it to enable editing for iPad.
-        if (this.beans.touchSvc?.handleCellDoubleClick(this, event)) {
+        if (touchSvc?.handleCellDoubleClick(this, cellCtrl, event)) {
             return;
         }
 
-        const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides, gos } = this.beans;
         const isMultiKey = event.ctrlKey || event.metaKey;
-        const { cellCtrl } = this;
         const { column, cellPosition, rowNode } = cellCtrl;
         const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, event);
 
@@ -87,10 +78,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (editModelSvc?.getState(cellCtrl) !== 'editing') {
-            const editing = editSvc?.isEditing();
-            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
-            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (isEditingWithValidations(editSvc, editModelSvc)) {
                 return;
             }
 
@@ -113,11 +101,10 @@ export class CellMouseListenerFeature extends BeanStub {
         }
     }
 
-    public onCellDoubleClicked(event: MouseEvent) {
-        const { column, beans, cellCtrl } = this;
-        const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
-
-        const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
+    public onCellDoubleClicked(cellCtrl: CellCtrl, event: MouseEvent) {
+        const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = this.beans;
+        const { column, rowNode } = cellCtrl;
+        const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, event);
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
@@ -142,10 +129,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         if (editSvc?.shouldStartEditing(cellCtrl, event) && editModelSvc?.getState(cellCtrl) !== 'editing') {
-            const editing = editSvc?.isEditing();
-            const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
-            const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
-            if (editing && (cellValidations > 0 || rowValidations > 0)) {
+            if (isEditingWithValidations(editSvc, editModelSvc)) {
                 return;
             }
 
@@ -153,11 +137,10 @@ export class CellMouseListenerFeature extends BeanStub {
         }
     }
 
-    private onMouseDown(mouseEvent: MouseEvent): void {
+    private onMouseDown(cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
-        const { cellCtrl, beans } = this;
-        const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
+        const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = this.beans;
         const { column, rowNode, cellPosition } = cellCtrl;
 
         const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, mouseEvent);
@@ -175,7 +158,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         // do not change the range for right-clicks inside an existing range
-        if (this.isRightClickInExistingRange(mouseEvent)) {
+        if (this.isRightClickInExistingRange(cellCtrl, mouseEvent)) {
             return;
         }
 
@@ -245,7 +228,7 @@ export class CellMouseListenerFeature extends BeanStub {
             if (isRowNumberColumn) {
                 mouseEvent.preventDefault();
             }
-            const hasRightClickedOnRowNumber = _interpretAsRightClick(beans, mouseEvent) && isRowNumberColumn;
+            const hasRightClickedOnRowNumber = _interpretAsRightClick(this.beans, mouseEvent) && isRowNumberColumn;
             if (shiftKey) {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else if (!hasRightClickedOnRowNumber) {
@@ -257,11 +240,11 @@ export class CellMouseListenerFeature extends BeanStub {
         fireMouseDownEvent();
     }
 
-    private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
+    private isRightClickInExistingRange(cellCtrl: CellCtrl, mouseEvent: MouseEvent): boolean {
         const { rangeSvc } = this.beans;
 
         if (rangeSvc) {
-            const cellInRange = rangeSvc.isCellInAnyRange(this.cellCtrl.cellPosition);
+            const cellInRange = rangeSvc.isCellInAnyRange(cellCtrl.cellPosition);
             const isRightClick = _interpretAsRightClick(this.beans, mouseEvent);
 
             if (cellInRange && isRightClick) {
@@ -279,31 +262,39 @@ export class CellMouseListenerFeature extends BeanStub {
         );
     }
 
-    private onMouseOut(mouseEvent: MouseEvent): void {
-        if (this.mouseStayingInsideCell(mouseEvent)) {
+    private onMouseOut(cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
+        if (this.mouseStayingInsideCell(cellCtrl, mouseEvent)) {
             return;
         }
         const { eventSvc, colHover } = this.beans;
-        eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
+        eventSvc.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
         colHover?.clearMouseOver();
     }
 
-    private onMouseOver(mouseEvent: MouseEvent): void {
-        if (this.mouseStayingInsideCell(mouseEvent)) {
+    private onMouseOver(cellCtrl: CellCtrl, mouseEvent: MouseEvent): void {
+        if (this.mouseStayingInsideCell(cellCtrl, mouseEvent)) {
             return;
         }
         const { eventSvc, colHover } = this.beans;
-        eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
-        colHover?.setMouseOver([this.column]);
+        eventSvc.dispatchEvent(cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
+        colHover?.setMouseOver([cellCtrl.column]);
     }
 
-    private mouseStayingInsideCell(e: MouseEvent): boolean {
+    private mouseStayingInsideCell(cellCtrl: CellCtrl, e: MouseEvent): boolean {
         if (!e.target || !e.relatedTarget) {
             return false;
         }
-        const eCell = this.cellCtrl.eGui;
-        const cellContainsTarget = eCell.contains(e.target as Node);
-        const cellContainsRelatedTarget = eCell.contains(e.relatedTarget as Node);
-        return cellContainsTarget && cellContainsRelatedTarget;
+        const eCell = cellCtrl.eGui;
+        return eCell.contains(e.target as Node) && eCell.contains(e.relatedTarget as Node);
     }
+}
+
+function isEditingWithValidations(
+    editSvc: IEditService | undefined,
+    editModelSvc: IEditModelService | undefined
+): boolean | undefined {
+    const editing = editSvc?.isEditing();
+    const cellValidations = editModelSvc?.getCellValidationModel().getCellValidationMap().size ?? 0;
+    const rowValidations = editModelSvc?.getRowValidationModel().getRowValidationMap().size ?? 0;
+    return editing && (cellValidations > 0 || rowValidations > 0);
 }

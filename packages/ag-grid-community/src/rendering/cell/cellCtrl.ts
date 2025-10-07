@@ -27,7 +27,6 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
-import type { ICellStyleFeature } from '../../interfaces/iCellStyleFeature';
 import type { RefreshCellsParams } from '../../interfaces/iCellsParams';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
@@ -46,8 +45,8 @@ import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import { _createCellEvent } from './cellEvent';
-import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
-import { CellMouseListenerFeature } from './cellMouseListenerFeature';
+import type { CellKeyboardListenerService } from './cellKeyboardListenerService';
+import type { CellMouseListenerService } from './cellMouseListenerService';
 import { CellPositionFeature } from './cellPositionFeature';
 
 const CSS_CELL = 'ag-cell';
@@ -106,9 +105,6 @@ export class CellCtrl extends BeanStub {
     private rowResizeFeature: IRowNumbersRowResizeFeature | undefined = undefined;
     private positionFeature: CellPositionFeature | undefined = undefined;
     private customStyleFeature: CellCustomStyleFeature | undefined = undefined;
-    public editStyleFeature: ICellStyleFeature | undefined = undefined;
-    private mouseListener: CellMouseListenerFeature | undefined = undefined;
-    private keyboardListener: CellKeyboardListenerFeature | undefined = undefined;
 
     public cellPosition: CellPosition;
 
@@ -129,6 +125,8 @@ export class CellCtrl extends BeanStub {
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
+    private keyboardListenerSvc: CellKeyboardListenerService | undefined = undefined;
+    private mouseListenerSvc: CellMouseListenerService | undefined = undefined;
     private readonly editSvc?: IEditService;
     private readonly hasEdit: boolean = false;
 
@@ -159,10 +157,10 @@ export class CellCtrl extends BeanStub {
         const { beans } = this;
         this.positionFeature = new CellPositionFeature(this, beans);
         this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this, beans);
-        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this, beans);
-        this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
 
-        this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
+        // Maintain existing behaviour of keyboard listener being available / not available based on feature lifecycle
+        this.keyboardListenerSvc = beans.cellKeyboardSvc;
+        this.mouseListenerSvc = beans.cellMouseSvc;
 
         this.enableTooltipFeature();
 
@@ -190,11 +188,11 @@ export class CellCtrl extends BeanStub {
         this.positionFeature = context.destroyBean(this.positionFeature);
         this.editorTooltipFeature = context.destroyBean(this.editorTooltipFeature);
         this.customStyleFeature = context.destroyBean(this.customStyleFeature);
-        this.editStyleFeature = context.destroyBean(this.editStyleFeature);
-        this.mouseListener = context.destroyBean(this.mouseListener);
-        this.keyboardListener = context.destroyBean(this.keyboardListener);
         this.rangeFeature = context.destroyBean(this.rangeFeature);
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
+
+        this.mouseListenerSvc = undefined;
+        this.keyboardListenerSvc = undefined;
 
         this.disableTooltipFeature();
     }
@@ -256,9 +254,8 @@ export class CellCtrl extends BeanStub {
 
         this.positionFeature?.init();
         this.customStyleFeature?.setComp(comp);
-        this.editStyleFeature?.setComp(comp);
+        this.editSvc?.applyCellStyles(this);
         this.tooltipFeature?.refreshTooltip();
-        this.keyboardListener?.init();
         this.rangeFeature?.setComp(comp);
         this.rowResizeFeature?.refreshRowResizer();
 
@@ -331,7 +328,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
-        const { beans, column, rowNode, rangeFeature } = this;
+        const { beans, column, rowNode, rangeFeature, editSvc } = this;
         const { userCompFactory } = beans;
         let valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
@@ -357,12 +354,8 @@ export class CellCtrl extends BeanStub {
             );
         }
 
-        if (
-            this.hasEdit &&
-            this.editSvc!.isBatchEditing() &&
-            this.editSvc!.isRowEditing(rowNode, { checkSiblings: true })
-        ) {
-            const result = this.editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
+        if (this.hasEdit && editSvc!.isBatchEditing() && editSvc!.isRowEditing(rowNode, { checkSiblings: true })) {
+            const result = editSvc!.prepDetailsDuringBatch(this, { compDetails, valueToDisplay });
             if (result) {
                 if (result.compDetails) {
                     compDetails = result.compDetails;
@@ -594,7 +587,7 @@ export class CellCtrl extends BeanStub {
                 this.beans.cellFlashSvc?.flashCell(this);
             }
 
-            this.editStyleFeature?.applyCellStyles?.();
+            this.editSvc?.applyCellStyles(this);
 
             this.customStyleFeature?.applyUserStyles();
             this.customStyleFeature?.applyClassesFromColDef();
@@ -653,15 +646,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public processCharacter(event: KeyboardEvent): void {
-        this.keyboardListener?.processCharacter(event);
+        this.keyboardListenerSvc?.processCharacter(this, event);
     }
 
     public onKeyDown(event: KeyboardEvent): void {
-        this.keyboardListener?.onKeyDown(event);
+        this.keyboardListenerSvc?.onKeyDown(this, event);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        this.mouseListener?.onMouseEvent(eventName, mouseEvent);
+        this.mouseListenerSvc?.onMouseEvent(this, eventName, mouseEvent);
     }
 
     public getColSpanningList(): AgColumn[] {
@@ -797,19 +790,19 @@ export class CellCtrl extends BeanStub {
     }
 
     public onFirstRightPinnedChanged(): void {
-        if (!this.comp) {
+        const { comp, column } = this;
+        if (!comp) {
             return;
         }
-        const firstRightPinned = this.column.isFirstRightPinned();
-        this.comp.toggleCss(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
+        comp.toggleCss(CSS_CELL_FIRST_RIGHT_PINNED, column.isFirstRightPinned());
     }
 
     public onLastLeftPinnedChanged(): void {
-        if (!this.comp) {
+        const { comp, column } = this;
+        if (!comp) {
             return;
         }
-        const lastLeftPinned = this.column.isLastLeftPinned();
-        this.comp.toggleCss(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
+        comp.toggleCss(CSS_CELL_LAST_LEFT_PINNED, column.isLastLeftPinned());
     }
 
     /**
@@ -832,12 +825,12 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        const { beans } = this;
+        const { beans, comp, rowCtrl } = this;
         if (_isCellFocusSuppressed(beans)) {
             return;
         }
 
-        if (!this.comp) {
+        if (!comp) {
             // scenario: focusing event on cell outside viewport causes cells to force render
             // preserve event for when cell renders.
             if (event) {
@@ -849,11 +842,11 @@ export class CellCtrl extends BeanStub {
         const cellFocused = this.isCellFocused();
         const editing = beans.editSvc?.isEditing(this) ?? false;
 
-        this.comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
+        comp.toggleCss(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event?.forceBrowserFocus) {
-            let focusEl = this.comp.getFocusableElement();
+            let focusEl = comp.getFocusableElement();
 
             if (editing) {
                 const focusableEls = _findFocusableElements(focusEl, null, true);
@@ -866,7 +859,7 @@ export class CellCtrl extends BeanStub {
         }
 
         if (cellFocused) {
-            this.rowCtrl.announceDescription();
+            rowCtrl.announceDescription();
         }
     }
 
@@ -898,11 +891,13 @@ export class CellCtrl extends BeanStub {
     }
 
     public onColDefChanged(): void {
-        if (!this.comp) {
+        const { comp, editSvc, column } = this;
+
+        if (!comp) {
             return;
         }
 
-        if (this.column.isTooltipEnabled()) {
+        if (column.isTooltipEnabled()) {
             this.disableTooltipFeature();
             this.enableTooltipFeature();
         } else {
@@ -911,8 +906,8 @@ export class CellCtrl extends BeanStub {
 
         this.setWrapText();
 
-        if (this.editSvc?.isEditing(this)) {
-            this.editSvc?.handleColDefChanged(this);
+        if (editSvc?.isEditing(this)) {
+            editSvc?.handleColDefChanged(this);
         } else {
             this.refreshOrDestroyCell({ force: true, suppressFlash: true });
         }
@@ -962,12 +957,13 @@ export class CellCtrl extends BeanStub {
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {
-        const cbSelectionComponent = this.beans.selectionSvc?.createCheckboxSelectionComponent();
+        const { selectionSvc, context } = this.beans;
+        const cbSelectionComponent = selectionSvc?.createCheckboxSelectionComponent();
         if (!cbSelectionComponent) {
             return undefined;
         }
 
-        this.beans.context.createBean(cbSelectionComponent);
+        context.createBean(cbSelectionComponent);
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
 
         // put the checkbox in before the value
@@ -975,7 +971,8 @@ export class CellCtrl extends BeanStub {
     }
 
     public createDndSource(): DndSourceComp | undefined {
-        const dndSourceComp = this.beans.registry.createDynamicBean<DndSourceComp>(
+        const { registry, context } = this.beans;
+        const dndSourceComp = registry.createDynamicBean<DndSourceComp>(
             'dndSourceComp',
             false,
             this.rowNode,
@@ -983,7 +980,7 @@ export class CellCtrl extends BeanStub {
             this.eGui
         );
         if (dndSourceComp) {
-            this.beans.context.createBean(dndSourceComp);
+            context.createBean(dndSourceComp);
         }
 
         return dndSourceComp;
@@ -1013,7 +1010,8 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         alwaysVisible?: boolean
     ): RowDragComp | undefined {
-        const rowDragComp = this.beans.rowDragSvc?.createRowDragCompForCell(
+        const { rowDragSvc, context } = this.beans;
+        const rowDragComp = rowDragSvc?.createRowDragCompForCell(
             this.rowNode,
             this.column,
             () => this.value,
@@ -1024,7 +1022,7 @@ export class CellCtrl extends BeanStub {
         if (!rowDragComp) {
             return undefined;
         }
-        this.beans.context.createBean(rowDragComp);
+        context.createBean(rowDragComp);
 
         return rowDragComp;
     }

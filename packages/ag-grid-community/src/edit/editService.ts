@@ -36,7 +36,7 @@ import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 import type { BaseEditStrategy } from './strategy/baseEditStrategy';
 import { isCellEditable, isFullRowCellEditable, shouldStartEditing } from './strategy/strategyUtils';
-import { CellEditStyleFeature } from './styles/cellEditStyleFeature';
+import { applyCellStyles } from './styles/cellEditStyles';
 import { RowEditStyleFeature } from './styles/rowEditStyleFeature';
 import { _addStopEditingWhenGridLosesFocus, _getCellCtrl } from './utils/controllers';
 import {
@@ -998,8 +998,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    public createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): CellEditStyleFeature {
-        return new CellEditStyleFeature(cellCtrl, beans);
+    public applyCellStyles(cellCtrl: CellCtrl): void {
+        applyCellStyles(this.beans, cellCtrl);
     }
 
     public createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature {

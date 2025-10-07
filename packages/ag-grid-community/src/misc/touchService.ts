@@ -10,12 +10,15 @@ import type { RowContainerEventsFeature } from '../gridBodyComp/rowContainer/row
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { HeaderGroupComp } from '../headerRendering/cells/columnGroup/headerGroupComp';
 import type { GridHeaderCtrl } from '../headerRendering/gridHeaderCtrl';
-import type { CellMouseListenerFeature } from '../rendering/cell/cellMouseListenerFeature';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { CellMouseListenerService } from '../rendering/cell/cellMouseListenerService';
 import type { LongTapEvent, TapEvent, TouchListenerEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
 
 export class TouchService extends BeanStub implements NamedBean {
     beanName = 'touchSvc' as const;
+
+    private readonly lastIPadMouseClickEventMap = new WeakMap<CellCtrl, number>();
 
     public mockBodyContextMenu(
         ctrl: GridBodyCtrl,
@@ -47,20 +50,25 @@ export class TouchService extends BeanStub implements NamedBean {
         this.mockContextMenu(ctrl, ctrl.element, listener);
     }
 
-    public handleCellDoubleClick(ctrl: CellMouseListenerFeature, mouseEvent: MouseEvent): boolean {
+    public handleCellDoubleClick(
+        cellMouseSvc: CellMouseListenerService,
+        ctrl: CellCtrl,
+        mouseEvent: MouseEvent
+    ): boolean {
         const isDoubleClickOnIPad = () => {
             if (!_isIOSUserAgent() || _isEventSupported('dblclick')) {
                 return false;
             }
 
             const nowMillis = Date.now();
-            const res = nowMillis - ctrl.lastIPadMouseClickEvent < 200;
-            ctrl.lastIPadMouseClickEvent = nowMillis;
+            const prevMillis = this.lastIPadMouseClickEventMap.get(ctrl) || 0;
+            const res = nowMillis - prevMillis < 200;
+            this.lastIPadMouseClickEventMap.set(ctrl, nowMillis);
 
             return res;
         };
         if (isDoubleClickOnIPad()) {
-            ctrl.onCellDoubleClicked(mouseEvent);
+            cellMouseSvc.onCellDoubleClicked(ctrl, mouseEvent);
             mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
 
             return true;

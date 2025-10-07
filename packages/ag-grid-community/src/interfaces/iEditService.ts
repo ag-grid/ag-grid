@@ -7,7 +7,6 @@ import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { CellRange } from './IRangeService';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from './iCellEditor';
-import type { ICellStyleFeature } from './iCellStyleFeature';
 import type { Column } from './iColumn';
 import type { EditMap } from './iEditModelService';
 import type { IRowNode } from './iRowNode';
@@ -114,7 +113,7 @@ export interface IEditService extends NamedBean {
     ): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
-    createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
+    applyCellStyles(cellCtrl: CellCtrl): void;
     createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
     setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void;
     hasValidationErrors(position?: EditPosition): boolean;
