@@ -48,25 +48,25 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         let { gos, treeData, parentIdField, childrenField } = this;
         let cachedFieldGettersChanged = false;
         if (!changedProps || changedProps.has('treeData')) {
-            treeData = gos.get('treeData') && gos.isModuleRegistered('TreeData');
-            if (this.treeData !== treeData) {
-                this.treeData = treeData;
+            const value = gos.get('treeData') && gos.isModuleRegistered('TreeData');
+            if (this.treeData !== value) {
+                this.treeData = treeData = value;
                 this.approachChanged = 'full';
                 cachedFieldGettersChanged = true;
             }
         }
         if (!changedProps || changedProps.has('treeDataParentIdField')) {
-            parentIdField = gos.get('treeDataParentIdField') || undefined;
-            if (this.parentIdField !== parentIdField) {
-                this.parentIdField = parentIdField;
-                this.cachedParentIdGetter = parentIdField ? fieldGetter(parentIdField) : null;
+            const value = gos.get('treeDataParentIdField') || undefined;
+            if (parentIdField !== value) {
+                this.parentIdField = parentIdField = value;
+                this.cachedParentIdGetter = value ? fieldGetter(value) : null;
                 cachedFieldGettersChanged = true;
             }
         }
         if (!changedProps || changedProps.has('treeDataChildrenField')) {
-            childrenField = gos.get('treeDataChildrenField') || undefined;
-            if (this.childrenField !== childrenField) {
-                this.childrenField = childrenField;
+            const value = gos.get('treeDataChildrenField') || undefined;
+            if (childrenField !== value) {
+                this.childrenField = childrenField = value;
                 this.cachedNestedDataGetter = childrenField ? fieldGetter(childrenField) : null;
                 cachedFieldGettersChanged = true;
             }
