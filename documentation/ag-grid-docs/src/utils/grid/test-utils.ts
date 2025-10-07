@@ -76,9 +76,6 @@ function getFilteredFrameworks(): readonly AgFramework[] {
 
 const FILTERED_FRAMEWORKS = getFilteredFrameworks();
 
-const additionalBrowser = ['webkit', 'firefox'];
-const frameworksWithAdditionalBrowser: AgFramework[] = ['reactFunctionalTs', 'typescript'];
-
 const licenseTexts = [
     '****************************************************************************************************************************',
     '************************************************ AG Grid Enterprise License ************************************************',
@@ -260,7 +257,6 @@ const frameworkTest =
                 baseURL,
                 request,
                 context,
-                browserName,
             }: TestFixtures,
             testInfo: any
         ) => {
@@ -271,9 +267,6 @@ const frameworkTest =
             }
 
             // Would be nice if this logic could be done so that the test is not even created rather than skipped
-            if (additionalBrowser.includes(browserName) && !frameworksWithAdditionalBrowser.includes(agFramework)) {
-                test.skip(true, `Skipping ${agFramework} tests in ${browserName} to reduce duplication.`);
-            }
             if (process.env.FRAMEWORK && process.env.FRAMEWORK !== agFramework) {
                 test.skip(true, `Skipping ${agFramework} as not the selected framework ${process.env.FRAMEWORK}.`);
             }
