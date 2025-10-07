@@ -1,4 +1,3 @@
-import { _EmptyArray, _last } from '../agStack/utils/array';
 import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -33,14 +32,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public rootNode: RowNode | null = null;
     public rowCountReady: boolean = false;
 
-    private nodeMgr: ClientSideNodeManager<any> | null | undefined = undefined;
+    private nodeMgr: ClientSideNodeManager<any> | undefined = undefined;
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
     private rowDataUpdatedPending: boolean = false;
-    private rowDataTransactionBatch: BatchTransactionItem[] | null = null;
 
-    private applyAsyncTransactionsTimeout: number = 0;
+    private asyncTransactions: BatchTransactionItem[] | null = null;
+    private asyncTransactionsTimer: number = 0;
+
     /** Has the start method been called */
     private started: boolean = false;
     /**
@@ -538,7 +538,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public refreshModel(params: RefreshModelParams): void {
         if (!this.nodeMgr) {
-            return; // destroyed or not ready
+            return; // destroyed
         }
 
         // this goes through the pipeline of stages. what's in my head is similar
@@ -705,23 +705,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getRowIndexAtPixel(pixelToMatch: number): number {
         const rowsToDisplay = this.rowsToDisplay;
-        if (this.isEmpty() || rowsToDisplay.length === 0) {
+        const rowsToDisplayLen = rowsToDisplay.length;
+        if (this.isEmpty() || rowsToDisplayLen === 0) {
             return -1;
         }
 
         // do binary search of tree
         // http://oli.me.uk/2013/06/08/searching-javascript-arrays-with-a-binary-search/
         let bottomPointer = 0;
-        let topPointer = rowsToDisplay.length - 1;
+        let topPointer = rowsToDisplayLen - 1;
 
         // quick check, if the pixel is out of bounds, then return last row
         if (pixelToMatch <= 0) {
             // if pixel is less than or equal zero, it's always the first row
             return 0;
         }
-        const lastNode = _last(rowsToDisplay);
+        const lastNode = rowsToDisplay[topPointer];
         if (lastNode.rowTop! <= pixelToMatch) {
-            return rowsToDisplay.length - 1;
+            return topPointer;
         }
 
         let oldBottomPointer = -1;
@@ -952,16 +953,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowDataTransaction: RowDataTransaction,
         callback?: (res: RowNodeTransaction) => void
     ): void {
-        if (!this.applyAsyncTransactionsTimeout) {
-            this.rowDataTransactionBatch = [];
-            const waitMillis = this.gos.get('asyncTransactionWaitMillis');
-            this.applyAsyncTransactionsTimeout = window.setTimeout(() => this.executeBatchUpdateRowData(), waitMillis);
+        if (!this.asyncTransactionsTimer) {
+            this.asyncTransactions = [];
+            const waitMilliseconds = this.gos.get('asyncTransactionWaitMillis');
+            this.asyncTransactionsTimer = window.setTimeout(() => this.executeBatchUpdateRowData(), waitMilliseconds);
         }
-        this.rowDataTransactionBatch!.push({ rowDataTransaction: rowDataTransaction, callback });
+        this.asyncTransactions!.push({ rowDataTransaction: rowDataTransaction, callback });
     }
 
     public flushAsyncTransactions(): void {
-        const timer = this.applyAsyncTransactionsTimeout;
+        const timer = this.asyncTransactionsTimer;
         if (timer) {
             clearTimeout(timer);
             this.executeBatchUpdateRowData();
@@ -969,10 +970,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private executeBatchUpdateRowData(): void {
-        this.applyAsyncTransactionsTimeout = 0;
         const nodeManager = this.nodeMgr;
         if (!nodeManager) {
-            return; // Destroyed
+            this.asyncTransactionsTimer = 0;
+            this.asyncTransactions = null;
+            return; // destroyed
         }
         this.beans.valueCache?.onDataChanged();
 
@@ -981,9 +983,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const changedRowNodes = new ChangedRowNodes();
         let orderChanged = false;
-        const rowDataTransactionBatch = this.rowDataTransactionBatch ?? _EmptyArray;
-        for (let i = 0, len = rowDataTransactionBatch.length; i < len; i++) {
-            const tranItem = rowDataTransactionBatch[i];
+        for (const tranItem of this.asyncTransactions ?? []) {
             this.rowNodesCountReady = true;
             const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(
                 tranItem.rowDataTransaction,
@@ -1013,8 +1013,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 results: rowNodeTrans,
             });
         }
-
-        this.rowDataTransactionBatch = null;
+        this.asyncTransactionsTimer = 0;
+        this.asyncTransactions = null;
     }
 
     /**
@@ -1024,7 +1024,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         const nodeManager = this.nodeMgr;
         if (!nodeManager) {
-            return null; // destroyed or not ready
+            return null; // destroyed
         }
         this.beans.valueCache?.onDataChanged();
 
@@ -1074,25 +1074,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public onRowHeightChanged(): void {
-        this.refreshModel({
-            step: 'map',
-            keepRenderedRows: true,
-            keepUndoRedoStack: true,
-        });
+        this.refreshModel({ step: 'map', keepRenderedRows: true, keepUndoRedoStack: true });
     }
 
     public resetRowHeights(): void {
         const rootNode = this.rootNode;
         if (!rootNode) {
-            return;
+            return; // destroyed
         }
 
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
 
         rootNode.setRowHeight(rootNode.rowHeight, true);
-        if (rootNode.sibling) {
-            rootNode.sibling.setRowHeight(rootNode.sibling.rowHeight, true);
-        }
+        const sibling = rootNode.sibling;
+        sibling?.setRowHeight(sibling.rowHeight, true);
 
         // when pivotMode but pivot not active, root node is displayed on its own
         // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
@@ -1124,33 +1119,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onGridStylesChanges(e: CssVariablesChanged) {
-        if (e.rowHeightChanged) {
-            if (this.beans.rowAutoHeight?.active) {
-                return;
-            }
-
+        if (e.rowHeightChanged && !this.beans.rowAutoHeight?.active) {
             this.resetRowHeights();
         }
     }
 
     private onGridReady(): void {
         if (!this.started) {
-            // App can start using API to add transactions, so need to add data into the node manager if not started
-            this.setInitialData();
+            this.setInitialData(); // App can start using API to add transactions, so need to add data into the node manager if not started
         }
     }
 
     public override destroy(): void {
         super.destroy();
-
-        // Forcefully deallocate memory
+        this.flushAsyncTransactions();
         this.started = false;
         this.rootNode = null;
-        this.nodeMgr = null;
-        this.rowDataTransactionBatch = null;
         this.rowsToDisplay = [];
         this.nodeMgr = this.destroyBean(this.nodeMgr);
-        clearTimeout(this.applyAsyncTransactionsTimeout);
     }
 
     private readonly onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
