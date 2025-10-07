@@ -153,7 +153,10 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private isGroupHierarchyColsEnabledForCol(col: AgColumn): boolean {
         const def = col.getColDef();
         const groupHierarchy = _getGroupHierarchy(def);
-        return !!(groupHierarchy && (def.rowGroup || def.enableRowGroup || def.pivot || def.enablePivot));
+        return !!(
+            groupHierarchy &&
+            (def.rowGroup || def.enableRowGroup || def.rowGroupIndex || def.pivot || def.enablePivot || def.pivotIndex)
+        );
     }
 
     private createGroupHierarchyColDefs(sourceCol: AgColumn): ColDef[] {
