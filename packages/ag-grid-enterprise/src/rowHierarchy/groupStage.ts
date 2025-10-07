@@ -125,16 +125,16 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     private changeApproach({ rowNode }: StageExecuteParams<TData>): IRowGroupingStrategy<TData> | undefined {
         let { treeData, approachChanged, strategy } = this;
         this.approachChanged = false;
-        if (approachChanged === 'full') {
-            if (strategy) {
-                resetGrouping(rowNode, !this.nestedDataGetter);
-            }
-            this.destroyBean(strategy);
-            strategy = this.beans.registry.createDynamicBean(treeData ? 'treeGroupStrategy' : 'groupStrategy', false);
-            this.strategy = strategy && this.createBean(strategy);
+        if (approachChanged !== 'full') {
+            strategy?.reset?.();
             return strategy;
         }
-        strategy?.reset?.();
+        if (strategy) {
+            this.destroyBean(strategy);
+            resetGrouping(rowNode, !this.nestedDataGetter);
+        }
+        strategy = this.beans.registry.createDynamicBean(treeData ? 'treeGroupStrategy' : 'groupStrategy', false);
+        this.strategy = strategy && this.createBean(strategy);
         return strategy;
     }
 }
