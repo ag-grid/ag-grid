@@ -257,7 +257,6 @@ const frameworkTest =
                 baseURL,
                 request,
                 context,
-                browserName,
             }: TestFixtures,
             testInfo: any
         ) => {
