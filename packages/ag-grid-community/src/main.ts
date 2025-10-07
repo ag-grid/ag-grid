@@ -1237,7 +1237,7 @@ export { ElementParams, _createElement } from './utils/element';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/gridEvent';
 export { _warnOnce } from './utils/log';
-export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
+export { _warn, _error, _errMsg, _logPreInitWarn, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
