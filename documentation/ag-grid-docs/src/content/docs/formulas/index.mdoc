@@ -122,6 +122,8 @@ It is the responsibility of the function implementation to throw errors when the
 In the example below, two cells have been configured to use the custom ADD function with incorrect params, one passes in a string and the other provides
 no parameters.
 
+It's important to note that these errors will propagate to any other cells that reference these cells in their formulas.
+
 {% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=450 /%}
 
 {% note %}

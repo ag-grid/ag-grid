@@ -1,16 +1,25 @@
-export type OperatorDef = {
-    symbol: string; // symbol: "+", "-", "%", ">=", ...
-    precedence: number; // bodmas precedence (higher = priority)
-    fixity: 'prefix' | 'infix' | 'postfix'; // prefix | infix | postfix
-    associativity: 'left' | 'right' | 'none'; // 'left' | 'right' for infix; 'none' otherwise
-    isAssociative?: true; // true for associative infix ops like '+' and '*' where serializing can drop brackets
-};
+interface BaseOperatorDef {
+    symbol: string;
+    precedence: number;
+}
 
-export const OP_DEFS: OperatorDef[] = [
-    { symbol: '%', fixity: 'postfix', precedence: 100, associativity: 'none' },
+export interface InfixOpDef extends BaseOperatorDef {
+    fixity: 'infix';
+    associativity: 'left' | 'right';
+    isAssociative?: true;
+}
 
-    { symbol: '-', fixity: 'prefix', precedence: 90, associativity: 'none' },
-    { symbol: '+', fixity: 'prefix', precedence: 90, associativity: 'none' },
+interface ExternalOpDef extends BaseOperatorDef {
+    fixity: 'prefix' | 'postfix';
+}
+
+export type OperatorDef = InfixOpDef | ExternalOpDef;
+
+const OP_DEFS: OperatorDef[] = [
+    { symbol: '%', fixity: 'postfix', precedence: 100 },
+
+    { symbol: '-', fixity: 'prefix', precedence: 90 },
+    { symbol: '+', fixity: 'prefix', precedence: 90 },
 
     { symbol: '^', fixity: 'infix', precedence: 80, associativity: 'right' },
     { symbol: '*', fixity: 'infix', precedence: 70, associativity: 'left', isAssociative: true },
@@ -38,6 +47,8 @@ for (const d of OP_DEFS) {
 }
 
 /** Return the operator def for a given symbol and (optionally) fixity. */
+export function getDefBySymbol(symbol: string, fixity: 'infix'): InfixOpDef | undefined;
+export function getDefBySymbol(symbol: string, fixity: 'prefix' | 'postfix'): ExternalOpDef | undefined;
 export function getDefBySymbol(symbol: string, fixity?: 'prefix' | 'infix' | 'postfix'): OperatorDef | undefined {
     const arr = symbolOperatorMap.get(symbol) ?? [];
     return fixity ? arr.find((d) => d.fixity === fixity) : arr[0];
@@ -46,5 +57,5 @@ export function getDefBySymbol(symbol: string, fixity?: 'prefix' | 'infix' | 'po
 /** Greedy operator list for tokenization (longest-first). */
 export const OP_SYMBOLS_DESC = [...new Set(OP_DEFS.map((d) => d.symbol))].sort((a, b) => b.length - a.length);
 
-/** Access to symbol->defs if needed (parser). */
+/** OperatorDefs mapped by symbol. */
 export const OP_BY_SYMBOL = symbolOperatorMap;

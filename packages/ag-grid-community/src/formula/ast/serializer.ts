@@ -2,7 +2,7 @@ import type { ColumnModel } from '../../columns/columnModel';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import { getDefBySymbol } from './operators';
-import type { OperatorDef } from './operators';
+import type { InfixOpDef } from './operators';
 import type { FormulaNode, FormulaOperation } from './utils';
 import type { Cell, CellRef } from './utils';
 
@@ -168,18 +168,21 @@ function isInfixOpNode(node: FormulaNode): boolean {
     return !!getDefBySymbol(node.operation, 'infix');
 }
 
-function needsParensInBinary(parentDef: OperatorDef, child: FormulaNode, side: 'left' | 'right'): boolean {
+function needsParensInBinary(parentDef: InfixOpDef, child: FormulaNode, side: 'left' | 'right'): boolean {
     if (!isOperationNode(child)) {
         return false;
     }
 
-    // if child is unary-minus-encoded, let the unary emit decide its own parens.
+    // If child is unary-minus-encoded, let the unary print logic decide.
     if (isUnaryMinusNode(child)) {
         return false;
     }
 
     const childDef = getDefBySymbol(child.operation, 'infix');
-    if (!childDef) return false; // functions or non-infix -> no parens
+    if (!childDef || childDef.fixity !== 'infix') {
+        // functions or non-infix -> no parens
+        return false;
+    }
 
     const pParent = parentDef.precedence;
     const pChild = childDef.precedence;
@@ -191,7 +194,7 @@ function needsParensInBinary(parentDef: OperatorDef, child: FormulaNode, side: '
         return false;
     }
 
-    // Equal precedence:
+    // Equal precedence
     if (parentDef.associativity === 'right') {
         // e.g., '^': parenthesize LEFT child if also '^'
         const sameOp = childDef.symbol === parentDef.symbol;

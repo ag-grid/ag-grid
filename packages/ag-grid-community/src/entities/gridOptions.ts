@@ -2902,7 +2902,7 @@ export interface ChartRef {
     setMaximized: (maximized: boolean) => void;
 }
 
-export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef { }
+export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
 
 export interface ServerSideGroupLevelParams {
     /**
@@ -2921,7 +2921,7 @@ export interface ServerSideGroupLevelParams {
 
 /**
  * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams { }
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
 
 export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
     (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;
