@@ -1,6 +1,6 @@
-import { type ParamType } from '@components/theme-builder/api';
+import { type ColorValue, type ParamType } from '@components/theme-builder/api';
 import { useSetAdvancedParamEnabled } from '@components/theme-builder/model/advanced-params';
-import type { ThemeParam } from '@components/theme-builder/model/utils';
+import { type ThemeParam, clamp } from '@components/theme-builder/model/utils';
 import type { FC, ReactNode } from 'react';
 
 import { ParamModel, useParamAtom } from '../../model/ParamModel';
@@ -37,16 +37,11 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     if (!props.isAdvancedSection && param.onlyEditableAsAdvancedParam) {
         throw new Error(`Add ${param.property} to nonAdvancedParams to allow editing outside the advanced section.`);
     }
-
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
         const params = getThemeDefaultParams(theme);
-        if (param.property in params) {
-            editorValue = params[param.property];
-        } else {
-            throw new Error(`ThemeParam "${param.property}" does not exist.`);
-        }
+        editorValue = renderColorValue(param.property, params, new Set());
     }
 
     const ValueEditorComponent = valueEditors[param.type] || CssValueEditor;
@@ -90,3 +85,27 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps<any>>> = {
     fontWeight: FontWeightValueEditor,
     duration: LengthValueEditor,
 };
+
+function renderColorValue(property: ThemeParam, params: any, stack: Set<ThemeParam>): string {
+    const value: ColorValue = params[property];
+    if (stack.has(property)) {
+        throw new Error(`Circular reference detected resolving default value for ${property}`);
+    }
+    stack.add(property);
+    try {
+        if (!isRef(value)) {
+            return value;
+        }
+        if (!value.mix) {
+            return renderColorValue(value.ref, params, stack);
+        }
+        const colorExpr = renderColorValue(value.ref, params, stack);
+        const backgroundExpr = value.onto ? renderColorValue(value.onto, params, stack) : 'transparent';
+        return `color-mix(in srgb, ${backgroundExpr}, ${colorExpr} ${clamp(value.mix * 100, 0, 100)}%)`;
+    } finally {
+        stack.delete(property);
+    }
+}
+
+const isRef = (value: unknown): value is { ref: string } =>
+    typeof value === 'object' && value != null && 'ref' in value && typeof value.ref === 'string';

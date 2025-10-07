@@ -76,7 +76,8 @@
 }
 
 .ag-row {
-    background-color: var(--ag-background-color);
+    /* Rows need a solid background to avoid being transparent when dragging */
+    background-color: var(--ag-data-background-color);
     width: 100%;
     height: var(--ag-row-height);
     border-bottom: var(--ag-row-border);
@@ -241,6 +242,12 @@
     inset: 0;
     background-color: var(--ag-selected-row-background-color);
     border: 1px solid var(--ag-range-selection-border-color);
+}
+
+.ag-body,
+.ag-floating-top,
+.ag-floating-bottom {
+    background-color: var(--ag-data-background-color);
 }
 
 .ag-row-odd {

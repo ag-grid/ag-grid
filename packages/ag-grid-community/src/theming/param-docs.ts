@@ -52,7 +52,7 @@ const docs: Record<AllThemeParams, string> = {
     cellFontFamily: 'Font family of text in grid cells',
     cellHorizontalPadding: 'Padding at the start and end of grid cells and header cells.',
     cellHorizontalPaddingScale: 'Multiply the cell horizontal padding by a number, e.g. 1.5 to increase by 50%',
-    cellTextColor: 'Color of text in grid cells.',
+    cellTextColor: 'Color of text in cells in the grid data area.',
     cellWidgetSpacing:
         'Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes).',
     chartMenuLabelColor: 'Color of form field labels within the chart editing panel for integrated charts',
@@ -180,7 +180,9 @@ const docs: Record<AllThemeParams, string> = {
     menuShadow: 'Shadow for menus e.g. column menu and right-click context menu',
     menuTextColor: 'Text color for menus e.g. column menu and right-click context menu',
     modalOverlayBackgroundColor: 'Background color of the overlay shown over the grid e.g. a data loading indicator.',
-    oddRowBackgroundColor: 'Background color applied to every other row',
+    dataBackgroundColor:
+        'Background color applied to grid rows. Should be a solid color, semi-transparent colors will cause issues.',
+    oddRowBackgroundColor: 'Alternative background colour applied to every other row to create a striped effect',
     paginationPanelHeight:
         'Height of the pagination panel at the bottom of the grid. Defaults to the higher of rowHeight or 22px.',
     panelBackgroundColor:
