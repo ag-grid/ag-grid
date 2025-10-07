@@ -1,5 +1,3 @@
-import { array } from 'astro:schema';
-
 import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
