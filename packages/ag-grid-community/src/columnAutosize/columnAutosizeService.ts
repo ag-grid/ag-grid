@@ -15,6 +15,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type {
     IColumnLimit,
@@ -47,7 +48,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private resizeOperationQueue: (() => void)[] = [];
 
     public postConstruct(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
+        const { gos } = this;
+        const autoSizeStrategy = gos.get('autoSizeStrategy');
 
         if (autoSizeStrategy) {
             let shouldHideColumns = false;
@@ -56,6 +58,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 shouldHideColumns = true;
             } else if (type === 'fitCellContents') {
                 this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered(autoSizeStrategy) });
+                // Hide columns when we already have row data to display. This avoids jittering when we initially
+                // render columns at default width, only to immediately resize them when rows are rendered.
+                const rowData = gos.get('rowData');
+                shouldHideColumns = rowData != null && rowData.length > 0 && _isClientSideRowModel(gos);
             }
             if (shouldHideColumns) {
                 this.beans.colDelayRenderSvc?.hideColumns(type);
@@ -539,6 +545,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             } else {
                 this.autoSizeAllColumns({ ...params, source });
             }
+            this.beans.colDelayRenderSvc?.revealColumns(params.type);
         });
     }
 

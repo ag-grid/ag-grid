@@ -367,7 +367,12 @@ interface CoreThemeParams extends SharedThemeParams {
     modalOverlayBackgroundColor: ColorValue;
 
     /**
-     * Background color applied to every other row
+     * Background color applied to grid rows
+     */
+    dataBackgroundColor: ColorValue;
+
+    /**
+     * Alternative background colour applied to every other row to create a striped effect
      */
     oddRowBackgroundColor: ColorValue;
 
@@ -375,6 +380,11 @@ interface CoreThemeParams extends SharedThemeParams {
      * Background color for panels and dialogs such as the integrated charts and the advanced filter builder.
      */
     panelBackgroundColor: ColorValue;
+
+    /**
+     * The height of the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
+     */
+    panelTitleBarHeight: LengthValue;
 
     /**
      * Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
@@ -781,7 +791,8 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
         ref: 'backgroundColor',
         mix: 0.66,
     },
-    oddRowBackgroundColor: backgroundColor,
+    dataBackgroundColor: backgroundColor,
+    oddRowBackgroundColor: { ref: 'dataBackgroundColor' },
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {
         calc: 'spacing * 2 * cellHorizontalPaddingScale',
@@ -867,6 +878,7 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
         color: foregroundMix(0.2),
     },
     panelBackgroundColor: backgroundColor,
+    panelTitleBarHeight: { ref: 'headerHeight' },
     panelTitleBarBackgroundColor: {
         ref: 'headerBackgroundColor',
     },
@@ -929,12 +941,12 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
         ref: 'textColor',
     },
     pinnedSourceRowBackgroundColor: {
-        ref: 'backgroundColor',
+        ref: 'dataBackgroundColor',
     },
     pinnedSourceRowFontWeight: 600,
     pinnedRowFontWeight: 600,
     pinnedRowBackgroundColor: {
-        ref: 'backgroundColor',
+        ref: 'dataBackgroundColor',
     },
     pinnedRowTextColor: {
         ref: 'textColor',

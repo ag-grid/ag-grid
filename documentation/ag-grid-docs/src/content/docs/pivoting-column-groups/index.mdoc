@@ -78,6 +78,35 @@ const gridOptions = {
 }
 ```
 
+## Pivoting by Dates and Times
+
+When pivoting by date/time values, the grid can optionally generate pivot group columns based on components of the date/time.
+
+To enable this for a particular column, use the `groupHierarchy` property of the [Column Definition](./column-properties/#reference-grouping-groupHierarchy).
+
+{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["groupHierarchy"] /%}
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            pivot: true,
+            groupHierarchy: ['year', 'month']
+        },
+        // ...other column definitions
+    ],
+};
+```
+
+This snippet is illustrated in the example below.
+
+{% gridExampleRunner title="Pivoting by Dates and Times" name="pivoting-date-time" /%}
+
+{% note %}
+Date values must be formatted as ISO-8601 dates in order to be correctly parsed into their components.
+{% /note %}
+
 ## Filtering Pivoted Columns
 
 When pivoting is active, filters can be applied to columns defined within the column definitions by using

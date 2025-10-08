@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-accessibility",
-  "version": "34.2.0-beta.20250929.1228",
+  "version": "34.2.0-beta.20251005.2025",
   "scripts": {
     "download-examples": "curl --retry 5 -retry-all-errors https://grid-staging.ag-grid.com/debug/all-examples.json > ./all-examples.json",
     "download-examples-local": "curl https://localhost:4610/debug/all-examples.json > ./all-examples.json",
