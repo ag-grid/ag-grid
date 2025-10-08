@@ -83,7 +83,7 @@
 
     .ag-row {
         height: var(--ag-row-height);
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-data-background-color);
         border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
         &.ag-row-editing-invalid {
             background-color: var(--ag-full-row-invalid-background-color);
@@ -91,7 +91,7 @@
     }
 
     .ag-spanned-cell-wrapper {
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-data-background-color);
         position: absolute;
     }
 
@@ -137,6 +137,12 @@
         inset: 0;
         background-color: var(--ag-selected-row-background-color);
         border: 1px solid var(--ag-range-selection-border-color);
+    }
+
+    .ag-body,
+    .ag-floating-top,
+    .ag-floating-bottom {
+        background-color: var(--ag-data-background-color);
     }
 
     .ag-row-odd {
@@ -291,7 +297,7 @@
 
     .ag-details-row {
         padding: calc(var(--ag-grid-size) * 5);
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-data-background-color);
     }
 
     .ag-layout-auto-height,
