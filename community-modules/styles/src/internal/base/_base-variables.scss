@@ -39,7 +39,8 @@
 
         --ag-selected-row-background-color: #bbb;
 
-        --ag-odd-row-background-color: var(--ag-background-color);
+        --ag-data-background-color: var(--ag-background-color);
+        --ag-odd-row-background-color: var(--ag-data-background-color);
 
         --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
 

@@ -1,9 +1,12 @@
 @mixin output {
     .ag-root-wrapper,
-    .ag-sticky-top,
-    .ag-sticky-bottom,
     .ag-dnd-ghost {
         background-color: var(--ag-background-color);
+    }
+
+    .ag-sticky-top,
+    .ag-sticky-bottom {
+        background-color: var(--ag-data-background-color);
     }
 
     .ag-sticky-bottom {

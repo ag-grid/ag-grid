@@ -26,6 +26,6 @@ describe('LicenseManager', () => {
         LicenseManager.setLicenseKey('test key 1');
         LicenseManager.setLicenseKey('test key 2');
 
-        expect(console.warn.mock.calls[0][0]).toContain('warning #291');
+        expect(console.warn.mock.calls[0][0]).toContain('AG Grid: warning #291');
     });
 });
