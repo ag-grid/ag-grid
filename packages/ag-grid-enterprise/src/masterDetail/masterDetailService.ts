@@ -23,7 +23,6 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     beanName: BeanName = 'masterDetailSvc' as const;
 
     public store: { [id: string]: DetailGridInfo | undefined } = {};
-
     private enabled: boolean;
 
     private isEnabled(): boolean {
@@ -31,12 +30,34 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     }
 
     public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
+        const gos = this.gos;
+        if (_isClientSideRowModel(gos)) {
             this.enabled = this.isEnabled();
         }
+        if (_isServerSideRowModel(gos)) {
+            this.addEventListeners();
+        }
+    }
 
-        this.addManagedListeners(this.beans.eventSvc, {
-            rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
+    private addEventListeners() {
+        let rowsChangedListener: (() => null)[] = [];
+        const eventSvc = this.beans.eventSvc;
+        if (this.isEnabled()) {
+            rowsChangedListener = this.addManagedListeners(eventSvc, {
+                rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
+            });
+        }
+
+        this.gos.addPropertyEventListener('masterDetail', (e) => {
+            if (e.currentValue !== e.previousValue) {
+                if (e.currentValue) {
+                    rowsChangedListener = this.addManagedListeners(eventSvc, {
+                        rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
+                    });
+                } else {
+                    rowsChangedListener.forEach((l) => l());
+                }
+            }
         });
     }
 
