@@ -231,7 +231,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         } else if (extractData) {
             // Row manager needs reload; extract row data to include user changes,
             // as it may differ from the original rowData
-            newRowData = groupStage?.extractData(oldNestedDataGetter);
+            newRowData = groupStage?.extractData();
         }
 
         if (newRowData && !Array.isArray(newRowData)) {

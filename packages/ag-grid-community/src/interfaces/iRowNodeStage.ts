@@ -31,6 +31,6 @@ export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeSta
     readonly treeData: boolean;
     getNestedDataGetter(): NestedDataGetter<TData> | null | undefined;
     onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): void;
-    extractData(nestedDataGetter: NestedDataGetter<TData> | null | undefined): TData[];
+    extractData(): TData[];
     getNode(id: string): RowNode<TData> | undefined;
 }

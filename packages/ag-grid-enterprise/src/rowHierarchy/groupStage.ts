@@ -31,6 +31,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     private treeDataChanged = false;
     private strategy: IRowGroupingStrategy<TData> | null | undefined = undefined;
     private canUseTreeData: boolean = false;
+    private nested: boolean = false;
 
     public getNestedDataGetter(): NestedDataGetter<TData> | null | undefined {
         return this.getStrategy()?.nestedDataGetter;
@@ -71,9 +72,9 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         this.strategy?.onPropChange?.(changedProps);
     }
 
-    public extractData(nestedDataGetter: NestedDataGetter<TData> | null | undefined): TData[] {
+    public extractData(): TData[] {
         const rootNode = (this.beans.rowModel as IClientSideRowModel).rootNode;
-        const nodes = nestedDataGetter ? rootNode?.childrenAfterGroup : rootNode?.allLeafChildren;
+        const nodes = this.nested ? rootNode?.childrenAfterGroup : rootNode?.allLeafChildren;
         if (!nodes) {
             return this.gos.get('rowData') ?? [];
         }
@@ -102,11 +103,13 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
 
     public execute(params: StageExecuteParams<TData>): boolean | undefined {
         const strategy = this.getStrategy();
+        const nested = !!strategy?.nestedDataGetter;
         const treeDataChanged = this.treeDataChanged;
         if (treeDataChanged) {
             this.treeDataChanged = false;
-            resetGrouping(params.rowNode, !strategy?.nestedDataGetter);
+            resetGrouping(params.rowNode, !nested);
         }
+        this.nested = nested;
         if (!strategy) {
             return undefined; // Stage not executed if no strategy is available
         }
