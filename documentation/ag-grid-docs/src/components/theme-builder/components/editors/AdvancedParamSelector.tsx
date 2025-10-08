@@ -67,7 +67,7 @@ export const AdvancedParamSelector = memoWithSameType(() => {
                 case useCombobox.stateChangeTypes.InputBlur:
                     return {
                         ...changes,
-                        inputValue: '', // don't clear the input string on blur
+                        inputValue: state.inputValue, // don't clear the input string on blur
                     };
                 case useCombobox.stateChangeTypes.ControlledPropUpdatedSelectedItem:
                     return {
