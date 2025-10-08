@@ -654,8 +654,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         this.isRefreshingModel = true;
-
-        beans.masterDetailSvc?.refreshModel(params);
+        const doMasterDetailRefresh = !params.skipMasterDetailsModelRefresh;
+        if (doMasterDetailRefresh) {
+            beans.masterDetailSvc?.refreshModel(params);
+        }
 
         if (rowDataUpdated && params.step !== 'group') {
             beans.colFilter?.refreshModel();
@@ -1115,6 +1117,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             animate: !this.gos.get('suppressAnimationFrame'),
             changedRowNodes,
             changedPath: this.createChangePath(true),
+            skipMasterDetailsModelRefresh: true
         });
     }
 

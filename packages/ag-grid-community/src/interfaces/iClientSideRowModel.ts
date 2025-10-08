@@ -108,4 +108,7 @@ export interface RefreshModelParams<TData = any> {
 
     /** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */
     keepUndoRedoStack?: boolean;
+
+    /** if true, masterDetailService.refreshModel() will not be called */
+    skipMasterDetailsModelRefresh?: boolean;
 }

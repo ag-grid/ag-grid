@@ -6,7 +6,6 @@ import type {
     NamedBean,
     RefreshModelParams,
     RowCtrl,
-    RowNodeDataChangedEvent,
 } from 'ag-grid-community';
 import {
     BeanStub,
