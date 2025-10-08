@@ -52,7 +52,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         setAllLeafs(rootNode, allLeafs);
 
         let writeIdx = 0;
-        const nestedDataGetter = groupStage?.nestedDataGetter;
+        const nestedDataGetter = groupStage?.getNestedDataGetter();
         const processedNested = nestedDataGetter ? new Set<TData>() : null;
         const processChildren = (parent: RowNode, childrenData: TData[]) => {
             const level = parent.level + 1;
@@ -75,7 +75,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             }
         };
 
-        processChildren(this.rootNode, rowData);
+        processChildren(rootNode, rowData);
         allLeafs.length = writeIdx;
     }
 
@@ -87,7 +87,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const { adds, updates } = changedRowNodes;
         const processedNodes = new Set<RowNode<TData>>();
         const nodesToUnselect: RowNode<TData>[] = [];
-        const nestedDataGetter = this.beans.groupStage?.nestedDataGetter;
+        const nestedDataGetter = this.beans.groupStage?.getNestedDataGetter();
+
         let updated = false;
         let reordered = false;
         let prevIndex = -1;
@@ -202,7 +203,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             rowsInserted: false,
         };
 
-        if (this.beans.groupStage?.nestedDataGetter) {
+        if (this.beans.groupStage?.getNestedDataGetter()) {
             _warn(268); // transactions not supported with treeDataChildrenField
             return updateRowDataResult;
         }

@@ -1,6 +1,7 @@
 import type {
     ChangedPath,
     ChangedRowNodes,
+    GridOptions,
     NestedDataGetter,
     ParentIdGetter,
     StageExecuteParams,
@@ -8,6 +9,7 @@ import type {
 import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
+import { fieldGetter } from '../rowHierarchy/fieldGetter';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 
@@ -44,16 +46,60 @@ const PATH_KEY_SEPARATOR = String.fromCodePoint(31, 41150, 8291);
 const PATH_KEY_SEPARATOR_LEN = 3;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
+    public nestedDataGetter: NestedDataGetter<TData> | null = null;
+    private parentIdGetter: ((data: TData) => string | null | undefined) | null = null;
+
+    private cachedNestedDataGetter: NestedDataGetter<TData> | null = null;
+    private cachedParentIdGetter: ParentIdGetter<TData> | null = null;
+
+    private parentIdField: string | undefined;
+    private childrenField: string | undefined;
+
     private groupColsIds: string = '';
     private groupColsChanged: boolean = true;
     private fillerNodesById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
+    private fullReload: boolean = true;
+
+    public postConstruct(): void {
+        this.onPropChange(null);
+    }
+
+    public onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void {
+        let { parentIdField, childrenField } = this;
+        let cachedFieldGettersChanged = false;
+        const { gos } = this;
+        if (!changedProps || changedProps.has('treeDataParentIdField')) {
+            const value = gos.get('treeDataParentIdField') || undefined;
+            if (parentIdField !== value) {
+                this.parentIdField = parentIdField = value;
+                this.cachedParentIdGetter = value ? fieldGetter(value) : null;
+                cachedFieldGettersChanged = true;
+            }
+        }
+        if (!changedProps || changedProps.has('treeDataChildrenField')) {
+            const value = gos.get('treeDataChildrenField') || undefined;
+            if (childrenField !== value) {
+                this.childrenField = childrenField = value;
+                this.cachedNestedDataGetter = childrenField ? fieldGetter(childrenField) : null;
+                cachedFieldGettersChanged = true;
+            }
+        }
+        if (cachedFieldGettersChanged) {
+            const parentIdGetter = parentIdField ? this.cachedParentIdGetter : null;
+            const nestedDataGetter = !parentIdField && childrenField ? this.cachedNestedDataGetter : null;
+            if (this.parentIdGetter !== parentIdGetter || this.nestedDataGetter !== nestedDataGetter) {
+                this.parentIdGetter = parentIdGetter;
+                this.nestedDataGetter = nestedDataGetter;
+                this.reset();
+            }
+        }
+    }
 
     public override destroy(): void {
-        super.destroy();
-        this.groupColsIds = '';
-        this.fillerNodesById = null!;
         this.nodesToUnselect = null;
+        this.reset();
+        super.destroy();
     }
 
     public reset(): void {
@@ -61,31 +107,32 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         this.deselectHiddenNodes(false);
         this.groupColsIds = '';
         this.groupColsChanged = true;
+        this.fullReload = true;
     }
 
     public getNode(id: string): RowNode<TData> | undefined {
         return this.fillerNodesById?.get(id);
     }
 
-    public execute(
-        params: StageExecuteParams<TData>,
-        fullReload: boolean,
-        parentIdGetter: ParentIdGetter<TData> | null,
-        nestedDataGetter: NestedDataGetter<TData> | null
-    ): boolean {
+    public execute(params: StageExecuteParams<TData>): boolean {
+        if (this.fullReload) {
+            this.reset();
+        }
+
         const { changedRowNodes, changedPath, afterColumnsChanged } = params;
         this.checkGroupColsUpdated(afterColumnsChanged);
 
         const rootNode = params.rowNode;
 
         const activeChangedPath = changedPath?.active ? changedPath : undefined;
-        fullReload ||= !changedRowNodes && !activeChangedPath;
+        const fullReload = this.fullReload || (!changedRowNodes && !activeChangedPath);
 
         const hasUpdates = !!changedRowNodes && this.flagUpdatedNodes(changedRowNodes);
         if (fullReload || hasUpdates) {
-            if (parentIdGetter) {
-                this.loadSelfRef(params, parentIdGetter, fullReload);
-            } else if (nestedDataGetter) {
+            this.fullReload = false;
+            if (this.parentIdGetter) {
+                this.loadSelfRef(params, fullReload);
+            } else if (this.nestedDataGetter) {
                 this.loadNested(params, fullReload);
             } else {
                 this.loadDataPath(params, fullReload);
@@ -455,11 +502,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Load the tree structure for self-referencing data, aka parentId field */
-    private loadSelfRef(
-        { rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>,
-        parentIdGetter: ParentIdGetter<TData> | null,
-        reload: boolean
-    ): void {
+    private loadSelfRef({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, reload: boolean): void {
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const gos = this.gos;
 
@@ -472,11 +515,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
         const rowModel = this.beans.rowModel;
         const removals = changedRowNodes?.removals;
+        const parentIdGetter = this.parentIdGetter;
         for (let i = 0, len = rootAllLeafChildren.length; i < len; ++i) {
             const row = rootAllLeafChildren[i];
             if (reload || row.treeNodeFlags & FLAG_CHANGED || removals?.has(row.treeParent!)) {
                 let newParent: RowNode<TData> | null | undefined;
-                const parentId = parentIdGetter?.(row.data);
+                const parentId = parentIdGetter?.(row.data!);
                 if (parentId !== null && parentId !== undefined) {
                     newParent = rowModel.getRowNode(parentId);
                     if (!newParent) {

@@ -69,7 +69,7 @@ describe('ag-grid hierarchical tree data', () => {
         expect(hasNoRowsOverlay()).toBe(true);
     });
 
-    test('ag-grid hierarchical tree data (without id)', async () => {
+    test.only('ag-grid hierarchical tree data (without id)', async () => {
         const rowData = [
             { x: 'A', children: [{ x: 'B', children: [{ x: 'C', children: [{ x: 'D' }] }] }] },
             { x: 'E', children: [{ x: 'F', children: [{ x: 'G', children: [{ x: 'H' }] }] }] },

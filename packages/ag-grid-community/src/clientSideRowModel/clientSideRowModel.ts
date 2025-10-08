@@ -220,14 +220,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const params: RefreshModelParams = { step: 'nothing', changedProps };
 
         const groupStage = beans.groupStage;
-        const oldNestedDataGetter = groupStage?.nestedDataGetter;
+        const oldNestedDataGetter = groupStage?.getNestedDataGetter();
         groupStage?.onPropChange(changedProps);
-        const extractDat = oldNestedDataGetter !== groupStage?.nestedDataGetter;
+
+        const extractData = oldNestedDataGetter !== groupStage?.getNestedDataGetter();
 
         let newRowData: any[] | null | undefined;
         if (changedProps.has('rowData')) {
             newRowData = gos.get('rowData'); // new rowData to load or update
-        } else if (extractDat) {
+        } else if (extractData) {
             // Row manager needs reload; extract row data to include user changes,
             // as it may differ from the original rowData
             newRowData = groupStage?.extractData(oldNestedDataGetter);
@@ -240,7 +241,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         if (newRowData) {
             const immutable =
-                !extractDat &&
+                !extractData &&
                 !this.isEmpty() &&
                 newRowData.length > 0 &&
                 gos.exists('getRowId') &&

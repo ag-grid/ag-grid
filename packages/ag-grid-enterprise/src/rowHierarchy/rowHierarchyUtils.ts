@@ -1,21 +1,20 @@
 import type {
     Bean,
     BeanCollection,
+    GridOptions,
     GridOptionsService,
     IRowNode,
     NestedDataGetter,
-    ParentIdGetter,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
-    execute(
-        params: StageExecuteParams<TData>,
-        fullReload: boolean,
-        parentIdGetter: ParentIdGetter<TData> | null | undefined,
-        nestedDataGetter: NestedDataGetter<TData> | null | undefined
-    ): boolean | undefined | void;
+    readonly nestedDataGetter?: NestedDataGetter<TData> | null;
+
+    onPropChange?(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void;
+
+    execute(params: StageExecuteParams<TData>): boolean | undefined | void;
 
     /** Called to reset the state when the strategy changes */
     reset?(): void;

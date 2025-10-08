@@ -136,6 +136,7 @@ describe('ag-grid treeDataChildrenField', () => {
             └── LEAF id:4
         `);
 
+        console.log('setting treeData = true and treeDataChildrenField = children1');
         api.updateGridOptions({
             treeData: true,
             treeDataChildrenField: 'children1',
