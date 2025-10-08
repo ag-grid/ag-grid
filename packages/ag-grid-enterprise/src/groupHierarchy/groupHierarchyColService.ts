@@ -155,7 +155,12 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         const groupHierarchy = _getGroupHierarchy(def);
         return !!(
             groupHierarchy &&
-            (def.rowGroup || def.enableRowGroup || def.rowGroupIndex || def.pivot || def.enablePivot || def.pivotIndex)
+            (def.rowGroup ||
+                def.enableRowGroup ||
+                def.rowGroupIndex != null ||
+                def.pivot ||
+                def.enablePivot ||
+                def.pivotIndex != null)
         );
     }
 
