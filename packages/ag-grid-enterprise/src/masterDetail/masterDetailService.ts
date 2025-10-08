@@ -51,6 +51,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
                 for (const removeListener of removeListeners) {
                     removeListener();
                 }
+                removeListeners = undefined;
             }
             if (this.isEnabled()) {
                 removeListeners = this.addManagedListeners(this.beans.eventSvc, { rowNodeDataChanged });
