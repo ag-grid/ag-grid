@@ -40,26 +40,29 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     }
 
     private addEventListeners() {
-        let rowsChangedListener: (() => null)[] = [];
+        let destructors: (() => null)[] = [];
         const eventSvc = this.beans.eventSvc;
+        const handlers = { rowNodeDataChanged: this.onRowNodeDataChanged };
         if (this.isEnabled()) {
-            rowsChangedListener = this.addManagedListeners(eventSvc, {
-                rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
-            });
+            destructors = this.addManagedListeners(eventSvc, handlers);
         }
 
         this.gos.addPropertyEventListener('masterDetail', (e) => {
             if (e.currentValue !== e.previousValue) {
                 if (e.currentValue) {
-                    rowsChangedListener = this.addManagedListeners(eventSvc, {
-                        rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
-                    });
+                    destructors = this.addManagedListeners(eventSvc, handlers);
                 } else {
-                    rowsChangedListener.forEach((l) => l());
+                    for (let i = 0; i < destructors.length; i++) {
+                        destructors[i]();
+                    }
                 }
             }
         });
     }
+
+    private onRowNodeDataChanged = (event: { node: RowNode }): void => {
+        this.setMaster(event.node, false, true);
+    };
 
     public refreshModel(params: RefreshModelParams) {
         if (params.changedProps) {
