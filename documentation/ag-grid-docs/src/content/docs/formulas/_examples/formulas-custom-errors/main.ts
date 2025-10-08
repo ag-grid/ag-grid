@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFuncParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     FormulaModule,
@@ -51,28 +51,20 @@ const gridOptions: GridOptions<any> = {
         { field: 'H', colId: '7' },
         { field: 'I', colId: '8' },
     ],
-    cellSelection: {
-        handle: {
-            mode: 'fill',
-        },
-    },
     getRowId: (params) => String(params.data.rid),
     enableFormulas: true,
-    rowNumbers: true,
     defaultColDef: {
         headerName: '',
-        tooltipValueGetter: () => {},
         editable: true,
         width: 150,
-        cellDataType: 'text',
     },
     rowData,
     formulaFuncs: {
         ADD: {
-            func: (iterator: Iterable<unknown>) => {
+            func: (params: FormulaFuncParams) => {
                 let total = 0;
                 let count = 0;
-                for (const value of iterator) {
+                for (const value of params.values) {
                     if (typeof value !== 'number') {
                         throw 'ADD only supports numbers';
                     }

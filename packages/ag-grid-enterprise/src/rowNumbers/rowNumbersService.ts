@@ -17,6 +17,7 @@ import {
     _setAriaLabel,
     _updateColsMap,
     isRowNumberCol,
+    _isRowNumbers,
 } from 'ag-grid-community';
 import type {
     BeanCollection,
@@ -38,6 +39,7 @@ import type {
 } from 'ag-grid-community';
 
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
+
 
 export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
     beanName = 'rowNumbersSvc' as const;
@@ -89,7 +91,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             this.columns = null;
         };
 
-        if (!this.gos.get('rowNumbers')) {
+        if (!_isRowNumbers(this.gos)) {
             destroyCollection();
             return;
         }
@@ -412,7 +414,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private generateRowNumberCols(): AgColumn[] {
         const { gos } = this;
-        if (!gos.get('rowNumbers')) {
+        if (!_isRowNumbers(gos)) {
             return [];
         }
 

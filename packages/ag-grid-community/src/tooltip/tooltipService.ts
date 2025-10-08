@@ -144,11 +144,6 @@ export class TooltipService extends BeanStub implements NamedBean {
             const colDef = column.getColDef();
             const data = rowNode.data;
 
-            const error = this.beans.formula?.getFormulaError(column, rowNode);
-            if (error) {
-                return error.message;
-            }
-
             if (colDef.tooltipField && _exists(data)) {
                 return _getValueUsingField(data, colDef.tooltipField, column.isTooltipFieldContainsDots());
             }
@@ -249,6 +244,38 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         return ctrl.createBean(tooltipFeature, context);
+    }
+
+    public setupFormulaTooltip(cellCtrl: CellCtrl): TooltipFeature | undefined {
+        const { beans } = this;
+        const { context, formula } = beans;
+
+        if (!formula || !beans.gos.get('enableFormulas')) {
+            return;
+        }
+
+        const tooltipParams: ITooltipCtrl = {
+            getGui: () => cellCtrl.eGui,
+            getTooltipValue: () => {
+                const error = formula?.getFormulaError(cellCtrl.column, cellCtrl.rowNode);
+                return error ? error.message : undefined;
+            },
+            getLocation: () => 'cell',
+            shouldDisplayTooltip: () => {
+                const error = formula?.getFormulaError(cellCtrl.column, cellCtrl.rowNode);
+                return !!error;
+            },
+        };
+
+        const tooltipFeature = this.createTooltipFeature(tooltipParams, beans);
+
+        if (!tooltipFeature) {
+            return;
+        }
+
+        return cellCtrl.createBean(tooltipFeature, context);
+
+
     }
 
     public setupCellEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {

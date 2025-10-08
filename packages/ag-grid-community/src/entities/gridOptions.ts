@@ -116,6 +116,7 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
+import type { FormulaFunctionParams } from '../formula/functions/types';
 import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
@@ -1102,7 +1103,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `FormulaModule`
      */
-    formulaFuncs?: { [key: string]: { func: (iterable: Iterable<unknown>) => any } };
+    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } };
     /**
      * Enable or disable the processing of cell formulas
      * @initial

@@ -84,7 +84,7 @@ export function _setupEditors(
                     UNEDITED;
 
                 editModelSvc?.setEdit(cellPosition, {
-                    pendingValue: newValue,
+                    pendingValue: getNormalisedFormula(beans, newValue, false),
                     sourceValue: oldValue,
                     state: 'editing',
                 });
@@ -144,7 +144,7 @@ export function _setupEditor(
     }
 
     beans.editModelSvc?.setEdit(position, {
-        editorValue: newValue,
+        editorValue: getNormalisedFormula(beans, newValue, true),
         state: 'editing',
     });
 
@@ -372,17 +372,14 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: edit ? edit.editorValue : UNEDITED,
+            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false) : UNEDITED,
         });
     }
 
-    const normalised = beans.formula?.isFormula(editorValue)
-        ? beans.formula?.normaliseFormula(editorValue, true) ?? editorValue
-        : editorValue;
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: valueSameAsSource ? edit.sourceValue : normalised,
+        editorValue: valueSameAsSource ? getNormalisedFormula(beans, edit.sourceValue, true) : editorValue,
     });
 
     if (params?.persist) {
@@ -390,27 +387,26 @@ export function _syncFromEditor(
     }
 }
 
+/**
+ * Converts formula to shorthand or longhand depending on context
+ * @param forEditing if true, converts to shorthand (A1), if false converts to longhand (REF(COL(id),ROW(id))) for storage
+ */
+export function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean): any {
+    const { formula } = beans;
+    if (formula?.isFormula(value)) {
+        return formula?.normaliseFormula(value, forEditing) ?? value;
+    }
+    return value;
+}
+
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
-    const { editModelSvc, formula } = beans;
+    const { editModelSvc } = beans;
 
     const edit = editModelSvc?.getEdit(position, true);
 
-    let value = edit?.editorValue;
-
-    /**
-     * Formulas, if the input value has relative references, the formula needs to be normalised.
-     */
-    if (formula?.isFormula(value)) {
-        // don't save modified version if formula did not parse
-        const normalisedFormula = formula.normaliseFormula(value);
-        if (normalisedFormula) {
-            value = normalisedFormula;
-        }
-    }
-
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
-        pendingValue: value,
+        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false),
     });
 }
 
@@ -458,10 +454,10 @@ export function _destroyEditor(
             const args = enableGroupEditing
                 ? groupEditOverrides(params, edit)
                 : {
-                      valueChanged: false,
-                      newValue: undefined,
-                      oldValue: edit.sourceValue,
-                  };
+                    valueChanged: false,
+                    newValue: undefined,
+                    oldValue: edit.sourceValue,
+                };
             dispatchEditingStopped(beans, position, args, params);
         }
 
@@ -492,13 +488,13 @@ export function _destroyEditor(
         const args = enableGroupEditing
             ? groupEditOverrides(params, latest)
             : {
-                  valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-                  newValue:
-                      params?.cancel || latest.editorState.isCancelAfterEnd
-                          ? undefined
-                          : latest?.editorValue ?? edit?.pendingValue,
-                  oldValue: latest?.sourceValue,
-              };
+                valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
+                newValue:
+                    params?.cancel || latest.editorState.isCancelAfterEnd
+                        ? undefined
+                        : latest?.editorValue ?? edit?.pendingValue,
+                oldValue: latest?.sourceValue,
+            };
 
         dispatchEditingStopped(beans, position, args, params);
     }
@@ -509,17 +505,17 @@ type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' |
 function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Readonly<EditValue>): EditingStoppedArgs {
     return params?.cancel
         ? {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: undefined,
-              value: latest.sourceValue,
-          }
+            valueChanged: false,
+            oldValue: latest.sourceValue,
+            newValue: undefined,
+            value: latest.sourceValue,
+        }
         : {
-              valueChanged: false,
-              oldValue: latest.sourceValue,
-              newValue: latest.pendingValue,
-              value: latest.sourceValue,
-          };
+            valueChanged: false,
+            oldValue: latest.sourceValue,
+            newValue: latest.pendingValue,
+            value: latest.sourceValue,
+        };
 }
 
 function dispatchEditingStopped(

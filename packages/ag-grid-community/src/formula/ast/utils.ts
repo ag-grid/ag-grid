@@ -15,7 +15,14 @@ export class FormulaError extends Error {
     override name = 'FormulaError';
     constructor(
         message: string,
-        public readonly type: '#REF!' | '#NAME?' | '#CIRCREF!' | '#PARSE!'
+        public readonly type:
+            | '#REF!'
+            | '#NAME?'
+            | '#CIRCREF!'
+            | '#PARSE!'
+            | '#VALUE!'
+            | '#DIV/0!'
+            | '#ERROR!' = '#ERROR!'
     ) {
         super(message);
     }

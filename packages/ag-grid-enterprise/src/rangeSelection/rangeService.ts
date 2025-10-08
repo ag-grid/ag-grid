@@ -47,6 +47,7 @@ import {
     _missing,
     _warn,
     isRowNumberCol,
+    _isRowNumbers,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -92,7 +93,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private newestRangeStartCell?: CellPosition;
 
     private dragging = false;
-    public draggingRange?: CellRange;
+    private draggingRange?: CellRange;
 
     private intersectionRange = false; // When dragging ends, the current range will be used to intersect all other ranges
 
@@ -373,7 +374,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const isRowNumbersEnabled = gos.get('rowNumbers');
+        const isRowNumbersEnabled = _isRowNumbers(gos);
         const allColumnsRange = isRowNumberCol(cell.column);
         if (isRowNumbersEnabled) {
             this.setSelectionMode(allColumnsRange);
@@ -1042,9 +1043,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         return processedColumns
             ? {
-                  columns: processedColumns,
-                  startsOnTheRight,
-              }
+                columns: processedColumns,
+                startsOnTheRight,
+            }
             : undefined;
     }
 
@@ -1169,7 +1170,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private getColumnsFromModel(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
         const { gos, visibleCols } = this;
-        const isRowHeaderActive = gos.get('rowNumbers');
+        const isRowHeaderActive = _isRowNumbers(gos);
 
         if (!cols || this.selectionMode === SelectionMode.ALL_COLUMNS) {
             cols = visibleCols.allCols;

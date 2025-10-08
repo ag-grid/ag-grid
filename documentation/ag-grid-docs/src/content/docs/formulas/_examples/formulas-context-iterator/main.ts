@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFuncParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     FormulaModule,
@@ -28,24 +28,7 @@ const rowData = [
         A: 1,
         B: 2,
         C: 3,
-
-        // Relative-only refs; good for vertical + horizontal fill tests
-        D: '=A1+A2/A3',
-
-        // Absolute column, relative row; col shouldn’t move on horizontal fill
-        E: '=$A1',
-
-        // Relative column, absolute row; row shouldn’t move on vertical fill
-        F: '=A$1',
-
-        // Fully absolute; never changes with fill
-        G: '=$A$1',
-
-        // Range with all-relative ends; shifts in either axis
-        H: '=SUM(A1:B1)',
-
-        // Mixed-absolute range ends; only the relative sides should shift
-        I: '=SUM($A1:B$1)',
+        D: '=COUNTEQ(A1:C8,3)',
     },
     { rid: '2', A: 2, B: 4, C: 6 },
     { rid: '3', A: 3, B: 6, C: 9 },
@@ -54,7 +37,6 @@ const rowData = [
     { rid: '6', A: 6, B: 12, C: 18 },
     { rid: '7', A: 7, B: 14, C: 21 },
     { rid: '8', A: 8, B: 16, C: 24 },
-    { rid: '9', A: '=A1+A2', B: '=B1+B2', C: '=C1+C2' },
 ];
 
 const gridOptions: GridOptions<any> = {
@@ -77,6 +59,30 @@ const gridOptions: GridOptions<any> = {
         width: 150,
     },
     rowData,
+    formulaFuncs: {
+        COUNTEQ: {
+            func: (params) => {
+                const argsArr = Array.from(params.args);
+                if (argsArr.length != 2) {
+                    throw 'COUNTEQ requires exactly 2 arguments';
+                }
+                const [range, criteria] = argsArr;
+                if (range.kind !== 'range') {
+                    throw 'First argument to COUNTEQ must be a range';
+                }
+                if (criteria.kind !== 'value' || typeof criteria.value === 'object') {
+                    throw 'Second argument to COUNTEQ must be a primitive value';
+                }
+                let count = 0;
+                for (const value of range) {
+                    if (value === criteria.value) {
+                        count++;
+                    }
+                }
+                return count;
+            },
+        },
+    },
 };
 
 // setup the grid after the page has finished loading

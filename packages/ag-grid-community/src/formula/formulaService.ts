@@ -1,4 +1,3 @@
-import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -8,8 +7,9 @@ import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
 import type { Cell, CellRef, FormulaNode } from './ast/utils';
 import { FormulaError } from './ast/utils';
+import type { Addr } from './functions/resolver';
+import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
-import { evalAst, iterateCellAddresses } from './functions/utils';
 
 // plunker: https://plnkr.co/edit/8idB7tTubExLB58S?open=main.js
 // plunker2: https://plnkr.co/edit/VsIBH0GJb3iyq45c?open=main.js
@@ -38,7 +38,7 @@ const getFormula = (column: AgColumn, node: RowNode): string | null => {
  * Cell Formula Cache
  * Caches the parsed AST until the formula changes, and the last computed value/error.
  */
-class CellFormula {
+export class CellFormula {
     public error: FormulaError | null = null;
     public ast: FormulaNode | null = null;
     public astStale = true;
@@ -51,7 +51,7 @@ class CellFormula {
         public readonly column: AgColumn,
         public formulaString: string,
         private readonly beans: BeanCollection
-    ) {}
+    ) { }
 
     public setFormulaString(next: string) {
         if (this.formulaString === next) {
@@ -72,22 +72,26 @@ class CellFormula {
     /** Cache write: store an error (value considered stale). */
     public setError(e: FormulaError) {
         this.error = e;
-        this._valueStale = true;
+        this._valueStale = false;
     }
 
-    /** Try to read cached value if it’s fresh and error-free. */
-    public tryGetCachedValue(): { hit: boolean; value?: unknown } {
-        if (!this._valueStale && this.error == null) {
-            return { hit: true, value: this._value };
-        }
-        if (this.error != null) {
-            return { hit: true, value: this.error.type };
-        }
-        return { hit: false };
+    public isValueReady(): boolean {
+        return !this._valueStale;
     }
 
-    /** Ensure we have an up-to-date AST (no evaluation here). */
-    public ensureAst(): FormulaNode | null {
+    /**
+     * Return the error type or the value
+     */
+    public getValue(): unknown {
+        return this.error?.type ?? this._value;
+    }
+
+    public getError(): FormulaError | null {
+        return this.error;
+    }
+
+    /** Returns the AST for the formula and recomputes if stale */
+    public getAst(): FormulaNode | null {
         if (!this.astStale) {
             return this.ast;
         }
@@ -98,6 +102,11 @@ class CellFormula {
     }
 }
 
+interface FormulaFrame {
+    address: Addr;
+    ast: FormulaNode;
+    unresolvedDepIterator: Generator<Addr>;
+}
 export class FormulaService extends BeanStub implements NamedBean {
     public readonly beanName = 'formula' as const;
 
@@ -125,6 +134,7 @@ export class FormulaService extends BeanStub implements NamedBean {
             newColumnsLoaded: this.setupColRefMap.bind(this),
             columnMoved: this.setupColRefMap.bind(this),
             cellValueChanged: this.reset.bind(this),
+            rowDataUpdated: this.reset.bind(this),
         });
     }
 
@@ -276,7 +286,7 @@ export class FormulaService extends BeanStub implements NamedBean {
 
     /** Lookup a column by A1-style reference label, e.g. "A", "AB". */
     public getColByRef(ref: string): AgColumn | null {
-        return this.colRefMap.get(ref) ?? null;
+        return this.colRefMap.get(ref.toUpperCase()) ?? null;
     }
 
     /** Find the A1-style label for a given column (reverse lookup). */
@@ -298,11 +308,6 @@ export class FormulaService extends BeanStub implements NamedBean {
          */
 
         this.cachedResult = new WeakMap(); // drops cached values & ASTs
-        // if CSRM, need to refresh everything as sorting/filtering may be impacted.
-        const csrm = _getClientSideRowModel(this.beans);
-        if (csrm) {
-            csrm.refreshModel({ step: 'group' });
-        }
         // if not CSRM, just refresh cells (no re-sort).
         this.beans.rowRenderer.refreshCells();
     }
@@ -350,16 +355,6 @@ export class FormulaService extends BeanStub implements NamedBean {
         return this.supportedOperations.get(name);
     }
 
-    /** Get or create the inner Map for a given row in a WeakMap<RowNode, Map<...>>. */
-    private getOrCreate<K, V>(wm: WeakMap<RowNode, Map<K, V>>, row: RowNode): Map<K, V> {
-        let m = wm.get(row);
-        if (!m) {
-            m = new Map<K, V>();
-            wm.set(row, m);
-        }
-        return m;
-    }
-
     /** Ensure a CellFormula exists for (row,col) if it's a formula cell; returns null for non-formula. */
     private ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
         // Get or create the per-row cache map
@@ -397,6 +392,50 @@ export class FormulaService extends BeanStub implements NamedBean {
         return this.beans.valueSvc.getValue(col, row, false, 'ui');
     }
 
+    private getVisitorContext() {
+        const stateByCell = new WeakMap<RowNode, Set<AgColumn>>();
+        const setVisiting = (r: RowNode, c: AgColumn): void => {
+            let colSet = stateByCell.get(r);
+
+            const isVisiting = colSet?.has(c);
+            if (isVisiting) {
+                // already visiting, so we have a cycle.
+                throw new FormulaError('Circular reference', '#CIRCREF!');
+            }
+
+            if (!colSet) {
+                colSet = new Set<AgColumn>();
+                stateByCell.set(r, colSet);
+            }
+            colSet.add(c);
+        };
+
+        const setVisited = (r: RowNode, c: AgColumn): void => {
+            const colSet = stateByCell.get(r);
+            if (colSet) {
+                colSet.delete(c);
+                if (colSet.size === 0) {
+                    stateByCell.delete(r);
+                }
+            }
+        };
+        return { setVisited, setVisiting };
+    }
+
+    private makeFormulaFrame(address: Addr): FormulaFrame {
+        // unresolvedDeps only yields formula cells, so cache must exist.
+        const cachedItem = this.ensureCellFormula(address.row, address.column)!;
+
+        const ast = cachedItem.getAst();
+        if (!ast) {
+            throw new FormulaError('Expected parsable formula', '#PARSE!');
+        }
+
+        const unresolvedDepIterator = unresolvedDeps(this.beans, ast, this.ensureCellFormula.bind(this));
+
+        return { address, ast, unresolvedDepIterator };
+    }
+
     /**
      * Evaluate a single cell's formula **iteratively** (no recursion to avoid large stack traces),
      * caching dependency results into their own CellFormula entries.
@@ -405,208 +444,98 @@ export class FormulaService extends BeanStub implements NamedBean {
      */
     public resolveValue(column: AgColumn, node: RowNode): unknown {
         // If start cell isn't a formula, return raw value.
-        const startHolder = this.ensureCellFormula(node, column);
-        if (!startHolder) {
+        const rootCachedCellFormula = this.ensureCellFormula(node, column);
+        if (!rootCachedCellFormula) {
             return this.fetchRawValue(column, node);
         }
 
         // Fast path: cached value / cached error on start.
-        const cached = startHolder.tryGetCachedValue();
-        if (cached.hit) {
-            return cached.value;
-        }
-        if (startHolder.error) {
-            return startHolder.error.type;
+        if (rootCachedCellFormula.isValueReady()) {
+            return rootCachedCellFormula.getValue();
         }
 
-        // Visitation state for formula cells: 0=unseen, 1=visiting, 2=done
-        type Status = 0 | 1 | 2;
-        const status = new WeakMap<RowNode, Map<AgColumn, Status>>();
-        const getStatus = (r: RowNode, c: AgColumn) => status.get(r)?.get(c) ?? (0 as Status);
-        const setStatus = (r: RowNode, c: AgColumn, s: Status) => {
-            this.getOrCreate(status, r).set(c, s);
-        };
-
-        type Addr = { row: RowNode; column: AgColumn };
-        type Frame = {
-            addr: Addr;
-            phase: 'discover' | 'compute';
-            ast?: FormulaNode;
-            depIter?: Iterator<Addr>;
-        };
-
-        const stack: Frame[] = [{ addr: { row: node, column }, phase: 'discover' }];
+        const { setVisited, setVisiting } = this.getVisitorContext();
 
         try {
-            while (stack.length) {
-                const f = stack[stack.length - 1];
-                const { row, column: col } = f.addr;
+            // Seed the stack with the root formula cell.
+            // Dependencies will be added to tail, and the last item is picked each pass
+            // As items are removed from the tail, items at the head should become resolvable.
+            const evalStack: FormulaFrame[] = [this.makeFormulaFrame({ row: node, column })];
 
-                if (f.phase === 'discover') {
-                    const st = getStatus(row, col);
-                    if (st === 2) {
-                        stack.pop();
-                        continue;
-                    }
-                    if (st === 1) {
-                        throw new FormulaError('Circular reference', '#CIRCREF!');
-                    }
-                    setStatus(row, col, 1); // visiting
+            while (evalStack.length) {
+                const { address, ast, unresolvedDepIterator } = evalStack[evalStack.length - 1];
+                const { row, column: col } = address;
 
-                    // Formula cell?
-                    const holder = this.ensureCellFormula(row, col);
-                    if (!holder) {
-                        // Non-formula: nothing to schedule.
-                        setStatus(row, col, 2);
-                        stack.pop();
-                        continue;
-                    }
+                // formula is guaranteed to exist for frames; check cache/error each pass.
+                const cachedCellFormula = this.ensureCellFormula(row, col)!;
 
-                    // Check cached value / cached error.
-                    {
-                        const cached = holder.tryGetCachedValue();
-                        if (cached.hit) {
-                            setStatus(row, col, 2);
-                            stack.pop();
-                            continue;
-                        }
-                        if (holder.error) {
-                            // Propagate cached error only along current chain (ancestors waiting to compute).
-                            const err = holder.error;
-                            for (let k = stack.length - 1; k >= 0; k--) {
-                                const anc = stack[k];
-                                if (anc.phase !== 'compute') {
-                                    continue;
-                                }
-                                const ancCF = this.ensureCellFormula(anc.addr.row, anc.addr.column);
-                                if (ancCF) {
-                                    ancCF.setError(err);
-                                }
-                            }
-                            throw err;
-                        }
-                    }
+                // if not stale and cache ready, short circuit
+                if (cachedCellFormula.isValueReady()) {
+                    // value is ready, so set complete
+                    evalStack.pop();
+                    setVisited(row, col);
 
-                    // Parse AST and create a lazy dependency iterator.
-                    const ast = holder.ensureAst();
-                    if (!ast) {
-                        throw new FormulaError('Formula parsing error', '#PARSE!');
+                    // if the value is up to date, but an error, re-throw.
+                    if (cachedCellFormula.error) {
+                        throw cachedCellFormula.error;
                     }
-
-                    f.ast = ast;
-                    f.depIter = iterateCellAddresses(this.beans, ast);
-                    f.phase = 'compute';
+                    continue;
                 }
 
-                // compute phase: advance dependencies lazily via .next()
-                try {
-                    // Pull deps one by one until we either schedule a formula dep or deps are exhausted.
-                    let scheduled = false;
-                    while (true) {
-                        const it = f.depIter!;
-                        const step = it.next();
-                        if (step.done) {
-                            break;
-                        }
-
-                        const d = step.value;
-                        const depHolder = this.ensureCellFormula(d.row, d.column);
-                        if (!depHolder) {
-                            // Non-formula dependency: read raw at evaluation time, no frame needed.
-                            continue;
-                        }
-
-                        const stDep = getStatus(d.row, d.column);
-                        if (stDep === 1) {
-                            throw new FormulaError('Circular reference', '#CIRCREF!');
-                        }
-                        if (stDep !== 2) {
-                            stack.push({ addr: d, phase: 'discover' });
-                            scheduled = true;
-                            break; // pause current frame until dep is done
-                        }
-                        // else already done - keep pulling next dep
-                    }
-                    if (scheduled) {
-                        continue;
+                // pull next unresolved dependency
+                const depStep = unresolvedDepIterator.next();
+                if (!depStep.done) {
+                    const depAddr = depStep.value;
+                    const depCachedCellFormula = this.ensureCellFormula(depAddr.row, depAddr.column);
+                    if (!depCachedCellFormula || depCachedCellFormula.isValueReady()) {
+                        continue; // skip if not formula or value ready
                     }
 
-                    // All deps consumed - evaluate this AST now.
-                    const ast = f.ast!;
-                    const val = evalAst(this.beans, ast, (addr) => {
-                        const depHolder = this.ensureCellFormula(addr.row, addr.column);
-                        if (depHolder) {
-                            if (depHolder.error) {
-                                throw depHolder.error;
+                    // value not ready, so mark as visiting before adding any dependencies to the stack
+                    setVisiting(row, col);
+
+                    evalStack.push(this.makeFormulaFrame(depAddr)); // push dependency to be resolved
+                    continue;
+                }
+
+                // all deps ready, evaluate this frame.
+                const computed = evalAst(
+                    this.beans,
+                    ast,
+                    (addr) => {
+                        const cachedRefFormula = this.ensureCellFormula(addr.row, addr.column);
+                        if (cachedRefFormula) {
+                            if (!cachedRefFormula.isValueReady()) {
+                                throw new FormulaError('Internal scheduling error');
                             }
-                            const hit = depHolder.tryGetCachedValue();
-                            if (hit.hit) {
-                                return hit.value;
+
+                            const error = cachedRefFormula.getError();
+                            if (error) {
+                                throw error;
                             }
-                            // Shouldn't happen: any formula dep should have been scheduled & computed.
-                            throw new FormulaError('Internal scheduling error', '#PARSE!');
+                            return cachedRefFormula.getValue();
                         }
-                        // Non-formula dependency: read directly.
                         return this.fetchRawValue(addr.column, addr.row);
-                    });
+                    },
+                    { row, column: col }
+                );
 
-                    setStatus(row, col, 2);
-                    const holder2 = this.ensureCellFormula(row, col)!;
-                    holder2.setComputedValue(val); // persist
-
-                    stack.pop();
-                } catch (e: any) {
-                    const err = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e), '#PARSE!');
-
-                    // Mark failing cell
-                    const currCF = this.ensureCellFormula(row, col);
-                    if (currCF) {
-                        currCF.setError(err);
-                    }
-
-                    // Mark all ancestors waiting to compute
-                    for (let k = stack.length - 1; k >= 0; k--) {
-                        const anc = stack[k];
-                        if (anc.phase !== 'compute') {
-                            continue;
-                        }
-                        const ancCF = this.ensureCellFormula(anc.addr.row, anc.addr.column);
-                        if (ancCF) {
-                            ancCF.setError(err);
-                        }
-                    }
-
-                    throw err;
-                }
+                // cache result and mark as completed
+                cachedCellFormula.setComputedValue(computed);
+                setVisited(row, col);
+                evalStack.pop();
             }
 
-            // Success: start cell should now have a cached value.
-            const cached = startHolder.tryGetCachedValue();
-            return cached.hit ? cached.value : undefined;
+            if (!rootCachedCellFormula.isValueReady()) {
+                throw new FormulaError('Internal scheduling error');
+            }
+
+            return rootCachedCellFormula.getValue();
         } catch (e: any) {
-            const err = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e), '#PARSE!');
-            startHolder.setError(err);
-            return err.type;
+            // wrap non-formula errors as they were sourced by a user function
+            const normalized = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e));
+            rootCachedCellFormula.setError(normalized);
+            return normalized.type;
         }
     }
-
-    /** True if the user is currently typing a formula into a focused text input. */
-    public isWritingFormula = (): boolean => {
-        const active = document.activeElement as HTMLInputElement | null;
-        if (!active || active.tagName !== 'INPUT' || active.type !== 'text') {
-            return false;
-        }
-
-        const v = active.value ?? '';
-        if (!v.startsWith('=')) {
-            return false;
-        }
-
-        const last = v.trim().slice(-1);
-        if (last !== '(' && last !== ',' && last !== '=') {
-            return false;
-        }
-
-        return this.beans.focusSvc.doesRowOrCellHaveBrowserFocus();
-    };
 }

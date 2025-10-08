@@ -22,6 +22,7 @@ import type {
     FillOperationParams,
     FindOptions,
     FocusGridInnerElementParams,
+    FormulaFunctionParams,
     GetChartMenuItems,
     GetChartToolbarItems,
     GetContextMenuItems,
@@ -929,7 +930,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `FormulaModule`
          */
-    formulaFuncs?: ({ [key: string]: { func: (iterable: Iterable<unknown>) => any } }) | undefined,
+    formulaFuncs?: ({ [key: string]: { func: (params: FormulaFunctionParams) => any } }) | undefined,
     /** Enable or disable the processing of cell formulas
          * @initial
          * @agModule `FormulaModule`

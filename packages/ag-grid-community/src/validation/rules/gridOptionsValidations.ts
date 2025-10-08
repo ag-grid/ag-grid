@@ -549,12 +549,25 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         enableFormulas: {
             supportedRowModels: ['clientSide'],
             validate: (options) => {
-                if (!options.getRowId) {
-                    return '`getRowId` is required when `enableFormulas` is true.';
+                const unsupported: (keyof GridOptions)[] = [
+                    'pivotMode', // no row grouping
+                    'masterDetail', // breaks row indices
+                    'grandTotalRow', // no aggregations
+                    'quickFilterText', // no filtering
+                    'isExternalFilterPresent', // no filtering
+                    'doesExternalFilterPass', // no filtering
+                ];
+                const error = unsupported.find((key) => options[key]);
+                if (error) {
+                    return `${error} is not supported with enableFormulas.`;
                 }
-                if (options.pivotMode) {
-                    return '`pivotMode` cannot be used with `enableFormulas`.';
+
+                const required: (keyof GridOptions)[] = ['getRowId'];
+                const req = required.find((key) => !options[key]);
+                if (req) {
+                    return `${req} is required when enableFormulas is true.`;
                 }
+
                 return null;
             },
         },

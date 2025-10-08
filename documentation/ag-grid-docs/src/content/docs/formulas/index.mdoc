@@ -85,7 +85,7 @@ The following functions are available in formulas:
 | `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
 | `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
 
-### Custom Functions
+## Custom Functions
 
 Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
 
@@ -100,10 +100,10 @@ const gridOptions = {
     enableFormulas: true,
     formulaFuncs: {
         ADD: {
-            func: (iterator) => {
+            func: (params) => {
                 let total = 0;
-                for (const value of iterator) {
-                    return total += value;
+                for (const value of params.values) {
+                    total += value;
                 }
                 return total;
             },
@@ -112,8 +112,48 @@ const gridOptions = {
 }
 ```
 
-In this snippet note how the function is provided an iterator for navigating the values provided to the function, and it
-traverses and aggregates the values using the iterator.
+In this snippet note how the function uses the `params.values` iterator for navigating the values provided to the function, and it
+traverses and aggregates the values using the iterator. This iterator flattens any ranges provided to the function and provides
+them in one easy stream, meaning any input such as `=ADD(A1:B2, 2)` will be be streamed as `1 (A1), 2 (A2), 3 (B1), 4 (B2), 2` for the function to process.
+
+### Contextual Custom Functions
+
+Some functions may need explicit context of the ranges they were provieded, for example COUNTIF needs to know a range, and a criteria to apply to that range.
+Flattening these using the `params.values` iterator would make the range values hard to distinguish from the criteria. In the event that context is required,
+the `params.args` array provides the raw arguments as provided to the function, without any flattening or transformation.
+Note that any ranges in this array are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
+
+{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=450 /%}
+
+The following snippet demonstrates providing a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'a' },
+        { field: 'b' },
+        { field: 'c' },
+    ],
+    enableFormulas: true,
+    formulaFuncs: {
+        COUNTEQ: {
+            func: (params) => {
+                const argsArr = Array.from(params.args);
+                if (argsArr.length != 2) {
+                    throw 'COUNTEQ requires exactly 2 arguments';
+                }
+                const [range, criteria] = argsArr;
+                let count = 0;
+                for (const value of range) {
+                    if (value === criteria) {
+                        count++;
+                    }
+                }
+                return count;
+            },
+        },
+    },
+}
+```
 
 ### Handling Errors
 

@@ -374,6 +374,9 @@ export {
     DraggingChangedEvent,
 } from './interfaces/iRowNode';
 
+// formulas
+export { FormulaFunctionParams } from './formula/functions/types';
+
 // filter
 export {
     IFilterDef,
@@ -910,6 +913,7 @@ export {
     _shouldUpdateColVisibilityAfterGroup,
     _getGroupAggFiltering,
     _isRowSelection,
+    _isRowNumbers,
     _isGetRowHeightFunction,
     _getGroupSelection,
     _getGroupSelectsDescendants,

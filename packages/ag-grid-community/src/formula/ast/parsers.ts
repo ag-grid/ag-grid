@@ -41,7 +41,7 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
 
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
-    const cellRegex = /^(\$?)([A-Z]+)(\$?)([0-9]+)(?::(\$?)([A-Z]+)(\$?)([0-9]+))?$/i;
+    const cellRegex = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/i;
     const match = trimmed.match(cellRegex);
 
     if (match) {
@@ -52,7 +52,7 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
             const row = rowAbs ? rowStr : beans.rowModel?.getRow(Number(rowStr) - 1)?.id; // TODO handle NaN
 
             if (col == null || row == null) {
-                throw new FormulaParseError('Invalid cell reference', 0, 0);
+                throw new FormulaParseError(`Invalid cell reference: ${trimmed}`, 0, 0);
             }
 
             return {
@@ -216,7 +216,7 @@ function tokenize(expr: string): string[] {
 
 type OperatorFrame =
     | { kind: 'op'; def: OperatorDef }
-    | { kind: 'parenthesis' }
+    | { kind: 'parenthesis'; outLen: number }
     | { kind: 'function'; name: string; args: FormulaNode[] };
 
 function shouldReduce(top: OperatorDef, incoming: OperatorDef): boolean {
@@ -311,7 +311,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
                 return;
             }
 
-            // arity 2 (infix)
+            // infix
             const right = output.pop();
             const left = output.pop();
             if (!left || !right) {
@@ -333,14 +333,14 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         if (/[A-Za-z]/.test(token[0] || '') && tokens[i + 1] === '(') {
             const name = token;
             ops.push({ kind: 'function', name, args: [] });
-            ops.push({ kind: 'parenthesis' });
+            ops.push({ kind: 'parenthesis', outLen: output.length });
             i += 2;
             continue;
         }
 
         // Grouping '('
         if (token === '(') {
-            ops.push({ kind: 'parenthesis' });
+            ops.push({ kind: 'parenthesis', outLen: output.length });
             i++;
             continue;
         }
@@ -348,18 +348,17 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Argument separator ','
         if (token === ',') {
             // reduce until '('
-            for (;;) {
+            while (true) {
                 const top = ops[ops.length - 1];
-                if (!top || top.kind === 'parenthesis') {
-                    break;
-                }
+                if (!top || top.kind === 'parenthesis') break;
                 if (top.kind === 'op') {
                     applyTop();
                 } else {
                     throw new FormulaParseError("Internal error: unexpected frame before '('", i, i + 1);
                 }
             }
-            if (ops[ops.length - 1]?.kind !== 'parenthesis') {
+            const paren = ops[ops.length - 1];
+            if (!paren || paren.kind !== 'parenthesis') {
                 throw new FormulaParseError('Misplaced comma', i, i + 1);
             }
             // function frame must be just below '('
@@ -367,10 +366,10 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             if (!maybeFunction || maybeFunction.kind !== 'function') {
                 throw new FormulaParseError('Comma outside of a function call', i, i + 1);
             }
-            const argNode = output.pop();
-            if (argNode) {
-                maybeFunction.args.push(argNode);
-            } // ignore empty arg if none
+            // Only consume an arg if something was produced since '('
+            if (output.length > paren.outLen) {
+                maybeFunction.args.push(output.pop()!);
+            }
             i++;
             continue;
         }
@@ -378,7 +377,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         // Closing ')'
         if (token === ')') {
             // reduce until '('
-            for (;;) {
+            while (true) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind === 'parenthesis') {
                     break;
@@ -389,17 +388,19 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
                     throw new FormulaParseError("Internal error: unexpected frame before ')'", i, i + 1);
                 }
             }
-            if (ops[ops.length - 1]?.kind !== 'parenthesis') {
+            const paren = ops[ops.length - 1];
+            if (!paren || paren.kind !== 'parenthesis') {
                 throw new FormulaParseError('Mismatched parentheses', i, i + 1);
             }
+            const parenOutLen = paren.outLen;
             ops.pop(); // pop '('
 
             // function collapse
             if (ops[ops.length - 1]?.kind === 'function') {
                 const fn = ops.pop() as Extract<OperatorFrame, { kind: 'function' }>;
-                const lastArg = output.pop();
-                if (lastArg) {
-                    fn.args.push(lastArg);
+                // Only attach an argument if one was parsed within the parens
+                if (output.length > parenOutLen) {
+                    fn.args.push(output.pop()!);
                 }
                 output.push({ type: 'operation', operation: fn.name, operands: fn.args });
             }
@@ -413,7 +414,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
 
         if (incoming) {
             // Reduce while top-of-stack operator outranks incoming
-            for (;;) {
+            while (true) {
                 const top = ops[ops.length - 1];
                 if (!top || top.kind !== 'op') {
                     break;

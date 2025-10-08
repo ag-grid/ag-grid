@@ -100,6 +100,7 @@ import type {
     FirstDataRenderedEvent,
     FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
+    FormulaFunctionParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -1109,7 +1110,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `FormulaModule`
      */
-    @Input() public formulaFuncs: { [key: string]: { func: (iterable: Iterable<unknown>) => any } } | undefined =
+    @Input() public formulaFuncs: { [key: string]: { func: (params: FormulaFunctionParams) => any } } | undefined =
         undefined;
     /** Enable or disable the processing of cell formulas
      * @initial

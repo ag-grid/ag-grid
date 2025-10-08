@@ -99,10 +99,11 @@ function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
 }
 
 function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
-    const looksLetters = /^[A-Za-z]+$/.test(ref.id);
-    if (looksLetters) {
-        return ref.id.toUpperCase();
+    // if absolute, already storing col label
+    if (ref.absolute) {
+        return ref.id;
     }
+
     const label = colLabelFromId(beans, ref.id);
     if (label) {
         return label.toUpperCase();
@@ -111,9 +112,13 @@ function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
 }
 
 function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
-    const looksDigits = /^\d+$/.test(ref.id);
-    if (looksDigits) {
-        return Number(ref.id);
+    // if absolute, already storing 1-based row index
+    if (ref.absolute) {
+        const idx = Number(ref.id);
+        if (Number.isFinite(idx) && idx >= 1) {
+            return idx;
+        }
+        throw `Cannot parse absolute row index '${ref.id}'`;
     }
     const idx = rowIndexFromId(beans, ref.id);
     if (idx != null) {

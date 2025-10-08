@@ -661,6 +661,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             beans.colFilter?.refreshModel();
         }
 
+
+        const usingFormulas = this.beans.gos.get('enableFormulas');
+        if (usingFormulas) {
+            // currently no additional steps between group and map that formulas support
+            params.step = 'map';
+        }
+
         /* eslint-disable no-fallthrough */
         switch (params.step) {
             case 'group': {
@@ -1119,7 +1126,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doRowsToDisplay() {
-        const { flattenStage, rootNode } = this;
+        const { flattenStage, rootNode, beans } = this;
+
+        const usingFormulas = beans.gos.get('enableFormulas');
+        if (usingFormulas) {
+            this.rowsToDisplay = rootNode?.allLeafChildren ?? [];
+
+            for (const row of this.rowsToDisplay) {
+                row.setUiLevel(0);
+            }
+            return;
+        }
+
         let rowsToDisplay: RowNode[];
         if (flattenStage) {
             rowsToDisplay = flattenStage.execute({ rowNode: rootNode! });

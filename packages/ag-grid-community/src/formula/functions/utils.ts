@@ -1,313 +1,186 @@
-import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
-import type { RowNode } from '../../entities/rowNode';
-import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
+import type { FormulaParam, RangeParam, ValueParam } from './types';
 
-function isRangeCell(cell: Cell): boolean {
-    return !!(cell.endColumn && cell.endRow);
-}
-
-function getRowNode(beans: BeanCollection, cellRef: CellRef): RowNode | undefined {
-    if (cellRef.absolute) {
-        const idx = Number(cellRef.id) - 1;
-        return beans.rowModel.getRow(idx);
-    } else {
-        return beans.rowModel.getRowNode(cellRef.id);
-    }
-}
-
-function getColumn(beans: BeanCollection, cellRef: CellRef): AgColumn | undefined {
-    if (cellRef.absolute) {
-        return beans.formula?.getColByRef(cellRef.id) ?? undefined;
-    } else {
-        return beans.colModel.getColById(cellRef.id) ?? undefined;
-    }
-}
-
-// Reference resolution (A1 abs vs id rel)
-type CellAddress = { row: RowNode; column: AgColumn };
-
-/** Resolve a Cell to concrete grid objects, honoring absolute vs relative semantics. */
-function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
-    const { row, column } = cell;
-
-    const rowNode = row.absolute ? beans.rowModel.getRow(Number(row.id) - 1) : beans.rowModel.getRowNode(row.id);
-
-    const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
-
-    if (!rowNode || !agCol) {
-        return null;
-    }
-    return { row: rowNode, column: agCol };
-}
-
-function* expandRangeAddresses(beans: BeanCollection, cell: Cell): Generator<{ row: RowNode; column: AgColumn }> {
-    const startRow = getRowNode(beans, cell.row);
-    const startCol = getColumn(beans, cell.column);
-    if (!startRow || !startCol) {
-        return;
-    }
-
-    // Single cell
-    if (!cell.endColumn || !cell.endRow) {
-        yield { row: startRow, column: startCol };
-        return;
-    }
-
-    // Range
-    const endRow = getRowNode(beans, cell.endRow);
-    const endCol = getColumn(beans, cell.endColumn);
-    if (!endRow || !endCol) {
-        return;
-    }
-
-    // Column indices from current column order
-    const cols = beans.colModel.getCols();
-    const startColIdx = cols.indexOf(startCol);
-    const endColIdx = cols.indexOf(endCol);
-    if (startColIdx == null || endColIdx == null) {
-        return;
-    }
-
-    // Prefer native rowIndex on RowNode (display index)
-    const startRowIdx = (startRow as any).rowIndex ?? 0;
-    const endRowIdx = (endRow as any).rowIndex ?? 0;
-
-    const rowLo = Math.min(startRowIdx, endRowIdx);
-    const rowHi = Math.max(startRowIdx, endRowIdx);
-    const colLo = Math.min(startColIdx, endColIdx);
-    const colHi = Math.max(startColIdx, endColIdx);
-
-    for (let ri = rowLo; ri <= rowHi; ri++) {
-        const r = beans.rowModel.getRow(ri);
-        if (!r) {
-            continue;
-        }
-        for (let ci = colLo; ci <= colHi; ci++) {
-            const c = cols[ci];
-            if (!c) {
-                continue;
-            }
-            yield { row: r, column: c };
-        }
-    }
-}
-
-const isCellOperand = (v: unknown): v is Cell =>
-    !!v && typeof v === 'object' && v !== null && 'row' in (v as any) && 'column' in (v as any);
-
-function makeArgIterator(
-    beans: BeanCollection,
-    operands: FormulaNode[],
-    getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown
-): Iterator<unknown> {
-    let i = 0;
-    let inner: Iterator<unknown> | null = null;
-
-    const it: Iterator<unknown> = {
-        next(): IteratorResult<unknown> {
-            // drain inner (e.g., a range) first
-            if (inner) {
-                const step = inner.next();
-                if (!step.done) {
-                    return step;
-                }
-                inner = null;
-            }
-
-            // move to next operand
-            if (i >= operands.length) {
-                return { done: true, value: undefined };
-            }
-            const node = operands[i++];
-
-            if (node.type === 'operand') {
-                const v = node.value;
-                if (isCellOperand(v)) {
-                    if (isRangeCell(v)) {
-                        // iterate all addresses in the range lazily
-                        inner = (function* () {
-                            for (const addr of expandRangeAddresses(beans, v)) {
-                                yield getCellValue(addr);
-                            }
-                        })();
-                        return it.next(); // return first range value
-                    } else {
-                        const addr = resolveRefToAddress(beans, v);
-                        if (!addr) {
-                            throw new FormulaError('Unknown reference to cell', '#REF!');
-                        }
-                        return { done: false, value: getCellValue(addr) };
-                    }
-                } else {
-                    return { done: false, value: v }; // primitive literal
-                }
-            }
-
-            // Sub-expression as an argument: evaluate to a single scalar lazily
-            const val = evalAst(beans, node, getCellValue);
-            return { done: false, value: val };
-        },
-    };
-
-    // iterable for for...of
-    (it as any)[Symbol.iterator] = function () {
-        return this;
-    };
-    return it;
-}
-
-export function evalAst(
-    beans: BeanCollection,
-    node: FormulaNode,
-    getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown
-): unknown {
-    if (node.type === 'operand') {
-        const v = node.value;
-        if (isCellOperand(v)) {
-            if (isRangeCell(v)) {
-                // A bare range in scalar context is not meaningful
-                throw new FormulaError('Range is not allowed in scalar context', '#PARSE!');
-            }
-            const addr = resolveRefToAddress(beans, v);
-            if (!addr) {
-                throw new FormulaError('Unknown reference to cell', '#REF!');
-            }
-            return getCellValue(addr);
-        }
-        return v; // primitive literal
-    }
-
-    const fn = beans.formula?.getFunction(node.operation);
-    if (!fn) {
-        throw new FormulaError(`Unsupported operation ${node.operation}`, '#NAME?');
-    }
-
-    const argIter = makeArgIterator(beans, node.operands, getCellValue);
-    return fn(argIter);
-}
-
-// Lazily yield unique cell addresses (row, column) referenced by an AST.
-// - Expands ranges on the fly (A1:B3 - many addresses)
-// - Deduplicates by (row.id, column id)
-// - DFS traversal; order is not guaranteed
-export function* iterateCellAddresses(
-    beans: BeanCollection,
-    root: FormulaNode
-): Generator<{ row: RowNode; column: AgColumn }> {
-    const seen = new Set<string>();
-    const stack: FormulaNode[] = [root];
-
-    const colKey = (c: AgColumn) => (c as any).getId?.() ?? (c as any).colId ?? String(c);
-
-    while (stack.length) {
-        const node = stack.pop()!;
-        if (node.type === 'operand') {
-            const v = node.value;
-            if (isCellOperand(v)) {
-                if (isRangeCell(v)) {
-                    for (const addr of expandRangeAddresses(beans, v)) {
-                        const key = addr.row.id + '§' + colKey(addr.column);
-                        if (!seen.has(key)) {
-                            seen.add(key);
-                            yield addr;
-                        }
-                    }
-                } else {
-                    const addr = resolveRefToAddress(beans, v);
-                    if (addr) {
-                        const key = addr.row.id + '§' + colKey(addr.column);
-                        if (!seen.has(key)) {
-                            seen.add(key);
-                            yield addr;
-                        }
-                    }
-                }
-            }
-        } else {
-            const ops = node.operands;
-            for (let i = ops.length - 1; i >= 0; i--) {
-                stack.push(ops[i]);
-            }
-        }
-    }
-}
-
-// Helpers for funcs below
-const isFiniteNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
-
-/** Convert a value to a finite number, allowing numeric strings; else throw. */
-export function coerceFiniteNumber(fname: string, v: unknown): number {
-    if (isFiniteNumber(v)) {
-        return v;
-    }
-
-    if (typeof v === 'string') {
-        const n = Number(v.trim());
-        if (Number.isFinite(n)) {
-            return n;
-        }
-    }
-
-    throw new FormulaError(`${fname}: values must be numeric`, '#PARSE!');
-}
-
-/** Iterate all iterator values; call `onValue(num)` for each value. */
-export function forEach<T = any>(
-    it: Iterator<unknown>,
-    fname: string,
-    onValue: (num: T) => void,
-    coerce?: (fname: string, v: unknown) => T
-): void {
-    for (let t = it.next(); !t.done; t = it.next()) {
-        onValue(coerce ? coerce(fname, t.value) : (t.value as T));
-    }
-}
-
-/** Read exactly N numeric values from the iterator; error on too few or too many. */
-export function readExactlyN<T = any>(
-    it: Iterator<unknown>,
-    fname: string,
-    n: number,
-    coerce?: (fname: string, v: unknown) => T
-): T[] {
-    const out: T[] = [];
+export function take<T>(values: Iterable<T>, name: string, n: 1): [T];
+export function take<T>(values: Iterable<T>, name: string, n: 2): [T, T];
+export function take<T>(values: Iterable<T>, name: string, n: 3): [T, T, T];
+export function take<T>(values: Iterable<T>, name: string, n: number): T[] {
+    const it = values[Symbol.iterator]();
+    const out: T[] = new Array(n);
     for (let i = 0; i < n; i++) {
-        const t = it.next();
-        if (t.done) {
-            throw new FormulaError(`${fname}: requires exactly ${n} value(s)`, '#PARSE!');
+        const step = it.next();
+        if (step.done) {
+            throw new FormulaError(`${name}: expected exactly ${n} arguments`);
         }
-        out.push(coerce ? coerce(fname, t.value) : (t.value as T));
+        out[i] = step.value;
     }
+    // ensure there aren't extras
     if (!it.next().done) {
-        throw new FormulaError(`${fname}: too many values`, '#PARSE!');
+        throw new FormulaError(`${name}: expected exactly ${n} arguments`);
     }
     return out;
 }
 
-/** Reduce at least one numeric value; `initial=null` means "seed with first value". */
-export function reduceAtLeastOne(
-    it: Iterator<unknown>,
-    fname: string,
-    reducer: (acc: number, v: number) => number,
-    initial: number | null // null - seed with first number
-): number {
-    let have = false;
-    let acc = initial as number;
+export function takeBetween<T>(values: Iterable<T>, name: string, min: number, max: number): T[] {
+    const out: T[] = [];
+    for (const v of values) {
+        out.push(v);
 
-    for (let t = it.next(); !t.done; t = it.next()) {
-        const v = coerceFiniteNumber(fname, t.value);
-        if (!have) {
-            have = true;
-            acc = initial === null ? v : reducer(acc, v);
-        } else {
-            acc = reducer(acc, v);
+        if (out.length > max) {
+            throw new FormulaError(`${name}: expected at most ${max} arguments`);
         }
     }
-
-    if (!have) {
-        throw new FormulaError(`${fname}: requires at least one value`, '#PARSE!');
+    if (out.length < min) {
+        throw new FormulaError(`${name}: expected at least ${min} arguments`);
     }
-    return acc;
+    return out;
+}
+
+export const isRangeParam = (p: FormulaParam): p is RangeParam => {
+    return p.kind === 'range';
+};
+
+export const isValueParam = (p: FormulaParam): p is ValueParam => {
+    return p.kind === 'value';
+};
+
+/**
+ * Wildcard parser/builder for COUNTIF/SUMIF
+ */
+
+// Ordered to match longest first
+const OPERATOR_TOKENS = ['<=', '>=', '<>', '<', '>', '='] as const;
+type OperatorSymbol = (typeof OPERATOR_TOKENS)[number];
+
+function findOperatorSymbol(s: string): OperatorSymbol | null {
+    for (const tok of OPERATOR_TOKENS) {
+        if (s.startsWith(tok)) {
+            return tok;
+        }
+    }
+    return null;
+}
+
+function toNumberLike(x: unknown): number | null {
+    if (typeof x === 'number' && Number.isFinite(x)) {
+        return x;
+    }
+    if (x instanceof Date) {
+        return +x;
+    }
+    if (typeof x === 'string') {
+        const s = x.trim();
+        if (/^[+-]?(?:\d+\.?\d*|\d*\.?\d+)(?:[eE][+-]?\d+)?$/.test(s)) {
+            const n = Number(s);
+            return Number.isFinite(n) ? n : null;
+        }
+    }
+    return null;
+}
+
+function toText(x: unknown): string {
+    if (x == null) {
+        return '';
+    }
+    switch (typeof x) {
+        case 'string':
+            return x;
+        case 'number':
+            return String(x);
+        case 'boolean':
+            return x ? 'TRUE' : 'FALSE';
+    }
+    if (x instanceof Date) {
+        return String(+x);
+    }
+    return String(x);
+}
+
+function wildcardToRegExp(pattern: string): RegExp {
+    let out = '^';
+    for (let i = 0; i < pattern.length; i++) {
+        const ch = pattern[i];
+        if (ch === '~' && i + 1 < pattern.length && (pattern[i + 1] === '*' || pattern[i + 1] === '?')) {
+            out += '\\' + pattern[++i];
+            continue;
+        }
+        if (ch === '*') {
+            out += '.*';
+            continue;
+        }
+        if (ch === '?') {
+            out += '.';
+            continue;
+        }
+        if (/[-/\\^$*+?.()|[\]{}]/.test(ch)) {
+            out += '\\' + ch;
+        } else {
+            out += ch;
+        }
+    }
+    out += '$';
+    return new RegExp(out, 'i'); // case-insensitive
+}
+
+const COMPARE_VALUES = (op: OperatorSymbol, query: string, cell: unknown) => {
+    let queryVal: string | number | null = toNumberLike(query);
+    let cellVal: string | number | null = toNumberLike(cell);
+
+    if (queryVal == null || cellVal == null) {
+        queryVal = query;
+        cellVal = toText(cell).toUpperCase();
+    }
+
+    switch (op) {
+        case '<':
+            return cellVal < queryVal;
+        case '>':
+            return cellVal > queryVal;
+        case '<=':
+            return cellVal <= queryVal;
+        case '>=':
+            return cellVal >= queryVal;
+        case '=':
+            return cellVal === queryVal;
+        case '<>':
+            return cellVal !== queryVal;
+    }
+    return false;
+};
+
+const REGEX_COMPARE_VALUES = (op: '=' | '<>', rx: RegExp, cell: unknown) => {
+    const text = toText(cell); // assumes regexp /i/
+    const match = rx.test(text);
+    return op === '=' ? match : !match;
+};
+
+const EMPTY_PREDICATE = (cell: unknown) => cell == null || cell === '';
+
+/** Excel-like predicate for COUNTIF/SUMIF */
+export function criteriaToPredicate(criteria: unknown): (cell: unknown) => boolean {
+    if (typeof criteria === 'number') {
+        return (cell: unknown) => toNumberLike(cell) === criteria;
+    }
+    // objects, booleans, dates (dates need more thought)
+    if (typeof criteria !== 'string') {
+        return (cell: unknown) => criteria === cell;
+    }
+
+    const trimmed = criteria.trim();
+    if (trimmed === '') {
+        return EMPTY_PREDICATE;
+    }
+
+    const symbol = findOperatorSymbol(trimmed);
+    const query = symbol ? trimmed.substring(symbol.length) : trimmed;
+    const wildcard = /[*?]/.test(query);
+    if (!wildcard) {
+        return COMPARE_VALUES.bind(null, symbol ?? '=', query.toUpperCase());
+    }
+
+    if (symbol && symbol !== '=' && symbol !== '<>') {
+        throw new FormulaError('Invalid criteria: wildcards with comparator', '#VALUE!');
+    }
+    const regexp = wildcardToRegExp(query);
+    return REGEX_COMPARE_VALUES.bind(null, symbol ?? '=', regexp);
 }

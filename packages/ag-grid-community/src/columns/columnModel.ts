@@ -8,7 +8,7 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -281,7 +281,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const { valueColsSvc, selectionColSvc, gos } = this.beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
-        const showRowNumbers = gos.get('rowNumbers');
+        const showRowNumbers = _isRowNumbers(gos);
         const valueColumns = valueColsSvc?.columns;
 
         const res = this.cols.list.filter((col) => {
@@ -514,11 +514,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
         return this.colDefCols
             ? this.beans.colDefFactory?.getColumnDefs(
-                  this.colDefCols.list,
-                  this.showingPivotResult,
-                  this.lastOrder,
-                  this.cols?.list ?? []
-              )
+                this.colDefCols.list,
+                this.showingPivotResult,
+                this.lastOrder,
+                this.cols?.list ?? []
+            )
             : undefined;
     }
 
