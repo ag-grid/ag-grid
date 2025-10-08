@@ -1,4 +1,4 @@
-import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+// import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { ReleasesSection } from '@ag-website-shared/components/releases-section/ReleasesSection';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -258,8 +258,12 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
                     </table>
                 </div>
 
-                <h2>Contact us</h2>
-                <ContactForm />
+                <RenewNowButton
+                    href={mailto}
+                    className={`button-tertiary ${styles.button}`}
+                    plausibleEventType="renew-body-cta"
+                    text="Contact us at info@ag-grid.com"
+                />
             </section>
 
             <ReleasesSection

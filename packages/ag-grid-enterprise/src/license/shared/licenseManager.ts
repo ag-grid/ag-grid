@@ -1,4 +1,5 @@
-import { _exists, _warn } from 'ag-grid-community';
+import { _exists } from 'ag-grid-community';
+import { _logPreInitWarn } from 'ag-grid-community';
 
 import { MD5 } from './md5';
 
@@ -286,7 +287,13 @@ export class LicenseManager {
 
     static setLicenseKey(licenseKey: string): void {
         if (_exists(this.licenseKey) && this.licenseKey !== licenseKey) {
-            _warn(291);
+            // we output a flat warning without reference to modules as most of the time ValidationService.provideValidationServiceLogger
+            // will only be applied AFTER this call is made, which result in an incorrect message
+            _logPreInitWarn(
+                291,
+                undefined,
+                'AG Grid: License Key being set multiple times with different values. This can result in an incorrect license key being used.'
+            );
         }
 
         this.licenseKey = licenseKey;

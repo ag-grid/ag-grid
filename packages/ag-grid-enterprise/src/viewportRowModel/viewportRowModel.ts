@@ -14,6 +14,9 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowHeight: number;
     private datasource: IViewportDatasource;
 
+    /** Dummy root node */
+    public rootNode: RowNode | null = null;
+
     /**
      * Used to see if setRowData has been called inside of the viewportChanged event context,
      * if so the new rows are already being calculated, and the model does not need updated
@@ -33,6 +36,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public postConstruct(): void {
         const beans = this.beans;
+
+        const rootNode = new RowNode(beans);
+        this.rootNode = rootNode;
+        rootNode.level = -1;
+
         this.rowHeight = _getRowHeightAsNumber(beans);
         this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
@@ -53,6 +61,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     public override destroy(): void {
         this.destroyDatasource();
         super.destroy();
+        this.rootNode = null;
     }
 
     private destroyDatasource(): void {
