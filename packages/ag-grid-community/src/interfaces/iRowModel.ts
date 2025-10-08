@@ -9,6 +9,9 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
+    /** True while a model is updating the rowData. Implemented in ClientSideRowModel. */
+    readonly updatingRowData?: boolean;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 

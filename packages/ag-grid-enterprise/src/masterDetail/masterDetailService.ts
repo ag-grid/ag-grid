@@ -36,8 +36,19 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
             this.enabled = this.isEnabled();
         }
 
+        const rowModel = this.beans.rowModel;
         this.addManagedListeners(this.beans.eventSvc, {
-            rowNodeDataChanged: (event) => this.setMaster(event.node, false, true),
+            rowNodeDataChanged: (event: RowNodeDataChangedEvent) => {
+                if (rowModel.updatingRowData) {
+                    // During ClientSideRowModel bulk updates the model is unstable and fires many
+                    // rowNodeDataChanged events. Skip per-row master/detail checks here and let
+                    // the row model call setMasters after refresh to avoid duplicate checks and calling
+                    // it before the data is fully loaded and all rowNodes are created or updated.
+                    // setMasters is instead called from ClientSideRowModel.refreshModel after the data is loaded.
+                    return;
+                }
+                this.setMaster(event.node, false, true);
+            },
         });
     }
 
