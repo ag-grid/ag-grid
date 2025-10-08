@@ -6,6 +6,7 @@ import type {
     NamedBean,
     RefreshModelParams,
     RowCtrl,
+    RowNodeDataChangedEvent,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -40,28 +41,25 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     }
 
     private addEventListeners() {
-        let destructors: (() => null)[] = [];
-        const eventSvc = this.beans.eventSvc;
-        const handlers = { rowNodeDataChanged: this.onRowNodeDataChanged };
-        if (this.isEnabled()) {
-            destructors.push(...this.addManagedListeners(eventSvc, handlers));
-        }
+        const rowNodeDataChanged = (event: RowNodeDataChangedEvent) => {
+            this.setMaster(event.node, false, true);
+        };
 
-        this.gos.addPropertyEventListener('masterDetail', (e) => {
-            if (e.currentValue !== e.previousValue) {
-                for (let i = 0; i < destructors.length; i++) {
-                    destructors[i]();
-                }
-                if (e.currentValue) {
-                    destructors.push(...this.addManagedListeners(eventSvc, handlers));
+        let removeListeners: (() => null)[] | undefined;
+        const addOrRemoveListeners = () => {
+            if (removeListeners) {
+                for (const removeListener of removeListeners) {
+                    removeListener();
                 }
             }
-        });
-    }
+            if (this.isEnabled()) {
+                removeListeners = this.addManagedListeners(this.beans.eventSvc, { rowNodeDataChanged });
+            }
+        };
 
-    private onRowNodeDataChanged = (event: { node: RowNode }): void => {
-        this.setMaster(event.node, false, true);
-    };
+        addOrRemoveListeners();
+        this.gos.addPropertyEventListener('masterDetail', addOrRemoveListeners);
+    }
 
     public refreshModel(params: RefreshModelParams) {
         if (params.changedProps) {
