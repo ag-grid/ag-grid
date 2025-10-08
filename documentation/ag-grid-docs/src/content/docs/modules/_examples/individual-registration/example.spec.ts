@@ -2,7 +2,7 @@ import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework('Example', async ({ page, agFramework, agIdFor }) => {
-        test.skip(true, 'Vanilla does not support module registration');
+        test.skip(agFramework === 'vanilla', 'Vanilla does not support module registration');
 
         ensureGridReady(page, 'Left');
         ensureGridReady(page, 'Right');

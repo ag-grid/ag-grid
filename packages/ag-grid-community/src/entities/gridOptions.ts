@@ -1455,7 +1455,7 @@ export interface GridOptions<TData = any> {
     suppressGroupRowsSticky?: boolean;
 
     /**
-     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
     groupHierarchyConfig?: { [k: string]: ColDef };

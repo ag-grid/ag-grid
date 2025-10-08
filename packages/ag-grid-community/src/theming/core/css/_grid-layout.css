@@ -76,7 +76,8 @@
 }
 
 .ag-row {
-    background-color: var(--ag-background-color);
+    /* Rows need a solid background to avoid being transparent when dragging */
+    background-color: var(--ag-data-background-color);
     width: 100%;
     height: var(--ag-row-height);
     border-bottom: var(--ag-row-border);
@@ -123,7 +124,7 @@
 }
 
 .ag-spanned-cell-wrapper {
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-data-background-color);
     position: absolute;
 }
 
@@ -243,6 +244,12 @@
     border: 1px solid var(--ag-range-selection-border-color);
 }
 
+.ag-body,
+.ag-floating-top,
+.ag-floating-bottom {
+    background-color: var(--ag-data-background-color);
+}
+
 .ag-row-odd {
     background-color: var(--ag-odd-row-background-color);
 }
@@ -325,7 +332,7 @@
 }
 
 .ag-details-row {
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-data-background-color);
     padding: calc(var(--ag-spacing) * 3.75);
 }
 

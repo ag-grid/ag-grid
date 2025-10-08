@@ -6,6 +6,8 @@ test.agExample(import.meta, () => {
     [
         { prod: true, version: '19.1.0' },
         { prod: false, version: '19.1.0' },
+        { prod: true, version: '19.2.0' },
+        { prod: false, version: '19.2.0' },
         { prod: true, version: '18.2.0' },
         { prod: false, version: '18.2.0' },
     ].forEach((configOptions) => {
@@ -38,7 +40,10 @@ test.agExample(import.meta, () => {
                 await expect(page.getByText('Customers Grid (Position: 1)')).toBeVisible();
 
                 // REACT 19 DEV Resets grids state that moves down in re-order
-                if (loadPageOptions!.version === '19.1.0' && !loadPageOptions!.prod) {
+                if (
+                    (loadPageOptions!.version === '19.1.0' || loadPageOptions!.version === '19.2.0') &&
+                    !loadPageOptions!.prod
+                ) {
                     await expect(grid1.getByTestId(agTestIdFor.headerCell('id'))).toHaveText(' users         ');
                     await expect(grid2.getByTestId(agTestIdFor.headerCell('name'))).toHaveText('    Name   1       ');
                 } else {
@@ -53,7 +58,10 @@ test.agExample(import.meta, () => {
                 await page.getByRole('button', { name: '⬇️ Move Down' }).first().click();
 
                 // REACT 19 DEV Resets grids state that moves down in re-order
-                if (loadPageOptions!.version === '19.1.0' && !loadPageOptions!.prod) {
+                if (
+                    (loadPageOptions!.version === '19.1.0' || loadPageOptions!.version === '19.2.0') &&
+                    !loadPageOptions!.prod
+                ) {
                     await expect(grid1.getByTestId(agTestIdFor.headerCell('id'))).toHaveText('    users   1       ');
                     await expect(grid2.getByTestId(agTestIdFor.headerCell('name'))).toHaveText('    Name          ');
                 } else {
@@ -68,7 +76,10 @@ test.agExample(import.meta, () => {
                 await expect(page.getByText('Customers Grid (Position: 2)')).toBeVisible();
 
                 // REACT 19 DEV Resets grids state that moves down in re-order
-                if (loadPageOptions!.version === '19.1.0' && !loadPageOptions!.prod) {
+                if (
+                    (loadPageOptions!.version === '19.1.0' || loadPageOptions!.version === '19.2.0') &&
+                    !loadPageOptions!.prod
+                ) {
                     await expect(grid1.getByTestId(agTestIdFor.headerCell('id'))).toHaveText('    users   1       ');
                     await expect(grid2.getByTestId(agTestIdFor.headerCell('name'))).toHaveText('    Name   1       ');
                 } else {

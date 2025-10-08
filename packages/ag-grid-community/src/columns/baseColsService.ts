@@ -69,7 +69,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.columns.forEach((col, index) => (this.columnIndexMap[col.getId()] = index));
     };
 
-    protected setColList(
+    private setColList(
         colKeys: ColKey[] = [],
         masterList: AgColumn[],
         eventName: IColsService['eventName'],
@@ -131,7 +131,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.dispatchColumnChangedEvent(this.eventSvc, eventName, [...changes.keys()], source);
     }
 
-    protected updateColList(
+    private updateColList(
         keys: Maybe<ColKey>[] = [],
         masterList: AgColumn[],
         actionIsAdd: boolean,
@@ -273,6 +273,15 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const res: AgColumn[] = [...colsWithIndex];
 
+        const groupHierarchCols = this.groupHierarchCols;
+        const pushToRes = (col: AgColumn) => {
+            if (groupHierarchCols) {
+                groupHierarchCols.expandColumnInto(res, col);
+            } else {
+                res.push(col);
+            }
+        };
+
         // next, add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true...
         previousCols.forEach((col) => {
@@ -280,14 +289,14 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the caveat that each column added also has any associated virtual columns added here
                 // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
                 // virtual columns here means they will not be added below when iterating over `colsWithValue`.
-                this.groupHierarchCols?.expandColumnInto(res, col);
+                pushToRes(col);
             }
         });
 
         // lastly put in all remaining cols
         colsWithValue.forEach((col) => {
             if (res.indexOf(col) < 0) {
-                res.push(col);
+                pushToRes(col);
             }
         });
 

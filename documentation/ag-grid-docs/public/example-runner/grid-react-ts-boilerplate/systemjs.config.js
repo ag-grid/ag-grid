@@ -1,8 +1,8 @@
 (function (global) {
     const urlParams = new URLSearchParams(window.location.search);
     const config = {
-        // Suggested defaults: 19.1.0 or 18.2.0
-        version: urlParams.get('version') ?? '19.1.0',
+        // Suggested defaults: 19.2.0 or 18.2.0
+        version: urlParams.get('version') ?? '19.2.0',
         prod: urlParams.get('prod') === 'false' ? false : urlParams.get('prod') ?? true,
     };
 
