@@ -44,17 +44,16 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         const eventSvc = this.beans.eventSvc;
         const handlers = { rowNodeDataChanged: this.onRowNodeDataChanged };
         if (this.isEnabled()) {
-            destructors = this.addManagedListeners(eventSvc, handlers);
+            destructors.push(...this.addManagedListeners(eventSvc, handlers));
         }
 
         this.gos.addPropertyEventListener('masterDetail', (e) => {
             if (e.currentValue !== e.previousValue) {
+                for (let i = 0; i < destructors.length; i++) {
+                    destructors[i]();
+                }
                 if (e.currentValue) {
-                    destructors = this.addManagedListeners(eventSvc, handlers);
-                } else {
-                    for (let i = 0; i < destructors.length; i++) {
-                        destructors[i]();
-                    }
+                    destructors.push(...this.addManagedListeners(eventSvc, handlers));
                 }
             }
         });
