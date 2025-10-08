@@ -124,7 +124,7 @@
 }
 
 .ag-spanned-cell-wrapper {
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-data-background-color);
     position: absolute;
 }
 
@@ -332,7 +332,7 @@
 }
 
 .ag-details-row {
-    background-color: var(--ag-background-color);
+    background-color: var(--ag-data-background-color);
     padding: calc(var(--ag-spacing) * 3.75);
 }
 

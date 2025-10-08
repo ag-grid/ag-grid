@@ -935,12 +935,12 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
         ref: 'textColor',
     },
     pinnedSourceRowBackgroundColor: {
-        ref: 'backgroundColor',
+        ref: 'dataBackgroundColor',
     },
     pinnedSourceRowFontWeight: 600,
     pinnedRowFontWeight: 600,
     pinnedRowBackgroundColor: {
-        ref: 'backgroundColor',
+        ref: 'dataBackgroundColor',
     },
     pinnedRowTextColor: {
         ref: 'textColor',

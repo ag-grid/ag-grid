@@ -91,7 +91,7 @@
     }
 
     .ag-spanned-cell-wrapper {
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-data-background-color);
         position: absolute;
     }
 
@@ -297,7 +297,7 @@
 
     .ag-details-row {
         padding: calc(var(--ag-grid-size) * 5);
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-data-background-color);
     }
 
     .ag-layout-auto-height,
