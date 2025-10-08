@@ -57,7 +57,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private aggStage?: IRowNodeStage;
     private pivotStage?: IRowNodeStage;
     private filterAggStage?: IRowNodeStage;
-    private updatingRowDataCounter = 0;
+
+    /** When not zero, the rowData is being loaded into row nodes (new rowData, immutable or transactions) */
+    public updatingRowData = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
@@ -96,10 +98,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private rowNodesCountReady: boolean = false;
     private rowCountReady: boolean = false;
     private orderedStages: IRowNodeStage[];
-
-    public get updatingRowData(): boolean {
-        return this.updatingRowDataCounter > 0;
-    }
 
     public postConstruct(): void {
         this.orderedStages = [
@@ -317,7 +315,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 // the old behaviour of Row IDs but NOT Immutable Data.
                 !gos.get('resetRowDataOnUpdate');
 
-            ++this.updatingRowDataCounter;
+            ++this.updatingRowData;
             if (immutable) {
                 params.keepRenderedRows = true;
                 params.animate = !this.gos.get('suppressAnimationFrame');
@@ -344,7 +342,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 this.rowNodesCountReady = true;
                 nodeManager.setNewRowData(newRowData);
             }
-            --this.updatingRowDataCounter;
+            --this.updatingRowData;
         }
 
         if (params.rowDataUpdated) {
@@ -1054,7 +1052,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const changedRowNodes = new ChangedRowNodes();
         let orderChanged = false;
 
-        ++this.updatingRowDataCounter;
+        ++this.updatingRowData;
         this.rowDataTransactionBatch?.forEach((tranItem) => {
             this.rowNodesCountReady = true;
             const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(
@@ -1069,7 +1067,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTransaction));
             }
         });
-        --this.updatingRowDataCounter;
+        --this.updatingRowData;
 
         this.commitTransactions(orderChanged, changedRowNodes);
 
@@ -1100,9 +1098,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
-        ++this.updatingRowDataCounter;
+        ++this.updatingRowData;
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran, changedRowNodes);
-        --this.updatingRowDataCounter;
+        --this.updatingRowData;
 
         this.commitTransactions(rowsInserted, changedRowNodes);
 
