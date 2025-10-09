@@ -1,5 +1,4 @@
 import { _removeFromArray } from '../agStack/utils/array';
-import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -89,14 +88,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         masterList.length = 0;
 
-        if (_exists(colKeys)) {
-            colKeys.forEach((key) => {
-                const column = this.colModel.getColDefCol(key);
-                if (column) {
-                    masterList.push(column);
-                }
-            });
-        }
+        colKeys.forEach((key) => {
+            const column = this.colModel.getColDefCol(key);
+            if (column) {
+                masterList.push(column);
+            }
+        });
 
         masterList.forEach((col, idx) => {
             const oldIndex = changes.get(col);
