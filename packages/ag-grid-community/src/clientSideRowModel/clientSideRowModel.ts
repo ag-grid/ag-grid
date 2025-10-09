@@ -890,8 +890,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getRowNode(id: string): RowNode | undefined {
         const found = this.nodeManager?.getRowNode(id);
-        if (typeof found === 'object') {
-            return found; // we check for typeof object to avoid returning things from Object.prototype
+        if (found) {
+            return found;
         }
         // although id is typed a string, this could be called by the user, and they could have passed a number
         const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) === 0;
