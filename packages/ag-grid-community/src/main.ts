@@ -740,7 +740,7 @@ export {
 export type { ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export {
     ClientSideNodeManager,
-    ClientSideNodeManagerUpdateRowDataResult,
+    UpdateRowDataResult as ClientSideNodeManagerUpdateRowDataResult,
 } from './clientSideRowModel/clientSideNodeManager';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 

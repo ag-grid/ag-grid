@@ -2,7 +2,7 @@ import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
-import type { IRowModel } from './iRowModel';
+import type { ForEachNodeCallback, IRowModel } from './iRowModel';
 import type { RowDataTransaction } from './rowDataTransaction';
 import type { RowNodeTransaction } from './rowNodeTransaction';
 
@@ -36,14 +36,10 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(params: RefreshModelParams): void;
-    forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
-    forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
-    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
-    forEachPivotNode(
-        callback: (node: RowNode, index: number) => void,
-        includeFooterNodes?: boolean,
-        afterSort?: boolean
-    ): void;
+    forEachLeafNode(callback: ForEachNodeCallback<TData>): void;
+    forEachNodeAfterFilter(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean): void;
+    forEachNodeAfterFilterAndSort(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean): void;
+    forEachPivotNode(callback: ForEachNodeCallback<TData>, includeFooterNodes?: boolean, afterSort?: boolean): void;
     batchUpdateRowData(
         rowDataTransaction: RowDataTransaction<TData>,
         callback?: (res: RowNodeTransaction<TData>) => void
