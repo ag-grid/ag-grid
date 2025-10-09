@@ -105,4 +105,36 @@ test.agExample(import.meta, () => {
         // Assert has grouped by date parts
         await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (5)', { useInnerText: true });
     });
+
+    test.eachFramework('Example with rowGroupIndex', async ({ page, agIdFor, remoteGrid }) => {
+        const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
+        const level1GroupRowId = `${level0GroupRowId}-${vcolPrefix}-date-month-8`;
+        const level2GroupRowId = `${level1GroupRowId}-date-2008-08-24`;
+
+        const remoteApi = remoteGrid(page, '1');
+
+        await remoteApi.setGridOption('columnDefs', [
+            {
+                field: 'date',
+                rowGroupIndex: 0,
+                groupHierarchy: ['year', 'month'],
+            },
+            { field: 'country' },
+            { field: 'sport' },
+            { field: 'total', aggFunc: 'sum' },
+        ]);
+
+        // Assert has grouped by date parts
+        await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (5)', { useInnerText: true });
+
+        // Expanding year group shows month group
+        await agIdFor.groupContracted(level0GroupRowId, GROUP_AUTO_COLUMN_ID).click();
+        await expect(agIdFor.autoGroupCell(level1GroupRowId)).toHaveText('8 (5)', {
+            useInnerText: true,
+        });
+
+        // Expanding month group shows original group
+        await agIdFor.groupContracted(level1GroupRowId, GROUP_AUTO_COLUMN_ID).click();
+        await expect(agIdFor.autoGroupCell(level2GroupRowId)).toHaveText('2008-08-24 (5)', { useInnerText: true });
+    });
 });

@@ -268,16 +268,19 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // sort cols with index, and add these first
         colsWithIndex.sort((colA, colB) => getIndexForCol(colA) - getIndexForCol(colB));
 
-        const res: AgColumn[] = [...colsWithIndex];
+        const res: AgColumn[] = [];
 
         const groupHierarchCols = this.groupHierarchCols;
-        const pushToRes = (col: AgColumn) => {
+        const addCol = (col: AgColumn) => {
             if (groupHierarchCols) {
                 groupHierarchCols.expandColumnInto(res, col);
             } else {
                 res.push(col);
             }
         };
+
+        // Columns with an index specified need to have any virtual hierarchical columns expanded
+        colsWithIndex.forEach(addCol);
 
         // next, add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true...
@@ -286,14 +289,14 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the caveat that each column added also has any associated virtual columns added here
                 // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
                 // virtual columns here means they will not be added below when iterating over `colsWithValue`.
-                pushToRes(col);
+                addCol(col);
             }
         });
 
         // lastly put in all remaining cols
         colsWithValue.forEach((col) => {
             if (res.indexOf(col) < 0) {
-                pushToRes(col);
+                addCol(col);
             }
         });
 

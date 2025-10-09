@@ -1,6 +1,6 @@
 import { dragOverTo, expect, test } from '@utils/grid/test-utils';
 
-import { GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
+import { GROUP_AUTO_COLUMN_ID, GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
 
 test.agExample(import.meta, () => {
     test.describe(() => {
@@ -72,6 +72,27 @@ test.agExample(import.meta, () => {
             ).toHaveCount(3);
             await expect(agIdFor.columnSelectListItemCheckbox('Date (Month) Column')).toBeChecked();
             await expect(agIdFor.columnSelectListItemCheckbox('Date (Year) Column')).toBeChecked();
+        });
+
+        test.eachFramework('Example with pivotIndex', async ({ page, agIdFor, remoteGrid }) => {
+            const remoteApi = remoteGrid(page, '1');
+
+            await remoteApi.setGridOption('columnDefs', [
+                { field: 'athlete' },
+                { field: 'country', rowGroup: true },
+                { field: 'sport' },
+                {
+                    field: 'date',
+                    pivotIndex: 0,
+                    groupHierarchy: ['year', 'month'],
+                },
+                { field: 'total', aggFunc: 'sum' },
+            ]);
+
+            const headerGroupCell = agIdFor.headerGroupCell(
+                `pivotGroup_${vcolPrefix}-date-year-${vcolPrefix}-date-month-date_2000_0`
+            );
+            await expect(headerGroupCell).toBeVisible();
         });
     });
 });
