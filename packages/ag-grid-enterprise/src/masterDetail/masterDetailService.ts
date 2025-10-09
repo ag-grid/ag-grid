@@ -82,7 +82,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         let newMaster = enabled;
 
         const gos = this.gos;
-        const isRowMaster = gos.get('isRowMaster') as ((data: any) => unknown) | undefined;
+        const isRowMaster = gos.get('isRowMaster');
         const treeData = gos.get('treeData');
 
         if (enabled) {
