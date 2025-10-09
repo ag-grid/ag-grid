@@ -319,7 +319,7 @@ interface CoreBeanCollection
     filterStage?: IRowNodeStage;
     sortStage?: IRowNodeStage;
     flattenStage?: IRowNodeStage<RowNode[]>;
-    groupStage?: IRowGroupStage;
+    groupStage?: IRowGroupStage<boolean>;
     aggStage?: IRowNodeStage;
     pivotStage?: IRowNodeStage;
     filterAggStage?: IRowNodeStage;

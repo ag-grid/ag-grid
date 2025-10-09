@@ -543,16 +543,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // fallthrough in below switch is on purpose, eg if STEP_FILTER, then all steps after runs too
         /* eslint-disable no-fallthrough */
         switch (params.step) {
-            case 'group': {
-                const groupingChanged = this.doRowGrouping(params);
-                if (groupingChanged || rowDataUpdated) {
-                    beans.colFilter?.refreshModel();
-                }
-                if (!this.rowCountReady && this.rowNodesCountReady) {
-                    this.rowCountReady = true; // only if row data has been set
-                    this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
-                }
-            }
+            case 'group':
+                this.doGrouping(params);
             case 'filter':
                 this.doFilter(changedPath);
             case 'pivot':
@@ -853,28 +845,31 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
     }
 
-    private doRowGrouping(params: RefreshModelParams): boolean {
+    private doGrouping(params: RefreshModelParams): void {
         const rootNode = this.rootNode!;
-        const groupStageExecuted = this.beans.groupStage?.execute({
+        const groupStage = this.beans.groupStage;
+        const groupingChanged = groupStage?.execute({
             rowNode: rootNode,
             changedRowNodes: params.changedRowNodes,
             changedPath: params.changedPath,
             rowNodesOrderChanged: !!params.rowNodesOrderChanged,
             afterColumnsChanged: !!params.afterColumnsChanged,
         });
-
-        if (groupStageExecuted !== undefined) {
-            return groupStageExecuted;
+        if (groupingChanged === undefined) {
+            const { allLeafChildren, sibling } = rootNode;
+            rootNode.childrenAfterGroup = allLeafChildren;
+            rootNode.updateHasChildren();
+            if (sibling) {
+                sibling.childrenAfterGroup = allLeafChildren;
+            }
         }
-
-        const sibling = rootNode.sibling;
-        rootNode.childrenAfterGroup = rootNode.allLeafChildren;
-        if (sibling) {
-            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+        if (groupingChanged || params.rowDataUpdated) {
+            this.beans.colFilter?.refreshModel();
         }
-        rootNode.updateHasChildren();
-
-        return false;
+        if (!this.rowCountReady && this.rowNodesCountReady) {
+            this.rowCountReady = true; // only if row data has been set
+            this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+        }
     }
 
     private doFilter(changedPath: ChangedPath) {
