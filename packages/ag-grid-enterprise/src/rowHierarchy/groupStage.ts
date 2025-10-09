@@ -137,10 +137,8 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         if (canResetTreeNode) {
             row.treeParent = null;
         }
-        if (row.group || row.hasChildren()) {
-            row.group = false;
-            row.updateHasChildren();
-        }
+        row.group = false;
+        row.updateHasChildren();
     }
     rootNode.updateHasChildren();
 };
