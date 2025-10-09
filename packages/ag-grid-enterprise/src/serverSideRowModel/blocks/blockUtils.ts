@@ -152,7 +152,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
-        // this is triggered on refreshModel(), so we need to use 'external' updateData, instead of 'internal' to trigger refreshes
         rowNode.updateData(data);
 
         if (this.gos.get('treeData')) {
@@ -166,8 +165,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
         } else if (this.gos.get('masterDetail')) {
-            // if we have isRowMaster cb, we need to redraw the row, as the result of the function
-            // could have changed, eg row was master and now isn't.
+            // this should be implemented, however it's not the use case i'm currently
+            // programming, so leaving for another day. to test this, create an example
+            // where whether a master row is expandable or not is dynamic
         }
     }
 
@@ -197,14 +197,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const gos = this.gos;
-        const treeData = gos.get('treeData');
+        const treeData = this.gos.get('treeData');
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
-        const canBeMaster = !!rowNode.data;
-        const isMasterDetail = gos.get('masterDetail');
-        if (canBeMaster && isMasterDetail) {
+
+        if ((treeData || !group) && this.gos.get('masterDetail')) {
             this.setMasterDetailInfo(rowNode);
         }
 
