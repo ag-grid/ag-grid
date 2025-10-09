@@ -25,8 +25,6 @@ export interface IRowNodeStage<TResult = void, TData = any> {
 
 export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | undefined;
 
-export type ParentIdGetter<TData = any> = (data: TData | null | undefined) => string | null | undefined;
-
 export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeStage<TResult, TData> {
     readonly treeData: boolean;
     getNestedDataGetter(): NestedDataGetter<TData> | null | undefined;
