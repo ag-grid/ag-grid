@@ -1,4 +1,5 @@
 import { _areEqual } from '../agStack/utils/array';
+import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -633,12 +634,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
+        const changedRowNodes = new ChangedRowNodes();
+        changedRowNodes.reordered = true;
         clientSideRowModel.refreshModel({
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
             changedPath: new ChangedPath(false, rootNode as RowNode),
-            rowNodesOrderChanged: true,
+            changedRowNodes,
         });
 
         // Get the focussed cell so we can ensure it remains focussed after the move

@@ -73,12 +73,6 @@ export interface RefreshModelParams<TData = any> {
     newData?: boolean;
 
     /**
-     * true if the order of root.allLeafChildren has changed.
-     * This can happen if order of root.allLeafChildren is updated or rows are inserted (and not just appended at the end)
-     */
-    rowNodesOrderChanged?: boolean;
-
-    /**
      * A data structure that holds the affected row nodes, if this was an update and not a full reload.
      */
     changedRowNodes?: ChangedRowNodes<TData>;

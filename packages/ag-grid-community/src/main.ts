@@ -738,10 +738,6 @@ export {
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
 export type { ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
-export {
-    ClientSideNodeManager,
-    UpdateRowDataResult as ClientSideNodeManagerUpdateRowDataResult,
-} from './clientSideRowModel/clientSideNodeManager';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';

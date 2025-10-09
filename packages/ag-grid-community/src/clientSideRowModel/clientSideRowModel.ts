@@ -494,7 +494,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public refreshModel(params: RefreshModelParams): void {
-        const { nodeManager, beans, eventSvc, started, refreshingModel: isRefreshingModel } = this;
+        const { nodeManager, beans, eventSvc, started, refreshingModel } = this;
         if (!nodeManager) {
             return; // destroyed
         }
@@ -508,7 +508,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         if (
             !started ||
-            isRefreshingModel ||
+            refreshingModel ||
             beans.colModel.changeEventsDispatching ||
             this.isSuppressModelUpdateAfterUpdateTransaction(params)
         ) {
@@ -831,7 +831,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNode: rootNode,
             changedRowNodes: params.changedRowNodes,
             changedPath: params.changedPath,
-            rowNodesOrderChanged: !!params.rowNodesOrderChanged,
             afterColumnsChanged: !!params.afterColumnsChanged,
         });
         if (groupingChanged === undefined) {
@@ -904,21 +903,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         beans.valueCache?.onDataChanged();
 
-        const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
+        const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const changedRowNodes = new ChangedRowNodes();
-        let orderChanged = false;
         for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
             this.rowNodesCountReady = true;
-            const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(rowDataTransaction, changedRowNodes);
-            orderChanged ||= rowsInserted;
+            const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes);
             rowNodeTrans.push(rowNodeTransaction);
             if (callback) {
                 callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
             }
         }
-
-        this.commitTransactions(orderChanged, changedRowNodes);
+        this.commitTransactions(changedRowNodes);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -949,8 +945,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.rowNodesCountReady = true;
         const changedRowNodes = new ChangedRowNodes();
-        const { rowNodeTransaction, rowsInserted } = nodeManager.updateRowData(rowDataTran, changedRowNodes);
-        this.commitTransactions(rowsInserted, changedRowNodes);
+        const rowNodeTransaction = nodeManager.updateRowData(rowDataTran, changedRowNodes);
+        this.commitTransactions(changedRowNodes);
         return rowNodeTransaction;
     }
 
@@ -963,11 +959,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commitTransactions(rowNodesOrderChanged: boolean, changedRowNodes: ChangedRowNodes): void {
+    private commitTransactions(changedRowNodes: ChangedRowNodes): void {
         this.refreshModel({
             step: 'group',
             rowDataUpdated: true,
-            rowNodesOrderChanged,
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
             changedRowNodes,

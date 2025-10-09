@@ -8,13 +8,6 @@ import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _error, _warn } from '../validation/logging';
 import type { ChangedRowNodes } from './changedRowNodes';
 
-export interface UpdateRowDataResult<TData = any> {
-    /** The RowNodeTransaction containing all the removals, updates and additions */
-    rowNodeTransaction: RowNodeTransaction<TData>;
-    /** True if at least one row was inserted in the middle (and not just appended) */
-    rowsInserted: boolean;
-}
-
 export class ClientSideNodeManager<TData = any> extends BeanStub {
     private nextId = 0;
     private allNodesMap: { [id: string]: RowNode<TData> } = {};
@@ -135,10 +128,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             this.deleteUnusedNodes(processedNodes, changedRowNodes, nodesToUnselect) || reorder || adds.size > 0;
 
         if (changed) {
-            if (reorder !== undefined) {
-                params.rowNodesOrderChanged = updateRootLeafsOrdered(rootNode, processedNodes);
-            } else {
+            if (reorder === undefined) {
                 updateRootLeafsKeepOrder(rootNode, processedNodes, changedRowNodes);
+            } else if (updateRootLeafsOrdered(rootNode, processedNodes)) {
+                changedRowNodes.reordered = true;
             }
         }
 
@@ -172,38 +165,34 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     public updateRowData(
         rowDataTran: RowDataTransaction<TData>,
         changedRowNodes: ChangedRowNodes<TData>
-    ): UpdateRowDataResult<TData> {
+    ): RowNodeTransaction<TData> {
         this.dispatchRowDataUpdateStarted(rowDataTran.add);
-        const result: UpdateRowDataResult<TData> = {
-            rowNodeTransaction: { remove: [], update: [], add: [] },
-            rowsInserted: false,
-        };
         if (this.beans.groupStage?.getNestedDataGetter()) {
             _warn(268); // transactions not supported with treeDataChildrenField
-            return result;
+            return { remove: [], update: [], add: [] };
         }
         const nodesToUnselect: RowNode[] = [];
         const getRowIdFunc = _getRowIdCallback(this.gos);
-        this.executeRemove(getRowIdFunc, rowDataTran, result, changedRowNodes, nodesToUnselect);
-        this.executeUpdate(getRowIdFunc, rowDataTran, result, changedRowNodes, nodesToUnselect);
-        this.executeAdd(rowDataTran, result, changedRowNodes);
+        const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect);
+        const update = this.executeUpdate(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect);
+        const add = this.executeAdd(rowDataTran, changedRowNodes);
         this.deselect(nodesToUnselect);
-        return result;
+        return { remove, update, add };
     }
 
     private executeRemove(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         { remove }: RowDataTransaction,
-        { rowNodeTransaction }: UpdateRowDataResult<TData>,
         changedRowNodes: ChangedRowNodes<TData>,
         nodesToUnselect: RowNode<TData>[]
-    ): void {
+    ): RowNode<TData>[] {
         const removeLen = remove?.length;
         if (!removeLen) {
-            return;
+            return [];
         }
         const removedSet = new Set<RowNode<TData>>();
-        const removedResult = rowNodeTransaction.remove;
+        const removedResult = new Array<RowNode<TData>>(removeLen);
+        let writeIdx = 0;
         for (let i = 0; i < removeLen; ++i) {
             const rowNode = this.lookupNode(getRowIdFunc, remove[i]);
             if (rowNode) {
@@ -212,25 +201,27 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 }
                 this.deleteNode(rowNode);
                 changedRowNodes.remove(rowNode);
-                removedResult.push(rowNode);
+                removedResult[writeIdx++] = rowNode;
                 removedSet.add(rowNode);
             }
         }
+        removedResult.length = writeIdx;
         filterRemovedNodes(this.rootNode, removedSet);
+        return removedResult;
     }
 
     private executeUpdate(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         { update }: RowDataTransaction,
-        { rowNodeTransaction }: UpdateRowDataResult<TData>,
         { adds, updates }: ChangedRowNodes<TData>,
         nodesToUnselect: RowNode<TData>[]
-    ): void {
+    ): RowNode<TData>[] {
         const updateLen = update?.length;
         if (!updateLen) {
-            return;
+            return [];
         }
-        const updatedRowNodes = rowNodeTransaction.update;
+        const updateResult = new Array<RowNode<TData>>(updateLen);
+        let writeIdx = 0;
         for (let i = 0; i < updateLen; i++) {
             const item = update[i];
             const rowNode = this.lookupNode(getRowIdFunc, item);
@@ -239,32 +230,31 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 if (!rowNode.selectable && rowNode.isSelected()) {
                     nodesToUnselect.push(rowNode);
                 }
-                updatedRowNodes.push(rowNode);
+                updateResult[writeIdx++] = rowNode;
                 if (!adds.has(rowNode)) {
                     updates.add(rowNode);
                 }
             }
         }
+        updateResult.length = writeIdx;
+        return updateResult;
     }
 
-    private executeAdd(
-        rowDataTran: RowDataTransaction,
-        result: UpdateRowDataResult<TData>,
-        { adds }: ChangedRowNodes<TData>
-    ): void {
+    private executeAdd(rowDataTran: RowDataTransaction, changedRowNodes: ChangedRowNodes<TData>): RowNode<TData>[] {
         const add = rowDataTran.add;
         if (!add?.length) {
-            return;
+            return [];
         }
         const rootNode = this.rootNode;
         const allLeafs = rootNode.allLeafChildren!;
         const allLeafsLen = allLeafs.length;
-        const addIndex = this.sanitizeAddIndex(allLeafs, rowDataTran.addIndex);
         const addLength = add.length;
         const newAllLeafs = new Array<RowNode<TData>>(allLeafsLen + addLength); // Preallocate new array
+        const addIndex = this.sanitizeAddIndex(allLeafs, rowDataTran.addIndex);
         for (let i = 0; i < addIndex; ++i) {
             newAllLeafs[i] = allLeafs[i]; // Copy nodes before addIndex
         }
+        const adds = changedRowNodes.adds;
         let writeIdx = addIndex;
         for (let i = 0; i < addLength; i++) {
             const node = this.createRowNode(add[i], 0);
@@ -272,14 +262,16 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             node.sourceRowIndex = writeIdx;
             newAllLeafs[writeIdx++] = node; // Insert new nodes
         }
-        for (let i = addIndex; i < allLeafsLen; i++) {
-            const node = allLeafs[i];
-            node.sourceRowIndex = writeIdx;
-            newAllLeafs[writeIdx++] = node; // Copy nodes after addIndex
+        if (addIndex < allLeafsLen) {
+            changedRowNodes.reordered = true; // Inserting in the middle, order changed
+            for (let i = addIndex; i < allLeafsLen; i++) {
+                const node = allLeafs[i];
+                node.sourceRowIndex = writeIdx;
+                newAllLeafs[writeIdx++] = node; // Copy nodes after addIndex
+            }
         }
         setAllLeafs(rootNode, newAllLeafs);
-        result.rowsInserted ||= addIndex < allLeafsLen; // If not appending, mark as inserted
-        result.rowNodeTransaction.add = newAllLeafs.slice(addIndex, addIndex + addLength);
+        return newAllLeafs.slice(addIndex, addIndex + addLength);
     }
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
@@ -356,15 +348,16 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         if (addIndex < 0 || addIndex >= allLeafsLen || Number.isNaN(addIndex)) {
             return allLeafsLen; // Append. Also for negative values, as it was historically the behavior.
         }
-        const gos = this.gos;
-        if (addIndex > 0 && gos.get('treeData') && gos.get('getDataPath')) {
-            addIndex = adjustAddIndexForDataPath(allLeafs, addIndex); // AG-6231 workaround
-        }
         // Ensure index is a whole number and not a floating point.
         // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
         // If the array has an odd number of elements, the addIndex need to be rounded up.
         // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
-        return Math.ceil(addIndex);
+        addIndex = Math.ceil(addIndex);
+        const gos = this.gos;
+        if (addIndex > 0 && gos.get('treeData') && gos.get('getDataPath')) {
+            addIndex = adjustAddIndexForDataPath(allLeafs, addIndex); // AG-6231 workaround
+        }
+        return addIndex;
     }
 }
 

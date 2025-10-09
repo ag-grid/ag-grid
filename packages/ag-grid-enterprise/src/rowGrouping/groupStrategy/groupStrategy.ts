@@ -31,7 +31,6 @@ interface GroupingDetails {
     rootNode: RowNode;
     groupCols: GroupColumn[];
     groupColsChanged: boolean;
-    rowNodesOrderChanged: boolean;
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
     initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
@@ -118,7 +117,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodesOrderChanged } = params;
+        const { rowNode, changedPath } = params;
 
         let groupColsChanged = false;
         const { rowGroupColsSvc, colModel, gos } = this.beans;
@@ -133,7 +132,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             groupCols,
             rootNode: rowNode,
             pivotMode: colModel.isPivotMode(),
-            rowNodesOrderChanged: !!rowNodesOrderChanged,
             groupColsChanged,
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
@@ -145,7 +143,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return details;
     }
 
-    private handleDeltaUpdate(details: GroupingDetails, { removals, updates, adds }: ChangedRowNodes): void {
+    private handleDeltaUpdate(details: GroupingDetails, { removals, updates, adds, reordered }: ChangedRowNodes): void {
         const batchRemover = new BatchRemover();
         const changedPath = details.changedPath;
 
@@ -168,7 +166,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         batchRemover.flush();
         this.removeEmptyGroups(parentsWithChildrenRemoved);
 
-        if (details.rowNodesOrderChanged) {
+        if (reordered) {
             this.sortChildren(details);
         }
     }
