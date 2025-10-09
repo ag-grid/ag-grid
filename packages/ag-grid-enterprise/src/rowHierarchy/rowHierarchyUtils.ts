@@ -10,17 +10,15 @@ import type {
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
+    /** Getter for grid option treeDataChildrenField, only not null for tree nested data. */
     readonly nestedDataGetter?: NestedDataGetter<TData> | null;
+
+    /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
+    getNode(id: string): RowNode<TData> | undefined;
 
     onPropChange?(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void;
 
     execute(params: StageExecuteParams<TData>): boolean | undefined | void;
-
-    /** Called to reset the state when the strategy changes */
-    reset?(): void;
-
-    /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
-    getNode(id: string): RowNode<TData> | undefined;
 }
 
 /**

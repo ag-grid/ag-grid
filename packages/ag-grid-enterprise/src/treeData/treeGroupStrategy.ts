@@ -12,8 +12,6 @@ import { fieldGetter } from '../rowHierarchy/fieldGetter';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 
-type ParentIdGetter<TData = any> = (data: TData | null | undefined) => string | null | undefined;
-
 // The approach used here avoids complex incremental updates by using linear passes and a final traversal.
 // We reduce memory allocations and footprint and we ensure consistent performance without keeping additional per node map.
 //
@@ -46,59 +44,44 @@ const MASK_CHILDREN_LEN = 0x0fffffff; // This equates to 268,435,455 maximum chi
 const PATH_KEY_SEPARATOR = String.fromCodePoint(31, 41150, 8291);
 const PATH_KEY_SEPARATOR_LEN = 3;
 
+type ParentIdGetter<TData> = ((data: TData) => string | null | undefined) | null;
+
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
     public nestedDataGetter: NestedDataGetter<TData> | null = null;
-    private parentIdGetter: ((data: TData) => string | null | undefined) | null = null;
-
-    private cachedNestedDataGetter: NestedDataGetter<TData> | null = null;
-    private cachedParentIdGetter: ParentIdGetter<TData> | null = null;
-
-    private parentIdField: string | undefined;
-    private childrenField: string | undefined;
+    private parentIdGetter: ParentIdGetter<TData> = null;
 
     private groupColsIds: string = '';
     private groupColsChanged: boolean = true;
     private fillerNodesById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
-    private fullReload: boolean = true;
+    private fullReload: boolean = false;
 
     public postConstruct(): void {
         this.onPropChange(null);
     }
 
     public onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void {
-        let { parentIdField, childrenField } = this;
-        let cachedFieldGettersChanged = false;
-        const { gos } = this;
+        const gos = this.gos;
         if (!changedProps || changedProps.has('treeDataParentIdField')) {
-            const value = gos.get('treeDataParentIdField') || undefined;
-            if (parentIdField !== value) {
-                this.parentIdField = parentIdField = value;
-                this.cachedParentIdGetter = value ? fieldGetter(value) : null;
-                cachedFieldGettersChanged = true;
+            const parentIdField = gos.get('treeDataParentIdField');
+            const getter: ParentIdGetter<TData> = parentIdField ? fieldGetter(parentIdField) : null;
+            this.fullReload ||= this.parentIdGetter !== getter;
+            this.parentIdGetter = getter;
+            if (getter) {
+                this.nestedDataGetter = null; // Mutually exclusive getters
             }
         }
         if (!changedProps || changedProps.has('treeDataChildrenField')) {
-            const value = gos.get('treeDataChildrenField') || undefined;
-            if (childrenField !== value) {
-                this.childrenField = childrenField = value;
-                this.cachedNestedDataGetter = childrenField ? fieldGetter(childrenField) : null;
-                cachedFieldGettersChanged = true;
-            }
-        }
-        if (cachedFieldGettersChanged) {
-            const parentIdGetter = parentIdField ? this.cachedParentIdGetter : null;
-            const nestedDataGetter = !parentIdField && childrenField ? this.cachedNestedDataGetter : null;
-            if (this.parentIdGetter !== parentIdGetter || this.nestedDataGetter !== nestedDataGetter) {
-                this.parentIdGetter = parentIdGetter;
-                this.nestedDataGetter = nestedDataGetter;
-                this.reset();
-            }
+            const childrenField = this.parentIdGetter ? '' : gos.get('treeDataChildrenField');
+            const getter: NestedDataGetter<TData> | null = childrenField ? fieldGetter(childrenField) : null;
+            this.fullReload ||= this.nestedDataGetter !== getter;
+            this.nestedDataGetter = getter;
         }
     }
 
     public override destroy(): void {
         this.nodesToUnselect = null;
+        this.groupColsIds = '';
         this.reset();
         super.destroy();
     }
@@ -106,8 +89,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public reset(): void {
         this.destroyFillerRows();
         this.deselectHiddenNodes(false);
-        this.groupColsIds = '';
-        this.groupColsChanged = true;
         this.fullReload = true;
     }
 
