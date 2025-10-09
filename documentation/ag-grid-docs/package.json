@@ -98,9 +98,9 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/he": "^1.2.3",
-    "playwright": "^1.46.0",
-    "playwright-ctrf-json-reporter": "0.0.20",
-    "@playwright/test": "^1.46.0",
+    "playwright": "^1.56.0",
+    "playwright-ctrf-json-reporter": "0.0.24",
+    "@playwright/test": "^1.56.0",
     "prettier-plugin-astro": "^0.12.3",
     "vite-plugin-mkcert": "^1.17.8",
     "vitest": "2.1.9"

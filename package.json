@@ -36,7 +36,7 @@
     "@nx/rollup": "20.3.1",
     "@nx/web": "20.3.1",
     "@nx/workspace": "20.3.1",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.56.0",
     "@swc-node/register": "1.9.2",
     "@swc/cli": "0.3.14",
     "@swc/core": "1.5.7",
