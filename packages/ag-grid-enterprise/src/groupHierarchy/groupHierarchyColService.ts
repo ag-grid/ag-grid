@@ -119,10 +119,10 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         return null;
     }
 
-    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): void {
+    public insertVirtualColumnsForCol(columns: AgColumn<any>[], col: AgColumn<any>): AgColumn[] {
         const hierarchyCols = this.getVirtualColumnsForColumn(col);
         if (!hierarchyCols) {
-            return;
+            return [];
         }
 
         // Index at which to insert the virtual columns
@@ -137,6 +137,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         // Insert the virtual columns in the given order
         columns.splice(idxCol, 0, ...hierarchyCols);
+
+        return hierarchyCols;
     }
 
     private getVirtualColumnsForColumn(col: AgColumn): AgColumn[] {

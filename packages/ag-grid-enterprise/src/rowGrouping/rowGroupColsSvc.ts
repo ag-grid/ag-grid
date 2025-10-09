@@ -37,10 +37,6 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
     private readonly modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => {
-            // if this column has virtual columns associated to it, ensure those virtual columns are
-            // inserted before it in the list (and therefore the grouping hierarchy)
-            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-
             if (!this.columns.includes(column)) {
                 this.columns.push(column);
             }
@@ -118,7 +114,8 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
             column.rowGroupActive = rowGroup;
 
             if (rowGroup) {
-                this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+                const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+                addedCols?.forEach((c) => this.setColRowGroupActive(c, rowGroup, source));
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);
