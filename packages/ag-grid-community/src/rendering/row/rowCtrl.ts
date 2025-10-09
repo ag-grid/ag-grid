@@ -287,7 +287,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
-            _setAriaExpanded(gui.element, this.rowNode.expanded);
+            _setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
         this.setRowCompRowId(comp);
@@ -880,11 +880,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public refreshRow(params: RefreshRowsParams & { newData?: boolean }): void {
-        const rowRenderer = this.beans.rowRenderer;
-        // if the row is rendered incorrectly, as the requirements for whether this i s a FW row have changed, we force re-render this row.
+        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
         const fullWidthChanged = this.isFullWidth() !== !!this.isNodeFullWidthCell();
         if (fullWidthChanged) {
-            rowRenderer.redrawRow(this.rowNode);
+            this.beans.rowRenderer.redrawRow(this.rowNode);
             return;
         }
 
@@ -892,7 +891,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (this.isFullWidth()) {
             const refresh = this.refreshFullWidth();
             if (!refresh) {
-                rowRenderer.redrawRow(this.rowNode);
+                this.beans.rowRenderer.redrawRow(this.rowNode);
             }
             return;
         }

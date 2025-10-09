@@ -170,7 +170,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (stickyRowSvc) {
             this.stickyRowFeature = stickyRowSvc.createStickyRowFeature(
                 this,
-                this.createRowCtrl.bind(this),
+                this.createRowCon.bind(this),
                 this.destroyRowCtrls.bind(this)
             );
         } else {
@@ -558,7 +558,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 }
                 ctrl.destroyFirstPass();
                 ctrl.destroySecondPass();
-                dataStruct[rowNode.rowIndex!] = this.createRowCtrl(rowNode, false, false);
+                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
             };
 
             switch (rowNode.rowPinned) {
@@ -1241,7 +1241,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             }
 
             if (_exists(rowNode)) {
-                rowCtrl = this.createRowCtrl(rowNode, animate, afterScroll);
+                rowCtrl = this.createRowCon(rowNode, animate, afterScroll);
             } else {
                 // this should never happen - if somehow we are trying to create
                 // a row for a rowNode that does not exist.
@@ -1495,7 +1495,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return this.beans.pagination?.isRowInPage(rowNode.rowIndex!) ?? true;
     }
 
-    private createRowCtrl(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
+    private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
         const rowCtrlFromCache = this.cachedRowCtrls?.getRow(rowNode) ?? null;
         if (rowCtrlFromCache) {
             return rowCtrlFromCache;

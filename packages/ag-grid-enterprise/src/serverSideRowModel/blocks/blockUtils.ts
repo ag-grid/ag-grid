@@ -144,7 +144,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setMasterDetailInfo(rowNode: RowNode): void {
         const isMasterFunc = this.gos.get('isRowMaster');
-        if (isMasterFunc) {
+        if (isMasterFunc != null) {
             rowNode.master = isMasterFunc(rowNode.data);
         } else {
             rowNode.master = true;

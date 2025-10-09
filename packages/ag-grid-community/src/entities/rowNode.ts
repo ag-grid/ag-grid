@@ -294,19 +294,19 @@ export class RowNode<TData = any>
     private setDataCommon(data: TData, update: boolean): void {
         const { valueCache, eventSvc } = this.beans;
         const oldData = this.data;
-        this.data = data;
 
+        this.data = data;
         valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
         this.__localEventService?.dispatchEvent(event);
-        const sibling = this.sibling;
-        if (sibling) {
-            sibling.data = data;
-            const event: DataChangedEvent<TData> = sibling.createDataChangedEvent(data, oldData, update);
-            sibling.__localEventService?.dispatchEvent(event);
+
+        if (this.sibling) {
+            this.sibling.data = data;
+            const event: DataChangedEvent<TData> = this.sibling.createDataChangedEvent(data, oldData, update);
+            this.sibling.__localEventService?.dispatchEvent(event);
         }
 
         eventSvc.dispatchEvent({ type: 'rowNodeDataChanged', node: this });
