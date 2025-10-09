@@ -33,10 +33,6 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     private canUseTreeData: boolean = false;
     private nested: boolean = false;
 
-    public getNestedDataGetter(): NestedDataGetter<TData> | null | undefined {
-        return this.getStrategy()?.nestedDataGetter;
-    }
-
     public postConstruct(): void {
         const gos = this.gos;
         if (gos.isModuleRegistered('TreeData')) {
@@ -45,31 +41,33 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         }
     }
 
-    private getStrategy(): IRowGroupingStrategy<TData> | null {
-        let strategy = this.strategy;
-        if (strategy !== undefined) {
-            return strategy;
-        }
-        strategy =
-            this.beans.registry.createDynamicBean(this.treeData ? 'treeGroupStrategy' : 'groupStrategy', false) ?? null;
-        this.strategy = strategy && this.createBean(strategy);
-        return strategy;
+    public override destroy(): void {
+        this.strategy = this.destroyBean(this.strategy);
+        super.destroy();
     }
 
-    public onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): void {
+    /** Gets a filler row by id */
+    public getNode(id: string): RowNode<TData> | undefined {
+        return this.strategy?.getNode(id);
+    }
+
+    public getNestedDataGetter(): NestedDataGetter<TData> | null | undefined {
+        return this.getStrategy()?.nestedDataGetter;
+    }
+
+    public onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): boolean {
         const gos = this.gos;
-        if (this.canUseTreeData && changedProps.has('treeData')) {
-            const value = !!gos.get('treeData');
+        const oldNestedDataGetter = this.strategy?.nestedDataGetter;
+        if (changedProps.has('treeData')) {
+            const value = !!gos.get('treeData') && this.canUseTreeData;
             if (this.treeData !== value) {
                 this.treeData = value;
                 this.treeDataChanged = true;
-
                 this.strategy = this.destroyBean(this.strategy);
-                this.getStrategy();
-                return;
             }
         }
         this.strategy?.onPropChange?.(changedProps);
+        return this.getNestedDataGetter() !== oldNestedDataGetter;
     }
 
     public extractData(): TData[] {
@@ -91,16 +89,6 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         return result;
     }
 
-    /** Gets a filler row by id */
-    public getNode(id: string): RowNode<TData> | undefined {
-        return this.strategy?.getNode(id);
-    }
-
-    public override destroy(): void {
-        super.destroy();
-        this.strategy = this.destroyBean(this.strategy);
-    }
-
     public execute(params: StageExecuteParams<TData>): boolean | undefined {
         const strategy = this.getStrategy();
         const nested = !!strategy?.nestedDataGetter;
@@ -114,6 +102,17 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
             return undefined; // Stage not executed if no strategy is available
         }
         return strategy.execute(params) || treeDataChanged;
+    }
+
+    private getStrategy(): IRowGroupingStrategy<TData> | null {
+        let strategy = this.strategy;
+        if (strategy !== undefined) {
+            return strategy;
+        }
+        strategy =
+            this.beans.registry.createDynamicBean(this.treeData ? 'treeGroupStrategy' : 'groupStrategy', false) ?? null;
+        this.strategy = strategy && this.createBean(strategy);
+        return strategy;
     }
 }
 

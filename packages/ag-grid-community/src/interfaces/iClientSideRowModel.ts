@@ -30,13 +30,10 @@ export type ClientSideRowModelStage =
     | 'nothing';
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
-<<<<<<< HEAD
     /** The root row containing all the rows */
     readonly rootNode: RowNode | null;
     readonly rowCountReady: boolean;
 
-=======
->>>>>>> latest
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(params: RefreshModelParams): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;

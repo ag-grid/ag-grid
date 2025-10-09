@@ -217,20 +217,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         const changedProps = new Set(properties);
-        const params: RefreshModelParams = { step: 'nothing', changedProps };
-
         const groupStage = beans.groupStage;
-        const oldNestedDataGetter = groupStage?.getNestedDataGetter();
-        groupStage?.onPropChange(changedProps);
-
-        const extractData = oldNestedDataGetter !== groupStage?.getNestedDataGetter();
+        const extractData = groupStage?.onPropChange(changedProps);
 
         let newRowData: any[] | null | undefined;
         if (changedProps.has('rowData')) {
             newRowData = gos.get('rowData'); // new rowData to load or update
         } else if (extractData) {
-            // Row manager needs reload; extract row data to include user changes,
-            // as it may differ from the original rowData
+            // Row manager needs reload; extract row data to include user changes, as it may differ from the original rowData
             newRowData = groupStage?.extractData();
         }
 
@@ -239,6 +233,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             _warn(1); // `rowData` must be an array
         }
 
+        const params: RefreshModelParams = { step: 'nothing', changedProps };
         if (newRowData) {
             const immutable =
                 !extractData &&
@@ -269,15 +264,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private getRefreshedStage(properties: (keyof GridOptions)[]): ClientSideRowModelStage | '' {
+    private getRefreshedStage(properties: (keyof GridOptions)[]): ClientSideRowModelStage | null {
         const { stages, stagesRefreshProps } = this;
         const stagesLen = stages.length;
         let minIndex = stagesLen;
         for (let i = 0, len = properties.length; i < len && minIndex; ++i) {
-            const index = stagesRefreshProps.get(properties[i]);
-            minIndex = index !== undefined && index < minIndex ? index : minIndex;
+            const index = stagesRefreshProps.get(properties[i]) ?? stagesLen;
+            minIndex = index < minIndex ? index : minIndex;
         }
-        return minIndex < stagesLen ? stages[minIndex].step : '';
+        return minIndex < stagesLen ? stages[minIndex].step : null;
     }
 
     private setRowTopAndRowIndex(outputDisplayedRowsMapped?: Set<string>): void {

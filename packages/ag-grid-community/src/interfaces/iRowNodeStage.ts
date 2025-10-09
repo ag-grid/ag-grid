@@ -30,7 +30,7 @@ export type ParentIdGetter<TData = any> = (data: TData | null | undefined) => st
 export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeStage<TResult, TData> {
     readonly treeData: boolean;
     getNestedDataGetter(): NestedDataGetter<TData> | null | undefined;
-    onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): void;
+    onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): boolean;
     extractData(): TData[];
     getNode(id: string): RowNode<TData> | undefined;
 }
