@@ -1,4 +1,4 @@
-import { expect, test } from '@utils/grid/test-utils';
+import { dragOverTo, expect, test } from '@utils/grid/test-utils';
 
 import { GROUP_AUTO_COLUMN_ID, GROUP_HIERARCHY_COLUMN_ID_PREFIX as vcolPrefix } from 'ag-grid-community';
 
@@ -84,5 +84,29 @@ test.agExample(import.meta, () => {
             'August (5)',
             { useInnerText: true }
         );
+    });
+
+    test.eachFramework('Example with dragging from Column List', async ({ agIdFor, page, remoteGrid }) => {
+        const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
+
+        const remoteApi = remoteGrid(page, '1');
+
+        await remoteApi.setGridOption('columnDefs', [
+            {
+                field: 'date',
+                enableRowGroup: true,
+                enablePivot: true,
+                groupHierarchy: ['year', 'month'],
+            },
+            { field: 'country' },
+            { field: 'sport' },
+            { field: 'total', aggFunc: 'sum' },
+        ]);
+
+        const dateHandle = agIdFor.columnSelectListItemDragHandle('Date Column');
+        await dragOverTo(dateHandle, agIdFor.columnDropArea('toolbar', 'Row Groups'));
+
+        // Assert has grouped by date parts
+        await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (5)', { useInnerText: true });
     });
 });
