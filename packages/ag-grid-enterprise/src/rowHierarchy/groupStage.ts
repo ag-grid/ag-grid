@@ -28,15 +28,15 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     ];
 
     public treeData: boolean = false;
-    private treeDataChanged = false;
+    private hasTreeData: boolean = false;
+    private needReset: boolean = false;
     private strategy: IRowGroupingStrategy<TData> | null | undefined = undefined;
-    private canUseTreeData: boolean = false;
     private nested: boolean = false;
 
     public postConstruct(): void {
         const gos = this.gos;
         if (gos.isModuleRegistered('TreeData')) {
-            this.canUseTreeData = true;
+            this.hasTreeData = true;
             this.treeData = !!gos.get('treeData');
         }
     }
@@ -59,10 +59,10 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         const gos = this.gos;
         const oldNestedDataGetter = this.strategy?.nestedDataGetter;
         if (changedProps.has('treeData')) {
-            const value = !!gos.get('treeData') && this.canUseTreeData;
+            const value = !!gos.get('treeData') && this.hasTreeData;
             if (this.treeData !== value) {
                 this.treeData = value;
-                this.treeDataChanged = true;
+                this.needReset = true;
                 this.strategy = this.destroyBean(this.strategy);
             }
         }
@@ -92,21 +92,18 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
     public execute(params: StageExecuteParams<TData>): boolean | undefined {
         const strategy = this.getStrategy();
         const nested = !!strategy?.nestedDataGetter;
-        const treeDataChanged = this.treeDataChanged;
-        if (treeDataChanged) {
-            this.treeDataChanged = false;
+        const needReset = this.needReset;
+        this.nested = nested;
+        if (needReset) {
+            this.needReset = false;
             resetGrouping(params.rowNode, !nested);
         }
-        this.nested = nested;
-        if (!strategy) {
-            return undefined; // Stage not executed if no strategy is available
-        }
-        return strategy.execute(params) || treeDataChanged;
+        return strategy ? strategy.execute(params) || needReset : undefined;
     }
 
     private getStrategy(): IRowGroupingStrategy<TData> | null {
         let strategy = this.strategy;
-        if (strategy !== undefined) {
+        if (strategy !== undefined && this.isAlive()) {
             return strategy;
         }
         strategy =
