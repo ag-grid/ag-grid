@@ -30,7 +30,15 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
     } as const;
 
     private readonly modifyColumnsNoEventsCallbacks = {
-        addCol: (column: AgColumn) => this.columns.push(column),
+        addCol: (column: AgColumn) => {
+            // if this column has virtual columns associated to it, ensure those virtual columns are
+            // inserted before it in the list (and therefore the pivoting hierarchy)
+            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+
+            if (!this.columns.includes(column)) {
+                this.columns.push(column);
+            }
+        },
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 

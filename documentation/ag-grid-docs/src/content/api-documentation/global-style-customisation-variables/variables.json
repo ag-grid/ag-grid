@@ -73,8 +73,12 @@
             "description": "Background color of selected rows in the grid and in dropdown menus",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
+        "--ag-data-background-color": {
+            "description": "Background colour applied to rows",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
         "--ag-odd-row-background-color": {
-            "description": "Background colour applied to every other row",
+            "description": "Alternative background colour applied to every other row to create a striped effect",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
         "--ag-modal-overlay-background-color": {

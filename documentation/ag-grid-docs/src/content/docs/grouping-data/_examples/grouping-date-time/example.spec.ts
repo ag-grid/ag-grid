@@ -66,6 +66,9 @@ test.agExample(import.meta, () => {
     test.eachFramework('Example with formatted months', async ({ agIdFor, page }) => {
         const level0GroupRowId = `row-group-${vcolPrefix}-date-year-2008`;
 
+        // Assert grid has rendered and grouped by year
+        await expect(agIdFor.autoGroupCell(level0GroupRowId)).toContainText('2008 (5)', { useInnerText: true });
+
         // Switch to formatted month groups
         await page.locator('#formatted-month-checkbox').click();
 

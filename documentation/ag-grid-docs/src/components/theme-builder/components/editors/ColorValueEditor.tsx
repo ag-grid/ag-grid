@@ -12,7 +12,7 @@ import { type ValueEditorProps } from './ValueEditorProps';
 
 export const ColorValueEditor = ({ param, value, onChange }: ValueEditorProps<ColorValue>) => (
     <ColorEditor
-        preventTransparency={param.property === 'backgroundColor'}
+        preventTransparency={param.property === 'backgroundColor' || param.property === 'dataBackgroundColor'}
         value={paramValueToCss(param.property, value, gridThemeLogger) || ''}
         onChange={onChange}
     />

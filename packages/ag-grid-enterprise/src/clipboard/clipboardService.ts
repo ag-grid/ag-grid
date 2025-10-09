@@ -356,25 +356,16 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const rangeSvc = this.beans.rangeSvc!;
 
         const clipboardRowCount = clipboardData.length;
-        const clipboardColCount = clipboardData[0].length;
         const rangeRowCount = rangeSvc.getRangeRowCount(cellRange);
-        const rangeColCount = cellRange.columns.length;
+        const isRowMultiple = rangeRowCount >= clipboardRowCount && rangeRowCount % clipboardRowCount === 0;
 
-        if (
-            rangeRowCount >= clipboardRowCount &&
-            rangeRowCount % clipboardRowCount === 0 &&
-            rangeColCount >= clipboardColCount &&
-            rangeColCount % clipboardColCount === 0
-        ) {
-            return {
-                rowDiff: rangeRowCount - clipboardRowCount,
-                colDiff: rangeColCount - clipboardColCount,
-            };
-        }
+        const clipboardColCount = clipboardData[0].length;
+        const rangeColCount = cellRange.columns.length;
+        const isColMultiple = rangeColCount >= clipboardColCount && rangeColCount % clipboardColCount === 0;
 
         return {
-            rowDiff: clipboardRowCount - rangeRowCount,
-            colDiff: clipboardColCount - rangeColCount,
+            rowDiff: isRowMultiple ? 0 : clipboardRowCount - rangeRowCount,
+            colDiff: isColMultiple ? 0 : clipboardColCount - rangeColCount,
         };
     }
 

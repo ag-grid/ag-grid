@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-module-size-angular",
-  "version": "34.2.0-beta.20250929.1228",
+  "version": "34.2.0-beta.20251005.2025",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
