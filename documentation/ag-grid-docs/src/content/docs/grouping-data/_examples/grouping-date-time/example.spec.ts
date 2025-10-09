@@ -55,12 +55,8 @@ test.agExample(import.meta, () => {
         // ...in reverse order this time, checking Date should make Month/Year appear immediately, and the other checks are idempotent
         await agIdFor.columnSelectListItemCheckbox('Date Column').click();
         await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
-
-        await agIdFor.columnSelectListItemCheckbox('Date (Month) Column').click();
-        await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
-
-        await agIdFor.columnSelectListItemCheckbox('Date (Year) Column').click();
-        await expect(agIdFor.columnDropArea('toolbar', 'Row Groups').locator('.ag-column-drop-cell')).toHaveCount(3);
+        await expect(agIdFor.columnSelectListItemCheckbox('Date (Month) Column')).toBeChecked();
+        await expect(agIdFor.columnSelectListItemCheckbox('Date (Year) Column')).toBeChecked();
     });
 
     test.eachFramework('Example with formatted months', async ({ agIdFor, page }) => {
