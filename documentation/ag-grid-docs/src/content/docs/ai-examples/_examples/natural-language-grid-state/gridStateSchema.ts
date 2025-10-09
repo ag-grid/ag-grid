@@ -10,15 +10,14 @@ export interface ChatGPTGridStateResponse {
      * Uses the official AG-Grid GridState interface
      */
     gridState: GridState;
-    
+
     /**
      * Properties to ignore when setting state (optional)
      */
     propertiesToIgnore?: GridStateKey[];
-    
+
     /**
      * Human-readable explanation of what changes were made
      */
     explanation: string;
 }
-

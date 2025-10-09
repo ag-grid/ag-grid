@@ -1,58 +1,36 @@
 <div class="example-wrapper">
-    <div>
-        <div class="input-group" style="margin-bottom: 15px;">
-            <input 
-                type="password" 
-                id="apiKeyInput" 
-                placeholder="Enter your OpenAI API Key (required)"
-                autocomplete="off"
-                style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px;"
-            />
-            <button onclick="toggleApiKeyVisibility()" style="padding: 8px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                👁️
-            </button>
+    <div class="example-controls">
+        <div class="request-container">
+            <form class="input-group" id="requestForm">
+                <input
+                    type="text"
+                    id="naturalLanguageInput"
+                    placeholder="Enter your request in natural language (e.g., 'hide age column', 'sort by gold medals')"
+                />
+                <button type="submit" id="processRequest">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M2 8h10m0 0l-3-3m3 3l-3 3"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </button>
+            </form>
+            <div id="processingStatus"></div>
+            <div>
+                <button onclick="getCurrentState()">Get Current State</button>
+                <button onclick="resetGrid()">Reset Grid</button>
+            </div>
         </div>
-        
-        <div class="input-group">
-            <input 
-                type="text" 
-                id="naturalLanguageInput" 
-                placeholder="Enter your request in natural language (e.g., 'hide age column', 'sort by gold medals')"
-                autocomplete="off"
-                style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px;"
-            />
-            <button id="processRequest" onclick="processNaturalLanguageRequest()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                Process Request
-            </button>
+
+        <div class="response-container">
+            <div id="aiResponse" style="display: none"></div>
+            <div id="currentState" style="display: none"></div>
         </div>
-        
-        <div style="background: #e7f3ff; border: 1px solid #b3d9ff; color: #004085; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 14px;">
-            <strong>ℹ️ API Key Required:</strong> Enter your OpenAI API key above to use the natural language processing features.<br>
-            <small>Tip: You can also pass the API key as a URL parameter: <code>?apiKey=your-key-here</code></small>
-        </div>
-        
-        <div class="examples" style="background: #e7f3ff; padding: 15px; border-radius: 4px; margin: 15px 0; border-left: 4px solid #007bff;">
-            <strong>Try these example commands:</strong>
-            <ul style="margin: 10px 0 0 20px;">
-                <li><code>hide the age column</code> - Hide the age column</li>
-                <li><code>sort by gold medals descending</code> - Sort by gold medals</li>
-                <li><code>group rows by country</code> - Group by country (only groupable columns)</li>
-                <li><code>pin athlete column to the left</code> - Pin the athlete column</li>
-                <li><code>aggregate gold medals using sum</code> - Apply aggregation (only numeric columns)</li>
-                <li><code>create pivot table with sport as columns</code> - Enable pivot mode</li>
-                <li><code>resize age column to 120 pixels</code> - Set column width</li>
-            </ul>
-        </div>
-        
-        <div class="button-group">
-            <button onclick="getCurrentState()">Get Current State</button>
-            <button onclick="resetGrid()">Reset Grid</button>
-        </div>
-        
-        <div id="processingStatus" style="margin-top: 15px;"></div>
-        <div id="aiResponse" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none;"></div>
-        <div id="currentState" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; display: none; max-height: 300px; overflow-y: auto;"></div>
     </div>
 
-    <div id="myGrid"></div>
+    <div id="ExampleGrid"></div>
 </div>

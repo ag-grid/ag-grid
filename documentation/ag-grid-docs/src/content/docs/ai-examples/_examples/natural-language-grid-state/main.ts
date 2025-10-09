@@ -4,6 +4,7 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
 
+const API_KEY = ''; // <-- ENTER YOUR OPENAI API KEY HERE
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 
 interface IOlympicData {
@@ -125,20 +126,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSizeSelector: [10, 20, 50, 100],
 };
 
-function processNaturalLanguageRequest() {
+function processRequest(event?: Event) {
+    event?.preventDefault();
+
     const inputElement = document.getElementById('naturalLanguageInput') as HTMLInputElement;
-    const apiKeyElement = document.getElementById('apiKeyInput') as HTMLInputElement;
+    const submitButton = document.getElementById('processRequest') as HTMLButtonElement;
     const outputElement = document.getElementById('aiResponse') as HTMLDivElement;
     const statusElement = document.getElementById('processingStatus') as HTMLDivElement;
 
     const userRequest = inputElement.value.trim();
-    const apiKey = apiKeyElement.value.trim();
-
-    if (!apiKey) {
-        outputElement.innerHTML = '<p style="color: red;">Please enter your OpenAI API key</p>';
-        outputElement.style.display = 'block';
-        return;
-    }
 
     if (!userRequest) {
         outputElement.innerHTML = '<p style="color: red;">Please enter a request</p>';
@@ -146,33 +142,45 @@ function processNaturalLanguageRequest() {
         return;
     }
 
+    // Disable form elements
+    inputElement.disabled = true;
+    submitButton.disabled = true;
+
     statusElement.innerHTML = '<p>Processing request with ChatGPT...</p>';
     outputElement.innerHTML = '';
 
     const currentState = gridApi.getState();
 
-    callChatGPT(userRequest, currentState, gridApi, apiKey)
+    callChatGPT(userRequest, currentState, gridApi, API_KEY)
         .then(function (response) {
             // Apply the state changes
             if (Object.keys(response.gridState).length > 0) {
                 gridApi.setState(response.gridState, response.propertiesToIgnore);
             }
 
-            // Display the response
+            // Display the request and response
             statusElement.innerHTML = '<p style="color: green;">✓ Request processed successfully!</p>';
             outputElement.innerHTML = `
+                <h4>Your Request:</h4>
+                <p><em>"${userRequest}"</em></p>
                 <h4>AI Response:</h4>
                 <p>${response.explanation}</p>
             `;
             outputElement.style.display = 'block';
 
-            // Clear the input
+            // Clear the input and re-enable form
             inputElement.value = '';
+            inputElement.disabled = false;
+            submitButton.disabled = false;
         })
         .catch(function (error) {
             statusElement.innerHTML = '<p style="color: red;">✗ Error processing request</p>';
             outputElement.innerHTML = `<p style="color: red;">Error: ${error instanceof Error ? error.message : String(error)}</p>`;
             outputElement.style.display = 'block';
+
+            // Re-enable form on error
+            inputElement.disabled = false;
+            submitButton.disabled = false;
         });
 }
 
@@ -215,24 +223,12 @@ function toggleApiKeyVisibility() {
 
 // Setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#ExampleGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    // Check for API key in URL parameters and populate the input field
-    const urlParams = new URLSearchParams(window.location.search);
-    const apiKeyFromUrl = urlParams.get('apiKey') || urlParams.get('api_key');
-    if (apiKeyFromUrl) {
-        const apiKeyElement = document.getElementById('apiKeyInput') as HTMLInputElement;
-        apiKeyElement.value = apiKeyFromUrl;
-    }
-
-    // Allow Enter key to submit request
-    const inputElement = document.getElementById('naturalLanguageInput') as HTMLInputElement;
-    inputElement.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            processNaturalLanguageRequest();
-        }
-    });
+    // Add form submit handler
+    const form = document.getElementById('requestForm') as HTMLFormElement;
+    form.addEventListener('submit', processRequest);
 
     // Load sample data
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -245,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Make functions available globally for demo purposes
-(window as any).processNaturalLanguageRequest = processNaturalLanguageRequest;
+(window as any).processRequest = processRequest;
 (window as any).getCurrentState = getCurrentState;
 (window as any).resetGrid = resetGrid;
 (window as any).toggleApiKeyVisibility = toggleApiKeyVisibility;
