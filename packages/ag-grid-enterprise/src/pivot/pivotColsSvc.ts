@@ -73,6 +73,11 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
     private setColPivotActive(column: AgColumn, pivot: boolean, source: ColumnEventType): void {
         if (column.pivotActive !== pivot) {
             column.pivotActive = pivot;
+
+            if (pivot) {
+                this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+            }
+
             column.dispatchColEvent('columnPivotChanged', source);
         }
         column.dispatchStateUpdatedEvent('pivot');
