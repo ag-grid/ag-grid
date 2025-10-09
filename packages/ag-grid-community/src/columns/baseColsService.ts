@@ -270,6 +270,15 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const res: AgColumn[] = [...colsWithIndex];
 
+        const groupHierarchCols = this.groupHierarchCols;
+        const pushToRes = (col: AgColumn) => {
+            if (groupHierarchCols) {
+                groupHierarchCols.expandColumnInto(res, col);
+            } else {
+                res.push(col);
+            }
+        };
+
         // next, add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true...
         previousCols.forEach((col) => {
@@ -277,14 +286,14 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the caveat that each column added also has any associated virtual columns added here
                 // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
                 // virtual columns here means they will not be added below when iterating over `colsWithValue`.
-                res.push(col);
+                pushToRes(col);
             }
         });
 
         // lastly put in all remaining cols
         colsWithValue.forEach((col) => {
             if (res.indexOf(col) < 0) {
-                res.push(col);
+                pushToRes(col);
             }
         });
 
