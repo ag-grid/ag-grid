@@ -19,6 +19,7 @@ import {
 } from 'ag-grid-community';
 
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
+import { BlockUtils } from '../serverSideRowModel/blocks/blockUtils';
 
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
@@ -96,8 +97,8 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
             }
         }
 
+        const beans = this.beans;
         if (!treeData) {
-            const beans = this.beans;
             // Note that with treeData the initialization of the expansed state is delegated to treeGroupStrategy
             if (newMaster && created) {
                 const level = beans.rowGroupColsSvc?.columns.length ?? 0;
@@ -110,6 +111,12 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
         if (newMaster !== oldMaster) {
             row.master = newMaster;
+
+            if (row.detailNode && !newMaster && _isServerSideRowModel(gos)) {
+                delete this.store[row.detailNode.id!];
+                (beans.ssrmBlockUtils as BlockUtils)?.destroyRowNode(row.detailNode);
+                row.detailNode = undefined;
+            }
             row.dispatchRowEvent('masterChanged');
         }
     }
