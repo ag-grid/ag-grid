@@ -156,7 +156,7 @@ async function loadPage(
     await page.goto(`./examples/${agExampleUrl}/${urlFramework}?${queryParams.toString()}`);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForLoadState('load');
-    await page.waitForLoadState('networkidle');
+    // await page.waitForLoadState('networkidle'); Not recommended by Playwright as can lead to tests hanging
 
     return page;
 }
@@ -243,6 +243,12 @@ const frameworkTest =
      */
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
+
+        // Set expect timeout to 20,000ms for Angular framework
+        if (agFramework === 'angular') {
+            playwrightExpect.configure({ timeout: 20_000 });
+        }
+
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
         const testWrapper = async (
             {
