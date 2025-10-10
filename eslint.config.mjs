@@ -10,6 +10,8 @@ export const sonarjsConfig = [
     {
         files: ['**/*.{js,ts,tsx}'],
         rules: {
+            // The plan is to work through these rules and enable them where possible.
+            // For now, turning them off to avoid noise and enable other sonarjs rules.
             'sonarjs/no-duplicate-string': 0,
             'sonarjs/sonar-max-params': 0,
             'sonarjs/todo-tag': 0,
@@ -18,7 +20,6 @@ export const sonarjsConfig = [
             'sonarjs/function-return-type': 0,
             'sonarjs/max-switch-cases': 0,
 
-            // Need to work through these as required.
             'sonarjs/different-types-comparison': 0,
             'sonarjs/slow-regex': 0,
             'sonarjs/no-selector-parameter': 0,
@@ -61,8 +62,6 @@ export const sonarjsConfig = [
             'unicorn/prefer-at': 0,
             'unicorn/prefer-includes': 0,
             'unicorn/no-zero-fractions': 0,
-
-            // 'unicorn/prefer-global-this': 1,
         },
     },
 ];

@@ -13,8 +13,6 @@ export default [
             '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             'no-console': 'error',
-
-            'sonarjs/no-nested-conditional': 0,
         },
     },
 ];
