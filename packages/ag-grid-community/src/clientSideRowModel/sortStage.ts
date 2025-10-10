@@ -106,7 +106,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                 }
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
-                // newChildrenAfterSort = null;
             } else if (useDeltaSort && changedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
