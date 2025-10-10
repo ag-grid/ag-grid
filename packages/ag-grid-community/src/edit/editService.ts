@@ -670,9 +670,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _populateModelValidationErrors(this.beans);
 
         cellCtrl?.refreshCell(FORCE_REFRESH);
-        // refresh the styles directly rather than through refreshRow as that causes the group cell renderer to
-        // be recreated and would discard future mouse click events
-        cellCtrl.rowCtrl.rowEditStyleFeature?.applyRowStyles();
 
         if (!focus) {
             return;
