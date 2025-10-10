@@ -162,6 +162,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         gridStylesChanged: GridStylesChangedEvent<TData, TContext>;
         storeUpdated: StoreUpdatedEvent<TData, TContext>;
         filterDestroyed: FilterDestroyedEvent<TData, TContext>;
+        filterHandlerDestroyed: FilterHandlerDestroyedEvent<TData, TContext>;
         filterClosed: FilterClosedEvent<TData, TContext>;
         rowDataUpdateStarted: RowDataUpdateStartedEvent<TData, TContext>;
         rowCountReady: RowCountReadyEvent<TData, TContext>;
@@ -400,13 +401,6 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGlobal
 
 export interface FloatingFilterUiChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'floatingFilterUiChanged', TData, TContext> {
-    column: Column;
-}
-
-// internal event
-export interface FilterDestroyedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'filterDestroyed', TData, TContext> {
-    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
     column: Column;
 }
 
@@ -1290,3 +1284,19 @@ export interface FilterSwitchedEvent<TData = any, TContext = any>
 export interface FilterClosedEvent<TData = any, TContext = any> extends AgGlobalEvent<'filterClosed', TData, TContext> {
     column: Column;
 }
+
+interface BaseFilterDestroyedEvent<
+    TEventType extends 'filterDestroyed' | 'filterHandlerDestroyed',
+    TData = any,
+    TContext = any,
+> extends AgGlobalEvent<TEventType, TData, TContext> {
+    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated';
+    column: Column;
+}
+
+export interface FilterDestroyedEvent<TData = any, TContext = any>
+    extends BaseFilterDestroyedEvent<'filterDestroyed', TData, TContext> {}
+
+/** This is a special version of FilterDestroyedEvent, that only fires if the UI was never created (but the handler existed) */
+export interface FilterHandlerDestroyedEvent<TData = any, TContext = any>
+    extends BaseFilterDestroyedEvent<'filterHandlerDestroyed', TData, TContext> {}

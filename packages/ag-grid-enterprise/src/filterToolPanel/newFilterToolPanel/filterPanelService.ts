@@ -4,6 +4,7 @@ import type {
     FilterAction,
     FilterDestroyedEvent,
     FilterHandler,
+    FilterHandlerDestroyedEvent,
     FilterPanelFilterState,
     FilterPanelSummaryState,
     IFilterPanelService,
@@ -43,6 +44,7 @@ export class FilterPanelService
 
         const updateFilterStates = this.updateFilterStates.bind(this);
         const updateApplyButton = () => this.dispatchStatesUpdates(undefined, true);
+        const onFilterDestroyed = this.onFilterDestroyed.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 this.columnsLoaded = true;
@@ -52,7 +54,8 @@ export class FilterPanelService
                 updateFilterStates();
             },
             filterChanged: updateFilterStates,
-            filterDestroyed: this.onFilterDestroyed.bind(this),
+            filterDestroyed: onFilterDestroyed,
+            filterHandlerDestroyed: onFilterDestroyed,
             filterOpened: updateApplyButton,
             filterClosed: updateApplyButton,
         });
@@ -343,7 +346,7 @@ export class FilterPanelService
         }
     }
 
-    private onFilterDestroyed({ column, source }: FilterDestroyedEvent) {
+    private onFilterDestroyed({ column, source }: FilterDestroyedEvent | FilterHandlerDestroyedEvent) {
         if (!this.beans.colFilter?.isAlive()) {
             // if grid is being destroyed, don't recreate filters
             return;
