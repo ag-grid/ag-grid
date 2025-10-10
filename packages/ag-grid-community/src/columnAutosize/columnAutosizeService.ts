@@ -1,7 +1,6 @@
 import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
-import type { ColKey } from '../columns/columnModel';
 import {
     _columnsMatch,
     getWidthOfColsInList,
@@ -14,6 +13,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';

@@ -2,13 +2,13 @@ import { _removeFromArray } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, ColKey } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import type { ColKey, ColumnCollections } from './columnModel';
+import type { ColumnCollections } from './columnModel';
 import { _applyColumnState } from './columnStateUtils';
 import {
     ROW_NUMBERS_COLUMN_ID,

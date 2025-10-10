@@ -1,11 +1,11 @@
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
-import type { ColKey } from '../columns/columnModel';
 import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { SetPinnedWidthFeature } from '../gridBodyComp/rowContainer/setPinnedWidthFeature';

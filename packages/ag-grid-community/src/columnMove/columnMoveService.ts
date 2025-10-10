@@ -1,6 +1,5 @@
 import type { HorizontalDirection } from '../agStack/constants/direction';
 import { _last, _moveInArray, _removeFromArray } from '../agStack/utils/array';
-import type { ColKey } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridDragSource } from '../dragAndDrop/dragAndDropService';
@@ -8,7 +7,7 @@ import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isColumnGroup } from '../entities/agColumnGroup';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { DragItem } from '../interfaces/iDragItem';

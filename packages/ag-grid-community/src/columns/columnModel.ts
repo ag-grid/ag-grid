@@ -4,17 +4,16 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import type { Column } from '../interfaces/iColumn';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _createColumnTree } from './columnFactoryUtils';
-import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';
+import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import {
     _columnsMatch,
     _convertColumnEventSourceType,
@@ -25,7 +24,6 @@ import {
     isRowNumberCol,
 } from './columnUtils';
 
-export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
 
 export interface ColumnCollections {

@@ -1,9 +1,9 @@
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
-import type { ColKey } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';

@@ -3,6 +3,7 @@ import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type {
@@ -16,7 +17,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { ColumnChangedEventType } from './columnApi';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
-import type { ColKey, ColumnModel, Maybe } from './columnModel';
+import type { ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 import type { VisibleColsService } from './visibleColsService';
 

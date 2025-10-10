@@ -7,7 +7,7 @@ export {
 } from './columns/columnFactoryUtils';
 export type { ColumnGroupService } from './columns/columnGroups/columnGroupService';
 export type { ColumnModel } from './columns/columnModel';
-export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
+export { ColumnCollections as _ColumnCollections } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export { BaseColsService } from './columns/baseColsService';
 export {
@@ -1013,7 +1013,7 @@ export {
     ColDefField,
     AbstractColDef,
     ColTypeDef,
-    ColumnSelectorKey,
+    ColKey,
     ValueSetterParams,
     ValueParserParams,
     ValueFormatterParams,
