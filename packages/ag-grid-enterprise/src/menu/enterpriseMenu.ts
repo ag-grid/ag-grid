@@ -617,6 +617,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         this.eColumnMenu.appendChild(mainMenuList.getGui());
     }
 
+    // eslint-disable-next-line sonarjs/no-identical-functions
     private onHidePopup(event?: CloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,

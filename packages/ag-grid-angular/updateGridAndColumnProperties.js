@@ -141,6 +141,7 @@ function addDocLine(docLookup, property, result) {
     const doc = docLookup[property];
     if (doc) {
         // Get comments to line up properly
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         result += `    ${doc.replace(/\s\*/g, `     *`)}${EOL}`;
     }
     return result;

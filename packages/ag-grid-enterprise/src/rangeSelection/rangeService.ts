@@ -479,13 +479,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         let startIdx = allColumns.indexOf(startColumn as AgColumn);
-        let endIdx = allColumns.indexOf(endColumn as AgColumn);
+        const endIdx = allColumns.indexOf(endColumn as AgColumn);
         const isRtlRange = endIdx < startIdx;
 
         if (isRtlRange) {
             // if we are anchoring to the left and the range is rtl
             // then we need to flip the start and end indices
-            [startIdx, endIdx] = [endIdx, startIdx];
+            startIdx = endIdx;
         }
 
         const currentLength = columns.length;
@@ -1013,7 +1013,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (shouldMoveRightCol) {
             moveColInCellRange(right, false);
-            return;
         }
     }
 

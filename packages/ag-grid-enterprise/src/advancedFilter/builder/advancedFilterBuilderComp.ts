@@ -567,8 +567,6 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             isValid = JSON.stringify(this.filterModel) !== this.stringifiedModel;
             if (!isValid) {
                 validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationAlreadyApplied');
-            } else {
-                validationMessage = null;
             }
         } else {
             validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
@@ -608,7 +606,6 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             }
             if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
                 item.valid = false;
-                return;
             }
         });
     }

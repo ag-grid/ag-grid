@@ -568,7 +568,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.setGroupData(groupNode, groupInfo);
 
         groupNode.key = groupInfo.key;
-        groupNode.id = this.createGroupId(groupNode, parent, level);
+        groupNode.id = this.createGroupId(groupNode, parent);
 
         groupNode.level = level;
         groupNode.leafGroup = level === details.groupCols.length - 1;
@@ -592,21 +592,18 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return groupNode;
     }
 
-    private createGroupId(node: RowNode, parent: RowNode, level: number): string {
-        const createGroupId: (node: RowNode, parent: RowNode | null, level: number) => string | null = (
-            node,
-            parent
-        ) => {
+    private createGroupId(node: RowNode, parent: RowNode): string {
+        const createGroupId: (node: RowNode, parent: RowNode | null) => string | null = (node, parent) => {
             if (!node.rowGroupColumn) {
                 return null;
             } // root node
-            const parentId = parent ? createGroupId(parent, parent.parent, 0) : null;
+            const parentId = parent ? createGroupId(parent, parent.parent) : null;
             return `${parentId == null ? '' : parentId + '-'}${node.rowGroupColumn.getColId()}-${node.key}`;
         };
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
-        return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
+        return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent);
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {

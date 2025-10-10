@@ -33,7 +33,7 @@ function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
                 tag: 'div',
                 ref: 'eBody',
                 role: 'presentation',
-                cls: `ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}`,
+                cls: 'ag-tabs-body' + cssClass ? ` ${cssClass}-body` : '',
             },
         ],
     };

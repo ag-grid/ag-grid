@@ -110,12 +110,10 @@ export class InputPillComp extends Component<InputPillCompEvent> {
                 this.showEditor();
             },
             keydown: (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
-                        this.showEditor();
-                        break;
+                if (event.key === KeyCode.ENTER) {
+                    event.preventDefault();
+                    _stopPropagationForAgGrid(event);
+                    this.showEditor();
                 }
             },
         });
@@ -160,6 +158,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
      */
     private createEditorComp(type: BaseCellDataType): GridInputTextField {
         const [Comp, postConstruct] = inputComponentDescriptors[type];
+        // eslint-disable-next-line sonarjs/new-operator-misuse
         const instance = this.createBean(new Comp());
         if (postConstruct) postConstruct(instance);
         return instance;
