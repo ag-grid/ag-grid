@@ -320,8 +320,11 @@ export class CellCtrl extends BeanStub {
                 resolver = resolve;
             });
 
-            this.addManagedListeners(eventSvc, {
-                bodyScrollEnd: () => resolver(),
+            const [removeBodyScrollEnd] = this.addManagedListeners(eventSvc, {
+                bodyScrollEnd: () => {
+                    resolver();
+                    removeBodyScrollEnd();
+                },
             });
             return { loadingComp: loadingDetails, onReady };
         }

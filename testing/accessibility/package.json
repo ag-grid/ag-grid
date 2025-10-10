@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-accessibility",
-  "version": "34.2.0-beta.20250929.1228",
+  "version": "34.2.0-beta.20251005.2025",
   "scripts": {
     "download-examples": "curl --retry 5 -retry-all-errors https://grid-staging.ag-grid.com/debug/all-examples.json > ./all-examples.json",
     "download-examples-local": "curl https://localhost:4610/debug/all-examples.json > ./all-examples.json",
@@ -21,14 +21,14 @@
     "ag-grid-angular": "34.2.0-beta.20250929.1228",
     "ag-grid-community": "34.2.0-beta.20250929.1228",
     "ag-grid-enterprise": "34.2.0-beta.20250929.1228",
-    "ag-charts-community": "12.2.0-beta.20250928",
-    "ag-charts-enterprise": "12.2.0-beta.20250928",
+    "ag-charts-community": "12.2.0-beta.20251005",
+    "ag-charts-enterprise": "12.2.0-beta.20251005",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "playwright": "^1.46.0",
-    "@playwright/test": "^1.46.0"
+    "playwright": "^1.56.0",
+    "@playwright/test": "^1.56.0"
   }
 }

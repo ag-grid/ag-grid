@@ -26,7 +26,7 @@ const COL_DEFS: ColDef<IOlympicData>[] = [
         rowGroup: true,
         enableRowGroup: true,
         enablePivot: true,
-        rowGroupingHierarchy: ['year', 'month'],
+        groupHierarchy: ['year', 'month'],
     },
     { field: 'country' },
     { field: 'sport' },
@@ -66,6 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function onChangeFormattedMonth(event: any) {
     const month = event.target.checked ? 'formattedMonth' : 'month';
-    COL_DEFS[0].rowGroupingHierarchy![1] = month;
+    COL_DEFS[0].groupHierarchy![1] = month;
     gridApi.setGridOption('columnDefs', COL_DEFS);
 }

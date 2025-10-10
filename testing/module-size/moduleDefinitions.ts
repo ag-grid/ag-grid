@@ -6,7 +6,7 @@ import type {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 6.88,
-    AllCommunityModule: 482.0,
+    AllCommunityModule: 485,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 64.61,
@@ -54,7 +54,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     AllEnterpriseModule: 1498.82,
     BatchEditModule: 81.15,
     CellSelectionModule: 55,
-    ClipboardModule: 46.04,
+    ClipboardModule: 47.54,
     ColumnMenuModule: 153.19,
     ColumnsToolPanelModule: 150.64,
     ContextMenuModule: 72,
@@ -78,10 +78,10 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ServerSideRowModelModule: 155.08,
     SetFilterModule: 152.16,
     SideBarModule: 33.16,
-    SparklinesModule: 20,
+    SparklinesModule: 20.5,
     StatusBarModule: 27,
     TreeDataModule: 90.17,
-    ViewportRowModelModule: 27,
+    ViewportRowModelModule: 28,
 };
 
 export interface ModuleTest {

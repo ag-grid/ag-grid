@@ -1,4 +1,4 @@
-import { type AgGridFixtures, expect, test } from '@utils/grid/test-utils';
+import { type AgGridFixtures, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Locator } from 'playwright/test';
 
 async function getWidth(locator: Locator): Promise<number | undefined> {
@@ -28,6 +28,7 @@ async function totalHeaderWidth(headers: Record<ColIds, Locator>): Promise<numbe
 
 test.agExample(import.meta, () => {
     test.eachFramework('fitCellToContents', async ({ page, agIdFor }) => {
+        await waitForGridContent(page);
         const headers = getHeaders(agIdFor);
         const headerRow = page.locator('.ag-header-row').filter({ has: headers.athlete });
         const baseHeaderWidths = await getHeaderWidths(headers);
@@ -89,6 +90,8 @@ test.agExample(import.meta, () => {
         // need to set the viewport size to less than the column width to test the scale-down
         await page.setViewportSize({ width: 400, height: 600 });
 
+        await waitForGridContent(page);
+
         await page.locator('#toggle-scale-up').click(); // on
         await page.locator('button.resize-button').click();
 
@@ -117,6 +120,8 @@ test.agExample(import.meta, () => {
                 { field: 'date', width: 110 },
             ]);
             const baseHeaderWidths = await getHeaderWidths(headers);
+
+            await waitForGridContent(page);
 
             await page.locator('#toggle-scale-up').click(); // on
             await page.locator('button.resize-button').click();

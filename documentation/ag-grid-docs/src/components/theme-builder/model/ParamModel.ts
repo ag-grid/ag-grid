@@ -33,6 +33,7 @@ const nonAdvancedParams = new Set([
     'headerFontWeight',
     'headerVerticalPaddingScale',
     'cellTextColor',
+    'dataBackgroundColor',
     'oddRowBackgroundColor',
     'rowVerticalPaddingScale',
     'cellHorizontalPaddingScale',

@@ -134,20 +134,23 @@ function onFilterChanged() {
     }
 }
 
-function areEqual(a: null | string[], b: null | string[]) {
-    if (a == null && b == null) {
-        return true;
+export function areEqual(a: readonly any[] | null | undefined, b: readonly any[] | null | undefined): boolean {
+    if (a === b) {
+        return true; // Same instance, no need to compare
     }
-    if (a != null || b != null) {
+    if (!a || !b) {
+        return a == null && b == null;
+    }
+    const len = a.length;
+    if (len !== b.length) {
         return false;
     }
-
-    return (
-        a!.length === b!.length &&
-        a!.every(function (v, i) {
-            return b![i] === v;
-        })
-    );
+    for (let i = 0; i < len; i++) {
+        if (a[i] !== b[i]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 function getCountryValuesAsync(params: SetFilterValuesFuncParams) {

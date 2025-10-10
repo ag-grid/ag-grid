@@ -126,20 +126,13 @@ export class ClientSideExpansionService
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
-        const { gridApi: masterGridApi } = this.beans;
-
-        masterGridApi.addEventListener('expandOrCollapseAll', ({ source }) => {
-            switch (source) {
-                case 'expandAll':
-                    return detailGridApi.expandAll();
-                case 'collapseAll':
-                    return detailGridApi.collapseAll();
-            }
-        });
-        if (this.getExpansionState().collapsedRowGroupIds.length) {
-            return detailGridApi.collapseAll();
+        const expansionState = this.getExpansionState();
+        const allExpanded = expansionState.collapsedRowGroupIds.length === 0;
+        const allCollapsed = expansionState.expandedRowGroupIds.length === 0;
+        if (allCollapsed === allExpanded) {
+            return;
         }
-        return detailGridApi.expandAll();
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
     }
 
     // because the user can call rowNode.setExpanded() many times in one VM turn,

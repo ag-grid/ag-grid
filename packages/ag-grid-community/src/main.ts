@@ -132,7 +132,7 @@ export {
     _getAriaPosInSet,
     _setAriaInvalid,
 } from './agStack/utils/aria';
-export { _EmptyArray, _removeFromArray, _last, _areEqual, _flatten } from './agStack/utils/array';
+export { _EmptyArray, _removeFromArray, _removeAllFromArray, _last, _areEqual, _flatten } from './agStack/utils/array';
 export { _isIOSUserAgent, _isBrowserSafari, _isBrowserFirefox } from './agStack/utils/browser';
 export { _serialiseDate, _getDateParts, _parseDateTimeFromString, MONTHS as _MONTHS } from './agStack/utils/date';
 export {
@@ -1251,7 +1251,7 @@ export { ElementParams, _createElement } from './utils/element';
 export { _selectAllCells } from './utils/selection';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid } from './utils/gridEvent';
 export { _warnOnce } from './utils/log';
-export { _warn, _error, _errMsg, _preInitErrMsg } from './validation/logging';
+export { _warn, _error, _errMsg, _logPreInitWarn, _preInitErrMsg } from './validation/logging';
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
