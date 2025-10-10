@@ -1,10 +1,11 @@
 import { _areEqual } from '../agStack/utils/array';
+import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
-import { _getGroupingApproach, _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
+import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -14,11 +15,6 @@ import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 import { RowDragFeatureNudger } from './rowDragFeatureNudger';
 import type { RowDraggingEvent, RowDropZoneEvents, RowDropZoneParams, RowsDrop } from './rowDragTypes';
-
-interface WritableRowNode extends RowNode {
-    treeParent: RowNode | null;
-    sourceRowIndex: number;
-}
 
 /** We actually have a different interface if we are passing params out of the grid and
  * directly into another grid. These internal params just work directly off the DraggingEvent.
@@ -186,10 +182,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 
-        const groupingApproach = _getGroupingApproach(gos);
         const canSetParent =
             // We don't yet support drag and drop with grouping
-            groupingApproach !== 'group' &&
+            !!this.beans.groupStage?.treeData &&
             // We don't yet support moving tree rows from a different grid in a structured way
             sameGrid;
 
@@ -605,10 +600,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private csrmMoveRows({ position, target, rows, newParent, rootNode }: RowsDrop): boolean {
         let changed = false;
 
-        const leafs = new Set<WritableRowNode>();
-        for (const row of rows as WritableRowNode[]) {
+        const leafs = new Set<RowNode>();
+        for (const row of rows as RowNode[]) {
             if (newParent && row.parent !== newParent) {
-                row.treeParent = newParent as RowNode | null;
+                row.treeParent = newParent as RowNode;
                 changed = true;
             }
 
@@ -639,12 +634,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
+        const changedRowNodes = new ChangedRowNodes();
+        changedRowNodes.reordered = true;
         clientSideRowModel.refreshModel({
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
             changedPath: new ChangedPath(false, rootNode as RowNode),
-            rowNodesOrderChanged: true,
+            changedRowNodes,
         });
 
         // Get the focussed cell so we can ensure it remains focussed after the move
@@ -683,14 +680,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
      * @returns True if the order of the rows changed, false otherwise
      */
     private reorderLeafChildren(
-        leafs: ReadonlySet<WritableRowNode>,
+        leafs: ReadonlySet<RowNode>,
         firstAffectedLeafIdx: number,
         targetPositionIdx: number,
         lastAffectedLeafIndex: number
     ): boolean {
         let orderChanged = false;
 
-        const allLeafChildren: WritableRowNode[] | null | undefined = this.beans.rowModel.rootNode?.allLeafChildren;
+        const allLeafChildren: RowNode[] | null | undefined = this.beans.rowModel.rootNode?.allLeafChildren;
         if (!leafs.size || !allLeafChildren) {
             return false;
         }

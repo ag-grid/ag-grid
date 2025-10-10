@@ -20,14 +20,14 @@ import {
 export class FlattenStage extends BeanStub implements IRowNodeStage<RowNode[]>, NamedBean {
     beanName = 'flattenStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+    public readonly step: ClientSideRowModelStage = 'map';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'groupHideParentOfSingleChild',
         'groupRemoveSingleChildren',
         'groupRemoveLowestSingleChildren',
         'groupTotalRow',
         'masterDetail',
-    ]);
-    public step: ClientSideRowModelStage = 'map';
+    ];
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;

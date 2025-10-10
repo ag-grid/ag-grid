@@ -20,7 +20,7 @@ export class ClientSideValuesExtractor<V> extends BeanStub {
         existingValues?: Map<string | null, V | null>
     ): AgPromise<Map<string | null, V | null>> {
         return new AgPromise((resolve) => {
-            if ((this.beans.rowModel as IClientSideRowModel).isRowDataLoaded()) {
+            if ((this.beans.rowModel as IClientSideRowModel).rowCountReady) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {
                 const [destroyFunc] = this.addManagedEventListeners({

@@ -1,27 +1,32 @@
+import type { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
-import type { ClientSideRowModelStage, IChangedRowNodes } from './iClientSideRowModel';
+import type { ClientSideRowModelStage } from './iClientSideRowModel';
 
 export interface StageExecuteParams<TData = any> {
     rowNode: RowNode<TData>;
 
     // used in sort stage, as sort stage looks at all transactions in one go
-    changedRowNodes?: IChangedRowNodes<TData>;
+    changedRowNodes?: ChangedRowNodes<TData>;
 
-    // true if the order of root.allLeafChildren has changed
-    // This can happen if order of root.allLeafChildren is updated or rows are inserted (and not just appended at the end)
-    rowNodesOrderChanged?: boolean;
     changedPath?: ChangedPath;
     afterColumnsChanged?: boolean;
 }
 
-export interface IRowNodeStage<TResult = any, TData = any> {
-    step: ClientSideRowModelStage;
-    refreshProps: Set<keyof GridOptions>;
+export interface IRowNodeStage<TResult = void, TData = any> {
+    readonly step: ClientSideRowModelStage;
+    readonly refreshProps: (keyof GridOptions<any>)[];
     execute(params: StageExecuteParams<TData>): TResult;
 }
 
-export interface IRowGroupStage<TResult = any, TData = any> extends IRowNodeStage<TResult, TData> {
+export type NestedDataGetter<TData = any> = (data: TData) => TData[] | null | undefined;
+
+export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeStage<TResult, TData> {
+    readonly treeData: boolean;
+    getNestedDataGetter(): NestedDataGetter<TData> | null | undefined;
+    onPropChange(changedProps: ReadonlySet<keyof GridOptions<any>>): boolean;
+    extractData(): TData[];
+    /** Gets a tree data filler or row grouping group row by id */
     getNode(id: string): RowNode<TData> | undefined;
 }

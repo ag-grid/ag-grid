@@ -736,10 +736,8 @@ export {
     ClientSideRowModelStage,
     ClientSideRowModelStep,
     RefreshModelParams,
-    IChangedRowNodes,
 } from './interfaces/iClientSideRowModel';
-export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
-export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
+export type { ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
@@ -927,12 +925,10 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
-    _getGroupingApproach,
     _getGridOption,
     _isSetFilterByDefault,
     _interpretAsRightClick,
 } from './gridOptionsUtils';
-export type { GroupingApproach } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export { SortedRowNode } from './sort/rowNodeSorter';
@@ -1184,7 +1180,7 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interfaces/iRowNodeStage';
+export type { IRowNodeStage, IRowGroupStage, StageExecuteParams, NestedDataGetter } from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';

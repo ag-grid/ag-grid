@@ -134,36 +134,22 @@ export class RowNode<TData = any>
      * The index of the row in the source rowData array including any updates via transactions.
      * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
      * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value is set to `-1`.
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRowNode
-     * - ClientSideRowModel, cast to ClientSideRowModelRowNode
      */
-    public readonly sourceRowIndex: number = -1;
+    public sourceRowIndex: number = -1;
 
     /**
      * All lowest level nodes beneath this node, no groups.
      * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
      * The array might also br frozen (immutable).
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
      */
-    public readonly allLeafChildren: RowNode<TData>[] | null;
+    public allLeafChildren: RowNode<TData>[] | null;
 
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.
      * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     *
-     * Generally readonly. It is modified only by:
-     * - ClientSideNodeManager, cast to ClientSideNodeManagerRootNode
-     * - GroupStrategy, cast to GroupRow
-     * - TreeStrategy, cast to TreeRow
      */
-    public readonly childrenAfterGroup: RowNode<TData>[] | null;
+    public childrenAfterGroup: RowNode<TData>[] | null;
 
     /** Filtered children of this group. */
     public childrenAfterFilter: RowNode<TData>[] | null;
@@ -184,11 +170,15 @@ export class RowNode<TData = any>
      * Parent RowNode for tree data.
      * When set, the parent node in the hierarchy is updated during Client-Side Row Model (CSRM) grouping.
      * Used by the ClientSideChildrenTreeNodeManager, TreeGroupStrategy, RowDragFeature
+     * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
-    public readonly treeParent: RowNode<TData> | null = null;
+    public treeParent: RowNode<TData> | null = null;
 
-    /** The flags associated to this node. Used only internally within TreeGroupStrategy. */
-    public readonly treeNodeFlags: number = 0;
+    /**
+     * The flags associated to this node. Used only internally within TreeGroupStrategy.
+     * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
+     */
+    public treeNodeFlags: number = 0;
 
     /** Server Side Row Model Only - the children are in an infinite cache. */
     public childStore: IServerSideStore | null;
@@ -222,12 +212,6 @@ export class RowNode<TData = any>
 
     /** `true` by default - can be overridden via gridOptions.isRowSelectable(rowNode) */
     public selectable = true;
-
-    /** `true` if this node is a daemon. This means row is not part of the model. Can happen when then
-     * the row is selected and then the user sets a different ID onto the node. The nodes is then
-     * representing a different entity, so the selection controller, if the node is selected, takes
-     * a copy where daemon=true. */
-    public __daemon: boolean;
 
     /** Used by the value service, stores values for a particular change detection turn. */
     public __cacheData: { [colId: string]: any };
@@ -325,8 +309,9 @@ export class RowNode<TData = any>
     // so if we show / hide the detail, the same detail rowNode is used. so we need to keep the data
     // in sync, otherwise expand/collapse of the detail would still show the old values.
     private updateDataOnDetailNode(): void {
-        if (this.detailNode) {
-            this.detailNode.data = this.data;
+        const detailNode = this.detailNode;
+        if (detailNode) {
+            detailNode.data = this.data;
         }
     }
 
@@ -428,7 +413,11 @@ export class RowNode<TData = any>
 
         this.dispatchRowEvent('topChanged');
 
-        this.setDisplayed(rowTop !== null);
+        const displayed = rowTop !== null;
+        if (this.displayed !== displayed) {
+            this.displayed = displayed;
+            this.dispatchRowEvent('displayedChanged');
+        }
     }
 
     public clearRowTopAndRowIndex(): void {
@@ -517,12 +506,9 @@ export class RowNode<TData = any>
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
 
-        const pinnedSibling = this.pinnedSibling;
-        if (pinnedSibling) {
+        if (valueChanged) {
             // pinned sibling shares a reference to the same data object as the
-            if (valueChanged) {
-                pinnedSibling.dispatchCellChangedEvent(column, newValue, oldValue);
-            }
+            this.pinnedSibling?.dispatchCellChangedEvent(column, newValue, oldValue);
         }
 
         return valueChanged;
@@ -530,8 +516,7 @@ export class RowNode<TData = any>
 
     public updateHasChildren(): void {
         // in CSRM, the group property is set before the childrenAfterGroup property, check both to prevent flickering
-        let newValue: boolean | null =
-            (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+        let newValue: boolean | null = (this.group && !this.footer) || !!this.childrenAfterGroup?.length;
 
         const { rowChildrenSvc } = this.beans;
         if (rowChildrenSvc) {
@@ -590,8 +575,9 @@ export class RowNode<TData = any>
             return this.sibling.isSelected();
         }
         // similarly for manually pinned rows
-        if (this.rowPinned && this.pinnedSibling) {
-            return this.pinnedSibling.isSelected();
+        const pinnedSibling = this.rowPinned && this.pinnedSibling;
+        if (pinnedSibling) {
+            return pinnedSibling.isSelected();
         }
 
         return this.__selected;
@@ -599,7 +585,12 @@ export class RowNode<TData = any>
 
     /** Perform a depth-first search of this node and its children. */
     public depthFirstSearch(callback: (rowNode: RowNode<TData>) => void): void {
-        this.childrenAfterGroup?.forEach((child) => child.depthFirstSearch(callback));
+        const childrenAfterGroup = this.childrenAfterGroup;
+        if (childrenAfterGroup) {
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                childrenAfterGroup[i].depthFirstSearch(callback);
+            }
+        }
         callback(this);
     }
 
@@ -639,11 +630,10 @@ export class RowNode<TData = any>
     }
 
     public __addEventListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>): void {
-        if (!this.__localEventService) {
-            this.__localEventService = new LocalEventService();
-        }
-        this.__localEventService.addEventListener(eventType, listener as any);
+        const localEventService = (this.__localEventService ??= new LocalEventService());
+        localEventService.addEventListener(eventType, listener as any);
     }
+
     public __removeEventListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>): void {
         this.removeLocalListener(eventType, listener);
     }
@@ -653,16 +643,14 @@ export class RowNode<TData = any>
      */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
         this.beans.validation?.checkRowEvents(eventType);
-        if (!this.__localEventService) {
-            this.__localEventService = new LocalEventService();
-        }
+        const localEventService = (this.__localEventService ??= new LocalEventService());
         this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
             this.frameworkEventListenerService,
-            this.__localEventService
+            localEventService
         );
 
         const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
-        this.__localEventService.addEventListener(eventType, listener);
+        localEventService.addEventListener(eventType, listener);
     }
 
     /**
@@ -677,9 +665,12 @@ export class RowNode<TData = any>
     }
 
     private removeLocalListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>) {
-        this.__localEventService?.removeEventListener(eventType, listener as any);
-        if (this.__localEventService?.noRegisteredListenersExist()) {
-            this.__localEventService = null;
+        const localEventService = this.__localEventService;
+        if (localEventService) {
+            localEventService.removeEventListener(eventType, listener as any);
+            if (localEventService.noRegisteredListenersExist()) {
+                this.__localEventService = null;
+            }
         }
     }
 
@@ -725,13 +716,6 @@ export class RowNode<TData = any>
         return res.reverse();
     }
 
-    private setDisplayed(displayed: boolean): void {
-        if (this.displayed !== displayed) {
-            this.displayed = displayed;
-            this.dispatchRowEvent('displayedChanged');
-        }
-    }
-
     public setRowIndex(rowIndex: number | null): void {
         if (this.rowIndex !== rowIndex) {
             this.rowIndex = rowIndex;
@@ -754,8 +738,9 @@ export class RowNode<TData = any>
     }
 
     public getFirstChild(): RowNode<TData> | null {
-        if (this.childStore) {
-            return this.childStore.getFirstNode() as RowNode<TData>;
+        const childStore = this.childStore;
+        if (childStore) {
+            return childStore.getFirstNode() as RowNode<TData> | null;
         }
         return this.childrenAfterSort?.[0] ?? null;
     }

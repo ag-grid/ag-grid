@@ -604,21 +604,6 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     return gos.addCommon(params);
 }
 
-export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
-
-export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach {
-    if (gos.get('treeData')) {
-        if (gos.get('treeDataParentIdField')) {
-            return 'treeSelfRef';
-        }
-        if (gos.get('treeDataChildrenField')) {
-            return 'treeNested';
-        }
-        return 'treePath';
-    }
-    return 'group';
-}
-
 /** Used for before GridOptionsService is initialised */
 export function _getGridOption<K extends keyof GridOptions>(
     providedGridOptions: GridOptions,
