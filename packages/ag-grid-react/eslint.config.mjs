@@ -1,7 +1,8 @@
-import rootESLint from '../../eslint.config.mjs';
+import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    ...sonarjsConfig,
     {
         rules: {
             'no-empty': 'error',
@@ -12,6 +13,8 @@ export default [
             '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             'no-console': 'error',
+
+            'sonarjs/no-nested-conditional': 0,
         },
     },
 ];

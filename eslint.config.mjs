@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint';
 export const sonarjsConfig = [
     sonarjs.configs.recommended,
     {
-        files: ['**/*.{js,ts}'],
+        files: ['**/*.{js,ts,tsx}'],
         rules: {
             'sonarjs/no-duplicate-string': 0,
             'sonarjs/sonar-max-params': 0,
@@ -16,6 +16,7 @@ export const sonarjsConfig = [
             'sonarjs/fixme-tag': 0,
             'sonarjs/no-redeclare': 0,
             'sonarjs/function-return-type': 0,
+            'sonarjs/max-switch-cases': 0,
 
             // Need to work through these as required.
             'sonarjs/different-types-comparison': 0,
@@ -40,6 +41,8 @@ export const sonarjsConfig = [
             'sonarjs/no-misleading-array-reverse': 0,
             'sonarjs/no-useless-intersection': 0,
             'sonarjs/no-nested-assignment': 0,
+            'sonarjs/prefer-regexp-exec': 0,
+            'sonarjs/concise-regex': 0,
 
             // Duplicates @typescript-eslint
             'sonarjs/sonar-no-unused-vars': 0,
