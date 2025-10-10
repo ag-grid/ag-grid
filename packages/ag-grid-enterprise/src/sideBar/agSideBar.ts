@@ -251,10 +251,7 @@ class AgSideBar extends Component implements ISideBar {
         return this;
     }
 
-    public override setDisplayed(
-        displayed: boolean,
-        options?: { skipAriaHidden?: boolean | undefined } | undefined
-    ): void {
+    public override setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean }): void {
         super.setDisplayed(displayed, options);
         this.dispatchSideBarUpdated();
     }

@@ -448,9 +448,9 @@ export class SetFilter<V = string>
 
     private newSetTreeItemAttributes(item: SetFilterModelTreeItem): {
         value: V | string | (() => string) | null;
-        depth?: number | undefined;
-        isGroup?: boolean | undefined;
-        hasIndeterminateExpandState?: boolean | undefined;
+        depth?: number;
+        isGroup?: boolean;
+        hasIndeterminateExpandState?: boolean;
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
@@ -507,9 +507,9 @@ export class SetFilter<V = string>
 
     private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): {
         value: V | string | (() => string) | null;
-        depth?: number | undefined;
-        isGroup?: boolean | undefined;
-        hasIndeterminateExpandState?: boolean | undefined;
+        depth?: number;
+        isGroup?: boolean;
+        hasIndeterminateExpandState?: boolean;
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
