@@ -7,7 +7,14 @@ import type {
     RowDataTransaction,
     RowNode,
 } from 'ag-grid-community';
-import { AbstractClientSideNodeManager, ChangedPath, _error, _getRowIdCallback, _warn } from 'ag-grid-community';
+import {
+    AbstractClientSideNodeManager,
+    ChangedPath,
+    _error,
+    _getClientSideRowModel,
+    _getRowIdCallback,
+    _warn,
+} from 'ag-grid-community';
 
 import type { GroupingRowNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { DataFieldGetter } from './fieldAccess';
@@ -242,5 +249,28 @@ export class ClientSideChildrenTreeNodeManager<TData>
             params.rowDataUpdated = true;
             params.rowNodesOrderChanged ||= orderChanged;
         }
+    }
+
+    public override updateGroupRowData(): void {
+        const csrm = _getClientSideRowModel(this.beans);
+        if (!csrm) {
+            return;
+        }
+
+        const groupDisplayCols = this.beans.showRowGroupCols?.getShowRowGroupCols();
+        csrm.forEachNode((node) => {
+            if (!node.group) {
+                return;
+            }
+
+            node.groupData = {};
+            if (!groupDisplayCols) {
+                return;
+            }
+
+            for (const col of groupDisplayCols) {
+                node.groupData[col.getColId()] = node.key;
+            }
+        });
     }
 }

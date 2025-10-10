@@ -120,6 +120,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             columnRowGroupChanged: refreshEverythingFunc,
             columnValueChanged: this.onValueChanged.bind(this),
             columnPivotChanged: this.refreshModel.bind(this, { step: 'pivot' }),
+            showRowGroupColumnsChanged: this.refreshGroupData.bind(this),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
             columnPivotModeChanged: refreshEverythingFunc,
@@ -569,6 +570,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getType(): RowModelType {
         return 'clientSide';
+    }
+
+    private refreshGroupData(): void {
+        this.nodeManager.updateGroupRowData();
     }
 
     private onValueChanged(): void {

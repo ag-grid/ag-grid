@@ -188,6 +188,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
+        showRowGroupColumnsChanged: AgEvent<'showRowGroupColumnsChanged'>;
     }
 >;
 

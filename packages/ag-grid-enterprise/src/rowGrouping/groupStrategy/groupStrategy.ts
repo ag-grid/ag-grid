@@ -70,7 +70,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
     private prevGroupCols: GroupColumn[] | null = null;
-    private prevShowGroupCols: GroupColumn[] | null = null;
 
     public getNode(id: string): RowNode | undefined {
         // only one users complained about getRowNode not working for groups, after years of
@@ -420,32 +419,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private checkAllGroupDataAfterColsChanged(details: GroupingDetails): void {
-        const recurse = (rowNodes: RowNode[] | null) => {
-            if (!rowNodes) {
-                return;
-            }
-            rowNodes.forEach((rowNode) => {
-                const isLeafNode = !rowNode.group;
-                if (isLeafNode) {
-                    return;
-                }
-                const groupInfo: GroupInfo = {
-                    field: rowNode.field,
-                    key: rowNode.key!,
-                    rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: rowNode.allLeafChildren?.[0],
-                };
-                this.setGroupData(rowNode, groupInfo);
-                recurse(rowNode.childrenAfterGroup);
-            });
-        };
-
-        recurse(details.rootNode.childrenAfterGroup);
-    }
-
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
-        if (this.noChangeInGroupingColumns(details, afterColumnsChanged)) {
+        const doFullGroup = !afterColumnsChanged || details.groupColsChanged;
+        if (!doFullGroup) {
             return;
         }
 
@@ -469,27 +445,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         this.insertNodes(rootNode.allLeafChildren!, details);
-    }
-
-    private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
-        let showGroupColsChanged = false;
-        const showGroupCols = this.prevShowGroupCols;
-        const showCols = this.showRowGroupCols.getShowRowGroupCols();
-        if (!showGroupCols || groupColumnsChanged(showGroupCols, showCols)) {
-            showGroupColsChanged = !!showGroupCols;
-            this.prevShowGroupCols = makeGroupColumns(showCols);
-        }
-
-        if (!afterColumnsChanged || details.groupColsChanged) {
-            return false; // We need the full grouping stage
-        }
-
-        if (showGroupColsChanged) {
-            // if the group display cols have changed, then we need to update rowNode.groupData
-            this.checkAllGroupDataAfterColsChanged(details);
-        }
-
-        return true;
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {

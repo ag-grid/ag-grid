@@ -40,15 +40,12 @@ const PATH_KEY_SEPARATOR = String.fromCodePoint(31, 41150, 8291);
 const PATH_KEY_SEPARATOR_LEN = 3;
 
 export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
-    private groupColsIds: string = '';
-    private groupColsChanged: boolean = true;
     private parentIdGetter: DataFieldGetter<TData, string> | null = null;
     private fillerNodesById: Map<string, GroupingRowNode<TData>> | null = null;
     private nodesToUnselect: GroupingRowNode<TData>[] | null = null;
 
     public override destroy(): void {
         super.destroy();
-        this.groupColsIds = '';
         this.parentIdGetter = null;
         this.fillerNodesById = null!;
         this.nodesToUnselect = null;
@@ -57,8 +54,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public reset(): void {
         this.destroyFillerRows();
         this.deselectHiddenNodes(false);
-        this.groupColsIds = '';
-        this.groupColsChanged = true;
         this.parentIdGetter = null;
     }
 
@@ -67,8 +62,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     public execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean {
-        const { changedRowNodes, changedPath, afterColumnsChanged } = params;
-        this.checkGroupColsUpdated(afterColumnsChanged);
+        const { changedRowNodes, changedPath } = params;
 
         const rootNode = params.rowNode as GroupingRowNode<TData>;
 
@@ -240,7 +234,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private preprocessRows(rootNode: GroupingRowNode<TData>): number {
         const rootAllLeafChildren = rootNode.allLeafChildren!;
         const allLeafChildrenLen = rootAllLeafChildren.length;
-        const groupColsChanged = this.groupColsChanged;
         let preprocessedCount = 0;
         let treeChanged = false;
         for (let i = 0; i < allLeafChildrenLen; ++i) {
@@ -263,7 +256,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
                 parent.treeNodeFlags = parentFlags;
 
-                if (!current.groupData || groupColsChanged) {
+                if (!current.groupData) {
                     current.treeNodeFlags |= FLAG_CHANGED;
                     this.setGroupData(current, current.key!);
                 }
@@ -812,21 +805,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         row.updateHasChildren();
         if (row.rowIndex !== null) {
             row.clearRowTopAndRowIndex();
-        }
-    }
-
-    private checkGroupColsUpdated(afterColumnsChanged: boolean | undefined): void {
-        this.groupColsChanged = false;
-        if (afterColumnsChanged || !this.groupColsIds) {
-            const cols = this.beans.showRowGroupCols?.getShowRowGroupCols() ?? _EmptyArray;
-            let groupColsIds = '';
-            for (let i = 0, len = cols.length; i < len; ++i) {
-                groupColsIds += cols[i].getId() + PATH_KEY_SEPARATOR;
-            }
-            if (this.groupColsIds !== groupColsIds) {
-                this.groupColsIds = groupColsIds;
-                this.groupColsChanged = true;
-            }
         }
     }
 }
