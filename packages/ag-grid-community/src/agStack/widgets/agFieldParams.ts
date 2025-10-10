@@ -14,6 +14,7 @@ export interface AgFieldParams extends AgLabelParams {
     value?: any;
     width?: number;
     onValueChange?: (value?: any) => void;
+    ariaLabel?: string | null;
 }
 
 export interface AgInputFieldParams<TComponentSelectorType extends string> extends AgFieldParams {
@@ -26,4 +27,5 @@ export interface AgCheckboxParams<TComponentSelectorType extends string>
     extends AgInputFieldParams<TComponentSelectorType> {
     readOnly?: boolean;
     passive?: boolean;
+    name?: string;
 }

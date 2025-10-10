@@ -194,7 +194,7 @@ export {
 } from './agStack/widgets/agFieldParams';
 export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
 export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
-export { AgRadioButton, AgRadioButtonParams } from './agStack/widgets/agRadioButton';
+export { AgRadioButton, AgRadioButtonParams, AgRadioButtonSelector } from './agStack/widgets/agRadioButton';
 export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
 export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
 export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
@@ -263,6 +263,7 @@ export {
 } from './agStack/interfaces/iProperties';
 export { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
+export { TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
 export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
 export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
