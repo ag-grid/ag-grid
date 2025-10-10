@@ -165,7 +165,7 @@ export class Environment
             return height;
         }
 
-        return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
+        return oldRowHeight != '' ? Number.parseFloat(oldRowHeight) : -1;
     }
 
     private getCSSVariablePixelValue(variable: Variable): number {

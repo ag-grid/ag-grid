@@ -49,7 +49,7 @@ export function _getAriaSortState(sortDirection: 'asc' | 'desc' | 'mixed' | null
 
 // ARIA ATTRIBUTE GETTERS
 export function _getAriaPosInSet(element: Element): number {
-    return parseInt(element.getAttribute('aria-posinset')!, 10);
+    return Number.parseInt(element.getAttribute('aria-posinset')!, 10);
 }
 
 export function _getAriaLabel(element: Element): string | null {

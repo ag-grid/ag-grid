@@ -202,8 +202,8 @@ export class TabGuardCtrl extends BeanStub {
         const focusableRange = focusableEls.slice(start, end);
         const targetTabIndex = this.gos.get('tabIndex');
         focusableRange.sort((a: HTMLElement, b: HTMLElement) => {
-            const indexA = parseInt(a.getAttribute('tabindex') || '0');
-            const indexB = parseInt(b.getAttribute('tabindex') || '0');
+            const indexA = Number.parseInt(a.getAttribute('tabindex') || '0');
+            const indexB = Number.parseInt(b.getAttribute('tabindex') || '0');
 
             if (indexB === targetTabIndex) {
                 return 1;

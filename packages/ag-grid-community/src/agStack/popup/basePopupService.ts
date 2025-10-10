@@ -562,7 +562,7 @@ export abstract class BasePopupService<
 
         const sourceRect = element.getBoundingClientRect();
 
-        const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
+        const extractFromPixelValue = (pxSize: string) => Number.parseInt(pxSize.substring(0, pxSize.length - 1), 10);
         const createPosition = (prop: 'top' | 'left', direction: Direction) => {
             const initialDiff = parentRect[prop] - sourceRect[prop];
             const initial = extractFromPixelValue(ePopup.style[prop]);
