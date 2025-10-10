@@ -1894,7 +1894,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    @Input() public ssrmExpandAllAffectsAllRows: boolean | undefined | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public ssrmExpandAllAffectsAllRows: boolean | undefined = undefined;
     /** Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */

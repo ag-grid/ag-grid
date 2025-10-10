@@ -1693,7 +1693,7 @@ export interface Props<TData> {
          * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
          * @agModule RowGroupingModule / TreeDataModule
          */
-    ssrmExpandAllAffectsAllRows?: boolean | undefined | undefined,
+    ssrmExpandAllAffectsAllRows?: boolean | undefined,
     /** Allows default sorting of groups.
          * @agModule `RowGroupingModule`
          */

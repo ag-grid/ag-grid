@@ -2126,7 +2126,7 @@ export interface GridOptions<TData = any> {
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    ssrmExpandAllAffectsAllRows?: boolean | undefined;
+    ssrmExpandAllAffectsAllRows?: boolean;
     /**
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
