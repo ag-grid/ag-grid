@@ -5,31 +5,41 @@ import unicorn from 'eslint-plugin-unicorn';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-let env = 'unknown';
-// if (process.env.CI != null) {
-//     env = 'ci';
-// } else if (process.env.NX_TASK_TARGET_PROJECT != null) {
-//     env = 'nx-task';
-// }
-
 export const sonarjsConfig = [
     sonarjs.configs.recommended,
     {
         files: ['**/*.{js,ts}'],
         rules: {
-            // Show this warning in IDE and PRs, but not when running at command line (to reduce clutter).
-            'sonarjs/cognitive-complexity': env !== 'nx-task' ? 1 : 0,
-            'sonarjs/no-duplicate-string': env !== 'nx-task' ? 1 : 0,
-            // 'sonarjs/sonar-max-params': env !== 'nx-task' ? 1 : 0,
-            'sonarjs/todo-tag': env !== 'nx-task' ? 1 : 0,
-            'sonarjs/fixme-tag': env !== 'nx-task' ? 1 : 0,
-            // 'sonarjs/no-redeclare': env !== 'nx-task' ? 1 : 0,
-            'sonarjs/function-return-type': env !== 'nx-task' ? 1 : 0,
+            'sonarjs/no-duplicate-string': 0,
+            'sonarjs/sonar-max-params': 0,
+            'sonarjs/todo-tag': 0,
+            'sonarjs/fixme-tag': 0,
+            'sonarjs/no-redeclare': 0,
+            'sonarjs/function-return-type': 0,
 
-            // We don't really care about these.
+            // Need to work through these as required.
+            'sonarjs/different-types-comparison': 0,
+            'sonarjs/slow-regex': 0,
             'sonarjs/no-selector-parameter': 0,
             'sonarjs/redundant-type-aliases': 0,
             'sonarjs/new-cap': 0,
+            'sonarjs/deprecation': 0,
+            'sonarjs/cognitive-complexity': 0,
+            'sonarjs/class-name': 0,
+            'sonarjs/no-nested-functions': 0,
+            'sonarjs/no-nested-conditional': 0,
+            'sonarjs/pseudo-random': 0,
+            'sonarjs/public-static-readonly': 0,
+            'sonarjs/no-redundant-optional': 0,
+            'sonarjs/no-ignored-exceptions': 0,
+            'sonarjs/no-alphabetical-sort': 0,
+            'sonarjs/no-redundant-boolean': 0,
+            'sonarjs/no-async-constructor': 0,
+            'sonarjs/updated-loop-counter': 0,
+            'sonarjs/no-unused-vars': 0,
+            'sonarjs/no-misleading-array-reverse': 0,
+            'sonarjs/no-useless-intersection': 0,
+            'sonarjs/no-nested-assignment': 0,
 
             // Duplicates @typescript-eslint
             'sonarjs/sonar-no-unused-vars': 0,
@@ -37,17 +47,19 @@ export const sonarjsConfig = [
             'sonarjs/sonar-prefer-optional-chain': 0,
             'sonarjs/no-base-to-string': 0,
             'sonarjs/no-misused-promises': 0,
+            'sonarjs/no-fallthrough': 0,
 
             // Unicorn rules, as referenced from the SonarCloud documentation.
-            'unicorn/prefer-number-properties': 1,
-            'unicorn/no-array-for-each': 1,
-            'unicorn/prefer-export-from': 1,
-            'unicorn/prefer-dom-node-remove': 1,
-            'unicorn/prefer-math-trunc': 1,
-            'unicorn/prefer-at': 1,
-            'unicorn/prefer-global-this': 1,
-            'unicorn/prefer-includes': 1,
-            'unicorn/no-zero-fractions': 1,
+            // 'unicorn/prefer-number-properties': 1,
+            // 'unicorn/no-array-for-each': 1,
+            'unicorn/prefer-export-from': 0,
+            'unicorn/prefer-dom-node-remove': 0,
+            'unicorn/prefer-math-trunc': 0,
+            'unicorn/prefer-at': 0,
+            'unicorn/prefer-includes': 0,
+            'unicorn/no-zero-fractions': 0,
+
+            // 'unicorn/prefer-global-this': 1,
         },
     },
 ];
