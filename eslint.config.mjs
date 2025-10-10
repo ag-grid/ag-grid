@@ -32,7 +32,7 @@ export const sonarjsConfig = [
             'sonarjs/no-nested-conditional': 0,
             'sonarjs/pseudo-random': 0,
             'sonarjs/public-static-readonly': 0,
-            'sonarjs/no-redundant-optional': 0,
+            'sonarjs/no-redundant-optional': 1,
             'sonarjs/no-ignored-exceptions': 0,
             'sonarjs/no-alphabetical-sort': 0,
             'sonarjs/no-redundant-boolean': 0,
