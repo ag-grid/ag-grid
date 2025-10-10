@@ -1,6 +1,5 @@
-import type { _AiToolkitGridApi } from '../api/gridApi';
-import { ColumnApiModule } from '../columns/columnModule';
-import type { _ModuleWithApi } from '../interfaces/iModule';
+import type { _AiToolkitGridApi, _ModuleWithApi } from 'ag-grid-community';
+import { ColumnApiModule } from 'ag-grid-community';
 import { VERSION } from '../version';
 import { getStructuredSchema } from './structuredSchema';
 

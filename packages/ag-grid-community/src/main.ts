@@ -880,6 +880,7 @@ export {
     _PinnedRowGridApi,
     _FindApi,
     _BatchEditApi,
+    _AiToolkitGridApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getViewportRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';

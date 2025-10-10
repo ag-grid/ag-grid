@@ -15,7 +15,11 @@ interface OpenAICompletionRequest {
     max_tokens?: number;
     stream?: boolean;
     response_format?: {
-        type: 'json_object' | 'text';
+        type: 'json_object' | 'text' | 'json_schema';
+        json_schema?: {
+            name: string;
+            schema: any;
+        };
     };
 }
 
@@ -55,7 +59,6 @@ interface StreamingChunk {
 }
 
 interface AIClientOptions {
-    apiKey: string;
     baseURL?: string;
     timeout?: number;
 }
@@ -80,16 +83,14 @@ interface GenerateObjectResult<T> {
 }
 
 export class OpenAIClient {
-    private apiKey: string;
     private baseURL: string;
     private timeout: number;
     private ajvValidator: any;
 
-    constructor(options: AIClientOptions) {
-        this.apiKey = options.apiKey;
-        this.baseURL = options.baseURL || 'https://api.openai.com/v1';
-        this.timeout = options.timeout || 30000;
-        
+    constructor(options?: AIClientOptions) {
+        this.baseURL = options?.baseURL || 'https://openai-proxy-nine-flame.vercel.app/v1';
+        this.timeout = options?.timeout || 30000;
+
         // Initialize AJV validator (loaded from CDN via Extras.tsx)
         if (typeof window !== 'undefined' && (window as any).Ajv) {
             this.ajvValidator = new (window as any).Ajv();
@@ -104,15 +105,7 @@ export class OpenAIClient {
      * Generate a structured object using OpenAI API with schema validation
      */
     async generateObject<T>(options: GenerateObjectOptions<T>): Promise<GenerateObjectResult<T>> {
-        const {
-            model,
-            schema,
-            messages,
-            temperature = 0.1,
-            maxTokens = 4096,
-            stream = false,
-            onProgress
-        } = options;
+        const { model, schema, messages, temperature = 0.1, maxTokens = 4096, stream = false, onProgress } = options;
 
         // Compile schema for validation if AJV is available
         let validateSchema: any = null;
@@ -132,8 +125,16 @@ export class OpenAIClient {
             messages: enhancedMessages,
             temperature,
             max_tokens: maxTokens,
-            response_format: { type: 'json_object' },
-            stream
+            response_format: schema
+                ? {
+                      type: 'json_schema',
+                      json_schema: {
+                          name: 'grid_state_response',
+                          schema: schema,
+                      },
+                  }
+                : { type: 'json_object' },
+            stream,
         };
 
         if (stream) {
@@ -147,7 +148,7 @@ export class OpenAIClient {
      * Add schema instructions to the system message
      */
     private addSchemaInstructions(messages: OpenAIMessage[], schema: any): OpenAIMessage[] {
-        const schemaInstruction = schema 
+        const schemaInstruction = schema
             ? `\n\nIMPORTANT: Respond with valid JSON that conforms to this schema:\n${JSON.stringify(schema, null, 2)}`
             : '\n\nIMPORTANT: Respond with valid JSON only.';
 
@@ -155,7 +156,7 @@ export class OpenAIClient {
             if (index === 0 && message.role === 'system') {
                 return {
                     ...message,
-                    content: message.content + schemaInstruction
+                    content: message.content + schemaInstruction,
                 };
             }
             return message;
@@ -168,14 +169,13 @@ export class OpenAIClient {
     private async handleNonStreamingResponse<T>(
         requestBody: OpenAICompletionRequest,
         validateSchema: any
-    ): Promise<GenerateObjectResult<T>> {
+    ): Promise<any> {
         const response = await this.makeRequest('/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.apiKey}`
             },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -195,7 +195,9 @@ export class OpenAIClient {
         try {
             parsedObject = JSON.parse(content);
         } catch (error) {
-            throw new Error(`Failed to parse JSON response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to parse JSON response: ${error instanceof Error ? error.message : 'Unknown error'}`
+            );
         }
 
         // Validate against schema if available
@@ -205,14 +207,7 @@ export class OpenAIClient {
             // Continue anyway, but log the validation failure
         }
 
-        return {
-            object: parsedObject,
-            usage: {
-                promptTokens: data.usage.prompt_tokens,
-                completionTokens: data.usage.completion_tokens,
-                totalTokens: data.usage.total_tokens
-            }
-        };
+        return parsedObject;
     }
 
     /**
@@ -222,14 +217,13 @@ export class OpenAIClient {
         requestBody: OpenAICompletionRequest,
         validateSchema: any,
         onProgress?: (partial: string) => void
-    ): Promise<GenerateObjectResult<T>> {
+    ): Promise<any> {
         const response = await this.makeRequest('/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.apiKey}`
             },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(requestBody),
         });
 
         if (!response.ok) {
@@ -287,7 +281,9 @@ export class OpenAIClient {
         try {
             parsedObject = JSON.parse(fullContent);
         } catch (error) {
-            throw new Error(`Failed to parse JSON response: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            throw new Error(
+                `Failed to parse JSON response: ${error instanceof Error ? error.message : 'Unknown error'}`
+            );
         }
 
         // Validate against schema if available
@@ -297,9 +293,7 @@ export class OpenAIClient {
             // Continue anyway, but log the validation failure
         }
 
-        return {
-            object: parsedObject
-        };
+        return parsedObject;
     }
 
     /**
@@ -307,14 +301,14 @@ export class OpenAIClient {
      */
     private async makeRequest(endpoint: string, options: RequestInit): Promise<Response> {
         const url = `${this.baseURL}${endpoint}`;
-        
+
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
         try {
             const response = await fetch(url, {
                 ...options,
-                signal: controller.signal
+                signal: controller.signal,
             });
             clearTimeout(timeoutId);
             return response;
@@ -341,9 +335,9 @@ export function createOpenAI(options: AIClientOptions): OpenAIClient {
 export async function generateObject<T>(
     client: OpenAIClient,
     options: Omit<GenerateObjectOptions<T>, 'model'> & { model?: string }
-): Promise<GenerateObjectResult<T>> {
+): Promise<any> {
     return client.generateObject({
         model: 'gpt-4o-mini',
-        ...options
+        ...options,
     });
 }

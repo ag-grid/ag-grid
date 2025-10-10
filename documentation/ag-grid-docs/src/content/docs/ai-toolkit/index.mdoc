@@ -1,0 +1,109 @@
+---
+title: 'AI Toolkit'
+enterprise: true
+---
+
+A collection of API methods and parameters that make integrating LLMs with AG Grid simple.
+
+By using the AI Toolkit you can allow users to interact with the grid using natural language. The example below demonstrates how you might provide a chat interface to your users, allowing them to ask questions about the data in the grid and have the grid respond with the appropriate state changes.
+
+Here are a few you can try:
+
+- "Show me all the gold medals won by the USA"
+- "Sort the competitors with the youngest first"
+- "Group by country and show the total number of medals won"
+
+{% gridExampleRunner title="Natural Language Grid State Management" name="natural-language-grid-state" exampleHeight=1000 /%}
+
+## Structured Schema
+
+To allow you to keep control over what aspects of the grid your users can manipulate using natural language, the grid exposes an API method `getStructuredSchema`, which returns a JSON schema that can be sent to an LLM as part of a prompt.
+
+Many LLMs, including ChatGPT and Gemini, support the ability to return structured data that conforms to a provided schema. By providing the schema returned by `getStructuredSchema` to the LLM, along with other metadata as you wish, you can ensure that the response from the LLM can be passed directly to the `setGridState` API method.
+
+If you wish to integrate with an LLM that does not support structured data natively, you can still use the schema to validate and parse the response from the LLM before passing it to `setGridState`.
+
+The schema returned by `getStructuredSchema` is a narrow representation of what can be achieved using the grid's API. For example, if a column is not sortable, the schema will not include that column in the list of sortable columns. This ensures that the LLM is only able to generate valid state changes for the grid.
+
+The schema is made up of a series of "features", each representing a different aspect of the grid that can be manipulated. The following features are currently supported:
+- Column Visibility
+- Column Sizing
+- Column Grouping
+- Sorting
+- Aggregation
+- Pivoting
+- Filtering (Josh still finalizing)
+
+By default, all features are enabled and included in the schema. If you wish to limit the features returned in the schema, you can do so by providing a list of feature names to the `getStructuredSchema` method. The available feature names are:
+- `columnVisibility`
+- `columnSizing`
+- `columnGrouping`
+- `sorting`
+- `aggregation`
+- `pivoting`
+- `filtering`
+
+For example, if you only want to allow users to manipulate column visibility and sorting, you can call `getStructuredSchema` like this:
+```ts
+const schema = gridApi.getStructuredSchema(['columnVisibility', 'sorting']);
+```
+
+Since `setGridState` will by default overwrite all properties of the grid state, you should make sure to use the secondary parameter in setGridState which allows you you to specify features to ignore in the change. You can even ask you LLM to include a list of features it hasn't changed, and pass that list directly to `setGridState`. Or you may wish to merge the current state with the new state before passing it to `setGridState`.
+
+## AI Context
+
+The AI Toolkit also includes a new property on `ColDef` called `aiContext`. This property allows you to provide additional context about a column that can be used by the LLM when generating responses. For example, you might want to provide a description of what the column represents, or the units of measurement used in the column.
+
+```ts
+const columnDefs: ColDef[] = [
+    { field: 'athlete', aiContext: 'Name of the athlete' } ,
+    { field: 'salary', aiContext: 'Athlete salary in $1,000s' } ,
+    { field: 'country', aiContext: 'Country the athlete represents' } ,
+    { field: 'year', aiContext: 'Year of the Olympic games' } ,
+    { field: 'sport', aiContext: 'Sport the athlete competed in' } 
+]
+```
+
+This context will be included in the schema returned by `getStructuredSchema`, and can be used by the LLM to provide more accurate and relevant responses. It will not be shown to users in the grid UI.
+
+## Prompting
+
+The AI Toolkit does not include any prompting logic, as this will vary depending on the LLM you are using and your specific use case. This gives you the flexibility to craft prompts that are tailored to your users and the data in your grid.
+
+In our testing we have found a few things that help get the best results from LLMs when prompting them to generate grid state changes:
+
+- Include the current state of the grid in the prompt. This helps the LLM understand what the grid currently looks like, and what changes are being requested.
+- Request the LLM to only return the grid state changes, and nothing else. This helps ensure that the response can be passed directly to `setGridState()`.
+- You may wish to provide the LLM with a few rows of data from the grid, to help it understand the data it is working with. This is especially useful if your grid contains domain-specific data that the LLM may not be familiar with. If you have a small dataset, you can even include the entire dataset in the prompt by using `exportToCsv()`.
+- If you have any domain specific knowledge or terminology that you want the LLM to be aware of, include that in the prompt as well. e.g. "In this dataset, a 'medal' refers to any of gold, silver or bronze medals won at the Olympic games".
+- Including a list of available features also helps the LLM understand what it can and cannot do.
+
+Below are a few example prompts you can use as a starting point:
+
+```ts
+const prompt = `
+    You are an expert data analyst working with a data grid. 
+    The grid contains data about Olympic athletes and their achievements.
+
+    You should respond to user requests by generating a JSON object that 
+    represents their requested changes to the grid state. The response should 
+    include all their requested changes, along with any features that are 
+    already applied to the grid that they have not requested to change.
+
+    The following is the current state of a data grid, represented as a 
+    JSON object. The grid contains data about Olympic athletes and their achievements.
+
+    Current Grid State:
+    ${JSON.stringify(gridApi.getGridState(), null, 2)}
+
+    The grid has the following features available to manipulate:
+    - Column Visibility
+    - Column Sizing
+    - Column Grouping
+    - Sorting
+    - Aggregation
+    - Pivoting
+    - Filtering
+`
+```
+

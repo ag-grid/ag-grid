@@ -4,7 +4,6 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
 
-const API_KEY = ''; // <-- ENTER YOUR OPENAI API KEY HERE
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 
 interface IOlympicData {
@@ -151,7 +150,7 @@ function processRequest(event?: Event) {
 
     const currentState = gridApi.getState();
 
-    callChatGPT(userRequest, currentState, gridApi, API_KEY)
+    callChatGPT(userRequest, currentState, gridApi)
         .then(function (response) {
             // Apply the state changes
             if (Object.keys(response.gridState).length > 0) {
@@ -187,7 +186,7 @@ function processRequest(event?: Event) {
 function getCurrentState() {
     const state = gridApi.getState();
     const outputElement = document.getElementById('currentState') as HTMLDivElement;
-    outputElement.innerHTML = `<h4>Current Grid State:</h4><pre>${JSON.stringify(state, null, 2)}</pre>`;
+    // outputElement.innerHTML = `<h4>Current Grid State:</h4><pre>${JSON.stringify(state, null, 2)}</pre>`;
     outputElement.style.display = 'block';
 }
 

@@ -1,5 +1,4 @@
 import type { AgEvent } from '../agStack/interfaces/agEvent';
-import type { StructuredSchema } from '../aiToolkit/aiToolkitModule';
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateUtils';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragTypes';
 import type {
@@ -1866,7 +1865,7 @@ export interface _AiToolkitGridApi {
      * This schema can be passed to AT services to ensure the response is of the correct format.
      * @agModule `AiToolkitModule`
      */
-    getStructuredSchema(): StructuredSchema;
+    getStructuredSchema(): any;
 }
 
 export interface GridApi<TData = any>

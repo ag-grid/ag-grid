@@ -1,6 +1,6 @@
 import type { GridApi } from 'ag-grid-community';
-import { createOpenAI, generateObject } from './ai';
 
+import { OpenAIClient, generateObject } from './ai';
 import type { ChatGPTGridStateResponse } from './gridStateSchema';
 
 /**
@@ -10,18 +10,12 @@ import type { ChatGPTGridStateResponse } from './gridStateSchema';
 export async function callChatGPT(
     userRequest: string,
     currentState: any,
-    gridApi: GridApi,
-    apiKey: string
+    gridApi: GridApi
 ): Promise<ChatGPTGridStateResponse> {
-    if (!apiKey || apiKey.trim() === '') {
-        throw new Error('OpenAI API key is required');
-    }
-
-    const openai = createOpenAI({
-        apiKey: apiKey,
-    });
+    const openai = new OpenAIClient();
 
     const schema = gridApi.getStructuredSchema();
+    console.log('Using schema:', schema);
 
     const systemPrompt = `You are an AG-Grid state management assistant. You help users modify grid configuration using natural language commands.
 
@@ -44,7 +38,34 @@ Important: Only modify the properties that the user specifically requested. If t
     try {
         const result = await generateObject(openai, {
             model: 'gpt-4o-mini',
-            schema: schema,
+            schema: {
+                type: 'object',
+                properties: {
+                    gridState: schema,
+                    propertiesToIgnore: {
+                        type: 'array',
+                        items: {
+                            type: 'string',
+                            enum: [
+                                'columnVisibility',
+                                'columnPinning',
+                                'sort',
+                                'filter',
+                                'rowGrouping',
+                                'rowPivoting',
+                                'aggregation',
+                                'columnSizing',
+                            ],
+                        },
+                        description: 'List of grid state properties to ignore when applying the new state',
+                    },
+                    explanation: {
+                        type: 'string',
+                        description: 'Human-readable explanation of the changes made to the grid state',
+                    },
+                },
+                required: ['gridState', 'explanation'],
+            },
             messages: [
                 {
                     role: 'system',
@@ -57,7 +78,8 @@ Important: Only modify the properties that the user specifically requested. If t
             ],
         });
 
-        return result.object as ChatGPTGridStateResponse;
+        console.log(result.gridState);
+        return result;
     } catch (error: any) {
         throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
     }

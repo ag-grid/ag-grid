@@ -1,4 +1,3 @@
-import { AiToolkitModule } from './aiToolkit/aiToolkitModule';
 import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { RowApiModule, ScrollApiModule } from './api/apiModule';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule } from './clientSideRowModel/clientSideRowModelModule';
@@ -92,6 +91,5 @@ export const AllCommunityModule: _ModuleWithoutApi = {
         DragAndDropModule,
         ClientSideRowModelApiModule,
         CellSpanModule,
-        AiToolkitModule,
     ],
 };

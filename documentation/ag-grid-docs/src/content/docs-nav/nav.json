@@ -32,10 +32,6 @@
                             "path": "modules"
                         },
                         {
-                            "title": "MCP Server",
-                            "path": "mcp-server"
-                        },
-                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
@@ -48,6 +44,21 @@
                             "type": "item",
                             "title": "Codemods",
                             "path": "codemods"
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "title": "AI Features",
+                    "children": [
+                        {
+                            "title": "AI Toolkit",
+                            "path": "ai-toolkit",
+                            "isEnterprise": true
+                        },
+                        {
+                            "title": "MCP Server",
+                            "path": "mcp-server"
                         }
                     ]
                 },
