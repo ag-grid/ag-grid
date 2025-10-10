@@ -143,7 +143,6 @@ export class NumberFilter extends SimpleFilter<
         this.forEachInput((element) => {
             if (!element.getInputElement().validity.valid) {
                 invalidInputs = true;
-                return;
             }
         });
         return invalidInputs;

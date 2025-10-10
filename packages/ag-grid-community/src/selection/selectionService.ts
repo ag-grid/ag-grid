@@ -650,11 +650,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     private canSelectAll(): boolean {
-        const { gos } = this.beans;
-        if (!_isClientSideRowModel(gos)) {
-            return false;
-        }
-        return true;
+        return _isClientSideRowModel(this.beans.gos);
     }
 
     /**

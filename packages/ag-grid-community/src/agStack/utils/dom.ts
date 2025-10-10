@@ -235,7 +235,7 @@ export function _removeFromParent(node: Element | null) {
     }
 }
 
-export function _isInDOM(element: Element): boolean {
+export function _isInDOM(element: Element): element is HTMLElement {
     return !!(element as HTMLElement).offsetParent;
 }
 

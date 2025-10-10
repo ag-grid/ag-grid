@@ -503,7 +503,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     let rowGroupIndex: number | null | undefined = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);
     let rowGroup: boolean | null | undefined = getValueOrNull(colDef.rowGroup, colDef.initialRowGroup);
 
-    if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
+    if (rowGroupIndex == null && !rowGroup) {
         rowGroupIndex = null;
         rowGroup = null;
     }
@@ -511,7 +511,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     let pivotIndex: number | null | undefined = getValueOrNull(colDef.pivotIndex, colDef.initialPivotIndex);
     let pivot: boolean | null | undefined = getValueOrNull(colDef.pivot, colDef.initialPivot);
 
-    if (pivotIndex == null && (pivot == null || pivot == false)) {
+    if (pivotIndex == null && !pivot) {
         pivotIndex = null;
         pivot = null;
     }

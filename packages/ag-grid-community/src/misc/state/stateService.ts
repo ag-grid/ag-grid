@@ -899,11 +899,9 @@ export class StateService extends BeanStub implements NamedBean {
     private refreshStaleState(): void {
         const staleStateKeys = this.staleStateKeys;
         staleStateKeys.forEach((key) => {
-            switch (key) {
-                // only row selection supported for now
-                case 'rowSelection':
-                    this.setCachedStateValue(key, this.getRowSelectionState());
-                    break;
+            // only row selection supported for now
+            if (key === 'rowSelection') {
+                this.setCachedStateValue(key, this.getRowSelectionState());
             }
         });
         staleStateKeys.clear();

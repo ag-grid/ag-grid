@@ -10,9 +10,8 @@ export function migrateGridStateModel(state: GridState): GridState {
         state.version = '32.1.0';
     }
 
-    switch (state.version) {
-        case '32.1.0':
-            state = migrateV32_1(state);
+    if (state.version === '32.1.0') {
+        state = migrateV32_1(state);
     }
 
     state.version = VERSION;

@@ -40,6 +40,8 @@ import {
 type SimpleFilterDisplayParams<M extends ISimpleFilterModel> = ISimpleFilterParams &
     FilterDisplayParams<any, any, M | ICombinedSimpleModel<M>>;
 
+type FilterModelOrCombined<M extends ISimpleFilterModel> = M | ICombinedSimpleModel<M> | null;
+
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.
  *
@@ -154,7 +156,7 @@ export abstract class SimpleFilter<
         });
     }
 
-    public getModelFromUi(): M | ICombinedSimpleModel<M> | null {
+    public getModelFromUi(): FilterModelOrCombined<M> {
         const conditions = this.getUiCompleteConditions();
         if (conditions.length === 0) {
             return null;

@@ -28,6 +28,8 @@ import { DOM_DATA_KEY_CELL_CTRL, DOM_DATA_KEY_ROW_CTRL } from './rendering/rende
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _focusNextGridCoreContainer, _isCellFocusSuppressed, _isHeaderFocusSuppressed } from './utils/gridFocus';
 
+type FocusDirection = 'Before' | 'After' | null;
+
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusSvc' as const;
 
@@ -300,7 +302,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public focusHeaderPosition(params: {
         headerPosition: HeaderPosition | null;
-        direction?: 'Before' | 'After' | null;
+        direction?: FocusDirection;
         fromTab?: boolean;
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
@@ -367,7 +369,7 @@ export class FocusService extends BeanStub implements NamedBean {
     public focusHeaderPositionFromUserFunc(params: {
         userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition;
         headerPosition: HeaderPosition | null;
-        direction?: 'Before' | 'After' | null;
+        direction?: FocusDirection;
         event?: KeyboardEvent;
     }): boolean {
         if (_isHeaderFocusSuppressed(this.beans)) {
@@ -395,7 +397,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private getHeaderPositionFromUserFunc(params: {
         userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition;
-        direction?: 'Before' | 'After' | null;
+        direction?: FocusDirection;
         currentPosition: HeaderPosition | null;
         headerPosition: HeaderPosition | null;
         headerRowCount: number;
@@ -419,7 +421,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private focusProvidedHeaderPosition(params: {
         headerPosition: HeaderPosition;
-        direction?: 'Before' | 'After' | null;
+        direction?: FocusDirection;
         event?: KeyboardEvent;
         fromCell?: boolean;
         rowWithoutSpanValue?: number;

@@ -525,7 +525,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, beans } = this;
         const groupHeaderHeight = getGroupRowsHeight(this.beans);
-        const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => (total += next), 0) === 0;
+        const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => total + next, 0) === 0;
 
         comp.toggleCss('ag-header-parent-hidden', isZeroGroupHeight);
 

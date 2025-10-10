@@ -12,6 +12,15 @@ import type { IColumnKeyCreator } from './columnKeyCreator';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
 
+const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
+    if (isProvidedColumnGroup(child)) {
+        child.setupExpandable();
+    }
+    // we set the original parents at the end, rather than when we go along, as balancing the tree
+    // adds extra levels into the tree. so we can only set parents when balancing is done.
+    child.originalParent = parent;
+};
+
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.
  * Used for Pivoting.
@@ -75,15 +84,6 @@ export function _createColumnTreeWithIds(
     };
     const columnTree = beans.colGroupSvc ? beans.colGroupSvc.balanceColumnTree(root, 0, maxDepth, keyCreator) : root;
 
-    const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
-        if (isProvidedColumnGroup(child)) {
-            child.setupExpandable();
-        }
-        // we set the original parents at the end, rather than when we go along, as balancing the tree
-        // adds extra levels into the tree. so we can only set parents when balancing is done.
-        child.originalParent = parent;
-    };
-
     depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
 
     return {
@@ -123,15 +123,6 @@ export function _createColumnTree(
     const columnTree = colGroupSvc
         ? colGroupSvc.balanceColumnTree(unbalancedTree, 0, treeDepth, columnKeyCreator)
         : unbalancedTree;
-
-    const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgProvidedColumnGroup) => {
-        if (isProvidedColumnGroup(child)) {
-            child.setupExpandable();
-        }
-        // we set the original parents at the end, rather than when we go along, as balancing the tree
-        // adds extra levels into the tree. so we can only set parents when balancing is done.
-        child.originalParent = parent;
-    };
 
     depthFirstOriginalTreeSearch(null, columnTree, depthFirstCallback);
 

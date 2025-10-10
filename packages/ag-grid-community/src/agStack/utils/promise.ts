@@ -1,9 +1,5 @@
 export function _isPromise<T>(fn: any): fn is Promise<T> {
-    if (typeof fn.then === 'function') {
-        return true;
-    }
-
-    return false;
+    return typeof fn.then === 'function';
 }
 
 export function _wrapInterval(action: any, timeout?: any): AgPromise<number> {

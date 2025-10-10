@@ -150,26 +150,25 @@ export abstract class BaseEditStrategy extends BeanStub {
                 _destroyEditor(this.beans, cell, { cancel });
                 this.model.stop(cell);
             });
-            return true;
-        }
+        } else {
+            const actions = this.processValidationResults(results);
 
-        const actions = this.processValidationResults(results);
+            if (actions.destroy.length > 0) {
+                actions.destroy.forEach((cell) => {
+                    _destroyEditor(this.beans, cell, { event, cancel });
+                    this.model.stop(cell);
+                });
+            }
 
-        if (actions.destroy.length > 0) {
-            actions.destroy.forEach((cell) => {
-                _destroyEditor(this.beans, cell, { event, cancel });
-                this.model.stop(cell);
-            });
-        }
+            if (actions.keep.length > 0) {
+                actions.keep.forEach((cell) => {
+                    const cellCtrl = _getCellCtrl(this.beans, cell);
 
-        if (actions.keep.length > 0) {
-            actions.keep.forEach((cell) => {
-                const cellCtrl = _getCellCtrl(this.beans, cell);
-
-                if (!this.editSvc?.cellEditingInvalidCommitBlocks()) {
-                    cellCtrl && this.editSvc.revertSingleCellEdit(cellCtrl);
-                }
-            });
+                    if (!this.editSvc?.cellEditingInvalidCommitBlocks()) {
+                        cellCtrl && this.editSvc.revertSingleCellEdit(cellCtrl);
+                    }
+                });
+            }
         }
 
         return true;
@@ -187,7 +186,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         if (rowNode) {
             positions.forEach((pos) => {
                 // if the rowNode is provided, we only keep positions that match it
-                if (!(!rowNode || pos.rowNode === rowNode)) {
+                if (pos.rowNode !== rowNode) {
                     discard.push(pos);
                 }
             });

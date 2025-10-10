@@ -7,6 +7,7 @@ import type { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from '../row/rowCtrl';
 import { SpannedRowCtrl } from './spannedRowCtrl';
 
+type SpannedRowContainerType = 'top' | 'bottom' | 'center';
 export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implements NamedBean {
     beanName = 'spannedRowRenderer' as const;
 
@@ -29,7 +30,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
     /**
      * When displayed rows or cols change, the spanned cell ctrls need to update
      */
-    public createCtrls(ctrlsKey: 'top' | 'bottom' | 'center'): void {
+    public createCtrls(ctrlsKey: SpannedRowContainerType): void {
         const { rowSpanSvc } = this.beans;
 
         const previousCtrls = this.getCtrlsMap(ctrlsKey);
@@ -84,7 +85,7 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
     }
 
     // cannot use getAllRowCtrls as it returns this services row ctrls.
-    private getAllRelevantRowControls(ctrlsKey: 'top' | 'bottom' | 'center'): RowCtrl[] {
+    private getAllRelevantRowControls(ctrlsKey: SpannedRowContainerType): RowCtrl[] {
         const { rowRenderer } = this.beans;
         switch (ctrlsKey) {
             case 'top':

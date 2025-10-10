@@ -53,6 +53,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
         }
         // if not found in cache, return the function
         const functionBody = this.createFunctionBody(expression);
+        // eslint-disable-next-line sonarjs/code-eval
         const theFunction = new Function(
             'x, ctx, oldValue, newValue, value, node, data, colDef, rowIndex, api, getValue, column, columnGroup',
             functionBody

@@ -183,11 +183,7 @@ export function _isAnimateRows(gos: GridOptionsService) {
 }
 
 export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
-    if (gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print')) {
-        return false;
-    }
-
-    return true;
+    return !(gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print'));
 }
 
 export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {

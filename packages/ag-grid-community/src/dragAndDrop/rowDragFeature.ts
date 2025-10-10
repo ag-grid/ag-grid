@@ -585,12 +585,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             let valid = true;
 
             const row = rows[i];
-            if (!row || row.footer || (row.rowTop === null && row !== this.beans.rowModel.getRowNode(row.id!))) {
-                valid = false; // This row cannot be dragged, not in allLeafChildren and not a filler
-            } else if (newParent && row.parent !== newParent && wouldFormCycle(row, newParent)) {
-                valid = false; // Cannot move to a parent that would create a cycle
-            } else if (!getLeafRow(row)) {
-                valid = false; // No leaf to move, so nothing to do
+            if (
+                !row ||
+                row.footer ||
+                (row.rowTop === null && row !== this.beans.rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
+                (newParent && row.parent !== newParent && wouldFormCycle(row, newParent)) || // Cannot move to a parent that would create a cycle
+                !getLeafRow(row) // No leaf to move, so nothing to do
+            ) {
+                valid = false;
             }
 
             if (valid) {

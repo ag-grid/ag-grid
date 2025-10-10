@@ -1013,6 +1013,7 @@ export {
     ColDefField,
     AbstractColDef,
     ColTypeDef,
+    ColumnSelectorKey,
     ValueSetterParams,
     ValueParserParams,
     ValueFormatterParams,

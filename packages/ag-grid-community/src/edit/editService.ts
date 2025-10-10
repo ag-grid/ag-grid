@@ -269,8 +269,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             startedEdit,
             silent,
         });
-
-        return;
     }
 
     public stopEditing(position?: EditPosition, params?: StopEditParams): boolean {

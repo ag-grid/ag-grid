@@ -1129,13 +1129,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.removeRowCompsNotToDraw(indexesToDraw, !animate);
 
         // add in new rows
-        const rowCtrls: RowCtrl[] = [];
-
         indexesToDraw.forEach((rowIndex) => {
-            const rowCtrl = this.createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll);
-            if (_exists(rowCtrl)) {
-                rowCtrls.push(rowCtrl);
-            }
+            this.createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll);
         });
 
         if (rowsToRecycle) {
@@ -1219,7 +1214,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         rowsToRecycle: { [key: string]: RowCtrl | null } | null | undefined,
         animate: boolean,
         afterScroll: boolean
-    ): RowCtrl | null | undefined {
+    ): void {
         let rowNode: RowNode | undefined;
         let rowCtrl: RowCtrl | null = this.rowCtrlsByRowIndex[rowIndex];
 
@@ -1256,8 +1251,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         this.rowCtrlsByRowIndex[rowIndex] = rowCtrl!;
-
-        return rowCtrl;
     }
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {

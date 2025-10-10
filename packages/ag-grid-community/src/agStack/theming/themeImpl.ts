@@ -257,9 +257,7 @@ const uninstallLegacyCSS = () => {
         style.remove();
     }
 };
-const googleFontsLoaded = new Set<string>();
 const loadGoogleFont = async (font: string, nonce: string | undefined) => {
-    googleFontsLoaded.add(font);
     const css = `@import url('https://${googleFontsDomain}/css2?family=${encodeURIComponent(font)}:wght@100;200;300;400;500;600;700;800;900&display=swap');\n`;
     // fonts are always installed in the document head, they are inherited in
     // shadow DOM without the need for separate installation

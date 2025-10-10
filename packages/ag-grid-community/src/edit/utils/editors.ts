@@ -104,8 +104,6 @@ export function _setupEditors(
             }
         );
     }
-
-    return;
 }
 
 export function _sourceAndPendingDiffer({
@@ -184,8 +182,6 @@ export function _setupEditor(
             beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
         }
     }
-
-    return;
 }
 
 function _valueFromEditor(
