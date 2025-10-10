@@ -8,9 +8,9 @@ import type {
 import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
-import { fieldGetter } from '../rowHierarchy/fieldGetter';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
+import { fieldGetter } from './fieldAccess';
 
 // The approach used here avoids complex incremental updates by using linear passes and a final traversal.
 // We reduce memory allocations and footprint and we ensure consistent performance without keeping additional per node map.
