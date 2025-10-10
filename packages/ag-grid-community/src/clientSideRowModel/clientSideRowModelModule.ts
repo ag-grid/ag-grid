@@ -4,7 +4,6 @@ import { CsrmSsrmSharedApiModule, RowModelSharedApiModule } from '../api/sharedA
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SortModule } from '../sort/sortModule';
 import { VERSION } from '../version';
-import { ClientSideNodeManager } from './clientSideNodeManager';
 import { ClientSideRowModel } from './clientSideRowModel';
 import {
     applyTransaction,
@@ -27,7 +26,7 @@ export const ClientSideRowModelModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModel',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [ClientSideNodeManager, ClientSideRowModel, SortStage],
+    beans: [ClientSideRowModel, SortStage],
     dependsOn: [SortModule],
 };
 
