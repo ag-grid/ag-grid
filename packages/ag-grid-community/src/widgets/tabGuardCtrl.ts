@@ -105,9 +105,9 @@ export class TabGuardCtrl extends BeanStub {
 
         this.activateTabGuards();
 
-        [this.eTopGuard, this.eBottomGuard].forEach((guard) =>
-            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) })
-        );
+        for (const guard of [this.eTopGuard, this.eBottomGuard]) {
+            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) });
+        }
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
