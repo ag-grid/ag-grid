@@ -18,9 +18,9 @@ function writeSortedLines(toWrite, result) {
         return 0;
     });
 
-    toWrite.forEach((p) => {
+    for (const p of toWrite) {
         result += p.line;
-    });
+    }
     // for readability
     result += EOL;
     return result;
@@ -62,8 +62,8 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
-    _GET_ALL_GRID_OPTIONS().forEach((property) => {
-        if (skippableProperties.includes(property)) return;
+    for (const property of _GET_ALL_GRID_OPTIONS()) {
+        if (skippableProperties.includes(property)) continue;
 
         const typeName = typeLookup[property];
         const inputType = getSafeType(typeName);
@@ -78,14 +78,14 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
         line += `    @Input(${isBoolean ? '{ transform: booleanAttribute }' : ''}) public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
         const order = typeKeysOrder.findIndex((p) => p === property);
         propsToWrite.push({ order, line });
-    });
+    }
 
     let result = writeSortedLines(propsToWrite, '');
 
     let eventsToWrite = [];
     const missingEventTypes = [];
-    _PUBLIC_EVENTS.forEach((event) => {
-        if (skippableEvents.includes(event)) return;
+    for (const event of _PUBLIC_EVENTS) {
+        if (skippableEvents.includes(event)) continue;
 
         const onEvent = _getCallbackForEvent(event);
         const eventType = eventTypeLookup[onEvent];
@@ -97,7 +97,7 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
         } else {
             missingEventTypes.push(event);
         }
-    });
+    }
 
     if (missingEventTypes.length > 0) {
         throw new Error(
@@ -162,12 +162,12 @@ function extractTypes(context, propsToSkip = [], typesToSkip = []) {
 
     let propertyTypes = [];
     const regex = new RegExp(/(?<!\w)(?:[A-Z]\w+)/, 'g');
-    allTypes.forEach((tt) => {
+    for (const tt of allTypes) {
         const matches = tt.matchAll(regex);
         for (const match of matches) {
             propertyTypes.push(Array.from(match, (m) => m));
         }
-    });
+    }
     let expandedTypes = propertyTypes.flatMap((m) => m);
 
     const nonAgTypes = ['Partial', 'Document', 'HTMLElement', 'Function', 'TData'];
@@ -184,8 +184,9 @@ function getGridPropertiesAndEventsJs() {
 
     // Apply @Output formatting to public events that are present in this lookup
     const publicEventLookup = {};
-    _PUBLIC_EVENTS.forEach((e) => (publicEventLookup[_getCallbackForEvent(e)] = true));
-
+    for (const e of _PUBLIC_EVENTS) {
+        publicEventLookup[_getCallbackForEvent(e)] = true;
+    }
     let context = {
         typeLookup: {},
         eventTypeLookup: {},
