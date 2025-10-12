@@ -119,7 +119,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
-        list.forEach((col) => (map[col.getId()] = col));
+        for (const col of list) {
+            map[col.getId()] = col;
+        }
 
         this.colDefCols = { tree, treeDepth, list, map };
 

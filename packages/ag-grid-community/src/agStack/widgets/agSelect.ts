@@ -220,7 +220,9 @@ export class AgSelect<
     }
 
     public addOptions(options: ListOption<TValue>[]): this {
-        options.forEach((option) => this.addOption(option));
+        for (const option of options) {
+            this.addOption(option);
+        }
 
         return this;
     }

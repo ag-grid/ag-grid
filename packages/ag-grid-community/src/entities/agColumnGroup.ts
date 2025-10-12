@@ -83,11 +83,11 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
-        this.displayedChildren!.forEach((child) => {
+        for (const child of this.displayedChildren!) {
             if (isColumnGroup(child)) {
                 child.checkLeft();
             }
-        });
+        }
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
@@ -136,9 +136,9 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
     public getActualWidth(): number {
         let groupActualWidth = 0;
-        this.displayedChildren?.forEach((child) => {
+        for (const child of this.displayedChildren ?? []) {
             groupActualWidth += child.getActualWidth();
-        });
+        }
         return groupActualWidth;
     }
 
@@ -149,20 +149,20 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
 
         // if at least one child is resizable, then the group is resizable
         let result = false;
-        this.displayedChildren.forEach((child) => {
+        for (const child of this.displayedChildren) {
             if (child.isResizable()) {
                 result = true;
             }
-        });
+        }
 
         return result;
     }
 
     public getMinWidth(): number {
         let result = 0;
-        this.displayedChildren!.forEach((groupChild) => {
+        for (const groupChild of this.displayedChildren!) {
             result += groupChild.getMinWidth();
-        });
+        }
         return result;
     }
 
@@ -229,23 +229,23 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     }
 
     private addDisplayedLeafColumns(leafColumns: AgColumn[]): void {
-        this.displayedChildren!.forEach((child) => {
+        for (const child of this.displayedChildren ?? []) {
             if (isColumn(child)) {
                 leafColumns.push(child);
             } else if (isColumnGroup(child)) {
                 child.addDisplayedLeafColumns(leafColumns);
             }
-        });
+        }
     }
 
     private addLeafColumns(leafColumns: AgColumn[]): void {
-        this.children!.forEach((child) => {
+        for (const child of this.children ?? []) {
             if (isColumn(child)) {
                 leafColumns.push(child);
             } else if (isColumnGroup(child)) {
                 child.addLeafColumns(leafColumns);
             }
-        });
+        }
     }
 
     public getChildren(): (AgColumn | AgColumnGroup)[] | null {
@@ -292,11 +292,11 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         // Add cols based on columnGroupShow
         // Note - the below also adds padding groups, these are always added because they never have
         // colDef.columnGroupShow set.
-        this.children!.forEach((child) => {
+        for (const child of this.children ?? []) {
             // never add empty groups
             const emptyGroup = isColumnGroup(child) && !child.displayedChildren?.length;
             if (emptyGroup) {
-                return;
+                continue;
             }
 
             const headerGroupShow = child.getColumnGroupShow();
@@ -317,7 +317,7 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
                     this.displayedChildren!.push(child);
                     break;
             }
-        });
+        }
 
         this.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
     }

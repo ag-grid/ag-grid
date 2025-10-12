@@ -65,7 +65,9 @@ export class AgPromise<T> {
         this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;
 
-        this.waiters.forEach((waiter) => waiter(value));
+        for (const waiter of this.waiters) {
+            waiter(value);
+        }
     }
 
     private onReject(_: any): void {}

@@ -34,11 +34,11 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         const { colModel, gos, visibleCols } = this.beans;
 
-        columnWidths.forEach((columnWidth) => {
+        for (const columnWidth of columnWidths) {
             const col = colModel.getColDefCol(columnWidth.key) || colModel.getCol(columnWidth.key);
 
             if (!col) {
-                return;
+                continue;
             }
 
             sets.push({
@@ -57,7 +57,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             if (shiftKey) {
                 const otherCol = visibleCols.getColAfter(col);
                 if (!otherCol) {
-                    return;
+                    continue;
                 }
 
                 const widthDiff = col.getActualWidth() - columnWidth.newWidth;
@@ -69,7 +69,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                     columns: [otherCol],
                 });
             }
-        });
+        }
 
         if (sets.length === 0) {
             return;
@@ -108,7 +108,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const changedCols: AgColumn[] = [];
         const allResizedCols: AgColumn[] = [];
 
-        resizeSets.forEach((set) => {
+        for (const set of resizeSets) {
             const { width, columns, ratios } = set;
 
             // keep track of pixels used, and last column gets the remaining,
@@ -116,7 +116,9 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             const newWidths: { [colId: string]: number } = {};
             const finishedCols: { [colId: string]: boolean } = {};
 
-            columns.forEach((col) => allResizedCols.push(col));
+            for (const col of columns) {
+                allResizedCols.push(col);
+            }
 
             // the loop below goes through each col. if a col exceeds it's min/max width,
             // it then gets set to its min/max width and the column is removed marked as 'finished'
@@ -190,7 +192,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 });
             }
 
-            columns.forEach((col) => {
+            for (const col of columns) {
                 const newWidth = newWidths[col.getId()];
                 const actualWidth = col.getActualWidth();
 
@@ -198,8 +200,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                     col.setActualWidth(newWidth, source);
                     changedCols.push(col);
                 }
-            });
-        });
+            }
+        }
 
         // if no cols changed, then no need to update more or send event.
         const atLeastOneColChanged = changedCols.length > 0;
@@ -273,7 +275,7 @@ function checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
     let maxWidthAccumulated = 0;
     let maxWidthActive = true;
 
-    columns.forEach((col) => {
+    for (const col of columns) {
         const minWidth = col.getMinWidth();
         minWidthAccumulated += minWidth || 0;
 
@@ -285,7 +287,7 @@ function checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
             // then has no max width, as at least one column can take as much width as possible
             maxWidthActive = false;
         }
-    });
+    }
 
     const minWidthPasses = width >= minWidthAccumulated;
     const maxWidthPasses = !maxWidthActive || width <= maxWidthAccumulated;

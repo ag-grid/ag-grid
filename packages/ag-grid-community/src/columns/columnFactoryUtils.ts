@@ -422,14 +422,14 @@ function assignColumnTypes(beans: BeanCollection, typeKeys: string[], colDefMerg
         }
     }
 
-    typeKeys.forEach((t) => {
+    for (const t of typeKeys) {
         const typeColDef = allColumnTypes[t.trim()];
         if (typeColDef) {
             _mergeDeep(colDefMerged, typeColDef, false, true);
         } else {
             _warn(36, { t });
         }
-    });
+    }
 }
 
 // if object has children, we assume it's a group

@@ -74,7 +74,9 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
             () => {
                 this.updateReady();
                 if (this.ready) {
-                    this.readyCallbacks.forEach((c) => c(this.params));
+                    for (const callback of this.readyCallbacks) {
+                        callback(this.params);
+                    }
                     this.readyCallbacks.length = 0;
                 }
             },

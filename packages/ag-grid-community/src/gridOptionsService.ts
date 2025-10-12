@@ -218,10 +218,10 @@ export class GridOptionsService
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map((event) => event.type);
 
-        events.forEach((event) => {
+        for (const event of events) {
             _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             this.propEventSvc.dispatchEvent(event);
-        });
+        }
     }
 
     public addPropertyEventListener<K extends keyof GridOptions>(

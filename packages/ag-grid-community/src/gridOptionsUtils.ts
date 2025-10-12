@@ -553,12 +553,12 @@ export function _combineAttributesAndGridOptions(
     // shallow copy (so we don't change the provided object)
     const mergedOptions = { ...gridOptions } as any;
     // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
-    gridOptionsKeys.forEach((key) => {
+    for (const key of gridOptionsKeys) {
         const value = component[key];
         if (typeof value !== 'undefined') {
             mergedOptions[key] = value;
         }
-    });
+    }
     return mergedOptions;
 }
 
@@ -569,10 +569,10 @@ export function _processOnChange(changes: any, api: GridApi): void {
 
     const gridChanges: Record<string, any> = {};
     let hasChanges = false;
-    Object.keys(changes).forEach((key) => {
+    for (const key of Object.keys(changes)) {
         gridChanges[key] = changes[key];
         hasChanges = true;
-    });
+    }
 
     if (!hasChanges) {
         return;

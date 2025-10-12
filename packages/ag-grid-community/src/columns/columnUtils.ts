@@ -106,7 +106,9 @@ export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | nu
 
 export function _updateColsMap(cols: ColumnCollections): void {
     cols.map = {};
-    cols.list.forEach((col) => (cols.map[col.getId()] = col));
+    for (const col of cols.list) {
+        cols.map[col.getId()] = col;
+    }
 }
 
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {

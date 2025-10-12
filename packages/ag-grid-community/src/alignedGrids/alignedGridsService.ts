@@ -85,12 +85,12 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.getAlignedGridApis().forEach((api) => {
+        for (const api of this.getAlignedGridApis()) {
             if (api.isDestroyed()) {
-                return;
+                continue;
             }
             api.dispatchEvent(event);
-        });
+        }
     }
 
     // common logic across all consume methods. very little common logic, however extracting
@@ -172,7 +172,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         if (!colGroupSvc) {
             return;
         }
-        groupOpenedEvent.columnGroups.forEach((masterGroup) => {
+        for (const masterGroup of groupOpenedEvent.columnGroups) {
             // likewise for column group
             let otherColumnGroup: AgProvidedColumnGroup | null = null;
 
@@ -181,11 +181,11 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
             }
 
             if (masterGroup && !otherColumnGroup) {
-                return;
+                continue;
             }
 
             colGroupSvc.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
-        });
+        }
     }
 
     private processColumnEvent(colEvent: ColumnEvent): void {
@@ -245,15 +245,15 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                         newWidth: number;
                     };
                 } = {};
-                masterColumns.forEach((column) => {
+                for (const column of masterColumns) {
                     columnWidths[column.getId()] = { key: column.getColId(), newWidth: column.getActualWidth() };
-                });
+                }
                 // don't set flex columns width
-                resizedEvent.flexColumns?.forEach((col) => {
+                for (const col of resizedEvent.flexColumns ?? []) {
                     if (columnWidths[col.getId()]) {
                         delete columnWidths[col.getId()];
                     }
-                });
+                }
                 colResize?.setColumnWidths(
                     Object.values(columnWidths),
                     false,
@@ -265,8 +265,8 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         }
         const gridBodyCon = ctrlsSvc.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
-        this.getAlignedGridApis().forEach((api) => {
+        for (const api of this.getAlignedGridApis()) {
             api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
-        });
+        }
     }
 }

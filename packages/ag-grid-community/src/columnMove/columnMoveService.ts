@@ -95,7 +95,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             const isRtl = gos.get('enableRtl');
             let lastPlacement = isRtl ? MoveDirection.RIGHT : MoveDirection.LEFT;
             let rulePassed = true;
-            proposedColumnOrder.forEach((col) => {
+            for (const col of proposedColumnOrder) {
                 const placement = lockPositionToPlacement(col.getColDef().lockPosition);
                 if (isRtl) {
                     if (placement > lastPlacement) {
@@ -109,7 +109,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                     }
                 }
                 lastPlacement = placement;
-            });
+            }
 
             return rulePassed;
         };
@@ -286,18 +286,22 @@ function createDragItemForGroup(columnGroup: AgColumnGroup, allCols: AgColumn[])
 
     // capture visible state, used when re-entering grid to dictate which columns should be visible
     const visibleState: { [key: string]: boolean } = {};
-    allColumnsOriginalOrder.forEach((column) => (visibleState[column.getId()] = column.isVisible()));
+    for (const column of allColumnsOriginalOrder) {
+        visibleState[column.getId()] = column.isVisible();
+    }
 
     const allColumnsCurrentOrder: AgColumn[] = [];
-    allCols.forEach((column) => {
+    for (const column of allCols) {
         if (allColumnsOriginalOrder.indexOf(column) >= 0) {
             allColumnsCurrentOrder.push(column);
             _removeFromArray(allColumnsOriginalOrder, column);
         }
-    });
+    }
 
     // we are left with non-visible columns, stick these in at the end
-    allColumnsOriginalOrder.forEach((column) => allColumnsCurrentOrder.push(column));
+    for (const column of allColumnsOriginalOrder) {
+        allColumnsCurrentOrder.push(column);
+    }
 
     const columnsInSplit: AgColumn[] = [];
     const columnGroupColumns = columnGroup.getLeafColumns();

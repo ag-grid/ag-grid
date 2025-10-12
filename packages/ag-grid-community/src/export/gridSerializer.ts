@@ -387,13 +387,15 @@ export class GridSerializer extends BeanStub implements NamedBean {
         processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined
     ): void {
         const directChildrenHeaderGroups: (AgColumn | AgColumnGroup)[] = [];
-        displayedGroups.forEach((columnGroupChild) => {
+        for (const columnGroupChild of displayedGroups) {
             const columnGroup = columnGroupChild as AgColumnGroup;
             if (!columnGroup.getChildren) {
-                return;
+                continue;
             }
-            columnGroup.getChildren()!.forEach((it) => directChildrenHeaderGroups.push(it));
-        });
+            for (const it of columnGroup.getChildren() ?? []) {
+                directChildrenHeaderGroups.push(it);
+            }
+        }
 
         if (displayedGroups.length > 0 && isColumnGroup(displayedGroups[0])) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups, processGroupHeaderCallback);
@@ -415,7 +417,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     ) {
         const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
-        displayedGroups.forEach((columnGroupChild) => {
+        for (const columnGroupChild of displayedGroups) {
             const columnGroup: AgColumnGroup = columnGroupChild as AgColumnGroup;
 
             let name: string;
@@ -460,6 +462,6 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 columnGroup.getLeafColumns().length - 1,
                 collapsibleGroupRanges
             );
-        });
+        }
     }
 }

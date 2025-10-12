@@ -191,9 +191,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
         });
         if (warnings.size > 0) {
-            warnings.forEach((warning) => {
+            for (const warning of warnings) {
                 _warnOnce(warning);
-            });
+            }
         }
     }
 
@@ -275,10 +275,9 @@ function _fuzzyCheckStrings<V extends string>(
     );
 
     if (invalidInputs.length > 0) {
-        invalidInputs.forEach(
-            (invalidInput) =>
-                (fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values)
-        );
+        for (const invalidInput of invalidInputs) {
+            fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values;
+        }
     }
 
     return fuzzyMatches;

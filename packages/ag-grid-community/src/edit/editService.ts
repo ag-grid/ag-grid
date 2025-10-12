@@ -320,18 +320,18 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.strategy?.stop(cancel, event);
 
             // clear any dangling edits, after editor destruction
-            editsToDelete.forEach((position) => {
+            for (const position of editsToDelete) {
                 model.clearEditValue(position);
-            });
+            }
 
             this.bulkRefresh(undefined, edits);
 
             // refresh previously edited cells
-            model.getEditPositions(freshEdits).forEach((pos) => {
+            for (const pos of model.getEditPositions(freshEdits)) {
                 const cellCtrl = _getCellCtrl(beans, pos);
                 const valueChanged = _sourceAndPendingDiffer(pos);
                 cellCtrl?.refreshCell({ force: true, suppressFlash: !valueChanged });
-            });
+            }
 
             edits = freshEdits;
 
@@ -582,9 +582,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             parent = parent.parent;
         }
 
-        updatedNodes.forEach((node) => this.dispatchEditValuesChanged({ rowNode: node, column }, edit));
-        updatedNodes.forEach((node) => _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params));
-        refreshNodes.forEach((node) => _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params));
+        for (const node of updatedNodes) {
+            this.dispatchEditValuesChanged({ rowNode: node, column }, edit);
+        }
+        for (const node of updatedNodes) {
+            _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params);
+        }
+        for (const node of refreshNodes) {
+            _getCellCtrl(beans, { rowNode: node, column })?.refreshCell(params);
+        }
     }
 
     public stopAllEditing(cancel: boolean = false, source: 'api' | 'ui' = 'ui'): void {
@@ -1007,17 +1013,17 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const edits: EditMap = new Map();
 
-        cells.forEach(({ colId, column, colKey, rowIndex, rowPinned, newValue: pendingValue, state }) => {
+        for (let { colId, column, colKey, rowIndex, rowPinned, newValue: pendingValue, state } of cells) {
             const col = colId ? colModel.getCol(colId) : colKey ? colModel.getCol(colKey) : column;
 
             if (!col) {
-                return;
+                continue;
             }
 
             const rowNode = _getRowNode(beans, { rowIndex, rowPinned });
 
             if (!rowNode) {
-                return;
+                continue;
             }
             const sourceValue = valueSvc.getValue(col as AgColumn, rowNode, true, 'api');
 
@@ -1028,7 +1034,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             ) {
                 // If the new value is the same as the old value, we don't need to update
                 // Unless forceRefreshOfEditCellsOnly is true, in which case we don't short-circuit
-                return;
+                continue;
             }
 
             let editRow = edits.get(rowNode);
@@ -1053,7 +1059,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     isCancelBeforeStart: undefined,
                 },
             });
-        });
+        }
 
         this.setEditMap(edits, params);
     }

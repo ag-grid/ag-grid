@@ -120,20 +120,20 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
         const updatedCols: AgColumn[] = [];
 
-        keys.forEach((key) => {
+        for (const key of keys) {
             if (!key) {
-                return;
+                continue;
             }
             const column = colModel.getCol(key);
             if (!column) {
-                return;
+                continue;
             }
 
             if (column.getPinned() !== actualPinned) {
                 this.setColPinned(column, actualPinned);
                 updatedCols.push(column);
             }
-        });
+        }
 
         if (updatedCols.length) {
             visibleCols.refresh(source);

@@ -163,7 +163,7 @@ export function _applyColumnState(
         const previousRowGroupCols = rowGroupColsSvc?.columns.slice() ?? [];
         const previousPivotCols = pivotColsSvc?.columns.slice() ?? [];
 
-        states.forEach((state) => {
+        for (const state of states) {
             const colId = state.colId;
 
             // auto group columns are re-created so deferring syncing with ColumnState
@@ -171,13 +171,13 @@ export function _applyColumnState(
             if (isAutoGroupColumn) {
                 autoColStates.push(state);
                 unmatchedAndAutoStates.push(state);
-                return;
+                continue;
             }
 
             if (isColumnSelectionCol(colId)) {
                 selectionColStates.push(state);
                 unmatchedAndAutoStates.push(state);
-                return;
+                continue;
             }
 
             const column = getById(colId);
@@ -189,7 +189,7 @@ export function _applyColumnState(
                 syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, false);
                 _removeFromArray(columnsWithNoState, column);
             }
-        });
+        }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         const applyDefaultsFunc = (col: AgColumn) =>
@@ -207,11 +207,11 @@ export function _applyColumnState(
             colStates: ColumnState[],
             columns: AgColumn[] = []
         ) => {
-            colStates.forEach((stateItem) => {
+            for (const stateItem of colStates) {
                 const col = getCol(stateItem.colId);
                 _removeFromArray(columns, col);
                 syncColumnWithStateItem(col, stateItem, null, null, true);
-            });
+            }
             columns.forEach(applyDefaultsFunc);
         };
 
@@ -332,9 +332,9 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
     const columnStateBefore = _getColumnState(beans);
     const columnStateBeforeMap: { [colId: string]: ColumnState } = {};
 
-    columnStateBefore.forEach((col) => {
+    for (const col of columnStateBefore) {
         columnStateBeforeMap[col.colId!] = col;
-    });
+    }
 
     return () => {
         // dispatches generic ColumnEvents where all columns are returned rather than what has changed
@@ -353,13 +353,13 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
             }
 
             const changes = new Set(colsBefore);
-            colsAfter.forEach((id) => {
+            for (const id of colsAfter) {
                 // if the first list had it, delete it, as it's unchanged.
                 if (!changes.delete(id)) {
                     // if the second list has it, and first doesn't, add it.
                     changes.add(id);
                 }
-            });
+            }
 
             const changesArr = [...changes];
 
@@ -539,11 +539,11 @@ function orderLiveColsLikeState(params: ApplyColumnStateParams, colModel: Column
         return;
     }
     const colIds: string[] = [];
-    params.state.forEach((item) => {
+    for (const item of params.state) {
         if (item.colId != null) {
             colIds.push(item.colId);
         }
-    });
+    }
     sortColsLikeKeys(colModel.cols, colIds, colModel, gos);
 }
 
@@ -560,24 +560,24 @@ function sortColsLikeKeys(
     let newOrder: AgColumn[] = [];
     const processedColIds: { [id: string]: boolean } = {};
 
-    colIds.forEach((colId) => {
+    for (const colId of colIds) {
         if (processedColIds[colId]) {
-            return;
+            continue;
         }
         const col = cols.map[colId];
         if (col) {
             newOrder.push(col);
             processedColIds[colId] = true;
         }
-    });
+    }
 
     // add in all other columns
     let autoGroupInsertIndex = 0;
-    cols.list.forEach((col) => {
+    for (const col of cols.list) {
         const colId = col.getColId();
         const alreadyProcessed = processedColIds[colId] != null;
         if (alreadyProcessed) {
-            return;
+            continue;
         }
 
         const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
@@ -591,7 +591,7 @@ function sortColsLikeKeys(
             // normal columns, if missing from state list, are added at the end
             newOrder.push(col);
         }
-    });
+    }
 
     // this is already done in updateCols, however we changed the order above (to match the order of the state
     // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
@@ -617,15 +617,17 @@ function normaliseColumnMovedEventForColumnState(
     // we are only interested in columns that were both present and visible before and after
 
     const colStateAfterMapped: { [id: string]: ColumnState } = {};
-    colStateAfter.forEach((s) => (colStateAfterMapped[s.colId!] = s));
+    for (const s of colStateAfter) {
+        colStateAfterMapped[s.colId!] = s;
+    }
 
     // get id's of cols in both before and after lists
     const colsIntersectIds: { [id: string]: boolean } = {};
-    colStateBefore.forEach((s) => {
+    for (const s of colStateBefore) {
         if (colStateAfterMapped[s.colId!]) {
             colsIntersectIds[s.colId!] = true;
         }
-    });
+    }
 
     // filter state lists, so we only have cols that were present before and after
     const beforeFiltered = colStateBefore.filter((c) => colsIntersectIds[c.colId!]);
