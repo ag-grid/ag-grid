@@ -76,7 +76,9 @@ const GridBodyComp = () => {
         eRoot.current = eRef;
         if (!eRef || context.isDestroyed()) {
             beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
-            destroyFuncs.current.forEach((f) => f());
+            for (const f of destroyFuncs.current) {
+                f();
+            }
             destroyFuncs.current = [];
 
             return;

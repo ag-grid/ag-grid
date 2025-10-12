@@ -56,7 +56,7 @@ const GridComp = ({ context }: GridCompProps) => {
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
         const compProxy: IGridComp = {
-            destroyGridUi: () => {}, // do nothing, as framework users destroy grid by removing the comp
+            destroyGridUi: () => { }, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass,
             forceFocusOutOfContainer: (up?: boolean) => {
                 if (!up && paginationCompRef.current?.isDisplayed()) {
@@ -72,11 +72,11 @@ const GridComp = ({ context }: GridCompProps) => {
                 if (gridBodyCompEl) {
                     comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
                 }
-                focusableContainersRef.current.forEach((comp) => {
+                for (const comp of focusableContainersRef.current) {
                     if (comp.isDisplayed()) {
                         comps.push(comp);
                     }
-                });
+                }
                 return comps;
             },
             setCursor,
@@ -154,9 +154,9 @@ const GridComp = ({ context }: GridCompProps) => {
 
         return () => {
             context.destroyBeans(beansToDestroy);
-            additionalEls.forEach((el) => {
+            for (const el of additionalEls) {
                 el.parentElement?.removeChild(el);
-            });
+            }
         };
     }, [tabGuardReady, eGridBodyParent, context]);
 
