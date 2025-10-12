@@ -75,9 +75,9 @@ export class ClientSideValuesExtractor<V> extends BeanStub {
             const value = this.getValue(node);
 
             if (value != null && Array.isArray(value)) {
-                value.forEach((x) => {
+                for (const x of value) {
                     addValue(this.createKey(x, node), x);
-                });
+                }
                 if (value.length === 0) {
                     addValue(null, null);
                 }

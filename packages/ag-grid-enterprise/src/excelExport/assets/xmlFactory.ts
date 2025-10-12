@@ -41,20 +41,20 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
     if (xmlElement.properties) {
         if (xmlElement.properties.prefixedAttributes) {
             xmlElement.properties.prefixedAttributes.forEach((prefixedSet: PrefixedXmlAttributes) => {
-                Object.keys(prefixedSet.map).forEach((key) => {
+                for (const key of Object.keys(prefixedSet.map)) {
                     props += returnAttributeIfPopulated(
                         prefixedSet.prefix + key,
                         prefixedSet.map[key],
                         booleanTransformer
                     );
-                });
+                }
             });
         }
 
         if (xmlElement.properties.rawMap) {
-            Object.keys(xmlElement.properties.rawMap).forEach((key) => {
+            for (const key of Object.keys(xmlElement.properties.rawMap)) {
                 props += returnAttributeIfPopulated(key, xmlElement.properties!.rawMap[key], booleanTransformer);
-            });
+            }
         }
     }
     let result: string = '<' + xmlElement.name + props;
@@ -69,9 +69,9 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
 
     result += '>' + LINE_SEPARATOR;
     if (xmlElement.children) {
-        xmlElement.children.forEach((it) => {
+        for (const it of xmlElement.children) {
             result += createXml(it, booleanTransformer);
-        });
+        }
     }
 
     return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;

@@ -615,7 +615,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        rowNodes.forEach((rowNode) => {
+        for (const rowNode of rowNodes) {
             this.eventSvc.dispatchEvent({
                 type: 'rowValueChanged',
                 node: rowNode,
@@ -623,7 +623,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 rowIndex: rowNode.rowIndex!,
                 rowPinned: rowNode.rowPinned,
             });
-        });
+        }
     }
 
     private pasteMultipleValues(
@@ -671,12 +671,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
         };
 
-        clipboardGridData.forEach((clipboardRowData) => {
+        for (const clipboardRowData of clipboardGridData) {
             const rowNode = getNextGoodRowNode();
 
             // if we have come to end of rows in grid, then skip
             if (!rowNode) {
-                return;
+                continue;
             }
 
             clipboardRowData.forEach((value, index) =>
@@ -684,7 +684,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             );
 
             updatedRowNodes.push(rowNode);
-        });
+        }
     }
 
     private updateCellValue(
@@ -864,7 +864,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const currentCellRanges = rangeSvc.getCellRanges();
         const cellRanges = onlyFirst ? [currentCellRanges[0]] : currentCellRanges;
 
-        cellRanges.forEach((cellRange) => this.iterateActiveRange({ cellRange, rowCallback, preProcessRange }));
+        for (const cellRange of cellRanges) {
+            this.iterateActiveRange({ cellRange, rowCallback, preProcessRange });
+        }
     }
 
     private iterateActiveRange(params: {
@@ -932,22 +934,22 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             });
         }
 
-        ranges.forEach((range) => {
+        for (const range of ranges) {
             range.columns.forEach((col: AgColumn) => columnsSet.add(col));
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
-            rowPositions.forEach((rowPosition) => {
+            for (const rowPosition of rowPositions) {
                 const isInCache = flatCache.has(rowPosition.rowIndex);
                 if (!isClientSideRowModel && !isInCache) {
-                    return; // skip rows that are not in the flat cache
+                    continue; // skip rows that are not in the flat cache
                 }
                 const rowPositionAsString = `${rowPosition.rowIndex}-${rowPosition.rowPinned || 'null'}`;
                 if (!rowPositionsMap.get(rowPositionAsString)) {
                     rowPositionsMap.set(rowPositionAsString, true);
                     allRowPositions.push(rowPosition);
                 }
-            });
+            }
             Object.assign(allCellsToFlash, cellsToFlash);
-        });
+        }
 
         const allColumns = this.beans.visibleCols.allCols;
         const exportedColumns = Array.from(columnsSet) as AgColumn[];
@@ -974,7 +976,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const data: string[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
-        ranges.forEach((range) => {
+        for (const range of ranges) {
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             Object.assign(allCellsToFlash, cellsToFlash);
             data.push(
@@ -985,7 +987,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     includeGroupHeaders: params.includeGroupHeaders,
                 })
             );
-        });
+        }
 
         return { data: data.join('\n'), cellsToFlash: allCellsToFlash };
     }
@@ -1002,11 +1004,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         while (node) {
             rowPositions.push(node);
-            range.columns.forEach((column) => {
+            for (const column of range.columns) {
                 const { rowIndex, rowPinned } = node!;
                 const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
-            });
+            }
             if (_isSameRow(node, lastRow)) {
                 break;
             }

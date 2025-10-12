@@ -138,7 +138,7 @@ class AgStatusBar extends Component {
         const existingStatusPanelsToReuse: Map<string, IStatusPanelComp> = new Map();
 
         if (validStatusBarPanelsProvided) {
-            statusPanels.forEach((statusPanelConfig) => {
+            for (const statusPanelConfig of statusPanels) {
                 const key = statusPanelConfig.key ?? statusPanelConfig.statusPanel;
                 const existingStatusPanel = this.statusBarSvc.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
@@ -153,7 +153,7 @@ class AgStatusBar extends Component {
                         _removeFromParent(existingStatusPanel.getGui());
                     }
                 }
-            });
+            }
         }
 
         this.resetStatusBar();
@@ -177,7 +177,9 @@ class AgStatusBar extends Component {
     }
 
     private destroyComponents(): void {
-        Object.values(this.compDestroyFunctions).forEach((func) => func());
+        for (const func of Object.values(this.compDestroyFunctions)) {
+            func();
+        }
         this.compDestroyFunctions = {};
     }
 
@@ -188,7 +190,7 @@ class AgStatusBar extends Component {
     ): AgPromise<void> {
         const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp> }[] = [];
 
-        statusBarComponents.forEach((componentConfig) => {
+        for (const componentConfig of statusBarComponents) {
             // default to the component name if no key supplied
             const key = componentConfig.key || componentConfig.statusPanel;
             const existingStatusPanel = existingStatusPanelsToReuse.get(key);
@@ -203,7 +205,7 @@ class AgStatusBar extends Component {
                 );
 
                 if (compDetails == null) {
-                    return;
+                    continue;
                 }
                 promise = compDetails.newAgStackInstance();
             }
@@ -212,10 +214,10 @@ class AgStatusBar extends Component {
                 key,
                 promise,
             });
-        });
+        }
 
         return AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
-            componentDetails.forEach((componentDetail) => {
+            for (const componentDetail of componentDetails) {
                 componentDetail.promise.then((component: IStatusPanelComp) => {
                     const destroyFunc = () => {
                         this.destroyBean(component);
@@ -229,7 +231,7 @@ class AgStatusBar extends Component {
                         destroyFunc();
                     }
                 });
-            });
+            }
         });
     }
 }

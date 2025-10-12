@@ -104,10 +104,10 @@ export class SeriesItemsPanel extends Component {
     }
 
     private destroyActivePanels(): void {
-        this.activePanels.forEach((panel) => {
+        for (const panel of this.activePanels) {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
     }
 
     public override destroy(): void {

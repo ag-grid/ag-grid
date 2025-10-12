@@ -148,11 +148,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
         this.refreshSelectionIntegration();
 
-        this.columns?.list.forEach((col) => {
+        for (const col of this.columns?.list ?? []) {
             const newColDef = this.createRowNumbersColDef();
             col.setColDef(newColDef, null, source);
             _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
-        });
+        }
     }
 
     public getColumn(): AgColumn | null {

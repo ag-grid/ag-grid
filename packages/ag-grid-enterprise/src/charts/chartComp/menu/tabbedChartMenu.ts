@@ -32,14 +32,14 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     }
 
     public postConstruct(): void {
-        this.panels.forEach((panel) => {
+        for (const panel of this.panels) {
             const panelType = panel.replace('chart', '').toLowerCase() as 'settings' | 'data' | 'format';
             const panelComp = this.createPanel(panelType);
             const tabItem = this.createTab(panel, panelType, panelComp);
 
             this.tabs.push(tabItem);
             this.addDestroyFunc(() => this.destroyBean(panelComp));
-        });
+        }
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,

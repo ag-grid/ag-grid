@@ -295,7 +295,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         const uniqueValues: Map<string | null, TValue | null> = new Map();
         const formattedKeys: Set<string | null> = new Set();
         const { caseFormat, createKey } = this;
-        (values ?? []).forEach((value) => {
+        for (const value of values ?? []) {
             const valueToUse = _makeNull(value);
             const unformattedKey = createKey(valueToUse);
             const formattedKey = caseFormat(unformattedKey);
@@ -303,7 +303,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                 formattedKeys.add(formattedKey);
                 uniqueValues.set(unformattedKey, valueToUse);
             }
-        });
+        }
 
         return uniqueValues;
     }

@@ -324,14 +324,14 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 } else if (columns) {
                     withinInitialRange = true;
                     resetValues();
-                    columns.forEach((col) =>
+                    for (const col of columns) {
                         fillValues(
                             values,
                             col,
                             rowNode,
                             () => col !== (this.isLeft ? initialRange.columns[0] : _last(initialRange.columns))
-                        )
-                    );
+                        );
+                    }
                 }
 
                 finished = _isSameRow(currentRow, this.isUp ? finalRangeStartRow : finalRangeEndRow);
@@ -508,16 +508,16 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private clearMarkedPath() {
-        this.markedCells.forEach((cell) => {
+        for (const cell of this.markedCells) {
             if (!cell.isAlive()) {
-                return;
+                continue;
             }
             const { comp } = cell;
             comp.toggleCss('ag-selection-fill-top', false);
             comp.toggleCss('ag-selection-fill-right', false);
             comp.toggleCss('ag-selection-fill-bottom', false);
             comp.toggleCss('ag-selection-fill-left', false);
-        });
+        }
 
         this.markedCells.length = 0;
 
@@ -669,7 +669,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const colsToMark = allCols.slice(startCol + offset, endCol + offset);
         const { rangeStartRow, rangeEndRow } = this;
 
-        colsToMark.forEach((column) => {
+        for (const column of colsToMark) {
             let row: RowPosition = rangeStartRow;
             let isLastRow = false;
 
@@ -697,7 +697,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 row = _getRowBelow(beans, row)!;
             } while (!isLastRow);
-        });
+        }
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
@@ -710,7 +710,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const colsToMark = allCols.slice(startCol, endCol);
         const { rangeStartRow, rangeEndRow } = this;
 
-        colsToMark.forEach((column) => {
+        for (const column of colsToMark) {
             let row: RowPosition = rangeStartRow;
             let isLastRow: boolean = false;
 
@@ -729,7 +729,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 row = _getRowBelow(beans, row)!;
             } while (!isLastRow);
-        });
+        }
     }
 
     public override refresh(cellCtrl: CellCtrl) {

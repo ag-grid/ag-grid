@@ -173,17 +173,20 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private setResizers(): void {
-        [this.primaryColsPanel, this.rowGroupDropZonePanel, this.valuesDropZonePanel, this.pivotDropZonePanel].forEach(
-            (panel) => {
-                if (!panel) {
-                    return;
-                }
-                const eGui = panel.getGui();
-                panel.toggleResizable(
-                    !eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden')
-                );
+        for (const panel of [
+            this.primaryColsPanel,
+            this.rowGroupDropZonePanel,
+            this.valuesDropZonePanel,
+            this.pivotDropZonePanel,
+        ]) {
+            if (!panel) {
+                continue;
             }
-        );
+            const eGui = panel.getGui();
+            panel.toggleResizable(
+                !eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden')
+            );
+        }
     }
 
     private setLastVisible(): void {
@@ -191,7 +194,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         const columnDrops: HTMLElement[] = Array.prototype.slice.call(eGui.querySelectorAll('.ag-column-drop'));
 
-        columnDrops.forEach((columnDrop) => columnDrop.classList.remove('ag-last-column-drop'));
+        for (const columnDrop of columnDrops) {
+            columnDrop.classList.remove('ag-last-column-drop');
+        }
 
         const columnDropEls = eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)');
         const lastVisible = _last(columnDropEls) as HTMLElement;
@@ -232,7 +237,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public destroyChildren(): void {
         const childDestroyFuncs = this.childDestroyFuncs;
-        childDestroyFuncs.forEach((func) => func());
+        for (const func of childDestroyFuncs) {
+            func();
+        }
         childDestroyFuncs.length = 0;
         _clearElement(this.getGui());
     }

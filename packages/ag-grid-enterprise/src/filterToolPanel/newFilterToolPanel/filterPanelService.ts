@@ -72,11 +72,11 @@ export class FilterPanelService
             if (this.columnsLoaded) {
                 // Remove any filters no longer in the state
                 const newIds = new Set(state.filters?.map((f) => f.colId));
-                this.getIds().forEach((id) => {
+                for (const id of this.getIds()) {
                     if (!newIds.has(id)) {
                         this.remove(id);
                     }
-                });
+                }
 
                 // Clear out existing state so that new state order is maintained
                 this.clearStates();
@@ -378,9 +378,9 @@ export class FilterPanelService
     private applyState() {
         if (this.params && this.columnsLoaded) {
             this.initialStateApplied = true;
-            this.currState?.filters?.forEach(({ colId, expanded }) => {
+            for (const { colId, expanded } of this.currState?.filters ?? []) {
                 this.createFilter(colId, expanded);
-            });
+            }
         }
     }
 

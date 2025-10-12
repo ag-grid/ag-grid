@@ -190,7 +190,9 @@ export class MultiFilterHandler
     }
 
     public override destroy(): void {
-        this.handlerWrappers.forEach((wrapper) => this.destroyBean(wrapper?.handler));
+        for (const wrapper of this.handlerWrappers) {
+            this.destroyBean(wrapper?.handler);
+        }
         this.handlerWrappers.length = 0;
         super.destroy();
     }

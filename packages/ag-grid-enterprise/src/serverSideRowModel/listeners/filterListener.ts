@@ -53,14 +53,18 @@ export class FilterListener extends BeanStub implements NamedBean {
                 ? Object.keys(oldModel ?? {})
                 : this.getAdvancedFilterColumns(oldModel as AdvancedFilterModel | null);
             const newColumns = this.getAdvancedFilterColumns(newModel as AdvancedFilterModel | null);
-            oldColumns.forEach((column) => newColumns.add(column));
+            for (const column of oldColumns) {
+                newColumns.add(column);
+            }
             changedColumns = Array.from(newColumns);
         } else {
             newModel = this.filterManager?.getFilterModel() ?? {};
             if (advancedFilterEnabledChanged) {
                 // old model is of type `AdvancedFilterModel | null`
                 const oldColumns = this.getAdvancedFilterColumns(oldModel as AdvancedFilterModel | null);
-                Object.keys(newModel).forEach((column) => oldColumns.add(column));
+                for (const column of Object.keys(newModel)) {
+                    oldColumns.add(column);
+                }
                 changedColumns = Array.from(oldColumns);
             } else {
                 changedColumns = this.findChangedColumns(oldModel as FilterModel, newModel as FilterModel);
@@ -82,19 +86,23 @@ export class FilterListener extends BeanStub implements NamedBean {
     private findChangedColumns(oldModel: FilterModel, newModel: FilterModel): string[] {
         const allColKeysMap: { [key: string]: boolean } = {};
 
-        Object.keys(oldModel).forEach((key) => (allColKeysMap[key] = true));
-        Object.keys(newModel).forEach((key) => (allColKeysMap[key] = true));
+        for (const key of Object.keys(oldModel)) {
+            allColKeysMap[key] = true;
+        }
+        for (const key of Object.keys(newModel)) {
+            allColKeysMap[key] = true;
+        }
 
         const res: string[] = [];
 
-        Object.keys(allColKeysMap).forEach((key) => {
+        for (const key of Object.keys(allColKeysMap)) {
             const oldJson = JSON.stringify(oldModel[key]);
             const newJson = JSON.stringify(newModel[key]);
             const filterChanged = oldJson != newJson;
             if (filterChanged) {
                 res.push(key);
             }
-        });
+        }
 
         return res;
     }
@@ -107,7 +115,9 @@ export class FilterListener extends BeanStub implements NamedBean {
 
         const processAdvancedFilterModel = (filterModel: AdvancedFilterModel) => {
             if (filterModel.filterType === 'join') {
-                filterModel.conditions.forEach((condition) => processAdvancedFilterModel(condition));
+                for (const condition of filterModel.conditions) {
+                    processAdvancedFilterModel(condition);
+                }
             } else {
                 columns.add(filterModel.colId);
             }

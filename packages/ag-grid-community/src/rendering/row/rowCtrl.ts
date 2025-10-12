@@ -1633,7 +1633,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (gui) {
             callback(gui);
         } else {
-            this.allRowGuis.forEach(callback);
+            for (const gui of this.allRowGuis) {
+                callback(gui);
+            }
         }
     }
 

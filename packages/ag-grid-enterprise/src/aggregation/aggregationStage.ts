@@ -250,9 +250,9 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         });
 
         if (notChangedValueColumns && oldValues) {
-            notChangedValueColumns.forEach((valueColumn) => {
+            for (const valueColumn of notChangedValueColumns) {
                 result[valueColumn.getId()] = oldValues[valueColumn.getId()];
-            });
+            }
         }
 
         return result;

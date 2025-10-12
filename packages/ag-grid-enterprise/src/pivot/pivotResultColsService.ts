@@ -58,7 +58,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
 
         let foundColumn: AgColumn | null = null;
 
-        this.pivotResultCols.list.forEach((column) => {
+        for (const column of this.pivotResultCols.list) {
             const thisPivotKeys = column.getColDef().pivotKeys;
             const pivotValueColumn = column.getColDef().pivotValueColumn;
 
@@ -68,7 +68,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             if (pivotKeyMatches && pivotValueMatches) {
                 foundColumn = column;
             }
-        });
+        }
 
         return foundColumn;
     }
@@ -113,7 +113,9 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             const map = {};
 
             this.pivotResultCols = { tree, treeDepth, list, map };
-            this.pivotResultCols.list.forEach((col) => (this.pivotResultCols!.map[col.getId()] = col));
+            for (const col of this.pivotResultCols.list) {
+                this.pivotResultCols!.map[col.getId()] = col;
+            }
             const hasPreviousCols = !!this.previousPivotResultCols;
             this.previousPivotResultCols = null;
             this.colModel.refreshCols(!hasPreviousCols, source);
