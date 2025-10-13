@@ -264,11 +264,4 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         this.createManagedBean(new CenterWidthFeature((width) => this.comp.setCenterWidth(`${width}px`), true));
     }
-
-    private onDisplayedColumnsChanged(): void {
-        const includeFloatingFilter = !!this.beans.filterManager?.hasFloatingFilters() && !this.hidden;
-        if (this.includeFloatingFilter !== includeFloatingFilter) {
-            this.refresh(true);
-        }
-    }
 }
