@@ -64,13 +64,12 @@ const PINNED_BORDER_WIDTH: Variable = {
 };
 
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
-    for (const module of modules
-        .sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
-            const moduleCss = module.css;
-            if (moduleCss) {
-                cssMap.set(`module-${module.moduleName}`, moduleCss);
-            }
+    for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
+        const moduleCss = module.css;
+        if (moduleCss) {
+            cssMap.set(`module-${module.moduleName}`, moduleCss);
         }
+    }
 }
 
 export class Environment

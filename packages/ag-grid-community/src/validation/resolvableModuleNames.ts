@@ -77,7 +77,7 @@ export function resolveModuleNames(
     rowModelType: RowModelType
 ): (CommunityModuleName | EnterpriseModuleName)[] {
     const resolvedModuleNames: (CommunityModuleName | EnterpriseModuleName)[] = [];
-    for (const modName of (Array.isArray(moduleName) ? moduleName : [moduleName])) {
+    for (const modName of Array.isArray(moduleName) ? moduleName : [moduleName]) {
         const resolved = RESOLVABLE_MODULE_NAMES[modName as ResolvableModuleName];
         if (resolved) {
             for (const resolvedModName of resolved) {

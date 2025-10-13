@@ -163,7 +163,7 @@ export class SeriesPanel extends Component {
                     this.initSeriesSelect();
                 }
 
-                for (const w of (this.seriesWidgetMappings[this.seriesType] ?? [])) {
+                for (const w of this.seriesWidgetMappings[this.seriesType] ?? []) {
                     const widgetFuncResult = this.widgetFuncs[w]();
                     let widget: Component<any>;
                     if (Array.isArray(widgetFuncResult)) {
