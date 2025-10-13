@@ -10,6 +10,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    MasterChangedEvent,
     ModuleName,
     RowNode,
     RowSelectedEvent,
@@ -182,13 +183,16 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
                 expansionSvc?.setDetailsExpansionState(api);
             }
         });
-
-        masterNode.addEventListener('masterChanged', (event) => {
-            if (!event.node.master) {
-                this.onDestroy(gridInfo);
-            }
+        const masterChangedListenerDestructors = this.addManagedListeners(masterNode, {
+            masterChanged: (event: MasterChangedEvent) => {
+                if (!event.node.master) {
+                    this.onDestroy(gridInfo);
+                }
+            },
         });
-
+        for (let i = 0; i < masterChangedListenerDestructors.length; i++) {
+            this.addDestroyFunc(masterChangedListenerDestructors[i]);
+        }
         this.addDestroyFunc(() => this.onDestroy(gridInfo));
     }
 
