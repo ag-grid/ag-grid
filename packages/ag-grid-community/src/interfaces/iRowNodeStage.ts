@@ -29,4 +29,6 @@ export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeSta
     extractData(): TData[];
     /** Gets a tree data filler or row grouping group row by id */
     getNode(id: string): RowNode<TData> | undefined;
+    /** Used to lazily compute and store allLeafChildren for a row node */
+    loadLeafs(node: RowNode<TData>): RowNode<TData>[] | null;
 }

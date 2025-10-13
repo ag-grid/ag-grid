@@ -571,7 +571,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isEmpty(): boolean {
-        return !this.rootNode?.allLeafChildren?.length || !this.beans.colModel?.ready;
+        return !this.rootNode?._leafs?.length || !this.beans.colModel?.ready;
     }
 
     public isRowsToRender(): boolean {
@@ -599,8 +599,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
-                    if (rowNode.group && groupsSelectChildren) {
-                        result.push(...rowNode.allLeafChildren!);
+                    if (groupsSelectChildren && rowNode.group) {
+                        addAllLeafs(result, rowNode);
                         return;
                     }
                 }
@@ -700,7 +700,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachLeafNode(callback: ForEachNodeCallback): void {
-        const allLeafs = this.rootNode?.allLeafChildren;
+        const allLeafs = this.rootNode?._leafs;
         if (allLeafs) {
             for (let i = 0, len = allLeafs.length; i < len; ++i) {
                 callback(allLeafs[i], i);
@@ -833,11 +833,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             afterColumnsChanged: !!params.afterColumnsChanged,
         });
         if (groupingChanged === undefined) {
-            const { allLeafChildren, sibling } = rootNode;
-            rootNode.childrenAfterGroup = allLeafChildren;
+            const allLeafs = rootNode._leafs!;
+            rootNode.childrenAfterGroup = allLeafs;
             rootNode.updateHasChildren();
+            const sibling = rootNode.sibling;
             if (sibling) {
-                sibling.childrenAfterGroup = allLeafChildren;
+                sibling.childrenAfterGroup = allLeafs;
             }
         }
         if (groupingChanged || params.rowDataUpdated) {
@@ -1054,3 +1055,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.onRowHeightChanged_debounced();
     }
 }
+
+const addAllLeafs = (result: RowNode[], node: RowNode): void => {
+    const childrenAfterGroup = node.childrenAfterGroup;
+    if (childrenAfterGroup) {
+        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+            const child = childrenAfterGroup[i];
+            if (child.data) {
+                result.push(child);
+            }
+            if (child.group) {
+                addAllLeafs(result, child);
+            }
+        }
+    }
+};

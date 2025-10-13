@@ -39,7 +39,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const rootNode = initRootNode(this.rootNode);
 
         const allLeafs = new Array<RowNode<TData>>(rowData.length);
-        setAllLeafs(rootNode, allLeafs);
+        rootNode._leafs = allLeafs;
 
         let writeIdx = 0;
         const nestedDataGetter = groupStage?.getNestedDataGetter();
@@ -147,7 +147,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         nodesToUnselect: RowNode<TData>[]
     ): boolean {
         let nodesRemoved = false;
-        const allLeafs = this.rootNode.allLeafChildren!;
+        const allLeafs = this.rootNode._leafs!;
         for (let i = 0, len = allLeafs.length; i < len; i++) {
             const node = allLeafs[i];
             if (!processedNodes.has(node)) {
@@ -246,7 +246,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             return [];
         }
         const rootNode = this.rootNode;
-        const allLeafs = rootNode.allLeafChildren!;
+        const allLeafs = rootNode._leafs!;
         const allLeafsLen = allLeafs.length;
         const addLength = add.length;
         const newAllLeafs = new Array<RowNode<TData>>(allLeafsLen + addLength); // Preallocate new array
@@ -270,7 +270,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 newAllLeafs[writeIdx++] = node; // Copy nodes after addIndex
             }
         }
-        setAllLeafs(rootNode, newAllLeafs);
+        rootNode._leafs = newAllLeafs;
         return newAllLeafs.slice(addIndex, addIndex + addLength);
     }
 
@@ -329,7 +329,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     private lookupNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
         if (!getRowIdFunc) {
-            return lookupNodeByData(this.rootNode.allLeafChildren, data);
+            return lookupNodeByData(this.rootNode._leafs, data);
         }
         const id = getRowIdFunc({ data, level: 0 });
         const rowNode = this.allNodesMap[id];
@@ -376,7 +376,9 @@ const initRootNode = <TData = any>(rootNode: RowNode<TData>): RowNode<TData> => 
     rootNode.group = true;
     rootNode.level = -1;
     rootNode.id = 'ROOT_NODE_ID';
-    setAllLeafs(rootNode, []);
+    if (rootNode._leafs?.length !== 0) {
+        rootNode._leafs = [];
+    }
     const childrenAfterGroup: RowNode<TData>[] = [];
     const childrenAfterSort: RowNode<TData>[] = [];
     const childrenAfterAggFilter: RowNode<TData>[] = [];
@@ -414,17 +416,9 @@ const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, dat
     return null;
 };
 
-const setAllLeafs = <TData>(node: RowNode<TData>, allLeafs: RowNode<TData>[]): void => {
-    node.allLeafChildren = allLeafs;
-    const sibling = node.sibling;
-    if (sibling) {
-        sibling.allLeafChildren = allLeafs;
-    }
-};
-
 const updateRootLeafsOrdered = <TData>(rootNode: RowNode<TData>, processedNodes: Set<RowNode<TData>>): boolean => {
     const newAllLeafs = new Array<RowNode<TData>>(processedNodes.size); // Preallocate
-    setAllLeafs(rootNode, newAllLeafs);
+    rootNode._leafs = newAllLeafs;
     let writeIdx = 0;
     let added = false;
     let reordered = false;
@@ -450,9 +444,9 @@ const updateRootLeafsKeepOrder = <TData>(
     processedNodes: Set<RowNode<TData>>,
     changedRowNodes: ChangedRowNodes<TData>
 ): void => {
-    const oldAllLeafs = rootNode.allLeafChildren!;
+    const oldAllLeafs = rootNode._leafs!;
     const newAllLeafs = new Array<RowNode<TData>>(processedNodes.size); // Preallocate
-    setAllLeafs(rootNode, newAllLeafs);
+    rootNode._leafs = newAllLeafs;
     let writeIdx = 0;
     const removals = changedRowNodes.removals;
     for (let i = 0, len = oldAllLeafs.length; i < len; ++i) {
@@ -472,7 +466,7 @@ const updateRootLeafsKeepOrder = <TData>(
 };
 
 const filterRemovedNodes = <TData>(rootNode: RowNode<TData>, removedSet: ReadonlySet<RowNode<TData>>): void => {
-    const allLeafs = rootNode.allLeafChildren;
+    const allLeafs = rootNode._leafs;
     const allLeafsLen = allLeafs?.length;
     const removeSize = removedSet.size;
     if (!allLeafsLen || !removeSize) {
@@ -489,6 +483,6 @@ const filterRemovedNodes = <TData>(rootNode: RowNode<TData>, removedSet: Readonl
     }
     if (writeIdx !== allLeafsLen) {
         newAllLeafs.length = writeIdx;
-        setAllLeafs(rootNode, newAllLeafs);
+        rootNode._leafs = newAllLeafs;
     }
 };
