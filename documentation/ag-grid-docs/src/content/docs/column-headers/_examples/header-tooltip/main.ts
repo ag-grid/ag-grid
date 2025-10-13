@@ -18,9 +18,9 @@ const columnDefs: ColDef[] = [
     { field: 'age', headerTooltip: "The athlete's age" },
     { field: 'date', headerTooltip: 'The date of the Olympics' },
     { field: 'sport', headerTooltip: 'The sport the medal was for' },
-    { field: 'gold', headerTooltip: 'How many gold medals' },
-    { field: 'silver', headerTooltip: 'How many silver medals' },
-    { field: 'bronze', headerTooltip: 'How many bronze medals' },
+    { field: 'gold', headerTooltipValueGetter: (p) => `How many ${p.colDef.field} medals` },
+    { field: 'silver', headerTooltipValueGetter: (p) => `How many ${p.colDef.field} medals` },
+    { field: 'bronze', headerTooltipValueGetter: (p) => `How many ${p.colDef.field} medals` },
     { field: 'total', headerTooltip: 'The total number of medals' },
 ];
 

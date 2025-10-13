@@ -18,14 +18,13 @@ export interface AbstractColDef<TData = any, TValue = any> {
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
-     * Tooltip for the column header, `headerTooltipValueGetter` takes precedence if set
+     * Tooltip for the column header, `headerTooltipValueGetter` takes precedence if set.
      * @agModule `TooltipModule`
      */
     headerTooltip?: string;
 
     /**
-     * Callback that should return the string to use for a tooltip, `headerTooltip` takes precedence if set.
-     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
+     * Callback that should return the string to use for a tooltip.
      * @agModule `TooltipModule`
      */
     headerTooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
