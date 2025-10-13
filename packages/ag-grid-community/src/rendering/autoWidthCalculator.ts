@@ -72,7 +72,7 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         const dummyContainerWidth = eDummyContainer.offsetWidth;
 
         // we are finished with the dummy container, so get rid of it
-        eBodyContainer.removeChild(eDummyContainer);
+        eDummyContainer.remove();
 
         // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
         // user can configure the grid to add a few more pixels after the calculated width

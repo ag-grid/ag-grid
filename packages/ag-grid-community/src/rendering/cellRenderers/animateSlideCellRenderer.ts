@@ -39,9 +39,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         const refreshCountCopy = this.refreshCount;
 
         // if old animation, remove it
-        if (this.ePrevious) {
-            this.getGui().removeChild(this.ePrevious);
-        }
+        this.ePrevious?.remove();
 
         const { beans, eCurrent } = this;
         const prevElement = _createElement({ tag: 'span', cls: 'ag-value-slide-previous ag-value-slide-out' });
@@ -65,7 +63,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
                 if (refreshCountCopy !== this.refreshCount) {
                     return;
                 }
-                this.getGui().removeChild(this.ePrevious!);
+                this.ePrevious?.remove();
                 this.ePrevious = null;
             }, 3000);
         });

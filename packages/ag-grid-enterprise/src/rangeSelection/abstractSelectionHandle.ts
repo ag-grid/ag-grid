@@ -175,8 +175,6 @@ export abstract class AbstractSelectionHandle extends Component {
         super.destroy();
         this.removeListeners();
 
-        const eGui = this.getGui();
-
-        eGui.parentElement?.removeChild(eGui);
+        this.getGui()?.remove();
     }
 }

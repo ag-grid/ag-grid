@@ -25,7 +25,7 @@ const useJsCellRenderer = (
         const compGui = comp.getGui();
 
         if (compGui && compGui.parentElement) {
-            compGui.parentElement.removeChild(compGui);
+            compGui.remove();
         }
 
         context.destroyBean(comp);

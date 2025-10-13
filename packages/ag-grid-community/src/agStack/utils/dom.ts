@@ -225,13 +225,13 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
 
 export function _clearElement(el: HTMLElement | null | undefined): void {
     while (el?.firstChild) {
-        el.removeChild(el.firstChild);
+        el.firstChild.remove();
     }
 }
 
-export function _removeFromParent(node: Element | null) {
+export function _removeFromParent(node: Element | null | undefined): void {
     if (node?.parentNode) {
-        node.parentNode.removeChild(node);
+        node.remove();
     }
 }
 

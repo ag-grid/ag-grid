@@ -402,7 +402,6 @@ export abstract class BasePopupService<
     ): (popupParams?: PopupEventParams) => void {
         const beans = this.beans;
         const eDocument = _getDocument(beans);
-        const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
@@ -439,7 +438,7 @@ export abstract class BasePopupService<
 
             popupHidden = true;
 
-            ePopupParent.removeChild(wrapperEl);
+            wrapperEl.remove();
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);

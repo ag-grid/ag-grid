@@ -125,7 +125,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         if (this.eLoading?.offsetParent) {
-            this.eLoading.parentElement?.removeChild(this.eLoading);
+            this.eLoading?.remove();
         }
 
         if (value == null) {
