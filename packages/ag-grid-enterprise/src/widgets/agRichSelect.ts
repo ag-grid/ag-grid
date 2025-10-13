@@ -359,10 +359,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         let idx = null;
-        listComponent.selectValue(this.value);
-        if (this.value != null) {
-            idx = listComponent.getIndicesForValues(Array.isArray(value) ? value : [value])[0];
+        let valueToUse: TValue[] | TValue = value;
+
+        // if value is null or undefined, we default to null and
+        // check the list of values for the presence of null
+        if (value === undefined) {
+            valueToUse = null as TValue;
         }
+
+        listComponent.selectValue(valueToUse);
+        idx = listComponent.getIndicesForValues(Array.isArray(valueToUse) ? valueToUse : [valueToUse])[0];
 
         if (idx != null) {
             this.tooltipFeature?.attemptToHideTooltip();
@@ -672,7 +678,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (this.listComponent?.getCurrentList()) {
             const lastRowHovered = this.listComponent.getLastItemHovered();
-            if (this.config.multiSelect || lastRowHovered == null) {
+            if (this.config.multiSelect || lastRowHovered === undefined) {
                 this.dispatchPickerEventAndHidePicker(this.value, true);
             } else {
                 this.onListValueSelected(new Set<TValue>([lastRowHovered]), true);
@@ -706,7 +712,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             }
         } else {
             const lastItemHovered = listComponent.getLastItemHovered();
-            if (lastItemHovered) {
+            if (lastItemHovered !== undefined) {
                 this.setValue(lastItemHovered, false, true);
             }
         }
@@ -842,7 +848,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 if (!isComposing && isPickerDisplayed && multiSelect && listComponent) {
                     const lastItemHovered = listComponent.getLastItemHovered();
 
-                    if (lastItemHovered) {
+                    if (lastItemHovered !== undefined) {
                         listComponent.toggleListItemSelection(lastItemHovered);
                     }
                 }
