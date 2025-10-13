@@ -183,11 +183,7 @@ export function _isAnimateRows(gos: GridOptionsService) {
 }
 
 export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
-    if (gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print')) {
-        return false;
-    }
-
-    return true;
+    return !(gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print'));
 }
 
 export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {
@@ -557,12 +553,12 @@ export function _combineAttributesAndGridOptions(
     // shallow copy (so we don't change the provided object)
     const mergedOptions = { ...gridOptions } as any;
     // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
-    gridOptionsKeys.forEach((key) => {
+    for (const key of gridOptionsKeys) {
         const value = component[key];
         if (typeof value !== 'undefined') {
             mergedOptions[key] = value;
         }
-    });
+    }
     return mergedOptions;
 }
 
@@ -573,10 +569,10 @@ export function _processOnChange(changes: any, api: GridApi): void {
 
     const gridChanges: Record<string, any> = {};
     let hasChanges = false;
-    Object.keys(changes).forEach((key) => {
+    for (const key of Object.keys(changes)) {
         gridChanges[key] = changes[key];
         hasChanges = true;
-    });
+    }
 
     if (!hasChanges) {
         return;
@@ -602,21 +598,6 @@ export function _addGridCommonParams<T extends AgGridCommon<TData, TContext>, TD
     params: WithoutGridCommon<T>
 ): T {
     return gos.addCommon(params);
-}
-
-export type GroupingApproach = 'group' | 'treeSelfRef' | 'treeNested' | 'treePath';
-
-export function _getGroupingApproach(gos: GridOptionsService): GroupingApproach {
-    if (gos.get('treeData')) {
-        if (gos.get('treeDataParentIdField')) {
-            return 'treeSelfRef';
-        }
-        if (gos.get('treeDataChildrenField')) {
-            return 'treeNested';
-        }
-        return 'treePath';
-    }
-    return 'group';
 }
 
 /** Used for before GridOptionsService is initialised */

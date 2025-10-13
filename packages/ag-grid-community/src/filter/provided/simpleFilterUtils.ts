@@ -30,7 +30,6 @@ export function evaluateCustomFilter<V>(
     }
 
     // No custom filter invocation, indicate that to the caller.
-    return;
 }
 
 export function validateAndUpdateConditions<M>(conditions: M[], maxNumConditions: number): number {

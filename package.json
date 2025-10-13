@@ -62,6 +62,8 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import-x": "0.5.1",
     "eslint-plugin-react-hooks": "5.1.0",
+    "eslint-plugin-sonarjs": "3.0.5",
+    "eslint-plugin-unicorn": "61.0.2",
     "event-stream": "4.0.1",
     "glob": "^11.0.0",
     "globals": "^15.2.0",

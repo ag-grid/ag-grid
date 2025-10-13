@@ -240,7 +240,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
         const usingTreeData = this.gos.get('treeData');
-        groupDisplayCols.forEach((col) => {
+        for (const col of groupDisplayCols) {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
             }
@@ -250,7 +250,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
                 rowNode.groupData[col.getColId()] = groupValue;
             }
-        });
+        }
     }
 
     public clearDisplayIndex(rowNode: RowNode): void {

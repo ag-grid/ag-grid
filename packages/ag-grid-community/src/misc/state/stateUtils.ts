@@ -98,11 +98,11 @@ export function _convertColumnGroupState(
     columnGroupState: { groupId: string; open: boolean }[]
 ): ColumnGroupState | undefined {
     const openColumnGroups: string[] = [];
-    columnGroupState.forEach(({ groupId, open }) => {
+    for (const { groupId, open } of columnGroupState) {
         if (open) {
             openColumnGroups.push(groupId);
         }
-    });
+    }
     return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
 }
 

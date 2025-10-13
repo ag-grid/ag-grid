@@ -90,7 +90,6 @@ export function _getLastRow(beans: BeanCollection): RowPosition | null {
         rowPinned = 'bottom';
         rowIndex = pinnedBottomCount - 1;
     } else if (beans.rowModel.getRowCount()) {
-        rowPinned = null;
         rowIndex = pageBounds.getLastRow();
     } else if (pinnedTopCount) {
         rowPinned = 'top';

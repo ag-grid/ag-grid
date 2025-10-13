@@ -80,12 +80,16 @@ export class CellCustomStyleFeature extends BeanStub implements ICellStyleFeatur
         const colDef = column.colDef;
         const cellClassParams = this.getCellClassParams(column, colDef);
 
-        this.staticClasses.forEach((className) => cellComp.toggleCss(className, false));
+        for (const className of this.staticClasses) {
+            cellComp.toggleCss(className, false);
+        }
 
         const newStaticClasses = this.beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
         this.staticClasses = newStaticClasses;
 
-        newStaticClasses.forEach((className) => cellComp.toggleCss(className, true));
+        for (const className of newStaticClasses) {
+            cellComp.toggleCss(className, true);
+        }
     }
 
     private getCellClassParams(column: AgColumn, colDef: ColDef): CellClassParams {

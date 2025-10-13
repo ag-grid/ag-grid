@@ -206,7 +206,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         const newCols: AgColumn[] = [];
 
         for (const col of cols.list) {
-            this.createGroupHierarchyColDefs(col).forEach((colDef) => {
+            for (const colDef of this.createGroupHierarchyColDefs(col)) {
                 const colId = colDef.colId!;
                 this.gos.validateColDef(colDef, colId, true);
                 const newCol = new AgColumn(colDef, null, colId, true);
@@ -214,7 +214,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                 newCols.push(newCol);
                 updateMap(sourceColMap, col, newCol);
                 inverseColMap.set(newCol, col);
-            });
+            }
         }
 
         return newCols;

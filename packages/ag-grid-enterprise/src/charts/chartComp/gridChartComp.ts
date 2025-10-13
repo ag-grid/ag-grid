@@ -569,11 +569,11 @@ export class GridChartComp extends Component {
     private getAllKeysInObjects(objects: any[]): string[] {
         const allValues: any = {};
 
-        objects
-            .filter((obj) => obj != null)
-            .forEach((obj) => {
-                Object.keys(obj).forEach((key) => (allValues[key] = null));
-            });
+        for (const obj of objects.filter((obj) => obj != null)) {
+            for (const key of Object.keys(obj)) {
+                allValues[key] = null;
+            }
+        }
 
         return Object.keys(allValues);
     }
@@ -582,11 +582,11 @@ export class GridChartComp extends Component {
         const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gos.get('customChartThemes');
         if (customChartThemes) {
-            this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
+            for (const customThemeName of this.getAllKeysInObjects([customChartThemes])) {
                 if (!suppliedThemes.includes(customThemeName)) {
                     _warn(139, { customThemeName });
                 }
-            });
+            }
         }
     }
 

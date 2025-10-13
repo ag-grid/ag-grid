@@ -163,7 +163,7 @@ export class SeriesPanel extends Component {
                     this.initSeriesSelect();
                 }
 
-                (this.seriesWidgetMappings[this.seriesType] ?? []).forEach((w) => {
+                for (const w of this.seriesWidgetMappings[this.seriesType] ?? []) {
                     const widgetFuncResult = this.widgetFuncs[w]();
                     let widget: Component<any>;
                     if (Array.isArray(widgetFuncResult)) {
@@ -175,7 +175,7 @@ export class SeriesPanel extends Component {
                     }
                     this.seriesGroup.addItem(widget);
                     this.activePanels.push(widget);
-                });
+                }
             })
             .catch((e) => _error(105, { e }));
     }
@@ -241,16 +241,16 @@ export class SeriesPanel extends Component {
         });
 
         const addItems = (groupComponent: ToggleablePanel) => {
-            [
+            for (const comp of [
                 this.initStrokeWidth('strokeWidth', 'dropOff'),
                 this.initLineDash('dropOff'),
                 this.initOpacity('strokeOpacity', 'dropOff'),
                 this.initOpacity('fillOpacity', 'dropOff'),
-            ].forEach((comp) => {
+            ]) {
                 const managed = groupComponent.createManagedBean(comp);
                 groupComponent.addItem(managed);
                 this.activePanels.push(managed);
-            });
+            }
         };
 
         return [dropOffGroup, addItems];
@@ -364,10 +364,10 @@ export class SeriesPanel extends Component {
     }
 
     private destroyActivePanels(): void {
-        this.activePanels.forEach((panel) => {
+        for (const panel of this.activePanels) {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
     }
 
     public override destroy(): void {

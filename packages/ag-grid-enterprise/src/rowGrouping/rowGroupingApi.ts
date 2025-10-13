@@ -1,16 +1,16 @@
-import type { BeanCollection, ColDef, Column } from 'ag-grid-community';
+import type { BeanCollection, ColKey, Column } from 'ag-grid-community';
 
 import type { RowGroupColsSvc } from './rowGroupColsSvc';
 
-export function setRowGroupColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function setRowGroupColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.rowGroupColsSvc?.setColumns(colKeys, 'api');
 }
 
-export function removeRowGroupColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function removeRowGroupColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.rowGroupColsSvc?.removeColumns(colKeys, 'api');
 }
 
-export function addRowGroupColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function addRowGroupColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.rowGroupColsSvc?.addColumns(colKeys, 'api');
 }
 

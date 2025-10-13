@@ -83,7 +83,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 });
             });
         }).then(() => {
-            this.afterFiltersReadyFuncs.forEach((f) => f());
+            for (const f of this.afterFiltersReadyFuncs) {
+                f();
+            }
             this.afterFiltersReadyFuncs.length = 0;
         });
     }
@@ -229,14 +231,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         let result = false;
 
-        this.wrappers.forEach((wrapper) => {
+        for (const wrapper of this.wrappers) {
             if (wrapper) {
                 const filter = wrapper.filter;
                 if (filter instanceof ProvidedFilter) {
                     result = filter.applyModel(source) || result;
                 }
             }
-        });
+        }
 
         return result;
     }
@@ -250,10 +252,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public override destroy(): void {
-        this.wrappers.forEach((wrapper) => {
+        for (const wrapper of this.wrappers) {
             this.destroyBean(wrapper?.filter);
             this.destroyBean(wrapper?.handler);
-        });
+        }
 
         this.wrappers.length = 0;
 

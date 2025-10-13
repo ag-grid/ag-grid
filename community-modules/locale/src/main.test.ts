@@ -1,5 +1,6 @@
 import * as locales from './main';
 
+// Skipping this test because translation keys can be out of sync until they are generated for the release.
 describe.skip('translations', () => {
     const enKeys = Object.keys(locales.AG_GRID_LOCALE_EN);
 

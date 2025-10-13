@@ -133,7 +133,9 @@ export class ChangedPath {
             if (!this.nodeIdsToColumns[pointer.id!]) {
                 this.nodeIdsToColumns[pointer.id!] = {};
             }
-            columns.forEach((col) => (this.nodeIdsToColumns[pointer.id!][col.getId()] = true));
+            for (const col of columns) {
+                this.nodeIdsToColumns[pointer.id!][col.getId()] = true;
+            }
             pointer = pointer.parent!;
         }
     }

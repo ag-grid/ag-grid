@@ -198,7 +198,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {
-        elements.forEach((element) => {
+        for (const element of elements) {
             this.addManagedElementListeners(element, {
                 focusin: (e: FocusEvent) => {
                     const { target } = e;
@@ -230,7 +230,7 @@ export class GridBodyCtrl extends BeanStub {
                     }
                 },
             });
-        });
+        }
     }
 
     // used by ColumnAnimationService

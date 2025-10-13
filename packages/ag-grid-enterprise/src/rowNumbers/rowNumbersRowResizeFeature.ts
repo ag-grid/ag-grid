@@ -12,11 +12,7 @@ import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 export function _isRowNumbersResizerEnabled(gos: GridOptionsService): boolean {
     const rowNumbers = gos.get('rowNumbers');
 
-    if (!rowNumbers || typeof rowNumbers !== 'object' || !rowNumbers.enableRowResizer) {
-        return false;
-    }
-
-    return true;
+    return !(!rowNumbers || typeof rowNumbers !== 'object' || !rowNumbers.enableRowResizer);
 }
 
 export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {

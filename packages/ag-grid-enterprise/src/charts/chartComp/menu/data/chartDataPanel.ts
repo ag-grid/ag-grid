@@ -192,10 +192,10 @@ export class ChartDataPanel extends Component {
     private clearPanelComponents() {
         const eGui = this.getGui();
 
-        this.panels.forEach((panel) => {
+        for (const panel of this.panels) {
             eGui.removeChild(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
         this.panels = [];
     }
 

@@ -130,6 +130,13 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
 }
 
+/** Select a column via:
+ * - the string (colId)
+ * - the colDef object
+ * - the Column instance
+ */
+export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
+
 export interface IAggFunc<TData = any, TValue = any, TContext = any> {
     (params: IAggFuncParams<TData, TValue, TContext>): any;
 }
@@ -267,6 +274,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `TooltipModule`
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
+
+    /**
+     * Callback to select which tooltip component to be used for a given row within the same column.
+     * @agModule `TooltipModule`
+     */
+    tooltipComponentSelector?: CellEditorSelectorFunc | CellRendererSelectorFunc;
+
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *

@@ -377,26 +377,28 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
         if (!isTop) {
             newCtrlsList.reverse();
         }
-        newCtrlsList.forEach((ctrl) => ctrl.setRowTop(ctrl.rowNode.stickyRowTop));
+        for (const ctrl of newCtrlsList) {
+            ctrl.setRowTop(ctrl.rowNode.stickyRowTop);
+        }
 
         const pageBounds = this.beans.pageBounds;
         let extraHeight = 0;
         if (isTop) {
-            newStickyNodes.forEach((node) => {
+            for (const node of newStickyNodes) {
                 if (node.rowIndex! < pageBounds.getFirstRow()) {
                     extraHeight += node.rowHeight!;
                 }
-            });
+            }
             if (extraHeight > this.topContainerHeight) {
                 extraHeight = this.topContainerHeight;
             }
             this.setOffsetTop(extraHeight);
         } else {
-            newStickyNodes.forEach((node) => {
+            for (const node of newStickyNodes) {
                 if (node.rowIndex! > pageBounds.getLastRow()) {
                     extraHeight += node.rowHeight!;
                 }
-            });
+            }
             if (extraHeight > this.bottomContainerHeight) {
                 extraHeight = this.bottomContainerHeight;
             }

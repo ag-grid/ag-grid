@@ -6,7 +6,9 @@ function delayAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 
 function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
     try {
-        assertions.forEach((a) => a());
+        for (const a of assertions) {
+            a();
+        }
         done();
     } catch (error) {
         done(error);
@@ -16,6 +18,7 @@ function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 describe('AgPromise', () => {
     it('executes initial function by default', () => {
         const initial = jest.fn();
+        // eslint-disable-next-line sonarjs/constructor-for-side-effects
         new AgPromise(() => initial());
 
         expect(initial).toBeCalledTimes(1);

@@ -46,7 +46,7 @@ export class MiniTreemapClass extends MiniChart {
             const width = availableWidth * widthRatio;
 
             const rows = d.length;
-            const rowParts = d.reduce((parts, ratio) => (parts += ratio), 0);
+            const rowParts = d.reduce((parts, ratio) => parts + ratio, 0);
             const rowPadding = treePadding / (rows - 1 || 1);
             const availableHeight = rows > 1 ? availableRange - treePadding : availableRange;
 

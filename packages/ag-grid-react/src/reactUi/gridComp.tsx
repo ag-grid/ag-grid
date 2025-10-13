@@ -72,11 +72,11 @@ const GridComp = ({ context }: GridCompProps) => {
                 if (gridBodyCompEl) {
                     comps.push({ getGui: () => gridBodyCompEl as HTMLElement });
                 }
-                focusableContainersRef.current.forEach((comp) => {
+                for (const comp of focusableContainersRef.current) {
                     if (comp.isDisplayed()) {
                         comps.push(comp);
                     }
-                });
+                }
                 return comps;
             },
             setCursor,
@@ -154,9 +154,9 @@ const GridComp = ({ context }: GridCompProps) => {
 
         return () => {
             context.destroyBeans(beansToDestroy);
-            additionalEls.forEach((el) => {
+            for (const el of additionalEls) {
                 el.parentElement?.removeChild(el);
-            });
+            }
         };
     }, [tabGuardReady, eGridBodyParent, context]);
 

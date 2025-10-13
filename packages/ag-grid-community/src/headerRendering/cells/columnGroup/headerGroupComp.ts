@@ -228,7 +228,6 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             const { agOpened, agClosed } = this;
             _setDisplayed(agOpened, false);
             _setDisplayed(agClosed, false);
-            return;
         }
     }
 

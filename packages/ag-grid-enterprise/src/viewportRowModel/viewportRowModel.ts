@@ -134,16 +134,16 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public purgeRowsNotInViewport(): void {
         const rowNodesByIndex = this.rowNodesByIndex;
-        Object.keys(rowNodesByIndex).forEach((indexStr) => {
+        for (const indexStr of Object.keys(rowNodesByIndex)) {
             const index = parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
                 if (this.isRowFocused(index) || this.beans.editSvc?.isRowEditing(rowNodesByIndex[index])) {
-                    return;
+                    continue;
                 }
 
                 delete rowNodesByIndex[index];
             }
-        });
+        }
     }
 
     private isRowFocused(rowIndex: number): boolean {
@@ -281,12 +281,12 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
 
-        Object.keys(this.rowNodesByIndex).forEach((indexStr) => {
+        for (const indexStr of Object.keys(this.rowNodesByIndex)) {
             const index = parseInt(indexStr, 10);
             const rowNode: RowNode = this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
             callbackCount++;
-        });
+        }
     }
 
     private setRowData(rowData: { [key: number]: any }): void {

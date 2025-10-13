@@ -190,7 +190,6 @@ export abstract class SimpleFilterHandler<
                 model: updatedModel,
             };
             params.onModelChange(updatedModel);
-            return;
         }
     }
 

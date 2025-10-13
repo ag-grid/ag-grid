@@ -4,6 +4,7 @@ import type {
     FilterAction,
     FilterDestroyedEvent,
     FilterHandler,
+    FilterHandlerDestroyedEvent,
     FilterPanelFilterState,
     FilterPanelSummaryState,
     IFilterPanelService,
@@ -43,6 +44,7 @@ export class FilterPanelService
 
         const updateFilterStates = this.updateFilterStates.bind(this);
         const updateApplyButton = () => this.dispatchStatesUpdates(undefined, true);
+        const onFilterDestroyed = this.onFilterDestroyed.bind(this);
         this.addManagedEventListeners({
             newColumnsLoaded: () => {
                 this.columnsLoaded = true;
@@ -52,7 +54,8 @@ export class FilterPanelService
                 updateFilterStates();
             },
             filterChanged: updateFilterStates,
-            filterDestroyed: this.onFilterDestroyed.bind(this),
+            filterDestroyed: onFilterDestroyed,
+            filterHandlerDestroyed: onFilterDestroyed,
             filterOpened: updateApplyButton,
             filterClosed: updateApplyButton,
         });
@@ -72,11 +75,11 @@ export class FilterPanelService
             if (this.columnsLoaded) {
                 // Remove any filters no longer in the state
                 const newIds = new Set(state.filters?.map((f) => f.colId));
-                this.getIds().forEach((id) => {
+                for (const id of this.getIds()) {
                     if (!newIds.has(id)) {
                         this.remove(id);
                     }
-                });
+                }
 
                 // Clear out existing state so that new state order is maintained
                 this.clearStates();
@@ -343,7 +346,7 @@ export class FilterPanelService
         }
     }
 
-    private onFilterDestroyed({ column, source }: FilterDestroyedEvent) {
+    private onFilterDestroyed({ column, source }: FilterDestroyedEvent | FilterHandlerDestroyedEvent) {
         if (!this.beans.colFilter?.isAlive()) {
             // if grid is being destroyed, don't recreate filters
             return;
@@ -378,9 +381,9 @@ export class FilterPanelService
     private applyState() {
         if (this.params && this.columnsLoaded) {
             this.initialStateApplied = true;
-            this.currState?.filters?.forEach(({ colId, expanded }) => {
+            for (const { colId, expanded } of this.currState?.filters ?? []) {
                 this.createFilter(colId, expanded);
-            });
+            }
         }
     }
 

@@ -120,7 +120,6 @@ export type ChartType =
     | 'rangeArea'
     | 'boxPlot'
     | 'treemap'
-    | 'sunburst'
     | 'heatmap'
     | 'waterfall'
     | 'columnLineCombo'

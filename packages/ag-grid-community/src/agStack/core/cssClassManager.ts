@@ -19,7 +19,9 @@ export class CssClassManager {
         if (className.indexOf(' ') >= 0) {
             const list = (className || '').split(' ');
             if (list.length > 1) {
-                list.forEach((cls) => this.toggleCss(cls, addOrRemove));
+                for (const cls of list) {
+                    this.toggleCss(cls, addOrRemove);
+                }
                 return;
             }
         }

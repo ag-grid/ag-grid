@@ -362,7 +362,9 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.advFilterModelUpdateQueue.forEach((model) => this.setAdvFilterModel(model));
+        for (const model of this.advFilterModelUpdateQueue) {
+            this.setAdvFilterModel(model);
+        }
         this.advFilterModelUpdateQueue = [];
     }
 

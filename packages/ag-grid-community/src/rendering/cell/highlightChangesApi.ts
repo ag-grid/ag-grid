@@ -8,8 +8,8 @@ export function flashCells<TData = any>(beans: BeanCollection, params: FlashCell
         return;
     }
     beans.frameworkOverrides.wrapIncoming(() => {
-        beans.rowRenderer
-            .getCellCtrls(params.rowNodes, params.columns as AgColumn[])
-            .forEach((cellCtrl) => cellFlashSvc.flashCell(cellCtrl, params));
+        for (const cellCtrl of beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
+            cellFlashSvc.flashCell(cellCtrl, params);
+        }
     });
 }

@@ -138,7 +138,7 @@ export class ChartDatasource extends BeanStub {
         }
 
         if (numRows > 0) {
-            valueCols.forEach((col) => {
+            for (const col of valueCols) {
                 let colNamesArr: string[] = [];
 
                 // pivot keys should be added first
@@ -157,7 +157,7 @@ export class ChartDatasource extends BeanStub {
                 if (colNamesArr.length > 0) {
                     colNames[col.getId()] = colNamesArr;
                 }
-            });
+            }
         }
 
         let numRemovedNodes = 0;
@@ -176,7 +176,7 @@ export class ChartDatasource extends BeanStub {
 
             const data: any = { node: rowNode };
             // first get data for dimensions columns
-            dimensionCols.forEach((col) => {
+            for (const col of dimensionCols) {
                 const colId = col.colId;
                 const column = this.colModel.getCol(colId);
 
@@ -231,10 +231,10 @@ export class ChartDatasource extends BeanStub {
                     // introduce a default category when no dimensions exist with a value based off row index (+1)
                     data[DEFAULT_CHART_CATEGORY] = i + 1;
                 }
-            });
+            }
 
             // then get data for value columns
-            valueCols.forEach((col) => {
+            for (const col of valueCols) {
                 const colId = col.getColId();
                 if (crossFiltering) {
                     const filteredOutColId = colId + '-filtered-out';
@@ -275,7 +275,7 @@ export class ChartDatasource extends BeanStub {
 
                     data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
                 }
-            });
+            }
 
             // add data to results
             extractedRowData.push(data);
@@ -307,10 +307,10 @@ export class ChartDatasource extends BeanStub {
         const map: any = {};
         const dataAggregated: any[] = [];
 
-        dataFromGrid.forEach((data) => {
+        for (const data of dataFromGrid) {
             let currentMap = map;
 
-            dimensionCols.forEach((col) => {
+            for (const col of dimensionCols) {
                 const colId = col.colId;
                 const key = data[colId];
 
@@ -320,10 +320,10 @@ export class ChartDatasource extends BeanStub {
                     if (!groupItem) {
                         groupItem = { __children: [] };
 
-                        dimensionCols.forEach((dimCol) => {
+                        for (const dimCol of dimensionCols) {
                             const dimColId = dimCol.colId;
                             groupItem[dimColId] = data[dimColId];
-                        });
+                        }
 
                         currentMap[key] = groupItem;
                         dataAggregated.push(groupItem);
@@ -338,12 +338,12 @@ export class ChartDatasource extends BeanStub {
 
                     currentMap = currentMap[key];
                 }
-            });
-        });
+            }
+        }
 
         if (this.gos.assertModuleRegistered('SharedAggregation', 1)) {
-            dataAggregated.forEach((groupItem) =>
-                params.valueCols.forEach((col) => {
+            for (const groupItem of dataAggregated) {
+                for (const col of params.valueCols) {
                     const colId = col.getColId();
                     if (params.crossFiltering) {
                         // filtered data
@@ -378,8 +378,8 @@ export class ChartDatasource extends BeanStub {
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
                     }
-                })
-            );
+                }
+            }
         }
 
         return dataAggregated;
@@ -398,14 +398,14 @@ export class ChartDatasource extends BeanStub {
 
         // `pivotKeys` is not used by the SSRM for pivoting, so it is safe to reuse this colDef property. This way
         // the same logic can be used for CSRM and SSRM to extract legend names in extractRowsFromGridRowModel()
-        secondaryColumns.forEach((col) => {
+        for (const col of secondaryColumns) {
             if (pivotKeySeparator === '') {
                 col.getColDef().pivotKeys = [];
             } else {
                 const keys = col.getColId().split(pivotKeySeparator);
                 col.getColDef().pivotKeys = keys.slice(0, keys.length - 1);
             }
-        });
+        }
     }
 
     private extractPivotKeySeparator(secondaryColumns: AgColumn[]) {

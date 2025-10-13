@@ -134,11 +134,11 @@ export class GridComp extends TabGuardComp {
     protected getFocusableContainers(): FocusableContainer[] {
         const focusableContainers: FocusableContainer[] = [this.gridBody];
 
-        [this.sideBar, this.pagination].forEach((comp) => {
+        for (const comp of [this.sideBar, this.pagination]) {
             if (comp) {
                 focusableContainers.push(comp);
             }
-        });
+        }
 
         return focusableContainers.filter((el) => _isVisible(el.getGui()));
     }

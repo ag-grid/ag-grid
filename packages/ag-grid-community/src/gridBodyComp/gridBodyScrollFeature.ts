@@ -352,11 +352,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const clientHeight = _getInnerHeight(this.eBodyViewport);
         const { scrollHeight } = this.eBodyViewport;
 
-        if (scrollTo < 0 || scrollTo + clientHeight > scrollHeight) {
-            return true;
-        }
-
-        return false;
+        return !!(scrollTo < 0 || scrollTo + clientHeight > scrollHeight);
     }
 
     private shouldBlockHorizontalScroll(scrollTo: number): boolean {
@@ -371,11 +367,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return true;
         }
 
-        if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
-            return true;
-        }
-
-        return false;
+        return Math.abs(scrollTo) + clientWidth > scrollWidth;
     }
 
     private redrawRowsAfterScroll(): void {
@@ -676,7 +668,9 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private clearRetryListeners(): void {
-        this.clearRetryListenerFncs.forEach((callback) => callback());
+        for (const callback of this.clearRetryListenerFncs) {
+            callback();
+        }
         this.clearRetryListenerFncs = [];
     }
 

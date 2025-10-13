@@ -95,6 +95,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     rowGroupIndex: 'SharedRowGrouping',
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
+    tooltipComponentSelector: 'Tooltip',
     spanRows: 'CellSpan',
     groupHierarchy: 'SharedRowGrouping',
 };
@@ -275,16 +276,16 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 const unrecognisedParts: string[] = [];
 
-                options.groupHierarchy?.forEach((part) => {
+                for (const part of options.groupHierarchy ?? []) {
                     if (typeof part === 'object') {
                         beans.validation?.validateColDef(part);
-                        return null;
+                        continue;
                     }
 
                     if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
                         unrecognisedParts.push(quote(part));
                     }
-                });
+                }
 
                 if (unrecognisedParts.length > 0) {
                     const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.join(', ')}.`;
@@ -429,6 +430,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     onCellContextMenu: undefined,
     rowDragText: undefined,
     tooltipValueGetter: undefined,
+    tooltipComponentSelector: undefined,
     cellRendererSelector: undefined,
     cellEditorSelector: undefined,
     suppressSpanHeaderHeight: undefined,

@@ -57,11 +57,11 @@ export class TabGuardFeature extends BeanStub {
 
         const compProxy: ITabGuard = {
             setTabIndex: (tabIndex) => {
-                tabGuards.forEach((tabGuard) =>
+                for (const tabGuard of tabGuards) {
                     tabIndex != null
                         ? tabGuard.setAttribute('tabindex', tabIndex)
-                        : tabGuard.removeAttribute('tabindex')
-                );
+                        : tabGuard.removeAttribute('tabindex');
+                }
             },
         };
 

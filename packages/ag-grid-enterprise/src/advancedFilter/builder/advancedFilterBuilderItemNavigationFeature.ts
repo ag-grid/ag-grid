@@ -47,17 +47,15 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
         const highlightClass = 'ag-advanced-filter-builder-virtual-list-item-highlight';
         this.addManagedListeners(this.focusWrapper, {
             keydown: (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        if (_isStopPropagationForAgGrid(event)) {
-                            return;
-                        }
-                        if (_getActiveDomElement(this.beans) === this.focusWrapper) {
-                            event.preventDefault();
-                            _stopPropagationForAgGrid(event);
-                            this.eFocusableComp.getFocusableElement().focus();
-                        }
-                        break;
+                if (event.key === KeyCode.ENTER) {
+                    if (_isStopPropagationForAgGrid(event)) {
+                        return;
+                    }
+                    if (_getActiveDomElement(this.beans) === this.focusWrapper) {
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.eFocusableComp.getFocusableElement().focus();
+                    }
                 }
             },
             focusin: () => {

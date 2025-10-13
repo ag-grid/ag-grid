@@ -171,12 +171,12 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
                 const paddingWidth = boundaryEl.offsetWidth - this.element.offsetWidth;
-                computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10) - paddingWidth;
+                computedMinWidth = Number.parseInt(offsetParentComputedStyles.minWidth, 10) - paddingWidth;
             }
 
             if (offsetParentComputedStyles.minHeight != null) {
                 const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
-                computedMinHeight = parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
+                computedMinHeight = Number.parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
             }
         }
 
@@ -209,8 +209,8 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             }
 
             if (boundaryEl) {
-                const top = parseFloat(boundaryEl.style.top);
-                const left = parseFloat(boundaryEl.style.left);
+                const top = Number.parseFloat(boundaryEl.style.top);
+                const left = Number.parseFloat(boundaryEl.style.left);
 
                 if (initialisedDuringPositioning) {
                     this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top, postProcessCallback);
@@ -361,7 +361,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             } else {
                 eGui.style.height = `${height}px`;
                 eGui.style.flex = '0 0 auto';
-                this.lastSize.height = typeof height === 'number' ? height : parseFloat(height);
+                this.lastSize.height = typeof height === 'number' ? height : Number.parseFloat(height);
             }
         } else {
             eGui.style.maxHeight = 'unset';
@@ -438,7 +438,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             } else {
                 eGui.style.width = `${width}px`;
                 eGui.style.flex = ' unset';
-                this.lastSize.width = typeof width === 'number' ? width : parseFloat(width);
+                this.lastSize.width = typeof width === 'number' ? width : Number.parseFloat(width);
             }
         } else {
             eGui.style.maxWidth = 'unset';
@@ -462,7 +462,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             postProcessCallback,
         });
 
-        this.setPosition(parseFloat(ePopup.style.left), parseFloat(ePopup.style.top));
+        this.setPosition(Number.parseFloat(ePopup.style.left), Number.parseFloat(ePopup.style.top));
     }
 
     public constrainSizeToAvailableHeight(constrain: boolean): void {
@@ -705,10 +705,10 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             if (isFlex) {
                 const computedStyle = window.getComputedStyle(currentEl);
                 if (computedStyle.minHeight) {
-                    nextHeight = parseInt(computedStyle.minHeight, 10);
+                    nextHeight = Number.parseInt(computedStyle.minHeight, 10);
                 }
                 if (computedStyle.minWidth) {
-                    nextWidth = parseInt(computedStyle.minWidth, 10);
+                    nextWidth = Number.parseInt(computedStyle.minWidth, 10);
                 }
             } else {
                 nextHeight = currentEl.offsetHeight;
