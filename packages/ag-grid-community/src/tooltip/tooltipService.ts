@@ -43,7 +43,8 @@ export class TooltipService extends BeanStub implements NamedBean {
             ctrl.destroyBean(existingTooltipFeature);
         }
 
-        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(this.gos);
+        const gos = this.gos;
+        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
         const { column, eGui } = ctrl;
         const colDef = column.getColDef();
 
@@ -61,8 +62,21 @@ export class TooltipService extends BeanStub implements NamedBean {
                     return value;
                 }
 
-                const res = column.getColDef().headerTooltip;
-                return res;
+                const res = colDef.headerTooltip;
+
+                if (res != null) {
+                    return res;
+                }
+
+                if (colDef.headerTooltipValueGetter) {
+                    return colDef.headerTooltipValueGetter(
+                        _addGridCommonParams(gos, {
+                            location: 'cell',
+                            colDef: column.getColDef(),
+                            column: column,
+                        })
+                    );
+                }
             },
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
