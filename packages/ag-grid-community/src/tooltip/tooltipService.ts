@@ -57,27 +57,10 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => 'header',
-            getTooltipValue: () => {
-                if (value != null) {
-                    return value;
-                }
-
-                const res = colDef.headerTooltip;
-
-                if (res != null) {
-                    return res;
-                }
-
-                if (colDef.headerTooltipValueGetter) {
-                    return colDef.headerTooltipValueGetter(
-                        _addGridCommonParams(gos, {
-                            location: 'cell',
-                            colDef: column.getColDef(),
-                            column: column,
-                        })
-                    );
-                }
-            },
+            getTooltipValue: () =>
+                value ??
+                colDef?.headerTooltipValueGetter?.(_addGridCommonParams(gos, { location: 'cell', colDef, column })) ??
+                colDef?.headerTooltip,
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
                 column,
@@ -102,12 +85,12 @@ export class TooltipService extends BeanStub implements NamedBean {
         if (existingTooltipFeature) {
             ctrl.destroyBean(existingTooltipFeature);
         }
-
-        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(this.gos);
+        const gos = this.gos;
+        const isTooltipWhenTruncated = _isShowTooltipWhenTruncated(gos);
         const { column, eGui } = ctrl;
-        const colGroupDef = column.getColGroupDef();
+        const colDef = column.getColGroupDef();
 
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
+        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef?.headerGroupComponent) {
             shouldDisplayTooltip = _isElementOverflowingCallback(
                 () => eGui.querySelector('.ag-header-group-text') as HTMLElement | undefined
             );
@@ -116,14 +99,17 @@ export class TooltipService extends BeanStub implements NamedBean {
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => 'headerGroup',
-            getTooltipValue: () => value ?? colGroupDef?.headerTooltip,
+            getTooltipValue: () =>
+                value ??
+                colDef?.headerTooltipValueGetter?.(_addGridCommonParams(gos, { location: 'cell', colDef, column })) ??
+                colDef?.headerTooltip,
             shouldDisplayTooltip,
             getAdditionalParams: () => {
                 const additionalParams: ITooltipCtrlParams = {
                     column,
                 };
-                if (colGroupDef) {
-                    additionalParams.colDef = colGroupDef;
+                if (colDef) {
+                    additionalParams.colDef = colDef;
                 }
                 return additionalParams;
             },
