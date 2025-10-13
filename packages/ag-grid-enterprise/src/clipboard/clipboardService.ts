@@ -1251,10 +1251,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (callbackAfter) {
             window.setTimeout(() => {
                 callbackAfter(eTempInput);
-                guiRoot.removeChild(eTempInput);
+                eTempInput.remove();
             }, 100);
         } else {
-            guiRoot.removeChild(eTempInput);
+            eTempInput.remove();
         }
     }
 }

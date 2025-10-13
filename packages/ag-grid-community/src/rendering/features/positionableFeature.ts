@@ -636,9 +636,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         this.resizerMap = undefined;
         const resizerEl = this.element.querySelector(`.${RESIZE_CONTAINER_STYLE}`);
 
-        if (resizerEl) {
-            this.element.removeChild(resizerEl);
-        }
+        resizerEl?.remove();
         this.resizersAdded = false;
     }
 

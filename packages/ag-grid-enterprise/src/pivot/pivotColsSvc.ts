@@ -31,10 +31,6 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
 
     private readonly modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => {
-            // if this column has virtual columns associated to it, ensure those virtual columns are
-            // inserted before it in the list (and therefore the pivoting hierarchy)
-            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-
             if (!this.columns.includes(column)) {
                 this.columns.push(column);
             }
@@ -73,6 +69,12 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
     private setColPivotActive(column: AgColumn, pivot: boolean, source: ColumnEventType): void {
         if (column.pivotActive !== pivot) {
             column.pivotActive = pivot;
+
+            if (pivot) {
+                const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+                addedCols?.forEach((c) => this.setColPivotActive(c, pivot, source));
+            }
+
             column.dispatchColEvent('columnPivotChanged', source);
         }
         column.dispatchStateUpdatedEvent('pivot');

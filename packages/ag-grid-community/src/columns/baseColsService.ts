@@ -1,5 +1,4 @@
 import { _removeFromArray } from '../agStack/utils/array';
-import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -90,12 +89,10 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         masterList.length = 0;
 
-        if (_exists(colKeys)) {
-            for (const key of colKeys) {
-                const column = this.colModel.getColDefCol(key);
-                if (column) {
-                    masterList.push(column);
-                }
+        for (const key of colKeys) {
+            const column = this.colModel.getColDefCol(key);
+            if (column) {
+                masterList.push(column);
             }
         }
 
@@ -273,16 +270,19 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // sort cols with index, and add these first
         colsWithIndex.sort((colA, colB) => getIndexForCol(colA) - getIndexForCol(colB));
 
-        const res: AgColumn[] = [...colsWithIndex];
+        const res: AgColumn[] = [];
 
         const groupHierarchCols = this.groupHierarchCols;
-        const pushToRes = (col: AgColumn) => {
+        const addCol = (col: AgColumn) => {
             if (groupHierarchCols) {
                 groupHierarchCols.expandColumnInto(res, col);
             } else {
                 res.push(col);
             }
         };
+
+        // Columns with an index specified need to have any virtual hierarchical columns expanded
+        colsWithIndex.forEach(addCol);
 
         // next, add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true...
@@ -291,14 +291,14 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 // ...with the caveat that each column added also has any associated virtual columns added here
                 // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
                 // virtual columns here means they will not be added below when iterating over `colsWithValue`.
-                pushToRes(col);
+                addCol(col);
             }
         }
 
         // lastly put in all remaining cols
         for (const col of colsWithValue) {
             if (res.indexOf(col) < 0) {
-                pushToRes(col);
+                addCol(col);
             }
         }
 

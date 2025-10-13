@@ -194,7 +194,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             const icon = _createIconNoSpan(iconName, this.beans, null);
             if (icon) {
                 element.appendChild(icon);
-                this.addDestroyFunc(() => element.removeChild(icon));
+                this.addDestroyFunc(() => icon.remove());
             }
         };
 
@@ -560,7 +560,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private destroyCheckbox(): void {
         this.comp.setCheckboxSpacing(false);
         this.comp.setCheckboxVisible(false);
-        this.cbComp && this.eCheckbox.removeChild(this.cbComp.getGui());
+        this.cbComp?.getGui().remove();
         this.cbComp = this.destroyBean(this.cbComp);
     }
 

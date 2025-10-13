@@ -65,7 +65,7 @@ export class GridComp extends TabGuardComp {
         const eGui = this.getGui();
         this.eGridDiv.appendChild(eGui);
         this.addDestroyFunc(() => {
-            this.eGridDiv.removeChild(eGui);
+            eGui.remove();
             _logIfDebug(this.gos, 'Grid removed from DOM');
         });
     }

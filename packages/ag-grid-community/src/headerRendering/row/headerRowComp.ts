@@ -63,7 +63,7 @@ export class HeaderRowComp extends Component {
         }
 
         Object.values(oldComps).forEach((comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
-            this.getGui().removeChild(comp.getGui());
+            comp.getGui().remove();
             this.destroyBean(comp);
         });
 

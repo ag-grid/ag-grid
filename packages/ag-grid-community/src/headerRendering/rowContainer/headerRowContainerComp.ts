@@ -77,7 +77,7 @@ export class HeaderRowContainerComp extends Component {
 
     private destroyRowComp(rowComp: HeaderRowComp): void {
         this.destroyBean(rowComp);
-        this.eRowContainer.removeChild(rowComp.getGui());
+        rowComp.getGui().remove();
     }
 
     private setCtrls(ctrls: HeaderRowCtrl[]): void {
