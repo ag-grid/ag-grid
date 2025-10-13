@@ -186,7 +186,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         // the place for these destructors is looking for a new home, so if you have a better idea where to put them - feel free
         // we are undecided if they should live on detailCellRenderer or here in the ctrl
-        const destructors = this.addManagedListeners(masterNode, {
+        this.addManagedListeners(masterNode, {
             masterChanged: (event: MasterChangedEvent) => {
                 if (!event.node.master) {
                     this.onDestroy(gridInfo);
@@ -194,12 +194,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             },
         });
 
-        this.addDestroyFunc(() => {
-            this.onDestroy(gridInfo);
-            for (let i = 0; i < destructors.length; i++) {
-                destructors[i]();
-            }
-        });
+        this.addDestroyFunc(() => this.onDestroy(gridInfo));
     }
 
     private onDestroy(gridInfo: DetailGridInfo) {
