@@ -274,6 +274,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `TooltipModule`
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
+
+    /**
+     * Callback to select which tooltip component to be used for a given row within the same column.
+     * @agModule `TooltipModule`
+     */
+    tooltipComponentSelector?: CellEditorSelectorFunc | CellRendererSelectorFunc;
+
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *

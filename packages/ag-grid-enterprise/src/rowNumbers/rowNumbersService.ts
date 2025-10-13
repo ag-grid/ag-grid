@@ -226,6 +226,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             'tooltipValueGetter',
             'tooltipComponent',
             'tooltipComponentParams',
+            'tooltipComponentSelector',
             'valueGetter',
             'valueFormatter',
             'width',

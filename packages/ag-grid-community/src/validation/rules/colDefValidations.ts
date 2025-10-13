@@ -95,6 +95,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     rowGroupIndex: 'SharedRowGrouping',
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
+    tooltipComponentSelector: 'Tooltip',
     spanRows: 'CellSpan',
     groupHierarchy: 'SharedRowGrouping',
 };
@@ -429,6 +430,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     onCellContextMenu: undefined,
     rowDragText: undefined,
     tooltipValueGetter: undefined,
+    tooltipComponentSelector: undefined,
     cellRendererSelector: undefined,
     cellEditorSelector: undefined,
     suppressSpanHeaderHeight: undefined,
