@@ -47,7 +47,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const onDisplayedColsChanged = this.onDisplayedColumnsChanged.bind(this);
         this.addManagedEventListeners({
-            gridColumnsChanged: () => this.refresh(true),
+            firstDataRendered: () => this.refresh(true),
             displayedColumnsChanged: onDisplayedColsChanged,
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
