@@ -111,12 +111,6 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
         if (newMaster !== oldMaster) {
             row.master = newMaster;
-
-            if (row.detailNode && !newMaster && _isServerSideRowModel(gos)) {
-                delete this.store[row.detailNode.id!];
-                (beans.ssrmBlockUtils as BlockUtils)?.destroyRowNode(row.detailNode);
-                row.detailNode = undefined;
-            }
             row.dispatchRowEvent('masterChanged');
         }
     }

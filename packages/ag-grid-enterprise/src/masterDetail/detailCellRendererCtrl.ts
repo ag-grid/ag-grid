@@ -183,17 +183,29 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
         });
 
-        this.addDestroyFunc(() => {
-            // the gridInfo can be stale if a refresh happens and
-            // a new row is created before the old one is destroyed.
-            if (rowNode.detailGridInfo !== gridInfo) {
-                return;
+        masterNode.addEventListener('masterChanged', (event) => {
+            if (!event.node.master) {
+                this.onDestroy(gridInfo);
             }
-            if (!masterGridApi.isDestroyed()) {
-                masterGridApi.removeDetailGridInfo(rowId); // unregister from api
-            }
-            rowNode.detailGridInfo = null; // unregister from node
         });
+
+        this.addDestroyFunc(() => this.onDestroy(gridInfo));
+    }
+
+    private onDestroy(gridInfo: DetailGridInfo) {
+        const { params } = this;
+        const rowNode = params.node as RowNode;
+        const masterGridApi = params.api;
+
+        // the gridInfo can be stale if a refresh happens and
+        // a new row is created before the old one is destroyed.
+        if (rowNode.detailGridInfo !== gridInfo) {
+            return;
+        }
+        if (!masterGridApi.isDestroyed()) {
+            masterGridApi.removeDetailGridInfo(rowNode.id!); // unregister from api
+        }
+        rowNode.detailGridInfo = null; // unregister from node
     }
 
     private loadRowData(): void {
