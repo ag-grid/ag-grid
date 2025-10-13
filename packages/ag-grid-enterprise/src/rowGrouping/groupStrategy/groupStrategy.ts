@@ -254,27 +254,28 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return true;
     }
 
-    private removeEmptyGroups(possibleEmptyGroups: RowNode[]): void {
-        const groupShouldBeRemoved = (rowNode: RowNode): boolean => {
-            // because of the while loop below, it's possible we already moved the node,
-            // so double check before trying to remove again.
-            const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
-            const parentChildrenMapped = rowNode.parent?.childrenMapped;
-            const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
+    private groupShouldBeRemoved(rowNode: RowNode): boolean {
+        // because of the while loop below, it's possible we already moved the node,
+        // so double check before trying to remove again.
+        const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
+        const parentChildrenMapped = rowNode.parent?.childrenMapped;
+        const groupAlreadyRemoved = parentChildrenMapped ? !parentChildrenMapped[mapKey] : true;
 
-            if (groupAlreadyRemoved) {
-                // if not linked, then group was already removed
-                return false;
-            }
-            // if still not removed, then we remove if this group is empty
-            return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
-        };
+        if (groupAlreadyRemoved) {
+            // if not linked, then group was already removed
+            return false;
+        }
+        // if still not removed, then we remove if this group is empty
+        return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
+    }
 
+    private removeEmptyGroups(possibleEmptyGroups: RowNode[], removals: Set<RowNode>): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
         let batchRemover: BatchRemover | null;
         const selectionSvc = this.beans.selectionSvc;
+        let nodesToUnselect: RowNode[] | undefined;
         do {
             batchRemover = null;
             for (let idx = 0; idx < possibleEmptyGroups.length; ++idx) {
@@ -284,20 +285,20 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     if (!parent) {
                         break; // root node
                     }
-                    if (!groupShouldBeRemoved(pointer)) {
+                    if (!this.groupShouldBeRemoved(pointer)) {
                         pointer = parent;
                         continue;
                     }
 
                     batchRemover ??= new BatchRemover();
+                    removals.add(pointer); // Mark the empty group node as removed
                     this.removeFromParent(pointer, batchRemover);
                     // we remove selection on filler nodes here, as the selection would not be removed
                     // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                    selectionSvc?.setNodesSelected({
-                        nodes: [pointer],
-                        newValue: false,
-                        source: 'rowGroupChanged',
-                    });
+                    if (selectionSvc && pointer.isSelected()) {
+                        nodesToUnselect ??= [];
+                        nodesToUnselect.push(pointer);
+                    }
 
                     possibleEmptyGroups[idx] = parent; // check parent next
                     pointer = parent;
@@ -305,6 +306,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
             batchRemover?.flush();
         } while (batchRemover);
+
+        if (nodesToUnselect) {
+            selectionSvc!.setNodesSelected({
+                nodes: nodesToUnselect,
+                newValue: false,
+                source: 'rowGroupChanged',
+            });
+        }
     }
 
     // removes the node from the parent by:
