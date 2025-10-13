@@ -311,7 +311,6 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         } else {
             this.clear();
         }
-        return;
     }
 
     public clear(): void {

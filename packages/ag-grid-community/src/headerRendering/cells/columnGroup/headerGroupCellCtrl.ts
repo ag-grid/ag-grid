@@ -317,7 +317,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         }
 
-        classes.forEach((c) => this.comp.toggleCss(c, true));
+        for (const c of classes) {
+            this.comp.toggleCss(c, true);
+        }
     }
 
     private setupMovingCss(compBean: BeanStub): void {
@@ -330,9 +332,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // user that the column was picked up).
         const listener = () => this.comp.toggleCss('ag-header-cell-moving', column.isMoving());
 
-        leafColumns.forEach((col) => {
+        for (const col of leafColumns) {
             compBean.addManagedListeners(col, { movingChanged: listener });
-        });
+        }
 
         listener();
     }

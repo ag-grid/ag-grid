@@ -84,7 +84,9 @@ export abstract class AgComponentStub<
     public preConstruct(): void {
         this.wireTemplate(this.getGui());
         const debugId = 'component-' + Object.getPrototypeOf(this)?.constructor?.name;
-        this.css?.forEach((css) => this.beans.environment.addGlobalCSS(css, debugId));
+        for (const css of this.css ?? []) {
+            this.beans.environment.addGlobalCSS(css, debugId);
+        }
     }
 
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
@@ -148,9 +150,9 @@ export abstract class AgComponentStub<
             childNodeList.push(childNode);
         }
 
-        childNodeList.forEach((childNode) => {
+        for (const childNode of childNodeList) {
             if (!(childNode instanceof HTMLElement)) {
-                return;
+                continue;
             }
 
             const childComp = this.createComponentFromElement(
@@ -182,7 +184,7 @@ export abstract class AgComponentStub<
             } else if (childNode.childNodes) {
                 this.createChildComponentsFromTags(childNode, paramsMap);
             }
-        });
+        }
     }
 
     private createComponentFromElement(
@@ -241,7 +243,9 @@ export abstract class AgComponentStub<
             elements.push(this.getGui());
         }
 
-        elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
+        for (const el of elements) {
+            el.setAttribute('tabindex', tabIndex.toString());
+        }
     }
 
     protected setTemplate(

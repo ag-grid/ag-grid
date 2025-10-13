@@ -71,14 +71,14 @@ export class SeriesChartTypePanel extends Component {
 
         const seriesChartTypes = this.chartController.getSeriesChartTypes();
 
-        columns.forEach((col) => {
+        for (const col of columns) {
             if (!col.selected) {
-                return;
+                continue;
             }
 
             const seriesChartType: SeriesChartType = seriesChartTypes.filter((s) => s.colId === col.colId)[0];
             if (!seriesChartType) {
-                return;
+                continue;
             }
 
             this.selectedColIds.push(col.colId);
@@ -130,17 +130,17 @@ export class SeriesChartTypePanel extends Component {
             this.seriesChartTypeGroupComp.addItem(seriesItemGroup);
             this.chartTypeComps.set(col.colId, chartTypeComp);
             this.secondaryAxisComps.set(col.colId, secondaryAxisComp);
-        });
+        }
 
         this.getGui().appendChild(this.seriesChartTypeGroupComp.getGui());
     }
 
     private refreshComps(): void {
         const seriesChartTypes = this.chartController.getSeriesChartTypes();
-        this.selectedColIds.forEach((colId) => {
+        for (const colId of this.selectedColIds) {
             const seriesChartType = seriesChartTypes.find((chartType) => chartType.colId === colId);
             if (!seriesChartType) {
-                return;
+                continue;
             }
             const chartTypeComp = this.chartTypeComps.get(colId);
             const secondaryAxisComp = this.secondaryAxisComps.get(colId);
@@ -148,7 +148,7 @@ export class SeriesChartTypePanel extends Component {
             chartTypeComp?.setValue(seriesChartType.chartType);
             secondaryAxisComp?.setValue(!!seriesChartType.secondaryAxis);
             secondaryAxisComp?.setDisabled(this.isSecondaryAxisDisabled(seriesChartType.chartType));
-        });
+        }
     }
 
     private clearComps(): void {

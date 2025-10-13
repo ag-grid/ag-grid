@@ -5,7 +5,7 @@ import type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
 } from '../dragAndDrop/rowDropHighlightService';
-import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions, SelectAllMode } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
 import type {
@@ -599,7 +599,7 @@ export interface _ColumnAutosizeApi {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      * @agModule `ColumnAutoSizeModule`
      */
-    autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+    autoSizeColumns(keys: ColKey[], skipHeader?: boolean): void;
     /**
      * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
      * and row data is initially empty or yet to be set,
@@ -630,7 +630,7 @@ export interface _ColumnAutosizeApi {
 export interface _ColumnResizeApi {
     /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     setColumnWidths(
-        columnWidths: { key: string | ColDef | Column; newWidth: number }[],
+        columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
         source?: ColumnEventType
     ): void;
@@ -641,7 +641,7 @@ export interface _ColumnMoveApi {
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
 
     /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
+    moveColumns(columnsToMoveKeys: ColKey[], toIndex: number): void;
 }
 
 export interface _ColumnHoverApi {
@@ -675,7 +675,7 @@ export interface _ColumnGridApi<TData> {
      * Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object).
      * @agModule `ColumnApiModule`
      */
-    getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null;
+    getColumn<TValue = any>(key: ColKey<TData, TValue>): Column<TValue> | null;
 
     /**
      * Returns all the columns, regardless of visible or not.
@@ -741,7 +741,7 @@ export interface _ColumnGridApi<TData> {
      * Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object.
      * @agModule `ColumnApiModule`
      */
-    setColumnsPinned(keys: (string | ColDef | Column)[], pinned: ColumnPinnedType): void;
+    setColumnsPinned(keys: ColKey[], pinned: ColumnPinnedType): void;
 
     /**
      * Returns all the grid columns, same as `getColumns()`, except
@@ -1416,7 +1416,7 @@ export interface _RowGroupingGridApi {
      * Set the row group columns.
      * @agModule `RowGroupingModule`
      */
-    setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    setRowGroupColumns(colKeys: ColKey[]): void;
 
     /**
      * Move the column to a new position in the row grouping order.
@@ -1428,13 +1428,13 @@ export interface _RowGroupingGridApi {
      * Remove columns from the row groups.
      * @agModule `RowGroupingModule`
      */
-    removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    removeRowGroupColumns(colKeys: ColKey[]): void;
 
     /**
      * Add columns to the row groups.
      * @agModule `RowGroupingModule`
      */
-    addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+    addRowGroupColumns(colKeys: ColKey[]): void;
 
     /**
      * Get row group columns.
@@ -1461,7 +1461,7 @@ export interface _AggregationGridApi<TData> {
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     setColumnAggFunc<TValue = any>(
-        key: string | ColDef<TData, TValue> | Column<TValue>,
+        key: ColKey<TData, TValue>,
         aggFunc: string | IAggFunc<TData, TValue> | null | undefined
     ): void;
 }
@@ -1477,16 +1477,13 @@ export interface _PivotGridApi<TData> {
      * Returns the pivot result column for the given `pivotKeys` and `valueColId`.
      * @agModule `PivotModule`
      */
-    getPivotResultColumn<TValue = any>(
-        pivotKeys: string[],
-        valueColKey: string | ColDef<TData, TValue> | Column<TValue>
-    ): Column<TValue> | null;
+    getPivotResultColumn<TValue = any>(pivotKeys: string[], valueColKey: ColKey<TData, TValue>): Column<TValue> | null;
 
     /**
      * Set the value columns to the provided list of columns.
      * @agModule `PivotModule`
      */
-    setValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    setValueColumns(colKeys: ColKey[]): void;
 
     /**
      * Get a list of the existing value columns.
@@ -1498,31 +1495,31 @@ export interface _PivotGridApi<TData> {
      * Remove the given list of columns from the existing set of value columns.
      * @agModule `PivotModule`
      */
-    removeValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    removeValueColumns(colKeys: ColKey[]): void;
 
     /**
      * Add the given list of columns to the existing set of value columns.
      * @agModule `PivotModule`
      */
-    addValueColumns(colKeys: (string | ColDef | Column)[]): void;
+    addValueColumns(colKeys: ColKey[]): void;
 
     /**
      * Set the columns for the grid to pivot on.
      * @agModule `PivotModule`
      */
-    setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    setPivotColumns(colKeys: ColKey[]): void;
 
     /**
      * Stops the grid from pivoting on the provided columns.
      * @agModule `PivotModule`
      */
-    removePivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    removePivotColumns(colKeys: ColKey[]): void;
 
     /**
      * Add columns for the grid to pivot on.
      * @agModule `PivotModule`
      */
-    addPivotColumns(colKeys: (string | ColDef | Column)[]): void;
+    addPivotColumns(colKeys: ColKey[]): void;
 
     /**
      * Get the columns which the grid is pivoting on.

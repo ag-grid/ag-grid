@@ -66,9 +66,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
-        columns.forEach((column) => {
+        for (const column of columns) {
             if (!column.isCellEditable(rowNode)) {
-                return;
+                continue;
             }
             const position: Required<EditPosition> = {
                 rowNode,
@@ -79,7 +79,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             if (!this.model.hasEdits(position)) {
                 this.model.start(position);
             }
-        });
+        }
 
         this.rowNode = rowNode;
 
@@ -137,7 +137,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         super.stop(cancel, event);
 
-        changedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowValueChanged'));
+        for (const rowNode of changedRows) {
+            this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+        }
 
         this.cleanupEditors({ rowNode }, true);
 
@@ -172,7 +174,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
         super.cleanupEditors(position, includeEditing);
-        this.startedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowEditingStopped'));
+        for (const rowNode of this.startedRows) {
+            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+        }
         this.startedRows.length = 0;
     }
 

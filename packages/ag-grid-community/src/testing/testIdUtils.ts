@@ -354,11 +354,11 @@ export const wrapAgTestIdFor = <TLocator>(fn: (str: string) => TLocator): Locato
     const locators: Partial<Locators<TLocator>> = {};
 
     const keys = Object.keys(agTestIdFor) as (keyof AgTestIds)[];
-    keys.forEach((k) => {
+    for (const k of keys) {
         locators[k] = (...args: any[]) => {
             return fn((agTestIdFor[k] as any)(...args));
         };
-    });
+    }
 
     return locators as Locators<TLocator>;
 };

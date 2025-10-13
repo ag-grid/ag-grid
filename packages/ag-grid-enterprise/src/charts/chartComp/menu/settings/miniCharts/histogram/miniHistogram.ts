@@ -51,10 +51,10 @@ export class MiniHistogramClass extends MiniChartWithAxes {
     }
 
     updateColors([fill]: string[], [stroke]: string[]) {
-        this.bars.forEach((bar) => {
+        for (const bar of this.bars) {
             bar.fill = fill;
             bar.stroke = stroke;
-        });
+        }
     }
 }
 

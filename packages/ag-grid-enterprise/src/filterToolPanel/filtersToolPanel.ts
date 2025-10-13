@@ -44,7 +44,9 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     public init(params: ToolPanelFiltersCompParams): void {
         // if initialised is true, means this is a refresh
         if (this.initialised) {
-            this.listenerDestroyFuncs.forEach((func) => func());
+            for (const func of this.listenerDestroyFuncs) {
+                func();
+            }
             this.listenerDestroyFuncs = [];
         }
 

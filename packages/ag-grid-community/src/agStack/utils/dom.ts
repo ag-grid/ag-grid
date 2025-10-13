@@ -137,21 +137,22 @@ export function _getElementSize(el: HTMLElement): {
         boxSizing,
     } = window.getComputedStyle(el);
 
+    const pf = Number.parseFloat;
     return {
-        height: parseFloat(height || '0'),
-        width: parseFloat(width || '0'),
-        borderTopWidth: parseFloat(borderTopWidth || '0'),
-        borderRightWidth: parseFloat(borderRightWidth || '0'),
-        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
-        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
-        paddingTop: parseFloat(paddingTop || '0'),
-        paddingRight: parseFloat(paddingRight || '0'),
-        paddingBottom: parseFloat(paddingBottom || '0'),
-        paddingLeft: parseFloat(paddingLeft || '0'),
-        marginTop: parseFloat(marginTop || '0'),
-        marginRight: parseFloat(marginRight || '0'),
-        marginBottom: parseFloat(marginBottom || '0'),
-        marginLeft: parseFloat(marginLeft || '0'),
+        height: pf(height || '0'),
+        width: pf(width || '0'),
+        borderTopWidth: pf(borderTopWidth || '0'),
+        borderRightWidth: pf(borderRightWidth || '0'),
+        borderBottomWidth: pf(borderBottomWidth || '0'),
+        borderLeftWidth: pf(borderLeftWidth || '0'),
+        paddingTop: pf(paddingTop || '0'),
+        paddingRight: pf(paddingRight || '0'),
+        paddingBottom: pf(paddingBottom || '0'),
+        paddingLeft: pf(paddingLeft || '0'),
+        marginTop: pf(marginTop || '0'),
+        marginRight: pf(marginRight || '0'),
+        marginBottom: pf(marginBottom || '0'),
+        marginLeft: pf(marginLeft || '0'),
         boxSizing,
     };
 }
@@ -234,7 +235,7 @@ export function _removeFromParent(node: Element | null) {
     }
 }
 
-export function _isInDOM(element: Element): boolean {
+export function _isInDOM(element: Element): element is HTMLElement {
     return !!(element as HTMLElement).offsetParent;
 }
 

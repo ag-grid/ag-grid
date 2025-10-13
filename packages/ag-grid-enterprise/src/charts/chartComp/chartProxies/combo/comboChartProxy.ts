@@ -75,13 +75,13 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         const primaryYKeys: string[] = [];
         const secondaryYKeys: string[] = [];
 
-        fields.forEach((field) => {
+        for (const field of fields) {
             const colId = field.colId;
             const seriesChartType = seriesChartTypes.find((s) => s.colId === colId);
             if (seriesChartType) {
                 seriesChartType.secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
             }
-        });
+        }
 
         return { primaryYKeys, secondaryYKeys };
     }

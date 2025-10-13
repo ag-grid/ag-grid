@@ -30,13 +30,15 @@ export class ChartToolbar extends Component {
     }
 
     private createButtons(buttons: ChartToolbarButton[]): void {
-        this.buttonListenersDestroyFuncs.forEach((func) => func?.());
+        for (const func of this.buttonListenersDestroyFuncs) {
+            func?.();
+        }
         this.buttonListenersDestroyFuncs = [];
 
         const menuEl = this.eMenu;
         _clearElement(menuEl);
 
-        buttons.forEach((buttonConfig) => {
+        for (const buttonConfig of buttons) {
             const { buttonName, iconName, callback } = buttonConfig;
             const buttonEl = this.createButton(iconName);
 
@@ -54,7 +56,7 @@ export class ChartToolbar extends Component {
             );
 
             menuEl.appendChild(buttonEl);
-        });
+        }
     }
 
     private createButton(iconName: IconName): Element {

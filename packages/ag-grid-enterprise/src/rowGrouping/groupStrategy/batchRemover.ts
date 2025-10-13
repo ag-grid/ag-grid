@@ -1,7 +1,5 @@
 import type { RowNode } from 'ag-grid-community';
 
-import type { GroupRow } from './groupRow';
-
 // doing _removeFromArray() multiple times on a large list can be a bottleneck.
 // when doing large deletes (eg removing 1,000 rows) then we would be calling _removeFromArray()
 // a thousands of times, in particular RootNode.allGroupChildren could be a large list, and
@@ -13,12 +11,12 @@ import type { GroupRow } from './groupRow';
 // it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
 
 interface RemoveDetails {
-    fromChildrenAfterGroup: Set<GroupRow> | null;
-    fromAllLeafChildren: Set<GroupRow> | null;
+    fromChildrenAfterGroup: Set<RowNode> | null;
+    fromAllLeafChildren: Set<RowNode> | null;
 }
 
 export class BatchRemover {
-    private readonly allSets = new Map<GroupRow, RemoveDetails>();
+    private readonly allSets = new Map<RowNode, RemoveDetails>();
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
@@ -74,7 +72,7 @@ export class BatchRemover {
     }
 }
 
-function filterRowNodesInPlace(array: GroupRow[], removals: ReadonlySet<GroupRow>): void {
+function filterRowNodesInPlace(array: RowNode[], removals: ReadonlySet<RowNode>): void {
     let writeIdx = 0;
     for (let i = 0, len = array.length; i < len; ++i) {
         const item = array[i];

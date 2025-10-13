@@ -57,10 +57,7 @@ const registerFill = (fill: ExcelInterior): number => {
     let pos = registeredFills.findIndex((currentFill) => {
         const { patternType, fgRgb, bgRgb } = currentFill;
 
-        if (patternType != convertedPattern || fgRgb != convertedFillColor || bgRgb != convertedPatternColor) {
-            return false;
-        }
-        return true;
+        return !(patternType != convertedPattern || fgRgb != convertedFillColor || bgRgb != convertedPatternColor);
     });
 
     if (pos === -1) {
@@ -207,7 +204,7 @@ const registerFont = (font: ExcelFont): number => {
     const convertedVerticalAlign = verticalAlign ? verticalAlign.toLocaleLowerCase() : undefined;
 
     let pos = registeredFonts.findIndex((currentFont) => {
-        if (
+        return !(
             currentFont.fontName != name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||
@@ -219,11 +216,7 @@ const registerFont = (font: ExcelFont): number => {
             currentFont.underline != convertedUnderline ||
             currentFont.verticalAlign != convertedVerticalAlign ||
             currentFont.family != familyId
-        ) {
-            return false;
-        }
-
-        return true;
+        );
     });
 
     if (pos === -1) {

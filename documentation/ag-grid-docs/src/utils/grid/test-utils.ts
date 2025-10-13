@@ -244,11 +244,6 @@ const frameworkTest =
     (testName: string | undefined, testBody: (fixtures: TestFixtures) => Promise<void>): void => {
         extended.use({ agFramework });
 
-        // Set expect timeout to 20,000ms for Angular framework
-        if (agFramework === 'angular') {
-            playwrightExpect.configure({ timeout: 20_000 });
-        }
-
         // cachedRoute needs to be destructured in testWrapper for Playwright to initialise it correctly
         const testWrapper = async (
             {

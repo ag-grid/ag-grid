@@ -1,7 +1,7 @@
 import type {
     BeanName,
+    ChangedRowNodes,
     DetailGridInfo,
-    IChangedRowNodes,
     IMasterDetailService,
     NamedBean,
     RefreshModelParams,
@@ -121,7 +121,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         }
     }
 
-    private setMasters(changedRowNodes: IChangedRowNodes | null | undefined): void {
+    private setMasters(changedRowNodes: ChangedRowNodes | null | undefined): void {
         this.enabled = this.isEnabled();
         if (changedRowNodes) {
             for (const node of changedRowNodes.updates) {

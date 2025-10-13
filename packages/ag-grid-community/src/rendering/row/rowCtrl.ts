@@ -259,7 +259,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public setCached(cached: boolean): void {
         const displayValue = cached ? 'none' : '';
-        this.allRowGuis.forEach((rg) => (rg.element.style.display = displayValue));
+        for (const rg of this.allRowGuis) {
+            rg.element.style.display = displayValue;
+        }
     }
 
     private initialiseRowComp(gui: RowGui): void {
@@ -282,8 +284,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const comp = gui.rowComp;
 
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
-        initialRowClasses.forEach((name) => comp.toggleCss(name, true));
-
+        for (const name of initialRowClasses) {
+            comp.toggleCss(name, true);
+        }
         this.executeSlideAndFadeAnimations(gui);
 
         if (this.rowNode.group) {
@@ -639,10 +642,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private setCellCtrls(useFlushSync: boolean) {
-        this.allRowGuis.forEach((item) => {
+        for (const item of this.allRowGuis) {
             const cellControls = this.getCellCtrlsForContainer(item.containerType);
             item.rowComp.setCellCtrls(cellControls, useFlushSync);
-        });
+        }
     }
 
     private getCellCtrlsForContainer(containerType: RowContainerType) {
@@ -847,9 +850,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.addManagedPropertyListener('rowDragEntireRow', () => {
             const useRowDragEntireRow = gos.get('rowDragEntireRow');
             if (useRowDragEntireRow) {
-                this.allRowGuis.forEach((gui) => {
+                for (const gui of this.allRowGuis) {
                     this.addRowDraggerToRow(gui);
-                });
+                }
                 return;
             }
             this.rowDragComps = this.destroyBeans(this.rowDragComps, context);
@@ -860,8 +863,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addListenersForCellComps(): void {
         this.addManagedListeners(this.rowNode, {
-            rowIndexChanged: () => this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged()),
-            cellChanged: (event) => this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event)),
+            rowIndexChanged: () => {
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    cellCtrl.onRowIndexChanged();
+                }
+            },
+            cellChanged: (event) => {
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    cellCtrl.onCellChanged(event);
+                }
+            },
         });
     }
 
@@ -899,14 +910,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.refreshCell(params));
+        for (const cellCtrl of this.getAllCellCtrls()) {
+            cellCtrl.refreshCell(params);
+        }
 
         // as data has changed update the dom row id attributes
-        this.allRowGuis.forEach((gui) => {
+        for (const gui of this.allRowGuis) {
             this.setRowCompRowId(gui.rowComp);
             this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
-        });
+        }
 
         // check for selected also, as this could be after lazy loading of the row data, in which case
         // the id might of just gotten set inside the row and the row selected state may of changed
@@ -938,7 +951,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const indented = treeData && (belowOn || aboveOn);
         const uiLevel = this.rowNode.uiLevel.toString();
 
-        this.allRowGuis.forEach((gui) => {
+        for (const gui of this.allRowGuis) {
             const rowComp = gui.rowComp;
             rowComp.toggleCss('ag-row-highlight-above', aboveOn);
             rowComp.toggleCss('ag-row-highlight-inside', insideOn);
@@ -949,12 +962,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             } else {
                 gui.element.style.removeProperty('--ag-row-highlight-level');
             }
-        });
+        }
     }
 
     private postProcessRowDragging(): void {
         const dragging = this.rowNode.dragging;
-        this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-dragging', dragging));
+        for (const gui of this.allRowGuis) {
+            gui.rowComp.toggleCss('ag-row-dragging', dragging);
+        }
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -1050,9 +1065,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
         const tabIndex = this.isFullWidth() && suppressCellFocus ? undefined : this.gos.get('tabIndex');
-        this.allRowGuis.forEach((gui) => {
+        for (const gui of this.allRowGuis) {
             _addOrRemoveAttribute(gui.element, 'tabindex', tabIndex);
-        });
+        }
     }
 
     public onFullWidthRowFocused(event?: CellFocusedEvent) {
@@ -1102,13 +1117,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             list: [],
             map: {},
         };
-        prev.list.forEach((cellCtrl) => {
+        for (const cellCtrl of prev.list) {
             if (cellCtrl === cellCtrlToRemove) {
-                return;
+                continue;
             }
             res.list.push(cellCtrl);
             res.map[cellCtrl.column.getInstanceId()] = cellCtrl;
-        });
+        }
         return res;
     }
 
@@ -1355,10 +1370,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (this.rowLevel != newLevel) {
             const classToAdd = 'ag-row-level-' + newLevel;
             const classToRemove = 'ag-row-level-' + this.rowLevel;
-            this.allRowGuis.forEach((gui) => {
+            for (const gui of this.allRowGuis) {
                 gui.rowComp.toggleCss(classToAdd, true);
                 gui.rowComp.toggleCss(classToRemove, false);
-            });
+            }
         }
         this.rowLevel = newLevel;
     }
@@ -1377,11 +1392,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-first', newFirst));
+            for (const gui of this.allRowGuis) {
+                gui.rowComp.toggleCss('ag-row-first', newFirst);
+            }
         }
         if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-row-last', newLast));
+            for (const gui of this.allRowGuis) {
+                gui.rowComp.toggleCss('ag-row-last', newLast);
+            }
         }
     }
 
@@ -1400,19 +1419,25 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        cssClasses.forEach((classStr) => {
-            this.allRowGuis.forEach((c) => c.rowComp.toggleCss(classStr, true));
-        });
+        for (const classStr of cssClasses) {
+            for (const c of this.allRowGuis) {
+                c.rowComp.toggleCss(classStr, true);
+            }
+        }
     }
 
     private postProcessRowClassRules(): void {
         this.beans.rowStyleSvc?.processRowClassRules(
             this.rowNode,
             (className: string) => {
-                this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss(className, true));
+                for (const gui of this.allRowGuis) {
+                    gui.rowComp.toggleCss(className, true);
+                }
             },
             (className: string) => {
-                this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss(className, false));
+                for (const gui of this.allRowGuis) {
+                    gui.rowComp.toggleCss(className, false);
+                }
             }
         );
     }
@@ -1608,7 +1633,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (gui) {
             callback(gui);
         } else {
-            this.allRowGuis.forEach(callback);
+            for (const gui of this.allRowGuis) {
+                callback(gui);
+            }
         }
     }
 
@@ -1669,7 +1696,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 const rowTop = this.roundRowTopToBounds(rowNode.rowTop!);
                 this.setRowTop(rowTop);
             } else {
-                this.allRowGuis.forEach((gui) => gui.rowComp.toggleCss('ag-opacity-zero', true));
+                for (const gui of this.allRowGuis) {
+                    gui.rowComp.toggleCss('ag-opacity-zero', true);
+                }
             }
         }
 
@@ -1691,7 +1720,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.allRowGuis.length = 0;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
-            ctrls.list.forEach((c) => c.destroy());
+            for (const c of ctrls.list) {
+                c.destroy();
+            }
             return { list: [], map: {} };
         };
 
@@ -1810,19 +1841,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private setRowTopStyle(topPx: string): void {
-        this.allRowGuis.forEach((gui) =>
-            this.suppressRowTransform ? gui.rowComp.setTop(topPx) : gui.rowComp.setTransform(`translateY(${topPx})`)
-        );
+        for (const gui of this.allRowGuis) {
+            this.suppressRowTransform ? gui.rowComp.setTop(topPx) : gui.rowComp.setTransform(`translateY(${topPx})`);
+        }
     }
 
     public getCellCtrl(column: AgColumn, skipColSpanSearch = false): CellCtrl | null {
         // first up, check for cell directly linked to this column
         let res: CellCtrl | null = null;
-        this.getAllCellCtrls().forEach((cellCtrl) => {
+        for (const cellCtrl of this.getAllCellCtrls()) {
             if (cellCtrl.column == column) {
                 res = cellCtrl;
             }
-        });
+        }
 
         if (res != null || skipColSpanSearch) {
             return res;
@@ -1833,11 +1864,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // more expensive, as spanning cols is a
         // infrequently used feature so we don't need to do this most
         // of the time
-        this.getAllCellCtrls().forEach((cellCtrl) => {
+        for (const cellCtrl of this.getAllCellCtrls()) {
             if (cellCtrl?.getColSpanningList().indexOf(column) >= 0) {
                 res = cellCtrl;
             }
-        });
+        }
 
         return res;
     }

@@ -5,5 +5,5 @@
 export type Part<TParams = unknown> = {
     readonly feature?: string;
     readonly modeParams: Record<string, TParams>;
-    readonly css?: string | (() => string) | undefined;
+    readonly css?: string | (() => string);
 };

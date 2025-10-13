@@ -9,16 +9,17 @@ import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeSt
 import type { ChangedPath } from '../utils/changedPath';
 
 export function updateRowNodeAfterFilter(rowNode: RowNode): void {
-    if (rowNode.sibling) {
-        rowNode.sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
+    const sibling = rowNode.sibling;
+    if (sibling) {
+        sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
     }
 }
 
 export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'filterStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set(['excludeChildrenWhenTreeDataFiltering']);
-    public step: ClientSideRowModelStage = 'filter';
+    public readonly step: ClientSideRowModelStage = 'filter';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];
 
     private filterManager?: FilterManager;
 

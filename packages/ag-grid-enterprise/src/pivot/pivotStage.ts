@@ -28,13 +28,13 @@ const mapToObject = (map: Map<string, any>): Record<string, any> => {
 export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'pivotStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+    public readonly step: ClientSideRowModelStage = 'pivot';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'removePivotHeaderRowWhenSingleValueColumn',
         'pivotRowTotals',
         'pivotColumnGroupTotals',
         'suppressExpandablePivotGroups',
-    ]);
-    public step: ClientSideRowModelStage = 'pivot';
+    ];
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;

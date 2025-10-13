@@ -117,7 +117,9 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
                 this.updateGroups();
             },
             destroyed: () => {
-                destroyFunctions.forEach((func) => func());
+                for (const func of destroyFunctions) {
+                    func();
+                }
                 // resubscribe
                 this.addHandlerListeners(listener);
             },
@@ -185,7 +187,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         const filterPromises: AgPromise<void>[] = [];
         const filterColumnPairs: FilterColumnPair[] = [];
         const colFilter = this.beans.colFilter!;
-        sourceColumns.forEach((column) => {
+        for (const column of sourceColumns) {
             const filterPromise = colFilter.getOrCreateFilterUi(column);
             if (filterPromise) {
                 filterPromises.push(
@@ -202,7 +204,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
                     })
                 );
             }
-        });
+        }
         return AgPromise.all(filterPromises).then(() => {
             this.filterColumnPairs = filterColumnPairs;
         });

@@ -456,7 +456,9 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.suppressRootStyles = !!suppressRootStyles;
         if (!this.suppressRootStyles) {
             eGui.classList.add(cssClassPrefix);
-            cssClasses?.forEach((it) => eGui.classList.add(it));
+            for (const it of cssClasses ?? []) {
+                eGui.classList.add(it);
+            }
             if (disabled) {
                 eGui.classList.add(`${cssClassPrefix}-disabled`);
             }

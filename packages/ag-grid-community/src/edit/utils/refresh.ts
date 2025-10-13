@@ -12,21 +12,21 @@ const purgeRows = (
     pinnedRowModel?.forEachPinnedRow('top', (node) => rowNodes.has(node) && found.add(node));
     pinnedRowModel?.forEachPinnedRow('bottom', (node) => rowNodes.has(node) && found.add(node));
 
-    rowNodes.forEach((rowNode) => {
+    for (const rowNode of rowNodes) {
         if (!found.has(rowNode)) {
             editModelSvc!.removeEdits({ rowNode });
         }
-    });
+    }
 
     return found;
 };
 
 const purgeCells = ({ editModelSvc }: BeanCollection, rowNodes: Set<IRowNode>, columns: Set<Column>): void => {
-    rowNodes.forEach((rowNode) =>
+    for (const rowNode of rowNodes) {
         editModelSvc
             ?.getEditRow(rowNode)
-            ?.forEach((_, column) => !columns.has(column) && editModelSvc!.removeEdits({ rowNode, column }))
-    );
+            ?.forEach((_, column) => !columns.has(column) && editModelSvc!.removeEdits({ rowNode, column }));
+    }
 };
 
 export const _refreshEditCells = (beans: BeanCollection) => () => {

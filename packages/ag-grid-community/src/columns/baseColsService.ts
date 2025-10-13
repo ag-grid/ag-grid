@@ -3,6 +3,7 @@ import { _exists } from '../agStack/utils/generic';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type {
@@ -16,7 +17,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { ColumnChangedEventType } from './columnApi';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
-import type { ColKey, ColumnModel, Maybe } from './columnModel';
+import type { ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -90,12 +91,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         masterList.length = 0;
 
         if (_exists(colKeys)) {
-            colKeys.forEach((key) => {
+            for (const key of colKeys) {
                 const column = this.colModel.getColDefCol(key);
                 if (column) {
                     masterList.push(column);
                 }
-            });
+            }
         }
 
         masterList.forEach((col, idx) => {
@@ -119,10 +120,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.updateIndexMap();
 
         const primaryCols = this.colModel.getColDefCols();
-        primaryCols?.forEach((column) => {
+
+        for (const column of primaryCols ?? []) {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(column, added, source);
-        });
+        }
 
         autoGroupsNeedBuilding && this.colModel.refreshCols(false, source);
 
@@ -147,25 +149,25 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         let atLeastOne = false;
         const updatedCols: Set<AgColumn> = new Set();
 
-        keys.forEach((key) => {
+        for (const key of keys) {
             if (!key) {
-                return;
+                continue;
             }
             const columnToAdd = this.colModel.getColDefCol(key);
             if (!columnToAdd) {
-                return;
+                continue;
             }
             updatedCols.add(columnToAdd);
 
             if (actionIsAdd) {
                 if (masterList.indexOf(columnToAdd) >= 0) {
-                    return;
+                    continue;
                 }
                 masterList.push(columnToAdd);
             } else {
                 const currentIndex = masterList.indexOf(columnToAdd);
                 if (currentIndex < 0) {
-                    return;
+                    continue;
                 }
                 for (let i = currentIndex + 1; i < masterList.length; i++) {
                     // row indexes of subsequent columns have changed
@@ -176,7 +178,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
             columnCallback(columnToAdd, actionIsAdd, source);
             atLeastOne = true;
-        });
+        }
 
         if (!atLeastOne) {
             return;
@@ -212,7 +214,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // go though all cols.
         // if value, change
         // if default only, change only if new
-        primaryCols?.forEach((col) => {
+        for (const col of primaryCols ?? []) {
             const colIsNew = !oldProvidedCols.includes(col);
             const colDef = col.getColDef();
 
@@ -261,7 +263,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 const useIndex = colIsNew ? index != null || initialIndex != null : index != null;
                 useIndex ? colsWithIndex.push(col) : colsWithValue.push(col);
             }
-        });
+        }
 
         const getIndexForCol = (col: AgColumn): number => {
             const colDef = col.getColDef();
@@ -284,34 +286,34 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         // next, add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true...
-        previousCols.forEach((col) => {
+        for (const col of previousCols) {
             if (colsWithValue.indexOf(col) >= 0) {
                 // ...with the caveat that each column added also has any associated virtual columns added here
                 // so they appear before it in the group hierarchy. This is purely a matter of ordering; adding the
                 // virtual columns here means they will not be added below when iterating over `colsWithValue`.
                 pushToRes(col);
             }
-        });
+        }
 
         // lastly put in all remaining cols
-        colsWithValue.forEach((col) => {
+        for (const col of colsWithValue) {
             if (res.indexOf(col) < 0) {
                 pushToRes(col);
             }
-        });
+        }
 
         // set flag=false for removed cols
-        previousCols.forEach((col) => {
+        for (const col of previousCols) {
             if (res.indexOf(col) < 0) {
                 setFlagFunc(col, false, source);
             }
-        });
+        }
         // set flag=true for newly added cols
-        res.forEach((col) => {
+        for (const col of res) {
             if (previousCols.indexOf(col) < 0) {
                 setFlagFunc(col, true, source);
             }
-        });
+        }
 
         this.columns = res;
         this.updateIndexMap();
@@ -384,7 +386,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             lastIndex = originalOrderIndex;
         };
 
-        colList.forEach((column) => {
+        for (const column of colList) {
             const colId = column.getColId();
             if (updatedColIds.has(colId)) {
                 // New col already exists. Add any other new cols that should be before it.
@@ -402,10 +404,10 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                             processPrecedingNewCols(colId);
                         } else {
                             // Reached the first manually added column. Add all the new columns now.
-                            newColIds.forEach((newColId) => {
+                            for (const newColId of newColIds) {
                                 // Rather than increment the index, just use the original order index - doesn't need to be contiguous.
                                 incomingColumnState[newColId][indexProp] = index + originalOrderMap[newColId];
-                            });
+                            }
                             index += colIdsInOriginalOrder.length;
                             hasAddedNewCols = true;
                         }
@@ -416,7 +418,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                     columnStateAccumulator[colId][indexProp] = index++;
                 }
             }
-        });
+        }
 
         return columnStateAccumulator;
     }

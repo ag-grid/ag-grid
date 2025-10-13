@@ -17,17 +17,17 @@ export class MultiIndexMap<K, I extends keyof K> {
     }
 
     public set(item: K) {
-        this.indexes.forEach((index) => {
+        for (const index of this.indexes) {
             const map = this.maps.get(index)!;
             map.set(item[index], item);
-        });
+        }
     }
 
     public delete(item: K) {
-        this.indexes.forEach((index) => {
+        for (const index of this.indexes) {
             const map = this.maps.get(index)!;
             map.delete(item[index]);
-        });
+        }
     }
 
     public clear() {

@@ -89,7 +89,9 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     private destroyGlobalListeners(set: Set<AgGlobalEventListener>, async: boolean): void {
-        set.forEach((listener) => this.eventSvc.removeGlobalListener(listener, async));
+        for (const listener of set) {
+            this.eventSvc.removeGlobalListener(listener, async);
+        }
         set.clear();
     }
 

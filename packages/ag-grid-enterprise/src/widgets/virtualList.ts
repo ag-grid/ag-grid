@@ -396,7 +396,9 @@ export class VirtualList<
                 }
                 const callbacks = this.awaitStableCallbacks;
                 this.awaitStableCallbacks = [];
-                callbacks.forEach((c) => c());
+                for (const c of callbacks) {
+                    c();
+                }
             }
         );
     }

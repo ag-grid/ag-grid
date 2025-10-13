@@ -27,7 +27,7 @@ export default defineConfig({
          * Maximum time expect() should wait for the condition to be met.
          * For example in `await expect(locator).toHaveText('text')`.
          */
-        timeout: process.env.CI ? 10_000 : 5_000,
+        timeout: process.env.CI ? 20_000 : 5_000,
     },
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,

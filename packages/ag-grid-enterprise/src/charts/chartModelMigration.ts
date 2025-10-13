@@ -165,9 +165,9 @@ function migrateV26_2(model: ChartModel) {
                 [type]: { ...minimalAxis, ...axisProps },
             }))
             .reduce(merge, {});
-        ALL_AXIS_TYPES.filter((v) => updatedAxes[v] == null).forEach((v) => {
+        for (const v of ALL_AXIS_TYPES.filter((v) => updatedAxes[v] == null)) {
             updatedAxes[v] = { ...minimalAxis };
-        });
+        }
         chartTypeMixin.axes = updatedAxes;
     }
 

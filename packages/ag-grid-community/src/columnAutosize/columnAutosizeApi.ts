@@ -1,11 +1,10 @@
 import type { BeanCollection } from '../context/context';
-import type { ColDef } from '../entities/colDef';
+import type { ColKey } from '../entities/colDef';
 import type {
     ISizeAllColumnsToContentParams,
     ISizeColumnsToContentParams,
     ISizeColumnsToFitParams,
 } from '../interfaces/autoSize';
-import type { Column } from '../interfaces/iColumn';
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
     if (typeof paramsOrGridWidth === 'number') {
@@ -15,11 +14,11 @@ export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISiz
     }
 }
 
-export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+export function autoSizeColumns(beans: BeanCollection, keys: ColKey[], skipHeader?: boolean): void;
 export function autoSizeColumns(beans: BeanCollection, params: ISizeColumnsToContentParams): void;
 export function autoSizeColumns(
     { colAutosize, visibleCols }: BeanCollection,
-    keysOrParams: (string | ColDef | Column)[] | ISizeColumnsToContentParams,
+    keysOrParams: ColKey[] | ISizeColumnsToContentParams,
     skipHeader?: boolean
 ): void {
     if (Array.isArray(keysOrParams)) {

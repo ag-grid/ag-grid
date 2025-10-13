@@ -60,7 +60,9 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
         // css styles that the real cells are inheriting
         const eBodyContainer = this.centerRowContainerCtrl.eContainer;
 
-        elements.forEach((el) => this.cloneItemIntoDummy(el, eDummyContainer));
+        for (const el of elements) {
+            this.cloneItemIntoDummy(el, eDummyContainer);
+        }
 
         // only append the dummyContainer to the DOM after it contains all the necessary items
         eBodyContainer.appendChild(eDummyContainer);
@@ -82,12 +84,12 @@ export class AutoWidthCalculator extends BeanStub implements NamedBean {
     private getHeaderCellForColumn(column: AgColumnGroup | AgColumn): HTMLElement | null {
         let element: HTMLElement | null = null;
 
-        this.beans.ctrlsSvc.getHeaderRowContainerCtrls().forEach((container) => {
+        for (const container of this.beans.ctrlsSvc.getHeaderRowContainerCtrls()) {
             const res = container.getHtmlElementForColumnHeader(column);
             if (res != null) {
                 element = res;
             }
-        });
+        }
 
         return element;
     }

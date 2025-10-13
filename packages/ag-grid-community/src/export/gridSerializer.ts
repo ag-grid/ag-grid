@@ -239,11 +239,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map((position) => rowModel.getRow(position.rowIndex))
                     .forEach(processRow);
-
-                return gridSerializingSession;
-            }
-
-            if (this.colModel.isPivotMode()) {
+            } else if (this.colModel.isPivotMode()) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processRow, true, exportedRows === 'filteredAndSorted');
                 } else if (usingSsrm) {
@@ -252,16 +248,12 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
                 }
-
-                return gridSerializingSession;
-            }
-
-            // onlySelectedAllPages: user doing pagination and wants selected items from
-            // other pages, so cannot use the standard row model as it won't have rows from
-            // other pages.
-            // onlySelectedNonStandardModel: if user wants selected in non standard row model
-            // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
-            if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
+            } else if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
+                // onlySelectedAllPages: user doing pagination and wants selected items from
+                // other pages, so cannot use the standard row model as it won't have rows from
+                // other pages.
+                // onlySelectedNonStandardModel: if user wants selected in non standard row model
+                // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
                 const selectedNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
                 this.replicateSortedOrder(selectedNodes);
                 // serialize each node
@@ -395,13 +387,15 @@ export class GridSerializer extends BeanStub implements NamedBean {
         processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined
     ): void {
         const directChildrenHeaderGroups: (AgColumn | AgColumnGroup)[] = [];
-        displayedGroups.forEach((columnGroupChild) => {
+        for (const columnGroupChild of displayedGroups) {
             const columnGroup = columnGroupChild as AgColumnGroup;
             if (!columnGroup.getChildren) {
-                return;
+                continue;
             }
-            columnGroup.getChildren()!.forEach((it) => directChildrenHeaderGroups.push(it));
-        });
+            for (const it of columnGroup.getChildren() ?? []) {
+                directChildrenHeaderGroups.push(it);
+            }
+        }
 
         if (displayedGroups.length > 0 && isColumnGroup(displayedGroups[0])) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups, processGroupHeaderCallback);
@@ -423,7 +417,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     ) {
         const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
-        displayedGroups.forEach((columnGroupChild) => {
+        for (const columnGroupChild of displayedGroups) {
             const columnGroup: AgColumnGroup = columnGroupChild as AgColumnGroup;
 
             let name: string;
@@ -468,6 +462,6 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 columnGroup.getLeafColumns().length - 1,
                 collapsibleGroupRanges
             );
-        });
+        }
     }
 }

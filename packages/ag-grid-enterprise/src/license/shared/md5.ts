@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/arguments-order */
 export class MD5 {
     private ieCompatibility = false;
 

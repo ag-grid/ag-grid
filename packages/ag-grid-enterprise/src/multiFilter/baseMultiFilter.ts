@@ -96,7 +96,9 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
     }
 
     private destroyChildren() {
-        this.guiDestroyFuncs.forEach((func) => func());
+        for (const func of this.guiDestroyFuncs) {
+            func();
+        }
         this.guiDestroyFuncs.length = 0;
         this.filterGuis.length = 0;
     }

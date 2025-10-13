@@ -397,7 +397,6 @@ export class LazyCache extends BeanStub {
             // get the smallest next node
             if (nextNode == null || nextNode.node.rowIndex! > lazyNode.node.rowIndex!) {
                 nextNode = lazyNode;
-                return;
             }
         });
         if (!previousNode && !nextNode) return null;
@@ -430,7 +429,6 @@ export class LazyCache extends BeanStub {
             // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
-                return;
             }
         });
 

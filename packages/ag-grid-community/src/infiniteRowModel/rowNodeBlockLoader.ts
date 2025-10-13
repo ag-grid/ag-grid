@@ -81,7 +81,9 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
             .filter((block) => block.state === 'needsLoading')
             .slice(0, loadAvailability);
         this.activeBlockLoadsCount += blocksToLoad.length;
-        blocksToLoad.forEach((block) => block.load());
+        for (const block of blocksToLoad) {
+            block.load();
+        }
         this.printCacheStatus();
     }
 

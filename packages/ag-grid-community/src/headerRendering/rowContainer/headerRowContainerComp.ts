@@ -101,7 +101,7 @@ export class HeaderRowContainerComp extends Component {
             prevGui = eGui;
         };
 
-        ctrls.forEach((ctrl) => {
+        for (const ctrl of ctrls) {
             const ctrlId = ctrl.instanceId;
             const existingComp = oldRowComps[ctrlId];
             delete oldRowComps[ctrlId];
@@ -111,8 +111,10 @@ export class HeaderRowContainerComp extends Component {
             this.rowCompsList.push(rowComp);
 
             appendEnsuringDomOrder(rowComp);
-        });
+        }
 
-        Object.values(oldRowComps).forEach((c) => this.destroyRowComp(c));
+        for (const c of Object.values(oldRowComps)) {
+            this.destroyRowComp(c);
+        }
     }
 }

@@ -1,8 +1,8 @@
 import type { ColumnChangedEventType } from '../columns/columnApi';
-import type { ColKey, Maybe } from '../columns/columnModel';
+import type { Maybe } from '../columns/columnModel';
 import type { ColumnState, ColumnStateParams } from '../columns/columnStateUtils';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, IAggFunc } from '../entities/colDef';
+import type { ColDef, ColKey, IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
 type ColumnProcessorKeys = 'add' | 'remove' | 'set';
