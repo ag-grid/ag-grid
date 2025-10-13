@@ -19,7 +19,6 @@ import {
 } from 'ag-grid-community';
 
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
-import type { BlockUtils } from '../serverSideRowModel/blocks/blockUtils';
 
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailSvc' as const;
