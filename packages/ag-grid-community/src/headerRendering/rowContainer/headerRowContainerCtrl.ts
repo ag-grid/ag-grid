@@ -45,9 +45,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         this.setupDragAndDrop(colMoves, this.eViewport);
 
-        const onDisplayedColsChanged = this.onDisplayedColumnsChanged.bind(this);
+        const onDisplayedColsChanged = this.refresh.bind(this, true);
         this.addManagedEventListeners({
-            firstDataRendered: () => this.refresh(true),
             displayedColumnsChanged: onDisplayedColsChanged,
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
@@ -255,7 +254,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
 
-        focusSvc.focusHeaderPosition({ headerPosition: position });
+        focusSvc.focusHeaderPosition({ headerPosition: position, scroll: false });
     }
 
     private setupCenterWidth(): void {
