@@ -45,8 +45,9 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         this.setupDragAndDrop(colMoves, this.eViewport);
 
-        const onDisplayedColsChanged = this.refresh.bind(this, true);
+        const onDisplayedColsChanged = this.onDisplayedColumnsChanged.bind(this);
         this.addManagedEventListeners({
+            gridColumnsChanged: () => this.refresh(true),
             displayedColumnsChanged: onDisplayedColsChanged,
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
@@ -263,5 +264,12 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         }
 
         this.createManagedBean(new CenterWidthFeature((width) => this.comp.setCenterWidth(`${width}px`), true));
+    }
+
+    private onDisplayedColumnsChanged(): void {
+        const includeFloatingFilter = !!this.beans.filterManager?.hasFloatingFilters() && !this.hidden;
+        if (this.includeFloatingFilter !== includeFloatingFilter) {
+            this.refresh(true);
+        }
     }
 }
