@@ -183,30 +183,59 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     private executeRemove(
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         { remove }: RowDataTransaction,
-        changedRowNodes: ChangedRowNodes<TData>,
+        { adds, updates, removals }: ChangedRowNodes<TData>,
         nodesToUnselect: RowNode<TData>[]
     ): RowNode<TData>[] {
+        const allLeafs = this.rootNode._leafs;
+        const allLeafsLen = allLeafs?.length;
         const removeLen = remove?.length;
-        if (!removeLen) {
+        if (!removeLen || !allLeafsLen) {
             return [];
         }
-        const removedSet = new Set<RowNode<TData>>();
+        let removeCount = 0;
+        let filterIdx = allLeafsLen;
+        let filterEndIdx = 0;
+        let nodesNeverAdded: Set<RowNode<TData>> | undefined;
         const removedResult = new Array<RowNode<TData>>(removeLen);
-        let writeIdx = 0;
         for (let i = 0; i < removeLen; ++i) {
             const rowNode = this.lookupNode(getRowIdFunc, remove[i]);
-            if (rowNode) {
-                if (rowNode.isSelected()) {
-                    nodesToUnselect.push(rowNode);
-                }
-                this.deleteNode(rowNode);
-                changedRowNodes.remove(rowNode);
-                removedResult[writeIdx++] = rowNode;
-                removedSet.add(rowNode);
+            if (!rowNode) {
+                continue;
             }
+            const sourceRowIndex = rowNode.sourceRowIndex;
+            if (sourceRowIndex < filterIdx) {
+                filterIdx = sourceRowIndex;
+            }
+            if (sourceRowIndex > filterEndIdx) {
+                filterEndIdx = sourceRowIndex;
+            }
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+            this.deleteNode(rowNode);
+            if (adds.delete(rowNode)) {
+                nodesNeverAdded ??= new Set();
+                nodesNeverAdded.add(rowNode);
+            } else {
+                updates.delete(rowNode);
+                removals.add(rowNode);
+            }
+            removedResult[removeCount++] = rowNode;
         }
-        removedResult.length = writeIdx;
-        filterRemovedNodes(this.rootNode, removedSet);
+        removedResult.length = removeCount;
+        if (!removeCount) {
+            return removedResult;
+        }
+        filterIdx = Math.max(0, filterIdx);
+        for (let readIdx = filterIdx; readIdx < allLeafsLen; ++readIdx) {
+            const node = allLeafs[readIdx];
+            if (readIdx <= filterEndIdx && (removals.has(node) || nodesNeverAdded?.has(node))) {
+                continue;
+            }
+            node.sourceRowIndex = filterIdx;
+            allLeafs[filterIdx++] = node;
+        }
+        allLeafs.length = filterIdx;
         return removedResult;
     }
 
@@ -463,26 +492,4 @@ const updateRootLeafsKeepOrder = <TData>(
         }
     }
     newAllLeafs.length = writeIdx;
-};
-
-const filterRemovedNodes = <TData>(rootNode: RowNode<TData>, removedSet: ReadonlySet<RowNode<TData>>): void => {
-    const allLeafs = rootNode._leafs;
-    const allLeafsLen = allLeafs?.length;
-    const removeSize = removedSet.size;
-    if (!allLeafsLen || !removeSize) {
-        return;
-    }
-    const newAllLeafs = new Array<RowNode<TData>>(allLeafsLen - removeSize);
-    let writeIdx = 0;
-    for (let readIdx = 0; readIdx < allLeafsLen; ++readIdx) {
-        const node = allLeafs[readIdx];
-        if (!removedSet.has(node)) {
-            node.sourceRowIndex = writeIdx;
-            newAllLeafs[writeIdx++] = node;
-        }
-    }
-    if (writeIdx !== allLeafsLen) {
-        newAllLeafs.length = writeIdx;
-        rootNode._leafs = newAllLeafs;
-    }
 };
