@@ -306,7 +306,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     pointer = parent;
                 }
             }
-        } while (flushRemovedNodes(parents, removals));
+            flushRemovedNodes(parents, removals);
+        } while (parents.size);
 
         if (nodesToUnselect) {
             selectionSvc!.setNodesSelected({
@@ -356,6 +357,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
             childrenAfterGroup.push(child);
             setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
+            invalidateAllLeafChildren(parent);
         }
     }
 
@@ -486,8 +488,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupNode.level = level;
         groupNode.leafGroup = level === details.groupCols.length - 1;
 
-        groupNode.allLeafChildren = [];
-
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
@@ -581,44 +581,32 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 }
 
-/**
- * Flushes filtering in place of removed nodes from childrenAfterGroup of a list of parents.
- */
-export const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): boolean => {
-    let changed = false;
+/** Filters in place all moved or removed nodes from childrenAfterGroup of a list of parents. */
+export const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): void => {
     for (const parent of parents) {
-        if (parent && filterRowNodesInPlace(parent, removals)) {
-            changed = true;
+        const childrenAfterGroup = parent?.childrenAfterGroup;
+        if (!childrenAfterGroup) {
+            continue; // no children, so no change
+        }
+        const childrenAfterGroupLen = childrenAfterGroup.length;
+        let writeIdx = 0;
+        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+            const item = childrenAfterGroup[i];
+            if (item.parent === parent && !removals.has(item)) {
+                childrenAfterGroup[writeIdx++] = item;
+            }
+        }
+        if (childrenAfterGroupLen !== writeIdx) {
+            childrenAfterGroup.length = writeIdx;
+            parent.updateHasChildren();
+            invalidateAllLeafChildren(parent);
         }
     }
-    return changed;
-};
-
-const filterRowNodesInPlace = (parent: RowNode, removals: ReadonlySet<RowNode>): boolean => {
-    const childrenAfterGroup = parent.childrenAfterGroup;
-    if (!childrenAfterGroup) {
-        return false;
-    }
-    const childrenAfterGroupLen = childrenAfterGroup.length;
-    let writeIdx = 0;
-    for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-        const item = childrenAfterGroup[i];
-        if (item.parent === parent && !removals.has(item)) {
-            childrenAfterGroup[writeIdx++] = item;
-        }
-    }
-    if (childrenAfterGroupLen === writeIdx) {
-        return false;
-    }
-    childrenAfterGroup.length = writeIdx;
-    parent.updateHasChildren();
-    invalidateAllLeafChildren(parent);
-    return true;
 };
 
 /** Sets rowNode._leafs to undefined on node and its parents recursively so it will be reloaded at next access. It does not touch the root node. */
-const invalidateAllLeafChildren = (node: RowNode | null): void => {
-    while (node?._leafs !== undefined) {
+const invalidateAllLeafChildren = (node: RowNode): void => {
+    while (node._leafs !== undefined) {
         const parent = node.parent;
         if (!parent) {
             break; // Don't touch the root node.
