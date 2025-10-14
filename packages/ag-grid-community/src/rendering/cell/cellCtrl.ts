@@ -278,7 +278,9 @@ export class CellCtrl extends BeanStub {
         }
 
         if (this.onCompAttachedFuncs.length) {
-            this.onCompAttachedFuncs.forEach((func) => func());
+            for (const func of this.onCompAttachedFuncs) {
+                func();
+            }
             this.onCompAttachedFuncs = [];
         }
     }
@@ -1043,7 +1045,9 @@ export class CellCtrl extends BeanStub {
     }
 
     public cellEditorAttached(): void {
-        this.onEditorAttachedFuncs.forEach((func) => func());
+        for (const func of this.onEditorAttachedFuncs) {
+            func();
+        }
         this.onEditorAttachedFuncs = [];
     }
 

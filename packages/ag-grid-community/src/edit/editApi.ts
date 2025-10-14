@@ -63,11 +63,11 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
     const { editSvc } = beans;
     if (editSvc?.isBatchEditing()) {
         if (cancel) {
-            beans.editModelSvc?.getEditPositions().forEach((cellPosition) => {
+            for (const cellPosition of beans.editModelSvc?.getEditPositions() ?? []) {
                 if (cellPosition.state === 'editing') {
                     editSvc.revertSingleCellEdit(cellPosition);
                 }
-            });
+            }
         } else {
             _syncFromEditors(beans, { persist: true });
         }

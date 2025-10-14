@@ -396,7 +396,9 @@ export class VirtualList<
                 }
                 const callbacks = this.awaitStableCallbacks;
                 this.awaitStableCallbacks = [];
-                callbacks.forEach((c) => c());
+                for (const c of callbacks) {
+                    c();
+                }
             }
         );
     }
@@ -499,7 +501,7 @@ export class VirtualList<
     private removeRow(rowIndex: number) {
         const component = this.renderedRows.get(rowIndex)!;
 
-        this.eContainer.removeChild(component.eDiv);
+        component.eDiv.remove();
         this.destroyBean(component.rowComponent);
         this.renderedRows.delete(rowIndex);
     }

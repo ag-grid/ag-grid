@@ -6,7 +6,9 @@ function delayAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 
 function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
     try {
-        assertions.forEach((a) => a());
+        for (const a of assertions) {
+            a();
+        }
         done();
     } catch (error) {
         done(error);

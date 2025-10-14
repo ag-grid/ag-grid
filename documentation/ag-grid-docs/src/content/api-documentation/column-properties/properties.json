@@ -114,6 +114,12 @@
                 "url": "./tooltips"
             }
         },
+        "tooltipComponentSelector": {
+            "more": {
+                "name": "Custom Tooltip Component",
+                "url": "./tooltips/#custom-component"
+            }
+        },
         "tooltipComponentParams": {}
     },
     "header": {

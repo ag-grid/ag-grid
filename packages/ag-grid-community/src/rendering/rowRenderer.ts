@@ -251,8 +251,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * @param event cell focused event
      */
     private updateCellFocus(event?: CellFocusedEvent) {
-        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellFocused(event));
-        this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onFullWidthRowFocused(event));
+        for (const cellCtrl of this.getAllCellCtrls()) {
+            cellCtrl.onCellFocused(event);
+        }
+        for (const rowCtrl of this.getFullWidthRowCtrls()) {
+            rowCtrl.onFullWidthRowFocused(event);
+        }
     }
 
     /**
@@ -273,8 +277,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onSuppressCellFocusChanged(suppressCellFocus: boolean): void {
-        this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onSuppressCellFocusChanged(suppressCellFocus));
-        this.getFullWidthRowCtrls().forEach((rowCtrl) => rowCtrl.onSuppressCellFocusChanged(suppressCellFocus));
+        for (const cellCtrl of this.getAllCellCtrls()) {
+            cellCtrl.onSuppressCellFocusChanged(suppressCellFocus);
+        }
+        for (const rowCtrl of this.getFullWidthRowCtrls()) {
+            rowCtrl.onSuppressCellFocusChanged(suppressCellFocus);
+        }
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -287,14 +295,20 @@ export class RowRenderer extends BeanStub implements NamedBean {
             flashCells: (event) => {
                 const { cellFlashSvc } = this.beans;
                 if (cellFlashSvc) {
-                    this.getAllCellCtrls().forEach((cellCtrl) => cellFlashSvc.onFlashCells(cellCtrl, event));
+                    for (const cellCtrl of this.getAllCellCtrls()) {
+                        cellFlashSvc.onFlashCells(cellCtrl, event);
+                    }
                 }
             },
             columnHoverChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onColumnHover());
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    cellCtrl.onColumnHover();
+                }
             },
             displayedColumnsChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onDisplayedColumnsChanged());
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    cellCtrl.onDisplayedColumnsChanged();
+                }
             },
             displayedColumnsWidthChanged: () => {
                 // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
@@ -303,7 +317,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
                 // in different containers so doesn't impact.
                 if (this.printLayout) {
-                    this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onLeftChanged());
+                    for (const cellCtrl of this.getAllCellCtrls()) {
+                        cellCtrl.onLeftChanged();
+                    }
                 }
             },
         });
@@ -322,11 +338,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private readonly setupRangeSelectionListeners = () => {
         const onCellSelectionChanged = () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellSelectionChanged());
+            for (const cellCtrl of this.getAllCellCtrls()) {
+                cellCtrl.onCellSelectionChanged();
+            }
         };
 
         const onColumnMovedPinnedVisible = () => {
-            this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.updateRangeBordersIfRangeCount());
+            for (const cellCtrl of this.getAllCellCtrls()) {
+                cellCtrl.updateRangeBordersIfRangeCount();
+            }
         };
 
         const addCellSelectionListeners = () => {
@@ -359,7 +379,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     // executes all functions in destroyFuncsForColumnListeners and then clears the list
     private removeGridColumnListeners(): void {
-        this.destroyFuncsForColumnListeners.forEach((func) => func());
+        for (const func of this.destroyFuncsForColumnListeners) {
+            func();
+        }
         this.destroyFuncsForColumnListeners.length = 0;
     }
 
@@ -372,13 +394,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const cols = this.colModel.getCols();
 
-        cols.forEach((col) => {
+        for (const col of cols) {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
-                this.getAllCellCtrls().forEach((cellCtrl) => {
+                for (const cellCtrl of this.getAllCellCtrls()) {
                     if (cellCtrl.column === col) {
                         callback(cellCtrl);
                     }
-                });
+                }
             };
 
             const leftChangedListener = () => {
@@ -410,7 +432,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 col.__removeEventListener('lastLeftPinnedChanged', lastLeftPinnedChangedListener);
                 col.__removeEventListener('colDefChanged', colDefChangedListener);
             });
-        });
+        }
     }
 
     private onDomLayoutChanged(): void {
@@ -462,12 +484,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public getAllCellsNotSpanningForColumn(column: AgColumn): HTMLElement[] {
         const res: HTMLElement[] = [];
 
-        this.getAllRowCtrls().forEach((rowCtrl) => {
+        for (const rowCtrl of this.getAllRowCtrls()) {
             const eCell = rowCtrl.getCellCtrl(column, true)?.eGui;
             if (eCell) {
                 res.push(eCell);
             }
-        });
+        }
 
         return res;
     }
@@ -593,7 +615,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const partialRefresh = rowNodes != null;
 
         if (partialRefresh) {
-            rowNodes?.forEach((node) => this.redrawRow(node as RowNode, true));
+            for (const node of rowNodes ?? []) {
+                this.redrawRow(node as RowNode, true);
+            }
             this.dispatchDisplayedRowsChanged(false);
             return;
         }
@@ -853,7 +877,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public refreshRows(params: RefreshRowsParams = {}): void {
-        this.getRowCtrls(params.rowNodes).forEach((rowCtrl) => rowCtrl.refreshRow(params));
+        for (const rowCtrl of this.getRowCtrls(params.rowNodes)) {
+            rowCtrl.refreshRow(params);
+        }
 
         // refresh the full width rows too
         this.refreshFullWidth(params.rowNodes);
@@ -913,18 +939,18 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         const res: CellCtrl[] = [];
-        this.getRowCtrls(rowNodes).forEach((rowCtrl) => {
-            rowCtrl.getAllCellCtrls().forEach((cellCtrl) => {
+        for (const rowCtrl of this.getRowCtrls(rowNodes)) {
+            for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
                 const colId: string = cellCtrl.column.getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 
                 if (excludeColFromRefresh) {
-                    return;
+                    continue;
                 }
 
                 res.push(cellCtrl);
-            });
-        });
+            }
+        }
         return res;
     }
 
@@ -968,14 +994,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
 
-        rowsToRemove.forEach((indexToRemove) => {
+        for (const indexToRemove of rowsToRemove) {
             const rowCtrl = this.rowCtrlsByRowIndex[indexToRemove];
             if (rowCtrl) {
                 rowCtrl.destroyFirstPass(suppressAnimation);
                 rowCtrl.destroySecondPass();
             }
             delete this.rowCtrlsByRowIndex[indexToRemove];
-        });
+        }
     }
 
     private onBodyScroll(e: BodyScrollEvent) {
@@ -1043,7 +1069,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private removeRowCompsNotToDraw(indexesToDraw: number[], suppressAnimation: boolean): void {
         // for speedy lookup, dump into map
         const indexesToDrawMap: { [index: string]: boolean } = {};
-        indexesToDraw.forEach((index) => (indexesToDrawMap[index] = true));
+        for (const index of indexesToDraw) {
+            indexesToDrawMap[index] = true;
+        }
 
         const existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
         const indexesNotToDraw = existingIndexes.filter((index) => !indexesToDrawMap[index]);
@@ -1129,9 +1157,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.removeRowCompsNotToDraw(indexesToDraw, !animate);
 
         // add in new rows
-        indexesToDraw.forEach((rowIndex) => {
+        for (const rowIndex of indexesToDraw) {
             this.createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll);
-        });
+        }
 
         if (rowsToRecycle) {
             const { animationFrameSvc } = this.beans;
@@ -1180,10 +1208,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // embedded, as what appears in each section depends on whether we are pinned or not
         const rowsToRemove: string[] = [];
 
-        this.getFullWidthRowCtrls().forEach((fullWidthCtrl) => {
+        for (const fullWidthCtrl of this.getFullWidthRowCtrls()) {
             const rowIndex = fullWidthCtrl.rowNode.rowIndex;
             rowsToRemove.push(rowIndex!.toString());
-        });
+        }
 
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
@@ -1289,7 +1317,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
                     this.dispatchDisplayedRowsChanged();
                 }
             });
-            window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), ROW_ANIMATION_TIMEOUT);
+            window.setTimeout(() => {
+                for (const func of executeInAWhileFuncs) {
+                    func();
+                }
+            }, ROW_ANIMATION_TIMEOUT);
         }
     }
 
@@ -1650,7 +1682,7 @@ export function mapRowNodes(
         normal: {},
     };
 
-    rowNodes.forEach((rowNode) => {
+    for (const rowNode of rowNodes) {
         const id = rowNode.id!;
         switch (rowNode.rowPinned) {
             case 'top':
@@ -1663,7 +1695,7 @@ export function mapRowNodes(
                 res.normal[id] = rowNode;
                 break;
         }
-    });
+    }
 
     return res;
 }

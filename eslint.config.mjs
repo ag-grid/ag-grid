@@ -32,7 +32,7 @@ export const sonarjsConfig = [
             'sonarjs/no-nested-conditional': 0,
             'sonarjs/pseudo-random': 0,
             'sonarjs/public-static-readonly': 0,
-            'sonarjs/no-redundant-optional': 0,
+            'sonarjs/no-redundant-optional': 1,
             'sonarjs/no-ignored-exceptions': 0,
             'sonarjs/no-alphabetical-sort': 0,
             'sonarjs/no-redundant-boolean': 0,
@@ -48,16 +48,15 @@ export const sonarjsConfig = [
             // Duplicates @typescript-eslint
             'sonarjs/sonar-no-unused-vars': 0,
             'sonarjs/no-redundant-type-constituents': 0,
-            'sonarjs/sonar-prefer-optional-chain': 0,
             'sonarjs/no-base-to-string': 0,
             'sonarjs/no-misused-promises': 0,
             'sonarjs/no-fallthrough': 0,
 
             // Unicorn rules, as referenced from the SonarCloud documentation.
             // 'unicorn/prefer-number-properties': 1,
-            // 'unicorn/no-array-for-each': 1,
+            'unicorn/no-array-for-each': 1,
             'unicorn/prefer-export-from': 0,
-            'unicorn/prefer-dom-node-remove': 0,
+            'unicorn/prefer-dom-node-remove': 1,
             'unicorn/prefer-math-trunc': 0,
             'unicorn/prefer-at': 0,
             'unicorn/prefer-includes': 0,

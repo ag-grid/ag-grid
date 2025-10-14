@@ -170,7 +170,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
             return;
         }
         this.eEditor = undefined;
-        this.getGui().removeChild(eEditor.getGui());
+        eEditor.getGui().remove();
         this.destroyBean(eEditor);
         _setDisplayed(this.ePill, true);
         if (keepFocus) {

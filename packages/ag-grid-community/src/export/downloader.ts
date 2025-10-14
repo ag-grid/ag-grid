@@ -23,7 +23,7 @@ export function _downloadFile(fileName: string, content: Blob) {
         })
     );
 
-    document.body.removeChild(element);
+    element.remove();
 
     win.setTimeout(() => {
         win.URL.revokeObjectURL(url);

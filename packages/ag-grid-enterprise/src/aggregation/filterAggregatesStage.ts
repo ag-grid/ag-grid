@@ -46,7 +46,9 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             if (node.childrenAfterFilter) {
                 node.childrenAfterAggFilter = node.childrenAfterFilter;
                 if (recursive) {
-                    node.childrenAfterAggFilter.forEach((child) => preserveChildren(child, recursive));
+                    for (const child of node.childrenAfterAggFilter) {
+                        preserveChildren(child, recursive);
+                    }
                 }
                 this.setAllChildrenCount(node);
             }

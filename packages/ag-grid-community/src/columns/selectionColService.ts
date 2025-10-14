@@ -94,11 +94,11 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
     public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
         const source = _convertColumnEventSourceType(event.source);
 
-        this.columns?.list.forEach((col) => {
+        for (const col of this.columns?.list ?? []) {
             const newColDef = this.createSelectionColDef(event.currentValue);
             col.setColDef(newColDef, null, source);
             _applyColumnState(this.beans, { state: [{ ...newColDef, colId: col.getColId() }] }, source);
-        });
+        }
     }
 
     public getColumn(key: ColKey): AgColumn | null {

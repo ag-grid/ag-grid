@@ -199,9 +199,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const removedResult = new Array<RowNode<TData>>(removeLen);
         for (let i = 0; i < removeLen; ++i) {
             const rowNode = this.lookupNode(getRowIdFunc, remove[i]);
-            if (!rowNode) {
-                continue;
-            }
+            if (!rowNode) continue; // node not found
             const sourceRowIndex = rowNode.sourceRowIndex;
             if (sourceRowIndex < filterIdx) {
                 filterIdx = sourceRowIndex;

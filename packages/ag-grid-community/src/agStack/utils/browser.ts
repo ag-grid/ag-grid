@@ -99,7 +99,7 @@ export function _getMaxDivHeight(): number {
         }
     }
 
-    document.body.removeChild(div);
+    div.remove();
     maxDivHeight = res;
     return res;
 }
@@ -132,7 +132,7 @@ function initScrollbarWidthAndVisibility(): void {
 
     // remove div
     if (div.parentNode) {
-        div.parentNode.removeChild(div);
+        div.remove();
     }
 
     if (width != null) {

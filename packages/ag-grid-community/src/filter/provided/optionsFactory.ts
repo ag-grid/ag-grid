@@ -29,9 +29,9 @@ export class OptionsFactory {
             return;
         }
 
-        filterOptions.forEach((filterOption) => {
+        for (const filterOption of filterOptions) {
             if (typeof filterOption === 'string') {
-                return;
+                continue;
             }
 
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
@@ -46,11 +46,11 @@ export class OptionsFactory {
 
             if (!requiredProperties.every(propertyCheck)) {
                 this.filterOptions = filterOptions.filter((v) => v === filterOption) || [];
-                return;
+                continue;
             }
 
             this.customFilterOptions[filterOption.displayKey] = filterOption;
-        });
+        }
     }
 
     private getDefaultItem(defaultOption?: string): string | undefined {

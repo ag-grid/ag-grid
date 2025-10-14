@@ -139,7 +139,11 @@ export class CartesianAxisPanel extends Component {
         this.initAxisTicks(chartAxisThemeOverrides);
         this.initAxisLabels(chartAxisThemeOverrides);
 
-        const updateFns = () => this.updateFuncs.forEach((func) => func());
+        const updateFns = () => {
+            for (const func of this.updateFuncs) {
+                func();
+            }
+        };
         this.addManagedListeners(this.chartController, {
             chartUpdated: updateFns,
             chartModelUpdate: () =>
@@ -487,10 +491,10 @@ export class CartesianAxisPanel extends Component {
     }
 
     private destroyActivePanels(): void {
-        this.activePanels.forEach((panel) => {
+        for (const panel of this.activePanels) {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
     }
 
     public override destroy(): void {

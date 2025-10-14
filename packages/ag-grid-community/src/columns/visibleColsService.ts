@@ -173,10 +173,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             firstRight = rightCols ? rightCols[0] : null;
         }
 
-        colModel.getCols().forEach((col) => {
+        for (const col of colModel.getCols()) {
             col.setLastLeftPinned(col === lastLeft, source);
             col.setFirstRightPinned(col === firstRight, source);
-        });
+        }
     }
 
     private buildTrees(colModel: ColumnModel, columnGroupSvc: ColumnGroupService | undefined) {
@@ -255,14 +255,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private setLeftValuesOfGroups(): void {
         // a groups left value is the lest left value of it's children
-        [this.treeLeft, this.treeRight, this.treeCenter].forEach((columns) => {
-            columns.forEach((column) => {
+        for (const columns of [this.treeLeft, this.treeRight, this.treeCenter]) {
+            for (const column of columns) {
                 if (isColumnGroup(column)) {
                     const columnGroup = column;
                     columnGroup.checkLeft();
                 }
-            });
-        });
+            }
+        }
     }
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
@@ -278,31 +278,31 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // let totalColumnWidth = this.getWidthOfColsInList()
         const doingRtl = this.gos.get('enableRtl');
 
-        [this.leftCols, this.rightCols, this.centerCols].forEach((columns) => {
+        for (const columns of [this.leftCols, this.rightCols, this.centerCols]) {
             if (doingRtl) {
                 // when doing RTL, we start at the top most pixel (ie RHS) and work backwards
                 let left = getWidthOfColsInList(columns);
-                columns.forEach((column) => {
+                for (const column of columns) {
                     left -= column.getActualWidth();
                     column.setLeft(left, source);
-                });
+                }
             } else {
                 // otherwise normal LTR, we start at zero
                 let left = 0;
-                columns.forEach((column) => {
+                for (const column of columns) {
                     column.setLeft(left, source);
                     left += column.getActualWidth();
-                });
+                }
             }
             _removeAllFromUnorderedArray(allColumns, columns);
-        });
+        }
 
         // items left in allColumns are columns not displayed, so remove the left position. this is
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
         // we don't want the animation of the cell floating in from the old position, whatever that was.
-        allColumns.forEach((column) => {
+        for (const column of allColumns) {
             column.setLeft(null, source);
-        });
+        }
     }
 
     private joinCols(): void {
@@ -387,11 +387,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 // if lots of columns, that means column spanning, and we set filterPasses = true
                 // if one or more of the columns spanned pass the filter.
                 filterPasses = false;
-                columnsToCheckFilter.forEach((colForFilter) => {
+                for (const colForFilter of columnsToCheckFilter) {
                     if (filterCallback(colForFilter)) {
                         filterPasses = true;
                     }
-                });
+                }
             } else {
                 filterPasses = true;
             }

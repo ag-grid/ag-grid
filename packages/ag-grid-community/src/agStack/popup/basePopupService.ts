@@ -183,10 +183,10 @@ export abstract class BasePopupService<
 
         const positions = ['right', 'left', 'over', 'above', 'under'];
 
-        positions.forEach((position) => {
+        for (const position of positions) {
             alignedToElement.classList.remove(`ag-has-popup-positioned-${position}`);
             ePopup.classList.remove(`ag-popup-positioned-${position}`);
-        });
+        }
 
         if (!positioned) {
             return;
@@ -402,7 +402,6 @@ export abstract class BasePopupService<
     ): (popupParams?: PopupEventParams) => void {
         const beans = this.beans;
         const eDocument = _getDocument(beans);
-        const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
@@ -439,7 +438,7 @@ export abstract class BasePopupService<
 
             popupHidden = true;
 
-            ePopupParent.removeChild(wrapperEl);
+            wrapperEl.remove();
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
@@ -732,11 +731,11 @@ export abstract class BasePopupService<
             }
 
             const innerEls = currentPopup.querySelectorAll('div');
-            innerEls.forEach((el) => {
+            for (const el of innerEls) {
                 if (el.scrollTop !== 0) {
                     innerElsScrollMap.push([el, el.scrollTop]);
                 }
-            });
+            }
 
             if (i === 0) {
                 parent.insertAdjacentElement('afterbegin', currentPopup);

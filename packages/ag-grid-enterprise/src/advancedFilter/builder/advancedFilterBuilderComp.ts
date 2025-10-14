@@ -319,9 +319,9 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         ) => {
             items.push({ filterModel, level, parent, valid: true, showMove: this.params.showMoveButtons });
             if (filterModel.filterType === 'join') {
-                filterModel.conditions.forEach((childFilterModel) =>
-                    parseFilterModel(childFilterModel, items, level + 1, filterModel)
-                );
+                for (const childFilterModel of filterModel.conditions) {
+                    parseFilterModel(childFilterModel, items, level + 1, filterModel);
+                }
                 if (level === 0) {
                     items.push({ filterModel: null, level: level + 1, parent: filterModel, valid: true });
                 }
@@ -334,18 +334,18 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private refreshList(softRefresh: boolean): void {
         if (!softRefresh) {
             const invalidModels: AdvancedFilterModel[] = [];
-            this.items.forEach((item) => {
+            for (const item of this.items) {
                 if (!item.valid) {
                     invalidModels.push(item.filterModel!);
                 }
-            });
+            }
             this.buildList();
             if (invalidModels.length) {
-                this.items.forEach((item) => {
+                for (const item of this.items) {
                     if (item.filterModel && invalidModels.includes(item.filterModel)) {
                         item.valid = false;
                     }
-                });
+                }
             }
         }
         this.virtualList.refresh(softRefresh);
@@ -581,9 +581,9 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         const clearOperand = (filterModel: ColumnAdvancedFilterModel) => {
             delete (filterModel as any).filter;
         };
-        this.items.forEach((item) => {
+        for (const item of this.items) {
             if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
-                return;
+                continue;
             }
             const { filterModel } = item;
             const { colId } = filterModel;
@@ -594,7 +594,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 filterModel.colId = undefined as any;
                 clearOperator(filterModel);
                 clearOperand(filterModel);
-                return;
+                continue;
             }
             const operatorForType = this.advFilterExpSvc.getDataTypeExpressionOperator(columnDetails.baseCellDataType)!;
             const operator = operatorForType.operators[filterModel.type];
@@ -602,11 +602,11 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 item.valid = false;
                 clearOperator(filterModel);
                 clearOperand(filterModel);
-                return;
+                continue;
             }
             if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
                 item.valid = false;
             }
-        });
+        }
     }
 }

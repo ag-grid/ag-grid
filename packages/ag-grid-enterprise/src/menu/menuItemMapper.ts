@@ -440,7 +440,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             }
         };
 
-        originalList.forEach((menuItemOrString) => {
+        for (const menuItemOrString of originalList) {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
@@ -451,7 +451,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             }
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
             if (!result) {
-                return;
+                continue;
             }
 
             const resultDef = result as MenuItemDef;
@@ -470,7 +470,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             if (result != null) {
                 resultList.push(result);
             }
-        });
+        }
 
         // items could have been removed due to missing modules
         _removeRepeatsFromArray(resultList, MENU_ITEM_SEPARATOR);
@@ -506,7 +506,7 @@ function createAggregationSubMenu(
             checked: !columnIsAlreadyAggValue,
         });
 
-        funcNames.forEach((funcName) => {
+        for (const funcName of funcNames) {
             result.push({
                 name: localeTextFunc(funcName, aggFuncSvc.getDefaultFuncLabel(funcName)),
                 action: () => {
@@ -515,7 +515,7 @@ function createAggregationSubMenu(
                 },
                 checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
             });
-        });
+        }
     }
 
     return result;

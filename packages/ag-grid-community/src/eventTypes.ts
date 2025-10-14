@@ -145,6 +145,7 @@ const _INTERNAL_EVENTS = [
     'gridStylesChanged',
     'storeUpdated',
     'filterDestroyed',
+    'filterHandlerDestroyed',
     'rowDataUpdateStarted',
     'rowCountReady',
     'advancedFilterEnabledChanged',

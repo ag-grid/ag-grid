@@ -283,10 +283,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             );
 
             const coercedGridOptions = {} as GridOptions<TData>;
-            gridOptionKeys.forEach((key) => {
+            for (const key of gridOptionKeys) {
                 const valueToUse = getValueOrCoercedValue(key, this[key as keyof AgGridAngular]);
                 coercedGridOptions[key as keyof GridOptions] = valueToUse;
-            });
+            }
 
             const mergedGridOps = _combineAttributesAndGridOptions(
                 this.gridOptions,

@@ -668,7 +668,9 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private clearRetryListeners(): void {
-        this.clearRetryListenerFncs.forEach((callback) => callback());
+        for (const callback of this.clearRetryListenerFncs) {
+            callback();
+        }
         this.clearRetryListenerFncs = [];
     }
 

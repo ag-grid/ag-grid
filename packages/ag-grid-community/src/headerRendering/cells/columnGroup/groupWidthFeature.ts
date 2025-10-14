@@ -38,18 +38,20 @@ export class GroupWidthFeature extends BeanStub {
 
         // now add new listeners to the new set of children
         const widthChangedListener = this.onWidthChanged.bind(this);
-        this.columnGroup.getLeafColumns().forEach((column) => {
+        for (const column of this.columnGroup.getLeafColumns()) {
             column.__addEventListener('widthChanged', widthChangedListener);
             column.__addEventListener('visibleChanged', widthChangedListener);
             this.removeChildListenersFuncs.push(() => {
                 column.__removeEventListener('widthChanged', widthChangedListener);
                 column.__removeEventListener('visibleChanged', widthChangedListener);
             });
-        });
+        }
     }
 
     private removeListenersOnChildrenColumns(): void {
-        this.removeChildListenersFuncs.forEach((func) => func());
+        for (const func of this.removeChildListenersFuncs) {
+            func();
+        }
         this.removeChildListenersFuncs = [];
     }
 

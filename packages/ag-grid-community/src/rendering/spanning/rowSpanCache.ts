@@ -67,10 +67,10 @@ export class CellSpan {
         }
 
         let allButLastHeights = 0;
-        this.spannedNodes.forEach((node) => {
-            if (node === this.lastNode) return;
+        for (const node of this.spannedNodes) {
+            if (node === this.lastNode) continue;
             allButLastHeights += node.rowHeight!;
-        });
+        }
         return autoHeight - allButLastHeights;
     }
 }

@@ -10,6 +10,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    MasterChangedEvent,
     ModuleName,
     RowNode,
     RowSelectedEvent,
@@ -183,17 +184,33 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
         });
 
-        this.addDestroyFunc(() => {
-            // the gridInfo can be stale if a refresh happens and
-            // a new row is created before the old one is destroyed.
-            if (rowNode.detailGridInfo !== gridInfo) {
-                return;
-            }
-            if (!masterGridApi.isDestroyed()) {
-                masterGridApi.removeDetailGridInfo(rowId); // unregister from api
-            }
-            rowNode.detailGridInfo = null; // unregister from node
+        // the place for these destructors is looking for a new home, so if you have a better idea where to put them - feel free
+        // we are undecided if they should live on detailCellRenderer or here in the ctrl
+        this.addManagedListeners(masterNode, {
+            masterChanged: (event: MasterChangedEvent) => {
+                if (!event.node.master) {
+                    this.onDestroy(gridInfo);
+                }
+            },
         });
+
+        this.addDestroyFunc(() => this.onDestroy(gridInfo));
+    }
+
+    private onDestroy(gridInfo: DetailGridInfo) {
+        const { params } = this;
+        const rowNode = params.node as RowNode;
+        const masterGridApi = params.api;
+
+        // the gridInfo can be stale if a refresh happens and
+        // a new row is created before the old one is destroyed.
+        if (rowNode.detailGridInfo !== gridInfo) {
+            return;
+        }
+        if (!masterGridApi.isDestroyed()) {
+            masterGridApi.removeDetailGridInfo(rowNode.id!); // unregister from api
+        }
+        rowNode.detailGridInfo = null; // unregister from node
     }
 
     private loadRowData(): void {

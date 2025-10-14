@@ -205,7 +205,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             closeOnEsc: true,
             closedCallback: (e?: Event) => {
                 // menu closed callback
-                closedFuncs.forEach((f) => f(e));
+                for (const f of closedFuncs) {
+                    f(e);
+                }
                 this.dispatchVisibleChangedEvent(false, false, column, columnGroup, defaultTab);
             },
             afterGuiAttached: (params) =>

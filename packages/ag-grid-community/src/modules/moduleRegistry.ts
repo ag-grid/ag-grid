@@ -70,15 +70,17 @@ export function _registerModule(module: Module, gridId: string | undefined, isIn
     } else {
         moduleStore = globalModulesMap;
     }
-    rowModels.forEach((rowModel) => {
+    for (const rowModel of rowModels) {
         if (moduleStore[rowModel] === undefined) {
             moduleStore[rowModel] = {};
         }
         moduleStore[rowModel]![module.moduleName] = module;
-    });
+    }
 
     if (module.dependsOn) {
-        module.dependsOn.forEach((dependency) => _registerModule(dependency, gridId, isInternalRegistration));
+        for (const dependency of module.dependsOn) {
+            _registerModule(dependency, gridId, isInternalRegistration);
+        }
     }
 }
 
@@ -141,6 +143,8 @@ export class ModuleRegistry {
      * @param modules - modules to register
      */
     public static registerModules(modules: Module[]): void {
-        modules.forEach((module) => _registerModule(module, undefined));
+        for (const module of modules) {
+            _registerModule(module, undefined);
+        }
     }
 }

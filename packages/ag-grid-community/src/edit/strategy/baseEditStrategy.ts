@@ -131,7 +131,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
 
-        editingCells.forEach((cell) => {
+        for (const cell of editingCells) {
             results.all.push(cell);
 
             const validation = this.model.getCellValidationModel().getCellValidation(cell);
@@ -139,35 +139,35 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if ((validation?.errorMessages?.length ?? 0) > 0) {
                 results.fail.push(cell);
-                return;
+                continue;
             }
 
             results.pass.push(cell);
-        });
+        }
 
         if (cancel) {
-            editingCells.forEach((cell) => {
+            for (const cell of editingCells) {
                 _destroyEditor(this.beans, cell, { cancel });
                 this.model.stop(cell);
-            });
+            }
         } else {
             const actions = this.processValidationResults(results);
 
             if (actions.destroy.length > 0) {
-                actions.destroy.forEach((cell) => {
+                for (const cell of actions.destroy) {
                     _destroyEditor(this.beans, cell, { event, cancel });
                     this.model.stop(cell);
-                });
+                }
             }
 
             if (actions.keep.length > 0) {
-                actions.keep.forEach((cell) => {
+                for (const cell of actions.keep) {
                     const cellCtrl = _getCellCtrl(this.beans, cell);
 
                     if (!this.editSvc?.cellEditingInvalidCommitBlocks()) {
                         cellCtrl && this.editSvc.revertSingleCellEdit(cellCtrl);
                     }
-                });
+                }
             }
         }
 
@@ -184,17 +184,17 @@ export abstract class BaseEditStrategy extends BeanStub {
         const discard: Required<EditPosition>[] = [];
 
         if (rowNode) {
-            positions.forEach((pos) => {
+            for (const pos of positions) {
                 // if the rowNode is provided, we only keep positions that match it
                 if (pos.rowNode !== rowNode) {
                     discard.push(pos);
                 }
-            });
+            }
         } else {
-            positions.forEach((pos) => {
+            for (const pos of positions) {
                 // if no rowNode is provided, we keep all positions
                 discard.push(pos);
-            });
+            }
         }
 
         // clean up any dangling editors

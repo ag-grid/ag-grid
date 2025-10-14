@@ -68,8 +68,7 @@ export class ChartColumnService extends BeanStub {
         const dimensionCols = new Set<AgColumn>();
         const valueCols = new Set<AgColumn>();
 
-        for (let i = 0, len = gridCols.length; i < len; ++i) {
-            const col = gridCols[i];
+        for (const col of gridCols) {
             const colDef = col.getColDef();
             const chartDataType = colDef.chartDataType;
 

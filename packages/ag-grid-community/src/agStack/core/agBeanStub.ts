@@ -280,7 +280,9 @@ export abstract class AgBeanStub<
             listener(propertiesChangeEvent);
         };
 
-        events.forEach((event) => this.setupPropertyListener(event, wrappedListener));
+        for (const event of events) {
+            this.setupPropertyListener(event, wrappedListener);
+        }
     }
 
     public isAlive = (): boolean => !this.destroyed;

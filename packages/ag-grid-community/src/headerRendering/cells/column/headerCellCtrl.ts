@@ -329,7 +329,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
 
-            classes.forEach((c) => {
+            for (const c of classes) {
                 if (oldClasses.has(c)) {
                     // class already added, no need to apply it, but remove from old set
                     oldClasses.delete(c);
@@ -337,10 +337,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                     // class new since last time, so apply it
                     this.comp.toggleCss(c, true);
                 }
-            });
+            }
 
             // now old set only has classes that were applied last time, but not this time, so remove them
-            oldClasses.forEach((c) => this.comp.toggleCss(c, false));
+            for (const c of oldClasses) {
+                this.comp.toggleCss(c, false);
+            }
         };
 
         this.setRefreshFunction('headerClasses', refreshHeaderClasses);
@@ -375,7 +377,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.updateState();
         this.refreshHeaderComp();
         this.refreshAria();
-        Object.values(this.refreshFunctions).forEach((f) => f());
+        for (const f of Object.values(this.refreshFunctions)) {
+            f();
+        }
     }
 
     private refreshHeaderComp(): void {

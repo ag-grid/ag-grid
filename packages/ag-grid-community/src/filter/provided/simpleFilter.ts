@@ -367,9 +367,9 @@ export abstract class SimpleFilter<
     private putOptionsIntoDropdown(eType: GridSelect): void {
         const { filterListOptions } = this;
         // Add specified options to condition drop-down.
-        filterListOptions.forEach((listOption) => {
+        for (const listOption of filterListOptions) {
             eType.addOption(listOption);
-        });
+        }
 
         // Make drop-downs read-only if there is only one option.
         eType.setDisabled(filterListOptions.length <= 1);
@@ -454,12 +454,12 @@ export abstract class SimpleFilter<
         });
 
         const orChecked = (joinOperator ?? this.getJoinOperator()) === 'OR';
-        this.eJoinAnds.forEach((eJoinOperatorAnd) => {
+        for (const eJoinOperatorAnd of this.eJoinAnds) {
             eJoinOperatorAnd.setValue(!orChecked, true);
-        });
-        this.eJoinOrs.forEach((eJoinOperatorOr) => {
+        }
+        for (const eJoinOperatorOr of this.eJoinOrs) {
             eJoinOperatorOr.setValue(orChecked, true);
-        });
+        }
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             this.setElementDisplayed(element, index < numberOfInputs);
@@ -496,7 +496,9 @@ export abstract class SimpleFilter<
 
     private removeElements(elements: HTMLElement[], startPosition: number, deleteCount?: number): void {
         const removedElements = removeItems(elements, startPosition, deleteCount);
-        removedElements.forEach((element) => _removeFromParent(element));
+        for (const element of removedElements) {
+            _removeFromParent(element);
+        }
     }
 
     protected removeComponents<TEventType extends string>(
@@ -505,10 +507,10 @@ export abstract class SimpleFilter<
         deleteCount?: number
     ): void {
         const removedComponents = removeItems(components, startPosition, deleteCount);
-        removedComponents.forEach((comp) => {
+        for (const comp of removedComponents) {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
-        });
+        }
     }
 
     public override afterGuiAttached(params?: IAfterGuiAttachedParams) {

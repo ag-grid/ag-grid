@@ -67,7 +67,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
-        this.asyncTransactions.forEach((txWrapper) => {
+        for (const txWrapper of this.asyncTransactions) {
             let result: ServerSideTransactionResult | undefined;
             const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, (cache) => {
                 result = cache.applyTransaction(txWrapper.transaction);
@@ -85,7 +85,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
             if (retryTransaction) {
                 transactionsToRetry.push(txWrapper);
-                return;
+                continue;
             }
 
             if (txWrapper.callback) {
@@ -94,12 +94,14 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             if (result.status === ServerSideTransactionResultStatus.Applied) {
                 atLeastOneTransactionApplied = true;
             }
-        });
+        }
 
         // do callbacks in next VM turn so it's async
         if (resultFuncs.length > 0) {
             window.setTimeout(() => {
-                resultFuncs.forEach((func) => func());
+                for (const func of resultFuncs) {
+                    func();
+                }
             }, 0);
         }
 

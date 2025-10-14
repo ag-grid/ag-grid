@@ -3115,6 +3115,7 @@ export type SelectionColumnDef = Pick<
     | 'tooltipValueGetter'
     | 'tooltipComponent'
     | 'tooltipComponentParams'
+    | 'tooltipComponentSelector'
     | 'width'
     | 'initialWidth'
     | 'maxWidth'
