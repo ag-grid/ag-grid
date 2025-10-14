@@ -387,7 +387,7 @@ export function _syncFromEditor(
  * Converts formula to shorthand or longhand depending on context
  * @param forEditing if true, converts to shorthand (A1), if false converts to longhand (REF(COL(id),ROW(id))) for storage
  */
-export function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean): any {
+function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean): any {
     const { formula } = beans;
     if (formula?.isFormula(value)) {
         return formula?.normaliseFormula(value, forEditing) ?? value;
