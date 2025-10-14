@@ -253,8 +253,8 @@ export function _getRowIdCallback<TData = any>(
     gos: GridOptionsService
 ):
     | ((
-        params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
-    ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+          params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+      ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
     | undefined {
     const getRowId = gos.getCallback('getRowId');
 

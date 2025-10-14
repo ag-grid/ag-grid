@@ -2,7 +2,13 @@ import type { UserComponentName } from '../../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, ModuleValidation, OptionsValidation, OptionsValidator, Validations } from '../validationTypes';
+import type {
+    Deprecations,
+    ModuleValidation,
+    OptionsValidation,
+    OptionsValidator,
+    Validations,
+} from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {

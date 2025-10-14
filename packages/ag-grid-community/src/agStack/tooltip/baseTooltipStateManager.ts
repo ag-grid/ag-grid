@@ -527,7 +527,7 @@ export abstract class BaseTooltipStateManager<
             this.tooltipMouseLeaveListener =
             this.tooltipFocusInListener =
             this.tooltipFocusOutListener =
-            null;
+                null;
     }
 
     private lockService(): void {

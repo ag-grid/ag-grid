@@ -452,10 +452,10 @@ export function _destroyEditor(
             const args = enableGroupEditing
                 ? groupEditOverrides(params, edit)
                 : {
-                    valueChanged: false,
-                    newValue: undefined,
-                    oldValue: edit.sourceValue,
-                };
+                      valueChanged: false,
+                      newValue: undefined,
+                      oldValue: edit.sourceValue,
+                  };
             dispatchEditingStopped(beans, position, args, params);
         }
 
@@ -486,13 +486,13 @@ export function _destroyEditor(
         const args = enableGroupEditing
             ? groupEditOverrides(params, latest)
             : {
-                valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
-                newValue:
-                    params?.cancel || latest.editorState.isCancelAfterEnd
-                        ? undefined
-                        : latest?.editorValue ?? edit?.pendingValue,
-                oldValue: latest?.sourceValue,
-            };
+                  valueChanged: _sourceAndPendingDiffer(latest) && !params?.cancel,
+                  newValue:
+                      params?.cancel || latest.editorState.isCancelAfterEnd
+                          ? undefined
+                          : latest?.editorValue ?? edit?.pendingValue,
+                  oldValue: latest?.sourceValue,
+              };
 
         dispatchEditingStopped(beans, position, args, params);
     }
@@ -503,17 +503,17 @@ type EditingStoppedArgs = Partial<Pick<CellEditingStoppedEvent, 'valueChanged' |
 function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Readonly<EditValue>): EditingStoppedArgs {
     return params?.cancel
         ? {
-            valueChanged: false,
-            oldValue: latest.sourceValue,
-            newValue: undefined,
-            value: latest.sourceValue,
-        }
+              valueChanged: false,
+              oldValue: latest.sourceValue,
+              newValue: undefined,
+              value: latest.sourceValue,
+          }
         : {
-            valueChanged: false,
-            oldValue: latest.sourceValue,
-            newValue: latest.pendingValue,
-            value: latest.sourceValue,
-        };
+              valueChanged: false,
+              oldValue: latest.sourceValue,
+              newValue: latest.pendingValue,
+              value: latest.sourceValue,
+          };
 }
 
 function dispatchEditingStopped(

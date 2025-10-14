@@ -274,8 +274,6 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         return cellCtrl.createBean(tooltipFeature, context);
-
-
     }
 
     public setupCellEditorTooltip(cellCtrl: CellCtrl, editor: ICellEditor) {

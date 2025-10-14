@@ -1087,7 +1087,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // used by spannedCellCtrl
-    public refreshAriaRowIndex(): void { }
+    public refreshAriaRowIndex(): void {}
 
     /**
      * Returns the root element of the cell, could be a span container rather than the cell element.

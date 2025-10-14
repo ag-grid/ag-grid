@@ -287,7 +287,6 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         const map = this.getEditRow(position.rowNode) ?? new Map<Column, EditValue>();
         const { rowNode, column } = position;
         if (column && !map.has(column)) {
-
             map.set(column, {
                 editorValue: undefined,
                 pendingValue: UNEDITED,

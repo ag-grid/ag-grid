@@ -51,7 +51,7 @@ export class CellFormula {
         public readonly column: AgColumn,
         public formulaString: string,
         private readonly beans: BeanCollection
-    ) { }
+    ) {}
 
     public setFormulaString(next: string) {
         if (this.formulaString === next) {

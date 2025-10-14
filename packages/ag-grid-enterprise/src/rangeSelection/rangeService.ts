@@ -40,6 +40,7 @@ import {
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
+    _isRowNumbers,
     _isSameRow,
     _isUsingNewCellSelectionAPI,
     _last,
@@ -47,7 +48,6 @@ import {
     _missing,
     _warn,
     isRowNumberCol,
-    _isRowNumbers,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -1042,9 +1042,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         return processedColumns
             ? {
-                columns: processedColumns,
-                startsOnTheRight,
-            }
+                  columns: processedColumns,
+                  startsOnTheRight,
+              }
             : undefined;
     }
 

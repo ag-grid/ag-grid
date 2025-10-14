@@ -13,11 +13,11 @@ import {
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
+    _isRowNumbers,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
     isRowNumberCol,
-    _isRowNumbers,
 } from 'ag-grid-community';
 import type {
     BeanCollection,
@@ -39,7 +39,6 @@ import type {
 } from 'ag-grid-community';
 
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
-
 
 export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
     beanName = 'rowNumbersSvc' as const;
