@@ -8,6 +8,7 @@ export interface AgLabelParams {
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
     disabled?: boolean;
+    labelEllipsis?: boolean;
 }
 
 export interface AgFieldParams extends AgLabelParams {
@@ -21,6 +22,9 @@ export interface AgInputFieldParams<TComponentSelectorType extends string> exten
     inputName?: string;
     inputWidth?: number | 'flex';
     template?: AgElementParams<TComponentSelectorType>;
+    inputPlaceholder?: string;
+    autoComplete?: boolean;
+    tabIndex?: number;
 }
 
 export interface AgCheckboxParams<TComponentSelectorType extends string>
