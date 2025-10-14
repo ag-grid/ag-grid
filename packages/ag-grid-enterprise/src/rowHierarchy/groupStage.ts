@@ -136,8 +136,8 @@ const loadRealLeafs = (node: RowNode): RowNode[] | null => {
         return null; // no children, so no leafs
     }
     let leafs: RowNode[] | null | undefined;
-    const onlyChild = childrenAfterGroupLen === 1 && childrenAfterGroup[0];
-    if (onlyChild && onlyChild.group && onlyChild.sourceRowIndex < 0) {
+    const onlyChild = childrenAfterGroupLen === 1 ? childrenAfterGroup[0] : null;
+    if (onlyChild?.group && onlyChild.sourceRowIndex < 0) {
         leafs = onlyChild._leafs; // use cache if available
         if (leafs === undefined) {
             leafs = loadRealLeafs(onlyChild); // reload leafs for child
