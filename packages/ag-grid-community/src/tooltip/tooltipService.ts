@@ -55,8 +55,9 @@ export class TooltipService extends BeanStub implements NamedBean {
             );
         }
         const location = 'header';
-        const value = passedValue ?? colDef.headerName ?? colDef.field;
-        const valueFormatted = this.beans.colNames.getDisplayNameForColumn(column, 'header', true);
+        const headerLocation = 'header';
+        const valueFormatted = this.beans.colNames.getDisplayNameForColumn(column, headerLocation, true);
+        const value = passedValue ?? valueFormatted;
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
             getLocation: () => location,
@@ -102,8 +103,9 @@ export class TooltipService extends BeanStub implements NamedBean {
         }
 
         const location = 'headerGroup';
-        const value = passedValue ?? colDef?.headerName ?? (colDef as ColDef)?.field;
-        const valueFormatted = this.beans.colNames.getDisplayNameForColumnGroup(column, 'header');
+        const headerLocation = 'header';
+        const valueFormatted = this.beans.colNames.getDisplayNameForColumnGroup(column, headerLocation);
+        const value = passedValue ?? valueFormatted;
 
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
