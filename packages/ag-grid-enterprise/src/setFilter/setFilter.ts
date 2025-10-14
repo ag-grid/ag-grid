@@ -1033,7 +1033,7 @@ export class SetFilter<V = string>
         const formattedFilterText = handler.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && handler.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
+            valueToCheck != null && handler.caseFormat(valueToCheck).includes(formattedFilterText);
 
         const nullMatchesFilter = !!this.params.excelMode && matchesFilter(translateForSetFilter(this, 'blanks'));
 

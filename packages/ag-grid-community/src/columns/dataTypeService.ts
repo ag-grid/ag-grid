@@ -288,7 +288,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
+            const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
             value = _getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);

@@ -151,14 +151,14 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
         return this.colsToUse.some((column) => {
             const part = this.getTextForColumn(column, node);
 
-            return _exists(part) && part.indexOf(filterPart) >= 0;
+            return _exists(part) && part.includes(filterPart);
         });
     }
 
     private doesRowPassCache(node: RowNode, filterPart: string): boolean {
         this.checkGenerateAggText(node);
 
-        return node.quickFilterAggregateText!.indexOf(filterPart) >= 0;
+        return node.quickFilterAggregateText!.includes(filterPart);
     }
 
     private doesRowPassMatcher(usingCache: boolean, node: RowNode): boolean {

@@ -586,7 +586,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 const isMatch =
                     searchType === 'match'
                         ? currentValue.startsWith(valueToMatch)
-                        : currentValue.indexOf(valueToMatch) !== -1;
+                        : currentValue.includes(valueToMatch);
                 if (filterList && isMatch) {
                     filteredValues.push(this.values[idx]);
                 }

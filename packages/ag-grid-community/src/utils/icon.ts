@@ -198,7 +198,7 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
     if (iconContents) {
         const { className } = iconContents;
         if (
-            (typeof className === 'string' && className.indexOf('ag-icon') > -1) ||
+            (typeof className === 'string' && className.includes('ag-icon')) ||
             (typeof className === 'object' && className['ag-icon'])
         ) {
             return iconContents;
