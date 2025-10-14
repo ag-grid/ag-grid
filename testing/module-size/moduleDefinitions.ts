@@ -6,7 +6,7 @@ import type {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 6.88,
-    AllCommunityModule: 506.53,
+    AllCommunityModule: 515.3,
     CellApiModule: 0.28,
     CellStyleModule: 2.24,
     CheckboxEditorModule: 64.61,
@@ -48,13 +48,13 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ValidationModule: 74.37,
     ValueCacheModule: 0.65,
     CellSpanModule: 8.08,
-    FormulaModule: 19.08,
+    FormulaModule: 26.8,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
-    AllEnterpriseModule: 1520.3,
+    AllEnterpriseModule: 1528.7,
     BatchEditModule: 81.15,
-    CellSelectionModule: 55,
+    CellSelectionModule: 56.66,
     ClipboardModule: 47.54,
     ColumnMenuModule: 153.19,
     ColumnsToolPanelModule: 146,
@@ -63,14 +63,14 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     FiltersToolPanelModule: 133.66,
     FindModule: 14.51,
     GridChartsModule: 69.02,
-    IntegratedChartsModule: 397.78,
+    IntegratedChartsModule: 402.79,
     GroupFilterModule: 115.18,
-    MasterDetailModule: 82,
+    MasterDetailModule: 85.07,
     MenuModule: 159.93,
     MultiFilterModule: 145.8,
     NewFiltersToolPanelModule: 169.77,
     PivotModule: 99.56,
-    RangeSelectionModule: 55,
+    RangeSelectionModule: 56.72,
     RichSelectModule: 124.09,
     RowNumbersModule: 30,
     RowGroupingModule: 85.49,
@@ -81,7 +81,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 33.16,
     SparklinesModule: 20.5,
     StatusBarModule: 27,
-    TreeDataModule: 90.17,
+    TreeDataModule: 83.97,
     ViewportRowModelModule: 28,
 };
 

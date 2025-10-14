@@ -199,7 +199,7 @@ function makeArgIterables(
 function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
     if (ref.absolute) {
         const n = Number(ref.id) - 1;
-        if (!Number.isFinite(n) || n < 1) {
+        if (!Number.isFinite(n) || n < 0) {
             throw new FormulaError('Invalid absolute row', '#REF!');
         }
         return n;
