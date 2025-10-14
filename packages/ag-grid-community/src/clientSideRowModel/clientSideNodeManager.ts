@@ -270,37 +270,37 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, changedRowNodes: ChangedRowNodes<TData>): RowNode<TData>[] {
+        const allLeafs = (this.rootNode._leafs ??= []);
+        const allLeafsLen = allLeafs.length;
         const add = rowDataTran.add;
-        if (!add?.length) {
+        const addLength = add?.length;
+        if (!addLength) {
             return [];
         }
-        const rootNode = this.rootNode;
-        const allLeafs = rootNode._leafs!;
-        const allLeafsLen = allLeafs.length;
-        const addLength = add.length;
-        const newAllLeafs = new Array<RowNode<TData>>(allLeafsLen + addLength); // Preallocate new array
-        const addIndex = this.sanitizeAddIndex(allLeafs, rowDataTran.addIndex);
-        for (let i = 0; i < addIndex; ++i) {
-            newAllLeafs[i] = allLeafs[i]; // Copy nodes before addIndex
+        const newLen = allLeafsLen + addLength;
+        let addIndex = this.sanitizeAddIndex(allLeafs, rowDataTran.addIndex);
+        if (addIndex < allLeafsLen) {
+            for (let readIdx = allLeafsLen - 1, writeIdx = newLen - 1; readIdx >= addIndex; --readIdx) {
+                const node = allLeafs[readIdx];
+                node.sourceRowIndex = writeIdx;
+                allLeafs[writeIdx--] = node; // Shift elements from end to addIndex
+            }
+            changedRowNodes.reordered = true; //inserting in middle, we assume order changed
         }
+        allLeafs.length = newLen; // Resize array to new length
+        const addedNodes: RowNode<TData>[] = new Array(addLength);
         const adds = changedRowNodes.adds;
-        let writeIdx = addIndex;
         for (let i = 0; i < addLength; i++) {
             const node = this.createRowNode(add[i], 0);
             adds.add(node);
-            node.sourceRowIndex = writeIdx;
-            newAllLeafs[writeIdx++] = node; // Insert new nodes
+            node.sourceRowIndex = addIndex;
+            allLeafs[addIndex] = node;
+            addedNodes[i] = node; // Write new nodes
+            addIndex++;
         }
-        if (addIndex < allLeafsLen) {
-            changedRowNodes.reordered = true; // Inserting in the middle, order changed
-            for (let i = addIndex; i < allLeafsLen; i++) {
-                const node = allLeafs[i];
-                node.sourceRowIndex = writeIdx;
-                newAllLeafs[writeIdx++] = node; // Copy nodes after addIndex
-            }
-        }
-        rootNode._leafs = newAllLeafs;
-        return newAllLeafs.slice(addIndex, addIndex + addLength);
+
+        // If we appended at the end, ensure length is correctly set (it already is via newLen)
+        return addedNodes;
     }
 
     private dispatchRowDataUpdateStarted(data?: TData[] | null): void {
