@@ -12,6 +12,7 @@ import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/h
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
+import type { ColDef } from '../entities/colDef';
 import type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltipFeature';
 import { _isShowTooltipWhenTruncated } from './tooltipFeature';
 
@@ -36,7 +37,7 @@ export class TooltipService extends BeanStub implements NamedBean {
     public setupHeaderTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
         ctrl: HeaderCellCtrl,
-        value?: string,
+        passedValue?: string,
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
         if (existingTooltipFeature) {
@@ -53,13 +54,17 @@ export class TooltipService extends BeanStub implements NamedBean {
                 () => eGui.querySelector('.ag-header-cell-text') as HTMLElement | undefined
             );
         }
-
+        const location = 'header';
+        const value = passedValue ?? colDef.headerName ?? colDef.field;
+        const valueFormatted = this.beans.colNames.getDisplayNameForColumn(column, 'header', true);
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
-            getLocation: () => 'header',
+            getLocation: () => location,
             getTooltipValue: () =>
-                value ??
-                colDef?.headerTooltipValueGetter?.(_addGridCommonParams(gos, { location: 'cell', colDef, column })) ??
+                passedValue ??
+                colDef?.headerTooltipValueGetter?.(
+                    _addGridCommonParams(gos, { location, colDef, column, value, valueFormatted })
+                ) ??
                 colDef?.headerTooltip,
             shouldDisplayTooltip,
             getAdditionalParams: () => ({
@@ -79,7 +84,7 @@ export class TooltipService extends BeanStub implements NamedBean {
     public setupHeaderGroupTooltip(
         existingTooltipFeature: TooltipFeature | undefined,
         ctrl: HeaderGroupCellCtrl,
-        value?: string,
+        passedValue?: string,
         shouldDisplayTooltip?: () => boolean
     ): TooltipFeature | undefined {
         if (existingTooltipFeature) {
@@ -96,12 +101,18 @@ export class TooltipService extends BeanStub implements NamedBean {
             );
         }
 
+        const location = 'headerGroup';
+        const value = passedValue ?? colDef?.headerName ?? (colDef as ColDef)?.field;
+        const valueFormatted = this.beans.colNames.getDisplayNameForColumnGroup(column, 'header');
+
         const tooltipCtrl: ITooltipCtrl = {
             getGui: () => eGui,
-            getLocation: () => 'headerGroup',
+            getLocation: () => location,
             getTooltipValue: () =>
-                value ??
-                colDef?.headerTooltipValueGetter?.(_addGridCommonParams(gos, { location: 'cell', colDef, column })) ??
+                passedValue ??
+                colDef?.headerTooltipValueGetter?.(
+                    _addGridCommonParams(gos, { location, colDef, column, value, valueFormatted })
+                ) ??
                 colDef?.headerTooltip,
             shouldDisplayTooltip,
             getAdditionalParams: () => {
