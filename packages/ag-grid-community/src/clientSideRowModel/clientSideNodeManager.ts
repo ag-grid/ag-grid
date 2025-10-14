@@ -143,23 +143,21 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     private deleteUnusedNodes(
         processedNodes: Set<RowNode<TData>>,
-        changedRowNodes: ChangedRowNodes<TData>,
+        { removals }: ChangedRowNodes<TData>,
         nodesToUnselect: RowNode<TData>[]
     ): boolean {
-        let nodesRemoved = false;
         const allLeafs = this.rootNode._leafs!;
         for (let i = 0, len = allLeafs.length; i < len; i++) {
             const node = allLeafs[i];
             if (!processedNodes.has(node)) {
-                nodesRemoved = true;
-                changedRowNodes.remove(node);
+                removals.add(node);
                 if (node.isSelected()) {
                     nodesToUnselect.push(node);
                 }
                 this.deleteNode(node);
             }
         }
-        return nodesRemoved;
+        return removals.size > 0;
     }
 
     public updateRowData(
@@ -296,8 +294,6 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             addedNodes[i] = node; // Write new nodes
             addIndex++;
         }
-
-        // If we appended at the end, ensure length is correctly set (it already is via newLen)
         return addedNodes;
     }
 
@@ -444,8 +440,10 @@ const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, dat
 };
 
 const updateRootLeafsOrdered = <TData>(rootNode: RowNode<TData>, processedNodes: Set<RowNode<TData>>): boolean => {
-    const newAllLeafs = new Array<RowNode<TData>>(processedNodes.size); // Preallocate
-    rootNode._leafs = newAllLeafs;
+    // Reuse existing array to avoid unnecessary allocations. Grow if needed, then trim.
+    const allLeafs = (rootNode._leafs ??= []);
+    const newSize = processedNodes.size;
+    allLeafs.length = newSize;
     let writeIdx = 0;
     let added = false;
     let reordered = false;
@@ -461,7 +459,7 @@ const updateRootLeafsOrdered = <TData>(rootNode: RowNode<TData>, processedNodes:
             }
             node.sourceRowIndex = writeIdx;
         }
-        newAllLeafs[writeIdx++] = node;
+        allLeafs[writeIdx++] = node;
     }
     return reordered;
 };
