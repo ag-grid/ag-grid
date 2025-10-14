@@ -12,7 +12,7 @@ import type { ITabGuard } from './tabGuardCtrl';
 import { AgTabGuardCtrl } from './tabGuardCtrl';
 import { TabGuardClassNames } from './tabGuardCtrl';
 
-export interface TabGuardParams {
+export interface AgTabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     shouldStopEventPropagation?: () => boolean;
     /**
@@ -61,7 +61,7 @@ export class AgTabGuardFeature<
         super();
     }
 
-    public initialiseTabGuard(params: TabGuardParams) {
+    public initialiseTabGuard(params: AgTabGuardParams) {
         this.eTopGuard = this.createTabGuard('top');
         this.eBottomGuard = this.createTabGuard('bottom');
         this.eFocusableElement = this.comp.getFocusableElement();

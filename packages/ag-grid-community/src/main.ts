@@ -281,7 +281,10 @@ export {
 export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
 export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
 export { AgEventService as _AgEventService } from './agStack/interfaces/iEvent';
-export { AgTabGuardFeature as _AgTabGuardFeature } from './agStack/focus/agTabGuardFeature';
+export {
+    AgTabGuardFeature as _AgTabGuardFeature,
+    AgTabGuardParams as _AgTabGuardParams,
+} from './agStack/focus/agTabGuardFeature';
 export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
 
 // excel

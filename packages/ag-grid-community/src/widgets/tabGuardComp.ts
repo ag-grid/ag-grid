@@ -1,4 +1,4 @@
-import type { TabGuardParams } from '../agStack/focus/agTabGuardFeature';
+import type { AgTabGuardParams } from '../agStack/focus/agTabGuardFeature';
 import type { ComponentEvent } from './component';
 import { Component } from './component';
 import { TabGuardFeature } from './tabGuard';
@@ -6,7 +6,7 @@ import { TabGuardFeature } from './tabGuard';
 export class TabGuardComp<TLocalEvent extends string = ComponentEvent> extends Component<TLocalEvent> {
     protected tabGuardFeature: TabGuardFeature;
 
-    protected initialiseTabGuard(params: TabGuardParams) {
+    protected initialiseTabGuard(params: AgTabGuardParams) {
         this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
         this.tabGuardFeature.initialiseTabGuard(params);
     }
