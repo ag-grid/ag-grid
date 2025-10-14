@@ -8,10 +8,7 @@ import { _createIconNoSpan } from '../utils/icon';
 export class IconService extends BeanStub implements NamedBean, IIconService<IconName, { column?: AgColumn | null }> {
     beanName = 'iconSvc' as const;
 
-    public createIconNoSpan(
-        iconName: IconName,
-        params?: { column?: AgColumn<any> | null | undefined } | undefined
-    ): Element | undefined {
+    public createIconNoSpan(iconName: IconName, params?: { column?: AgColumn<any> | null }): Element | undefined {
         return _createIconNoSpan(iconName, this.beans, params?.column);
     }
 }

@@ -5,7 +5,8 @@ test.agExample(import.meta, () => {
         // PLACEHOLDER - MINIMAL TEST TO ENSURE GRID LOADS WITHOUT ERRORS
         await ensureGridReady(page);
         await waitForGridContent(page);
-        await clickAllButtons(page);
+
+        // await clickAllButtons(page); buttons are disabled if there are not edits made
         // END PLACEHOLDER
     });
 });

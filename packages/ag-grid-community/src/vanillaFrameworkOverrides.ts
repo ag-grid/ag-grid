@@ -26,6 +26,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     }
 
     getDocLink(path?: string): string {
-        return `${this.baseDocLink}${path ? `/${path}` : ''}`;
+        return this.baseDocLink + (path ? '/' + path : '');
     }
 }

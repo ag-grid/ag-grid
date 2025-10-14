@@ -181,18 +181,18 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         valueExtractor: (cellValueChange: CellValueChange) => any,
         source: string
     ) {
-        action.cellValueChanges.forEach((cellValueChange) => {
+        for (const cellValueChange of action.cellValueChanges) {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
             const currentRow = _getRowNode(this.beans, rowPosition);
 
             // checks if the row has been filtered out
             if (!currentRow!.displayed) {
-                return;
+                continue;
             }
 
             currentRow!.setDataValue(columnId, valueExtractor(cellValueChange), source);
-        });
+        }
     }
 
     private processRange(ranges: (CellRange | undefined)[]) {

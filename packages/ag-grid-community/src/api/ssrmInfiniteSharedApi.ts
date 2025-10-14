@@ -19,11 +19,7 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
         return;
     }
 
-    const infiniteRowModel = _getInfiniteRowModel(beans);
-    if (infiniteRowModel) {
-        infiniteRowModel.setRowCount(rowCount, maxRowFound);
-        return;
-    }
+    _getInfiniteRowModel(beans)?.setRowCount(rowCount, maxRowFound);
 }
 
 export function getCacheBlockState(beans: BeanCollection): any {

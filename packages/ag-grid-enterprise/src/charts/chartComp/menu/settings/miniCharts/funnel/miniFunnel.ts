@@ -48,11 +48,11 @@ export class MiniFunnelClass extends MiniChart {
     }
 
     override updateColors(fills: string[], strokes: string[]): void {
-        this.shapes.forEach((bar) => {
+        for (const bar of this.shapes) {
             bar.fill = fills[0];
             bar.stroke = strokes[0];
             bar.strokeWidth = 0;
-        });
+        }
     }
 }
 

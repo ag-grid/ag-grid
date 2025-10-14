@@ -109,7 +109,9 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private destroyGui(): void {
-        this.guiDestroyFunctions.forEach((func) => func());
+        for (const func of this.guiDestroyFunctions) {
+            func();
+        }
         this.guiDestroyFunctions.length = 0;
         this.childPillComponents.length = 0;
         _clearElement(this.getGui());

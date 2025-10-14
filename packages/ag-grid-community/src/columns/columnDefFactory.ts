@@ -19,9 +19,9 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
     const obj = object as any;
     const res: any = {};
 
-    Object.keys(obj).forEach((key) => {
+    for (const key of Object.keys(obj)) {
         if ((keysToSkip && keysToSkip.indexOf(key) >= 0) || SKIP_JS_BUILTINS.has(key)) {
-            return;
+            continue;
         }
 
         const value = obj[key];
@@ -37,7 +37,7 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
         } else {
             res[key] = value;
         }
-    });
+    }
 
     return res;
 }

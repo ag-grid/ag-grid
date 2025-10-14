@@ -201,13 +201,13 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     private getAggText(node: RowNode): string {
         const stringParts: string[] = [];
 
-        this.colsToUse.forEach((column) => {
+        for (const column of this.colsToUse) {
             const part = this.getTextForColumn(column, node);
 
             if (_exists(part)) {
                 stringParts.push(part);
             }
-        });
+        }
 
         return stringParts.join('\n');
     }

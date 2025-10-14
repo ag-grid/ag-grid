@@ -28,14 +28,14 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
             return;
         }
 
-        dragColumns.forEach((column) => {
+        for (const column of dragColumns) {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) {
-                return;
+                continue;
             }
 
             if (column.isAnyFunctionActive()) {
-                return;
+                continue;
             }
 
             if (column.isAllowValue()) {
@@ -45,7 +45,7 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
             } else if (column.isAllowPivot()) {
                 this.columnsToPivot.push(column);
             }
-        });
+        }
     }
 
     public getIconName(): DragAndDropIcon | null {

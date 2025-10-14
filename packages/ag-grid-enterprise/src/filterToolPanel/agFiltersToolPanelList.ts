@@ -140,7 +140,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (len) {
             // skip the destroy function because this will be managed
             // by the `destroyFilters` function
-            filterGroupComps.forEach((comp) => this.appendChild(comp));
+            for (const comp of filterGroupComps) {
+                this.appendChild(comp);
+            }
             this.setFirstAndLastVisible(0, len - 1);
         }
 
@@ -283,20 +285,24 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
         if (this.isInitialState) {
             const { expandedColIds, expandedGroupIds } = this.params.initialState as FiltersToolPanelState;
-            expandedColIds.forEach((id) => expansionState.set(id, true));
-            expandedGroupIds.forEach((id) => expansionState.set(id, true));
+            for (const id of expandedColIds) {
+                expansionState.set(id, true);
+            }
+            for (const id of expandedGroupIds) {
+                expansionState.set(id, true);
+            }
             return expansionState;
         }
 
         const recursiveGetExpansionState = (filterGroupComp: ToolPanelFilterGroupComp) => {
             expansionState.set(filterGroupComp.getFilterGroupId(), filterGroupComp.isExpanded());
-            filterGroupComp.getChildren().forEach((child) => {
+            for (const child of filterGroupComp.getChildren()) {
                 if (child instanceof ToolPanelFilterGroupComp) {
                     recursiveGetExpansionState(child);
                 } else {
                     expansionState.set(child.getColumn().getId(), child.isExpanded());
                 }
-            });
+            }
         };
 
         this.filterGroupComps.forEach(recursiveGetExpansionState);
@@ -332,11 +338,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
 
             // recursively look for more groups to expand / collapse
-            filterGroup.getChildren().forEach((child) => {
+            for (const child of filterGroup.getChildren()) {
                 if (child instanceof ToolPanelFilterGroupComp) {
                     updateGroupExpandState(child);
                 }
-            });
+            }
         };
 
         this.filterGroupComps.forEach(updateGroupExpandState);
@@ -358,7 +364,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         const updateGroupExpandState = (filterComp: ToolPanelFilterGroupComp | ToolPanelFilterComp): boolean => {
             if (filterComp instanceof ToolPanelFilterGroupComp) {
                 let anyChildrenChanged = false;
-                filterComp.getChildren().forEach((child) => {
+                for (const child of filterComp.getChildren()) {
                     const childUpdated = updateGroupExpandState(child);
                     if (childUpdated) {
                         if (expand) {
@@ -369,7 +375,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                             filterComp.collapse();
                         }
                     }
-                });
+                }
                 return anyChildrenChanged;
             }
 
@@ -416,11 +422,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
             filterGroup.isExpanded() ? expandedCount++ : notExpandedCount++;
 
-            filterGroup.getChildren().forEach((child) => {
+            for (const child of filterGroup.getChildren()) {
                 if (child instanceof ToolPanelFilterGroupComp) {
                     updateExpandCounts(child);
                 }
-            });
+            }
         };
 
         this.filterGroupComps.forEach(updateExpandCounts);
@@ -520,7 +526,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private onPanelHidden(): void {
-        this.filterGroupComps.forEach((filterGroupComp) => filterGroupComp.onPanelHidden());
+        for (const filterGroupComp of this.filterGroupComps) {
+            filterGroupComp.onPanelHidden();
+        }
     }
 
     public getExpandedFiltersAndGroups(): { expandedGroupIds: string[]; expandedColIds: string[] } {
@@ -529,7 +537,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
         const getExpandedFiltersAndGroups = (filterComp: ToolPanelFilterGroupComp | ToolPanelFilterComp) => {
             if (filterComp instanceof ToolPanelFilterGroupComp) {
-                filterComp.getChildren().forEach((child) => getExpandedFiltersAndGroups(child));
+                for (const child of filterComp.getChildren()) {
+                    getExpandedFiltersAndGroups(child);
+                }
                 const groupId = filterComp.getFilterGroupId();
                 if (filterComp.isExpanded() && !expandedColIds.has(groupId)) {
                     expandedGroupIds.push(groupId);

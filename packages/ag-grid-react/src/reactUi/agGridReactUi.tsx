@@ -99,7 +99,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
         if (!eRef) {
-            destroyFuncs.current.forEach((f) => f());
+            for (const f of destroyFuncs.current) {
+                f();
+            }
             destroyFuncs.current.length = 0;
             return;
         }
@@ -188,7 +190,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
                     },
                 },
                 () => {
-                    whenReadyFuncs.current.forEach((f) => f());
+                    for (const f of whenReadyFuncs.current) f();
                     whenReadyFuncs.current.length = 0;
                     ready.current = true;
                 }
@@ -254,18 +256,18 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
 
 function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
     const changes: { [p: string]: any } = {};
-    Object.keys(nextProps).forEach((propKey) => {
+    for (const propKey of Object.keys(nextProps)) {
         if (excludeReactCompProps.has(propKey)) {
             if (deprecatedReactCompProps.has(propKey)) {
                 _warn(274, { prop: propKey });
             }
-            return;
+            continue;
         }
         const propValue = nextProps[propKey];
         if (prevProps[propKey] !== propValue) {
             changes[propKey] = propValue;
         }
-    });
+    }
 
     return changes;
 }

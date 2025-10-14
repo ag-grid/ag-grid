@@ -289,7 +289,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         this.destroyLoadingSpinner = () => {
             rootNode.removeEventListener('mousemove', mouseMoveCallback);
-            targetEl.removeChild(wrapperEl);
+            wrapperEl.remove();
             this.destroyLoadingSpinner = null;
         };
     }

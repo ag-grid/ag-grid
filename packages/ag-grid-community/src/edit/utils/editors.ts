@@ -104,8 +104,6 @@ export function _setupEditors(
             }
         );
     }
-
-    return;
 }
 
 export function _sourceAndPendingDiffer({
@@ -184,8 +182,6 @@ export function _setupEditor(
             beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
         }
     }
-
-    return;
 }
 
 function _valueFromEditor(
@@ -325,17 +321,17 @@ export function _syncFromEditors(
     beans: BeanCollection,
     params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
 ): void {
-    beans.editModelSvc?.getEditPositions().forEach((cellId) => {
+    for (const cellId of beans.editModelSvc?.getEditPositions() ?? []) {
         const cellCtrl = _getCellCtrl(beans, cellId);
 
         if (!cellCtrl) {
-            return;
+            continue;
         }
 
         const editor = cellCtrl.comp?.getCellEditor();
 
         if (!editor) {
-            return;
+            continue;
         }
 
         const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
@@ -345,7 +341,7 @@ export function _syncFromEditors(
         }
 
         _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
-    });
+    }
 }
 
 export function _syncFromEditor(
@@ -419,7 +415,9 @@ export function _destroyEditors(
         edits = beans.editModelSvc?.getEditPositions();
     }
 
-    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params));
+    for (const cellPosition of edits ?? []) {
+        _destroyEditor(beans, cellPosition, params);
+    }
 }
 
 type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };

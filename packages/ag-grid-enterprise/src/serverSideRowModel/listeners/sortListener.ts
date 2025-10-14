@@ -55,12 +55,12 @@ export class SortListener extends BeanStub implements NamedBean {
     private findChangedColumnsInSort(newSortModel: SortModelItem[], oldSortModel: SortModelItem[]): string[] {
         let allColsInBothSorts: string[] = [];
 
-        [newSortModel, oldSortModel].forEach((sortModel) => {
+        for (const sortModel of [newSortModel, oldSortModel]) {
             if (sortModel) {
                 const ids = sortModel.map((sm) => sm.colId);
                 allColsInBothSorts = allColsInBothSorts.concat(ids);
             }
-        });
+        }
 
         const differentSorts = (oldSortItem: SortModelItem | undefined, newSortItem: SortModelItem | undefined) => {
             const oldSort = oldSortItem ? oldSortItem.sort : null;

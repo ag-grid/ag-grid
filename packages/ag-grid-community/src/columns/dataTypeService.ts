@@ -666,7 +666,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private destroyColumnStateUpdateListeners(): void {
-        this.columnStateUpdateListenerDestroyFuncs.forEach((destroyFunc) => destroyFunc());
+        for (const destroyFunc of this.columnStateUpdateListenerDestroyFuncs) {
+            destroyFunc();
+        }
         this.columnStateUpdateListenerDestroyFuncs = [];
     }
 
@@ -807,7 +809,7 @@ function doColDefPropsPreventInference(
 
 function getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
     const columnState = getColumnStateFromColDef(column);
-    columnStateUpdates.forEach((key) => {
+    for (const key of columnStateUpdates) {
         // if the column state has been updated, don't update again
         delete columnState[key];
         if (key === 'rowGroup') {
@@ -815,6 +817,6 @@ function getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof C
         } else if (key === 'pivot') {
             delete columnState.pivotIndex;
         }
-    });
+    }
     return columnState;
 }

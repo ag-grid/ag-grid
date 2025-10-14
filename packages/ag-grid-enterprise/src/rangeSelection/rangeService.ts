@@ -279,7 +279,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const allColumns = this.visibleCols.allCols;
 
         // check that the columns in each range still exist and are visible
-        this.cellRanges.forEach((cellRange) => {
+        for (const cellRange of this.cellRanges) {
             const beforeCols = cellRange.columns;
 
             // remove hidden or removed cols from cell range
@@ -293,7 +293,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 // notify users and other parts of grid (i.e. status panel) that range has changed
                 this.dispatchChangedEvent(false, true, cellRange.id);
             }
-        });
+        }
         // Remove empty cell ranges
         const countBefore = this.cellRanges.length;
         this.cellRanges = this.cellRanges.filter((range) => range.columns.length > 0);
@@ -480,13 +480,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         let startIdx = allColumns.indexOf(startColumn as AgColumn);
-        let endIdx = allColumns.indexOf(endColumn as AgColumn);
+        const endIdx = allColumns.indexOf(endColumn as AgColumn);
         const isRtlRange = endIdx < startIdx;
 
         if (isRtlRange) {
             // if we are anchoring to the left and the range is rtl
             // then we need to flip the start and end indices
-            [startIdx, endIdx] = [endIdx, startIdx];
+            startIdx = endIdx;
         }
 
         const currentLength = columns.length;
@@ -670,7 +670,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             cellRanges = this.cellRanges;
         }
 
-        cellRanges.forEach((cellRange) => {
+        for (const cellRange of cellRanges) {
             this.forEachRowInRange(cellRange, (rowPosition) => {
                 const rowNode = _getRowNode(beans, rowPosition);
                 if (!rowNode) {
@@ -685,7 +685,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });
-        });
+        }
 
         if (dispatchWrapperEvents) {
             eventSvc.dispatchEvent({
@@ -801,7 +801,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (len <= 1) return true;
 
-        this.cellRanges.forEach((range) => {
+        for (const range of this.cellRanges) {
             this.forEachRowInRange(range, (row) => {
                 const rowName = `${row.rowPinned || 'normal'}_${row.rowIndex}`;
                 const columns = rowToColumnMap.get(rowName);
@@ -813,7 +813,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     rowToColumnMap.set(rowName, currentRangeColIds);
                 }
             });
-        });
+        }
 
         let columnsString: string | undefined;
 
@@ -914,7 +914,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const newRanges: CellRange[] = [];
 
-        this.cellRanges.slice(0, -1).forEach((range) => {
+        for (const range of this.cellRanges.slice(0, -1)) {
             const startRow = this.getRangeStartRow(range);
             const endRow = this.getRangeEndRow(range);
             const cols = range.columns;
@@ -922,12 +922,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (intersectCols.length === cols.length) {
                 // No overlapping columns, retain previous range
                 newRanges.push(range);
-                return;
+                continue;
             }
             if (_isRowBefore(intersectionEndRow, startRow) || _isRowBefore(endRow, intersectionStartRow)) {
                 // No overlapping rows, retain previous range
                 newRanges.push(range);
-                return;
+                continue;
             }
             const rangeCountBefore = newRanges.length;
             // Top
@@ -966,7 +966,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 // Copy the source range's id, since essentially we just reduced it's size
                 newRanges[newRanges.length - 1].id = range.id;
             }
-        });
+        }
         this.cellRanges = newRanges;
 
         // when this is called because of a clickEvent and the ranges were changed
@@ -1014,7 +1014,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         if (shouldMoveRightCol) {
             moveColInCellRange(right, false);
-            return;
         }
     }
 
@@ -1101,21 +1100,21 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private rowMax(rows: RowPosition[]): RowPosition | undefined {
         let max: RowPosition | undefined;
-        rows.forEach((row) => {
+        for (const row of rows) {
             if (max === undefined || _isRowBefore(max, row)) {
                 max = row;
             }
-        });
+        }
         return max;
     }
 
     private rowMin(rows: RowPosition[]): RowPosition | undefined {
         let min: RowPosition | undefined;
-        rows.forEach((row) => {
+        for (const row of rows) {
             if (min === undefined || _isRowBefore(row, min)) {
                 min = row;
             }
-        });
+        }
         return min;
     }
 

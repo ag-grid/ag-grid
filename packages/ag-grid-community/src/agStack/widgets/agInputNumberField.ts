@@ -48,7 +48,7 @@ export class AgInputNumberField<
         const eInput = this.eInput;
         this.addManagedListeners(eInput, {
             blur: () => {
-                const floatedValue = parseFloat(eInput.value);
+                const floatedValue = Number.parseFloat(eInput.value);
                 const value = isNaN(floatedValue) ? '' : this.normalizeValue(floatedValue.toString());
 
                 if (this.value !== value) {
@@ -92,8 +92,8 @@ export class AgInputNumberField<
             return value;
         }
         if (isScientificNotation) {
-            const floatString = parseFloat(value).toFixed(precision);
-            return parseFloat(floatString).toString();
+            const floatString = Number.parseFloat(value).toFixed(precision);
+            return Number.parseFloat(floatString).toString();
         }
 
         // can't use toFixed here because we don't want to round up

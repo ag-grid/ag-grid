@@ -320,9 +320,9 @@ export class HeaderRowCtrl extends BeanStub {
 
         // return pinned left, center and right columns in print layout
         const viewportColumns: (AgColumn | AgColumnGroup)[] = [];
-        (['left', null, 'right'] as ColumnPinnedType[]).forEach((pinned) => {
+        for (const pinned of ['left', null, 'right'] as ColumnPinnedType[]) {
             viewportColumns.push(...this.getComponentsToRender(pinned));
-        });
+        }
         return viewportColumns;
     }
 

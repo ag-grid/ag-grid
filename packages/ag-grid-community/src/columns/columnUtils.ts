@@ -6,10 +6,11 @@ import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
-import type { ColKey, ColumnCollections } from './columnModel';
+import type { ColumnCollections } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
@@ -105,7 +106,9 @@ export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | nu
 
 export function _updateColsMap(cols: ColumnCollections): void {
     cols.map = {};
-    cols.list.forEach((col) => (cols.map[col.getId()] = col));
+    for (const col of cols.list) {
+        cols.map[col.getId()] = col;
+    }
 }
 
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {

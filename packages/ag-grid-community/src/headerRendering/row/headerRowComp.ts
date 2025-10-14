@@ -49,7 +49,7 @@ export class HeaderRowComp extends Component {
         const oldComps = this.headerComps;
         this.headerComps = {};
 
-        ctrls.forEach((ctrl) => {
+        for (const ctrl of ctrls) {
             const id = ctrl.instanceId;
             let comp = oldComps[id];
             delete oldComps[id];
@@ -60,10 +60,10 @@ export class HeaderRowComp extends Component {
             }
 
             this.headerComps[id] = comp;
-        });
+        }
 
         Object.values(oldComps).forEach((comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
-            this.getGui().removeChild(comp.getGui());
+            comp.getGui().remove();
             this.destroyBean(comp);
         });
 

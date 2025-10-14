@@ -104,9 +104,9 @@ function createCrossFilterThemeOverrides(
             legendItemClick: (e: any) => {
                 const chart = proxy.getChart();
                 const eligibleSeriesIds = [e.seriesId, `${e.seriesId}-filtered-out`];
-                chart.series
-                    .filter((s) => eligibleSeriesIds.includes(s.id))
-                    .forEach((s) => s.toggleSeriesItem(undefined, 'category', e.itemId, undefined));
+                for (const s of chart.series.filter((s) => eligibleSeriesIds.includes(s.id))) {
+                    s.toggleSeriesItem(undefined, 'category', e.itemId, undefined);
+                }
             },
         },
     };

@@ -512,16 +512,16 @@ export abstract class BaseTooltipStateManager<
     }
 
     private clearTooltipListeners(): void {
-        [
+        for (const listener of [
             this.tooltipMouseEnterListener,
             this.tooltipMouseLeaveListener,
             this.tooltipFocusInListener,
             this.tooltipFocusOutListener,
-        ].forEach((listener) => {
+        ]) {
             if (listener) {
                 listener();
             }
-        });
+        }
 
         this.tooltipMouseEnterListener =
             this.tooltipMouseLeaveListener =

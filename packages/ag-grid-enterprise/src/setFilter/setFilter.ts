@@ -157,7 +157,9 @@ export class SetFilter<V = string>
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
         const oldHandler = this.handler;
         if (oldHandler !== handler) {
-            this.handlerDestroyFuncs?.forEach((func) => func());
+            for (const func of this.handlerDestroyFuncs ?? []) {
+                func();
+            }
             this.handlerDestroyFuncs = [
                 ...this.addManagedListeners(handler, {
                     anyFilterChanged: (event) => {
@@ -448,9 +450,9 @@ export class SetFilter<V = string>
 
     private newSetTreeItemAttributes(item: SetFilterModelTreeItem): {
         value: V | string | (() => string) | null;
-        depth?: number | undefined;
-        isGroup?: boolean | undefined;
-        hasIndeterminateExpandState?: boolean | undefined;
+        depth?: number;
+        isGroup?: boolean;
+        hasIndeterminateExpandState?: boolean;
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
@@ -507,9 +509,9 @@ export class SetFilter<V = string>
 
     private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): {
         value: V | string | (() => string) | null;
-        depth?: number | undefined;
-        isGroup?: boolean | undefined;
-        hasIndeterminateExpandState?: boolean | undefined;
+        depth?: number;
+        isGroup?: boolean;
+        hasIndeterminateExpandState?: boolean;
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
@@ -1178,7 +1180,9 @@ export class SetFilter<V = string>
     public override destroy(): void {
         (this.virtualList as any) = this.destroyBean(this.virtualList);
 
-        this.handlerDestroyFuncs?.forEach((func) => func());
+        for (const func of this.handlerDestroyFuncs ?? []) {
+            func();
+        }
 
         (this.handler as any) = undefined;
         (this.displayValueModel as any) = undefined;

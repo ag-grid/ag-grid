@@ -193,17 +193,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return;
         }
         const nodesToDeselect: RowNode[] = [];
-        updatedNodes?.forEach((node) => {
+        for (const node of updatedNodes ?? []) {
             if (node.isSelected() && !node.selectable) {
                 nodesToDeselect.push(node);
             }
-        });
+        }
 
-        removedNodes?.forEach((node) => {
+        for (const node of removedNodes ?? []) {
             if (node.isSelected()) {
                 nodesToDeselect.push(node);
             }
-        });
+        }
 
         if (nodesToDeselect.length) {
             this.selectionSvc.setNodesSelected({

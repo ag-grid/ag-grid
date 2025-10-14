@@ -66,14 +66,14 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         super(config);
         this.config = Object.assign({}, config);
         this.stylesByIds = {};
-        this.config.baseExcelStyles.forEach((style) => {
+        for (const style of this.config.baseExcelStyles) {
             this.stylesByIds[style.id] = style;
-        });
+        }
         this.excelStyles = [...this.config.baseExcelStyles, { id: '_quotePrefix', quotePrefix: 1 }];
     }
 
     public addCustomContent(customContent: ExcelRow[]): void {
-        customContent.forEach((row) => {
+        for (const row of customContent) {
             const rowLen = this.rows.length + 1;
             let outlineLevel: number | undefined;
 
@@ -122,7 +122,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             }
 
             this.rows.push(rowObj);
-        });
+        }
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {

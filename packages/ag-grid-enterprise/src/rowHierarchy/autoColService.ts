@@ -93,12 +93,12 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         if (autoColsSame && treeDepthSame) {
             // Some things like header could have changed, ensure this is captured by updating the existing cols.
             const colsMap = new Map(list.map((col) => [col.getId(), col]));
-            this.columns?.list.forEach((col) => {
+            for (const col of this.columns?.list ?? []) {
                 const newDef = colsMap.get(col.getId());
                 if (newDef) {
                     col.setColDef(newDef.getColDef(), null, source);
                 }
-            });
+            }
             return;
         }
 

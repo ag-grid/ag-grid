@@ -13,8 +13,8 @@ on:
           type: boolean
           default: false
           required: true
-#    schedule:
-#        - cron: '0 0 * * *' # Run daily at midnight UTC
+    schedule:
+        - cron: '0 0 * * *' # Run daily at midnight UTC
 
 permissions:
   contents: read

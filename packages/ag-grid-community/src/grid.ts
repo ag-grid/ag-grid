@@ -205,17 +205,17 @@ export class GridCoreCreator {
         const registry = context.getBean('registry');
         const apiFunctionSvc = context.getBean('apiFunctionSvc');
 
-        registeredModules.forEach((module) => {
+        for (const module of registeredModules) {
             registry.registerModule(module);
 
             const apiFunctions = module.apiFunctions;
             if (apiFunctions) {
                 const names = Object.keys(apiFunctions) as ApiFunctionName[];
-                names.forEach((name) => {
+                for (const name of names) {
                     apiFunctionSvc?.addFunction(name, apiFunctions[name]!);
-                });
+                }
             }
-        });
+        }
     }
 
     private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
@@ -306,7 +306,11 @@ export class GridCoreCreator {
 
         const beans: Set<SingletonBean> = new Set();
 
-        registeredModules.forEach((module) => module.beans?.forEach((bean) => beans.add(bean)));
+        for (const module of registeredModules) {
+            for (const bean of module.beans ?? []) {
+                beans.add(bean);
+            }
+        }
 
         return Array.from(beans);
     }

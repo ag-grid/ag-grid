@@ -198,7 +198,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         const columns = this.colModel.getColDefCols() ?? [];
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
-        columns.forEach((column) => {
+        for (const column of columns) {
             if (
                 column.getColDef().filter &&
                 (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())
@@ -208,7 +208,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                     displayValue: this.colNames.getDisplayNameForColumn(column, 'advancedFilter')!,
                 });
             }
-        });
+        }
         entries.sort((a, b) => {
             const aValue = a.displayValue ?? '';
             const bValue = b.displayValue ?? '';

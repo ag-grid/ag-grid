@@ -373,8 +373,7 @@ export abstract class BaseDragAndDropService<
             this.dragImageComp = null;
         }
         if (comp) {
-            const eGui = comp.getGui();
-            this.dragImageParent?.removeChild(eGui);
+            comp.getGui()?.remove();
             this.destroyBean(comp);
         }
     }

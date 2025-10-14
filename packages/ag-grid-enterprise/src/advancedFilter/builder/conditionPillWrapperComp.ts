@@ -218,7 +218,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
 
     private destroyOperandPill(): void {
         delete (this.filterModel as any).filter;
-        this.getGui().removeChild(this.eOperandPill!.getGui());
+        this.eOperandPill?.getGui().remove();
         this.destroyBean(this.eOperandPill);
         this.eOperandPill = undefined;
     }

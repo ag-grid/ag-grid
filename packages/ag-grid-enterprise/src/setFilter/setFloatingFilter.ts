@@ -130,7 +130,9 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     public override destroy(): void {
         const destroyListeners = this.destroyListeners;
         if (destroyListeners) {
-            destroyListeners.forEach((destroyFunc) => destroyFunc());
+            for (const destroyFunc of destroyListeners) {
+                destroyFunc();
+            }
             destroyListeners.length = 0;
         }
         super.destroy();

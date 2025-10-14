@@ -155,11 +155,11 @@ export class VirtualListDragFeature<
 
     private clearHoveredItems(): void {
         const virtualListGui = this.virtualList.getGui();
-        virtualListGui.querySelectorAll(`.${LIST_ITEM_HOVERED}`).forEach((el) => {
-            [LIST_ITEM_HOVERED, 'ag-item-highlight-top', 'ag-item-highlight-bottom'].forEach((cls) => {
+        for (const el of virtualListGui.querySelectorAll(`.${LIST_ITEM_HOVERED}`)) {
+            for (const cls of [LIST_ITEM_HOVERED, 'ag-item-highlight-top', 'ag-item-highlight-bottom']) {
                 (el as HTMLElement).classList.remove(cls);
-            });
-        });
+            }
+        }
         this.lastHoveredListItem = null;
     }
 }

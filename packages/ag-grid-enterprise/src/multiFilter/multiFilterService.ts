@@ -15,7 +15,7 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
         existingFilterValueGetter: string | ValueGetterFunc | undefined,
         dataTypeDefinition: CoreDataTypeDefinition,
         formatValue: DataTypeFormatValueFunc
-    ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc<any, any> | undefined } {
+    ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc<any, any> } {
         let filters = existingFilterParams?.filters;
         const beans = this.beans;
         if (!filters) {

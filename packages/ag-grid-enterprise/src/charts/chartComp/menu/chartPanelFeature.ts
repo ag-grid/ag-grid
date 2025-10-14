@@ -52,10 +52,10 @@ export class ChartPanelFeature extends BeanStub {
     }
 
     private destroyPanels(): void {
-        this.panels.forEach((panel) => {
+        for (const panel of this.panels) {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
         this.panels = [];
     }
 

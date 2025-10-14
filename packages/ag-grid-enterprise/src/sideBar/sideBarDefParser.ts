@@ -50,15 +50,15 @@ export function parseSideBarDef(
 
     if (Array.isArray(toParse)) {
         const comps: ToolPanelDef[] = [];
-        toParse.forEach((key) => {
+        for (const key of toParse) {
             const lookupResult = DEFAULT_BY_KEY[key];
             if (!lookupResult) {
                 _warn(215, { key, defaultByKey: DEFAULT_BY_KEY });
-                return;
+                continue;
             }
 
             comps.push(lookupResult);
-        });
+        }
 
         if (comps.length === 0) {
             return undefined;

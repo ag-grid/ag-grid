@@ -180,9 +180,9 @@ export class GridBodyComp extends Component {
             setPinnedTopBottomOverflowY: (overflow) =>
                 (this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow),
             setCellSelectableCss: (cssClass: string, selectable: boolean) => {
-                [this.eTop, this.eBodyViewport, this.eBottom].forEach((ct) =>
-                    ct.classList.toggle(cssClass, selectable)
-                );
+                for (const ct of [this.eTop, this.eBodyViewport, this.eBottom]) {
+                    ct.classList.toggle(cssClass, selectable);
+                }
             },
             setBodyViewportWidth: (width) => (this.eBodyViewport.style.width = width),
             setGridRootRole: (role: 'grid' | 'treegrid') => _setAriaRole(this.eGridRoot, role),

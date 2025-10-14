@@ -68,7 +68,7 @@ export class ClientSideExpansionService
             if (!rowNodes) {
                 return;
             }
-            rowNodes.forEach((rowNode) => {
+            for (const rowNode of rowNodes) {
                 const actionRow = () => {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
@@ -76,7 +76,7 @@ export class ClientSideExpansionService
 
                 if (rowNode.master) {
                     actionRow();
-                    return;
+                    continue;
                 }
 
                 if (usingTreeData) {
@@ -84,7 +84,7 @@ export class ClientSideExpansionService
                     if (hasChildren) {
                         actionRow();
                     }
-                    return;
+                    continue;
                 }
 
                 if (usingPivotMode) {
@@ -92,14 +92,14 @@ export class ClientSideExpansionService
                     if (notLeafGroup) {
                         actionRow();
                     }
-                    return;
+                    continue;
                 }
 
                 const isRowGroup = rowNode.group;
                 if (isRowGroup) {
                     actionRow();
                 }
-            });
+            }
         };
 
         const rootNode = rowModel.rootNode;
@@ -150,7 +150,9 @@ export class ClientSideExpansionService
         this.events.push(event);
 
         const func = () => {
-            this.events.forEach((e) => this.eventSvc.dispatchEvent(e));
+            for (const e of this.events) {
+                this.eventSvc.dispatchEvent(e);
+            }
 
             // when using footers we need to refresh the group row, as the aggregation
             // values jump between group and footer, because the footer can be callback

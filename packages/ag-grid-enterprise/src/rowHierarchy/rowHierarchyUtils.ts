@@ -1,31 +1,24 @@
 import type {
     Bean,
     BeanCollection,
+    GridOptions,
     GridOptionsService,
-    GroupingApproach,
     IRowNode,
+    NestedDataGetter,
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
-    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean | undefined | void;
-
-    /** Called to reset the state when the strategy changes */
-    reset?(): void;
+    /** Getter for grid option treeDataChildrenField, only not null for tree nested data. */
+    readonly nestedDataGetter?: NestedDataGetter<TData> | null;
 
     /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
     getNode(id: string): RowNode<TData> | undefined;
-}
 
-export interface GroupingRowNode<TData = any> extends RowNode<TData> {
-    parent: this | null;
-    allLeafChildren: this[] | null;
-    childrenAfterGroup: this[] | null;
-    treeParent: this | null;
-    treeNodeFlags: number;
-    sibling: this;
-    sourceRowIndex: number;
+    onPropChange?(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void;
+
+    execute(params: StageExecuteParams<TData>): boolean | undefined | void;
 }
 
 /**
