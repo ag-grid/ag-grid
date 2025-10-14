@@ -73,4 +73,3 @@ documentation/ag-grid-docs/test-results/.last-run.json
 .dccache
 /snyk.json
 .tmp
-!./.idea/.recipes/
