@@ -3,7 +3,7 @@ import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
 export function _createGlobalRowEvent<T extends AgEventType>(
