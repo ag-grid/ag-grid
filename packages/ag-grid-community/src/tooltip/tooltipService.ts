@@ -6,13 +6,13 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColDef } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { ColDef } from '../entities/colDef';
 import type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltipFeature';
 import { _isShowTooltipWhenTruncated } from './tooltipFeature';
 
