@@ -151,14 +151,27 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             activeChangedPath = null;
         }
 
-        if (removals.size) {
-            this.removeNodes(removals, activeChangedPath, parentsWithRemovals);
+        for (const rowNode of removals) {
+            const oldParent = rowNode.parent;
+            this.removeFromParent(rowNode);
+            parentsWithRemovals.add(oldParent);
+            activeChangedPath?.addParentNode(oldParent);
         }
-        if (updates.size) {
-            this.updateNodes(updates, details, activeChangedPath, parentsWithRemovals);
+
+        for (const rowNode of updates) {
+            const oldParent = rowNode.parent;
+            // we add even if parent has not changed, as the data could have changed, or aggregations will be wrong
+            activeChangedPath?.addParentNode(oldParent);
+
+            if (this.moveNodeInWrongPath(rowNode, details)) {
+                parentsWithRemovals.add(oldParent);
+                activeChangedPath?.addParentNode(rowNode.parent);
+            }
         }
-        if (adds.size) {
-            this.addNodes(adds, details, activeChangedPath);
+
+        for (const rowNode of adds) {
+            this.insertOneNode(rowNode, details);
+            activeChangedPath?.addParentNode(rowNode.parent);
         }
 
         if (parentsWithRemovals.size) {
@@ -168,48 +181,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         if (reordered) {
             this.sortChildren(details);
-        }
-    }
-
-    private removeNodes(
-        removals: Set<RowNode>,
-        activeChangedPath: ChangedPath | null,
-        parentsWithRemovals: Set<RowNode | null>
-    ): void {
-        for (const rowNode of removals) {
-            const oldParent = rowNode.parent;
-            if (oldParent) {
-                this.removeFromParent(rowNode);
-                parentsWithRemovals.add(oldParent);
-                activeChangedPath?.addParentNode(oldParent);
-            }
-        }
-    }
-
-    private updateNodes(
-        updates: Set<RowNode>,
-        details: GroupingDetails,
-        activeChangedPath: ChangedPath | null,
-        parentsWithRemovals: Set<RowNode | null>
-    ): void {
-        for (const rowNode of updates) {
-            const oldParent = rowNode.parent;
-            // we add even if parent has not changed, as the data could have changed, or aggregations will be wrong
-            activeChangedPath?.addParentNode(oldParent);
-
-            if (this.moveNodeInWrongPath(rowNode, details)) {
-                if (oldParent) {
-                    parentsWithRemovals.add(oldParent);
-                }
-                activeChangedPath?.addParentNode(rowNode.parent);
-            }
-        }
-    }
-
-    private addNodes(adds: Set<RowNode>, details: GroupingDetails, activeChangedPath: ChangedPath | null): void {
-        for (const rowNode of adds) {
-            this.insertOneNode(rowNode, details);
-            activeChangedPath?.addParentNode(rowNode.parent);
         }
     }
 
