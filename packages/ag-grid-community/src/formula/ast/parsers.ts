@@ -41,7 +41,7 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
 
     // cell/range
     // Matches: $A$1, A1, $A1, A$1, $A$1:$B10 etc.
-    const cellRegex = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/i;
+    const cellRegex = /^(\$?)([A-Z]+)(\$?)([0-9]+)(?::(\$?)([A-Z]+)(\$?)([0-9]+))?$/i;
     const match = trimmed.match(cellRegex);
 
     if (match) {
@@ -140,7 +140,7 @@ function tokenize(expr: string): string[] {
         return j - start; // length of cell or range token
     };
 
-    main: while (i < expr.length) {
+    while (i < expr.length) {
         const ch = expr[i];
 
         // skip whitespace
@@ -200,15 +200,13 @@ function tokenize(expr: string): string[] {
         }
 
         // operators (greedy longest-first match)
-        for (const sym of OP_SYMBOLS_DESC) {
-            if (expr.startsWith(sym, i)) {
-                tokens.push(sym);
-                i += sym.length;
-                continue main;
-            }
+        const firstMatch = OP_SYMBOLS_DESC.find((sym) => expr.startsWith(sym, i));
+        if (!firstMatch) {
+            throw new FormulaParseError('Unexpected character: ' + ch, i, i + 1);
         }
 
-        throw new FormulaParseError('Unexpected character: ' + ch, i, i + 1);
+        tokens.push(firstMatch);
+        i += firstMatch.length;
     }
 
     return tokens;

@@ -69,10 +69,9 @@ function toNumberLike(x: unknown): number | null {
         return +x;
     }
     if (typeof x === 'string') {
-        const s = x.trim();
-        if (/^[+-]?(?:\d+\.?\d*|\d*\.?\d+)(?:[eE][+-]?\d+)?$/.test(s)) {
-            const n = Number(s);
-            return Number.isFinite(n) ? n : null;
+        const num = Number(x);
+        if (!Number.isNaN(num)) {
+            return num;
         }
     }
     return null;

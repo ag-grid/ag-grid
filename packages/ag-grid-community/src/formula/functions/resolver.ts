@@ -161,10 +161,9 @@ class ValuesIterator implements Iterator<unknown> {
                 this.res.done = false;
                 this.res.value = arg.value;
                 return this.res;
-            } else {
-                this.inner = arg[Symbol.iterator]();
-                continue;
             }
+
+            this.inner = arg[Symbol.iterator]();
         }
     }
 
