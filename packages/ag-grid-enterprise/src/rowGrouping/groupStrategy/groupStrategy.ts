@@ -284,6 +284,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 let pointer = possibleEmptyGroups[idx];
                 while (pointer) {
                     const parent: RowNode | null = pointer.parent;
+                    if (removals.has(pointer)) {
+                        possibleEmptyGroups[idx] = parent;
+                        pointer = parent;
+                        continue;
+                    }
                     if (!parent) {
                         break; // root node
                     }
@@ -291,7 +296,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         pointer = parent;
                         continue;
                     }
-
                     parents.add(parent);
                     removals.add(pointer); // Mark the empty group node as removed
                     this.removeFromParent(pointer);
@@ -301,8 +305,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         nodesToUnselect ??= [];
                         nodesToUnselect.push(pointer);
                     }
-
-                    possibleEmptyGroups[idx] = parent; // check parent next
+                    possibleEmptyGroups[idx] = parent;
                     pointer = parent;
                 }
             }
