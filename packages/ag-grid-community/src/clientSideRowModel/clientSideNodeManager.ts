@@ -128,9 +128,10 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             this.deleteUnusedNodes(processedNodes, changedRowNodes, nodesToUnselect) || reorder || adds.size > 0;
 
         if (changed) {
+            const allLeafs = (rootNode._leafs ??= []);
             if (reorder === undefined) {
-                updateRootLeafsKeepOrder(rootNode, processedNodes, changedRowNodes);
-            } else if (updateRootLeafsOrdered(rootNode, processedNodes)) {
+                updateRootLeafsKeepOrder(allLeafs, processedNodes, changedRowNodes);
+            } else if (updateRootLeafsOrdered(allLeafs, processedNodes)) {
                 changedRowNodes.reordered = true;
             }
         }
@@ -439,9 +440,8 @@ const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, dat
     return null;
 };
 
-const updateRootLeafsOrdered = <TData>(rootNode: RowNode<TData>, processedNodes: Set<RowNode<TData>>): boolean => {
+const updateRootLeafsOrdered = <TData>(allLeafs: RowNode<TData>[], processedNodes: Set<RowNode<TData>>): boolean => {
     // Reuse existing array to avoid unnecessary allocations. Grow if needed, then trim.
-    const allLeafs = (rootNode._leafs ??= []);
     const newSize = processedNodes.size;
     allLeafs.length = newSize;
     let writeIdx = 0;
@@ -450,7 +450,7 @@ const updateRootLeafsOrdered = <TData>(rootNode: RowNode<TData>, processedNodes:
     for (const node of processedNodes) {
         const sourceRowIndex = node.sourceRowIndex;
         if (sourceRowIndex === writeIdx) {
-            reordered ||= added; // Nodes inserted in the middle, order changed
+            reordered ||= added; // Nodes inserted in the middle, we assume order changed
         } else {
             if (sourceRowIndex >= 0) {
                 reordered = true;
@@ -465,27 +465,25 @@ const updateRootLeafsOrdered = <TData>(rootNode: RowNode<TData>, processedNodes:
 };
 
 const updateRootLeafsKeepOrder = <TData>(
-    rootNode: RowNode<TData>,
+    allLeafs: RowNode<TData>[],
     processedNodes: Set<RowNode<TData>>,
-    changedRowNodes: ChangedRowNodes<TData>
+    { removals, adds }: ChangedRowNodes<TData>
 ): void => {
-    const oldAllLeafs = rootNode._leafs!;
-    const newAllLeafs = new Array<RowNode<TData>>(processedNodes.size); // Preallocate
-    rootNode._leafs = newAllLeafs;
+    const allLeafsLen = allLeafs.length;
+    allLeafs.length = processedNodes.size; // Resize array to new size
     let writeIdx = 0;
-    const removals = changedRowNodes.removals;
-    for (let i = 0, len = oldAllLeafs.length; i < len; ++i) {
-        const node = oldAllLeafs[i];
+    for (let i = 0; i < allLeafsLen; ++i) {
+        const node = allLeafs[i];
         if (!removals.has(node)) {
             node.sourceRowIndex = writeIdx;
-            newAllLeafs[writeIdx++] = node; // First append all the old children that weren't removed
+            allLeafs[writeIdx++] = node; // Filter removed nodes
         }
     }
-    for (const node of changedRowNodes.adds) {
+    for (const node of adds) {
         if (node.sourceRowIndex < 0) {
             node.sourceRowIndex = writeIdx;
-            newAllLeafs[writeIdx++] = node; // Now append all the new children
+            allLeafs[writeIdx++] = node; // Now append all the new children
         }
     }
-    newAllLeafs.length = writeIdx;
+    allLeafs.length = writeIdx;
 };
