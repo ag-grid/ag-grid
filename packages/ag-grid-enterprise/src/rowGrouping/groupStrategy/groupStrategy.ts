@@ -13,7 +13,6 @@ import { BeanStub, _areEqual, _removeFromArray, _warn } from 'ag-grid-community'
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
-import { BatchRemover, invalidateAllLeafChildren } from './batchRemover';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
 import { sortGroupChildren } from './sortGroupChildren';
@@ -144,7 +143,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private handleDeltaUpdate(details: GroupingDetails, { removals, updates, adds, reordered }: ChangedRowNodes): void {
-        const batchRemover = new BatchRemover();
+        const parentsWithRemovals = new Set<RowNode | null>();
         const changedPath = details.changedPath;
 
         let activeChangedPath: ChangedPath | null = changedPath;
@@ -152,33 +151,65 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             activeChangedPath = null;
         }
 
-        for (const rowNode of removals) {
-            this.removeFromParent(rowNode, batchRemover);
-            activeChangedPath?.addParentNode(rowNode.parent);
+        if (removals.size) {
+            this.removeNodes(removals, activeChangedPath, parentsWithRemovals);
+        }
+        if (updates.size) {
+            this.updateNodes(updates, details, activeChangedPath, parentsWithRemovals);
+        }
+        if (adds.size) {
+            this.addNodes(adds, details, activeChangedPath);
         }
 
-        for (const rowNode of updates) {
-            // we add node, even if parent has not changed, as the data could have
-            // changed, hence aggregations will be wrong
-            activeChangedPath?.addParentNode(rowNode.parent);
-
-            if (this.moveNodeInWrongPath(rowNode, details, batchRemover)) {
-                // Parent changed, we need to add also the new parent to changed path
-                activeChangedPath?.addParentNode(rowNode.parent);
-            }
+        if (parentsWithRemovals.size) {
+            flushRemovedNodes(parentsWithRemovals, removals);
+            this.removeEmptyGroups(parentsWithRemovals, removals);
         }
-
-        for (const rowNode of adds) {
-            this.insertOneNode(rowNode, details);
-            activeChangedPath?.addParentNode(rowNode.parent);
-        }
-
-        const parentsWithChildrenRemoved = batchRemover.getAllParents();
-        batchRemover.flush();
-        this.removeEmptyGroups(parentsWithChildrenRemoved, removals);
 
         if (reordered) {
             this.sortChildren(details);
+        }
+    }
+
+    private removeNodes(
+        removals: Set<RowNode>,
+        activeChangedPath: ChangedPath | null,
+        parentsWithRemovals: Set<RowNode | null>
+    ): void {
+        for (const rowNode of removals) {
+            const oldParent = rowNode.parent;
+            if (oldParent) {
+                this.removeFromParent(rowNode);
+                parentsWithRemovals.add(oldParent);
+                activeChangedPath?.addParentNode(oldParent);
+            }
+        }
+    }
+
+    private updateNodes(
+        updates: Set<RowNode>,
+        details: GroupingDetails,
+        activeChangedPath: ChangedPath | null,
+        parentsWithRemovals: Set<RowNode | null>
+    ): void {
+        for (const rowNode of updates) {
+            const oldParent = rowNode.parent;
+            // we add even if parent has not changed, as the data could have changed, or aggregations will be wrong
+            activeChangedPath?.addParentNode(oldParent);
+
+            if (this.moveNodeInWrongPath(rowNode, details)) {
+                if (oldParent) {
+                    parentsWithRemovals.add(oldParent);
+                }
+                activeChangedPath?.addParentNode(rowNode.parent);
+            }
+        }
+    }
+
+    private addNodes(adds: Set<RowNode>, details: GroupingDetails, activeChangedPath: ChangedPath | null): void {
+        for (const rowNode of adds) {
+            this.insertOneNode(rowNode, details);
+            activeChangedPath?.addParentNode(rowNode.parent);
         }
     }
 
@@ -233,7 +264,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return res;
     }
 
-    private moveNodeInWrongPath(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover): boolean {
+    private moveNodeInWrongPath(childNode: RowNode, details: GroupingDetails): boolean {
         const oldPath: string[] = this.getExistingPathForNode(childNode);
         const newPath: string[] = this.getGroupInfo(childNode, details).map((item) => item.key);
 
@@ -241,7 +272,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             return false; // in the same path, so no move needed
         }
 
-        this.removeFromParent(childNode, batchRemover);
+        this.removeFromParent(childNode);
         this.insertOneNode(childNode, details);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
@@ -269,15 +300,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
     }
 
-    private removeEmptyGroups(possibleEmptyGroups: RowNode[], removals: Set<RowNode>): void {
+    private removeEmptyGroups(parents: Set<RowNode | null>, removals: Set<RowNode>): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
-        let batchRemover: BatchRemover | null;
         const selectionSvc = this.beans.selectionSvc;
         let nodesToUnselect: RowNode[] | undefined;
+        const possibleEmptyGroups = Array.from(parents);
         do {
-            batchRemover = null;
+            parents.clear();
             for (let idx = 0; idx < possibleEmptyGroups.length; ++idx) {
                 let pointer = possibleEmptyGroups[idx];
                 while (pointer) {
@@ -290,9 +321,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         continue;
                     }
 
-                    batchRemover ??= new BatchRemover();
+                    parents.add(parent);
                     removals.add(pointer); // Mark the empty group node as removed
-                    this.removeFromParent(pointer, batchRemover);
+                    this.removeFromParent(pointer);
                     // we remove selection on filler nodes here, as the selection would not be removed
                     // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
                     if (selectionSvc && pointer.isSelected()) {
@@ -304,8 +335,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     pointer = parent;
                 }
             }
-            batchRemover?.flush();
-        } while (batchRemover);
+        } while (flushRemovedNodes(parents, removals));
 
         if (nodesToUnselect) {
             selectionSvc!.setNodesSelected({
@@ -321,10 +351,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
     // d) setRowIndex(null) - as the rowNode will no longer be displayed.
-    private removeFromParent(child: RowNode, batchRemover: BatchRemover) {
+    private removeFromParent(child: RowNode) {
         const parent = child.parent;
         if (parent) {
-            batchRemover.removeFromChildrenAfterGroup(parent, child);
             const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
             const childParentChildrenMapped = parent.childrenMapped;
             if (childParentChildrenMapped) {
@@ -408,7 +437,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             sibling.childrenMapped = rootNode.childrenMapped;
         }
 
-        this.insertNodes(rootNode.allLeafChildren!, details);
+        const allLeafs = rootNode._leafs!;
+        for (let i = 0, len = allLeafs.length; i < len; ++i) {
+            this.insertOneNode(allLeafs[i], details);
+        }
     }
 
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
@@ -430,18 +462,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         return true;
-    }
-
-    private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
-        let activeChangedPath: ChangedPath | null = details.changedPath;
-        if (!activeChangedPath.active) {
-            activeChangedPath = null;
-        }
-        for (let i = 0, len = newRowNodes.length; i < len; ++i) {
-            const rowNode = newRowNodes[i];
-            this.insertOneNode(rowNode, details);
-            activeChangedPath?.addParentNode(rowNode.parent);
-        }
     }
 
     private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
@@ -589,3 +609,50 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return res;
     }
 }
+
+/**
+ * Flushes filtering in place of removed nodes from childrenAfterGroup of a list of parents.
+ */
+export const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): boolean => {
+    let changed = false;
+    for (const parent of parents) {
+        if (parent && filterRowNodesInPlace(parent, removals)) {
+            changed = true;
+        }
+    }
+    return changed;
+};
+
+const filterRowNodesInPlace = (parent: RowNode, removals: ReadonlySet<RowNode>): boolean => {
+    const childrenAfterGroup = parent.childrenAfterGroup;
+    if (!childrenAfterGroup) {
+        return false;
+    }
+    const childrenAfterGroupLen = childrenAfterGroup.length;
+    let writeIdx = 0;
+    for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+        const item = childrenAfterGroup[i];
+        if (item.parent === parent && !removals.has(item)) {
+            childrenAfterGroup[writeIdx++] = item;
+        }
+    }
+    if (childrenAfterGroupLen === writeIdx) {
+        return false;
+    }
+    childrenAfterGroup.length = writeIdx;
+    parent.updateHasChildren();
+    invalidateAllLeafChildren(parent);
+    return true;
+};
+
+/** Sets rowNode._leafs to undefined on node and its parents recursively so it will be reloaded at next access. It does not touch the root node. */
+const invalidateAllLeafChildren = (node: RowNode | null): void => {
+    while (node?._leafs !== undefined) {
+        const parent = node.parent;
+        if (!parent) {
+            break; // Don't touch the root node.
+        }
+        node._leafs = undefined; // Invalidate allLeafChildren cache.
+        node = parent;
+    }
+};
