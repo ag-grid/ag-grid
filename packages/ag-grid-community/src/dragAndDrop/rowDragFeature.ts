@@ -659,7 +659,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
     private getMoveRowsBounds(leafs: Iterable<RowNode>, target: IRowNode | null | undefined, above: boolean) {
         const totalRows = this.beans.rowModel.rootNode?._leafs?.length ?? 0;
-        let targetPositionIdx = getLeafSourceRowIndex(target);
+        let targetPositionIdx = target ? getLeafSourceRowIndex(target) : -1;
         if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
             targetPositionIdx = totalRows;
         } else if (!above) {
@@ -777,13 +777,13 @@ const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean
     return true;
 };
 
-const getLeafSourceRowIndex = (row: IRowNode | null | undefined): number => {
+const getLeafSourceRowIndex = (row: IRowNode): number => {
     const leaf = getLeafRow(row);
     return leaf !== undefined ? leaf.sourceRowIndex : -1;
 };
 
-const getLeafRow = (row: IRowNode | null | undefined): RowNode | undefined =>
-    row ? (row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup)) : undefined;
+const getLeafRow = (row: IRowNode): RowNode | undefined =>
+    row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&

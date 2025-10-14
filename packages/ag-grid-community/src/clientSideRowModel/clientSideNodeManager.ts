@@ -220,19 +220,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             removedResult[removeCount++] = rowNode;
         }
         removedResult.length = removeCount;
-        if (!removeCount) {
-            return removedResult;
+        if (removeCount) {
+            filterRemovedRowNodes(allLeafs, filterIdx, filterEndIdx, removals, nodesNeverAdded);
         }
-        filterIdx = Math.max(0, filterIdx);
-        for (let readIdx = filterIdx; readIdx < allLeafsLen; ++readIdx) {
-            const node = allLeafs[readIdx];
-            if (readIdx <= filterEndIdx && (removals.has(node) || nodesNeverAdded?.has(node))) {
-                continue;
-            }
-            node.sourceRowIndex = filterIdx;
-            allLeafs[filterIdx++] = node;
-        }
-        allLeafs.length = filterIdx;
         return removedResult;
     }
 
@@ -438,6 +428,25 @@ const lookupNodeByData = <TData>(nodes: RowNode<TData>[] | null | undefined, dat
     }
     _error(5, { data });
     return null;
+};
+
+const filterRemovedRowNodes = (
+    allLeafs: RowNode[],
+    filterIdx: number,
+    filterEndIdx: number,
+    removals: ReadonlySet<RowNode>,
+    nodesNeverAdded: ReadonlySet<RowNode> | undefined
+) => {
+    filterIdx = Math.max(0, filterIdx);
+    for (let i = filterIdx, len = allLeafs.length; i < len; ++i) {
+        const node = allLeafs[i];
+        if (i <= filterEndIdx && (removals.has(node) || nodesNeverAdded?.has(node))) {
+            continue;
+        }
+        node.sourceRowIndex = filterIdx;
+        allLeafs[filterIdx++] = node;
+    }
+    allLeafs.length = filterIdx;
 };
 
 const updateRootLeafsOrdered = <TData>(allLeafs: RowNode<TData>[], processedNodes: Set<RowNode<TData>>): boolean => {
