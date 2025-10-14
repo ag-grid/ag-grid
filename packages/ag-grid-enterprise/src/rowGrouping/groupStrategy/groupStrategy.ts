@@ -585,7 +585,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 }
 
 /** Filters in place all moved or removed nodes from childrenAfterGroup of a list of parents. */
-export const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): void => {
+const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): void => {
     for (const parent of parents) {
         const childrenAfterGroup = parent?.childrenAfterGroup;
         if (!childrenAfterGroup) {
