@@ -432,7 +432,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         while (pointer?.[0] && isProvidedColumnGroup(pointer[0])) {
             depth++;
-            pointer = (pointer[0]).getChildren();
+            pointer = pointer[0].getChildren();
         }
         return depth;
     }

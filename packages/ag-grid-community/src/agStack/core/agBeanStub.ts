@@ -162,7 +162,7 @@ export abstract class AgBeanStub<
         if (isAgEventEmitter(object)) {
             object.__addEventListener(event, listener);
             destroyFunc = () => {
-                (object).__removeEventListener(event, listener);
+                object.__removeEventListener(event, listener);
                 return null;
             };
         } else {

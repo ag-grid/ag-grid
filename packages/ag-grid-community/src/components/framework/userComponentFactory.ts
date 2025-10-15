@@ -18,7 +18,7 @@ function doesImplementIComponent(candidate: any): boolean {
     if (!candidate) {
         return false;
     }
-    return (candidate).prototype && 'getGui' in (candidate).prototype;
+    return candidate.prototype && 'getGui' in candidate.prototype;
 }
 
 export function _getUserCompKeys<TDefinition>(

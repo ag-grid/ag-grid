@@ -415,7 +415,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                   conditions: [],
               } as JoinAdvancedFilterModel)
             : ({} as ColumnAdvancedFilterModel);
-        const parent = (itemIsJoin ? (itemFilterModel) : itemParent)!;
+        const parent = (itemIsJoin ? itemFilterModel : itemParent)!;
         let insertIndex = itemIsJoin ? 0 : parent.conditions.indexOf(itemFilterModel!);
         if (insertIndex >= 0) {
             if (!itemIsJoin) {

@@ -127,7 +127,6 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),
         });
 
-         
         eMenu.appendChild(comp?.getGui());
 
         let hidePopup: () => void;
