@@ -14,7 +14,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             fileName = this.getDefaultFileName();
         }
 
-        return !fileName.includes('.') ? `${fileName}.${extension}` : fileName;
+        return fileName.includes('.') ? fileName : `${fileName}.${extension}`;
     }
 
     protected getData(params: P): string {
