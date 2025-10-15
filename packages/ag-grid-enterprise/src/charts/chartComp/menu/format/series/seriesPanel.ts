@@ -3,10 +3,11 @@ import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
 
+import { AgSlider } from '../../../../../agStack/agSlider';
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPicker } from '../../../../widgets/agColorPicker';
-import { AgSlider } from '../../../../widgets/agSlider';
+import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import { ColorPicker } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartSeriesType } from '../../../utils/seriesTypeMapper';
 import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
@@ -200,11 +201,11 @@ export class SeriesPanel extends Component {
         this.activePanels.push(seriesSelect);
     }
 
-    private initLineColor(): AgColorPicker {
-        return new AgColorPicker(this.chartMenuUtils.getDefaultColorPickerParams('stroke', 'strokeColor'));
+    private initLineColor(): ColorPicker {
+        return new ColorPicker(this.chartMenuUtils.getDefaultColorPickerParams('stroke', 'strokeColor'));
     }
 
-    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth', expression?: string): AgSlider {
+    private initStrokeWidth(labelKey: 'strokeWidth' | 'lineWidth', expression?: string): GridSlider {
         return new AgSlider(
             this.chartMenuUtils.getDefaultSliderParams(
                 expression ? `${expression}.${labelKey}` : 'strokeWidth',
@@ -214,7 +215,7 @@ export class SeriesPanel extends Component {
         );
     }
 
-    private initLineDash(expression?: string): AgSlider {
+    private initLineDash(expression?: string): GridSlider {
         return new AgSlider(
             this.chartMenuUtils.getDefaultSliderParams(
                 expression ? `${expression}.lineDash` : 'lineDash',
@@ -225,7 +226,7 @@ export class SeriesPanel extends Component {
         );
     }
 
-    private initOpacity(type: 'strokeOpacity' | 'fillOpacity', expression?: string): AgSlider {
+    private initOpacity(type: 'strokeOpacity' | 'fillOpacity', expression?: string): GridSlider {
         const params = this.chartMenuUtils.getDefaultSliderParams(expression ? `${expression}.${type}` : type, type, 1);
         params.step = 0.05;
         return new AgSlider(params);
@@ -286,7 +287,7 @@ export class SeriesPanel extends Component {
                 this.activePanels.push(placementSelect);
 
                 // Add padding slider
-                const paddingSlider = labelPanelComp.createManagedBean(
+                const paddingSlider: GridSlider = labelPanelComp.createManagedBean(
                     new AgSlider(this.chartMenuUtils.getDefaultSliderParams('label.padding', 'padding', 200))
                 );
 
@@ -309,7 +310,7 @@ export class SeriesPanel extends Component {
                 1
             );
             positionRatioParams.step = 0.05;
-            const positionRatioComp = sectorPanelComp.createManagedBean(new AgSlider(positionRatioParams));
+            const positionRatioComp: GridSlider = sectorPanelComp.createManagedBean(new AgSlider(positionRatioParams));
             sectorPanelComp.addItem(positionRatioComp);
         };
 
@@ -320,7 +321,7 @@ export class SeriesPanel extends Component {
         return new FontPanel(this.chartMenuUtils.getDefaultFontPanelParams('stageLabel', stageLabels));
     }
 
-    private initBins(): AgSlider {
+    private initBins(): GridSlider {
         const params = this.chartMenuUtils.getDefaultSliderParams('binCount', 'histogramBinCount', 20);
         const chartOptions = this.chartMenuUtils.getChartOptions();
         // this needs fixing
@@ -336,7 +337,7 @@ export class SeriesPanel extends Component {
         );
     }
 
-    private initSize(expression: 'size' | 'maxSize', labelKey: 'size' | 'minSize' | 'maxSize'): AgSlider {
+    private initSize(expression: 'size' | 'maxSize', labelKey: 'size' | 'minSize' | 'maxSize'): GridSlider {
         return new AgSlider(this.chartMenuUtils.getDefaultSliderParams(expression, labelKey, 60));
     }
 

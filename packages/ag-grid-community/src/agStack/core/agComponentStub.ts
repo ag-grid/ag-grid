@@ -24,7 +24,7 @@ import { AgBeanStub } from './agBeanStub';
 
 let compIdSequence = 0;
 
-export abstract class AgComponentStub<
+export class AgComponentStub<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,

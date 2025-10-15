@@ -1,7 +1,7 @@
 import type { NamedBean } from 'ag-grid-community';
 import { BeanStub, TabGuardComp, _findFocusableElements, _findNextFocusableElement } from 'ag-grid-community';
 
-import { AgDialog } from '../../../../widgets/agDialog';
+import { Dialog } from '../../../../widgets/dialog';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
@@ -10,7 +10,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
     beanName = 'advSettingsMenuFactory' as const;
 
     private activeMenu?: AdvancedSettingsMenu;
-    private activeDialog?: AgDialog;
+    private activeDialog?: Dialog;
 
     public showMenu(chartMenuContext: ChartMenuContext, eventSource?: HTMLElement): void {
         this.hideMenu();
@@ -18,7 +18,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
         const menu = this.createBean(new AdvancedSettingsMenu(chartMenuContext));
 
         this.activeDialog = this.createBean(
-            new AgDialog({
+            new Dialog({
                 title: (this.beans.chartTranslation as ChartTranslationService).translate('advancedSettings'),
                 component: menu,
                 width: 300,

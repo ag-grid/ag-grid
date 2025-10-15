@@ -30,7 +30,10 @@ export class AgManagedFocusFeature<
 > extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     constructor(
         private readonly eFocusable: HTMLElement,
-        private readonly stopPropagationCallbacks: StopPropagationCallbacks,
+        private readonly stopPropagationCallbacks: StopPropagationCallbacks = {
+            isStopPropagation: () => false,
+            stopPropagation: () => {},
+        },
         private readonly callbacks: ManagedFocusCallbacks = {}
     ) {
         super();

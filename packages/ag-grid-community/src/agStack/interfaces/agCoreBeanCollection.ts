@@ -31,6 +31,7 @@ export interface AgCoreBeanCollection<
     iconSvc: IIconService<string, any>;
     dragSvc?: IDragService;
     dragAndDrop?: IDragAndDropService<any, any, any, any, any>;
+    agChartsExports?: unknown; // this is intentionally left untyped
 }
 
 /** This is a cut down version to simplify typing for util functions that don't need/want all the generics */

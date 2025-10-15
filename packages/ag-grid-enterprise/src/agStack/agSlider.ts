@@ -1,14 +1,13 @@
 import type {
-    AgComponentSelectorType,
-    AgEventTypeParams,
-    AgGridCommon,
+    AgInputNumberField,
     AgLabelParams,
-    BeanCollection,
-    ComponentSelector,
-    GridInputNumberField,
-    GridOptionsService,
-    GridOptionsWithDefaults,
     LabelAlignment,
+    _AgComponentSelector,
+    _AgCoreBeanCollection,
+    _AgWidgetSelectorType,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
 } from 'ag-grid-community';
 import { AgAbstractLabel, AgInputNumberFieldSelector, RefPlaceholder } from 'ag-grid-community';
 
@@ -25,19 +24,40 @@ export interface AgSliderParams extends AgLabelParams {
 }
 
 type AgSliderEvent = 'fieldValueChanged';
-export class AgSlider extends AgAbstractLabel<
-    BeanCollection,
-    GridOptionsWithDefaults,
-    AgEventTypeParams,
-    AgGridCommon<any, any>,
-    GridOptionsService,
-    AgComponentSelectorType,
+export class AgSlider<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+> extends AgAbstractLabel<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     AgSliderParams,
     AgSliderEvent
 > {
     protected readonly eLabel: HTMLElement = RefPlaceholder;
-    private readonly eSlider: AgInputRange = RefPlaceholder;
-    private readonly eText: GridInputNumberField = RefPlaceholder;
+    private readonly eSlider: AgInputRange<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    > = RefPlaceholder;
+    private readonly eText: AgInputNumberField<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    > = RefPlaceholder;
 
     protected override labelAlignment: LabelAlignment = 'top';
 
@@ -51,7 +71,7 @@ export class AgSlider extends AgAbstractLabel<
                 <ag-input-number-field data-ref="eText"></ag-input-number-field>
             </div>
         </div>`,
-            [AgInputRangeSelector, AgInputNumberFieldSelector]
+            [AgInputRangeSelector, AgInputNumberFieldSelector] as _AgComponentSelector<TComponentSelectorType>[]
         );
     }
 
@@ -148,7 +168,7 @@ export class AgSlider extends AgAbstractLabel<
     }
 }
 
-export const AgSliderSelector: ComponentSelector = {
+export const AgSliderSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-SLIDER',
     component: AgSlider,
 };

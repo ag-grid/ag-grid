@@ -101,7 +101,7 @@ export class AgVirtualList<
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
 
     constructor(
-        private readonly stopPropagationCallbacks: _StopPropagationCallbacks,
+        private readonly stopPropagationCallbacks?: _StopPropagationCallbacks,
         params?: VirtualListParams<C>
     ) {
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
@@ -206,7 +206,7 @@ export class AgVirtualList<
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        this.stopPropagationCallbacks.stopPropagation(e);
+        this.stopPropagationCallbacks?.stopPropagation(e);
         this.tabGuardFeature.forceFocusOutOfContainer(e.shiftKey);
     }
 

@@ -69,7 +69,7 @@ export class AgTabGuardCtrl<
 
     constructor(
         params: TabGuardCtrlParams,
-        private readonly stopPropagationCallbacks: StopPropagationCallbacks
+        private readonly stopPropagationCallbacks?: StopPropagationCallbacks
     ) {
         super();
 

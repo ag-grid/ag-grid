@@ -35,7 +35,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import { AgDialog } from '../../widgets/agDialog';
+import { Dialog } from '../../widgets/dialog';
 import type { AgChartsExports } from '../agChartsExports';
 import type { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
@@ -107,7 +107,7 @@ export class GridChartComp extends Component {
     private readonly eEmpty: HTMLElement = RefPlaceholder;
 
     private chartMenu: ChartMenu;
-    private chartDialog: AgDialog;
+    private chartDialog: Dialog;
 
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
@@ -322,7 +322,7 @@ export class GridChartComp extends Component {
             ? () => setTimeout(() => _focusInto(this.getGui()))
             : undefined;
 
-        this.chartDialog = new AgDialog({
+        this.chartDialog = new Dialog({
             resizable: true,
             movable: true,
             maximizable: true,

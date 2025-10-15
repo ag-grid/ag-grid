@@ -1,18 +1,38 @@
 import type { IColor, _IUtil } from 'ag-charts-types';
 
-import type { BeanCollection } from 'ag-grid-community';
-import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from 'ag-grid-community';
+import type {
+    _AgComponentSelector,
+    _AgCoreBeanCollection,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
+} from 'ag-grid-community';
+import { KeyCode, RefPlaceholder, _AgComponentStub, _exists, _setDisplayed } from 'ag-grid-community';
 
-import type { AgChartsExports } from '../agChartsExports';
 import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';
 import type { AgColorPicker } from './agColorPicker';
+import type { IAgChartsExports } from './iAgChartsExports';
 
 const maxRecentColors = 8;
 
 let sharedRecentColors: string[] = [];
 
-export class AgColorPanel extends Component {
+export class AgColorPanel<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+> extends _AgComponentStub<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType
+> {
     private H = 1; // in the [0, 1] range
     private S = 1; // in the [0, 1] range
     private B = 1; // in the [0, 1] range
@@ -27,7 +47,14 @@ export class AgColorPanel extends Component {
     private spectrumAlphaRect?: ClientRect | DOMRect;
     private isSpectrumAlphaDragging = false;
 
-    private readonly picker: Component;
+    private readonly picker: AgColorPicker<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    >;
     private _Color: _IUtil['Color'];
 
     private colorChanged = false;
@@ -40,10 +67,26 @@ export class AgColorPanel extends Component {
     private readonly spectrumHueSlider: HTMLElement = RefPlaceholder;
     private readonly spectrumAlpha: HTMLElement = RefPlaceholder;
     private readonly spectrumAlphaSlider: HTMLElement = RefPlaceholder;
-    private readonly colorInput: AgColorInput = RefPlaceholder;
+    private readonly colorInput: AgColorInput<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    > = RefPlaceholder;
     private readonly recentColors: HTMLElement = RefPlaceholder;
 
-    constructor(config: { picker: Component<any> }) {
+    constructor(config: {
+        picker: AgColorPicker<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType
+        >;
+    }) {
         super(
             /* html */ `<div class="ag-color-panel" tabindex="-1">
             <div data-ref="spectrumColor" class="ag-spectrum-color">
@@ -66,13 +109,13 @@ export class AgColorPanel extends Component {
                 <div data-ref="recentColors" class="ag-recent-colors"></div>
             </div>
         </div>`,
-            [AgColorInputSelector]
+            [AgColorInputSelector] as _AgComponentSelector<TComponentSelectorType>[]
         );
         this.picker = config.picker;
     }
 
-    public wireBeans(beans: BeanCollection): void {
-        this._Color = (beans.agChartsExports as AgChartsExports)._Util.Color;
+    public wireBeans(beans: TBeanCollection): void {
+        this._Color = (beans.agChartsExports as IAgChartsExports)._Util.Color;
     }
 
     public postConstruct() {
@@ -119,7 +162,7 @@ export class AgColorPanel extends Component {
     }
 
     private initTabIndex(): void {
-        const tabIndex = (this.tabIndex = this.gos.get('tabIndex').toString());
+        const tabIndex = (this.tabIndex = this.gos.get('tabIndex')!.toString());
 
         this.spectrumColor.setAttribute('tabindex', tabIndex);
         this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
@@ -299,7 +342,7 @@ export class AgColorPanel extends Component {
         const spectrumRgbaColor = spectrumColor.toRgbaString();
 
         // the recent color list needs to know color has actually changed
-        const colorPicker = this.picker as AgColorPicker;
+        const colorPicker = this.picker;
 
         const existingColor = _Color.fromString(colorPicker.getValue());
         if (existingColor.toRgbaString() !== rgbaColor) {

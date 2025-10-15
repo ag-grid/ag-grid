@@ -56,7 +56,7 @@ export class AgTabGuardFeature<
 
     constructor(
         private readonly comp: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
-        private readonly stopPropagationCallbacks: StopPropagationCallbacks
+        private readonly stopPropagationCallbacks?: StopPropagationCallbacks
     ) {
         super();
     }

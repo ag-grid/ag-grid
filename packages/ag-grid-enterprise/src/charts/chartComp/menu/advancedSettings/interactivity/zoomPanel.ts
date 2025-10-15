@@ -1,10 +1,10 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckboxSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
+import { AgSliderSelector } from '../../../../../agStack/agSlider';
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { AgSlider } from '../../../../widgets/agSlider';
-import { AgSliderSelector } from '../../../../widgets/agSlider';
+import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -15,7 +15,7 @@ export class ZoomPanel extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    private readonly zoomScrollingStepInput: AgSlider = RefPlaceholder;
+    private readonly zoomScrollingStepInput: GridSlider = RefPlaceholder;
 
     constructor(private readonly chartMenuParamsFactory: ChartMenuParamsFactory) {
         super();

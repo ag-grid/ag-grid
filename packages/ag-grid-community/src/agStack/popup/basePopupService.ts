@@ -205,7 +205,7 @@ export abstract class BasePopupService<
         }
     }
 
-    protected abstract callPostProcessPopup(
+    public abstract callPostProcessPopup(
         params: Omit<TPopupPositionParams, keyof BasePopupPositionParams>,
         type: string,
         ePopup: HTMLElement,

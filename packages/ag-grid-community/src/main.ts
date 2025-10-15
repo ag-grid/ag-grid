@@ -101,6 +101,7 @@ export {
 } from './agStack/focus/agManagedFocusFeature';
 export { ITabGuard, TabGuardClassNames } from './agStack/focus/tabGuardCtrl';
 export { AutoScrollService } from './agStack/rendering/autoScrollService';
+export { ResizableStructure, ResizableSides, PositionableOptions } from './agStack/rendering/agPositionableFeature';
 
 // AG Stack Utils (public)
 export {
@@ -210,6 +211,7 @@ export { ListOption } from './agStack/widgets/agList';
 export { AgPickerField } from './agStack/widgets/agPickerField';
 export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 export { Direction } from './agStack/constants/direction';
+export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
 
 // AG Stack Theming
 export { createPart } from './agStack/theming/partImpl';
@@ -252,6 +254,7 @@ export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfa
 export { WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
 export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
 export { ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
+export { IPopupService as _IPopupService } from './agStack/interfaces/iPopupService';
 export { BasePopupPositionParams as _BasePopupPositionParams } from './agStack/interfaces/iPopup';
 export {
     AgPropertyKey as _AgPropertyKey,
@@ -728,12 +731,7 @@ export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rend
 export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features
-export {
-    PositionableFeature,
-    ResizableStructure,
-    ResizableSides,
-    PositionableOptions,
-} from './rendering/features/positionableFeature';
+export { PositionableFeature } from './rendering/features/positionableFeature';
 
 // rendering
 export { _getCellCtrlForEventTarget, _getRowCtrlForEventTarget } from './rendering/renderUtils';
@@ -798,7 +796,10 @@ export type { CellStyleService } from './styling/cellStyleService';
 // widgets
 export { RichSelectParams } from './interfaces/iRichCellEditorParams';
 export { Component } from './widgets/component';
-export { ManagedFocusFeature } from './widgets/managedFocusFeature';
+export {
+    ManagedFocusFeature,
+    STOP_PROPAGATION_CALLBACKS as _STOP_PROPAGATION_CALLBACKS,
+} from './widgets/managedFocusFeature';
 export { TabGuardComp } from './widgets/tabGuardComp';
 export { TabGuardFeature, TabGuardCtrl } from './widgets/tabGuard';
 export type { PopupService } from './widgets/popupService';
