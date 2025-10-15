@@ -5,7 +5,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
@@ -102,7 +102,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth,
             placeholder: valuePlaceholder,
-            initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
+            initialInputValue: eventKey?.length === 1 ? eventKey : eventKey === KeyCode.BACKSPACE ? '' : undefined,
             multiSelect,
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
@@ -201,7 +201,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             return;
         }
 
-        if (eventKey?.length === 1) {
+        if (eventKey === KeyCode.BACKSPACE) {
+            this.eEditor.searchTextFromString(null);
+        } else if (eventKey?.length === 1) {
             this.eEditor.searchTextFromString(eventKey);
         }
     }

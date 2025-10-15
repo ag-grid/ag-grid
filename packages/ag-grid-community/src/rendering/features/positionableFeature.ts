@@ -336,7 +336,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
 
         let isPercent = false;
 
-        if (typeof height === 'string' && height.indexOf('%') !== -1) {
+        if (typeof height === 'string' && height.includes('%')) {
             _setFixedHeight(eGui, height);
             height = _getAbsoluteHeight(eGui);
             isPercent = true;
@@ -414,7 +414,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
 
         let isPercent = false;
 
-        if (typeof width === 'string' && width.indexOf('%') !== -1) {
+        if (typeof width === 'string' && width.includes('%')) {
             _setFixedWidth(eGui, width);
             width = _getAbsoluteWidth(eGui);
             isPercent = true;

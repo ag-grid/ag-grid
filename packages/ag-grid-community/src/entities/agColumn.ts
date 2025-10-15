@@ -205,8 +205,8 @@ export class AgColumn<TValue = any>
             colDef: { field, tooltipField },
         } = this;
         const suppressDotNotation = gos.get('suppressFieldDotNotation');
-        this.fieldContainsDots = _exists(field) && field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = _exists(tooltipField) && tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.fieldContainsDots = _exists(field) && field.includes('.') && !suppressDotNotation;
+        this.tooltipFieldContainsDots = _exists(tooltipField) && tooltipField.includes('.') && !suppressDotNotation;
     }
 
     private initMinAndMaxWidths(): void {

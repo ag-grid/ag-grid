@@ -134,6 +134,7 @@
         "headerValueGetter": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for display in the header."
         },
+        "headerTooltipValueGetter": {},
         "headerTooltip": {},
         "headerStyle": {},
         "headerClass": {},
@@ -615,6 +616,7 @@
         },
         "headerName": {},
         "headerClass": {},
+        "headerTooltipValueGetter": {},
         "headerTooltip": {},
         "autoHeaderHeight": {
             "more": {

@@ -7,11 +7,10 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { RowNode, _firstLeaf } from 'ag-grid-community';
-import { BeanStub, _areEqual, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _areEqual, _firstLeaf, _warn } from 'ag-grid-community';
 
-import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
+import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
