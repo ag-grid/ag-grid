@@ -64,7 +64,7 @@ export class AgRangeHandle extends AbstractSelectionHandle {
     }
 
     protected onDragEnd(_: MouseEvent) {
-        const cellRange = _last(this.beans.rangeSvc!.getCellRanges())!;
+        const cellRange = _last(this.beans.rangeSvc!.getCellRanges());
 
         this.fixRangeStartEnd(cellRange);
         this.rangeFixed = false;

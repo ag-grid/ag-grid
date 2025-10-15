@@ -17,7 +17,7 @@ import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpris
 const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
     return (value: I | null | undefined): boolean | O => {
         if (value == undefined) return true;
-        return validationFn(value as NonNullable<I>);
+        return validationFn(value);
     };
 };
 
@@ -147,7 +147,7 @@ const cellRangeValidations: (isEnterprise: boolean) => ValidationFunction<any>[]
 ];
 
 export function validateUpdateParams(params: UpdateChartParams, isEnterprise: boolean): boolean | UpdateChartParams {
-    const paramsToValidate = params as UpdateChartParams;
+    const paramsToValidate = params;
     switch (paramsToValidate.type) {
         case 'rangeChartUpdate':
             return validateUpdateRangeChartParams(params as UpdateRangeChartParams, isEnterprise);

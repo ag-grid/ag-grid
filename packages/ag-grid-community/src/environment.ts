@@ -183,7 +183,7 @@ export class Environment
     }
 
     private measureSizeEl(variable: Variable): number | 'detached' | 'no-styles' {
-        const sizeEl = this.getSizeEl(variable)!;
+        const sizeEl = this.getSizeEl(variable);
         if (sizeEl.offsetParent == null) {
             return 'detached';
         }

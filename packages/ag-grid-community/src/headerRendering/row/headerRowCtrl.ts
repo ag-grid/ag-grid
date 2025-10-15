@@ -186,7 +186,7 @@ export class HeaderRowCtrl extends BeanStub {
         }
         topOffset += headerHeight;
 
-        const filterHeight = getFloatingFiltersHeight(this.beans) as number;
+        const filterHeight = getFloatingFiltersHeight(this.beans);
         return { topOffset, rowHeight: filterHeight };
     }
 

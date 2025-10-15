@@ -43,7 +43,7 @@ export function getColumnFilterModel<TModel>(
         _warn(288);
         useUnapplied = false;
     }
-    const column = colModel.getColDefCol(key) as AgColumn | null;
+    const column = colModel.getColDefCol(key);
     return column ? colFilter?.getModelForColumn(column, useUnapplied) ?? null : null;
 }
 

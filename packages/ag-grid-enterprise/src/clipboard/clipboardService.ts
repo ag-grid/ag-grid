@@ -952,7 +952,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         const allColumns = this.beans.visibleCols.allCols;
-        const exportedColumns = Array.from(columnsSet) as AgColumn[];
+        const exportedColumns = Array.from(columnsSet);
 
         exportedColumns.sort((a, b) => {
             const posA = allColumns.indexOf(a);
@@ -1005,7 +1005,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         while (node) {
             rowPositions.push(node);
             for (const column of range.columns) {
-                const { rowIndex, rowPinned } = node!;
+                const { rowIndex, rowPinned } = node;
                 const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             }

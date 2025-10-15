@@ -176,7 +176,7 @@ export function _recursivelyCreateColumns(
         if (colGroupSvc && isColumnGroupDef(def)) {
             result[i] = colGroupSvc.createProvidedColumnGroup(
                 primaryColumns,
-                def as ColGroupDef,
+                def,
                 level,
                 existingColsCopy,
                 columnKeyCreator,

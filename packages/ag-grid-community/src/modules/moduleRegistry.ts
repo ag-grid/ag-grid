@@ -44,7 +44,7 @@ function runVersionChecks(module: Module) {
     if (module.validate) {
         const result = module.validate();
         if (!result.isValid) {
-            const errorResult = result as ModuleValidationInvalidResult;
+            const errorResult = result;
             _errorOnce(`${errorResult.message}`);
         }
     }

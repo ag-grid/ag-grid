@@ -29,7 +29,7 @@ export function processClassRules(
         const classNames = Object.keys(classRules);
         for (let i = 0; i < classNames.length; i++) {
             const className = classNames[i];
-            const rule = classRules![className];
+            const rule = classRules[className];
 
             let resultOfRule: any;
 

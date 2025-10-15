@@ -300,7 +300,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
                 if (!current.groupData || groupColsChanged) {
                     current.treeNodeFlags |= FLAG_CHANGED;
-                    this.setGroupData(current, current.key!);
+                    this.setGroupData(current, current.key);
                 }
 
                 if (parent.data || (parent.treeNodeFlags & FLAG_MARKED_FILLER) === 0 || parent.treeParent === null) {
@@ -407,7 +407,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             if (parent && mark(row)) {
                 parent.treeNodeFlags |= FLAG_CHILDREN_CHANGED | FLAG_CHANGED;
                 row.parent = rootNode; // Move the row to the root node
-                _removeFromArray(parent.childrenAfterGroup!, row); // Remove the row from the root children
+                _removeFromArray(parent.childrenAfterGroup, row); // Remove the row from the root children
                 rootChildrenAfterGroup.push(row);
                 _warn(270, { id: row.id!, parentId: parent?.id ?? '' });
             } else if (parent === rootNode) {
@@ -465,9 +465,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const parentIdGetter = this.parentIdGetter;
         for (let i = 0; i < allLeafsLen; i++) {
             const row = allLeafs[i];
-            if (reload || row.treeNodeFlags & FLAG_CHANGED || removals?.has(row.treeParent!)) {
+            if (reload || row.treeNodeFlags & FLAG_CHANGED || removals?.has(row.treeParent)) {
                 let newParent: RowNode<TData> | null | undefined;
-                const parentId = parentIdGetter?.(row.data!);
+                const parentId = parentIdGetter?.(row.data);
                 if (parentId !== null && parentId !== undefined) {
                     newParent = rowModel.getRowNode(parentId);
                     if (!newParent) {
@@ -521,7 +521,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             if (!fullReload && node.treeParent !== null && (node.treeNodeFlags & FLAG_CHANGED) === 0) {
                 continue;
             }
-            const path = getDataPath(node.data!);
+            const path = getDataPath(node.data);
             const pathLen = path?.length;
             if (!pathLen) {
                 _warn(185, { data: node.data });

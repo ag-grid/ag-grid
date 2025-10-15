@@ -245,7 +245,7 @@ export class FocusService extends BeanStub implements NamedBean {
             sourceEvent,
         } = params;
 
-        const gridColumn = this.colModel.getCol(column!);
+        const gridColumn = this.colModel.getCol(column);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries

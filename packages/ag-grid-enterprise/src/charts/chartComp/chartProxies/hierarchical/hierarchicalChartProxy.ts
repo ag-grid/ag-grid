@@ -39,7 +39,7 @@ export class HierarchicalChartProxy<TSeries extends 'sunburst' | 'treemap'> exte
     private getSeries(sizeField?: FieldDefinition, colorField?: FieldDefinition): AgHierarchySeriesOptions[] {
         return [
             {
-                type: this.standaloneChartType as AgHierarchySeriesOptions['type'],
+                type: this.standaloneChartType,
                 labelKey: CATEGORY_LABEL_KEY,
                 // Size and color fields are inferred from the range data
                 sizeKey: sizeField?.colId,

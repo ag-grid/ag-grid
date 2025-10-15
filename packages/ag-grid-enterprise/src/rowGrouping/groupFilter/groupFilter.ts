@@ -112,7 +112,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     }
 
     private addHandlerListeners(listener: () => void): void {
-        const destroyFunctions = this.addManagedListeners(this.getHandler() as GroupFilterHandler, {
+        const destroyFunctions = this.addManagedListeners(this.getHandler(), {
             sourceColumnsChanged: () => {
                 this.updateGroups();
             },

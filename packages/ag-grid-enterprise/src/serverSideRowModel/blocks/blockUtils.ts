@@ -24,7 +24,7 @@ import type { ServerSideExpansionService } from '../services/serverSideExpansion
 import type { LazyStore } from '../stores/lazy/lazyStore';
 import type { StoreFactory } from '../stores/storeFactory';
 
-const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
+const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey';
 
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
@@ -308,11 +308,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
             const childStore = rowNode.childStore as LazyStore;
             // unbalanced group always behaves as if it was expanded
             if (rowNode.expanded || isUnbalancedGroup) {
-                childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop, isUnbalancedGroup ? uiLevel : uiLevel + 1);
+                childStore.setDisplayIndexes(displayIndexSeq, nextRowTop, isUnbalancedGroup ? uiLevel : uiLevel + 1);
             } else {
                 // we need to clear the row tops, as the row renderer depends on
                 // this to know if the row should be faded out
-                childStore!.clearDisplayIndexes();
+                childStore.clearDisplayIndexes();
             }
         }
     }

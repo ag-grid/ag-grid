@@ -194,7 +194,7 @@ export class MiniChartsContainer extends Component {
         const displayedMenuGroups = Object.keys(this.chartGroups)
             .map((group: keyof ChartGroupsDef) => {
                 const menuGroup =
-                    group in miniChartMapping ? miniChartMapping[group as keyof typeof miniChartMapping] : undefined;
+                    group in miniChartMapping ? miniChartMapping[group] : undefined;
                 if (!menuGroup) {
                     // User has specified an invalid chart group in the chartGroupsDef config
                     _warn(148, { group });
@@ -202,7 +202,7 @@ export class MiniChartsContainer extends Component {
                 }
 
                 // Determine the valid chart types within this group, based on the chartGroupsDef config
-                const chartGroupValues = this.chartGroups[group as keyof ChartGroupsDef] ?? [];
+                const chartGroupValues = this.chartGroups[group] ?? [];
                 const menuItems = chartGroupValues
                     .map((chartType) => {
                         const menuItem =

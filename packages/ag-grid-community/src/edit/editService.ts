@@ -261,7 +261,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
-        this.strategy!.start({
+        this.strategy.start({
             position,
             event,
             source,
@@ -921,7 +921,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _syncFromEditors(beans, { persist: true });
 
         const edits: EditMap = this.model.getEditMap(true);
-        const editValue = edits.get(rowNode)?.get(column!)?.pendingValue;
+        const editValue = edits.get(rowNode)?.get(column)?.pendingValue;
 
         if (!this.batch) {
             // bulk edits occurring during batch are handled as a batch set of changes

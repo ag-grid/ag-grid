@@ -211,7 +211,7 @@ export class GridCoreCreator {
             if (apiFunctions) {
                 const names = Object.keys(apiFunctions) as ApiFunctionName[];
                 for (const name of names) {
-                    apiFunctionSvc?.addFunction(name, apiFunctions[name]!);
+                    apiFunctionSvc?.addFunction(name, apiFunctions[name]);
                 }
             }
         }
@@ -280,7 +280,7 @@ export class GridCoreCreator {
                 if (userRowModelType !== rowModelType) {
                     const params = {
                         moduleName,
-                        rowModelType: userRowModelType!,
+                        rowModelType: userRowModelType,
                     };
                     _logPreInitErr(275, params, missingRowModelTypeError(params));
                     return;

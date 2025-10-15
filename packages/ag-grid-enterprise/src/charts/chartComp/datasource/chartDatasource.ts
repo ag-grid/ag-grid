@@ -351,7 +351,7 @@ export class ChartDatasource extends BeanStub {
                             .filter((child: any) => typeof child[colId] !== 'undefined')
                             .map((child: any) => child[colId]);
 
-                        const aggResult: any = _aggregateValues(this.beans, dataToAgg, params.aggFunc!, col);
+                        const aggResult: any = _aggregateValues(this.beans, dataToAgg, params.aggFunc, col);
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
@@ -364,7 +364,7 @@ export class ChartDatasource extends BeanStub {
                         const aggResultFiltered: any = _aggregateValues(
                             this.beans,
                             dataToAggFiltered,
-                            params.aggFunc!,
+                            params.aggFunc,
                             col
                         );
                         groupItem[filteredOutColId] =
@@ -373,7 +373,7 @@ export class ChartDatasource extends BeanStub {
                                 : aggResultFiltered;
                     } else {
                         const dataToAgg = groupItem.__children.map((child: any) => child[colId]);
-                        const aggResult = _aggregateValues(this.beans, dataToAgg, params.aggFunc!, col);
+                        const aggResult = _aggregateValues(this.beans, dataToAgg, params.aggFunc, col);
 
                         groupItem[colId] =
                             aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;

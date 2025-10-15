@@ -93,6 +93,7 @@ export default [
                     varsIgnorePattern: '^_+$',
                 },
             ],
+            '@typescript-eslint/no-unnecessary-type-assertion': 'error',
             'no-undef': 'warn',
         },
     },
