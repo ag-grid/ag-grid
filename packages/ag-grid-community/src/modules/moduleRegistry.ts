@@ -1,4 +1,4 @@
-import type { Module, ModuleName, ModuleValidationInvalidResult } from '../interfaces/iModule';
+import type { Module, ModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/log';
 
