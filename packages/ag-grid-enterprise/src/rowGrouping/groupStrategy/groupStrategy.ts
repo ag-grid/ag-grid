@@ -175,7 +175,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         if (parentsWithRemovals.size) {
-            flushRemovedNodes(parentsWithRemovals, removals);
+            batchedRemove(parentsWithRemovals, removals);
             this.removeEmptyGroups(parentsWithRemovals, removals);
         }
 
@@ -309,7 +309,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     pointer = parent;
                 }
             }
-            flushRemovedNodes(parents, removals);
+            batchedRemove(parents, removals);
         } while (parents.size);
 
         if (nodesToUnselect) {
@@ -584,8 +584,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 }
 
-/** Filters in place all moved or removed nodes from childrenAfterGroup of a list of parents. */
-const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): void => {
+/**
+ * Filters in place all moved or removed nodes from childrenAfterGroup of a list of parents and invalidates allLeafChildren if needed.
+ *
+ * Doing large deletes (1000 rows) with _removeFromArray() is a bottleneck, as the complexity would be O(n**2)
+ * to get around this, we do all the removes in a batch. this class manages the batch.
+ * This problem was brought to light by a client (AG-2879), with dataset of 20,000
+ */
+const batchedRemove = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): void => {
     for (const parent of parents) {
         const childrenAfterGroup = parent?.childrenAfterGroup;
         if (!childrenAfterGroup) {
@@ -593,10 +599,13 @@ const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: Readonly
         }
         const childrenAfterGroupLen = childrenAfterGroup.length;
         let writeIdx = 0;
-        for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
-            const item = childrenAfterGroup[i];
+        for (let readIdx = 0; readIdx < childrenAfterGroupLen; ++readIdx) {
+            const item = childrenAfterGroup[readIdx];
             if (item.parent === parent && !removals.has(item)) {
-                childrenAfterGroup[writeIdx++] = item;
+                if (writeIdx !== readIdx) {
+                    childrenAfterGroup[writeIdx] = item; // Keep the child
+                }
+                ++writeIdx;
             }
         }
         if (childrenAfterGroupLen !== writeIdx) {
@@ -607,7 +616,7 @@ const flushRemovedNodes = (parents: Iterable<RowNode | null>, removals: Readonly
     }
 };
 
-/** Sets rowNode._leafs to undefined on node and its parents recursively so it will be reloaded at next access. It does not touch the root node. */
+/** Sets rowNode._leafs to undefined on node and its parents recursively so it will be reloaded at next access. Root is not touched. */
 const invalidateAllLeafChildren = (node: RowNode): void => {
     while (node._leafs !== undefined) {
         const parent = node.parent;

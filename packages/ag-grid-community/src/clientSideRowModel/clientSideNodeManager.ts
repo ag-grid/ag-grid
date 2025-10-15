@@ -438,13 +438,16 @@ const filterRemovedRowNodes = (
     nodesNeverAdded: ReadonlySet<RowNode> | undefined
 ) => {
     filterIdx = Math.max(0, filterIdx);
-    for (let i = filterIdx, len = allLeafs.length; i < len; ++i) {
-        const node = allLeafs[i];
-        if (i <= filterEndIdx && (removals.has(node) || nodesNeverAdded?.has(node))) {
+    for (let readIdx = filterIdx, len = allLeafs.length; readIdx < len; ++readIdx) {
+        const node = allLeafs[readIdx];
+        if (readIdx <= filterEndIdx && (removals.has(node) || nodesNeverAdded?.has(node))) {
             continue;
         }
         node.sourceRowIndex = filterIdx;
-        allLeafs[filterIdx++] = node;
+        if (filterIdx !== readIdx) {
+            allLeafs[filterIdx] = node; // Shift elements to fill removed nodes
+        }
+        ++filterIdx;
     }
     allLeafs.length = filterIdx;
 };
@@ -467,8 +470,9 @@ const updateRootLeafsOrdered = <TData>(allLeafs: RowNode<TData>[], processedNode
                 added = true; // Keep track we have added nodes from now on
             }
             node.sourceRowIndex = writeIdx;
+            allLeafs[writeIdx] = node;
         }
-        allLeafs[writeIdx++] = node;
+        ++writeIdx;
     }
     return reordered;
 };
@@ -481,11 +485,14 @@ const updateRootLeafsKeepOrder = <TData>(
     const allLeafsLen = allLeafs.length;
     allLeafs.length = processedNodes.size; // Resize array to new size
     let writeIdx = 0;
-    for (let i = 0; i < allLeafsLen; ++i) {
-        const node = allLeafs[i];
+    for (let readIdx = 0; readIdx < allLeafsLen; ++readIdx) {
+        const node = allLeafs[readIdx];
         if (!removals.has(node)) {
-            node.sourceRowIndex = writeIdx;
-            allLeafs[writeIdx++] = node; // Filter removed nodes
+            if (writeIdx !== readIdx) {
+                node.sourceRowIndex = writeIdx;
+                allLeafs[writeIdx] = node; // Filter removed nodes
+            }
+            ++writeIdx;
         }
     }
     for (const node of adds) {
