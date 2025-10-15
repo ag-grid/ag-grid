@@ -75,6 +75,8 @@ class AgSideBar extends Component implements ISideBar {
         );
 
         _addFocusableContainerListener(beans, this, eGui);
+
+        this.addManagedPropertyListener('enableAdvancedFilter', this.onAdvancedFilterChanged.bind(this));
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
@@ -290,7 +292,7 @@ class AgSideBar extends Component implements ISideBar {
             return false;
         }
 
-        if (toolPanel === 'agFiltersToolPanel' || toolPanel === 'agNewFiltersToolPanel') {
+        if (isFilterPanel(toolPanel)) {
             if (this.beans.filterManager?.isAdvFilterEnabled()) {
                 _warn(213);
                 return false;
@@ -498,10 +500,24 @@ class AgSideBar extends Component implements ISideBar {
         this.toolPanelWrappers.length = 0;
     }
 
+    private onAdvancedFilterChanged(): void {
+        const needsRefresh = this.sideBar?.toolPanels?.some((toolPanel) =>
+            isFilterPanel(typeof toolPanel === 'string' ? toolPanel : toolPanel.toolPanel)
+        );
+        if (needsRefresh) {
+            // either need to show or hide the filter panel
+            this.setState();
+        }
+    }
+
     public override destroy(): void {
         this.destroyToolPanelWrappers();
         super.destroy();
     }
+}
+
+function isFilterPanel(toolPanel: any): boolean {
+    return toolPanel === 'agFiltersToolPanel' || toolPanel === 'agNewFiltersToolPanel';
 }
 
 export const AgSideBarSelector: ComponentSelector<Component> = {
