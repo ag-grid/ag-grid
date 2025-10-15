@@ -41,10 +41,10 @@ function processRequest(event?: Event) {
 
             statusElement.innerHTML = '<code class="success">Request processed successfully! <b>✓</b></code>';
             outputElement.innerHTML = `
-                <h4>Your Request:</h4>
-                <p><em>"${userRequest}"</em></p>
-                <h4>AI Response:</h4>
-                <p>${response.explanation}</p>
+                <i class="prompt">Prompt</i>
+                <p class="msg prompt">${userRequest}</p>
+                <i class="response">Response</i>
+                <p class="msg response">${response.explanation}</p>
             `;
             outputElement.style.display = 'block';
 

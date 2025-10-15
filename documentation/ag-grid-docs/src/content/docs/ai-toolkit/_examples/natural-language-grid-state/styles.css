@@ -322,12 +322,6 @@ body > #highlighter {
     margin-top: auto !important;
 }
 
-.response-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--row-gap);
-}
-
 #processingStatus {
     min-height: 28px;
 }
@@ -362,4 +356,47 @@ body > #highlighter {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.response-container {
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px dashed var(--chart-border);
+}
+
+.response-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--row-gap);
+}
+
+#aiResponse i,
+#aiResponse .msg {
+    font-size: 12px;
+}
+
+#aiResponse i {
+    display: block;
+    color: color-mix(in srgb, var(--main-fg) 50%, transparent);
+}
+
+#aiResponse .msg {
+    padding: 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--main-fg) 3%, transparent);
+    color: var(--main-fg);
+    border: 1px solid color-mix(in srgb, var(--main-fg) 10%, transparent);
+}
+
+#aiResponse .prompt {
+    margin-right: 32px !important;
+}
+
+#aiResponse .response {
+    margin-left: 32px !important;
+    text-align: right;
+}
+
+#aiResponse .msg.prompt {
+    margin-bottom: 12px !important;
 }
