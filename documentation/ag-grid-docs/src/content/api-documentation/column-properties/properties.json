@@ -114,6 +114,12 @@
                 "url": "./tooltips"
             }
         },
+        "tooltipComponentSelector": {
+            "more": {
+                "name": "Custom Tooltip Component",
+                "url": "./tooltips/#custom-component"
+            }
+        },
         "tooltipComponentParams": {}
     },
     "header": {
@@ -128,6 +134,7 @@
         "headerValueGetter": {
             "description": "Function or [expression](./cell-expressions/#column-definition-expressions). Gets the value for display in the header."
         },
+        "headerTooltipValueGetter": {},
         "headerTooltip": {},
         "headerStyle": {},
         "headerClass": {},
@@ -482,7 +489,7 @@
                 "url": "./grouping-custom-group-columns/"
             }
         },
-        "rowGroupingHierarchy": {
+        "groupHierarchy": {
             "more": {
                 "name": "Grouping by Dates and Times",
                 "url": "./grouping-data/#example-grouping-date-time"
@@ -609,6 +616,7 @@
         },
         "headerName": {},
         "headerClass": {},
+        "headerTooltipValueGetter": {},
         "headerTooltip": {},
         "autoHeaderHeight": {
             "more": {

@@ -32,13 +32,13 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
     ): A {
         const wrapper: F = this.createWrapper(OriginalConstructor, componentType);
 
-        mandatoryMethods?.forEach((methodName) => {
+        for (const methodName of mandatoryMethods ?? []) {
             this.createMethod(wrapper, methodName, true);
-        });
+        }
 
-        optionalMethods?.forEach((methodName) => {
+        for (const methodName of optionalMethods ?? []) {
             this.createMethod(wrapper, methodName, false);
-        });
+        }
 
         return wrapper as any as A;
     }

@@ -127,14 +127,14 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
                 }
             })
         ).then((elements) => {
-            (elements ?? []).forEach((element) => {
+            for (const element of elements ?? []) {
                 if (element?.eGui) {
                     this.appendChild(element.eGui);
                     if (element.comp) {
                         this.menuItems.push(element.comp);
                     }
                 }
-            });
+            }
         });
     }
 

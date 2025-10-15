@@ -5,6 +5,10 @@ import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
+function quote(s: string): string {
+    return `"${s}"`;
+}
+
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
     headerCheckboxSelection: {
@@ -22,6 +26,10 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
     showDisabledCheckboxes: {
         version: '32.2',
         message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
+    },
+    rowGroupingHierarchy: {
+        version: '34.3',
+        message: 'Use `colDef.groupHierarchy` instead.',
     },
 });
 
@@ -72,6 +80,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     floatingFilter: 'ColumnFilter',
     getQuickFilterText: 'QuickFilter',
     headerTooltip: 'Tooltip',
+    headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
@@ -87,8 +96,9 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     rowGroupIndex: 'SharedRowGrouping',
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
+    tooltipComponentSelector: 'Tooltip',
     spanRows: 'CellSpan',
-    rowGroupingHierarchy: 'SharedRowGrouping',
+    groupHierarchy: 'SharedRowGrouping',
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
@@ -252,7 +262,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
-        rowGroupingHierarchy: {
+        groupHierarchy: {
             validate(options, { groupHierarchyConfig = {} }, beans) {
                 const GROUP_HIERARCHY_PARTS = new Set([
                     'year',
@@ -267,20 +277,20 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 const unrecognisedParts: string[] = [];
 
-                options.rowGroupingHierarchy?.forEach((part) => {
+                for (const part of options.groupHierarchy ?? []) {
                     if (typeof part === 'object') {
                         beans.validation?.validateColDef(part);
-                        return null;
+                        continue;
                     }
 
                     if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
-                        unrecognisedParts.push(part);
+                        unrecognisedParts.push(quote(part));
                     }
-                });
+                }
 
                 if (unrecognisedParts.length > 0) {
-                    const warning = `The following parts of colDef.rowGroupingHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
-                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map((s) => `"${s}"`).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
+                    const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.join(', ')}.`;
+                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map(quote).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
                     return `${warning}\n${suggestions}`;
                 }
 
@@ -310,6 +320,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     tooltipComponent: undefined,
     tooltipField: undefined,
     headerTooltip: undefined,
+    headerTooltipValueGetter: undefined,
     cellClass: undefined,
     showRowGroup: undefined,
     filter: undefined,
@@ -421,6 +432,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     onCellContextMenu: undefined,
     rowDragText: undefined,
     tooltipValueGetter: undefined,
+    tooltipComponentSelector: undefined,
     cellRendererSelector: undefined,
     cellEditorSelector: undefined,
     suppressSpanHeaderHeight: undefined,
@@ -439,6 +451,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponentParams: undefined,
     getFindText: undefined,
     rowGroupingHierarchy: undefined,
+    groupHierarchy: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

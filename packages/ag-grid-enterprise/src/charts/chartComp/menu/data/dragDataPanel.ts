@@ -63,9 +63,9 @@ export abstract class DragDataPanel extends Component {
         } else {
             const params: AgSelectParams<AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
             params.onValueChange = (updatedColState: ColState) => {
-                columns.forEach((col) => {
+                for (const col of columns) {
                     col.selected = false;
-                });
+                }
                 updatedColState.selected = true;
                 // Clear the category aggregation function if the default ordinal category is selected
                 if (updatedColState.colId === DEFAULT_CHART_CATEGORY) {

@@ -80,12 +80,16 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        this.getBlocksInOrder().forEach((block) => block.setStateWaitingToLoad());
+        for (const block of this.getBlocksInOrder()) {
+            block.setStateWaitingToLoad();
+        }
         this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
 
     public override destroy(): void {
-        this.getBlocksInOrder().forEach((block) => this.destroyBlock(block));
+        for (const block of this.getBlocksInOrder()) {
+            this.destroyBlock(block);
+        }
         super.destroy();
     }
 
@@ -225,7 +229,9 @@ export class InfiniteCache extends BeanStub {
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
         const sequence = { value: 0 };
-        this.getBlocksInOrder().forEach((block) => block.forEachNode(callback, sequence, this.rowCount));
+        for (const block of this.getBlocksInOrder()) {
+            block.forEachNode(callback, sequence, this.rowCount);
+        }
     }
 
     public getBlocksInOrder(): InfiniteBlock[] {
@@ -261,19 +267,23 @@ export class InfiniteCache extends BeanStub {
 
     private destroyAllBlocksPastVirtualRowCount(): void {
         const blocksToDestroy: InfiniteBlock[] = [];
-        this.getBlocksInOrder().forEach((block) => {
+        for (const block of this.getBlocksInOrder()) {
             const startRow = block.id * this.params.blockSize!;
             if (startRow >= this.rowCount) {
                 blocksToDestroy.push(block);
             }
-        });
+        }
         if (blocksToDestroy.length > 0) {
-            blocksToDestroy.forEach((block) => this.destroyBlock(block));
+            for (const block of blocksToDestroy) {
+                this.destroyBlock(block);
+            }
         }
     }
 
     public purgeCache(): void {
-        this.getBlocksInOrder().forEach((block) => this.removeBlockFromCache(block));
+        for (const block of this.getBlocksInOrder()) {
+            this.removeBlockFromCache(block);
+        }
         this.lastRowIndexKnown = false;
         // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
         // otherwise if set to zero rows last time, and we don't update the row count, then after
@@ -295,14 +305,14 @@ export class InfiniteCache extends BeanStub {
 
         let foundGapInSelection = false;
 
-        this.getBlocksInOrder().forEach((block) => {
+        for (const block of this.getBlocksInOrder()) {
             if (foundGapInSelection) {
-                return;
+                continue;
             }
 
             if (inActiveRange && lastBlockId + 1 !== block.id) {
                 foundGapInSelection = true;
-                return;
+                continue;
             }
 
             lastBlockId = block.id;
@@ -321,7 +331,7 @@ export class InfiniteCache extends BeanStub {
                 numberSequence,
                 this.rowCount
             );
-        });
+        }
 
         // inActiveRange will be still true if we never hit the second rowNode
         const invalidRange = foundGapInSelection || inActiveRange;

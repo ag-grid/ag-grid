@@ -49,7 +49,9 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         };
 
         const removeResize = () => {
-            destroyResizeFuncs.forEach((f) => f());
+            for (const f of destroyResizeFuncs) {
+                f();
+            }
             destroyResizeFuncs.length = 0;
         };
 

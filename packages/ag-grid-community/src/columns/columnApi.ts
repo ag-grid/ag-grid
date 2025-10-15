@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey, HeaderLocation } from '../entities/colDef';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import { _applyColumnState, _getColumnState, _resetColumnState } from './columnStateUtils';
 import type { ApplyColumnStateParams, ColumnState } from './columnStateUtils';
@@ -28,7 +28,7 @@ export function getDisplayNameForColumn(beans: BeanCollection, column: Column, l
 
 export function getColumn<TValue = any, TData = any>(
     beans: BeanCollection,
-    key: string | ColDef<TData, TValue> | Column<TValue>
+    key: ColKey<TData, TValue>
 ): Column<TValue> | null {
     return beans.colModel.getColDefCol(key);
 }
@@ -73,11 +73,7 @@ export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)
     beans.colModel.setColsVisible(keys as (string | AgColumn)[], visible, 'api');
 }
 
-export function setColumnsPinned(
-    beans: BeanCollection,
-    keys: (string | ColDef | Column)[],
-    pinned: ColumnPinnedType
-): void {
+export function setColumnsPinned(beans: BeanCollection, keys: ColKey[], pinned: ColumnPinnedType): void {
     beans.pinnedCols?.setColsPinned(keys, pinned, 'api');
 }
 

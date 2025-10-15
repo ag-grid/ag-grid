@@ -33,13 +33,13 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const setTabIndex = (value?: string | null) => {
         const processedValue = value == null ? undefined : parseInt(value, 10).toString();
 
-        [topTabGuardRef, bottomTabGuardRef].forEach((tabGuard) => {
+        for (const tabGuard of [topTabGuardRef, bottomTabGuardRef]) {
             if (processedValue === undefined) {
                 tabGuard.current?.removeAttribute('tabindex');
             } else {
                 tabGuard.current?.setAttribute('tabindex', processedValue);
             }
-        });
+        }
     };
 
     useImperativeHandle(forwardRef, () => ({

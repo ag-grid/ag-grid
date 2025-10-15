@@ -101,38 +101,40 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const versionedModel = (c: ChartModel) => {
             return { ...c, version: GRID_VERSION };
         };
-        this.activeChartComps.forEach((c) => models.push(versionedModel(c.getChartModel())));
+        for (const c of this.activeChartComps) {
+            models.push(versionedModel(c.getChartModel()));
+        }
 
         return models;
     }
 
     public getChartRef(chartId: string): ChartRef | undefined {
         let chartRef;
-        this.activeCharts.forEach((cr) => {
+        for (const cr of this.activeCharts) {
             if (cr.chartId === chartId) {
                 chartRef = cr;
             }
-        });
+        }
         return chartRef;
     }
 
     public getChartComp(chartId: string): GridChartComp | undefined {
         let chartComp;
-        this.activeChartComps.forEach((comp) => {
+        for (const comp of this.activeChartComps) {
             if (comp.getChartId() === chartId) {
                 chartComp = comp;
             }
-        });
+        }
         return chartComp;
     }
 
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         let url: any;
-        this.activeChartComps.forEach((c) => {
+        for (const c of this.activeChartComps) {
             if (c.getChartId() === params.chartId) {
                 url = c.getChartImageDataURL(params.fileFormat);
             }
-        });
+        }
         return url;
     }
 
@@ -273,7 +275,11 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             chartType: getCanonicalChartType(chartType),
             insideDialog: !(chartContainer || createChartContainerFunc),
             crossFilteringContext: this.crossFilteringContext,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach((c) => c.crossFilteringReset()),
+            crossFilteringResetCallback: () => {
+                for (const c of this.activeChartComps) {
+                    c.crossFilteringReset();
+                }
+            },
         };
 
         const chartComp = new GridChartComp(gridChartParams);
@@ -334,12 +340,14 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         let startRowIndex = Number.MAX_VALUE;
         let endRowIndex = -Number.MAX_VALUE;
 
-        ranges.forEach(({ startRow: sr, endRow: er, columns: cols }) => {
+        for (const { startRow: sr, endRow: er, columns: cols } of ranges) {
             if (!(sr && er)) {
-                return;
+                continue;
             }
 
-            cols.forEach((col) => uCols.add(col));
+            for (const col of cols) {
+                uCols.add(col);
+            }
 
             // set start/end ranges assuming rows aren't pinned
             let { rowIndex: sRowIndex, rowPinned: startRowPinned } = sr;
@@ -354,7 +362,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             if (startRowPinned === 'top') {
                 if (endRowPinned === 'top') {
                     // range is fully pinned, ignore it
-                    return;
+                    continue;
                 }
                 // range crosses pinned top boundary, so start at first row in the row model
                 sRowIndex = 0;
@@ -362,7 +370,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             if (endRowPinned === 'bottom') {
                 if (startRowPinned === 'bottom') {
                     // range is fully pinned, ignore it
-                    return;
+                    continue;
                 }
                 // range crosses pinned bottom boundary, so end at last row in the row model
                 eRowIndex = this.beans.pageBounds.getLastRow();
@@ -374,7 +382,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             if (eRowIndex !== undefined) {
                 endRowIndex = Math.max(endRowIndex, eRowIndex);
             }
-        });
+        }
 
         if (startRowIndex === Number.MAX_VALUE || endRowIndex === -Number.MAX_VALUE) {
             // if we didn't find any valid ranges, return an empty range
@@ -422,7 +430,9 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     public override destroy(): void {
-        this.activeCharts.forEach((chart) => chart.destroyChart());
+        for (const chart of this.activeCharts) {
+            chart.destroyChart();
+        }
         super.destroy();
     }
 }

@@ -2,23 +2,25 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ContainerType } from './iAfterGuiAttachedParams';
 
+type MenuColumn = AgColumn | AgProvidedColumnGroup | undefined;
+
 export interface IMenuFactory {
     showMenuAfterButtonClick(
-        column: AgColumn | AgProvidedColumnGroup | undefined,
+        column: MenuColumn,
         eventSource: HTMLElement,
         containerType: ContainerType,
         onClosedCallback?: () => void,
         filtersOnly?: boolean
     ): void;
     showMenuAfterMouseEvent(
-        column: AgColumn | AgProvidedColumnGroup | undefined,
+        column: MenuColumn,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         onClosedCallback?: () => void,
         filtersOnly?: boolean
     ): void;
     showMenuAfterContextMenuEvent(
-        column: AgColumn | AgProvidedColumnGroup | undefined,
+        column: MenuColumn,
         mouseEvent?: MouseEvent | null,
         touchEvent?: TouchEvent | null
     ): void;

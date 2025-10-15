@@ -142,7 +142,7 @@ class RowContainerComp extends Component {
             orderedRows.push([rowComp, !existingRowComp]);
         }
 
-        this.removeOldRows(Object.values(oldRows), container);
+        this.removeOldRows(Object.values(oldRows));
         this.addRowNodes(orderedRows, container);
     }
 
@@ -160,9 +160,9 @@ class RowContainerComp extends Component {
         }
     }
 
-    private removeOldRows(rowComps: RowComp[], container: HTMLElement): void {
+    private removeOldRows(rowComps: RowComp[]): void {
         for (const oldRowComp of rowComps) {
-            container.removeChild(oldRowComp.getGui());
+            oldRowComp.getGui().remove();
             oldRowComp.destroy();
         }
     }

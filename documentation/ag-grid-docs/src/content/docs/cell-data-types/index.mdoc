@@ -219,7 +219,8 @@ The following example demonstrates providing custom cell data types:
 
 * The **Country** column contains complex objects and has a cell data type of `'country'`.
 * The **Sport** column contains a different type of complex object and has a cell data type of `'sport'`.
-* The `dataTypeMatcher` callback is defined for both cell data types to allow inferring the type.
+* The **Date** column parses date values from a non-standard date format.
+* The `dataTypeMatcher` callback is defined for all three cell data types to allow inferring the type.
 
 {% gridExampleRunner title="Providing Custom Cell Data Types" name="providing-custom-cell-data-types" /%}
 

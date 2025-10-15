@@ -1199,6 +1199,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null,
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null
     ): void {
+        const source = 'paramsUpdated';
         if (filterWrapper.isHandler) {
             const colId = column.getColId();
             delete this.initialModel[colId];
@@ -1206,21 +1207,29 @@ export class ColumnFilterService
             const filterUi = filterWrapper.filterUi;
             const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
             filterWrapper.filterUi = newFilterUi;
+            const eventSvc = this.eventSvc;
             // destroy the old one after creating the new one
             // so that anything listening to the destroyed event will receive the new comp
+
             if (filterUi?.created) {
                 filterUi.promise.then((filter) => {
                     this.destroyBean(filter);
 
-                    this.eventSvc.dispatchEvent({
+                    eventSvc.dispatchEvent({
                         type: 'filterDestroyed',
-                        source: 'paramsUpdated',
-                        column: filterWrapper.column,
+                        source,
+                        column,
                     });
+                });
+            } else {
+                eventSvc.dispatchEvent({
+                    type: 'filterHandlerDestroyed',
+                    source,
+                    column,
                 });
             }
         } else {
-            this.destroyFilter(column, 'paramsUpdated');
+            this.destroyFilter(column, source);
         }
     }
 

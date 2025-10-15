@@ -5,8 +5,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import type { TooltipCtrl } from '../interfaces/iTooltip';
-import type { ITooltipFeature } from '../interfaces/iTooltip';
+import type { ITooltipFeature, TooltipCtrl } from '../interfaces/iTooltip';
 import { _setAriaControlsAndLabel } from '../utils/aria';
 import { _isElementOverflowingCallback } from '../utils/dom';
 import type { ListOption } from './agList';
@@ -220,7 +219,9 @@ export class AgSelect<
     }
 
     public addOptions(options: ListOption<TValue>[]): this {
-        options.forEach((option) => this.addOption(option));
+        for (const option of options) {
+            this.addOption(option);
+        }
 
         return this;
     }

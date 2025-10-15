@@ -435,7 +435,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 previous.focusCell(true);
             }
 
-            if ((!backwards && focusSvc.focusOverlay(false)) || _focusNextGridCoreContainer(beans, backwards)) {
+            if (focusSvc.focusOverlay(false) || _focusNextGridCoreContainer(beans, backwards)) {
                 keyboardEvent.preventDefault();
             }
         }

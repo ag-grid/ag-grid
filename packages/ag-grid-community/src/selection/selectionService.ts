@@ -359,7 +359,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         // in the selection service
         oldNode.id = rowNode.id;
         oldNode.data = rowNode.data;
-        oldNode.__daemon = true;
         oldNode.__selected = rowNode.__selected;
         oldNode.level = rowNode.level;
 
@@ -650,11 +649,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     private canSelectAll(): boolean {
-        const { gos } = this.beans;
-        if (!_isClientSideRowModel(gos)) {
-            return false;
-        }
-        return true;
+        return _isClientSideRowModel(this.beans.gos);
     }
 
     /**

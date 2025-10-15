@@ -172,7 +172,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         eGui.focus();
 
         this.close = () => {
-            eGui.parentElement!.removeChild(eGui);
+            eGui.remove();
             this.destroy();
         };
     }
@@ -211,7 +211,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
             closeButtonComp.addManagedElementListeners(eGui, { click: this.onBtClose.bind(this) });
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
-            eGui.parentElement!.removeChild(eGui);
+            eGui.remove();
 
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }

@@ -134,7 +134,7 @@ describe('ag-grid grouping simple data', () => {
             },
             {
                 allChildrenCount: undefined,
-                allLeafChildren: undefined,
+                allLeafChildren: null,
                 childIndex: 0,
                 childrenAfterFilter: undefined,
                 childrenAfterGroup: undefined,
@@ -162,7 +162,7 @@ describe('ag-grid grouping simple data', () => {
             },
             {
                 allChildrenCount: undefined,
-                allLeafChildren: undefined,
+                allLeafChildren: null,
                 childIndex: 1,
                 childrenAfterFilter: undefined,
                 childrenAfterGroup: undefined,
@@ -218,7 +218,7 @@ describe('ag-grid grouping simple data', () => {
             },
             {
                 allChildrenCount: undefined,
-                allLeafChildren: undefined,
+                allLeafChildren: null,
                 childIndex: 0,
                 childrenAfterFilter: undefined,
                 childrenAfterGroup: undefined,
@@ -302,7 +302,7 @@ describe('ag-grid grouping simple data', () => {
             },
             {
                 allChildrenCount: undefined,
-                allLeafChildren: undefined,
+                allLeafChildren: null,
                 childIndex: 0,
                 childrenAfterFilter: undefined,
                 childrenAfterGroup: undefined,
@@ -358,7 +358,7 @@ describe('ag-grid grouping simple data', () => {
             },
             {
                 allChildrenCount: undefined,
-                allLeafChildren: undefined,
+                allLeafChildren: null,
                 childIndex: 0,
                 childrenAfterFilter: undefined,
                 childrenAfterGroup: undefined,

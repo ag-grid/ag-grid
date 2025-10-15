@@ -141,13 +141,13 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
             return;
         }
 
-        this.children.forEach((child) => {
+        for (const child of this.children) {
             if (isColumn(child)) {
                 leafColumns.push(child);
             } else if (isProvidedColumnGroup(child)) {
                 child.addLeafColumns(leafColumns);
             }
-        });
+        }
     }
 
     public getColumnGroupShow(): ColumnGroupShowType | undefined {
@@ -171,10 +171,14 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         }
 
         const listener = this.onColumnVisibilityChanged.bind(this);
-        this.getLeafColumns().forEach((col) => col.__addEventListener('visibleChanged', listener));
+        for (const col of this.getLeafColumns()) {
+            col.__addEventListener('visibleChanged', listener);
+        }
 
         this.expandableListenerRemoveCallback = () => {
-            this.getLeafColumns().forEach((col) => col.__removeEventListener('visibleChanged', listener));
+            for (const col of this.getLeafColumns()) {
+                col.__removeEventListener('visibleChanged', listener);
+            }
             this.expandableListenerRemoveCallback = null;
         };
     }
@@ -224,7 +228,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         const res: (AgColumn | AgProvidedColumnGroup)[] = [];
 
         const process = (items: (AgColumn | AgProvidedColumnGroup)[]) => {
-            items.forEach((item) => {
+            for (const item of items) {
                 // if padding, we add this children instead of the padding
                 const skipBecausePadding = isProvidedColumnGroup(item) && item.isPadding();
                 if (skipBecausePadding) {
@@ -232,7 +236,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
                 } else {
                     res.push(item);
                 }
-            });
+            }
         };
 
         process(this.children);

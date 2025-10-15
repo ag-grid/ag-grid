@@ -1,4 +1,6 @@
 import type {
+    AgEventTypeParams,
+    AgModuleName,
     BeanCollection,
     DetailGridInfo,
     Environment,
@@ -8,7 +10,8 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
-    RowGroupBulkExpansionState,
+    MasterChangedEvent,
+    ModuleName,
     RowNode,
     RowSelectedEvent,
 } from 'ag-grid-community';
@@ -117,7 +120,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     public registerDetailWithMaster(api: GridApi): void {
         const {
             params,
-            beans: { selectionSvc, findSvc },
+            beans: { selectionSvc, findSvc, expansionSvc },
         } = this;
         const rowId = params.node.id!;
         const masterGridApi = params.api;
@@ -148,6 +151,15 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             }
         }
 
+        function adjustDetailsOnExpandOrCollapseAll({ source }: AgEventTypeParams['expandOrCollapseAll']) {
+            if (source === 'expandAll') {
+                return api.expandAll();
+            }
+            if (source === 'collapseAll') {
+                return api.collapseAll();
+            }
+        }
+
         function onMasterRowSelected({ node, source }: RowSelectedEvent) {
             if (node !== masterNode || source === 'masterDetail' || api.isDestroyed()) {
                 return;
@@ -164,28 +176,41 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
             api.addEventListener('selectionChanged', onDetailSelectionChanged);
             masterGridApi.addEventListener('rowSelected', onMasterRowSelected);
+            const sharedApiModuleName = 'CsrmSsrmSharedApi' satisfies ModuleName;
+            const asAgModuleName = `${sharedApiModuleName}Module` as AgModuleName;
+            if (api.isModuleRegistered(asAgModuleName)) {
+                masterGridApi.addEventListener('expandOrCollapseAll', adjustDetailsOnExpandOrCollapseAll);
+                expansionSvc?.setDetailsExpansionState(api);
+            }
+        });
 
-            const ssrmExpandAllAffectsAllRows = api.getGridOption('ssrmExpandAllAffectsAllRows');
-            if (ssrmExpandAllAffectsAllRows) {
-                const state = masterGridApi.getState();
-                const expandState = state?.ssrmRowGroupExpansion as RowGroupBulkExpansionState;
-                if (expandState?.expandAll) {
-                    api.expandAll();
+        // the place for these destructors is looking for a new home, so if you have a better idea where to put them - feel free
+        // we are undecided if they should live on detailCellRenderer or here in the ctrl
+        this.addManagedListeners(masterNode, {
+            masterChanged: (event: MasterChangedEvent) => {
+                if (!event.node.master) {
+                    this.onDestroy(gridInfo);
                 }
-            }
+            },
         });
 
-        this.addDestroyFunc(() => {
-            // the gridInfo can be stale if a refresh happens and
-            // a new row is created before the old one is destroyed.
-            if (rowNode.detailGridInfo !== gridInfo) {
-                return;
-            }
-            if (!masterGridApi.isDestroyed()) {
-                masterGridApi.removeDetailGridInfo(rowId); // unregister from api
-            }
-            rowNode.detailGridInfo = null; // unregister from node
-        });
+        this.addDestroyFunc(() => this.onDestroy(gridInfo));
+    }
+
+    private onDestroy(gridInfo: DetailGridInfo) {
+        const { params } = this;
+        const rowNode = params.node as RowNode;
+        const masterGridApi = params.api;
+
+        // the gridInfo can be stale if a refresh happens and
+        // a new row is created before the old one is destroyed.
+        if (rowNode.detailGridInfo !== gridInfo) {
+            return;
+        }
+        if (!masterGridApi.isDestroyed()) {
+            masterGridApi.removeDetailGridInfo(rowNode.id!); // unregister from api
+        }
+        rowNode.detailGridInfo = null; // unregister from node
     }
 
     private loadRowData(): void {

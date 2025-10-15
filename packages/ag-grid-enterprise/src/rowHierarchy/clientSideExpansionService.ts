@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    GridApi,
     IClientSideRowModel,
     IExpansionService,
     NamedBean,
@@ -9,7 +10,6 @@ import type {
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
-import { getDetailGridInfo } from '../masterDetail/masterDetailApi';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
@@ -42,6 +42,7 @@ export class ClientSideExpansionService
 
     public getExpansionState(): RowGroupExpansionState {
         const expandedRowGroupIds: string[] = [];
+        const collapsedRowGroupIds: string[] = [];
         this.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
@@ -50,9 +51,11 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
+            } else {
+                collapsedRowGroupIds.push(id);
             }
         });
-        return { expandedRowGroupIds };
+        return { expandedRowGroupIds, collapsedRowGroupIds };
     }
 
     public expandAll(expand: boolean): void {
@@ -60,24 +63,28 @@ export class ClientSideExpansionService
         const rowModel = this.rowModel;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
-        const masterDetailsToExpandOrCollapse = [] as RowNode[];
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
             if (!rowNodes) {
                 return;
             }
-            rowNodes.forEach((rowNode) => {
+            for (const rowNode of rowNodes) {
                 const actionRow = () => {
                     rowNode.expanded = expand;
                     recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
                 };
+
+                if (rowNode.master) {
+                    actionRow();
+                    continue;
+                }
 
                 if (usingTreeData) {
                     const hasChildren = _exists(rowNode.childrenAfterGroup);
                     if (hasChildren) {
                         actionRow();
                     }
-                    return;
+                    continue;
                 }
 
                 if (usingPivotMode) {
@@ -85,20 +92,14 @@ export class ClientSideExpansionService
                     if (notLeafGroup) {
                         actionRow();
                     }
-                    return;
+                    continue;
                 }
 
                 const isRowGroup = rowNode.group;
                 if (isRowGroup) {
                     actionRow();
                 }
-
-                const isMasterRow = rowNode.master;
-                if (isMasterRow) {
-                    actionRow();
-                    masterDetailsToExpandOrCollapse.push(rowNode);
-                }
-            });
+            }
         };
 
         const rootNode = rowModel.rootNode;
@@ -107,15 +108,6 @@ export class ClientSideExpansionService
         }
 
         this.onGroupExpandedOrCollapsed();
-
-        for (const masterRowNode of masterDetailsToExpandOrCollapse) {
-            if (masterRowNode.detailNode?.id) {
-                const detailGridApi = getDetailGridInfo(this.beans, masterRowNode.detailNode.id)?.api;
-                if (expand) {
-                    detailGridApi?.expandAll();
-                }
-            }
-        }
 
         eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
@@ -133,6 +125,16 @@ export class ClientSideExpansionService
         this.rowModel.refreshModel({ step: 'map' });
     }
 
+    public setDetailsExpansionState(detailGridApi: GridApi): void {
+        const expansionState = this.getExpansionState();
+        const allExpanded = expansionState.collapsedRowGroupIds.length === 0;
+        const allCollapsed = expansionState.expandedRowGroupIds.length === 0;
+        if (allCollapsed === allExpanded) {
+            return;
+        }
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
+    }
+
     // because the user can call rowNode.setExpanded() many times in one VM turn,
     // we throttle the calls to ClientSideRowModel using animationFrameSvc. this means for 100
     // row nodes getting expanded, we only update the CSRM once, and then we fire all events after
@@ -148,7 +150,9 @@ export class ClientSideExpansionService
         this.events.push(event);
 
         const func = () => {
-            this.events.forEach((e) => this.eventSvc.dispatchEvent(e));
+            for (const e of this.events) {
+                this.eventSvc.dispatchEvent(e);
+            }
 
             // when using footers we need to refresh the group row, as the aggregation
             // values jump between group and footer, because the footer can be callback

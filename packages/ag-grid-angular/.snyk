@@ -5,13 +5,13 @@ ignore:
     SNYK-JS-WEBPACKDEVSERVER-10300775:
         - '@angular-devkit/build-angular@17.3.17 > webpack-dev-server@4.15.1':
               reason: Only used for dev
-              expires: 2025-09-21T12:00:00.000Z
+              expires: 2025-12-08T12:00:00.000Z
               created: 2025-06-06T14:47:25.226Z
     SNYK-JS-VITE-9653016:
         - '@angular-devkit/build-angular@17.3.11 > vite@5.1.8':
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
-              expires: 2025-09-21T12:00:00.000Z
+              expires: 2025-12-08T12:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
 patch: {}

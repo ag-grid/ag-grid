@@ -91,11 +91,11 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         let anyNodesToggled = false;
 
-        removedNodeIds.forEach((id) => {
+        for (const id of removedNodeIds) {
             if (this.selectedState.toggledNodes.delete(id)) {
                 anyNodesToggled = true;
             }
-        });
+        }
 
         return anyNodesToggled;
     }
@@ -144,7 +144,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             }
         };
 
-        nodes.forEach((node) => updateNodeState(node));
+        for (const node of nodes) {
+            updateNodeState(node);
+        }
 
         if (nodes.length === 1 && source === 'api') {
             this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);

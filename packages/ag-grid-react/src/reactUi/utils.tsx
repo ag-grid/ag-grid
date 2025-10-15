@@ -11,9 +11,9 @@ export class CssClasses {
     private classesMap: { [name: string]: boolean } = {};
 
     constructor(...initialClasses: string[]) {
-        initialClasses.forEach((className) => {
+        for (const className of initialClasses) {
             this.classesMap[className] = true;
-        });
+        }
     }
 
     public setClass(className: string, on: boolean): CssClasses {

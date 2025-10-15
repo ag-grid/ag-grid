@@ -70,7 +70,9 @@ export function mergeLeafPathTrees(leafPathTrees: AbstractColDef[]): AbstractCol
             }
         }
 
-        groupToMerge.children.forEach((child) => mergeTrees(mergeResult, child));
+        for (const child of groupToMerge.children) {
+            mergeTrees(mergeResult, child);
+        }
 
         return mergeResult;
     };

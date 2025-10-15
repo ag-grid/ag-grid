@@ -47,10 +47,10 @@ export function doesMovePassMarryChildren(
         }
 
         const newIndexes: number[] = [];
-        columnGroup.getLeafColumns().forEach((col) => {
+        for (const col of columnGroup.getLeafColumns()) {
             const newColIndex = allColumnsCopy.indexOf(col);
             newIndexes.push(newColIndex);
-        });
+        }
 
         // eslint-disable-next-line prefer-spread
         const maxIndex = Math.max.apply(Math, newIndexes);

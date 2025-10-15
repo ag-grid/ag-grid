@@ -213,7 +213,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 const hasCollapsedLeafGroup =
                     leafGroup && valueCols.length === 1 && this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
 
-                valueCols.forEach((valueColumn) => {
+                for (const valueColumn of valueCols) {
                     const columnName: string | null = this.colNames.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, def.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
@@ -228,7 +228,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                         children.push(totalColDef);
                         currentPivotColumnDefs.push(totalColDef);
                     }
-                });
+                }
 
                 this.merge(acc, childAcc);
 

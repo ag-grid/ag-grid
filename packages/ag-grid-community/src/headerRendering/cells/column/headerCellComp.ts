@@ -63,7 +63,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     private destroyHeaderComp(): void {
         if (this.headerComp) {
-            this.eHeaderCompWrapper.removeChild(this.headerCompGui!);
+            this.headerCompGui?.remove();
             this.headerComp = this.destroyBean(this.headerComp);
             this.headerCompGui = undefined;
         }

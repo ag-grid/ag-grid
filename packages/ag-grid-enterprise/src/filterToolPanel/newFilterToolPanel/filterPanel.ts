@@ -115,7 +115,9 @@ export class FilterPanel extends Component {
 
         compareAndUpdateListsInDom(eContainer, eNewItems, ePrevItems);
 
-        compsToDestroy.forEach((comp) => this.destroyBean(comp));
+        for (const comp of compsToDestroy) {
+            this.destroyBean(comp);
+        }
 
         const activeId = params?.activeId;
         const activeItemToFocus = activeId && newFilters.get(activeId)?.getGui();
@@ -141,9 +143,9 @@ export class FilterPanel extends Component {
                 buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-filter-panel-buttons' }));
                 this.getGui().appendChild(buttonComp.getGui());
                 const listeners: Partial<Record<FilterAction, () => void>> = {};
-                (['apply', 'clear', 'reset', 'cancel'] as const).forEach((action) => {
+                for (const action of ['apply', 'clear', 'reset', 'cancel'] as const) {
                     listeners[action] = () => filterPanelSvc.doAction(action);
-                });
+                }
                 buttonComp.addManagedListeners(buttonComp, listeners);
             }
             buttonComp.updateButtons(buttons);

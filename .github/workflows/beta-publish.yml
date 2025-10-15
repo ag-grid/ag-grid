@@ -43,6 +43,7 @@ jobs:
               id: pack-verify
               run: |
                 NODE_ENV=production yarn nx pack:verify -c staging
+<<<<<<< HEAD
 
             - name: Tag Latest Successful Commit
               uses: EndBug/latest-tag@latest
@@ -50,6 +51,8 @@ jobs:
               with:
                 ref: ${{ steps.next_version.outputs.tag }}
                 description: Latest commit to pass GitHub Actions workflow on latest branch.
+=======
+>>>>>>> origin/latest
 
             - name: Tag Latest Successful Commit
               uses: EndBug/latest-tag@latest

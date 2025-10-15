@@ -1,7 +1,8 @@
-import rootESLint from '../../eslint.config.mjs';
+import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    ...sonarjsConfig,
     {
         languageOptions: {
             parserOptions: {
@@ -77,6 +78,9 @@ export default [
             ],
 
             'no-console': 'error',
+
+            'sonarjs/use-type-alias': 0,
+            'sonarjs/no-nested-template-literals': 0,
         },
     },
     {

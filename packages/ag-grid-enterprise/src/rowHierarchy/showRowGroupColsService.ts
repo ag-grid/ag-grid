@@ -13,7 +13,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
 
         const { colModel, rowGroupColsSvc } = this.beans;
 
-        colModel.getCols().forEach((col) => {
+        for (const col of colModel.getCols()) {
             const colDef = col.getColDef();
             const showRowGroup = colDef.showRowGroup;
 
@@ -21,7 +21,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
             const isTrue = showRowGroup === true;
 
             if (!isString && !isTrue) {
-                return;
+                continue;
             }
 
             this.showRowGroupCols.push(col);
@@ -29,11 +29,11 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
             if (isString) {
                 this.showRowGroupColsMap[showRowGroup] = col;
             } else if (rowGroupColsSvc) {
-                rowGroupColsSvc.columns.forEach((rowGroupCol) => {
+                for (const rowGroupCol of rowGroupColsSvc.columns) {
                     this.showRowGroupColsMap[rowGroupCol.getId()] = col;
-                });
+                }
             }
-        });
+        }
     }
 
     public getShowRowGroupCols(): AgColumn[] {

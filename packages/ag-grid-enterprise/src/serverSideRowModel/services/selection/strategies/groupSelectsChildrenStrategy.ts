@@ -150,11 +150,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         let anyStateChanged = false;
-        removedNodeIds.forEach((id) => {
+        for (const id of removedNodeIds) {
             if (parentState?.toggledNodes.delete(id)) {
                 anyStateChanged = true;
             }
-        });
+        }
 
         if (anyStateChanged) {
             this.removeRedundantState();
@@ -174,11 +174,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.deselectAllRowNodes();
         }
 
-        nodes.forEach((rowNode) => {
+        for (const rowNode of nodes) {
             const node = rowNode.footer ? rowNode.sibling : rowNode;
             const idPathToNode = this.getRouteToNode(node);
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
-        });
+        }
         this.removeRedundantState();
         if (nodes.length === 1 && source === 'api') {
             this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);

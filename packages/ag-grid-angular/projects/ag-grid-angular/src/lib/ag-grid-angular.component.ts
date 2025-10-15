@@ -283,10 +283,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             );
 
             const coercedGridOptions = {} as GridOptions<TData>;
-            gridOptionKeys.forEach((key) => {
+            for (const key of gridOptionKeys) {
                 const valueToUse = getValueOrCoercedValue(key, this[key as keyof AgGridAngular]);
                 coercedGridOptions[key as keyof GridOptions] = valueToUse;
-            });
+            }
 
             const mergedGridOps = _combineAttributesAndGridOptions(
                 this.gridOptions,
@@ -1385,7 +1385,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
-    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+    /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
     @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
@@ -1894,7 +1894,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    @Input() public ssrmExpandAllAffectsAllRows: boolean | undefined | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public ssrmExpandAllAffectsAllRows: boolean | undefined = undefined;
     /** Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */

@@ -1455,7 +1455,7 @@ export interface GridOptions<TData = any> {
     suppressGroupRowsSticky?: boolean;
 
     /**
-     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
     groupHierarchyConfig?: { [k: string]: ColDef };
@@ -2126,7 +2126,7 @@ export interface GridOptions<TData = any> {
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    ssrmExpandAllAffectsAllRows?: boolean | undefined;
+    ssrmExpandAllAffectsAllRows?: boolean;
     /**
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
@@ -3079,6 +3079,7 @@ export type SelectionColumnDef = Pick<
     | 'onCellDoubleClicked'
     | 'onCellValueChanged'
     | 'headerTooltip'
+    | 'headerTooltipValueGetter'
     | 'headerStyle'
     | 'headerClass'
     | 'headerComponent'
@@ -3115,6 +3116,7 @@ export type SelectionColumnDef = Pick<
     | 'tooltipValueGetter'
     | 'tooltipComponent'
     | 'tooltipComponentParams'
+    | 'tooltipComponentSelector'
     | 'width'
     | 'initialWidth'
     | 'maxWidth'

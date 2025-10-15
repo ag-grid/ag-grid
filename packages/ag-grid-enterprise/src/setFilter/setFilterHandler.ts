@@ -329,7 +329,6 @@ export class SetFilterHandler<TValue = string>
                 // if all values selected, remove model
                 const newModel = allSelected ? null : { filterType: this.filterType, values: newValues };
                 params.onModelChange(newModel, additionalEventAttributes);
-                return;
             }
         });
     }

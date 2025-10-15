@@ -172,6 +172,8 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         this.asyncFunctionsQueue = [];
 
         // execute the queue
-        queueCopy.forEach((func) => func());
+        for (const func of queueCopy) {
+            func();
+        }
     }
 }

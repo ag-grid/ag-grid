@@ -163,7 +163,6 @@ export class CheckboxSelectionComponent extends Component {
 
         if (overrides?.removeHidden) {
             this.setDisplayed(visible);
-            return;
         }
     }
 

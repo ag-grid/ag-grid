@@ -8,9 +8,11 @@ test.agExample(import.meta, () => {
 
     // Run through all frameworks
     test.eachFramework('With Batch', async ({ page, agIdFor }) => {
-        await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
-
+        // Ensure grid is ready before clicking buttons
         const cell = agIdFor.cell('0', 'gold');
+        await expect(cell).toBeVisible();
+
+        await page.locator('button', { hasText: 'Start Batch Edit' }).click(); // click the button to start batch editing
 
         // initiate cell editing by double clicking the cell
         await cell.dblclick();

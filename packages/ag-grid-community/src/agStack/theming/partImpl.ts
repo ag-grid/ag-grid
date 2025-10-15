@@ -61,9 +61,9 @@ export const createPart = <T = unknown>(args: CreatePartArgs<T>): Part<ExpandTyp
 export const defaultModeName = '$default';
 let partCounter = 0;
 export class PartImpl implements Part {
-    feature?: string | undefined;
+    feature?: string;
     modeParams: Record<string, Record<string, unknown>>;
-    css?: string | (() => string) | undefined;
+    css?: string | (() => string);
     cssImports?: string[];
 
     _inject?: { css: string; class: string } | false;

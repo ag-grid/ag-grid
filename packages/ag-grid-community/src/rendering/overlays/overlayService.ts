@@ -215,8 +215,6 @@ export class OverlayService extends BeanStub implements NamedBean {
             const headerHeight = headerCtrl?.headerHeight || 0;
 
             newPadding = headerHeight;
-        } else if (this.wrapperPadding !== 0) {
-            newPadding = 0;
         }
 
         if (this.wrapperPadding === newPadding) {

@@ -46,8 +46,9 @@ export class SortService extends BeanStub implements NamedBean {
             }
         }
 
-        columnsToUpdate.forEach((col) => this.setColSort(col, sort, source));
-
+        for (const col of columnsToUpdate) {
+            this.setColSort(col, sort, source);
+        }
         const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
@@ -213,10 +214,10 @@ export class SortService extends BeanStub implements NamedBean {
 
         // add the row group cols back
         if (isSortLinked) {
-            sortedRowGroupCols.forEach((col) => {
+            for (const col of sortedRowGroupCols) {
                 const groupDisplayCol = showRowGroupCols!.getShowRowGroupCol(col.getId())!;
                 indexMap.set(col, indexMap.get(groupDisplayCol)!);
-            });
+            }
         }
 
         return indexMap;

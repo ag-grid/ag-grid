@@ -205,7 +205,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             closeOnEsc: true,
             closedCallback: (e?: Event) => {
                 // menu closed callback
-                closedFuncs.forEach((f) => f(e));
+                for (const f of closedFuncs) {
+                    f(e);
+                }
                 this.dispatchVisibleChangedEvent(false, false, column, columnGroup, defaultTab);
             },
             afterGuiAttached: (params) =>
@@ -617,6 +619,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         this.eColumnMenu.appendChild(mainMenuList.getGui());
     }
 
+    // eslint-disable-next-line sonarjs/no-identical-functions
     private onHidePopup(event?: CloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,

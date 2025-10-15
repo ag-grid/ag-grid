@@ -196,7 +196,7 @@ const CellComp = ({
                 setCellEditorRef(undefined);
                 setJsEditorComp(undefined);
 
-                compGui?.parentElement?.removeChild(compGui);
+                compGui?.remove();
             });
         };
     }, [editDetails]);

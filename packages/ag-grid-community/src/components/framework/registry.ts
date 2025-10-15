@@ -75,9 +75,9 @@ export class Registry
 
         this.registerDynamicBeans(dynamicBeans);
 
-        selectors?.forEach((selector) => {
+        for (const selector of selectors ?? []) {
             this.selectors[selector.selector] = selector;
-        });
+        }
 
         if (icons) {
             for (const name of Object.keys(icons) as IconName[]) {

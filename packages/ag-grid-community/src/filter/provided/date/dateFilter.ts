@@ -145,7 +145,9 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
     protected removeDateComps(components: DateCompWrapper[], startPosition: number, deleteCount?: number): void {
         const removedComponents = removeItems(components, startPosition, deleteCount);
-        removedComponents.forEach((comp) => comp.destroy());
+        for (const comp of removedComponents) {
+            comp.destroy();
+        }
     }
 
     private isValidDateValue(value: Date | null): boolean {

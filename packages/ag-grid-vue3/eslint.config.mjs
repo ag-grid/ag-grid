@@ -1,7 +1,8 @@
-import rootESLint from '../../eslint.config.mjs';
+import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
+    ...sonarjsConfig,
     {
         rules: {
             'prefer-rest-params': 'error',

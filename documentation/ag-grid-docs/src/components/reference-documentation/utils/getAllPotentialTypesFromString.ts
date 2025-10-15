@@ -38,6 +38,7 @@ export function getAllPotentialTypesFromString(type: string): string[] {
 
         if (ch === '"' || ch === "'" || ch === '`') {
             addType(set, token);
+            token = '';
             inString = ch;
             continue;
         }
@@ -46,9 +47,11 @@ export function getAllPotentialTypesFromString(type: string): string[] {
             token += ch;
         } else {
             addType(set, token);
+            token = '';
         }
     }
     addType(set, token);
+    token = '';
     return Array.from(set);
 }
 
@@ -104,6 +107,5 @@ const commonTsTypes = new Set<string>([
 function addType(set: Set<string>, token: string) {
     if (token.length && !charIsNumber(token[0]) && !commonTsTypes.has(token)) {
         set.add(token);
-        token = '';
     }
 }
