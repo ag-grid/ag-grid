@@ -48,21 +48,6 @@
                     ]
                 },
                 {
-                    "type": "group",
-                    "title": "AI Features",
-                    "children": [
-                        {
-                            "title": "AI Toolkit",
-                            "path": "ai-toolkit",
-                            "isEnterprise": true
-                        },
-                        {
-                            "title": "MCP Server",
-                            "path": "mcp-server"
-                        }
-                    ]
-                },
-                {
                     "title": "Tutorials",
                     "type": "group",
                     "children": [
@@ -160,6 +145,22 @@
                             "path": "supported-browsers"
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "title": "AI Features",
+            "children": [
+                {
+                    "type": "item",
+                    "title": "AI Toolkit",
+                    "path": "ai-toolkit",
+                    "isEnterprise": true
+                },
+                {
+                    "type": "item",
+                    "title": "MCP Server",
+                    "path": "mcp-server"
                 }
             ]
         },
