@@ -102,7 +102,6 @@
       "packages/ag-grid-angular",
       "packages/ag-grid-vue3",
       "documentation/ag-grid-docs",
-      "documentation/ag-grid-mcp",
       "documentation/update-algolia-indices",
       "plugins/ag-grid-generate-code-reference-files",
       "plugins/ag-grid-generate-example-files",
