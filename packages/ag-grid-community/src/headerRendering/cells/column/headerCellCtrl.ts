@@ -22,6 +22,7 @@ import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils'
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
+import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 import type { HeaderComp } from './headerComp';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
@@ -53,6 +54,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private menuEnabled: boolean;
     private openFilterEnabled: boolean;
     private dragSourceElement: HTMLElement | undefined;
+    private mouseListener?: HeaderCellMouseListenerFeature;
 
     private userCompDetails: UserCompDetails;
 
@@ -107,6 +109,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
         colHover?.createHoverFeature(compBean, [column], eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
+        this.mouseListener = this.createManagedBean(new HeaderCellMouseListenerFeature(column));
         compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
