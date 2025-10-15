@@ -7,7 +7,7 @@ import { gridOptions } from './gridOptions';
 
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 
-let gridApi: GridApi<IOlympicData>;
+let gridApi: GridApi;
 
 function processRequest(event?: Event) {
     event?.preventDefault();
@@ -25,7 +25,6 @@ function processRequest(event?: Event) {
         return;
     }
 
-    // Disable form elements
     inputElement.disabled = true;
     submitButton.disabled = true;
 
@@ -36,13 +35,11 @@ function processRequest(event?: Event) {
 
     callChatGPT(userRequest, currentState, gridApi)
         .then(function (response) {
-            // Apply the state changes
             if (Object.keys(response.gridState).length > 0) {
                 gridApi.setState(response.gridState, response.propertiesToIgnore);
             }
 
-            // Display the request and response
-            statusElement.innerHTML = '<p style="color: green;">✓ Request processed successfully!</p>';
+            statusElement.innerHTML = '<p>✓ Request processed successfully!</p>';
             outputElement.innerHTML = `
                 <h4>Your Request:</h4>
                 <p><em>"${userRequest}"</em></p>
@@ -51,14 +48,13 @@ function processRequest(event?: Event) {
             `;
             outputElement.style.display = 'block';
 
-            // Clear the input and re-enable form
             inputElement.value = '';
             inputElement.disabled = false;
             submitButton.disabled = false;
         })
         .catch(function (error) {
-            statusElement.innerHTML = '<p style="color: red;">✗ Error processing request</p>';
-            outputElement.innerHTML = `<p style="color: red;">Error: ${error instanceof Error ? error.message : String(error)}</p>`;
+            statusElement.innerHTML = '<p>✗ Error processing request</p>';
+            outputElement.innerHTML = `<p>Error: ${error instanceof Error ? error.message : String(error)}</p>`;
             outputElement.style.display = 'block';
 
             // Re-enable form on error
@@ -67,14 +63,14 @@ function processRequest(event?: Event) {
         });
 }
 
-export function getCurrentState() {
+function getCurrentState() {
     const state = gridApi.getState();
     const outputElement = document.getElementById('currentState') as HTMLDivElement;
     // outputElement.innerHTML = `<h4>Current Grid State:</h4><pre>${JSON.stringify(state, null, 2)}</pre>`;
     outputElement.style.display = 'block';
 }
 
-export function resetGrid() {
+function resetGrid() {
     gridApi.setState({
         columnVisibility: { hiddenColIds: [] },
         columnPinning: { leftColIds: [], rightColIds: [] },
@@ -95,18 +91,11 @@ export function resetGrid() {
     currentState.style.display = 'none';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#ExampleGrid')!;
+document.addEventListener('DOMContentLoaded', function () {
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    const form = document.getElementById('requestForm') as HTMLFormElement;
-    form.addEventListener('submit', processRequest);
-
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data: IOlympicData[]) {
-            gridApi.setGridOption('rowData', data);
-        });
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 });

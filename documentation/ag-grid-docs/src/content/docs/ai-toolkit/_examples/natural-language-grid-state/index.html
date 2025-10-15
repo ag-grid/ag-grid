@@ -1,17 +1,16 @@
 <div class="example-wrapper">
     <div class="example-controls">
         <div class="request-container">
-            <form class="input-group" id="requestForm">
+            <form class="input-group" id="requestForm" onsubmit="processRequest()">
                 <input
                     type="text"
                     id="naturalLanguageInput"
                     placeholder="Enter your request in natural language (e.g., 'hide age column', 'sort by gold medals')"
                 />
-                <button type="submit" id="processRequest">></button>
+                <button type="submit" id="processRequest">GO</button>
             </form>
             <div id="processingStatus"></div>
             <div>
-                <!-- <button onclick="getCurrentState()">Get Current State</button> -->
                 <button onclick="resetGrid()">Reset Grid</button>
             </div>
         </div>
@@ -22,5 +21,5 @@
         </div>
     </div>
 
-    <div id="ExampleGrid"></div>
+    <div id="myGrid"></div>
 </div>

@@ -214,8 +214,15 @@ const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
     const schema = s.object({
         filterType: s.literal('date', 'Filter type identifier for date filters'),
         type: s.enum(options, 'Date filter operation type'),
-        dateFrom: s.string({ pattern, description: 'Primary date filter value in YYYY-MM-DD HH:mm:ss format' }).nullable(),
-        dateTo: s.string({ pattern, description: 'Secondary date filter value for range operations in YYYY-MM-DD HH:mm:ss format' }).nullable(),
+        dateFrom: s
+            .string({ pattern, description: 'Primary date filter value in YYYY-MM-DD HH:mm:ss format' })
+            .nullable(),
+        dateTo: s
+            .string({
+                pattern,
+                description: 'Secondary date filter value for range operations in YYYY-MM-DD HH:mm:ss format',
+            })
+            .nullable(),
     });
 
     return buildJoinSchema(schema, 'date', params.maxConditions);
