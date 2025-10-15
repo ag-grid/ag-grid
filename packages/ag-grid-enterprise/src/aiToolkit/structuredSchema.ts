@@ -1,11 +1,11 @@
 import type { BeanCollection } from 'ag-grid-community';
 
 import { buildAggregationFeatureSchema } from './features/aggregationFeatureSchema';
-import { buildColumnGroupFeatureSchema } from './features/columnGroupFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';
 import { buildColumnVisibilityFeatureSchema } from './features/columnVisibilityFeatureSchema';
 import { buildFilterFeatureSchema } from './features/filterFeatureSchema';
 import { buildPivotFeatureSchema } from './features/pivotFeatureSchema';
+import { buildRowGroupFeatureSchema } from './features/rowGroupFeatureSchema';
 import { buildSortFeatureSchema } from './features/sortFeatureSchema';
 import type { SchemaBuilder } from './schemaBuilder';
 import { s } from './schemaBuilder';
@@ -18,7 +18,7 @@ const StructuredSchemaFeatures = [
     'pivot',
     'columnVisibility',
     'columnSizing',
-    'columnGroup',
+    'rowGroup',
 ] as const;
 
 export type StructuredSchemaFeature = (typeof StructuredSchemaFeatures)[number];
@@ -33,7 +33,7 @@ const StructuredSchemaBuilderMap: Record<
     pivot: buildPivotFeatureSchema,
     columnVisibility: buildColumnVisibilityFeatureSchema,
     columnSizing: buildColumnSizingFeatureSchema,
-    columnGroup: buildColumnGroupFeatureSchema,
+    rowGroup: buildRowGroupFeatureSchema,
 } as const;
 
 export type StructuredSchemaColumnParams = {
@@ -65,7 +65,20 @@ export function getStructuredSchema(beans: BeanCollection, params?: StructuredSc
         }
     }
 
-    const schema = s.object(features).define('allColumnIds', s.enum(allColumnIds, 'All column IDs'));
+    const columnParams = params?.columns ?? {};
+
+    const descriptions = allColumnIds
+        .map((colId) => {
+            if (columnParams[colId]?.description) {
+                return `${colId}: ${columnParams[colId].description}`;
+            } else {
+                return colId;
+            }
+        })
+        .filter(Boolean)
+        .join('\n');
+
+    const schema = s.object(features).define('allColumnIds', s.enum(allColumnIds, descriptions));
 
     return schema.toJSON();
 }

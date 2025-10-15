@@ -27,7 +27,7 @@ export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
                             })
                         )
                     ),
-                    'Array of aggregation configurations'
+                    'Array of column aggregations'
                 ),
             },
             'Aggregation configuration for the grid'

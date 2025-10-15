@@ -145,9 +145,9 @@ const buildJoinSchema = (schema: SchemaBuilder, filterType: string, maxCondition
     if (maxConditions === 1) return schema;
 
     return s.object({
-        filterType: s.literal(filterType),
-        operator: s.enum(['AND', 'OR']),
-        conditions: s.array(schema).minItems(2).maxItems(maxConditions),
+        filterType: s.literal(filterType, `Filter type identifier for ${filterType} filters with multiple conditions`),
+        operator: s.enum(['AND', 'OR'], 'Logical operator to combine multiple filter conditions'),
+        conditions: s.array(schema, 'Array of filter conditions to be combined').minItems(2).maxItems(maxConditions),
     });
 };
 
@@ -164,10 +164,10 @@ const buildTextFilterSchema = (params: SimpleFilterSchemaParams) => {
     ];
 
     const schema = s.object({
-        filterType: s.literal('text'),
-        type: s.enum(options),
-        filter: s.string('Primary filter value'),
-        filterTo: s.string('Secondary filter value for range operations'),
+        filterType: s.literal('text', 'Filter type identifier for text filters'),
+        type: s.enum(options, 'Text filter operation type'),
+        filter: s.string('Primary filter value').nullable(),
+        filterTo: s.string('Secondary filter value for range operations').nullable(),
     });
 
     return buildJoinSchema(schema, 'text', params.maxConditions);
@@ -187,10 +187,10 @@ const buildNumberFilterSchema = (params: SimpleFilterSchemaParams) => {
     ];
 
     const schema = s.object({
-        filterType: s.literal('number'),
-        type: s.enum(options),
-        filter: s.number('Primary filter value'),
-        filterTo: s.number('Secondary filter value for range operations'),
+        filterType: s.literal('number', 'Filter type identifier for number filters'),
+        type: s.enum(options, 'Number filter operation type'),
+        filter: s.number('Primary filter value').nullable(),
+        filterTo: s.number('Secondary filter value for range operations').nullable(),
     });
 
     return buildJoinSchema(schema, 'number', params.maxConditions);
@@ -212,19 +212,24 @@ const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
         : '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$';
 
     const schema = s.object({
-        filterType: s.literal('text'),
-        type: s.enum(options),
-        dateFrom: s.string({ pattern, description: 'Primary filter value' }),
-        dateTo: s.string({ pattern, description: 'Secondary filter value for range operations' }),
+        filterType: s.literal('date', 'Filter type identifier for date filters'),
+        type: s.enum(options, 'Date filter operation type'),
+        dateFrom: s.string({ pattern, description: 'Primary date filter value in YYYY-MM-DD HH:mm:ss format' }).nullable(),
+        dateTo: s.string({ pattern, description: 'Secondary date filter value for range operations in YYYY-MM-DD HH:mm:ss format' }).nullable(),
     });
 
-    return buildJoinSchema(schema, 'text', params.maxConditions);
+    return buildJoinSchema(schema, 'date', params.maxConditions);
 };
 
 const buildSetFilterSchema = (getKeys?: () => (string | null)[]) => {
+    const values = getKeys ? (getKeys().filter(Boolean) as string[]) : [];
+
     return s.object({
-        filterType: s.literal('set'),
-        values: s.array(getKeys ? s.enum(getKeys().filter(Boolean) as string[]) : s.string()),
+        filterType: s.literal('set', 'Filter type identifier for set filters'),
+        values: s.array(
+            values.length > 0 ? s.enum(values, 'Available values to filter by') : s.string('Filter values'),
+            'Array of values to include in the filter'
+        ),
     });
 };
 
@@ -234,7 +239,7 @@ const buildMultiFilterSchema = (
     getKeys: (isMulti: boolean, index?: number) => (string | null)[] = () => []
 ) => {
     return s.object({
-        filterType: s.literal('multi'),
+        filterType: s.literal('multi', 'Filter type identifier for multi-condition filters'),
         filterModels: s.array(
             s
                 .union(
@@ -242,9 +247,11 @@ const buildMultiFilterSchema = (
                         buildColumnFilterSchema(filter.filter, filter.filterParams, defaultFilter, () =>
                             getKeys(true, index)
                         )
-                    )
+                    ),
+                    'Union of different filter types that can be combined'
                 )
-                .nullable()
+                .nullable(),
+            'Array of filter conditions to be combined with AND/OR logic'
         ),
     });
 };

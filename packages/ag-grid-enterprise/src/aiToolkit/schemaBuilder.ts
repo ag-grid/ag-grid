@@ -34,7 +34,6 @@ abstract class BaseSchemaBuilder<TType extends JSONSchemaType> {
         for (const schema of schemas) {
             if (schema && typeof schema === 'object' && '$defs' in schema) {
                 Object.assign(allDefs, schema.$defs);
-                // Remove $defs from the schema to avoid duplication
                 delete (schema as any).$defs;
             }
         }
@@ -230,13 +229,10 @@ class ArraySchemaBuilder extends BaseSchemaBuilder<'array'> {
     }
 
     toJSON(): ArraySchema {
-        // First, convert items to JSON to get the schema
         const itemsSchema = this.items.toJSON();
 
-        // Collect nested definitions from the items schema
         const allDefs = this._collectNestedDefs([itemsSchema]);
 
-        // Update our _defs with collected definitions
         this._defs = allDefs;
 
         return this._toJSON({
@@ -258,15 +254,12 @@ class ObjectSchemaBuilder extends BaseSchemaBuilder<'object'> {
     }
 
     toJSON(): ObjectSchema {
-        // First, convert all properties to JSON to get their schemas
         const propertySchemas = Object.fromEntries(
             Object.keys(this.properties).map((key) => [key, this.properties[key].toJSON()])
         );
 
-        // Collect all nested definitions
         const allDefs = this._collectNestedDefs(Object.values(propertySchemas));
 
-        // Update our _defs with collected definitions
         this._defs = allDefs;
 
         return this._toJSON({
@@ -306,7 +299,6 @@ class UnionSchemaBuilder {
         for (const schema of schemas) {
             if (schema && typeof schema === 'object' && '$defs' in schema) {
                 Object.assign(allDefs, schema.$defs);
-                // Remove $defs from the schema to avoid duplication
                 delete (schema as any).$defs;
             }
         }
@@ -315,10 +307,8 @@ class UnionSchemaBuilder {
     }
 
     toJSON(): AnyOfSchema {
-        // First, convert all schemas to JSON
         const schemaJsons = this.schemas.map((x) => x.toJSON());
 
-        // Collect nested definitions
         const allDefs = this._collectNestedDefs(schemaJsons);
 
         const result: any = {
