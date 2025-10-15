@@ -1,4 +1,4 @@
-import type { FormulaFuncParams, GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     FormulaModule,

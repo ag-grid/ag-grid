@@ -735,7 +735,8 @@
                         {
                             "type": "item",
                             "title": "Formulas",
-                            "path": "formulas"
+                            "path": "formulas",
+                            "isEnterprise": true
                         },
                         {
                             "type": "item",

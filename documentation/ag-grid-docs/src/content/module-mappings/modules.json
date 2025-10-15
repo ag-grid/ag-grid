@@ -116,7 +116,8 @@
                 {
                     "moduleName": "FormulaModule",
                     "name": "Formulas",
-                    "path": "formulas"
+                    "path": "formulas",
+                    "isEnterprise": true
                 },
                 {
                     "moduleName": "FindModule",
