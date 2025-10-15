@@ -28,7 +28,7 @@ function processRequest(event?: Event) {
     inputElement.disabled = true;
     submitButton.disabled = true;
 
-    statusElement.innerHTML = '<p>Processing request with ChatGPT...</p>';
+    statusElement.innerHTML = '<code class="process">Processing request with ChatGPT <b>⧖</b></code>';
     outputElement.innerHTML = '';
 
     const currentState = gridApi.getState();
@@ -39,7 +39,7 @@ function processRequest(event?: Event) {
                 gridApi.setState(response.gridState, response.propertiesToIgnore);
             }
 
-            statusElement.innerHTML = '<p>✓ Request processed successfully!</p>';
+            statusElement.innerHTML = '<code class="success">Request processed successfully! <b>✓</b></code>';
             outputElement.innerHTML = `
                 <h4>Your Request:</h4>
                 <p><em>"${userRequest}"</em></p>
@@ -53,7 +53,7 @@ function processRequest(event?: Event) {
             submitButton.disabled = false;
         })
         .catch(function (error) {
-            statusElement.innerHTML = '<p>✗ Error processing request</p>';
+            statusElement.innerHTML = '<code class="error">Error processing request <b>✗</b></code>';
             outputElement.innerHTML = `<p>Error: ${error instanceof Error ? error.message : String(error)}</p>`;
             outputElement.style.display = 'block';
 
