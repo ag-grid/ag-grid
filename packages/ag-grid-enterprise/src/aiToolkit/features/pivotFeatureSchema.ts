@@ -1,9 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 
-import { createArraySchema, createBooleanSchema, createEnumSchema, createObjectSchema } from '../schemaTypes';
-import type { ObjectSchema } from '../schemaTypes';
+import { s } from '../schemaBuilder';
 
-export const buildPivotFeatureSchema = (beans: BeanCollection): ObjectSchema | undefined => {
+export const buildPivotFeatureSchema = (beans: BeanCollection) => {
     const columns = beans.colModel.getCols();
     const pivotableColumnIds = columns.filter((col) => col.isAllowPivot()).map((col) => col.getColId());
 
@@ -11,23 +10,16 @@ export const buildPivotFeatureSchema = (beans: BeanCollection): ObjectSchema | u
         return;
     }
 
-    return createObjectSchema({
-        description: 'Pivot configuration for the grid',
-        properties: {
-            pivot: createObjectSchema({
-                properties: {
-                    pivotMode: createBooleanSchema({
-                        description: 'Whether pivot mode is enabled',
-                    }),
-                    pivotColIds: createArraySchema({
-                        description: 'Array of column IDs to use as pivot columns',
-                        items: createEnumSchema({
-                            enum: pivotableColumnIds,
-                            description: 'Column ID that supports pivoting',
-                        }),
-                    }),
-                },
-            }),
-        },
-    });
+    return s
+        .object(
+            {
+                pivotMode: s.boolean('Whether pivot mode is enabled'),
+                pivotColIds: s.array(
+                    s.enum(pivotableColumnIds, 'Column ID that supports pivoting'),
+                    'Array of column IDs to use as pivot columns'
+                ),
+            },
+            'Pivot configuration for the grid'
+        )
+        .nullable();
 };

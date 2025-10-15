@@ -1,5 +1,7 @@
 export type JSONSchemaType = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object' | 'null' | 'anyOf';
 
+export type NullableProperty<TType extends JSONSchemaType> = TType | [TType, 'null'];
+
 export interface SchemaProperty {
     type: JSONSchemaType | JSONSchemaType[];
     description?: string;
@@ -18,28 +20,18 @@ export interface AnyOfSchema {
 export type StringFormat = 'date-time' | 'date' | 'time' | 'duration' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uuid';
 
 export interface StringSchema extends SchemaProperty {
-    type: 'string';
+    type: NullableProperty<'string'>;
     pattern?: string;
     format?: StringFormat;
 }
 
-export const createStringSchema = (schema: Omit<StringSchema, 'type'>): StringSchema => ({
-    type: 'string',
-    ...schema,
-});
-
 export interface EnumSchema extends SchemaProperty {
-    type: 'string';
+    type: NullableProperty<'string'>;
     enum: (string | number | boolean)[];
 }
 
-export const createEnumSchema = (schema: Omit<EnumSchema, 'type'>): EnumSchema => ({
-    type: 'string',
-    ...schema,
-});
-
 export interface NumberSchema extends SchemaProperty {
-    type: 'number' | 'integer';
+    type: NullableProperty<'number' | 'integer'>;
     minimum?: number;
     maximum?: number;
     exclusiveMinimum?: number;
@@ -47,58 +39,28 @@ export interface NumberSchema extends SchemaProperty {
     multipleOf?: number;
 }
 
-export const createNumberSchema = (schema: Omit<NumberSchema, 'type'>): NumberSchema => ({
-    type: 'number',
-    ...schema,
-});
-
 export interface BooleanSchema extends SchemaProperty {
-    type: 'boolean';
+    type: NullableProperty<'boolean'>;
 }
 
-export const createBooleanSchema = (schema: Omit<BooleanSchema, 'type'>): BooleanSchema => ({
-    type: 'boolean',
-    ...schema,
-});
-
 export interface ArraySchema extends SchemaProperty {
-    type: 'array';
+    type: NullableProperty<'array'>;
     items: JSONSchema;
     minItems?: number;
     maxItems?: number;
 }
 
-export const createArraySchema = (schema: Omit<ArraySchema, 'type'>): ArraySchema => ({
-    type: 'array',
-    ...schema,
-});
-
 export interface ObjectSchema extends SchemaProperty {
-    type: 'object';
+    type: NullableProperty<'object'>;
     properties: Record<string, JSONSchema>;
     required: string[];
     additionalProperties: false;
     minProperties?: number;
     maxProperties?: number;
 }
-
-export const createObjectSchema = (
-    schema: Omit<ObjectSchema, 'type' | 'additionalProperties' | 'required'>
-): ObjectSchema => ({
-    type: 'object',
-    required: Object.keys(schema.properties),
-    additionalProperties: false,
-    ...schema,
-});
-
 export interface NullSchema extends SchemaProperty {
     type: 'null';
 }
-
-export const createNullSchema = (schema: Omit<NullSchema, 'type'>): NullSchema => ({
-    type: 'null',
-    ...schema,
-});
 
 export type JSONSchema =
     | StringSchema
@@ -109,11 +71,5 @@ export type JSONSchema =
     | ArraySchema
     | NullSchema
     | ReferencedProperty
+    | SchemaProperty
     | AnyOfSchema;
-
-export interface ChatGPTJSONSchema {
-    name: string;
-    description?: string;
-    strict: true;
-    schema: JSONSchema;
-}

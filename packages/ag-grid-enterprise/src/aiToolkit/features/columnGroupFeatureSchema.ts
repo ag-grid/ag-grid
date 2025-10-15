@@ -1,12 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 
-import { createArraySchema, createEnumSchema, createObjectSchema } from '../schemaTypes';
-import type { ObjectSchema } from '../schemaTypes';
+import { s } from '../schemaBuilder';
 
-/**
- * Builds a comprehensive row grouping schema for all groupable columns in the grid
- */
-export const buildColumnGroupFeatureSchema = (beans: BeanCollection): ObjectSchema | undefined => {
+export const buildColumnGroupFeatureSchema = (beans: BeanCollection) => {
     const columns = beans.colModel.getCols();
     const groupableColumns = columns.filter((col) => col.isAllowRowGroup());
 
@@ -16,20 +12,13 @@ export const buildColumnGroupFeatureSchema = (beans: BeanCollection): ObjectSche
 
     const groupableColumnIds = groupableColumns.map((col) => col.getColId());
 
-    return createObjectSchema({
-        description: 'Row grouping configuration for the grid',
-        properties: {
-            rowGroup: createObjectSchema({
-                properties: {
-                    groupColIds: createArraySchema({
-                        description: 'Array of column IDs to group by',
-                        items: createEnumSchema({
-                            enum: groupableColumnIds,
-                            description: 'Column ID that supports row grouping',
-                        }),
-                    }),
-                },
-            }),
+    return s.object(
+        {
+            groupColIds: s.array(
+                s.enum(groupableColumnIds, 'Column ID that supports row grouping'),
+                'Array of column IDs to group by'
+            ),
         },
-    });
+        'Row grouping configuration for the grid'
+    );
 };

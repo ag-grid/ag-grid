@@ -1,12 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 
-import { createArraySchema, createEnumSchema, createObjectSchema } from '../schemaTypes';
-import type { ObjectSchema } from '../schemaTypes';
+import { s } from '../schemaBuilder';
 
-/**
- * Builds a comprehensive sort schema for all sortable columns in the grid
- */
-export const buildSortFeatureSchema = (beans: BeanCollection): ObjectSchema | undefined => {
+export const buildSortFeatureSchema = (beans: BeanCollection) => {
     const { sortSvc } = beans;
     if (!sortSvc) {
         return;
@@ -21,32 +17,18 @@ export const buildSortFeatureSchema = (beans: BeanCollection): ObjectSchema | un
 
     const sortableColumnIds = sortableColumns.map((col) => col.getColId());
 
-    return createObjectSchema({
-        description: 'Sort configuration for the grid',
-
-        properties: {
-            sort: createObjectSchema({
-                properties: {
-                    sortModel: createArraySchema({
-                        description: 'Array of sort configurations',
-                        items: {
-                            type: 'object',
-                            properties: {
-                                colId: createEnumSchema({
-                                    enum: sortableColumnIds,
-                                    description: 'Column ID that supports sorting',
-                                }),
-                                sort: createEnumSchema({
-                                    enum: ['asc', 'desc'],
-                                    description: 'Sort direction: ascending or descending',
-                                }),
-                            },
-                            required: ['colId', 'sort'],
-                            additionalProperties: false,
-                        },
+    return s
+        .object(
+            {
+                sortModel: s.array(
+                    s.object({
+                        colId: s.enum(sortableColumnIds, 'Column ID that supports sorting'),
+                        sort: s.enum(['asc', 'desc'], 'Sort direction: ascending or descending'),
                     }),
-                },
-            }),
-        },
-    });
+                    'Array of sort configurations'
+                ),
+            },
+            'Sort configuration for the grid'
+        )
+        .nullable();
 };

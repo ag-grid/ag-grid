@@ -1,5 +1,6 @@
 import type { _AiToolkitGridApi, _ModuleWithApi } from 'ag-grid-community';
 import { ColumnApiModule } from 'ag-grid-community';
+
 import { VERSION } from '../version';
 import { getStructuredSchema } from './structuredSchema';
 

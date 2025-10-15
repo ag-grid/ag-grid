@@ -1,9 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 
-import { createArraySchema, createEnumSchema, createNumberSchema, createObjectSchema } from '../schemaTypes';
-import type { ObjectSchema } from '../schemaTypes';
+import { s } from '../schemaBuilder';
 
-export const buildColumnSizingFeatureSchema = (beans: BeanCollection): ObjectSchema | undefined => {
+export const buildColumnSizingFeatureSchema = (beans: BeanCollection) => {
     const columns = beans.colModel.getCols();
     const resizableColumns = columns.filter((col) => col.isResizable());
 
@@ -13,50 +12,26 @@ export const buildColumnSizingFeatureSchema = (beans: BeanCollection): ObjectSch
 
     const resizableColumnIds = resizableColumns.map((col) => col.getColId());
 
-    return createObjectSchema({
-        description: 'Column sizing configuration for the grid',
-        $defs: {
-            resizableColumnId: createEnumSchema({
-                enum: resizableColumnIds,
-                description: 'Column ID that supports resizing',
-            }),
-        },
-        properties: {
-            columnSizing: createObjectSchema({
-                properties: {
-                    columnSizingModel: createArraySchema({
-                        description: 'Array of column sizing configurations',
-                        items: {
-                            anyOf: [
-                                {
-                                    type: 'object',
-                                    properties: {
-                                        colId: { $ref: '#/$defs/resizableColumnId' },
-                                        width: createNumberSchema({
-                                            description: 'Fixed width in pixels',
-                                            minimum: 20,
-                                        }),
-                                    },
-                                    required: ['colId', 'width'],
-                                    additionalProperties: false,
-                                },
-                                {
-                                    type: 'object',
-                                    properties: {
-                                        colId: { $ref: '#/$defs/resizableColumnId' },
-                                        flex: createNumberSchema({
-                                            description: 'Flexible sizing ratio',
-                                            minimum: 0,
-                                        }),
-                                    },
-                                    required: ['colId', 'flex'],
-                                    additionalProperties: false,
-                                },
-                            ],
-                        },
-                    }),
-                },
-            }),
-        },
-    });
+    return s
+        .object(
+            {
+                columnSizingModel: s.array(
+                    s.union([
+                        s.object({
+                            colId: s.ref('resizableColumnId'),
+                            width: s.number('Fixed width in pixels').minimum(20),
+                        }),
+
+                        s.object({
+                            colId: s.ref('resizableColumnId'),
+                            flex: s.number('Flex sizing ratio').minimum(0),
+                        }),
+                    ]),
+                    'Array of column sizing configurations'
+                ),
+            },
+            'Column sizing configuration for the grid'
+        )
+
+        .define('resizableColumnId', s.enum(resizableColumnIds, 'Column ID that supports resizing'));
 };

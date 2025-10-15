@@ -695,7 +695,7 @@ export class ColumnFilterService
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+    public getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
         return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 

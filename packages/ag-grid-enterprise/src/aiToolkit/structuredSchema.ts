@@ -4,50 +4,68 @@ import { buildAggregationFeatureSchema } from './features/aggregationFeatureSche
 import { buildColumnGroupFeatureSchema } from './features/columnGroupFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';
 import { buildColumnVisibilityFeatureSchema } from './features/columnVisibilityFeatureSchema';
-// import { buildFilterFeatureSchema } from './features/filterFeatureSchema';
+import { buildFilterFeatureSchema } from './features/filterFeatureSchema';
 import { buildPivotFeatureSchema } from './features/pivotFeatureSchema';
 import { buildSortFeatureSchema } from './features/sortFeatureSchema';
-import { createEnumSchema, createObjectSchema } from './schemaTypes';
+import type { SchemaBuilder } from './schemaBuilder';
+import { s } from './schemaBuilder';
 import type { JSONSchema } from './schemaTypes';
 
-export function getStructuredSchema(beans: BeanCollection): JSONSchema {
+const StructuredSchemaFeatures = [
+    'aggregation',
+    'filter',
+    'sort',
+    'pivot',
+    'columnVisibility',
+    'columnSizing',
+    'columnGroup',
+] as const;
+
+export type StructuredSchemaFeature = (typeof StructuredSchemaFeatures)[number];
+
+const StructuredSchemaBuilderMap: Record<
+    StructuredSchemaFeature,
+    (beans: BeanCollection, params?: StructuredSchemaParams) => SchemaBuilder | undefined
+> = {
+    aggregation: buildAggregationFeatureSchema,
+    filter: buildFilterFeatureSchema,
+    sort: buildSortFeatureSchema,
+    pivot: buildPivotFeatureSchema,
+    columnVisibility: buildColumnVisibilityFeatureSchema,
+    columnSizing: buildColumnSizingFeatureSchema,
+    columnGroup: buildColumnGroupFeatureSchema,
+} as const;
+
+export type StructuredSchemaColumnParams = {
+    description?: string;
+    includeSetValues?: boolean;
+};
+
+export type StructuredSchemaParams = {
+    exclude?: StructuredSchemaFeature[];
+    columns?: Record<string, StructuredSchemaColumnParams>;
+};
+
+export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
     const allColumnIds = beans.colModel.getCols().map((col) => col.getColId());
 
-    const schema = [
-        buildAggregationFeatureSchema(beans),
-        // buildFilterFeatureSchema(beans),
-        buildSortFeatureSchema(beans),
-        buildPivotFeatureSchema(beans),
-        buildColumnVisibilityFeatureSchema(),
-        buildColumnSizingFeatureSchema(beans),
-        buildColumnGroupFeatureSchema(beans),
-    ]
-        .filter(Boolean)
-        .reduce(
-            (acc, schema) => {
-                if (!schema || !acc) {
-                    return acc;
-                }
-                return {
-                    ...acc,
-                    $defs: {
-                        ...acc.$defs,
-                        ...schema.$defs,
-                    },
-                    properties: { ...acc.properties, ...schema.properties },
-                };
-            },
+    const features: Record<string, SchemaBuilder> = {};
 
-            createObjectSchema({
-                properties: {},
-                $defs: {
-                    allColumnIds: createEnumSchema({
-                        enum: allColumnIds,
-                        description: 'Column ID that supports resizing',
-                    }),
-                },
-            })
-        );
+    for (const feature of StructuredSchemaFeatures) {
+        if (params?.exclude?.includes(feature)) {
+            continue;
+        }
 
-    return schema as JSONSchema;
+        const builder = StructuredSchemaBuilderMap[feature];
+
+        const schema = builder(beans, params);
+
+        if (schema) {
+            features[feature] = schema.nullable();
+        }
+    }
+
+    const schema = s.object(features).define('allColumnIds', s.enum(allColumnIds, 'All column IDs'));
+
+    return schema.toJSON();
 }

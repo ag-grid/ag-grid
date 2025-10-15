@@ -1,9 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 
-import { createArraySchema, createEnumSchema, createObjectSchema } from '../schemaTypes';
-import type { ObjectSchema } from '../schemaTypes';
+import { s } from '../schemaBuilder';
 
-export const buildAggregationFeatureSchema = (beans: BeanCollection): ObjectSchema | undefined => {
+export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
     const { aggFuncSvc } = beans;
     if (!aggFuncSvc) {
         return;
@@ -16,33 +15,22 @@ export const buildAggregationFeatureSchema = (beans: BeanCollection): ObjectSche
         return;
     }
 
-    return createObjectSchema({
-        description: 'Aggregation configuration for the grid',
-        properties: {
-            aggregation: createObjectSchema({
-                properties: {
-                    aggregationModel: createArraySchema({
-                        description: 'Array of aggregation configurations',
-                        items: {
-                            anyOf: aggregatableColumns.map((col) => ({
-                                type: 'object',
-                                properties: {
-                                    colId: createEnumSchema({
-                                        enum: [col.getColId()],
-                                        description: 'Column identifier',
-                                    }),
-                                    aggFunc: createEnumSchema({
-                                        enum: beans.aggFuncSvc?.getFuncNames(col) || [],
-                                        description: 'Aggregation function',
-                                    }),
-                                },
-                                required: ['colId', 'aggFunc'],
-                                additionalProperties: false,
-                            })),
-                        },
-                    }),
-                },
-            }),
-        },
-    });
+    return s
+        .object(
+            {
+                aggregationModel: s.array(
+                    s.union(
+                        aggregatableColumns.map((col) =>
+                            s.object({
+                                colId: s.literal(col.getColId(), 'Column identifier'),
+                                aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) || [], 'Aggregation function'),
+                            })
+                        )
+                    ),
+                    'Array of aggregation configurations'
+                ),
+            },
+            'Aggregation configuration for the grid'
+        )
+        .nullable();
 };
