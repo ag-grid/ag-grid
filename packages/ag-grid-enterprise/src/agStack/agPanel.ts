@@ -8,10 +8,10 @@ import type {
     _BaseProperties,
     _IPropertiesService,
 } from 'ag-grid-community';
-import { _AgPositionableFeature } from 'ag-grid-community';
 import {
     RefPlaceholder,
     _AgComponentStub,
+    _AgPositionableFeature,
     _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,

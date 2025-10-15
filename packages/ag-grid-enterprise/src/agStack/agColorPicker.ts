@@ -9,10 +9,10 @@ import type {
 } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
 
-import type { AgChartsExports } from '../charts/agChartsExports';
 import { AgColorPanel } from './agColorPanel';
 import type { AgDialogCallbacks } from './agDialog';
 import { AgDialog } from './agDialog';
+import type { IAgChartsExports } from './iAgChartsExports';
 
 export interface AgColorPickerParams<TComponentSelectorType extends string>
     extends Omit<
@@ -166,7 +166,7 @@ export class AgColorPicker<
         }
 
         this.eDisplayFieldColor.style.backgroundColor = color;
-        this.eDisplayFieldText.textContent = (this.beans.agChartsExports as AgChartsExports)._Util.Color.fromString(
+        this.eDisplayFieldText.textContent = (this.beans.agChartsExports as IAgChartsExports)._Util.Color.fromString(
             color
         )
             .toHexString()
