@@ -444,10 +444,7 @@ const filterRemovedRowNodes = (
             continue;
         }
         node.sourceRowIndex = filterIdx;
-        if (filterIdx !== readIdx) {
-            allLeafs[filterIdx] = node; // Shift elements to fill removed nodes
-        }
-        ++filterIdx;
+        allLeafs[filterIdx++] = node; // Shift elements to fill removed nodes
     }
     allLeafs.length = filterIdx;
 };
