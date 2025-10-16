@@ -8,11 +8,9 @@ import type {
 import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
-import { _getFilteredRowCount, _getTotalRowCount, supportsCurrentRowModel } from './utils';
+import { _getFilteredRowCount, _getTotalRowCount } from './utils';
 
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
-    static supportsCurrentRowModel = supportsCurrentRowModel.bind(this, new Set(['clientSide'] as const), [224]);
-
     public postConstruct(): void {
         this.setLabel('totalAndFilteredRows', 'Rows');
 

@@ -7,15 +7,9 @@ import type {
 import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
-import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
+import { _getTotalRowCount } from './utils';
 
 export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
-    static supportsCurrentRowModel = supportsCurrentRowModel.bind(
-        this,
-        new Set(['clientSide', 'serverSide'] as const),
-        [223]
-    );
-
     public postConstruct(): void {
         this.setLabel('selectedRows', 'Selected');
 

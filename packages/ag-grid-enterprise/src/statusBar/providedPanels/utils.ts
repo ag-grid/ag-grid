@@ -20,18 +20,3 @@ export const _getTotalRowCount = (rowModel: IRowModel) => {
     });
     return totalRowCount;
 };
-
-/**
- * If false is returned the component should not be created
- */
-export const supportsCurrentRowModel = (
-    expectedRowModels: Set<RowModelType>,
-    warnArgs: [number, ...any[]],
-    gos: GridOptionsService
-): boolean => {
-    if (expectedRowModels.has(gos.get('rowModelType'))) {
-        return true;
-    }
-    _warn(...(warnArgs as Parameters<typeof _warn>));
-    return false;
-};

@@ -21,7 +21,7 @@ import {
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
-import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
+import { _getTotalRowCount } from './utils';
 
 function _formatNumberTwoDecimalPlacesAndCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
@@ -65,11 +65,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private readonly avgAggregationComp: AgNameValue = RefPlaceholder;
 
     private params!: AggregationStatusPanelParams;
-    static supportsCurrentRowModel = supportsCurrentRowModel.bind(
-        this,
-        new Set(['clientSide', 'serverSide'] as const),
-        [221]
-    );
 
     constructor() {
         super(AggregationCompElement, [AgNameValueSelector]);

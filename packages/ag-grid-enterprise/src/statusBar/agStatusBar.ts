@@ -3,8 +3,11 @@ import type {
     ComponentSelector,
     ComponentType,
     ElementParams,
+    GridOptionsService,
     IStatusPanelComp,
     IStatusPanelParams,
+    RowModelType,
+    StatusPanelComponentName,
     StatusPanelDef,
     UserCompDetails,
     UserComponentFactory,
@@ -16,6 +19,7 @@ import {
     _addGridCommonParams,
     _clearElement,
     _removeFromParent,
+    _warn,
 } from 'ag-grid-community';
 
 import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
@@ -29,10 +33,33 @@ function getStatusPanelCompDetails(
     return userCompFactory.getCompDetails(def, StatusPanelComponent, undefined, params, true);
 }
 
+/**
+ * If false is returned the component should not be created
+ */
+const supportsCurrentRowModel = (
+    expectedRowModels: Set<RowModelType>,
+    warnArgs: [number, ...any[]],
+    gos: GridOptionsService
+): boolean => {
+    if (expectedRowModels.has(gos.get('rowModelType'))) {
+        return true;
+    }
+    _warn(...(warnArgs as Parameters<typeof _warn>));
+    return false;
+};
+
 const StatusPanelComponent: ComponentType = {
     name: 'statusPanel',
     optionalMethods: ['refresh'],
 };
+
+const AgStatusBarValidationMap = {
+    agAggregationComponent: { rowModels: new Set(['clientSide', 'serverSide']), warnArgs: [221] },
+    agFilteredRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [222] },
+    agSelectedRowCountComponent: { rowModels: new Set(['clientSide', 'serverSide']), warnArgs: [223] },
+    agTotalAndFilteredRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [224] },
+    agTotalRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [225] },
+} satisfies Record<StatusPanelComponentName, { rowModels: Set<RowModelType>; warnArgs: [number, ...any[]] }>;
 
 const AgStatusBarElement: ElementParams = {
     tag: 'div',
@@ -85,8 +112,20 @@ class AgStatusBar extends Component {
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }
 
+    private getValidPanels(): StatusPanelDef[] | undefined {
+        const gos = this.gos;
+        const statusPanels = gos.get('statusBar')?.statusPanels;
+        if (!statusPanels) {
+            return statusPanels;
+        }
+        return statusPanels.filter((panel) => {
+            const { rowModels, warnArgs } = AgStatusBarValidationMap[panel.statusPanel as StatusPanelComponentName];
+            return supportsCurrentRowModel(rowModels, warnArgs, gos);
+        });
+    }
+
     private processStatusPanels(existingStatusPanelsToReuse: Map<string, IStatusPanelComp>): void {
-        const statusPanels = this.gos.get('statusBar')?.statusPanels;
+        const statusPanels = this.getValidPanels();
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels.filter(
                 (componentConfig) => componentConfig.align === 'left'
