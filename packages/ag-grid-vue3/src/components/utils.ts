@@ -1,4 +1,3 @@
-/* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
     AlignedGrid,
@@ -93,6 +92,7 @@ import type {
 // @END_IMPORTS@
 
 // @START_EVENTS_IMPORTS@
+// eslint-disable-next-line no-duplicate-imports
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushedEvent,
@@ -205,6 +205,7 @@ import type {
 } from 'ag-grid-community';
 // @END_EVENTS_IMPORTS@
 
+// eslint-disable-next-line no-duplicate-imports
 import type { GridOptions, Module } from 'ag-grid-community';
 import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 import { isProxy, isReactive, isRef, toRaw } from 'vue';
