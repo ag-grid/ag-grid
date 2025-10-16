@@ -327,7 +327,7 @@ class UnionSchemaBuilder {
     }
 }
 
-export class ReferenceSchemaBuilder {
+class ReferenceSchemaBuilder {
     constructor(private readonly id: string) {}
 
     nullable(): this {

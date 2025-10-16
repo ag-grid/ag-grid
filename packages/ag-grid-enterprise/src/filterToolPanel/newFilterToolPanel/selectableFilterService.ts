@@ -18,9 +18,9 @@ import {
 
 import { translateForFilterPanel } from './filterPanelUtils';
 
-export type SimpleFilterType = 'agTextColumnFilter' | 'agNumberColumnFilter' | 'agDateColumnFilter';
+type SimpleFilterType = 'agTextColumnFilter' | 'agNumberColumnFilter' | 'agDateColumnFilter';
 
-export type ProvidedFilterType = SimpleFilterType | 'agSetColumnFilter' | 'agMultiColumnFilter';
+type ProvidedFilterType = SimpleFilterType | 'agSetColumnFilter' | 'agMultiColumnFilter';
 
 export class SelectableFilterService extends BeanStub implements ISelectableFilterService, NamedBean {
     readonly beanName = 'selectableFilter' as const;

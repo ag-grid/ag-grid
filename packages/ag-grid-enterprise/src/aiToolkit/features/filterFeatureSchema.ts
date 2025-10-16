@@ -26,7 +26,7 @@ export const buildFilterFeatureSchema = (beans: BeanCollection, params?: Structu
     }
 };
 
-export const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
+const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
     const { gos, colFilter, colModel } = beans;
 
     if (!colFilter) {
@@ -85,7 +85,7 @@ export const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: S
         .nullable();
 };
 
-export function buildColumnFilterSchema(
+function buildColumnFilterSchema(
     filter: any,
     filterParams: any | undefined,
     defaultFilter: string,

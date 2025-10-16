@@ -1,8 +1,8 @@
 export type JSONSchemaType = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'object' | 'null' | 'anyOf';
 
-export type NullableProperty<TType extends JSONSchemaType> = TType | [TType, 'null'];
+type NullableProperty<TType extends JSONSchemaType> = TType | [TType, 'null'];
 
-export interface SchemaProperty {
+interface SchemaProperty {
     type: JSONSchemaType | JSONSchemaType[];
     description?: string;
     $defs?: Record<string, JSONSchema>;
@@ -58,7 +58,7 @@ export interface ObjectSchema extends SchemaProperty {
     minProperties?: number;
     maxProperties?: number;
 }
-export interface NullSchema extends SchemaProperty {
+interface NullSchema extends SchemaProperty {
     type: 'null';
 }
 

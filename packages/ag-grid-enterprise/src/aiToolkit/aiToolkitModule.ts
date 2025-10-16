@@ -4,8 +4,6 @@ import { ColumnApiModule } from 'ag-grid-community';
 import { VERSION } from '../version';
 import { getStructuredSchema } from './structuredSchema';
 
-export type StructuredSchema = any;
-
 export const AiToolkitModule: _ModuleWithApi<_AiToolkitGridApi> = {
     moduleName: 'AiToolkit',
     version: VERSION,
