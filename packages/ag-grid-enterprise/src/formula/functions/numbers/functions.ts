@@ -156,7 +156,9 @@ export const SUMIF = ({ args }: FormulaFunctionParams): number => {
         for (const v of critRange) {
             if (pred(v)) {
                 const n = coerceFiniteNumber('SUMIF', v);
-                if (n != null) acc += n; // non-numerics ignored
+                if (n != null) {
+                    acc += n; // non-numerics ignored
+                }
             }
         }
         return acc;
