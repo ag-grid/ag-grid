@@ -1,6 +1,6 @@
 import type { GridApi } from 'ag-grid-community';
 
-export const BASE_URL = 'https://openai-proxy-nine-flame.vercel.app/v1';
+export const BASE_URL = 'https://ai-api.ag-grid.com/api/openai/v1';
 
 const ajv = new ajv7({
     validateSchema: true, // Validate schemas against meta-schema
