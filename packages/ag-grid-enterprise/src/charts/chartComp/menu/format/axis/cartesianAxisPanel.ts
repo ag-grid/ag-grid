@@ -248,20 +248,18 @@ export class CartesianAxisPanel extends Component {
             // Some chart types do not support configuring the axis position
             if (chartType === 'heatmap') {
                 return null;
-            } else {
-                if (axisType === 'xAxis') {
-                    // Horizontal axis position can be changed between top and bottom
-                    return [
-                        { value: 'top', text: this.translate('top') },
-                        { value: 'bottom', text: this.translate('bottom') },
-                    ];
-                } else if (axisType === 'yAxis') {
-                    // Vertical axis position can be changed between left and right
-                    return [
-                        { value: 'left', text: this.translate('left') },
-                        { value: 'right', text: this.translate('right') },
-                    ];
-                }
+            } else if (axisType === 'xAxis') {
+                // Horizontal axis position can be changed between top and bottom
+                return [
+                    { value: 'top', text: this.translate('top') },
+                    { value: 'bottom', text: this.translate('bottom') },
+                ];
+            } else if (axisType === 'yAxis') {
+                // Vertical axis position can be changed between left and right
+                return [
+                    { value: 'left', text: this.translate('left') },
+                    { value: 'right', text: this.translate('right') },
+                ];
             }
         })(this.chartController.getChartType(), this.axisType);
         if (!axisPositionSelectOptions) return null;

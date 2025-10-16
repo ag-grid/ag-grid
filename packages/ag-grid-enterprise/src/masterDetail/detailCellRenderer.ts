@@ -68,18 +68,16 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         if (_missing(params.template)) {
             // use default template
             setDefaultTemplate();
-        } else {
+        } else if (typeof params.template === 'string') {
             // use user provided template
-            if (typeof params.template === 'string') {
-                this.setTemplate(params.template, []);
-            } else if (typeof params.template === 'function') {
-                const templateFunc = params.template;
-                const template = templateFunc(params);
-                this.setTemplate(template, []);
-            } else {
-                _warn(168);
-                setDefaultTemplate();
-            }
+            this.setTemplate(params.template, []);
+        } else if (typeof params.template === 'function') {
+            const templateFunc = params.template;
+            const template = templateFunc(params);
+            this.setTemplate(template, []);
+        } else {
+            _warn(168);
+            setDefaultTemplate();
         }
 
         if (this.eDetailGrid == null) {

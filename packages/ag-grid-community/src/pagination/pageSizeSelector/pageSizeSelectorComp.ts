@@ -77,12 +77,10 @@ export class PageSizeSelectorComp extends Component {
         const paginationPageSize = this.pagination.getPageSize();
         if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
             this.selectPageSizeComp.setValue(paginationPageSize.toString());
+        } else if (this.hasEmptyOption) {
+            this.selectPageSizeComp.setValue('');
         } else {
-            if (this.hasEmptyOption) {
-                this.selectPageSizeComp.setValue('');
-            } else {
-                this.toggleSelectDisplay(true);
-            }
+            this.toggleSelectDisplay(true);
         }
     }
 

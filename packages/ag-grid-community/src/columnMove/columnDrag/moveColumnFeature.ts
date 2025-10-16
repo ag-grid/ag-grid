@@ -430,10 +430,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             if (fromLeft) {
                 diff -= 1;
             }
-        } else {
-            if (!fromLeft) {
-                diff += 1;
-            }
+        } else if (!fromLeft) {
+            diff += 1;
         }
 
         if (targetIndex + diff === movingColIndex) {

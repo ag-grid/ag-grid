@@ -540,23 +540,20 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
                 // skip if we are moving to the right and the cursor
                 // is positioned to the left of the dialog
                 (diff > 0 && e.clientX < xPosition + parentRect.left);
+        } else if (anywhereWithin) {
+            // if anywhereWithin is true, we allow to move
+            // as long as the cursor is within the dialog
+            skipX =
+                (diff < 0 && e.clientX > boundaryElRect.right) || (diff > 0 && e.clientX < xPosition + parentRect.left);
         } else {
-            if (anywhereWithin) {
-                // if anywhereWithin is true, we allow to move
-                // as long as the cursor is within the dialog
-                skipX =
-                    (diff < 0 && e.clientX > boundaryElRect.right) ||
-                    (diff > 0 && e.clientX < xPosition + parentRect.left);
-            } else {
-                skipX =
-                    // if the movement is bound to the right side of the dialog
-                    // we skip if we are moving to the left and the cursor
-                    // is to the right of the dialog
-                    (diff < 0 && e.clientX > boundaryElRect.right) ||
-                    // or skip if we are moving to the right and the cursor
-                    // is to the left of the right side anchor
-                    (diff > 0 && e.clientX < boundaryElRect.right);
-            }
+            skipX =
+                // if the movement is bound to the right side of the dialog
+                // we skip if we are moving to the left and the cursor
+                // is to the right of the dialog
+                (diff < 0 && e.clientX > boundaryElRect.right) ||
+                // or skip if we are moving to the right and the cursor
+                // is to the left of the right side anchor
+                (diff > 0 && e.clientX < boundaryElRect.right);
         }
 
         return skipX;
@@ -807,16 +804,14 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
                     skipHeight = true;
                     offsetTop = 0;
                 }
-            } else {
+            } else if (
                 // do not let the size of all siblings be higher than the parent container
-                if (
-                    !this.config.popup &&
-                    !this.config.forcePopupParentAsOffsetParent &&
-                    oldHeight! < newHeight &&
-                    this.getMinSizeOfSiblings().height + newHeight > this.element.parentElement!.offsetHeight
-                ) {
-                    skipHeight = true;
-                }
+                !this.config.popup &&
+                !this.config.forcePopupParentAsOffsetParent &&
+                oldHeight! < newHeight &&
+                this.getMinSizeOfSiblings().height + newHeight > this.element.parentElement!.offsetHeight
+            ) {
+                skipHeight = true;
             }
 
             if (!skipHeight) {

@@ -94,6 +94,7 @@ export default [
                 },
             ],
             'no-undef': 'warn',
+            'no-lonely-if': 'error',
         },
     },
     {

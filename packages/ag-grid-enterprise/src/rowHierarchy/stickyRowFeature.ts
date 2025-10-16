@@ -360,12 +360,10 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                 this.gridBodyCtrl.setStickyTopHeight(height);
                 hasSomethingChanged = true;
             }
-        } else {
-            if (this.bottomContainerHeight !== height) {
-                this.bottomContainerHeight = height;
-                this.gridBodyCtrl.setStickyBottomHeight(height);
-                hasSomethingChanged = true;
-            }
+        } else if (this.bottomContainerHeight !== height) {
+            this.bottomContainerHeight = height;
+            this.gridBodyCtrl.setStickyBottomHeight(height);
+            hasSomethingChanged = true;
         }
 
         // clean up removed ctrls

@@ -157,11 +157,9 @@ export class RowSpanCache extends BeanStub {
                     setNewHead(node, value);
                     return;
                 }
-            } else {
-                if (equalsFnc ? !equalsFnc(lastValue, value) : lastValue !== value) {
-                    setNewHead(node, value);
-                    return;
-                }
+            } else if (equalsFnc ? !equalsFnc(lastValue, value) : lastValue !== value) {
+                setNewHead(node, value);
+                return;
             }
 
             if (!spanData) {

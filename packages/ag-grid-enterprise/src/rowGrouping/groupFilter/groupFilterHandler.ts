@@ -77,18 +77,16 @@ export class GroupFilterHandler
         if (!sourceColumns.length) {
             selectedColumn = undefined;
             hasMultipleColumns = false;
+        } else if (allSourceColumns.length === 1) {
+            selectedColumn = sourceColumns[0];
+            hasMultipleColumns = false;
         } else {
-            if (allSourceColumns.length === 1) {
+            // keep the old selected column if it's still valid
+            selectedColumn = this.selectedColumn;
+            if (!selectedColumn || !sourceColumns.some((column) => column.getId() === selectedColumn!.getId())) {
                 selectedColumn = sourceColumns[0];
-                hasMultipleColumns = false;
-            } else {
-                // keep the old selected column if it's still valid
-                selectedColumn = this.selectedColumn;
-                if (!selectedColumn || !sourceColumns.some((column) => column.getId() === selectedColumn!.getId())) {
-                    selectedColumn = sourceColumns[0];
-                }
-                hasMultipleColumns = true;
             }
+            hasMultipleColumns = true;
         }
         this.selectedColumn = selectedColumn;
         this.hasMultipleColumns = hasMultipleColumns;

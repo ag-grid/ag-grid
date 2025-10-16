@@ -434,12 +434,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 const node = nodes[i];
                 if (node.isSelected()) {
                     result.push(node);
-                } else {
-                    // if not selected, then if it's a group, and the group
-                    // has children, continue to search for selections
-                    if (node.group && node.childrenAfterGroup) {
-                        traverse(node.childrenAfterGroup);
-                    }
+                }
+                // if not selected, then if it's a group, and the group
+                // has children, continue to search for selections
+                else if (node.group && node.childrenAfterGroup) {
+                    traverse(node.childrenAfterGroup);
                 }
             }
         }

@@ -150,11 +150,9 @@ export class FilterPanel extends Component {
             }
             buttonComp.updateButtons(buttons);
             buttonComp.updateValidity(canApply !== false);
-        } else {
-            if (buttonComp) {
-                _removeFromParent(buttonComp.getGui());
-                buttonComp = this.destroyBean(buttonComp);
-            }
+        } else if (buttonComp) {
+            _removeFromParent(buttonComp.getGui());
+            buttonComp = this.destroyBean(buttonComp);
         }
         this.buttonComp = buttonComp;
     }

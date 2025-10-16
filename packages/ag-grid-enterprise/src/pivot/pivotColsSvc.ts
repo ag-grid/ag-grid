@@ -57,11 +57,9 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
                 if (rowIndex && typeof pivotIndex === 'number') {
                     rowIndex[column.getId()] = pivotIndex;
                 }
-            } else {
-                if (column.isPivotActive()) {
-                    this.setColPivotActive(column, false, source);
-                    this.modifyColumnsNoEventsCallbacks.removeCol(column);
-                }
+            } else if (column.isPivotActive()) {
+                this.setColPivotActive(column, false, source);
+                this.modifyColumnsNoEventsCallbacks.removeCol(column);
             }
         }
     }

@@ -560,10 +560,8 @@ export class ChartDataModel extends BeanStub {
                     selectedValueCols.push(col);
                     numSelected++;
                 }
-            } else {
-                if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
-                    selectedValueCols.push(col);
-                }
+            } else if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
+                selectedValueCols.push(col);
             }
         });
 
