@@ -16,7 +16,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         {
             field: 'athlete',
-            headerName: 'Athlete',
             minWidth: 200,
             filter: 'agTextColumnFilter',
             enableRowGroup: true,
@@ -24,7 +23,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'age',
-            headerName: 'Age',
             width: 90,
             filter: 'agNumberColumnFilter',
             enableValue: true,
@@ -32,7 +30,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'country',
-            headerName: 'Country',
             minWidth: 150,
             filter: 'agSetColumnFilter',
             enableRowGroup: true,
@@ -40,7 +37,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'year',
-            headerName: 'Year',
             width: 90,
             filter: 'agNumberColumnFilter',
             enableRowGroup: true,
@@ -48,7 +44,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'sport',
-            headerName: 'Sport',
             minWidth: 150,
             filter: 'agSetColumnFilter',
             enableRowGroup: true,
@@ -56,7 +51,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'gold',
-            headerName: 'Gold',
             width: 100,
             filter: 'agNumberColumnFilter',
             enableValue: true,
@@ -64,7 +58,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'silver',
-            headerName: 'Silver',
             width: 100,
             filter: 'agNumberColumnFilter',
             enableValue: true,
@@ -72,7 +65,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'bronze',
-            headerName: 'Bronze',
             width: 100,
             filter: 'agNumberColumnFilter',
             enableValue: true,
@@ -80,7 +72,6 @@ export const gridOptions: GridOptions<IOlympicData> = {
         },
         {
             field: 'total',
-            headerName: 'Total',
             width: 100,
             filter: 'agNumberColumnFilter',
             enableValue: true,

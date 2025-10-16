@@ -69,17 +69,12 @@ interface ProcessingState {
                         <i class="response">Response</i>
                         <p class="msg response">{{ chatMessage()?.response }}</p>
                     </div>
-
-                    <div id="currentState" *ngIf="currentState()">
-                        <h4>Current Grid State:</h4>
-                        <pre>{{ currentState() }}</pre>
-                    </div>
                 </div>
             </div>
 
             <ag-grid-angular
                 #gridRef
-                style="height: 100%; width: 100%"
+                style="flex: 1;"
                 [columnDefs]="columnDefs"
                 [rowData]="rowData()"
                 [gridOptions]="gridOptions"
