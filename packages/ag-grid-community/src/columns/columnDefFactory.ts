@@ -82,7 +82,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
 
         const colGroupDefs: { [id: string]: ColGroupDef } = {};
 
-        cols.forEach((col: AgColumn) => {
+        for (const col of cols) {
             const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
@@ -133,7 +133,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
             if (addToResult) {
                 res.push(childDef);
             }
-        });
+        }
 
         return res;
     }
