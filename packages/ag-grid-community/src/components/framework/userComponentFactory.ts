@@ -215,11 +215,6 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         // using javascript component
         let instance: TComp;
 
-        if (ComponentClass.supportsCurrentRowModel) {
-            if (!ComponentClass.supportsCurrentRowModel(this.gos)) {
-                return AgPromise.resolve();
-            }
-        }
         if (jsComponent) {
             instance = new ComponentClass();
         } else {
