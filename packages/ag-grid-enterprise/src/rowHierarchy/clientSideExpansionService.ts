@@ -134,17 +134,19 @@ export class ClientSideExpansionService
         return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
     }
 
-    // because the user can call rowNode.setExpanded() many times in one VM turn,
-    // we throttle the calls to ClientSideRowModel using animationFrameSvc. this means for 100
-    // row nodes getting expanded, we only update the CSRM once, and then we fire all events after
-    // CSRM has updated.
-    //
-    // if we did not do this, then the user could call setExpanded on 100+ rows, causing the grid
-    // to re-render 100+ times, which would be a performance lag.
-    //
-    // we use animationFrameService
-    // rather than debounce() so this will get done if anyone flushes the animationFrameService
-    // (eg user calls api.ensureRowVisible(), which in turn flushes ).
+    /**
+     * because the user can call rowNode.setExpanded() many times in one VM turn,
+     * we throttle the calls to ClientSideRowModel using animationFrameSvc. this means for 100
+     * row nodes getting expanded, we only update the CSRM once, and then we fire all events after
+     * CSRM has updated.
+     *
+     * if we did not do this, then the user could call setExpanded on 100+ rows, causing the grid
+     * to re-render 100+ times, which would be a performance lag.
+     *
+     * we use animationFrameService
+     * rather than debounce() so this will get done if anyone flushes the animationFrameService
+     * (eg user calls api.ensureRowVisible(), which in turn flushes ).
+     */
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void {
         (this.events ??= []).push(event);
 
