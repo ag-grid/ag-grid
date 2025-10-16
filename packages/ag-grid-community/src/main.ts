@@ -78,7 +78,7 @@ export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 export { BeanStub } from './context/beanStub';
 export { Bean, NamedBean } from './context/bean';
 export type { Context } from './context/context';
-export { BeanName, SingletonBean, BeanCollection } from './context/context';
+export { BeanName, SingletonBean, BeanCollection, StatusPanelComponentName } from './context/context';
 
 // AG Stack (public)
 export { VisibleChangedEvent, RefPlaceholder, AgBaseComponent, _isComponent } from './agStack/interfaces/agComponent';
