@@ -158,8 +158,7 @@ export type CommunityModuleName =
     | 'UndoRedoEdit'
     | 'Validation'
     | 'ValueCache'
-    | 'CellSpan'
-    | 'Formula';
+    | 'CellSpan';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -193,7 +192,8 @@ export type EnterpriseModuleName =
     | 'Sparklines'
     | 'StatusBar'
     | 'TreeData'
-    | 'ViewportRowModel';
+    | 'ViewportRowModel'
+    | 'Formula';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
@@ -239,7 +239,6 @@ export type AgModuleName =
     | 'UndoRedoEditModule'
     | 'ValidationModule'
     | 'ValueCacheModule'
-    | 'FormulaModule'
     | 'CellSpanModule'
     // Enterprise
     | 'AdvancedFilterModule'
@@ -273,7 +272,8 @@ export type AgModuleName =
     | 'SparklinesModule'
     | 'StatusBarModule'
     | 'TreeDataModule'
-    | 'ViewportRowModelModule';
+    | 'ViewportRowModelModule'
+    | 'FormulaModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;
