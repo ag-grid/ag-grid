@@ -66,7 +66,7 @@ import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
-import { StructuredSchemaParams } from '../interfaces/structuredSchemaParams';
+import type { StructuredSchemaParams } from '../interfaces/structuredSchemaParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface DetailGridInfo {
