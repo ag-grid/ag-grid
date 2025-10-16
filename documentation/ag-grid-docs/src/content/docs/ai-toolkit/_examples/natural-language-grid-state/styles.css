@@ -262,10 +262,6 @@ body > #highlighter {
     gap: var(--row-gap);
 }
 
-.example-wrapper > div:last-of-type {
-    height: 100%;
-}
-
 .example-controls {
     display: flex;
     flex-direction: row;
