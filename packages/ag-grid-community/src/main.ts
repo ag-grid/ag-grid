@@ -670,6 +670,7 @@ export {
     AggregationStatusPanelParams,
     IProvidedStatusPanelParams,
     IStatusPanelValueFormatterParams,
+    IWithSupportedRowModels,
 } from './interfaces/iStatusPanel';
 
 // tool panel components

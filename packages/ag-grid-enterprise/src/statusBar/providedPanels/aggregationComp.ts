@@ -15,16 +15,14 @@ import {
     _formatNumberCommas,
     _getRowBelow,
     _getRowNode,
-    _isClientSideRowModel,
     _isRowBefore,
-    _isServerSideRowModel,
     _missing,
-    _warn,
 } from 'ag-grid-community';
+import type { IWithSupportedRowModels } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
-import { _getTotalRowCount } from './utils';
+import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
 function _formatNumberTwoDecimalPlacesAndCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
@@ -60,7 +58,7 @@ const AggregationCompElement: ElementParams = {
         },
     ],
 };
-export class AggregationComp extends Component implements IStatusPanelComp {
+export class AggregationComp extends Component implements IStatusPanelComp, IWithSupportedRowModels {
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
     private readonly countAggregationComp: AgNameValue = RefPlaceholder;
     private readonly minAggregationComp: AgNameValue = RefPlaceholder;
@@ -68,14 +66,14 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private readonly avgAggregationComp: AgNameValue = RefPlaceholder;
 
     private params!: AggregationStatusPanelParams;
+    public readonly supportedRowModels = new Set(['clientSide', 'serverSide'] as const);
 
     constructor() {
         super(AggregationCompElement, [AgNameValueSelector]);
     }
 
     public postConstruct(): void {
-        if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
-            _warn(221);
+        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [221])) {
             return;
         }
 
@@ -92,6 +90,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public init(params: AggregationStatusPanelParams) {
+        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [221])) {
+            return;
+        }
         this.refresh(params);
     }
 

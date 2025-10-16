@@ -3,17 +3,17 @@ import type {
     IStatusPanelComp,
     IStatusPanelParams,
     IStatusPanelValueFormatterParams,
+    IWithSupportedRowModels,
 } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
+import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
-import { _getTotalRowCount } from './utils';
+import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
-export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
+export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp, IWithSupportedRowModels {
+    supportedRowModels = new Set(['clientSide', 'serverSide'] as const);
     public postConstruct(): void {
-        const gos = this.gos;
-        if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
-            _warn(223);
+        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [223])) {
             return;
         }
 
@@ -42,6 +42,9 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [223])) {
+            return;
+        }
         this.refresh(params);
         this.onRowSelectionChanged();
     }

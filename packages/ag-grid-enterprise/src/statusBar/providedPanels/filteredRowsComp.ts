@@ -4,18 +4,19 @@ import type {
     IStatusPanelComp,
     IStatusPanelParams,
     IStatusPanelValueFormatterParams,
+    IWithSupportedRowModels,
 } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
+import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
-import { _getFilteredRowCount, _getTotalRowCount } from './utils';
+import { _getFilteredRowCount, _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
-export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
+export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp, IWithSupportedRowModels {
+    supportedRowModels = new Set(['clientSide'] as const);
     public postConstruct(): void {
         this.setLabel('filteredRows', 'Filtered');
 
-        if (!_isClientSideRowModel(this.gos)) {
-            _warn(222);
+        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [222])) {
             return;
         }
 
@@ -38,8 +39,7 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        if (!_isClientSideRowModel(this.gos)) {
-            _warn(222);
+        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [222])) {
             return;
         }
         this.refresh(params);

@@ -1,5 +1,6 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgGridCommon } from './iCommon';
+import type { RowModelType } from './iRowModel';
 
 export interface StatusPanelDef {
     statusPanel?: any;
@@ -51,3 +52,7 @@ export interface IStatusPanel<TData = any, TContext = any> {
 export interface IStatusPanelComp<TData = any, TContext = any>
     extends IStatusPanel<TData, TContext>,
         IComponent<IStatusPanelParams<TData, TContext>> {}
+
+export interface IWithSupportedRowModels {
+    supportedRowModels: Set<RowModelType>;
+}
