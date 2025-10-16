@@ -63,7 +63,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
 
         if (showingPivotResult) {
             cols.sort((a, b) => lastOrder!.indexOf(a) - lastOrder!.indexOf(b));
-        } else if (lastOrder) {
+        } else {
             cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
         }
 
