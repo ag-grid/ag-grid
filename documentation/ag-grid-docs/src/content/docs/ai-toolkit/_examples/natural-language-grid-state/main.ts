@@ -1,11 +1,11 @@
 import type { GridApi } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
 import { gridOptions } from './gridOptions';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 let gridApi: GridApi;
 
@@ -66,7 +66,6 @@ function processRequest(event?: Event) {
 function getCurrentState() {
     const state = gridApi.getState();
     const outputElement = document.getElementById('currentState') as HTMLDivElement;
-    // outputElement.innerHTML = `<h4>Current Grid State:</h4><pre>${JSON.stringify(state, null, 2)}</pre>`;
     outputElement.style.display = 'block';
 }
 

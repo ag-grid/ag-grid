@@ -19,7 +19,7 @@ const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, DateFilterKey];
 export const buildFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
     const { advancedFilter } = beans;
 
-    if (advancedFilter.isEnabled()) {
+    if (advancedFilter && advancedFilter.isEnabled()) {
         return buildAdvancedFilterFeatureSchema(beans);
     } else {
         return buildColumnFilterFeatureSchema(beans, params);
@@ -80,9 +80,11 @@ export const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: S
         }
     }
 
-    return s.object({
-        filterModel: s.object(filterSchemas),
-    });
+    return s
+        .object({
+            filterModel: s.object(filterSchemas),
+        })
+        .nullable();
 };
 
 export function buildColumnFilterSchema(

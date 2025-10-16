@@ -21,12 +21,12 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
         text: [],
     };
 
-    columns.forEach((col) => {
+    for (const col of columns) {
         const dataType = dataTypeSvc.getBaseDataType(col);
         if (dataType) {
             dataTypes[dataType].push(col.colId);
         }
-    });
+    }
 
     const columnFilterModels: JSONSchema[] = [];
 
@@ -51,12 +51,14 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: Bean
         anyOf: [...columnFilterModels, { $ref: '#/$defs/joinAdvancedFilterModel' }],
     };
 
-    return s.object(
-        {
-            advancedFilterModel: s.ref('advancedFilterModel'),
-        },
-        'Advanced filter configuration for the grid'
-    );
+    return s
+        .object(
+            {
+                advancedFilterModel: s.ref('advancedFilterModel'),
+            },
+            'Advanced filter configuration for the grid'
+        )
+        .nullable();
 };
 
 const buildBooleanFilterSchema = (colIds: string[]) => {

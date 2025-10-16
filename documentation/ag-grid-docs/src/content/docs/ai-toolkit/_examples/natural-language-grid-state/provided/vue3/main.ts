@@ -8,7 +8,7 @@ import { callChatGPT } from './chatgptApi';
 import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 const App = {
     setup() {

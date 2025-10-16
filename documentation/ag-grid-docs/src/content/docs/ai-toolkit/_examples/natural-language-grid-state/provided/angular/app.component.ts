@@ -4,15 +4,14 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@ang
 import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { GridApi } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
 import { IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
 
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+ModuleRegistry.registerModules([AllEnterpriseModule]);
 
 @Component({
     selector: 'my-app',

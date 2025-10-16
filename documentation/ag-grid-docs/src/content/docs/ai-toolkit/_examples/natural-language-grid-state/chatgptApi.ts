@@ -42,7 +42,7 @@ export async function callChatGPT(userRequest: string, currentState: any, gridAp
     };
 
     const systemPrompt = `
-You are an assistant for a table displaying Olympic medal results. You help users modify grid configuration to fit there needs.
+You are an assistant for a table displaying Olympic medal results. You help users modify grid configuration to fit their needs.
 
 The schema provided can be used to manipulate multiple features of the table to help the user with their query.
 

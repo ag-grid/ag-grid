@@ -43,7 +43,7 @@ For example, if you only want to allow users to manipulate column visibility and
 const schema = gridApi.getStructuredSchema({ exclude: ['columnVisibility', 'sorting'] });
 ```
 
-Since `setState` will by default overwrite all properties of the grid state, you should make sure to use the secondary parameter in setGridState which allows you you to specify features to ignore in the change. You can even ask you LLM to include a list of features it hasn't changed, and pass that list directly to `setState`. Or you may wish to merge the current state with the new state before passing it to `setState`. The example above asks the LLM to provide a set of features which should be ignored by `setState` so it doesn't overwrite other settings.
+Since `setState` will by default overwrite all properties of the grid state, you should make sure to use the secondary parameter in setGridState which allows you you to specify features to ignore in the change. You can even ask your LLM to include a list of features it hasn't changed, and pass that list directly to `setState`. Alternatively you may wish to merge the current state with the new state before passing it to `setState`. The example above asks the LLM to provide a set of features which should be ignored by `setState` so it doesn't overwrite other settings.
 
 ### Options
 
