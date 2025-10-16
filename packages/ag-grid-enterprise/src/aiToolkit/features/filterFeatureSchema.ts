@@ -40,8 +40,6 @@ export const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: S
         return;
     }
 
-    const useSetFilters = gos.isModuleRegistered('SetFilter') && !gos.get('suppressSetFilterByDefault');
-
     const filterSchemas: Record<string, SchemaBuilder> = {};
     const enableFilterHandlers = gos.get('enableFilterHandlers');
 
@@ -49,7 +47,7 @@ export const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: S
         const columnParams = params?.columns ? params.columns[column.getColId()] : undefined;
 
         const colDef = column.getColDef();
-        const defaultFilter = useSetFilters ? SetFilterKey : colFilter!.getDefaultFilter(column);
+        const defaultFilter = colFilter!.getDefaultFilter(column);
         const includeSetValues = columnParams?.includeSetValues ?? false;
 
         const filter = buildColumnFilterSchema(
@@ -93,14 +91,18 @@ export function buildColumnFilterSchema(
     defaultFilter: string,
     getKeys?: (isMulti?: boolean, index?: number) => (string | null)[]
 ) {
-    let filterKey: string;
+    let filterKey: string | undefined = undefined;
 
     if (typeof filter === 'string') {
         filterKey = filter as string;
     } else if (typeof filter === 'object' && typeof filter.component === 'string') {
         filterKey = filter.component as string;
-    } else {
+    } else if (filter === true || (typeof filter === 'object' && filter.component === true)) {
         filterKey = defaultFilter;
+    }
+
+    if (!filterKey) {
+        return null;
     }
 
     if (SimpleFilterKeys.includes(filterKey)) {
