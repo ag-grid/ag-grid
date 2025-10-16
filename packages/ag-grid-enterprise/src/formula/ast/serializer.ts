@@ -2,8 +2,7 @@ import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
 import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
-import type { FormulaNode, FormulaOperation } from './utils';
-import type { Cell, CellRef } from './utils';
+import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 
 // shared, symbol-only
 

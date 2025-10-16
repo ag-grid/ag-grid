@@ -5,7 +5,9 @@ import { FormulaError } from '../../ast/utils';
 export const CONCAT = ({ values }: FormulaFunctionParams): string => {
     let out = '';
     for (const v of values) {
-        if (v == null) continue;
+        if (v == null) {
+            continue;
+        }
         switch (typeof v) {
             case 'string': {
                 out += v;

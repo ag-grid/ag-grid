@@ -245,7 +245,9 @@ class RangeValuesIterator implements Iterator<unknown> {
     ) {}
 
     private initColsOnce() {
-        if (this.cols) return;
+        if (this.cols) {
+            return;
+        }
 
         this.cols = this.beans.colModel.getCols() ?? [];
 
@@ -337,7 +339,9 @@ function getColRangeIndices(beans: BeanCollection, c1: AgColumn, c2: AgColumn): 
             startColIndex = i;
         }
 
-        if (endColIndex !== null && startColIndex !== null) break;
+        if (endColIndex !== null && startColIndex !== null) {
+            break;
+        }
     }
 
     if (startColIndex === null || endColIndex === null) {
@@ -367,7 +371,9 @@ function* rangeAddrs(
 
     for (let rowIndex = rowStartIndex; rowIndex <= rowEndIndex; rowIndex++) {
         const rowNode = beans.rowModel?.getRow(rowIndex);
-        if (!rowNode) continue;
+        if (!rowNode) {
+            continue;
+        }
         for (let colIndex = colIndexMin; colIndex <= colIndexMax; colIndex++) {
             yield { row: rowNode, column: allColumns[colIndex] };
         }

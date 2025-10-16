@@ -349,7 +349,9 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
             // reduce until '('
             while (true) {
                 const top = ops[ops.length - 1];
-                if (!top || top.kind === 'parenthesis') break;
+                if (!top || top.kind === 'parenthesis') {
+                    break;
+                }
                 if (top.kind === 'op') {
                     applyTop();
                 } else {
