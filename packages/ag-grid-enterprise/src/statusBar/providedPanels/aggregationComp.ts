@@ -65,17 +65,17 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     private readonly avgAggregationComp: AgNameValue = RefPlaceholder;
 
     private params!: AggregationStatusPanelParams;
-    public readonly supportedRowModels = new Set(['clientSide', 'serverSide'] as const);
+    static supportsCurrentRowModel = supportsCurrentRowModel.bind(
+        this,
+        new Set(['clientSide', 'serverSide'] as const),
+        [221]
+    );
 
     constructor() {
         super(AggregationCompElement, [AgNameValueSelector]);
     }
 
     public postConstruct(): void {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [221])) {
-            return;
-        }
-
         this.avgAggregationComp.setLabel('avg', 'Average');
         this.countAggregationComp.setLabel('count', 'Count');
         this.minAggregationComp.setLabel('min', 'Min');
@@ -89,9 +89,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public init(params: AggregationStatusPanelParams) {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [221])) {
-            return;
-        }
         this.refresh(params);
     }
 

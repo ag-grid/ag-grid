@@ -10,14 +10,12 @@ import { _formatNumberCommas } from 'ag-grid-community';
 import { AgNameValue } from './agNameValue';
 import { _getFilteredRowCount, _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
+const filteredRowsSupportsArgs = [new Set(['clientSide'] as const), [222]];
 export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
-    supportedRowModels = new Set(['clientSide'] as const);
+    static supportsCurrentRowModel = supportsCurrentRowModel.bind(this, new Set(['clientSide'] as const), [222]);
+
     public postConstruct(): void {
         this.setLabel('filteredRows', 'Filtered');
-
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [222])) {
-            return;
-        }
 
         this.addCss('ag-status-panel');
         this.addCss('ag-status-panel-filtered-row-count');
@@ -38,9 +36,6 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [222])) {
-            return;
-        }
         this.refresh(params);
         this.onDataChanged();
     }

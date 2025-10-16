@@ -10,12 +10,13 @@ import { AgNameValue } from './agNameValue';
 import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
 export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
-    supportedRowModels = new Set(['clientSide', 'serverSide'] as const);
-    public postConstruct(): void {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [223])) {
-            return;
-        }
+    static supportsCurrentRowModel = supportsCurrentRowModel.bind(
+        this,
+        new Set(['clientSide', 'serverSide'] as const),
+        [223]
+    );
 
+    public postConstruct(): void {
         this.setLabel('selectedRows', 'Selected');
 
         this.addCss('ag-status-panel');
@@ -41,9 +42,6 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [223])) {
-            return;
-        }
         this.refresh(params);
         this.onRowSelectionChanged();
     }

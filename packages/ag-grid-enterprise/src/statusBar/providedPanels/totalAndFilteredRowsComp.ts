@@ -11,12 +11,9 @@ import { AgNameValue } from './agNameValue';
 import { _getFilteredRowCount, _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
 export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
-    supportedRowModels = new Set(['clientSide'] as const);
-    public postConstruct(): void {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [224])) {
-            return;
-        }
+    static supportsCurrentRowModel = supportsCurrentRowModel.bind(this, new Set(['clientSide'] as const), [224]);
 
+    public postConstruct(): void {
         this.setLabel('totalAndFilteredRows', 'Rows');
 
         this.addCss('ag-status-panel');
@@ -37,10 +34,6 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [224])) {
-            return;
-        }
-
         this.refresh(params);
         this.onDataChanged();
     }

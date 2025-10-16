@@ -10,13 +10,10 @@ import { AgNameValue } from './agNameValue';
 import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
 export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
-    supportedRowModels = new Set(['clientSide'] as const);
+    static supportsCurrentRowModel = supportsCurrentRowModel.bind(this, new Set(['clientSide'] as const), [225]);
+
     public postConstruct(): void {
         this.setLabel('totalRows', 'Total Rows');
-
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [225])) {
-            return;
-        }
 
         this.addCss('ag-status-panel');
         this.addCss('ag-status-panel-total-row-count');
@@ -32,10 +29,6 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
-        if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [225])) {
-            return;
-        }
-
         this.refresh(params);
         this.onDataChanged();
     }
