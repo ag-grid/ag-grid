@@ -1,10 +1,10 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
 
+import { CellSelectionModule } from '../rangeSelection/rangeSelectionModule';
+import { RowNumbersModule } from '../rowNumbers/rowNumbersModule';
 import { VERSION } from '../version';
 import { formulaStylesCSS } from './formula-styles.css-GENERATED';
 import { FormulaService } from './formulaService';
-import { CellSelectionModule } from '../rangeSelection/rangeSelectionModule';
-import { RowNumbersModule } from '../rowNumbers/rowNumbersModule';
 
 /**
  * @feature FormulaModule
