@@ -1,46 +1,42 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { GridApi } from 'ag-grid-community';
-import { AllCommunityModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import { callChatGPT } from './chatgptApi';
 import { type IOlympicData, gridOptions } from './gridOptions';
 import './styles.css';
+import { useFetchJson } from './useFetchJson';
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
+interface ChatMessage {
+    prompt: string;
+    response: string;
+}
+
+interface ProcessingState {
+    isProcessing: boolean;
+    status: 'idle' | 'processing' | 'success' | 'error';
+    message: string;
+}
+
 const GridExample = () => {
-    const gridRef = useRef<HTMLDivElement>(null);
-    const gridApiRef = useRef<GridApi<IOlympicData> | null>(null);
+    const gridRef = useRef<AgGridReact>(null);
+    const { data: rowData, loading } = useFetchJson<IOlympicData>(
+        'https://www.ag-grid.com/example-assets/olympic-winners.json'
+    );
 
     const [naturalLanguageInput, setNaturalLanguageInput] = useState('');
-    const [aiResponse, setAiResponse] = useState('');
-    const [processingStatus, setProcessingStatus] = useState('');
+    const [chatMessage, setChatMessage] = useState<ChatMessage | null>(null);
     const [currentState, setCurrentState] = useState('');
-    const [isProcessing, setIsProcessing] = useState(false);
-
-    useEffect(() => {
-        if (gridRef.current && !gridApiRef.current) {
-            gridApiRef.current = createGrid(gridRef.current, gridOptions);
-
-            fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-                .then((response) => response.json())
-                .then((data: IOlympicData[]) => {
-                    if (gridApiRef.current) {
-                        gridApiRef.current.setGridOption('rowData', data);
-                    }
-                });
-        }
-
-        return () => {
-            if (gridApiRef.current) {
-                gridApiRef.current.destroy();
-                gridApiRef.current = null;
-            }
-        };
-    }, []);
+    const [processingState, setProcessingState] = useState<ProcessingState>({
+        isProcessing: false,
+        status: 'idle',
+        message: '',
+    });
 
     const processRequest = useCallback(
         async (event?: React.FormEvent) => {
@@ -49,57 +45,65 @@ const GridExample = () => {
             const userRequest = naturalLanguageInput.trim();
 
             if (!userRequest) {
-                setAiResponse('<p style="color: red;">Please enter a request</p>');
+                setProcessingState({
+                    isProcessing: false,
+                    status: 'error',
+                    message: 'Please enter a request',
+                });
                 return;
             }
 
-            if (!gridApiRef.current) {
-                setAiResponse('<p style="color: red;">Grid not initialized</p>');
+            if (!gridRef.current?.api) {
+                setProcessingState({
+                    isProcessing: false,
+                    status: 'error',
+                    message: 'Grid not initialized',
+                });
                 return;
             }
 
-            setIsProcessing(true);
-            setProcessingStatus('<code class="process">Processing request with ChatGPT <b>⧖</b></code>');
-            setAiResponse('');
+            setProcessingState({
+                isProcessing: true,
+                status: 'processing',
+                message: 'Processing request with ChatGPT',
+            });
+            setChatMessage(null);
 
-            const currentGridState = gridApiRef.current.getState();
+            const currentGridState = gridRef.current.api.getState();
 
             try {
-                const response = await callChatGPT(userRequest, currentGridState, gridApiRef.current);
+                const response = await callChatGPT(userRequest, currentGridState, gridRef.current.api);
 
                 if (Object.keys(response.gridState).length > 0) {
-                    gridApiRef.current.setState(response.gridState, response.propertiesToIgnore);
+                    gridRef.current.api.setState(response.gridState, response.propertiesToIgnore);
                 }
 
-                setProcessingStatus('<code class="success">Request processed successfully! <b>✓</b></code>');
-                setAiResponse(`
-                <i class="prompt">Prompt</i>
-                <p class="msg prompt">${userRequest}</p>
-                <i class="response">Response</i>
-                <p class="msg response">${response.explanation}</p>
-            `);
+                setProcessingState({
+                    isProcessing: false,
+                    status: 'success',
+                    message: 'Request processed successfully!',
+                });
+
+                setChatMessage({
+                    prompt: userRequest,
+                    response: response.explanation,
+                });
 
                 setNaturalLanguageInput('');
             } catch (error) {
-                setProcessingStatus('<code class="error">Error processing request <b>✗</b></code>');
-                setAiResponse(`<p>Error: ${error instanceof Error ? error.message : String(error)}</p>`);
-            } finally {
-                setIsProcessing(false);
+                setProcessingState({
+                    isProcessing: false,
+                    status: 'error',
+                    message: `Error: ${error instanceof Error ? error.message : String(error)}`,
+                });
             }
         },
         [naturalLanguageInput]
     );
 
-    const getCurrentState = useCallback(() => {
-        if (gridApiRef.current) {
-            const state = gridApiRef.current.getState();
-            setCurrentState(`<h4>Current Grid State:</h4><pre>${JSON.stringify(state, null, 2)}</pre>`);
-        }
-    }, []);
-
     const resetGrid = useCallback(() => {
-        if (gridApiRef.current) {
-            gridApiRef.current.setState({
+        if (gridRef.current?.api) {
+            gridRef.current.api.setState({
                 columnVisibility: { hiddenColIds: [] },
                 columnPinning: { leftColIds: [], rightColIds: [] },
                 sort: { sortModel: [] },
@@ -108,11 +112,19 @@ const GridExample = () => {
                 pagination: { page: 0, pageSize: 20 },
             });
 
-            setAiResponse('');
-            setProcessingStatus('');
+            setChatMessage(null);
+            setProcessingState({
+                isProcessing: false,
+                status: 'idle',
+                message: '',
+            });
             setCurrentState('');
         }
     }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="example-wrapper">
@@ -123,26 +135,61 @@ const GridExample = () => {
                             type="text"
                             value={naturalLanguageInput}
                             onChange={(e) => setNaturalLanguageInput(e.target.value)}
-                            disabled={isProcessing}
+                            disabled={processingState.isProcessing}
                             placeholder="Your prompt e.g. 'hide age column'"
                         />
-                        <button type="submit" disabled={isProcessing}>
+                        <button type="submit" disabled={processingState.isProcessing}>
                             →
                         </button>
                     </form>
-                    <div dangerouslySetInnerHTML={{ __html: processingStatus }} />
+
+                    {processingState.message && (
+                        <div id="processingStatus">
+                            <code
+                                className={`
+                                    ${processingState.status === 'processing' ? 'process' : ''}
+                                    ${processingState.status === 'success' ? 'success' : ''}
+                                    ${processingState.status === 'error' ? 'error' : ''}
+                                `.trim()}
+                            >
+                                {processingState.message}
+                                {processingState.status === 'processing' && <b> ⧖</b>}
+                                {processingState.status === 'success' && <b> ✓</b>}
+                                {processingState.status === 'error' && <b> ✗</b>}
+                            </code>
+                        </div>
+                    )}
+
                     <div>
                         <button onClick={resetGrid}>Reset Grid</button>
                     </div>
                 </div>
 
                 <div className="response-container">
-                    {aiResponse && <div dangerouslySetInnerHTML={{ __html: aiResponse }} />}
-                    {currentState && <div dangerouslySetInnerHTML={{ __html: currentState }} />}
+                    {chatMessage && (
+                        <div id="aiResponse">
+                            <i className="prompt">Prompt</i>
+                            <p className="msg prompt">{chatMessage.prompt}</p>
+                            <i className="response">Response</i>
+                            <p className="msg response">{chatMessage.response}</p>
+                        </div>
+                    )}
+
+                    {currentState && (
+                        <div id="currentState">
+                            <h4>Current Grid State:</h4>
+                            <pre>{currentState}</pre>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div ref={gridRef} style={{ height: '100%', width: '100%' }} />
+            <AgGridReact
+                ref={gridRef}
+                columnDefs={gridOptions.columnDefs}
+                rowData={rowData}
+                gridOptions={gridOptions}
+            />
         </div>
     );
 };

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
@@ -13,6 +13,17 @@ import './styles.css';
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);
 
+interface ChatMessage {
+    prompt: string;
+    response: string;
+}
+
+interface ProcessingState {
+    isProcessing: boolean;
+    status: 'idle' | 'processing' | 'success' | 'error';
+    message: string;
+}
+
 @Component({
     selector: 'my-app',
     standalone: true,
@@ -24,22 +35,45 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                     <form class="input-group" (ngSubmit)="processRequest($event)">
                         <input
                             type="text"
-                            [(ngModel)]="naturalLanguageInput"
-                            [disabled]="isProcessing"
+                            [ngModel]="naturalLanguageInput()"
+                            (ngModelChange)="naturalLanguageInput.set($event)"
+                            [disabled]="processingState().isProcessing"
                             placeholder="Your prompt e.g. hide age column"
                             name="naturalLanguageInput"
                         />
-                        <button type="submit" [disabled]="isProcessing">→</button>
+                        <button type="submit" [disabled]="processingState().isProcessing">→</button>
                     </form>
-                    <div id="processingStatus" [innerHTML]="processingStatus"></div>
+
+                    <div id="processingStatus" *ngIf="processingState().message">
+                        <code
+                            [class.process]="processingState().status === 'processing'"
+                            [class.success]="processingState().status === 'success'"
+                            [class.error]="processingState().status === 'error'"
+                        >
+                            {{ processingState().message }}
+                            <b *ngIf="processingState().status === 'processing'">⧖</b>
+                            <b *ngIf="processingState().status === 'success'">✓</b>
+                            <b *ngIf="processingState().status === 'error'">✗</b>
+                        </code>
+                    </div>
+
                     <div>
                         <button (click)="resetGrid()">Reset Grid</button>
                     </div>
                 </div>
 
                 <div class="response-container">
-                    <div id="aiResponse" *ngIf="aiResponse" [innerHTML]="aiResponse"></div>
-                    <div id="currentState" *ngIf="currentState" [innerHTML]="currentState"></div>
+                    <div id="aiResponse" *ngIf="chatMessage()">
+                        <i class="prompt">Prompt</i>
+                        <p class="msg prompt">{{ chatMessage()?.prompt }}</p>
+                        <i class="response">Response</i>
+                        <p class="msg response">{{ chatMessage()?.response }}</p>
+                    </div>
+
+                    <div id="currentState" *ngIf="currentState()">
+                        <h4>Current Grid State:</h4>
+                        <pre>{{ currentState() }}</pre>
+                    </div>
                 </div>
             </div>
 
@@ -47,7 +81,7 @@ ModuleRegistry.registerModules([AllEnterpriseModule]);
                 #gridRef
                 style="height: 100%; width: 100%"
                 [columnDefs]="columnDefs"
-                [rowData]="rowData"
+                [rowData]="rowData()"
                 [gridOptions]="gridOptions"
             />
         </div>
@@ -57,25 +91,25 @@ export class AppComponent implements OnInit, OnDestroy {
     @ViewChild('gridRef') gridRef!: AgGridAngular;
 
     columnDefs = gridOptions.columnDefs;
-    rowData: IOlympicData[] = [];
+    rowData = signal<IOlympicData[]>([]);
     gridOptions = gridOptions;
 
-    naturalLanguageInput = '';
-    aiResponse = '';
-    processingStatus = '';
-    currentState = '';
-    isProcessing = false;
+    naturalLanguageInput = signal('');
+    chatMessage = signal<ChatMessage | null>(null);
+    currentState = signal('');
+    processingState = signal<ProcessingState>({
+        isProcessing: false,
+        status: 'idle',
+        message: '',
+    });
 
-    constructor(
-        private http: HttpClient,
-        private cdr: ChangeDetectorRef
-    ) {}
+    constructor(private http: HttpClient) {}
 
     ngOnInit() {
         this.http
             .get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe((data) => {
-                this.rowData = data;
+                this.rowData.set(data);
             });
     }
 
@@ -86,21 +120,32 @@ export class AppComponent implements OnInit, OnDestroy {
     async processRequest(event?: Event) {
         event?.preventDefault();
 
-        const userRequest = this.naturalLanguageInput.trim();
+        const userRequest = this.naturalLanguageInput().trim();
 
         if (!userRequest) {
-            this.aiResponse = '<p style="color: red;">Please enter a request</p>';
+            this.processingState.set({
+                isProcessing: false,
+                status: 'error',
+                message: 'Please enter a request',
+            });
             return;
         }
 
         if (!this.gridRef?.api) {
-            this.aiResponse = '<p style="color: red;">Grid not initialized</p>';
+            this.processingState.set({
+                isProcessing: false,
+                status: 'error',
+                message: 'Grid not initialized',
+            });
             return;
         }
 
-        this.isProcessing = true;
-        this.processingStatus = '<code class="process">Processing request with ChatGPT <b>⧖</b></code>';
-        this.aiResponse = '';
+        this.processingState.set({
+            isProcessing: true,
+            status: 'processing',
+            message: 'Processing request with ChatGPT',
+        });
+        this.chatMessage.set(null);
 
         const currentGridState = this.gridRef.api.getState();
 
@@ -111,30 +156,31 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.gridRef.api.setState(response.gridState, response.propertiesToIgnore);
             }
 
-            this.processingStatus = '<code class="success">Request processed successfully! <b>✓</b></code>';
-            this.aiResponse = `
-                <i class="prompt">Prompt</i>
-                <p class="msg prompt">${userRequest}</p>
-                <i class="response">Response</i>
-                <p class="msg response">${response.explanation}</p>
-            `;
+            this.processingState.set({
+                isProcessing: false,
+                status: 'success',
+                message: 'Request processed successfully!',
+            });
 
-            this.naturalLanguageInput = '';
-            this.cdr.detectChanges(); // Force change detection after async operation
+            this.chatMessage.set({
+                prompt: userRequest,
+                response: response.explanation,
+            });
+
+            this.naturalLanguageInput.set('');
         } catch (error) {
-            this.processingStatus = '<code class="error">Error processing request <b>✗</b></code>';
-            this.aiResponse = `<p>Error: ${error instanceof Error ? error.message : String(error)}</p>`;
-            this.cdr.detectChanges(); // Force change detection on error too
-        } finally {
-            this.isProcessing = false;
-            this.cdr.detectChanges(); // Ensure final state is updated
+            this.processingState.set({
+                isProcessing: false,
+                status: 'error',
+                message: `Error: ${error instanceof Error ? error.message : String(error)}`,
+            });
         }
     }
 
     getCurrentState() {
         if (this.gridRef?.api) {
             const state = this.gridRef.api.getState();
-            this.currentState = `<h4>Current Grid State:</h4><pre>${JSON.stringify(state, null, 2)}</pre>`;
+            this.currentState.set(JSON.stringify(state, null, 2));
         }
     }
 
@@ -149,9 +195,13 @@ export class AppComponent implements OnInit, OnDestroy {
                 pagination: { page: 0, pageSize: 20 },
             });
 
-            this.aiResponse = '';
-            this.processingStatus = '';
-            this.currentState = '';
+            this.chatMessage.set(null);
+            this.processingState.set({
+                isProcessing: false,
+                status: 'idle',
+                message: '',
+            });
+            this.currentState.set('');
         }
     }
 }
