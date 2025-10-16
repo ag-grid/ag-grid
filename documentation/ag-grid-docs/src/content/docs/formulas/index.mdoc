@@ -152,53 +152,31 @@ Counting:
 Cell ranges are used to refer to a rectangular block of cells in the grid and are symbolised by the top-left cell reference followed by a colon (`:`) and the bottom-right cell reference.
 For example, the range `A1:B2` refers to the cells in column A and B, and rows 1 and 2 (i.e. A1, A2, B1, B2).
 
-### Provided Functions
-
-The following functions are available in formulas:
-| Function | Description |
-| -------- | ----------- |
-| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
-| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
-| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
-| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
-| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
-| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
-| `AVG(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
-| `PERCENT(arg1, arg2)` | Returns the percentage of the first argument relative to the second argument. |
-| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
-| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
-| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
-| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
-| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
-| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
-| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
-| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
-
 ## Custom Functions
 
 Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
 
-The following snippet demonstrates how to write a custom function `CUSTOM` which adds all of the provided values.
+The following snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
 
 It uses the params.values iterator to simplify navigating all of the values, including those provided in ranges by flattening
 them into one iterable.
 
 A user could then use this function in a formula such as:
-- `=CUSTOM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
-- `=CUSTOM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
+- `=CUSTOMSUM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
+- `=CUSTOMSUM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
 
-{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=450 /%}
+{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=200 /%}
+
+In this snippet below, observe how the function uses the `params.values` iterator for navigating the values provided to the function, 
+which provides all of the values from the ranges and constants in one simple iterable, meaning any input such as `=CUSTOMSUM(A1:B2, 2)` will
+ be streamed as `1 (A1) -> 1 (A2) -> 1 (B1) -> 1 (B2) -> 2` for the function to process.
+
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'a' },
-        { field: 'b' },
-        { field: 'c' },
-    ],
     enableFormulas: true,
     formulaFuncs: {
-        CUSTOM: {
+        CUSTOMSUM: {
             func: (params) => {
                 let total = 0;
                 for (const value of params.values) {
@@ -211,27 +189,60 @@ const gridOptions = {
 }
 ```
 
-In this snippet note how the function uses the `params.values` iterator for navigating the values provided to the function, and it
-traverses and aggregates the values using the iterator. This iterator flattens any ranges provided to the function and provides
-them in one easy stream, meaning any input such as `=ADD(A1:B2, 2)` will be be streamed as `1 (A1), 2 (A2), 3 (B1), 4 (B2), 2` for the function to process.
+### Handling Errors
 
-### Contextual Custom Functions
+It is the responsibility of the function implementation to throw errors when the arguments are not as expected.
 
-Some functions may need explicit context of the ranges they were provieded, for example COUNTIF needs to know a range, and a criteria to apply to that range.
-Flattening these using the `params.values` iterator would make the range values hard to distinguish from the criteria. In the event that context is required,
-the `params.args` array provides the raw arguments as provided to the function, without any flattening or transformation.
-Note that any ranges in this array are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
+The example below demonstrates a custom function `ERRORIFONE` which errors when any of the arguments provided are `1`.
 
-{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=450 /%}
+{% note %}
+When a function (or a referenced cell) throws an error, the cell displays `#ERROR!` and hovering over the cell displays the thrown error message.
 
-The following snippet demonstrates providing a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
+Errors will also propagate to any other cells that reference these cells in their formulas, as demonstrated in cell `D4`.
+{% /note %}
+
+{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=250 /%}
+
+
+The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'a' },
-        { field: 'b' },
-        { field: 'c' },
-    ],
+    enableFormulas: true,
+    formulaFuncs: {
+        ERRORIFONE: {
+            func: (params) => {
+                for (const value of params.values) {
+                    if (String(value) === '1') {
+                        throw 'Error, discovered a \'1\' in params';
+                    }
+                }
+                return 'SUCCESS, no \'1\' found.';
+            },
+        },
+    },
+}
+```
+
+When a function throws an error, the cell displays `#PARSE!` and hovering over the cell displays the thrown error message.
+
+
+### Complex Custom Functions
+
+Some custom functions may need explicit context about the ranges provided to them. For example, the COUNTIF function needs the first argument to be a range,
+and the second argument to be a criteria to apply to that range. If the `params.values` iterator was used, the range values would be flattened and hard to
+distinguish from the criteria.
+
+The grid provides an alternative iterator `params.args` which provides wrapped arguments as they were provided to the function, without any flattening or transformation.
+This means that ranges are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
+
+The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
+
+{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=200 /%}
+
+The following snippet demonstrates providing a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
     enableFormulas: true,
     formulaFuncs: {
         COUNTEQ: {
@@ -241,9 +252,17 @@ const gridOptions = {
                     throw 'COUNTEQ requires exactly 2 arguments';
                 }
                 const [range, criteria] = argsArr;
+                if (range.kind !== 'range') {
+                    throw 'First argument to COUNTEQ must be a range';
+                }
+                if (criteria.kind !== 'value' || typeof criteria.value === 'object') {
+                    throw 'Second argument to COUNTEQ must be a primitive value';
+                }
+                const isNumCriteria = typeof criteria.value === 'number';
                 let count = 0;
                 for (const value of range) {
-                    if (value === criteria) {
+                    const coercedValue = isNumCriteria ? Number(value) : value;
+                    if (coercedValue === criteria.value) {
                         count++;
                     }
                 }
@@ -253,56 +272,3 @@ const gridOptions = {
     },
 }
 ```
-
-### Handling Errors
-
-It is the responsibility of the function implementation to throw errors when the arguments are not as expected.
-
-In the example below, two cells have been configured to use the custom ADD function with incorrect params, one passes in a string and the other provides
-no parameters.
-
-It's important to note that these errors will propagate to any other cells that reference these cells in their formulas.
-
-{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=450 /%}
-
-{% note %}
-When a function throws an error, the cell displays `#PARSE!` and hovering over the cell displays the thrown error message.
-{% /note %}
-
-The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'a' },
-        { field: 'b' },
-        { field: 'c' },
-    ],
-    enableFormulas: true,
-    formulaFuncs: {
-        ADD: {
-            func: (iterator) => {
-                let total = 0;
-                let count = 0;
-                for (const value of iterator) {
-                    if (typeof value !== 'number') {    
-                        throw 'ADD only supports numbers';
-                    }
-                    count++;
-                    total += value;
-                }
-                if (count === 0) {
-                    throw 'ADD requires at least one argument';
-                }
-                return total;
-            },
-        },
-    },
-}
-```
-
-When a function throws an error, the cell displays `#PARSE!` and hovering over the cell displays the thrown error message.
-
-## Hidden Columns
-
-When hiding columns, the column letters are not updated, to ensure formulas continue to work as expected.
-This also occurs when columns are hidden due to column group expand state.

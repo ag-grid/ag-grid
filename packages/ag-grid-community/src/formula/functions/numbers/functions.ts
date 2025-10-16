@@ -1,11 +1,11 @@
 import { FormulaError } from '../../ast/utils';
 import type { FormulaFunctionParams } from '../types';
-import { criteriaToPredicate, isRangeParam, isValueParam, take, takeBetween } from '../utils';
+import { criteriaToPredicate, isRangeParam, isValueParam, iterableWithoutBlanks, take, takeBetween } from '../utils';
 import { coerceFiniteNumber, dateFromDays, isDateValue } from './utils';
 
 export const MULTIPLY = ({ values }: FormulaFunctionParams): number => {
     let acc = 1;
-    for (const v of values) {
+    for (const v of iterableWithoutBlanks(values)) {
         const n = coerceFiniteNumber('MULTIPLY', v);
         if (n == null) {
             continue;
@@ -21,7 +21,7 @@ export const MULTIPLY = ({ values }: FormulaFunctionParams): number => {
 };
 
 export const DIVIDE = ({ values }: FormulaFunctionParams): number => {
-    const [a, b] = take(values, 'DIVIDE', 2);
+    const [a, b] = take(iterableWithoutBlanks(values), 'DIVIDE', 2);
     const na = coerceFiniteNumber('DIV', a);
     const nb = coerceFiniteNumber('DIV', b);
     if (na == null || nb == null) {
@@ -37,7 +37,7 @@ export const SUM = ({ values }: FormulaFunctionParams): number | Date => {
     let hasDates = false;
     let acc = 0;
     let hasValue = false;
-    for (const v of values) {
+    for (const v of iterableWithoutBlanks(values)) {
         hasDates ||= isDateValue(v);
 
         const n = coerceFiniteNumber('SUM', v);
@@ -55,7 +55,7 @@ export const SUM = ({ values }: FormulaFunctionParams): number | Date => {
 };
 
 export const MINUS = ({ values }: FormulaFunctionParams): number | Date => {
-    const [a, b] = take(values, 'MINUS', 2);
+    const [a, b] = take(iterableWithoutBlanks(values), 'MINUS', 2);
     const na = coerceFiniteNumber('MINUS', a);
     const nb = coerceFiniteNumber('MINUS', b);
     if (na == null || nb == null) {
@@ -96,7 +96,7 @@ export const AVERAGE = ({ values }: FormulaFunctionParams): number | Date => {
     let sum = 0;
     let count = 0;
     let allDate = true;
-    for (const v of values) {
+    for (const v of iterableWithoutBlanks(values)) {
         const n = coerceFiniteNumber('AVG', v);
         if (n == null) {
             continue;
@@ -115,7 +115,7 @@ export const AVERAGE = ({ values }: FormulaFunctionParams): number | Date => {
 export const MEDIAN = ({ values }: FormulaFunctionParams): number | Date => {
     let allDates = true;
     const arr: number[] = [];
-    for (const v of values) {
+    for (const v of iterableWithoutBlanks(values)) {
         const n = coerceFiniteNumber('MEDIAN', v);
         if (n == null) {
             throw new FormulaError('MEDIAN: all values must be numbers', '#VALUE!');

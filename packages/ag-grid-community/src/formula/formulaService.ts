@@ -246,7 +246,7 @@ export class FormulaService extends BeanStub implements NamedBean {
         const customFuncs = this.gos.get('formulaFuncs');
         if (customFuncs) {
             Object.keys(customFuncs).forEach((name) => {
-                this.supportedOperations.set(name, customFuncs[name].func);
+                this.supportedOperations.set(name.toUpperCase(), customFuncs[name].func);
             });
         }
     }
@@ -352,7 +352,7 @@ export class FormulaService extends BeanStub implements NamedBean {
 
     /** Get a registered function by name (used by the evaluator). */
     public getFunction(name: string) {
-        return this.supportedOperations.get(name);
+        return this.supportedOperations.get(name.toUpperCase());
     }
 
     /** Ensure a CellFormula exists for (row,col) if it's a formula cell; returns null for non-formula. */

@@ -266,7 +266,7 @@ export function serializeFormula(beans: BeanCollection, root: FormulaNode, useRe
             return needsParensForUnaryMinus(unaryMinusInner) ? `-(${s})` : `-${s}`;
         }
 
-        const op = node.operation;
+        const op = node.operation.toUpperCase();
 
         // unary +-% (prefix or postfix)
         if (node.operands.length === 1) {

@@ -23,40 +23,22 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<any>;
 
 const rowData = [
-    {
-        rid: '1',
-        A: 1,
-        B: 2,
-        C: 3,
-        D: '=COUNTEQ(A1:C8,3)',
-    },
-    { rid: '2', A: 2, B: 4, C: 6 },
-    { rid: '3', A: 3, B: 6, C: 9 },
-    { rid: '4', A: 4, B: 8, C: 12 },
-    { rid: '5', A: 5, B: 10, C: 15 },
-    { rid: '6', A: 6, B: 12, C: 18 },
-    { rid: '7', A: 7, B: 14, C: 21 },
-    { rid: '8', A: 8, B: 16, C: 24 },
+    { rid: '1', A: 1, B: 2 },
+    { rid: '2', A: 2, B: 2 },
+    { rid: '3', A: 1, B: 2, C: '="Result of \'=COUNTEQ(A1:B3,2)\' is "&COUNTEQ(A1:B3,2)' },
 ];
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'A', colId: '0' },
-        { field: 'B', colId: '1' },
-        { field: 'C', colId: '2' },
-        { field: 'D', colId: '3' },
-        { field: 'E', colId: '4' },
-        { field: 'F', colId: '5' },
-        { field: 'G', colId: '6' },
-        { field: 'H', colId: '7' },
-        { field: 'I', colId: '8' },
+        { field: 'A', colId: '0', width: 150, },
+        { field: 'B', colId: '1', width: 150, },
+        { field: 'C', colId: '2', flex: 1 },
     ],
     getRowId: (params) => String(params.data.rid),
     enableFormulas: true,
     defaultColDef: {
         headerName: '',
         editable: true,
-        width: 150,
     },
     rowData,
     formulaFuncs: {
@@ -73,9 +55,11 @@ const gridOptions: GridOptions<any> = {
                 if (criteria.kind !== 'value' || typeof criteria.value === 'object') {
                     throw 'Second argument to COUNTEQ must be a primitive value';
                 }
+                const isNumCriteria = typeof criteria.value === 'number';
                 let count = 0;
                 for (const value of range) {
-                    if (value === criteria.value) {
+                    const coercedValue = isNumCriteria ? Number(value) : value;
+                    if (coercedValue === criteria.value) {
                         count++;
                     }
                 }

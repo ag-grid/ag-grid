@@ -21,6 +21,18 @@ export function take<T>(values: Iterable<T>, name: string, n: number): T[] {
     return out;
 }
 
+export function iterableWithoutBlanks<T>(values: Iterable<T>): Iterable<T> {
+    return {
+        *[Symbol.iterator]() {
+            for (const v of values) {
+                if (v != null && v !== '') {
+                    yield v;
+                }
+            }
+        },
+    };
+}
+
 export function takeBetween<T>(values: Iterable<T>, name: string, min: number, max: number): T[] {
     const out: T[] = [];
     for (const v of values) {

@@ -530,6 +530,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const usingFormulas = this.beans.gos.get('enableFormulas');
         if (usingFormulas) {
+            const allNodes = this.rootNode?.allLeafChildren ?? [];
+            this.rootNode!.childrenAfterGroup = allNodes;
+            this.rootNode!.childrenAfterFilter = allNodes;
+            this.rootNode!.childrenAfterAggFilter = allNodes;
+            this.rootNode!.childrenAfterSort = allNodes;
+
+            // when using formulas, we skip to the map step directly
             // currently no additional steps between group and map that formulas support
             params.step = 'map';
         }
