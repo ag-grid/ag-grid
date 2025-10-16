@@ -70,13 +70,16 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(params: AutoSizeColumnParams): void {
-        const { eventSvc, visibleCols } = this.beans;
+        const { eventSvc, visibleCols, ctrlsSvc } = this.beans;
+
+        setWidthAnimation(ctrlsSvc, true);
 
         this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             const dispatch = (cols: Set<AgColumn>) =>
                 dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
 
             if (!params.scaleUpToFitGridWidth) {
+                setWidthAnimation(ctrlsSvc, false);
                 return dispatch(columnsAutoSized);
             }
 
@@ -102,6 +105,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 colKeys,
                 onlyScaleUp: true,
             });
+
+            setWidthAnimation(ctrlsSvc, false);
 
             dispatch(columnsAutoSized);
         });
@@ -595,4 +600,15 @@ function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): numb
     // because we change the width of the bodyViewport to hide the real browser scrollbar
     const bodyViewportWidth = _getInnerWidth(gridBodyCtrl.eGridBody);
     return bodyViewportWidth - scrollWidthToRemove;
+}
+
+const WIDTH_ANIMATION_CLASS = 'ag-animate-autosize';
+
+function setWidthAnimation(ctrlsSvc: BeanCollection['ctrlsSvc'], enable: boolean): void {
+    const classList = ctrlsSvc.getGridBodyCtrl().eGridBody.classList;
+    if (enable) {
+        classList.add(WIDTH_ANIMATION_CLASS);
+    } else {
+        classList.remove(WIDTH_ANIMATION_CLASS);
+    }
 }
