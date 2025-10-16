@@ -529,7 +529,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         autoSizeStrategy: {
             validate: ({ autoSizeStrategy }) => {
-                if (!autoSizeStrategy) return null;
+                if (!autoSizeStrategy) {
+                    return null;
+                }
 
                 const validModes: NonNullable<GridOptions['autoSizeStrategy']>['type'][] = [
                     'fitCellContents',

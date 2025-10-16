@@ -109,7 +109,9 @@ export class ChartDataPanel extends Component {
     }
 
     private canRefresh(oldChartType: ChartType | undefined, newChartType: ChartType): boolean {
-        if (oldChartType === undefined) return false;
+        if (oldChartType === undefined) {
+            return false;
+        }
         if (oldChartType === newChartType) {
             return true;
         }
@@ -125,7 +127,9 @@ export class ChartDataPanel extends Component {
         this.clearPanelComponents();
 
         const { chartType } = this;
-        if (!chartType) return;
+        if (!chartType) {
+            return;
+        }
 
         const isCategorySeriesSwitched = this.chartController.isCategorySeriesSwitched();
 
@@ -202,17 +206,23 @@ export class ChartDataPanel extends Component {
     }
 
     private getCategoryGroupTitle(isCategorySeriesSwitched: boolean): string {
-        if (isCategorySeriesSwitched) return this.chartTranslation.translate('seriesLabels');
+        if (isCategorySeriesSwitched) {
+            return this.chartTranslation.translate('seriesLabels');
+        }
         return this.chartTranslation.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories');
     }
 
     private getCategoryGroupMultipleSelect(chartType: ChartType, isCategorySeriesSwitched: boolean): boolean {
-        if (isCategorySeriesSwitched) return false;
+        if (isCategorySeriesSwitched) {
+            return false;
+        }
         return getMaxNumCategories(chartType) !== 1;
     }
 
     private getSeriesGroupTitle(isCategorySeriesSwitched: boolean): string {
-        if (isCategorySeriesSwitched) return this.chartTranslation.translate('categoryValues');
+        if (isCategorySeriesSwitched) {
+            return this.chartTranslation.translate('categoryValues');
+        }
         return this.chartTranslation.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
     }
 
@@ -221,7 +231,9 @@ export class ChartDataPanel extends Component {
     }
 
     private getSeriesGroupMaxSelection(chartType: ChartType, isCategorySeriesSwitched: boolean): number | undefined {
-        if (isCategorySeriesSwitched) return undefined;
+        if (isCategorySeriesSwitched) {
+            return undefined;
+        }
         return getMaxNumSeries(chartType);
     }
 

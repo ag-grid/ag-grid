@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-imports */
 // False positive lint error, ElementRef and co can't be type imports
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {

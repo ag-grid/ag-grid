@@ -268,17 +268,15 @@ export class GridOptionsService
 
             if (this.gridReadyFired) {
                 fireEvent(eventName, event);
-            } else {
-                if (eventName === 'gridReady') {
-                    fireEvent(eventName, event);
-                    this.gridReadyFired = true;
-                    for (const q of this.queueEvents) {
-                        fireEvent(q.eventName, q.event);
-                    }
-                    this.queueEvents = [];
-                } else {
-                    this.queueEvents.push({ eventName, event });
+            } else if (eventName === 'gridReady') {
+                fireEvent(eventName, event);
+                this.gridReadyFired = true;
+                for (const q of this.queueEvents) {
+                    fireEvent(q.eventName, q.event);
                 }
+                this.queueEvents = [];
+            } else {
+                this.queueEvents.push({ eventName, event });
             }
         };
     };

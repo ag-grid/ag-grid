@@ -13,8 +13,12 @@ const AG_CHART_TYPES = ['AgChartTheme', 'AgChartThemeOverrides'];
 
 function writeSortedLines(toWrite, result) {
     toWrite.sort((a, b) => {
-        if (a.order < b.order) return -1;
-        if (a.order > b.order) return 1;
+        if (a.order < b.order) {
+            return -1;
+        }
+        if (a.order > b.order) {
+            return 1;
+        }
         return 0;
     });
 
@@ -63,7 +67,9 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
     const typeKeysOrder = Object.keys(typeLookup);
 
     for (const property of _GET_ALL_GRID_OPTIONS()) {
-        if (skippableProperties.includes(property)) continue;
+        if (skippableProperties.includes(property)) {
+            continue;
+        }
 
         const typeName = typeLookup[property];
         const inputType = getSafeType(typeName);
@@ -85,7 +91,9 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
     let eventsToWrite = [];
     const missingEventTypes = [];
     for (const event of _PUBLIC_EVENTS) {
-        if (skippableEvents.includes(event)) continue;
+        if (skippableEvents.includes(event)) {
+            continue;
+        }
 
         const onEvent = _getCallbackForEvent(event);
         const eventType = eventTypeLookup[onEvent];

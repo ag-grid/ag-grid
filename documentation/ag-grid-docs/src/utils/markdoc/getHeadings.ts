@@ -140,7 +140,9 @@ function addTabsToHeadings({
     for (const tab of tabHeadings) {
         const tabHeadingIndex = headingsClone.findIndex(({ slug }) => slug === tab.heading.slug);
 
-        if (tabHeadingIndex === -1) continue;
+        if (tabHeadingIndex === -1) {
+            continue;
+        }
 
         const tabItemsHeading: MarkdownHeading[] = tab.tabItems.map(({ id, label }) => ({
             slug: getTabItemSlug(id),

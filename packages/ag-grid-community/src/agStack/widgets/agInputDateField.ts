@@ -108,7 +108,9 @@ export class AgInputDateField<
         this.includeTime = includeTime;
 
         super.setInputType(includeTime ? 'datetime-local' : 'date');
-        if (includeTime) this.setStep(1);
+        if (includeTime) {
+            this.setStep(1);
+        }
 
         return this;
     }

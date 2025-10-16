@@ -36,7 +36,9 @@ export const logErrorMessage = (message: string, error?: unknown) => {
 
 const loggedMessages = new Set<string>();
 export const logErrorMessageOnce = (message: string) => {
-    if (loggedMessages.has(message)) return;
+    if (loggedMessages.has(message)) {
+        return;
+    }
     loggedMessages.add(message);
     logErrorMessage(message);
 };
@@ -64,7 +66,9 @@ export const cssValueIsValid = (value: string, type: ParamType): boolean => rein
 
 export const reinterpretCSSValue = (value: string, type: ParamType): string | null => {
     value = value.trim();
-    if (value === '') return '';
+    if (value === '') {
+        return '';
+    }
     const reinterpretationElement = getReinterpretationElement();
     const cssProperty = cssPropertyForParamType[type];
     try {

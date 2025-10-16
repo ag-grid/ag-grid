@@ -189,11 +189,9 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                     mouseleave: () => mouseListener(false),
                 });
             }
-        } else {
-            if (eButtonsPanel) {
-                _removeFromParent(eButtonsPanel.getGui());
-                this.eButtons = this.destroyBean(eButtonsPanel);
-            }
+        } else if (eButtonsPanel) {
+            _removeFromParent(eButtonsPanel.getGui());
+            this.eButtons = this.destroyBean(eButtonsPanel);
         }
     }
 
@@ -494,27 +492,23 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 const newParentItem = parent!.conditions[indexInParent - 1] as JoinAdvancedFilterModel;
                 newParentItem.conditions.push(filterModel!);
             }
-        } else {
-            if (destinationLevel === level) {
-                if (destinationFilterModel!.filterType === 'join') {
-                    // destination is join. move to first child
-                    (destinationFilterModel as JoinAdvancedFilterModel).conditions.splice(0, 0, filterModel!);
-                } else {
-                    // switch positions
-                    const destinationIndex = destinationParent!.conditions.indexOf(destinationFilterModel!);
-                    destinationParent!.conditions.splice(destinationIndex + 1, 0, filterModel!);
-                }
+        } else if (destinationLevel === level) {
+            if (destinationFilterModel!.filterType === 'join') {
+                // destination is join. move to first child
+                (destinationFilterModel as JoinAdvancedFilterModel).conditions.splice(0, 0, filterModel!);
             } else {
-                if (indexInParent < parent!.conditions.length) {
-                    // keep in parent, but swap with next child
-                    parent!.conditions.splice(indexInParent + 1, 0, filterModel!);
-                } else {
-                    // need to move down a level. move after parent in its parent
-                    const parentItem = this.items.find((itemToCheck) => itemToCheck.filterModel === parent);
-                    const destinationIndex = parentItem!.parent!.conditions.indexOf(parentItem!.filterModel!) + 1;
-                    parentItem!.parent!.conditions.splice(destinationIndex, 0, filterModel!);
-                }
+                // switch positions
+                const destinationIndex = destinationParent!.conditions.indexOf(destinationFilterModel!);
+                destinationParent!.conditions.splice(destinationIndex + 1, 0, filterModel!);
             }
+        } else if (indexInParent < parent!.conditions.length) {
+            // keep in parent, but swap with next child
+            parent!.conditions.splice(indexInParent + 1, 0, filterModel!);
+        } else {
+            // need to move down a level. move after parent in its parent
+            const parentItem = this.items.find((itemToCheck) => itemToCheck.filterModel === parent);
+            const destinationIndex = parentItem!.parent!.conditions.indexOf(parentItem!.filterModel!) + 1;
+            parentItem!.parent!.conditions.splice(destinationIndex, 0, filterModel!);
         }
         this.refreshList(false);
         const newIndex = this.items.findIndex(

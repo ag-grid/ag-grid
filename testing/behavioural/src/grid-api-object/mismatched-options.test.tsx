@@ -4,8 +4,7 @@ import type { MockInstance } from 'vitest';
 import { beforeEach } from 'vitest';
 
 import type { GridOptions, Params } from 'ag-grid-community';
-import { RowDragModule } from 'ag-grid-community';
-import { ClientSideRowModelModule, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, RowDragModule, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 

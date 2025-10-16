@@ -239,21 +239,19 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                     // grouping if the null check didn't exist above.
                     include = index >= 0;
                 }
-            } else {
-                if (colIsNew) {
-                    // as no value or index is 'present' we use the default / initial when col is new
-                    if (initialValuePresent) {
-                        include = initialValue!;
-                    } else if (initialIndexPresent) {
-                        include = initialIndex != null && initialIndex >= 0;
-                    } else {
-                        include = false;
-                    }
+            } else if (colIsNew) {
+                // as no value or index is 'present' we use the default / initial when col is new
+                if (initialValuePresent) {
+                    include = initialValue!;
+                } else if (initialIndexPresent) {
+                    include = initialIndex != null && initialIndex >= 0;
                 } else {
-                    // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
-                    // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
-                    include = previousCols.indexOf(col) >= 0;
+                    include = false;
                 }
+            } else {
+                // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
+                // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
+                include = previousCols.indexOf(col) >= 0;
             }
 
             if (include) {

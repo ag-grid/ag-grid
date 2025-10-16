@@ -669,8 +669,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let lastAffectedLeafIndex = Math.min(targetPositionIdx, totalRows - 1);
         for (const row of leafs) {
             const sourceRowIndex = row.sourceRowIndex;
-            if (sourceRowIndex < firstAffectedLeafIdx) firstAffectedLeafIdx = sourceRowIndex;
-            if (sourceRowIndex > lastAffectedLeafIndex) lastAffectedLeafIndex = sourceRowIndex;
+            if (sourceRowIndex < firstAffectedLeafIdx) {
+                firstAffectedLeafIdx = sourceRowIndex;
+            }
+            if (sourceRowIndex > lastAffectedLeafIndex) {
+                lastAffectedLeafIndex = sourceRowIndex;
+            }
         }
         return [firstAffectedLeafIdx, targetPositionIdx, lastAffectedLeafIndex] as const;
     }

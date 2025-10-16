@@ -272,10 +272,14 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private applyChartOptions(chartOptions: AgChartOptions, options?: { silent?: boolean }): void {
-        if (Object.keys(chartOptions).length === 0) return;
+        if (Object.keys(chartOptions).length === 0) {
+            return;
+        }
         this.updateChart(chartOptions);
         const shouldRaiseEvent = !options?.silent;
-        if (shouldRaiseEvent) this.raiseChartOptionsChangedEvent();
+        if (shouldRaiseEvent) {
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public awaitChartOptionUpdate(func: () => void) {
@@ -310,10 +314,14 @@ export class ChartOptionsService extends BeanStub {
                 }
                 return true;
             });
-            if (!relevantAxes) continue;
+            if (!relevantAxes) {
+                continue;
+            }
 
             for (const axis of relevantAxes) {
-                if (!this.isValidAxisType(axis)) continue;
+                if (!this.isValidAxisType(axis)) {
+                    continue;
+                }
                 this.assignChartAxisThemeOverride(chartOptions, chartType, axis.type, null, expression, value);
             }
         }
@@ -333,7 +341,9 @@ export class ChartOptionsService extends BeanStub {
     ): T | undefined {
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis || !this.isValidAxisType(chartAxis)) return undefined;
+        if (!chartAxis || !this.isValidAxisType(chartAxis)) {
+            return undefined;
+        }
         const chartType = this.getChartType();
         const chartOptions = this.getChart().getOptions();
 
@@ -352,7 +362,9 @@ export class ChartOptionsService extends BeanStub {
     ): void {
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis || !this.isValidAxisType(chartAxis)) return;
+        if (!chartAxis || !this.isValidAxisType(chartAxis)) {
+            return;
+        }
         const chartType = this.getChartType();
 
         // combine the axis options into a single merged object
@@ -396,11 +408,15 @@ export class ChartOptionsService extends BeanStub {
         // get a snapshot of all existing axis options from the chart instance
         const existingChartOptions = this.getChart().getOptions();
         const axisOptions = 'axes' in existingChartOptions ? existingChartOptions.axes : undefined;
-        if (!existingChartOptions || !axisOptions) return;
+        if (!existingChartOptions || !axisOptions) {
+            return;
+        }
 
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis) return;
+        if (!chartAxis) {
+            return;
+        }
 
         // combine the axis options into a single merged object
         const chartOptions = this.createChartOptions();
@@ -493,7 +509,9 @@ export class ChartOptionsService extends BeanStub {
                     chartType,
                     ['axes', axisType, axisPosition, ...(expression ? [expression] : [])].join('.')
                 );
-                if (value === undefined) continue;
+                if (value === undefined) {
+                    continue;
+                }
                 return value;
             }
         } else {
@@ -572,7 +590,9 @@ export class ChartOptionsService extends BeanStub {
         // Retrieve the first matching value
         for (const seriesType of chartSeriesTypes) {
             const value = this.retrieveChartOptionsSeriesThemeOverride<T>(chartOptions, seriesType, expression);
-            if (value === undefined) continue;
+            if (value === undefined) {
+                continue;
+            }
             return value;
         }
 

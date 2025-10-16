@@ -21,7 +21,9 @@ export function createCategoryHierarchy<T extends object>(data: T[], categoryKey
     }
 
     function getCategoryLabel(value: unknown): string | null {
-        if (value == null) return null;
+        if (value == null) {
+            return null;
+        }
         return String(value);
     }
 }

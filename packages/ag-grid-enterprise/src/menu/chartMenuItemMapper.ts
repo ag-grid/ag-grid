@@ -72,7 +72,9 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
         const addItem = (item: T) => {
             itemLookup[item._key] = item;
             if (item.subMenu) {
-                for (const s of item.subMenu) addItem(s as T);
+                for (const s of item.subMenu) {
+                    addItem(s as T);
+                }
             }
         };
         addItem(menuItem);
@@ -95,7 +97,9 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
             const chartConfigGroup = configLookup[group];
 
             // Skip any context panels that are not enabled for the current chart type
-            if (chartConfigGroup === null) continue;
+            if (chartConfigGroup === null) {
+                continue;
+            }
 
             if (chartConfigGroup == undefined) {
                 _warn(173, { group });

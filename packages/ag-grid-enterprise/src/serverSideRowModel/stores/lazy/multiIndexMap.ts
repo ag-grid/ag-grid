@@ -43,7 +43,9 @@ export class MultiIndexMap<K, I extends keyof K> {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;
         while ((pointer = iterator.next())) {
-            if (pointer.done) break;
+            if (pointer.done) {
+                break;
+            }
             callback(pointer.value);
         }
     }
@@ -52,7 +54,9 @@ export class MultiIndexMap<K, I extends keyof K> {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;
         while ((pointer = iterator.next())) {
-            if (pointer.done) break;
+            if (pointer.done) {
+                break;
+            }
             if (callback(pointer.value)) {
                 return pointer.value;
             }
@@ -64,7 +68,9 @@ export class MultiIndexMap<K, I extends keyof K> {
         let pointer: IteratorResult<K, any>;
         const result: K[] = [];
         while ((pointer = iterator.next())) {
-            if (pointer.done) break;
+            if (pointer.done) {
+                break;
+            }
             if (predicate(pointer.value)) {
                 result.push(pointer.value);
             }

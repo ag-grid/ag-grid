@@ -399,7 +399,9 @@ export class LazyCache extends BeanStub {
                 nextNode = lazyNode;
             }
         });
-        if (!previousNode && !nextNode) return null;
+        if (!previousNode && !nextNode) {
+            return null;
+        }
         return { previousNode, nextNode };
     }
 
@@ -692,7 +694,9 @@ export class LazyCache extends BeanStub {
             let distEnd;
             // may not have an end node if the block came back small
             const lastLazyNode = this.nodeMap.getBy('index', [blockEnd - 1]);
-            if (lastLazyNode) distEnd = Math.abs(lastLazyNode.node.rowIndex! - otherDisplayIndex);
+            if (lastLazyNode) {
+                distEnd = Math.abs(lastLazyNode.node.rowIndex! - otherDisplayIndex);
+            }
             const farthest = distEnd == null || distStart < distEnd ? distStart : distEnd;
 
             blockDistanceToMiddle[blockStart] = farthest;
@@ -824,7 +828,9 @@ export class LazyCache extends BeanStub {
     }
 
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
-        if (!this.live) return;
+        if (!this.live) {
+            return;
+        }
 
         const info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
@@ -954,7 +960,9 @@ export class LazyCache extends BeanStub {
     }
 
     public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number) {
-        if (!this.live) return;
+        if (!this.live) {
+            return;
+        }
         const wasRefreshing = this.nodesToRefresh.size > 0;
 
         for (let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {

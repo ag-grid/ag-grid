@@ -142,8 +142,12 @@ function zigzag(options: { offset: number; length: number; pattern: ZigzagPatter
     // Ensure the first and last points are clamped to the start and end of the range
     const xMin = 0;
     const xMax = length;
-    if (points.length === 0 || points[0][0] !== xMin) points.unshift(getZigzagPoint(xMin, offset, pattern));
-    if (points[points.length - 1][0] !== xMax) points.push(getZigzagPoint(xMax, offset, pattern));
+    if (points.length === 0 || points[0][0] !== xMin) {
+        points.unshift(getZigzagPoint(xMin, offset, pattern));
+    }
+    if (points[points.length - 1][0] !== xMax) {
+        points.push(getZigzagPoint(xMax, offset, pattern));
+    }
 
     return points;
 

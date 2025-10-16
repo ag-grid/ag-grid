@@ -219,13 +219,19 @@ export class MiniChartsContainer extends Component {
                             return null; // skip enterprise charts if community
                         }
                         // Only show the chart if it is valid for the current chart configuration (pivot/range)
-                        if (isRangeChart && menuItem.range) return menuItem;
-                        if (isPivotChart && menuItem.pivot) return menuItem;
+                        if (isRangeChart && menuItem.range) {
+                            return menuItem;
+                        }
+                        if (isPivotChart && menuItem.pivot) {
+                            return menuItem;
+                        }
                         return null;
                     })
                     .filter((menuItem): menuItem is NonNullable<typeof menuItem> => menuItem != null);
 
-                if (menuItems.length === 0) return null; // don't render empty chart groups
+                if (menuItems.length === 0) {
+                    return null;
+                } // don't render empty chart groups
 
                 return {
                     label: this.chartTranslation.translate(group),

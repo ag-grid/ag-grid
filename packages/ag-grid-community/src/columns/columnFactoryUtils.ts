@@ -167,7 +167,9 @@ export function _recursivelyCreateColumns(
     existingGroups: AgProvidedColumnGroup[],
     source: ColumnEventType
 ): (AgColumn | AgProvidedColumnGroup)[] {
-    if (!defs) return [];
+    if (!defs) {
+        return [];
+    }
 
     const { colGroupSvc } = beans;
     const result = new Array(defs.length);
@@ -304,11 +306,15 @@ function findExistingColumn(
     newColDef: ColDef,
     existingColsCopy: AgColumn[] | null
 ): { idx: number; column: AgColumn } | undefined {
-    if (!existingColsCopy) return undefined;
+    if (!existingColsCopy) {
+        return undefined;
+    }
 
     for (let i = 0; i < existingColsCopy.length; i++) {
         const def = existingColsCopy[i].getUserProvidedColDef();
-        if (!def) continue;
+        if (!def) {
+            continue;
+        }
 
         const newHasId = newColDef.colId != null;
         if (newHasId) {

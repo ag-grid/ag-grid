@@ -1,8 +1,7 @@
-import { ServerSideRowModelModule } from 'ag-grid-enterprise';
-import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
+import { MasterDetailModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, ssrmExpandAndLoadAll } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
+import { GridRows, TestGridsManager, ssrmExpandAndLoadAll } from '../../test-utils';
 
 describe('ag-grid SSRM treeData with master detail', () => {
     const gridsManager = new TestGridsManager({

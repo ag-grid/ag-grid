@@ -77,12 +77,11 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ServerSideRowModelApiModule: 20.55,
     ServerSideRowModelModule: 160.53,
     SetFilterModule: 152.16,
-    SideBarModule: 35.18,
-    SparklinesModule: 22.08,
-    StatusBarModule: 28.78,
-    TreeDataModule: 85.05,
-    ViewportRowModelModule: 29.21,
-    FormulaModule: 98.36,
+    SideBarModule: 33.16,
+    SparklinesModule: 20.5,
+    StatusBarModule: 28,
+    TreeDataModule: 83.97,
+    ViewportRowModelModule: 28,
 };
 
 export interface ModuleTest {

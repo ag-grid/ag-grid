@@ -102,11 +102,9 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                         // If placement goes up, we're not in the correct order
                         rulePassed = false;
                     }
-                } else {
-                    if (placement < lastPlacement) {
-                        // If placement goes down, we're not in the correct order
-                        rulePassed = false;
-                    }
+                } else if (placement < lastPlacement) {
+                    // If placement goes down, we're not in the correct order
+                    rulePassed = false;
                 }
                 lastPlacement = placement;
             }

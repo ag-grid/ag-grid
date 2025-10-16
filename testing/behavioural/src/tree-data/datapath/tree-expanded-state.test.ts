@@ -43,7 +43,9 @@ describe('ag-grid tree expanded state', () => {
             getRowId: ({ data }) => data.id,
             getDataPath,
             onRowGroupOpened: ({ data }) => {
-                if (!data) return;
+                if (!data) {
+                    return;
+                }
                 const oldEntries = api.getGridOption('rowData') ?? [];
                 const yoo = `yoo-${++yooCounter}`;
                 const newEntries = [

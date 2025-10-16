@@ -4,19 +4,13 @@ import type {
     IStatusPanelParams,
     IStatusPanelValueFormatterParams,
 } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
+import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 import { _getTotalRowCount } from './utils';
 
 export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
     public postConstruct(): void {
-        const gos = this.gos;
-        if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
-            _warn(223);
-            return;
-        }
-
         this.setLabel('selectedRows', 'Selected');
 
         this.addCss('ag-status-panel');

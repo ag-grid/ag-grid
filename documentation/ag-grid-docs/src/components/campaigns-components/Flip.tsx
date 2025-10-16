@@ -33,7 +33,9 @@ const Flip: React.FC<FlipProps> = ({ value }) => {
 
     // update
     useEffect(() => {
-        if (tick.current) tick.current.value = value;
+        if (tick.current) {
+            tick.current.value = value;
+        }
     }, [value]);
 
     return (

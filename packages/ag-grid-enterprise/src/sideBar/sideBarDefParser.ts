@@ -88,7 +88,9 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
 
     from.forEach((it: ToolPanelDef | string) => {
         const parsed = parseOneComponent(it);
-        if (!parsed) return;
+        if (!parsed) {
+            return;
+        }
         result.push(parsed);
     });
 

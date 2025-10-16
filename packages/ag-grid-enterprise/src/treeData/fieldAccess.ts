@@ -14,7 +14,9 @@ export const fieldGetter = <T = any, R = unknown>(
         let i = 0;
         do {
             data = data?.[segments[i++]];
-            if (i === len) return data;
+            if (i === len) {
+                return data;
+            }
         } while (typeof data === 'object');
     };
 };

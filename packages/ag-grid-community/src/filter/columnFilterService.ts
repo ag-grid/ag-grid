@@ -985,11 +985,9 @@ export class ColumnFilterService
             const userFilterHandler = gos.get('filterHandlers')?.[providedFilterHandler];
             if (userFilterHandler != null) {
                 filterHandler = userFilterHandler;
-            } else {
-                if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
-                    filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
-                    handlerName = providedFilterHandler as FilterHandlerName;
-                }
+            } else if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
+                filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
+                handlerName = providedFilterHandler as FilterHandlerName;
             }
         } else {
             filterHandler = providedFilterHandler;

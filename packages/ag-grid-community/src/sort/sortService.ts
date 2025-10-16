@@ -336,20 +336,16 @@ export class SortService extends BeanStub implements NamedBean {
             if (sort === 'asc' || sort === 'desc') {
                 column.sort = sort;
             }
-        } else {
-            if (initialSort === 'asc' || initialSort === 'desc') {
-                column.sort = initialSort;
-            }
+        } else if (initialSort === 'asc' || initialSort === 'desc') {
+            column.sort = initialSort;
         }
 
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
                 column.sortIndex = sortIndex;
             }
-        } else {
-            if (initialSortIndex !== null) {
-                column.sortIndex = initialSortIndex;
-            }
+        } else if (initialSortIndex !== null) {
+            column.sortIndex = initialSortIndex;
         }
     }
 
