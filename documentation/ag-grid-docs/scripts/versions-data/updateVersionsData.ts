@@ -41,7 +41,9 @@ async function getWebsiteVersions() {
 }
 
 function getDaySuffix(day: number) {
-    if (day >= 11 && day <= 13) return 'th';
+    if (day >= 11 && day <= 13) {
+        return 'th';
+    }
     switch (day % 10) {
         case 1:
             return 'st';
@@ -157,13 +159,11 @@ async function updateVersionsData({ isVerbose }: { isVerbose: boolean }) {
         if (isVerbose) {
             logFinalReport({ versionsDataFile, allVersions, noDocsUpdated });
         }
-    } else {
-        if (isVerbose) {
-            console.log('No changes needed');
-        }
+    } else if (isVerbose) {
+        console.log('No changes needed');
     }
 }
 
 const isVerbose = process.argv.includes('--verbose');
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
+
 updateVersionsData({ isVerbose });

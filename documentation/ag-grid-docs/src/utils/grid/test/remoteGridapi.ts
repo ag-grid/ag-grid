@@ -1,8 +1,7 @@
 import type { Page } from 'playwright/test';
 import { test } from 'playwright/test';
 
-import type { AgPublicEventType, GridApi } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
+import type { AgPublicEventType, GridApi, GridOptions } from 'ag-grid-community';
 
 import type { TemplateEventKeys } from '../test-event-types';
 

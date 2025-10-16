@@ -9,7 +9,9 @@ export default function createAgHotModuleReload(): Plugin {
     return {
         name: 'ag-hmr',
         async configureServer(server: ViteDevServer) {
-            if (!getIsDev()) return;
+            if (!getIsDev()) {
+                return;
+            }
 
             const filesToWatch = [BUILD_QUEUE_EMPTY_FILE];
             let timeout: NodeJS.Timeout | undefined;
