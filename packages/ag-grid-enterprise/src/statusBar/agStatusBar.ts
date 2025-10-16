@@ -103,7 +103,11 @@ class AgStatusBar extends Component {
             return statusPanels;
         }
         return statusPanels.filter((panel) => {
-            const { rowModels, warnArgs } = AgStatusBarValidationMap[panel.statusPanel as StatusPanelComponentName];
+            const { rowModels, warnArgs } =
+                AgStatusBarValidationMap[panel.statusPanel as StatusPanelComponentName] ?? {};
+            if (!rowModels) {
+                return true;
+            }
             if (rowModels.has(gos.get('rowModelType'))) {
                 return true;
             }
