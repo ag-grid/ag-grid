@@ -374,9 +374,6 @@ export {
     DraggingChangedEvent,
 } from './interfaces/iRowNode';
 
-// formulas
-export { FormulaFunctionParams } from './formula/functions/types';
-
 // filter
 export {
     IFilterDef,
@@ -1256,6 +1253,9 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 export { _downloadFile } from './export/downloader';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './export/iGridSerializer';
 
+//formulas
+export { FormulaParam, RangeParam, ValueParam, FormulaFunctionParams, IFormulaService } from './interfaces/formulas';
+
 // modules
 export {
     AgModuleName,
@@ -1335,7 +1335,6 @@ export { RenderApiModule } from './rendering/renderModule';
 export { ColumnAutoSizeModule } from './columnAutosize/columnAutosizeModule';
 export { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 export { CellSpanModule } from './rendering/spanning/cellSpanModule';
-export { FormulaModule } from './formula/formulaModule';
 export { ValueCacheModule, CellApiModule } from './valueService/valueModule';
 export { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 export { ColumnHoverModule } from './columns/columnHover/columnHoverModule';

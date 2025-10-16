@@ -1,14 +1,17 @@
-import type { _ModuleWithoutApi } from '../interfaces/iModule';
+import type { _ModuleWithoutApi } from 'ag-grid-community';
+
+import { CellSelectionModule, RowNumbersModule } from '../main';
 import { VERSION } from '../version';
 import { formulaStylesCSS } from './formula-styles.css-GENERATED';
 import { FormulaService } from './formulaService';
 
 /**
- *
+ * @feature FormulaModule
  */
 export const FormulaModule: _ModuleWithoutApi = {
     moduleName: 'Formula',
     version: VERSION,
     beans: [FormulaService],
+    dependsOn: [CellSelectionModule, RowNumbersModule],
     css: [formulaStylesCSS],
 };

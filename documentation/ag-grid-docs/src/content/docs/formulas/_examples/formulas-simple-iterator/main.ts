@@ -1,22 +1,19 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    FormulaModule,
     ModuleRegistry,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { FormulaModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    FormulaModule,
     TextEditorModule,
     TooltipModule,
-    RowNumbersModule,
-    CellSelectionModule,
+    FormulaModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 

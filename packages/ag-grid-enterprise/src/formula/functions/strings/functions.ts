@@ -1,5 +1,6 @@
+import type { FormulaFunctionParams } from 'ag-grid-community';
+
 import { FormulaError } from '../../ast/utils';
-import type { FormulaFunctionParams } from '../types';
 
 export const CONCAT = ({ values }: FormulaFunctionParams): string => {
     let out = '';

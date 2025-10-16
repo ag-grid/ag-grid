@@ -116,7 +116,6 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type { FormulaFunctionParams } from '../formula/functions/types';
 import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
@@ -126,6 +125,7 @@ import type {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
+import type { FormulaFunctionParams } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';

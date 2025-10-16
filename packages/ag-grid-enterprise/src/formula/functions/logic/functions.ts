@@ -1,5 +1,6 @@
+import type { FormulaFunctionParams } from 'ag-grid-community';
+
 import { FormulaError } from '../../ast/utils';
-import type { FormulaFunctionParams } from '../types';
 import { take } from '../utils';
 
 export const EQUALS = ({ values }: FormulaFunctionParams): boolean => {

@@ -1,4 +1,5 @@
-import type { BeanCollection } from '../../context/context';
+import type { BeanCollection } from 'ag-grid-community';
+
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';

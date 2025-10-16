@@ -1,5 +1,6 @@
+import type { FormulaFunctionParams } from 'ag-grid-community';
+
 import { FormulaError } from '../../ast/utils';
-import type { FormulaFunctionParams } from '../types';
 import { criteriaToPredicate, isRangeParam, isValueParam, take } from '../utils';
 
 export const COUNT = ({ values }: FormulaFunctionParams): number => {

@@ -23,6 +23,7 @@ export { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolP
 export { MasterDetailModule } from './masterDetail/masterDetailModule';
 export { CellSelectionModule, RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
 export { ServerSideRowModelModule, ServerSideRowModelApiModule } from './serverSideRowModel/serverSideRowModelModule';
+export { FormulaModule } from './formula/formulaModule';
 export { SparklinesModule } from './sparkline/sparklinesModule';
 export { TreeDataModule } from './treeData/treeDataModule';
 export { AggregationModule } from './aggregation/aggregationModule';

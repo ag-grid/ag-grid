@@ -1,8 +1,13 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { RowNode } from '../entities/rowNode';
+import type {
+    AgColumn,
+    BeanCollection,
+    FormulaFunctionParams,
+    IFormulaService,
+    NamedBean,
+    RowNode,
+} from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
+
 import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
 import type { Cell, CellRef, FormulaNode } from './ast/utils';
@@ -107,7 +112,7 @@ interface FormulaFrame {
     ast: FormulaNode;
     unresolvedDepIterator: Generator<Addr>;
 }
-export class FormulaService extends BeanStub implements NamedBean {
+export class FormulaService extends BeanStub implements IFormulaService, NamedBean {
     public readonly beanName = 'formula' as const;
 
     /** Cache: row -> (column -> CellFormula) */
@@ -118,7 +123,7 @@ export class FormulaService extends BeanStub implements NamedBean {
 
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    private supportedOperations: Map<string, Function>;
+    private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
 
     private formulasEnabled = false;
 
@@ -315,7 +320,7 @@ export class FormulaService extends BeanStub implements NamedBean {
     /**
      * Is a value a formula string (starts with '=')
      **/
-    public isFormula(value: unknown): value is string {
+    public isFormula(value: unknown): value is `=${string}` {
         return this.formulasEnabled && typeof value === 'string' && value.startsWith('=');
     }
 

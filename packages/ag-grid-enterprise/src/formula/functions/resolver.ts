@@ -1,10 +1,8 @@
-import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
-import type { RowNode } from '../../entities/rowNode';
+import type { AgColumn, BeanCollection, FormulaParam, RangeParam, RowNode } from 'ag-grid-community';
+
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
 import type { CellFormula } from '../formulaService';
-import type { FormulaParam, RangeParam } from '../functions/types';
 
 /**
  * This file contains utils for resolving formula AST to values

@@ -38,7 +38,6 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
-import type { FormulaService } from '../formula/formulaService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
@@ -47,6 +46,7 @@ import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader'
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
+import type { IFormulaService } from '../interfaces/formulas';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -355,7 +355,7 @@ interface CoreBeanCollection
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
-    formula?: FormulaService;
+    formula?: IFormulaService;
 }
 
 export type BeanCollection = CoreBeanCollection & {

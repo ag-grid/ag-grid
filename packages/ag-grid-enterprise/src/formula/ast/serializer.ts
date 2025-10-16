@@ -1,6 +1,5 @@
-import type { ColumnModel } from '../../columns/columnModel';
-import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
+
 import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
 import type { FormulaNode, FormulaOperation } from './utils';

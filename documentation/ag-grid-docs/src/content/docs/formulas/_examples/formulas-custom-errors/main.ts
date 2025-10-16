@@ -1,22 +1,19 @@
-import type { FormulaFuncParams, GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
-    FormulaModule,
     ModuleRegistry,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { CellSelectionModule, RowNumbersModule } from 'ag-grid-enterprise';
+import { FormulaModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     FormulaModule,
     TextEditorModule,
     TooltipModule,
-    RowNumbersModule,
-    CellSelectionModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -46,7 +43,7 @@ const gridOptions: GridOptions<any> = {
     rowData,
     formulaFuncs: {
         ERRORIFONE: {
-            func: (params: FormulaFuncParams) => {
+            func: (params) => {
                 for (const value of params.values) {
                     if (String(value) === '1') {
                         throw "Error, discovered a '1' in params";
