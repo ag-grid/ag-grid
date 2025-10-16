@@ -1,6 +1,5 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgGridCommon } from './iCommon';
-import type { RowModelType } from './iRowModel';
 
 export interface StatusPanelDef {
     statusPanel?: any;
