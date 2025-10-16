@@ -1,7 +1,7 @@
-import { Bean } from '../context/bean';
-import { AgColumn } from '../entities/agColumn';
-import { RowNode } from '../entities/rowNode';
-import { IRowNode } from './iRowNode';
+import type { Bean } from '../context/bean';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
+import type { IRowNode } from './iRowNode';
 
 // Value argument
 export interface ValueParam {
