@@ -55,7 +55,7 @@ export const sonarjsConfig = [
             // Unicorn rules, as referenced from the SonarCloud documentation.
             // 'unicorn/prefer-number-properties': 1,
             // 'unicorn/prefer-modern-dom-apis': 1,
-            'unicorn/no-array-for-each': 1,
+            // 'unicorn/no-array-for-each': 1,
             'unicorn/prefer-export-from': 0,
             'unicorn/prefer-dom-node-remove': 1,
             'unicorn/prefer-math-trunc': 0,
@@ -85,6 +85,7 @@ export default [
                 },
             ],
             'import-x/consistent-type-specifier-style': 'error',
+            'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-unused-vars': [
                 'error',
@@ -94,6 +95,8 @@ export default [
                 },
             ],
             'no-undef': 'warn',
+            'no-lonely-if': 'error',
+            curly: 'error',
         },
     },
     {

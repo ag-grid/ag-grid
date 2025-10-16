@@ -163,7 +163,9 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public setNodesSelected({ nodes, newValue, clearSelection, source }: ISetNodesSelectedParams): number {
-        if (nodes.length === 0) return 0;
+        if (nodes.length === 0) {
+            return 0;
+        }
 
         const onlyThisNode = clearSelection && newValue;
         if (!_isMultiRowSelection(this.gos) || onlyThisNode) {

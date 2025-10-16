@@ -42,7 +42,9 @@ export const BordersEditor = withErrorBoundary(() => {
 });
 
 const borderEnabled = (paramName: string, border: unknown): boolean => {
-    if (!border) return false;
+    if (!border) {
+        return false;
+    }
     const css = paramValueToCss(paramName, border, gridThemeLogger);
     return !!(css && css !== 'none' && !css.includes('transparent'));
 };
@@ -54,8 +56,12 @@ type BorderProps = {
 
 const getSelectedBordersLabel = (selectedBorders: string[]) => {
     const [first, ...rest] = selectedBorders;
-    if (!first) return 'None';
-    if (!rest.length) return `${first} only`;
+    if (!first) {
+        return 'None';
+    }
+    if (!rest.length) {
+        return `${first} only`;
+    }
     return `${first} +${rest.length} more`;
 };
 

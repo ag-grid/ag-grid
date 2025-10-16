@@ -71,7 +71,9 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
 
         // if no new cells, and size is equal can assume no removals either.
         const sameCount = newRowCtrls.size === previousCtrlsSize;
-        if (!hasNewSpans && sameCount) return;
+        if (!hasNewSpans && sameCount) {
+            return;
+        }
 
         for (const oldCtrl of previousCtrls.values()) {
             oldCtrl.destroyFirstPass(true);

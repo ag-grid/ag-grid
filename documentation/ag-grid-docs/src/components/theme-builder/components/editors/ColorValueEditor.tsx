@@ -115,7 +115,9 @@ const coerceToValidValue = (input: string, preventTransparency: boolean) => {
     if (!color) {
         color = RGBAColor.reinterpretCss(input);
     }
-    if (!color) return input;
+    if (!color) {
+        return input;
+    }
     if (preventTransparency) {
         color.a = 1;
     }

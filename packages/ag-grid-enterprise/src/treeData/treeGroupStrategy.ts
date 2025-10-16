@@ -259,13 +259,17 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             if (childrenAfterGroup !== _EmptyArray) {
                 row.childrenAfterGroup = _EmptyArray;
                 const sibling = row.sibling;
-                if (sibling) sibling.childrenAfterGroup = _EmptyArray;
+                if (sibling) {
+                    sibling.childrenAfterGroup = _EmptyArray;
+                }
             }
         } else if (oldLen !== len || childrenAfterGroup === rowLeafs) {
             if (!childrenAfterGroup || childrenAfterGroup === _EmptyArray || childrenAfterGroup === rowLeafs) {
                 row.childrenAfterGroup = childrenAfterGroup = new Array(len);
                 const sibling = row.sibling;
-                if (sibling) sibling.childrenAfterGroup = childrenAfterGroup;
+                if (sibling) {
+                    sibling.childrenAfterGroup = childrenAfterGroup;
+                }
             } else {
                 childrenAfterGroup.length = len;
             }
@@ -390,7 +394,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private handleCycles(rootNode: RowNode<TData>) {
         const marked = new Set<RowNode<TData>>();
         const mark = (row: RowNode<TData>): boolean => {
-            if (marked.has(row)) return false;
+            if (marked.has(row)) {
+                return false;
+            }
             marked.add(row);
             for (const child of row.childrenAfterGroup!) {
                 mark(child);
@@ -663,7 +669,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const pathKeyLen = pathKey.length;
         while (scanPos < pathKeyLen) {
             const sepPos = pathKey.indexOf(PATH_KEY_SEPARATOR, scanPos);
-            if (sepPos === -1) break; // No more separators found
+            if (sepPos === -1) {
+                break;
+            } // No more separators found
             segments[segmentsLen++] = sepPos;
             scanPos = sepPos + PATH_KEY_SEPARATOR_LEN;
         }

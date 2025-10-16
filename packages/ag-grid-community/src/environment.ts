@@ -188,7 +188,9 @@ export class Environment
             return 'detached';
         }
         const newSize = sizeEl.offsetWidth;
-        if (newSize === NO_VALUE_SENTINEL) return 'no-styles';
+        if (newSize === NO_VALUE_SENTINEL) {
+            return 'no-styles';
+        }
         this.sizesMeasured = true;
         return newSize;
     }

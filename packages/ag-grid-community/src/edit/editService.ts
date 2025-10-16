@@ -120,13 +120,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (hasCellValidation || hasRowValidation) {
                 this.stopEditing(undefined, CANCEL_PARAMS);
-            } else {
-                if (this.isEditing()) {
-                    if (this.isBatchEditing()) {
-                        _destroyEditors(beans, this.model.getEditPositions());
-                    } else {
-                        this.stopEditing(undefined, COMMIT_PARAMS);
-                    }
+            } else if (this.isEditing()) {
+                if (this.isBatchEditing()) {
+                    _destroyEditors(beans, this.model.getEditPositions());
+                } else {
+                    this.stopEditing(undefined, COMMIT_PARAMS);
                 }
             }
 
@@ -610,11 +608,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 if (!rowNode.data && !gos.get('enableGroupEdit')) {
                     return false;
                 }
-            } else {
-                // grouping - allow editing of groups if the user has enableGroupEdit option enabled
-                if (!gos.get('enableGroupEdit')) {
-                    return false;
-                }
+            }
+            // grouping - allow editing of groups if the user has enableGroupEdit option enabled
+            else if (!gos.get('enableGroupEdit')) {
+                return false;
             }
         }
 

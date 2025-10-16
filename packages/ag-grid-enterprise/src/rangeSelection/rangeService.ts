@@ -463,7 +463,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public extendRangeColumnCountBy(cellRange: CellRange, delta: number): void {
         const { columns, startColumn } = cellRange;
 
-        if (delta === 0) return;
+        if (delta === 0) {
+            return;
+        }
 
         const allColumns = this.getColumnsFromModel(); // ordered visible columns
 
@@ -798,7 +800,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const rowToColumnMap: Map<string, string[]> = new Map();
         const len = this.cellRanges.length;
 
-        if (len <= 1) return true;
+        if (len <= 1) {
+            return true;
+        }
 
         for (const range of this.cellRanges) {
             this.forEachRowInRange(range, (row) => {

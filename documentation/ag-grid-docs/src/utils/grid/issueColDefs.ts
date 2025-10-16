@@ -12,7 +12,9 @@ export const IssueColDef = {
     comparator: (a, b) => {
         const valA = a == null ? 0 : getIssueNumber(a);
         const valB = b == null ? 0 : getIssueNumber(b);
-        if (valA === valB) return 0;
+        if (valA === valB) {
+            return 0;
+        }
         return valA > valB ? 1 : -1;
     },
     cellRendererSelector: (params) => {

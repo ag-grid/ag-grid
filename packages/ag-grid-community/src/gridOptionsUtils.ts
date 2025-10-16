@@ -507,7 +507,9 @@ export function _getSelectAll(gos: GridOptionsService, defaultValue = true): Sel
 
 export function _getCtrlASelectsRows(gos: GridOptionsService): boolean {
     const rowSelection = gos.get('rowSelection');
-    if (typeof rowSelection === 'string') return false;
+    if (typeof rowSelection === 'string') {
+        return false;
+    }
     return rowSelection?.mode === 'multiRow' ? rowSelection.ctrlASelectsRows ?? false : false;
 }
 

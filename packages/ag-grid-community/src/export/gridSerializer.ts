@@ -258,17 +258,16 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 this.replicateSortedOrder(selectedNodes);
                 // serialize each node
                 selectedNodes.forEach(processRow);
+            }
+            // here is everything else - including standard row model and selected. we don't use
+            // the selection model even when just using selected, so that the result is the order
+            // of the rows appearing on the screen.
+            else if (exportedRows === 'all') {
+                rowModel.forEachNode(processRow);
+            } else if (usingCsrm || usingSsrm) {
+                rowModel.forEachNodeAfterFilterAndSort(processRow, true);
             } else {
-                // here is everything else - including standard row model and selected. we don't use
-                // the selection model even when just using selected, so that the result is the order
-                // of the rows appearing on the screen.
-                if (exportedRows === 'all') {
-                    rowModel.forEachNode(processRow);
-                } else if (usingCsrm || usingSsrm) {
-                    rowModel.forEachNodeAfterFilterAndSort(processRow, true);
-                } else {
-                    rowModel.forEachNode(processRow);
-                }
+                rowModel.forEachNode(processRow);
             }
 
             return gridSerializingSession;

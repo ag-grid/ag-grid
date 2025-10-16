@@ -293,7 +293,9 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private registerWithCtrlsService(): void {
         // we don't register full width containers
-        if (this.options.fullWidth) return;
+        if (this.options.fullWidth) {
+            return;
+        }
         this.beans.ctrlsSvc.register(this.name as any, this);
     }
 

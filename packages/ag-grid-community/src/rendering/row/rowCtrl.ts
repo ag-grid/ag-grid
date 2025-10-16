@@ -624,11 +624,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             if (focusedSpan.firstNode !== this.rowNode || !focusedSpan.doesSpanContain(focusedCell)) {
                 return undefined;
             }
-        } else {
+        } else if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
             // if no span, and the focused cell is not in this row, don't create ctrl
-            if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
-                return undefined;
-            }
+            return undefined;
         }
 
         return this.getNewCellCtrl(focusedCell.column as AgColumn);

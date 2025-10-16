@@ -127,11 +127,10 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             if (notPinningLeft) {
                 result *= -1;
             }
-        } else {
-            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            if (pinningRight) {
-                result *= -1;
-            }
+        }
+        // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+        else if (pinningRight) {
+            result *= -1;
         }
 
         return result;
