@@ -41,12 +41,9 @@ function runVersionChecks(module: Module) {
         );
     }
 
-    if (module.validate) {
-        const result = module.validate();
-        if (!result.isValid) {
-            const errorResult = result;
-            _errorOnce(`${errorResult.message}`);
-        }
+    const result = module.validate?.();
+    if (result && !result.isValid) {
+        _errorOnce(`${result.message}`);
     }
 }
 
