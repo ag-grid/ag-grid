@@ -16,8 +16,10 @@ import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpris
 
 const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
     return (value: I | null | undefined): boolean | O => {
-        if (value == undefined) return true;
-        return validationFn(value as NonNullable<I>);
+        if (value == undefined) {
+            return true;
+        }
+        return validationFn(value);
     };
 };
 
@@ -62,7 +64,9 @@ function isLegacyChartType(value: string): value is ChartType {
 
 const validateChartType = validateIfDefined<UpdateChartParams['chartType'], Exclude<ChartType, 'doughnut'>>(
     (chartType) => {
-        if (isValidChartType(chartType)) return true;
+        if (isValidChartType(chartType)) {
+            return true;
+        }
         if (isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType);
             _warnOnce(`The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
@@ -147,7 +151,7 @@ const cellRangeValidations: (isEnterprise: boolean) => ValidationFunction<any>[]
 ];
 
 export function validateUpdateParams(params: UpdateChartParams, isEnterprise: boolean): boolean | UpdateChartParams {
-    const paramsToValidate = params as UpdateChartParams;
+    const paramsToValidate = params;
     switch (paramsToValidate.type) {
         case 'rangeChartUpdate':
             return validateUpdateRangeChartParams(params as UpdateRangeChartParams, isEnterprise);
@@ -240,7 +244,9 @@ function validateProperties<T extends object>(
         if (property in params) {
             const value = params[property];
             const validationResult = validationFn(value);
-            if (validationResult === true) continue;
+            if (validationResult === true) {
+                continue;
+            }
             if (validationResult === false) {
                 _warnOnce(warnMessage(value));
                 return false;
@@ -267,7 +273,9 @@ function validateProperties<T extends object>(
     }
 
     // If one or more 'fixed' values were encountered, return the updated property set
-    if (validatedProperties) return validatedProperties;
+    if (validatedProperties) {
+        return validatedProperties;
+    }
 
     return true;
 }

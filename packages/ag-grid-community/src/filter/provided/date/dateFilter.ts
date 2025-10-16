@@ -161,20 +161,16 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             if (value < minValidDate) {
                 return false;
             }
-        } else {
-            if (value.getUTCFullYear() < minValidYear) {
-                return false;
-            }
+        } else if (value.getUTCFullYear() < minValidYear) {
+            return false;
         }
 
         if (maxValidDate) {
             if (value > maxValidDate) {
                 return false;
             }
-        } else {
-            if (value.getUTCFullYear() > maxValidYear) {
-                return false;
-            }
+        } else if (value.getUTCFullYear() > maxValidYear) {
+            return false;
         }
 
         return true;

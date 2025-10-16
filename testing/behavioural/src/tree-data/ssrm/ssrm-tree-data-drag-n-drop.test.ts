@@ -1,6 +1,11 @@
+import type {
+    GridOptions,
+    RowDragCancelEvent,
+    RowDragEndEvent,
+    RowDragEvent,
+    RowDragMoveEvent,
+} from 'ag-grid-community';
 import { RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import type { RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, dragAndDropRow, ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils';

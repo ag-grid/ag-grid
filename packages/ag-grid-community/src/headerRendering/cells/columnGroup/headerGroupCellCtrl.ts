@@ -342,10 +342,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private readonly onSuppressColMoveChange = () => {
         if (!this.isAlive() || this.isSuppressMoving()) {
             this.removeDragSource();
-        } else {
-            if (!this.dragSource) {
-                this.setDragSource(this.eGui);
-            }
+        } else if (!this.dragSource) {
+            this.setDragSource(this.eGui);
         }
     };
 

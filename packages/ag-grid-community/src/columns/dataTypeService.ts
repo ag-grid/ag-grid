@@ -221,7 +221,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colDef.cellDataType = false;
             return undefined;
         }
-        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
+        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
             _warn(47, { cellDataType });
             return undefined;
@@ -548,7 +548,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     }
                     const valA = a == null ? '' : formatValue({ column, node: null, value: a });
                     const valB = b == null ? '' : formatValue({ column, node: null, value: b });
-                    if (valA === valB) return 0;
+                    if (valA === valB) {
+                        return 0;
+                    }
                     return valA > valB ? 1 : -1;
                 },
                 keyCreator: formatValue,

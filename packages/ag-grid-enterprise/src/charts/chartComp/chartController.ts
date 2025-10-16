@@ -82,9 +82,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public update(params: UpdateChartParams): boolean {
-        if (!this.validUpdateType(params)) return false;
+        if (!this.validUpdateType(params)) {
+            return false;
+        }
         const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise);
-        if (!validationResult) return false;
+        if (!validationResult) {
+            return false;
+        }
         const validParams = validationResult === true ? params : validationResult;
         this.applyValidatedChartParams(validParams);
         return true;
@@ -304,7 +308,9 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public switchCategorySeries(inverted: boolean): void {
-        if (!supportsInvertedCategorySeries(this.getChartType())) return;
+        if (!supportsInvertedCategorySeries(this.getChartType())) {
+            return;
+        }
         this.model.switchCategorySeries = inverted;
         this.raiseChartModelUpdateEvent();
     }
@@ -314,9 +320,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public setAggFunc(value: string | IAggFunc | undefined, silent?: boolean): void {
-        if (this.model.aggFunc === value) return;
+        if (this.model.aggFunc === value) {
+            return;
+        }
         this.model.aggFunc = value;
-        if (silent) return;
+        if (silent) {
+            return;
+        }
         this.model.updateData();
         this.raiseChartModelUpdateEvent();
     }
@@ -327,7 +337,9 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         const updateForMax = (columns: ColState[], maxNum: number) => {
             let numSelected = 0;
             for (const colState of columns) {
-                if (!colState.selected) continue;
+                if (!colState.selected) {
+                    continue;
+                }
                 if (numSelected >= maxNum) {
                     colState.selected = false;
                 } else {

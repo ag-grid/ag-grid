@@ -538,7 +538,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             const isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
             if (isRowGroupDisplayed) {
                 // if maintain group value type, get the value from any leaf node.
-                groupNode.groupData![col.getColId()] = valueSvc.getValue(groupColumn, groupInfo.leafNode);
+                groupNode.groupData[col.getColId()] = valueSvc.getValue(groupColumn, groupInfo.leafNode);
             }
         }
     }

@@ -206,7 +206,7 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
                         params,
                         operand1!,
                         !!params.includeBlanksInEquals,
-                        equals!
+                        equals
                     ),
                 numOperands: 1,
             },
@@ -219,7 +219,7 @@ export class ScalarFilterExpressionOperators<ConvertedTValue extends number | Da
                         params,
                         operand1!,
                         !!params.includeBlanksInEquals,
-                        (v, o) => !equals!(v, o)
+                        (v, o) => !equals(v, o)
                     ),
                 numOperands: 1,
             },

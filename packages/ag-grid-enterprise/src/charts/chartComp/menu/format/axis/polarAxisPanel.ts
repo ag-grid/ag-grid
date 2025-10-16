@@ -120,7 +120,9 @@ export class PolarAxisPanel extends Component {
 
     private initRadiusAxis() {
         const chartSeriesType = getSeriesType(this.options.chartController.getChartType());
-        if (!isRadial(chartSeriesType)) return;
+        if (!isRadial(chartSeriesType)) {
+            return;
+        }
 
         const items = [
             this.createSlider({

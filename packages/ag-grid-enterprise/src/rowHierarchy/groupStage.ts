@@ -160,7 +160,7 @@ const loadRealLeafs = (node: RowNode): RowNode[] | null => {
             }
             if (childLeafs) {
                 for (let j = 0, len = childLeafs.length; j < len; ++j) {
-                    leafs.push(childLeafs![j]);
+                    leafs.push(childLeafs[j]);
                 }
             }
         }

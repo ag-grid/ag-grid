@@ -731,7 +731,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!newValue) {
                 newValue = [];
             }
-            (newValue as TValue[]).push(value);
+            newValue.push(value);
         }
 
         if (Array.isArray(newValue)) {

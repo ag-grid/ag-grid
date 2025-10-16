@@ -151,11 +151,9 @@ export class FilterManager extends BeanStub implements NamedBean {
             if (this.colFilter?.disableFilters()) {
                 this.onFilterChanged({ source: 'advancedFilter' });
             }
-        } else {
-            if (this.advancedFilter?.isFilterPresent()) {
-                this.advancedFilter.setModel(null);
-                this.onFilterChanged({ source: 'advancedFilter' });
-            }
+        } else if (this.advancedFilter?.isFilterPresent()) {
+            this.advancedFilter.setModel(null);
+            this.onFilterChanged({ source: 'advancedFilter' });
         }
     }
 

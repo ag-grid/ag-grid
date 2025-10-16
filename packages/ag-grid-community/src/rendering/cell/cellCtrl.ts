@@ -169,7 +169,7 @@ export class CellCtrl extends BeanStub {
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
         if (cellSelectionEnabled) {
-            this.rangeFeature = rangeSvc!.createCellRangeFeature(beans, this);
+            this.rangeFeature = rangeSvc.createCellRangeFeature(beans, this);
         }
 
         if (isRowNumberCol(this.column)) {

@@ -20,7 +20,9 @@ export function processClassRules(
     const forEachSingleClass = (className: string, callback: (singleClass: string) => void) => {
         // in case className = 'my-class1 my-class2', we need to split into individual class names
         for (const singleClass of className.split(' ')) {
-            if (singleClass.trim() == '') continue;
+            if (singleClass.trim() == '') {
+                continue;
+            }
             callback(singleClass);
         }
     };
@@ -29,7 +31,7 @@ export function processClassRules(
         const classNames = Object.keys(classRules);
         for (let i = 0; i < classNames.length; i++) {
             const className = classNames[i];
-            const rule = classRules![className];
+            const rule = classRules[className];
 
             let resultOfRule: any;
 

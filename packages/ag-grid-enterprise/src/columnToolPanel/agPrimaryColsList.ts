@@ -504,7 +504,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const groupId = item.columnGroup!.getId();
+            const groupId = item.columnGroup.getId();
             if (groupIds.indexOf(groupId) >= 0) {
                 item.expanded = expand;
                 expandedGroupIds.push(groupId);
@@ -561,7 +561,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const column = item.column!;
+            const column = item.column;
             const colDef = column.getColDef();
 
             let checked: boolean;
@@ -657,7 +657,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.forEachItem((item) => {
             if (item.group && item.expanded) {
-                expandedGroupIds.push(item.columnGroup!.getId());
+                expandedGroupIds.push(item.columnGroup.getId());
             }
         });
 

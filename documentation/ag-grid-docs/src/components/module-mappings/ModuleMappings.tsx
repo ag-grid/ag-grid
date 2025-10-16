@@ -1,9 +1,7 @@
-import type { Framework } from '@ag-grid-types';
-import type { ModuleMappings as ModuleMappingsType } from '@ag-grid-types';
+import type { Framework, ModuleMappings as ModuleMappingsType } from '@ag-grid-types';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import { type FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry, RowSelectionModule } from 'ag-grid-community';
 import type {
     ColDef,
     GetRowIdParams,
@@ -12,6 +10,7 @@ import type {
     RowSelectionOptions,
     ValueGetterParams,
 } from 'ag-grid-community';
+import { AllCommunityModule, ClientSideRowModelModule, ModuleRegistry, RowSelectionModule } from 'ag-grid-community';
 import { ClipboardModule, ContextMenuModule, TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 

@@ -72,7 +72,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
                     beans,
                     fns: { [apiName]: fn },
                 } = this;
-                return fn ? fn(beans!, ...args) : this.apiNotFound(apiName);
+                return fn ? fn(beans, ...args) : this.apiNotFound(apiName);
             },
         };
     }

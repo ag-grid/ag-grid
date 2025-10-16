@@ -109,7 +109,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                     this.setLastVisible();
                 },
             });
-            childDestroyFuncs.push(() => pivotModeListener!());
+            childDestroyFuncs.push(() => pivotModeListener());
         }
 
         this.initialised = true;

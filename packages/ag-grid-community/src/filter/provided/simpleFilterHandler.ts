@@ -163,7 +163,7 @@ export abstract class SimpleFilterHandler<
             model.filterType !== filterType
         ) {
             // need to add filterType to model
-            conditions = conditions!.map((condition) => ({ ...condition, filterType }));
+            conditions = conditions.map((condition) => ({ ...condition, filterType }));
             needsUpdate = true;
         }
 

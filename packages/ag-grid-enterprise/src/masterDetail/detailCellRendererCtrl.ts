@@ -170,7 +170,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         // initialise selection and expandAll state
         api.addEventListener('firstDataRendered', () => {
-            if (api.isDestroyed() || masterGridApi.isDestroyed()) return;
+            if (api.isDestroyed() || masterGridApi.isDestroyed()) {
+                return;
+            }
 
             selectionSvc?.setDetailSelectionState(masterNode, params.detailGridOptions, api);
 

@@ -20,8 +20,12 @@ export const _injectGlobalCSS = (
     priority: number,
     nonce: string | undefined
 ) => {
-    if (IS_SSR) return;
-    if (FORCE_LEGACY_THEMES) return;
+    if (IS_SSR) {
+        return;
+    }
+    if (FORCE_LEGACY_THEMES) {
+        return;
+    }
 
     if (layer) {
         css = `@layer ${CSS.escape(layer)} { ${css} }`;
@@ -32,7 +36,9 @@ export const _injectGlobalCSS = (
         injections = [];
         injectionState.map.set(styleContainer, injections);
     }
-    if (injections.find((i) => i.css === css)) return;
+    if (injections.some((i) => i.css === css)) {
+        return;
+    }
 
     const el = document.createElement('style');
     if (nonce) {
@@ -44,7 +50,9 @@ export const _injectGlobalCSS = (
 
     let insertAfter: InjectedStyle | undefined;
     for (const injection of injections) {
-        if (injection.priority > priority) break;
+        if (injection.priority > priority) {
+            break;
+        }
         insertAfter = injection;
     }
     if (insertAfter) {

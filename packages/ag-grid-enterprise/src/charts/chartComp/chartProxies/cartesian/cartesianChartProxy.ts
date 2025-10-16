@@ -155,10 +155,10 @@ export abstract class CartesianChartProxy<
         };
 
         return series.map((s) => {
-            s.yKey = getYKey(s.yKey!);
+            s.yKey = getYKey(s.yKey);
             s.listeners = {
                 seriesNodeClick: (e: any) => {
-                    const value = e.datum![s.xKey!];
+                    const value = e.datum![s.xKey];
                     const multiSelection = e.event.metaKey || e.event.ctrlKey;
                     this.crossFilteringAddSelectedPoint(multiSelection, value);
                     this.crossFilterCallback(e);

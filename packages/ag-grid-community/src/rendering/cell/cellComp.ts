@@ -265,7 +265,7 @@ export class CellComp extends Component {
         const cellEditorPromise = compDetails.newAgStackInstance();
 
         const { params } = compDetails;
-        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
+        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c, params, popup, position));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example

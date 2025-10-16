@@ -572,14 +572,12 @@ export class SetFilter<V = string>
             } else {
                 isSelected = this.selectedKeys.has(item.key!);
             }
+        } else if (item === SET_FILTER_SELECT_ALL) {
+            isSelected = this.isSelectAllSelected();
+        } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
+            isSelected = this.isAddCurrentSelectionToFilterChecked();
         } else {
-            if (item === SET_FILTER_SELECT_ALL) {
-                isSelected = this.isSelectAllSelected();
-            } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
-                isSelected = this.isAddCurrentSelectionToFilterChecked();
-            } else {
-                isSelected = this.selectedKeys.has(item);
-            }
+            isSelected = this.selectedKeys.has(item);
         }
         return { isSelected, isExpanded };
     }

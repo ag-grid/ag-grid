@@ -133,7 +133,7 @@ export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: Ro
     node ??= rm?.getRowNode(rowId);
 
     if (rowPinned) {
-        node ??= prm?.getPinnedRowById(rowId, rowPinned!);
+        node ??= prm?.getPinnedRowById(rowId, rowPinned);
     } else {
         node ??= prm?.getPinnedRowById(rowId, 'top');
         node ??= prm?.getPinnedRowById(rowId, 'bottom');

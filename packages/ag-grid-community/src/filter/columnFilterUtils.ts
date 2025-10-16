@@ -144,7 +144,7 @@ export function getAndRefreshFilterUi(
     if (filterUi?.created) {
         filterUi.promise.then((filter) => {
             const model = getModel();
-            _refreshFilterUi(filter!, filterUi.filterParams, model, getState() ?? { model }, 'ui');
+            _refreshFilterUi(filter, filterUi.filterParams, model, getState() ?? { model }, 'ui');
         });
     }
 }

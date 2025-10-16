@@ -49,7 +49,9 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         const root = this.root;
 
         root.append(radiusAxisLine);
-        if (this.gridLines.length > 0) root.append(this.gridLines);
+        if (this.gridLines.length > 0) {
+            root.append(this.gridLines);
+        }
         super.postConstruct();
     }
 }

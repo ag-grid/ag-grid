@@ -34,14 +34,14 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
             if (seriesDefinition?.sizeField) {
                 const opts: AgBubbleSeriesOptions = {
                     type: 'bubble',
-                    xKey: seriesDefinition!.xField.colId,
-                    xName: seriesDefinition!.xField.displayName ?? undefined,
-                    yKey: seriesDefinition!.yField.colId,
-                    yName: seriesDefinition!.yField.displayName ?? undefined,
-                    title: `${seriesDefinition!.yField.displayName} vs ${seriesDefinition!.xField.displayName}`,
-                    sizeKey: seriesDefinition!.sizeField.colId,
-                    sizeName: seriesDefinition!.sizeField.displayName ?? '',
-                    labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
+                    xKey: seriesDefinition.xField.colId,
+                    xName: seriesDefinition.xField.displayName ?? undefined,
+                    yKey: seriesDefinition.yField.colId,
+                    yName: seriesDefinition.yField.displayName ?? undefined,
+                    title: `${seriesDefinition.yField.displayName} vs ${seriesDefinition.xField.displayName}`,
+                    sizeKey: seriesDefinition.sizeField.colId,
+                    sizeName: seriesDefinition.sizeField.displayName ?? '',
+                    labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition.yField.colId,
                     labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
                 };
                 return opts;
@@ -113,26 +113,26 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
 
             let alteredSizeKey = {};
             if (series.type === 'bubble') {
-                alteredSizeKey = { sizeKey: filteredOutKey(series.sizeKey!) };
+                alteredSizeKey = { sizeKey: filteredOutKey(series.sizeKey) };
             }
 
             return {
                 ...series,
                 ...alteredSizeKey,
-                yKey: filteredOutKey(yKey!),
-                xKey: filteredOutKey(xKey!),
+                yKey: filteredOutKey(yKey),
+                xKey: filteredOutKey(xKey),
                 showInLegend: false,
                 listeners: {
                     ...series.listeners,
                     seriesNodeClick: (e: any) => {
-                        const value = e.datum[filteredOutKey(xKey!)];
+                        const value = e.datum[filteredOutKey(xKey)];
 
                         // Need to remove the `-filtered-out` suffixes from the event so that
                         // upstream processing maps the event correctly onto grid column ids.
                         const filterableEvent = {
                             ...e,
                             xKey,
-                            datum: { ...e.datum, [xKey!]: value },
+                            datum: { ...e.datum, [xKey]: value },
                         };
                         this.crossFilterCallback(filterableEvent);
                     },

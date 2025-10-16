@@ -61,10 +61,18 @@ export class AgInputNumberField<
         eInput.step = 'any';
 
         const { precision, min, max, step } = this.config;
-        if (typeof precision === 'number') this.setPrecision(precision);
-        if (typeof min === 'number') this.setMin(min);
-        if (typeof max === 'number') this.setMax(max);
-        if (typeof step === 'number') this.setStep(step);
+        if (typeof precision === 'number') {
+            this.setPrecision(precision);
+        }
+        if (typeof min === 'number') {
+            this.setMin(min);
+        }
+        if (typeof max === 'number') {
+            this.setMax(max);
+        }
+        if (typeof step === 'number') {
+            this.setStep(step);
+        }
     }
 
     private onWheel(e: WheelEvent) {

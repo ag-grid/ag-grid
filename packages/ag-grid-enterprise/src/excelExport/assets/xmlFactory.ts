@@ -53,7 +53,7 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
 
         if (xmlElement.properties.rawMap) {
             for (const key of Object.keys(xmlElement.properties.rawMap)) {
-                props += returnAttributeIfPopulated(key, xmlElement.properties!.rawMap[key], booleanTransformer);
+                props += returnAttributeIfPopulated(key, xmlElement.properties.rawMap[key], booleanTransformer);
             }
         }
     }

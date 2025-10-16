@@ -36,10 +36,14 @@ export const AdvancedParamSelector = memoWithSameType(() => {
         },
         onHighlightedIndexChange: ({ highlightedIndex }) => {
             const wasKeyboardNavigation = Date.now() - lastArrowKeyPressTime.current < 100;
-            if (!wasKeyboardNavigation) return;
+            if (!wasKeyboardNavigation) {
+                return;
+            }
             const popup = refs.floating.current;
             const item = popup?.querySelector(`[data-param-index="${highlightedIndex}"]`);
-            if (!popup || !item) return;
+            if (!popup || !item) {
+                return;
+            }
             const popupRect = popup.getBoundingClientRect();
             const itemRect = item.getBoundingClientRect();
             if (itemRect.top < popupRect.top) {
@@ -274,7 +278,9 @@ const ParamDocs = styled('div')`
 
 const getParamsMatchingFilter = (filter: string) => {
     const pattern = filterPatternParts(filter, '.*', 'isd');
-    if (!pattern) return allParamModels();
+    if (!pattern) {
+        return allParamModels();
+    }
     return allParamModels().filter(
         (pm) => pattern.test(pm.label) || pattern.test(pm.docs) || pattern.test(pm.property)
     );
@@ -289,7 +295,9 @@ const filterPatternParts = (filter: string, separator: string, flags: string) =>
         .filter(Boolean)
         .map((word) => `\\b${word}\\w*`)
         .join(separator);
-    if (!patternString) return null;
+    if (!patternString) {
+        return null;
+    }
     return new RegExp(patternString, flags);
 };
 
@@ -299,7 +307,9 @@ type EmphasiseMatchesProps = {
 };
 
 const EmphasiseMatches = ({ matcher, text }: EmphasiseMatchesProps) => {
-    if (!matcher) return <>{text}</>;
+    if (!matcher) {
+        return <>{text}</>;
+    }
     const matches = [...text.matchAll(matcher)];
 
     const parts: ReactElement[] = [];

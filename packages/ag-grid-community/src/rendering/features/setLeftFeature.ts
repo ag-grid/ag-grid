@@ -69,7 +69,7 @@ export class SetLeftFeature extends BeanStub {
         const oldActualLeft = this.modifyLeftForPrintLayout(colOrGroup, colOrGroup.getOldLeft()!);
         const actualLeft = this.modifyLeftForPrintLayout(colOrGroup, colOrGroup.getLeft()!);
 
-        this.setLeft(oldActualLeft!);
+        this.setLeft(oldActualLeft);
 
         // we must keep track of the left we want to set to, as this would otherwise lead to a race
         // condition, if the user changed the left value many times in one VM turn, then we want to make

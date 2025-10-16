@@ -19,7 +19,9 @@ export function useScrollSpy({
     const location = useLocation();
 
     function handleScrollSpy(slug: string) {
-        if (menuRef.current == null) return;
+        if (menuRef.current == null) {
+            return;
+        }
         for (const navItem of menuRef.current.querySelectorAll('a')) {
             navItem.classList.toggle('active', navItem.getAttribute('href') === `#${slug}`);
         }

@@ -74,7 +74,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
         const versionCopy = this.headerCompVersion;
 
-        compDetails.newAgStackInstance()!.then((comp) => this.afterCompCreated(versionCopy, comp));
+        compDetails.newAgStackInstance().then((comp) => this.afterCompCreated(versionCopy, comp));
     }
 
     private afterCompCreated(version: number, headerComp: IHeaderComp): void {
@@ -88,6 +88,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.headerComp = headerComp;
         this.headerCompGui = headerComp.getGui();
         this.eHeaderCompWrapper.appendChild(this.headerCompGui);
-        this.ctrl.setDragSource(this.getGui()!);
+        this.ctrl.setDragSource(this.getGui());
     }
 }

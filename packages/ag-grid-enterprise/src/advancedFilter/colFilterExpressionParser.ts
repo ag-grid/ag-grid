@@ -326,14 +326,14 @@ export class ColFilterExpressionParser {
                         this.columnParser = new ColumnParser(this.params, i);
                         parser = this.columnParser;
                     } else if (!this.operatorParser) {
-                        this.operatorParser = new OperatorParser(this.params, i, this.columnParser!.baseCellDataType);
+                        this.operatorParser = new OperatorParser(this.params, i, this.columnParser.baseCellDataType);
                         parser = this.operatorParser;
                     } else {
                         this.operandParser = new OperandParser(
                             this.params,
                             i,
-                            this.columnParser!.baseCellDataType,
-                            this.columnParser!.column
+                            this.columnParser.baseCellDataType,
+                            this.columnParser.column
                         );
                         parser = this.operandParser;
                     }
@@ -359,7 +359,7 @@ export class ColFilterExpressionParser {
             this.isComplete() &&
             this.columnParser!.valid &&
             this.operatorParser!.valid &&
-            (!this.operandParser || this.operandParser!.valid)
+            (!this.operandParser || this.operandParser.valid)
         );
     }
 
@@ -426,7 +426,7 @@ export class ColFilterExpressionParser {
                 this.params.expression,
                 this.startPosition,
                 this.columnParser?.getColId()
-                    ? this.columnParser!.endPosition!
+                    ? this.columnParser.endPosition!
                     : findEndPosition(expression, position).endPosition,
                 this.params.advFilterExpSvc.getColumnValue(updateEntry),
                 true
@@ -450,7 +450,7 @@ export class ColFilterExpressionParser {
                 let endPosition: number;
                 let empty = false;
                 if (this.operatorParser?.getOperatorKey()) {
-                    endPosition = this.operatorParser!.endPosition!;
+                    endPosition = this.operatorParser.endPosition!;
                 } else {
                     const { endPosition: calculatedEndPosition, isEmpty } = findEndPosition(
                         expression,

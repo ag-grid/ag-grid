@@ -8,13 +8,15 @@ export const fieldGetter = <T = any, R = unknown>(
     }
     const len = segments.length;
     if (len < 2) {
-        return (data: any) => data?.[path!];
+        return (data: any) => data?.[path];
     }
     return (data: any) => {
         let i = 0;
         do {
             data = data?.[segments[i++]];
-            if (i === len) return data;
+            if (i === len) {
+                return data;
+            }
         } while (typeof data === 'object');
     };
 };
