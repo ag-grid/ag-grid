@@ -164,17 +164,16 @@ export class ClientSideExpansionService
     }
 
     private dispatchExpandedEvents() {
+        const { eventSvc, rowRenderer } = this.beans;
         const eventsToDispatch = this.events;
         if (!eventsToDispatch) {
             return;
         }
         this.events = null;
 
-        const { eventSvc, rowRenderer } = this.beans;
-
-        const rowNodes = new Array<IRowNode>(eventsToDispatch.length);
+        const nodes = new Set<IRowNode>();
         for (let i = 0, len = eventsToDispatch.length; i < len; i++) {
-            rowNodes[i] = eventsToDispatch[i].node;
+            nodes.add(eventsToDispatch[i].node);
             eventSvc.dispatchEvent(eventsToDispatch[i]);
         }
 
@@ -184,7 +183,7 @@ export class ClientSideExpansionService
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer, because the footer can be callback
         // we refresh regardless as the output of the callback could be a moving target
-        rowRenderer.refreshCells({ rowNodes });
+        rowRenderer.refreshCells({ rowNodes: Array.from(nodes) });
     }
 
     // the advantage over normal debounce is the client can call flushAllFrames()
