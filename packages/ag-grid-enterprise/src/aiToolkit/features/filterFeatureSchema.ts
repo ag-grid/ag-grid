@@ -1,10 +1,9 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
-import type { StructuredSchemaParams } from '../structuredSchema';
 import { buildAdvancedFilterFeatureSchema } from './advancedFilterFeatureSchema';
 
 const TextFilterKey = 'agTextColumnFilter';
