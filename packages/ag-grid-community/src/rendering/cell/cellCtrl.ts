@@ -96,6 +96,7 @@ export class CellCtrl extends BeanStub {
 
     public comp: ICellComp;
     public editCompDetails?: UserCompDetails;
+    public isStoppingEditor: boolean = false;
 
     public printLayout: boolean;
 

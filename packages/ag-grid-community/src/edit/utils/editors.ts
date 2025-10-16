@@ -421,9 +421,9 @@ export function _destroyEditor(
         return;
     }
 
-    const { comp } = cellCtrl;
+    const { comp, isStoppingEditor } = cellCtrl;
 
-    if (comp && !comp.getCellEditor()) {
+    if (comp && (!comp.getCellEditor() || isStoppingEditor)) {
         // editor already cleaned up, refresh cell
         cellCtrl?.refreshCell();
 
@@ -473,7 +473,12 @@ export function _destroyEditor(
                           : latest?.editorValue ?? edit?.pendingValue,
                   oldValue: latest?.sourceValue,
               };
-
+        cellCtrl.isStoppingEditor = true;
+        setTimeout(() => {
+            if (cellCtrl?.isAlive()) {
+                cellCtrl.isStoppingEditor = false;
+            }
+        });
         dispatchEditingStopped(beans, position, args, params);
     }
 }
