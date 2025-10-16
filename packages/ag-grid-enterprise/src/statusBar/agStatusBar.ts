@@ -249,11 +249,7 @@ class AgStatusBar extends Component {
 
         return AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
             for (const componentDetail of componentDetails) {
-                componentDetail.promise.then((component: IStatusPanelComp | null) => {
-                    if (!component) {
-                        return;
-                    }
-
+                componentDetail.promise.then((component: IStatusPanelComp) => {
                     const destroyFunc = () => {
                         this.destroyBean(component);
                     };

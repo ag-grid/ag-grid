@@ -1,5 +1,4 @@
-import { _warn } from 'ag-grid-community';
-import type { GridOptionsService, IClientSideRowModel, IRowModel, RowModelType } from 'ag-grid-community';
+import type { IClientSideRowModel, IRowModel } from 'ag-grid-community';
 
 export const _getFilteredRowCount = (rowModel: IClientSideRowModel) => {
     let filteredRowCount = 0;
