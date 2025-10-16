@@ -66,6 +66,7 @@ import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
+import { StructuredSchemaParams } from '../interfaces/structuredSchemaParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface DetailGridInfo {
@@ -1862,7 +1863,7 @@ export interface _AiToolkitGridApi {
      * This schema can be passed to AT services to ensure the response is of the correct format.
      * @agModule `AiToolkitModule`
      */
-    getStructuredSchema(): any;
+    getStructuredSchema(params?: StructuredSchemaParams): any;
 }
 
 export interface GridApi<TData = any>

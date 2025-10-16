@@ -530,6 +530,13 @@ export { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 export {
+    STRUCTURED_SCHEMA_FEATURES,
+    StructuredSchemaFeature,
+    StructuredSchemaColumnParams,
+    StructuredSchemaParams,
+} from './interfaces/structuredSchemaParams';
+
+export {
     FindMatch,
     IFindService,
     FindOptions,

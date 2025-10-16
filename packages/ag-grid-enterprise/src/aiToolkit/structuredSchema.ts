@@ -1,4 +1,9 @@
-import type { BeanCollection } from 'ag-grid-community';
+import {
+    type BeanCollection,
+    STRUCTURED_SCHEMA_FEATURES,
+    type StructuredSchemaFeature,
+    type StructuredSchemaParams,
+} from 'ag-grid-community';
 
 import { buildAggregationFeatureSchema } from './features/aggregationFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';
@@ -10,18 +15,6 @@ import { buildSortFeatureSchema } from './features/sortFeatureSchema';
 import type { SchemaBuilder } from './schemaBuilder';
 import { s } from './schemaBuilder';
 import type { JSONSchema } from './schemaTypes';
-
-const StructuredSchemaFeatures = [
-    'aggregation',
-    'filter',
-    'sort',
-    'pivot',
-    'columnVisibility',
-    'columnSizing',
-    'rowGroup',
-] as const;
-
-export type StructuredSchemaFeature = (typeof StructuredSchemaFeatures)[number];
 
 const StructuredSchemaBuilderMap: Record<
     StructuredSchemaFeature,
@@ -36,22 +29,12 @@ const StructuredSchemaBuilderMap: Record<
     rowGroup: buildRowGroupFeatureSchema,
 } as const;
 
-export type StructuredSchemaColumnParams = {
-    description?: string;
-    includeSetValues?: boolean;
-};
-
-export type StructuredSchemaParams = {
-    exclude?: StructuredSchemaFeature[];
-    columns?: Record<string, StructuredSchemaColumnParams>;
-};
-
 export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
     const allColumnIds = beans.colModel.getCols().map((col) => col.getColId());
 
     const features: Record<string, SchemaBuilder> = {};
 
-    for (const feature of StructuredSchemaFeatures) {
+    for (const feature of STRUCTURED_SCHEMA_FEATURES) {
         if (params?.exclude?.includes(feature)) {
             continue;
         }
