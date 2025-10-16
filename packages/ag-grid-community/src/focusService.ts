@@ -15,7 +15,7 @@ import type { FilterManager } from './filter/filterManager';
 import { _getDomData } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
-import { getFocusHeaderRowCount } from './headerRendering/headerUtils';
+import { getFocusHeaderRowCount, isHeaderPositionEqual } from './headerRendering/headerUtils';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
 import type { CellPosition } from './interfaces/iCellPosition';
 import type { WithoutGridCommon } from './interfaces/iCommon';
@@ -432,6 +432,10 @@ export class FocusService extends BeanStub implements NamedBean {
         const { headerPosition, direction, fromCell, rowWithoutSpanValue, event, scroll = true } = params;
         const { column, headerRowIndex } = headerPosition;
         const { filterManager, ctrlsSvc, headerNavigation } = this.beans;
+
+        if (this.focusedHeader && isHeaderPositionEqual(params.headerPosition, this.focusedHeader)) {
+            return false;
+        }
 
         if (headerRowIndex === -1) {
             if (filterManager?.isAdvFilterHeaderActive()) {
