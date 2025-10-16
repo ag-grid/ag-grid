@@ -38,6 +38,10 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        if (!_isClientSideRowModel(this.gos)) {
+            _warn(222);
+            return;
+        }
         this.refresh(params);
         this.onDataChanged();
     }
