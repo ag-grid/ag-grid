@@ -32,6 +32,11 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     public init(params: IStatusPanelParams & IProvidedStatusPanelParams) {
+        if (!_isClientSideRowModel(this.gos)) {
+            _warn(225);
+            return;
+        }
+
         this.refresh(params);
         this.onDataChanged();
     }
