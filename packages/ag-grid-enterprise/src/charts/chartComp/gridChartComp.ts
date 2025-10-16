@@ -419,7 +419,9 @@ export class GridChartComp extends Component {
                 : undefined;
 
         // recreate chart if chart type has changed
-        if (updatedChartType) this.createChart();
+        if (updatedChartType) {
+            this.createChart();
+        }
 
         // combine any provided theme overrides with any retained theme overrides from changing chart type
         if (persistedThemeOverrides && params?.chartThemeOverrides) {
@@ -451,7 +453,9 @@ export class GridChartComp extends Component {
         if (chartEmpty) {
             // We don't have enough data to reinstantiate the chart with the new chart type,
             // but we still want to persist any theme overrides for when the data is present
-            if (updatedOverrides) this.chartController.updateThemeOverrides(updatedOverrides);
+            if (updatedOverrides) {
+                this.chartController.updateThemeOverrides(updatedOverrides);
+            }
             return;
         }
 
@@ -470,9 +474,13 @@ export class GridChartComp extends Component {
         const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
         const targetChartType = updatedChartType ? getCanonicalChartType(updatedChartType) : undefined;
         // If the grid chart component is out of sync with the existing chart instance type, return the correct chart type
-        if (this.chartType !== currentType) return targetChartType ?? currentType;
+        if (this.chartType !== currentType) {
+            return targetChartType ?? currentType;
+        }
         // If the target chart type is different to the current chart type, return the new chart type
-        if (targetChartType && currentType !== targetChartType) return targetChartType;
+        if (targetChartType && currentType !== targetChartType) {
+            return targetChartType;
+        }
         // Otherwise nothing has changed
         return null;
     }

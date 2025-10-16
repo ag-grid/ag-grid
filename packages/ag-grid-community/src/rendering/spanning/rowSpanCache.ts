@@ -68,7 +68,9 @@ export class CellSpan {
 
         let allButLastHeights = 0;
         for (const node of this.spannedNodes) {
-            if (node === this.lastNode) continue;
+            if (node === this.lastNode) {
+                continue;
+            }
             allButLastHeights += node.rowHeight!;
         }
         return autoHeight - allButLastHeights;

@@ -86,7 +86,9 @@ export function _getLevenshteinSimilarityDistance(inputText: string, suggestion:
                         }
                     }
                 }
-                if (i < sourceLength / 2 - 10) ++secondaryScore; // Favor matches at the start of the string
+                if (i < sourceLength / 2 - 10) {
+                    ++secondaryScore;
+                } // Favor matches at the start of the string
                 currentRow[j] = previousRow[j - 1]; // No cost
             } else {
                 const insertCost = currentRow[j - 1];

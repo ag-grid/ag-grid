@@ -160,7 +160,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         const [Comp, postConstruct] = inputComponentDescriptors[type];
         // eslint-disable-next-line sonarjs/new-operator-misuse
         const instance = this.createBean(new Comp());
-        if (postConstruct) postConstruct(instance);
+        postConstruct?.(instance);
         return instance;
     }
 

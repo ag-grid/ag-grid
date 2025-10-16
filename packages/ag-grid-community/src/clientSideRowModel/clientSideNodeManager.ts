@@ -48,7 +48,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             const level = parent.level + 1;
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
-                if (!data) continue;
+                if (!data) {
+                    continue;
+                }
                 const node = this.createRowNode(data, level);
                 node.sourceRowIndex = writeIdx;
                 allLeafs[writeIdx++] = node;
@@ -100,7 +102,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const processChildren = (parent: RowNode<TData>, childrenData: TData[], level: number): void => {
             for (let i = 0, len = childrenData.length; i < len; ++i) {
                 const data = childrenData[i];
-                if (!data) continue;
+                if (!data) {
+                    continue;
+                }
                 let node = this.getRowNode(getRowIdFunc({ data, level }));
                 if (node) {
                     updateNode(node, data);
@@ -198,7 +202,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         const removedResult = new Array<RowNode<TData>>(removeLen);
         for (let i = 0; i < removeLen; ++i) {
             const rowNode = this.lookupNode(getRowIdFunc, remove[i]);
-            if (!rowNode) continue; // node not found
+            if (!rowNode) {
+                continue;
+            } // node not found
             const sourceRowIndex = rowNode.sourceRowIndex;
             if (sourceRowIndex < filterIdx) {
                 filterIdx = sourceRowIndex;

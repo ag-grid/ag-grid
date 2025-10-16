@@ -48,7 +48,9 @@ export class ZoomPanel extends Component {
 
         // Enable/disable the scrolling step input according to whether the scrolling checkbox is checked
         zoomScrollingCheckboxParams.onValueChange = ((onValueChange) => (value: boolean) => {
-            if (!onValueChange) return;
+            if (!onValueChange) {
+                return;
+            }
             onValueChange(value);
             this.zoomScrollingStepInput.setDisabled(!value);
         })(zoomScrollingCheckboxParams.onValueChange);
