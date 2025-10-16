@@ -36,7 +36,7 @@ export const _injectGlobalCSS = (
         injections = [];
         injectionState.map.set(styleContainer, injections);
     }
-    if (injections.find((i) => i.css === css)) {
+    if (injections.some((i) => i.css === css)) {
         return;
     }
 
