@@ -19,13 +19,27 @@ const getElementType = (el: HTMLElement) => {
         return 'body';
     }
     const classList = el.classList;
-    if (classList.contains('ag-row')) return 'row';
-    if (classList.contains('ag-header')) return 'header';
-    if (classList.contains('ag-body-viewport')) return 'viewport';
-    if (classList.contains('ag-root')) return 'grid';
-    if (classList.contains('ag-header-cell')) return 'column';
-    if (classList.contains('ag-cell')) return 'cell';
-    if (classList.contains('ag-drag-handle')) return 'drag-handle';
+    if (classList.contains('ag-row')) {
+        return 'row';
+    }
+    if (classList.contains('ag-header')) {
+        return 'header';
+    }
+    if (classList.contains('ag-body-viewport')) {
+        return 'viewport';
+    }
+    if (classList.contains('ag-root')) {
+        return 'grid';
+    }
+    if (classList.contains('ag-header-cell')) {
+        return 'column';
+    }
+    if (classList.contains('ag-cell')) {
+        return 'cell';
+    }
+    if (classList.contains('ag-drag-handle')) {
+        return 'drag-handle';
+    }
     return 'default';
 };
 

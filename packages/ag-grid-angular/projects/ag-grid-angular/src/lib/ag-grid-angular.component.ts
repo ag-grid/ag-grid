@@ -214,6 +214,7 @@ import type {
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
 // @END_IMPORTS@
+// eslint-disable-next-line no-duplicate-imports
 import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
 import {
     _BOOLEAN_MIXED_GRID_OPTIONS,

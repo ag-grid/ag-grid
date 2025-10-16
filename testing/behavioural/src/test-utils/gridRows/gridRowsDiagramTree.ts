@@ -51,7 +51,9 @@ export class GridRowsDiagramTree {
             if (isHidden && !this.diagramNodes.has(child)) {
                 if (!node) {
                     node = this.getDiagramNode(gridRows, row);
-                    if (!node) return;
+                    if (!node) {
+                        return;
+                    }
                     node.hiddenChildren ??= new Set();
                 }
 
@@ -77,12 +79,10 @@ export class GridRowsDiagramTree {
         }
         if (row.detail) {
             values.push('detail');
-        } else {
-            if (row.group && !row.data) {
-                values.push(row.leafGroup ? 'LEAF_GROUP' : 'filler');
-            } else if (row.group || row.childrenAfterGroup?.length || row.hasChildren()) {
-                values.push('GROUP');
-            }
+        } else if (row.group && !row.data) {
+            values.push(row.leafGroup ? 'LEAF_GROUP' : 'filler');
+        } else if (row.group || row.childrenAfterGroup?.length || row.hasChildren()) {
+            values.push('GROUP');
         }
         if (row.leafGroup && !values.includes('LEAF_GROUP')) {
             values.push('leafGroup');
