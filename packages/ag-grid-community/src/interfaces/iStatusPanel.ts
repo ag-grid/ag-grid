@@ -52,7 +52,3 @@ export interface IStatusPanel<TData = any, TContext = any> {
 export interface IStatusPanelComp<TData = any, TContext = any>
     extends IStatusPanel<TData, TContext>,
         IComponent<IStatusPanelParams<TData, TContext>> {}
-
-export interface IWithSupportedRowModels {
-    supportedRowModels: Set<RowModelType>;
-}
