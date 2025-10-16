@@ -22,6 +22,7 @@ export default [
             '@typescript-eslint/ban-ts-comment': 'error',
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'error',
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
+            // '@typescript-eslint/no-unnecessary-type-assertion': 'error', rule fails on CI'@typescript-eslint/no-unnecessary-type-assertion': 'error',
             '@typescript-eslint/no-this-alias': 'error',
         },
     },

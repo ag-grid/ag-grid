@@ -86,6 +86,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     floatingFilter: 'ColumnFilter',
     getQuickFilterText: 'QuickFilter',
     headerTooltip: 'Tooltip',
+    headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
@@ -368,6 +369,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     tooltipComponent: undefined,
     tooltipField: undefined,
     headerTooltip: undefined,
+    headerTooltipValueGetter: undefined,
     cellClass: undefined,
     showRowGroup: undefined,
     filter: undefined,

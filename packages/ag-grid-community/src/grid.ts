@@ -1,11 +1,10 @@
-import { AgContext } from './agStack/core/agContext';
 import type { AgContextParams } from './agStack/core/agContext';
+import { AgContext } from './agStack/core/agContext';
 import { _missing } from './agStack/utils/generic';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { BeanCollection, SingletonBean } from './context/context';
-import type { Context } from './context/context';
+import type { BeanCollection, Context, SingletonBean } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventTypeParams } from './events';
@@ -212,7 +211,7 @@ export class GridCoreCreator {
             if (apiFunctions) {
                 const names = Object.keys(apiFunctions) as ApiFunctionName[];
                 for (const name of names) {
-                    apiFunctionSvc?.addFunction(name, apiFunctions[name]!);
+                    apiFunctionSvc?.addFunction(name, apiFunctions[name]);
                 }
             }
         }
@@ -281,7 +280,7 @@ export class GridCoreCreator {
                 if (userRowModelType !== rowModelType) {
                     const params = {
                         moduleName,
-                        rowModelType: userRowModelType!,
+                        rowModelType: userRowModelType,
                     };
                     _logPreInitErr(275, params, missingRowModelTypeError(params));
                     return;

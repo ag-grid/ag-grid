@@ -477,7 +477,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
         if (editSvc?.isEditing()) {
-            res = editSvc?.moveToNextCell(cellCtrl!, backwards, event, source);
+            res = editSvc?.moveToNextCell(cellCtrl, backwards, event, source);
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards, event);
         }

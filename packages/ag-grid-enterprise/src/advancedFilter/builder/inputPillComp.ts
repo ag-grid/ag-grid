@@ -204,7 +204,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         if (!this.eEditor) {
             return;
         }
-        const value = this.eEditor!.getValue() ?? '';
+        const value = this.eEditor.getValue() ?? '';
         this.dispatchLocalEvent<WithoutGridCommon<FieldValueEvent>>({
             type: 'fieldValueChanged',
             value,

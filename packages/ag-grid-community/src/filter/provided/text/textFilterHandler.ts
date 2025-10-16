@@ -15,9 +15,9 @@ const defaultMatcher: TextMatcher = ({ filterOption, value, filterText }) => {
 
     switch (filterOption) {
         case 'contains':
-            return value.indexOf(filterText) >= 0;
+            return value.includes(filterText);
         case 'notContains':
-            return value.indexOf(filterText) < 0;
+            return !value.includes(filterText);
         case 'equals':
             return value === filterText;
         case 'notEqual':

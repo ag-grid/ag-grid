@@ -53,7 +53,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         const { colAnimation } = this;
         if (colAnimation?.isActive()) {
             colAnimation.executeLaterVMTurn(() => {
-                colAnimation!.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
+                colAnimation.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
             });
         } else {
             this.updateScrollVisibleImpl();

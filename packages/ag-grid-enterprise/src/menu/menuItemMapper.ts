@@ -169,7 +169,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
-                            subMenu: createAggregationSubMenu(column!, aggFuncSvc, valueColsSvc, localeTextFunc),
+                            subMenu: createAggregationSubMenu(column, aggFuncSvc, valueColsSvc, localeTextFunc),
                             disabled: gos.get('functionsReadOnly'),
                         };
                     } else {
@@ -444,7 +444,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = getStockMenuItem(menuItemOrString as DefaultMenuItem, column, sourceElement, source);
+                result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
                 result = { ...menuItemOrString };
@@ -513,7 +513,7 @@ function createAggregationSubMenu(
                     valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
                     valueColsSvc.addColumns([columnToUse!], 'contextMenu');
                 },
-                checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
+                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName,
             });
         }
     }

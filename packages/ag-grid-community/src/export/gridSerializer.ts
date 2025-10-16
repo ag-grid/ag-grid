@@ -291,7 +291,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             // if the level is the same, compare these nodes, or their parents
             if (rowA.level === rowB.level) {
                 if (rowA.parent?.id === rowB.parent?.id) {
-                    return rowNodeSorter!.compareRowNodes(
+                    return rowNodeSorter.compareRowNodes(
                         sortOptions,
                         {
                             rowNode: rowA,

@@ -142,7 +142,7 @@ export class TabGuardFeature extends BeanStub {
         const { eBottomGuard: bottomTabGuard } = this;
 
         if (bottomTabGuard) {
-            bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
+            bottomTabGuard.insertAdjacentElement('beforebegin', newChild);
         } else {
             appendChild(newChild, container);
         }

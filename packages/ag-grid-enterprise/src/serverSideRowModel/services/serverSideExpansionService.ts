@@ -43,8 +43,10 @@ export class ServerSideExpansionService
         };
 
         this.addManagedEventListeners({
-            // when row grouping changes, the old expand all state is no longer valid as rows changed
+            // when row grouping / pivot changes, the old expand all state is no longer valid as rows changed
             columnRowGroupChanged: setDefaultExpand,
+            columnPivotChanged: setDefaultExpand,
+            columnPivotModeChanged: setDefaultExpand,
         });
 
         this.addManagedPropertyListener('ssrmExpandAllAffectsAllRows', (p) => {

@@ -347,8 +347,10 @@ export class FilterPanelService
     }
 
     private onFilterDestroyed({ column, source }: FilterDestroyedEvent | FilterHandlerDestroyedEvent) {
-        if (!this.beans.colFilter?.isAlive()) {
-            // if grid is being destroyed, don't recreate filters
+        const { colFilter, filterManager } = this.beans;
+        if (!colFilter?.isAlive() || !filterManager?.isFilterAllowed(column as AgColumn)) {
+            // if grid is being destroyed or filter not allowed (e.g. advanced filter toggled),
+            // don't recreate filters
             return;
         }
         const states = this.states;

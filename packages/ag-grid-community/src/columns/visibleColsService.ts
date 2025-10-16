@@ -323,7 +323,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     // gridPanel -> ensureColumnVisible
     public isColDisplayed(column: AgColumn): boolean {
-        return this.allCols.indexOf(column as AgColumn) >= 0;
+        return this.allCols.indexOf(column) >= 0;
     }
 
     public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
@@ -362,7 +362,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         let lastConsideredCol: AgColumn | null = null;
 
         for (let i = 0; i < displayedColumns.length; i++) {
-            const col = displayedColumns[i] as AgColumn;
+            const col = displayedColumns[i];
             const maxAllowedColSpan = displayedColumns.length - i;
             const colSpan = Math.min(col.getColSpan(rowNode), maxAllowedColSpan);
             const columnsToCheckFilter: AgColumn[] = [col];
@@ -425,7 +425,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     public getColBefore(col: AgColumn): AgColumn | null {
         const allDisplayedColumns = this.allCols;
-        const oldIndex = allDisplayedColumns.indexOf(col as AgColumn);
+        const oldIndex = allDisplayedColumns.indexOf(col);
 
         if (oldIndex > 0) {
             return allDisplayedColumns[oldIndex - 1];
@@ -482,7 +482,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     // + rowRenderer -> for navigation
     public getColAfter(col: AgColumn): AgColumn | null {
         const allDisplayedColumns = this.allCols;
-        const oldIndex = allDisplayedColumns.indexOf(col as AgColumn);
+        const oldIndex = allDisplayedColumns.indexOf(col);
 
         if (oldIndex < allDisplayedColumns.length - 1) {
             return allDisplayedColumns[oldIndex + 1];

@@ -197,7 +197,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
-        this.businessKey = _escapeString(businessKey!);
+        this.businessKey = _escapeString(businessKey);
     }
 
     private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
@@ -704,7 +704,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (mightWantToKeepCell) {
             const displayedColumns = visibleCols.allCols;
-            const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
+            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
 

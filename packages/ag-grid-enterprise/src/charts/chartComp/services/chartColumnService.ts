@@ -149,19 +149,20 @@ export class ChartColumnService extends BeanStub {
     }
 
     private extractLeafData(row: RowNode, col: AgColumn): any {
-        if (!row.allLeafChildren) {
-            return null;
+        const value = row.data && this.valueSvc.getValue(col, row);
+        if (value != null) {
+            return value;
         }
-
-        for (let i = 0; i < row.allLeafChildren.length; i++) {
-            const childRow = row.allLeafChildren[i];
-            const value = this.valueSvc.getValue(col, childRow);
-
-            if (value != null) {
-                return value;
+        const childrenAfterGroup = row.childrenAfterGroup;
+        if (childrenAfterGroup) {
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                const child = childrenAfterGroup[i];
+                const result = this.extractLeafData(child, col);
+                if (result != null) {
+                    return result;
+                }
             }
         }
-
         return null;
     }
 

@@ -199,11 +199,11 @@ export class GridOptionsService
 
             const shouldForce = force || (typeof value === 'object' && source === 'api'); // force objects as they could have been mutated.
 
-            const previousValue = gridOptions[key as keyof GridOptions];
+            const previousValue = gridOptions[key];
             if (shouldForce || previousValue !== value) {
-                gridOptions[key as keyof GridOptions] = value;
+                gridOptions[key] = value;
                 const event: PropertyValueChangedEvent<keyof GridOptions> = {
-                    type: key as keyof GridOptions,
+                    type: key,
                     currentValue: value,
                     previousValue,
                     changeSet,

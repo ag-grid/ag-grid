@@ -169,12 +169,12 @@ export function getBestColumnMoveIndexFromXPosition(
     // is not reliable for dictating where the column may now be placed.
     if (constrainDirection && !fakeEvent) {
         // only allow left drag if this column is moving left
-        if (!fromLeft && firstValidMove >= (oldIndex as number)) {
+        if (!fromLeft && firstValidMove >= oldIndex) {
             return;
         }
 
         // only allow right drag if this column is moving right
-        if (fromLeft && firstValidMove <= (oldIndex as number)) {
+        if (fromLeft && firstValidMove <= oldIndex) {
             return;
         }
     }

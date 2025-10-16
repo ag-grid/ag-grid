@@ -3,6 +3,7 @@ import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
+import { _firstLeaf } from '../entities/rowNodeUtils';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
@@ -657,8 +658,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
     private getMoveRowsBounds(leafs: Iterable<RowNode>, target: IRowNode | null | undefined, above: boolean) {
-        const totalRows = this.beans.rowModel.rootNode?.allLeafChildren?.length ?? 0;
-        let targetPositionIdx = getLeafSourceRowIndex(target);
+        const totalRows = this.beans.rowModel.rootNode?._leafs?.length ?? 0;
+        let targetPositionIdx = target ? getLeafSourceRowIndex(target) : -1;
         if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
             targetPositionIdx = totalRows;
         } else if (!above) {
@@ -689,19 +690,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     ): boolean {
         let orderChanged = false;
 
-        const allLeafChildren: RowNode[] | null | undefined = this.beans.rowModel.rootNode?.allLeafChildren;
-        if (!leafs.size || !allLeafChildren) {
+        const allLeafs: RowNode[] | null | undefined = this.beans.rowModel.rootNode?._leafs;
+        if (!leafs.size || !allLeafs) {
             return false;
         }
 
         // First partition. Filter from left to right, so the middle can be overwritten
         let writeIdxLeft = firstAffectedLeafIdx;
         for (let readIdx = firstAffectedLeafIdx; readIdx < targetPositionIdx; ++readIdx) {
-            const row = allLeafChildren[readIdx];
+            const row = allLeafs[readIdx];
             if (!leafs.has(row)) {
                 if (row.sourceRowIndex !== writeIdxLeft) {
                     row.sourceRowIndex = writeIdxLeft;
-                    allLeafChildren[writeIdxLeft] = row;
+                    allLeafs[writeIdxLeft] = row;
                     orderChanged = true;
                 }
                 ++writeIdxLeft;
@@ -711,11 +712,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         // Third partition. Filter from right to left, so the middle can be overwritten
         let writeIdxRight = lastAffectedLeafIndex;
         for (let readIdx = lastAffectedLeafIndex; readIdx >= targetPositionIdx; --readIdx) {
-            const row = allLeafChildren[readIdx];
+            const row = allLeafs[readIdx];
             if (!leafs.has(row)) {
                 if (row.sourceRowIndex !== writeIdxRight) {
                     row.sourceRowIndex = writeIdxRight;
-                    allLeafChildren[writeIdxRight] = row;
+                    allLeafs[writeIdxRight] = row;
                     orderChanged = true;
                 }
                 --writeIdxRight;
@@ -726,7 +727,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         for (const row of leafs) {
             if (row.sourceRowIndex !== writeIdxLeft) {
                 row.sourceRowIndex = writeIdxLeft;
-                allLeafChildren[writeIdxLeft] = row;
+                allLeafs[writeIdxLeft] = row;
                 orderChanged = true;
             }
             ++writeIdxLeft;
@@ -776,23 +777,13 @@ const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean
     return true;
 };
 
-const getLeafSourceRowIndex = (row: IRowNode | null | undefined): number => {
+const getLeafSourceRowIndex = (row: IRowNode): number => {
     const leaf = getLeafRow(row);
     return leaf !== undefined ? leaf.sourceRowIndex : -1;
 };
 
-const getLeafRow = (row: IRowNode | null | undefined): RowNode | undefined => {
-    while (row) {
-        if (row.sourceRowIndex >= 0) {
-            return row as RowNode;
-        }
-        const childrenAfterGroup = row.childrenAfterGroup;
-        if (!childrenAfterGroup?.length) {
-            return undefined;
-        }
-        row = childrenAfterGroup[0];
-    }
-};
+const getLeafRow = (row: IRowNode): RowNode | undefined =>
+    row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&

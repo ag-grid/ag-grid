@@ -221,7 +221,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colDef.cellDataType = false;
             return undefined;
         }
-        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
+        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
             _warn(47, { cellDataType });
             return undefined;
@@ -288,7 +288,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
+            const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
             value = _getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
@@ -310,7 +310,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         } else if (this.initialData) {
             return this.initialData;
         } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?.allLeafChildren;
+            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
             if (rowNodes?.length) {
                 return rowNodes[0].data;
             }

@@ -976,7 +976,7 @@ export class ColumnFilterService
         const providedFilterHandler = enableFilterHandlers ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
-            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
+            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName, true)!);
 
         let filterHandler: CreateFilterHandlerFunc | undefined;
         let handlerName: FilterHandlerName | undefined;
@@ -1409,7 +1409,7 @@ export class ColumnFilterService
         // If refresh() method is implemented - call it and destroy filter if it returns false
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         getFilterUiFromWrapper(filterWrapper, wasHandler)?.then((filter) => {
-            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams as any) : true;
+            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
                 this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);

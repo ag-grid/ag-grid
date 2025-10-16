@@ -93,7 +93,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
     private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {
         const primarySeries = series[0];
-        const angleKey = primarySeries.angleKey!;
+        const angleKey = primarySeries.angleKey;
 
         const commonOptions = {
             ...primarySeries,
@@ -114,7 +114,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
         const filteredOutOptions = {
             ...commonOptions,
-            radiusKey: `${angleKey!}-filtered-out`,
+            radiusKey: `${angleKey}-filtered-out`,
             showInLegend: false,
         };
 

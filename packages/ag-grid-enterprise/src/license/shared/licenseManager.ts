@@ -1,5 +1,4 @@
-import { _exists } from 'ag-grid-community';
-import { _logPreInitWarn } from 'ag-grid-community';
+import { _exists, _logPreInitWarn } from 'ag-grid-community';
 
 import { MD5 } from './md5';
 
@@ -96,7 +95,7 @@ export class LicenseManager {
 
         const gridReleaseDate = LicenseManager.getGridReleaseDate();
         const { md5, license, version, isTrial, type } = LicenseManager.extractLicenseComponents(licenseKey);
-        let valid = md5 === this.md5.md5(license) && licenseKey.indexOf('For_Trialing_ag-Grid_Only') === -1;
+        let valid = md5 === this.md5.md5(license) && !licenseKey.includes('For_Trialing_ag-Grid_Only');
         let trialExpired: undefined | boolean = undefined;
         let expired: undefined | boolean = undefined;
         let expiry: Date | null = null;
@@ -191,7 +190,7 @@ export class LicenseManager {
         const loc = win.location;
         const { pathname } = loc;
 
-        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
+        return pathname ? pathname.includes('forceWatermark') : false;
     }
 
     private isWebsiteUrl(): boolean {

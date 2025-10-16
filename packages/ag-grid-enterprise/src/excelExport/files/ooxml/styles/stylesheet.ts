@@ -32,7 +32,7 @@ let registeredCellStyles: ExcelCellStyle[];
 let currentSheet: number;
 
 const getStyleName = (name: string, currentSheet: number): string => {
-    if (name.indexOf('mixedStyle') !== -1 && currentSheet > 1) {
+    if (name.includes('mixedStyle') && currentSheet > 1) {
         name += `_${currentSheet}`;
     }
     return name;

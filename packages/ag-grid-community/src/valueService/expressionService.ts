@@ -68,7 +68,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
     private createFunctionBody(expression: any) {
         // if the expression has the 'return' word in it, then use as is,
         // if not, then wrap it with return and ';' to make a function
-        if (expression.indexOf('return') >= 0) {
+        if (expression.includes('return')) {
             return expression;
         } else {
             return 'return ' + expression + ';';

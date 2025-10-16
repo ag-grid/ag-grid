@@ -18,7 +18,7 @@ function doesImplementIComponent(candidate: any): boolean {
     if (!candidate) {
         return false;
     }
-    return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
+    return candidate.prototype && 'getGui' in candidate.prototype;
 }
 
 export function _getUserCompKeys<TDefinition>(
@@ -59,7 +59,7 @@ export function _getUserCompKeys<TDefinition>(
 
         const assignComp = (providedJsComp: any) => {
             if (typeof providedJsComp === 'string') {
-                compName = providedJsComp as string;
+                compName = providedJsComp;
             } else if (providedJsComp != null && providedJsComp !== true) {
                 const isFwkComp = frameworkOverrides.isFrameworkComponent(providedJsComp);
                 if (isFwkComp) {

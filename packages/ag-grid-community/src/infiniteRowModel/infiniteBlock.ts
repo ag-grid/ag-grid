@@ -201,9 +201,9 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
                 // destroy the old row and copy its position into new row. This prevents an additional
                 // set of events being fired as the row renderer tries to understand the changing id
                 rowNodes[index] = new RowNode(beans);
-                rowNodes[index].setRowIndex(rowNode.rowIndex!);
-                rowNodes[index].setRowTop(rowNode.rowTop!);
-                rowNodes[index].setRowHeight(rowNode.rowHeight!);
+                rowNodes[index].setRowIndex(rowNode.rowIndex);
+                rowNodes[index].setRowTop(rowNode.rowTop);
+                rowNodes[index].setRowHeight(rowNode.rowHeight);
 
                 // clean up the old row
                 rowNode.clearRowTopAndRowIndex();

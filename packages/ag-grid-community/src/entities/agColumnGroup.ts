@@ -304,17 +304,17 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
                 case 'open':
                     // when set to open, only show col if group is open
                     if (parentWithExpansion!.getProvidedColumnGroup().isExpanded()) {
-                        this.displayedChildren!.push(child);
+                        this.displayedChildren.push(child);
                     }
                     break;
                 case 'closed':
                     // when set to open, only show col if group is open
                     if (!parentWithExpansion!.getProvidedColumnGroup().isExpanded()) {
-                        this.displayedChildren!.push(child);
+                        this.displayedChildren.push(child);
                     }
                     break;
                 default:
-                    this.displayedChildren!.push(child);
+                    this.displayedChildren.push(child);
                     break;
             }
         }

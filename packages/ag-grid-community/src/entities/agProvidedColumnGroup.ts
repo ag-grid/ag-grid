@@ -232,7 +232,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
                 // if padding, we add this children instead of the padding
                 const skipBecausePadding = isProvidedColumnGroup(item) && item.isPadding();
                 if (skipBecausePadding) {
-                    process((item as AgProvidedColumnGroup).children);
+                    process(item.children);
                 } else {
                     res.push(item);
                 }

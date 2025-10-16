@@ -124,7 +124,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
                 this.setMaster(node, true, false);
             }
         } else {
-            const allLeafChildren = _getClientSideRowModel(this.beans)?.rootNode?.allLeafChildren;
+            const allLeafChildren = _getClientSideRowModel(this.beans)?.rootNode?._leafs;
             if (allLeafChildren) {
                 for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
                     this.setMaster(allLeafChildren[i], true, false);

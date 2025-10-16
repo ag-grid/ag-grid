@@ -67,7 +67,7 @@ export class FilterListener extends BeanStub implements NamedBean {
                 }
                 changedColumns = Array.from(oldColumns);
             } else {
-                changedColumns = this.findChangedColumns(oldModel as FilterModel, newModel as FilterModel);
+                changedColumns = this.findChangedColumns(oldModel as FilterModel, newModel);
             }
         }
 

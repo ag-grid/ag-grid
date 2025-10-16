@@ -182,7 +182,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     private wrapItemStyler(container: { itemStyler?: any }) {
-        container!.itemStyler = wrapFn(container.itemStyler, (fn, stylerParams: any): any => {
+        container.itemStyler = wrapFn(container.itemStyler, (fn, stylerParams: any): any => {
             return fn({
                 ...stylerParams,
                 context: this.createContext(),

@@ -184,7 +184,7 @@ export class ClientSideExpansionService
         }
         let pending = false;
         return () => {
-            if (!animationFrameSvc!.active) {
+            if (!animationFrameSvc.active) {
                 window.setTimeout(func, 0);
                 return;
             }
@@ -192,7 +192,7 @@ export class ClientSideExpansionService
                 return;
             }
             pending = true;
-            animationFrameSvc!.addDestroyTask(() => {
+            animationFrameSvc.addDestroyTask(() => {
                 pending = false;
                 func();
             });

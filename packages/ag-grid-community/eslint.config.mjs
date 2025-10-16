@@ -31,6 +31,7 @@ export default [
             '@typescript-eslint/prefer-readonly': 'error',
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'error',
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
+            // '@typescript-eslint/no-unnecessary-type-assertion': 'error', rule fails on CI
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             'no-restricted-syntax': [

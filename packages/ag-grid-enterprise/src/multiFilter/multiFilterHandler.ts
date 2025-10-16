@@ -51,7 +51,7 @@ export class MultiFilterHandler
             }
             const { handler, handlerParams } = wrapper;
             handler.init?.({
-                ...this.updateHandlerParams(handlerParams!, index, true),
+                ...this.updateHandlerParams(handlerParams, index, true),
                 model: getFilterModelForIndex(params.model, index),
                 source: 'init',
             });
@@ -99,7 +99,7 @@ export class MultiFilterHandler
     ): FilterHandlerBaseParams {
         const { onModelChange, doesRowPassOtherFilter, getValue } = params;
         const handlerParams: FilterHandlerBaseParams = {
-            ...params!,
+            ...params,
             onModelChange: (newModel, additionalEventAttributes) =>
                 onModelChange(
                     getUpdatedMultiFilterModel(this.params.model, this.handlerWrappers.length, newModel, index),

@@ -64,7 +64,6 @@ export class TestGridsManager {
     /** Destroys all created grids, and eventually created html elements */
     public destroyAllGrids(): void {
         for (const grid of this.getAllGrids()) {
-            grid.stopEditing(true);
             grid.destroy();
         }
     }

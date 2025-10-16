@@ -358,7 +358,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             const parentItem = this.items.find((itemToCheck) => itemToCheck.filterModel === filterModel);
             const parentFilterModel = parentItem?.parent;
             if (parentFilterModel) {
-                const { conditions } = parentFilterModel as JoinAdvancedFilterModel;
+                const { conditions } = parentFilterModel;
                 // check parent
                 populateTreeLines(parentFilterModel, treeLines);
                 treeLines.push(conditions[conditions.length - 1] === filterModel);
@@ -415,7 +415,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                   conditions: [],
               } as JoinAdvancedFilterModel)
             : ({} as ColumnAdvancedFilterModel);
-        const parent = (itemIsJoin ? (itemFilterModel as JoinAdvancedFilterModel) : itemParent)!;
+        const parent = (itemIsJoin ? itemFilterModel : itemParent)!;
         let insertIndex = itemIsJoin ? 0 : parent.conditions.indexOf(itemFilterModel!);
         if (insertIndex >= 0) {
             if (!itemIsJoin) {

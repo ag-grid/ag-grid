@@ -114,6 +114,7 @@
       "testing/vue-package-tests",
       "testing/accessibility",
       "testing/csp",
+      "testing/public-recipes/e2e",
       "external/ag-shared"
     ],
     "nohoist": [

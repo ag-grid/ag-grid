@@ -123,7 +123,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
         const gridColumns = this.beans.colModel.getCols();
         const proposedColumnOrder = gridColumns.slice();
-        _moveInArray(proposedColumnOrder, columnsToMove as AgColumn[], toIndex);
+        _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
         return proposedColumnOrder;
     }
 

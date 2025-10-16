@@ -11,8 +11,7 @@ import type { FilterDisplayParams } from '../../interfaces/iFilter';
 import type { ElementParams } from '../../utils/element';
 import { _createElement } from '../../utils/element';
 import { _warn } from '../../validation/logging';
-import type { ComponentSelector } from '../../widgets/component';
-import type { Component } from '../../widgets/component';
+import type { Component, ComponentSelector } from '../../widgets/component';
 import type { GridInputTextField, GridRadioButton, GridSelect } from '../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type {
