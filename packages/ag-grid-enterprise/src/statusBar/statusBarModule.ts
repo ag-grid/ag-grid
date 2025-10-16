@@ -1,11 +1,4 @@
-import {
-    Component,
-    IComponent,
-    IStatusPanelComp,
-    StatusPanelComponentName,
-    _ModuleWithApi,
-    _StatusBarGridApi,
-} from 'ag-grid-community';
+import type { StatusPanelComponentName, _ModuleWithApi, _StatusBarGridApi } from 'ag-grid-community';
 import { _KeyboardNavigationModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
