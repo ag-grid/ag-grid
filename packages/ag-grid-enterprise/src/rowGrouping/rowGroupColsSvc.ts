@@ -84,11 +84,9 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
                 if (rowIndex && typeof rowGroupIndex === 'number') {
                     rowIndex[column.getId()] = rowGroupIndex;
                 }
-            } else {
-                if (column.isRowGroupActive()) {
-                    this.setColRowGroupActive(column, false, source);
-                    this.modifyColumnsNoEventsCallbacks.removeCol(column);
-                }
+            } else if (column.isRowGroupActive()) {
+                this.setColRowGroupActive(column, false, source);
+                this.modifyColumnsNoEventsCallbacks.removeCol(column);
             }
         }
     }

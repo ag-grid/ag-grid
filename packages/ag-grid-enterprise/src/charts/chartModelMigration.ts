@@ -346,7 +346,9 @@ function migrateV33(model: ChartModel) {
 function migrateV34(model: ChartModel) {
     const highlightUpdate = (parent: any, targetProp: string) => {
         const highlightStyle = parent[targetProp];
-        if (highlightStyle == null) return;
+        if (highlightStyle == null) {
+            return;
+        }
 
         const highlight: any = {};
         if (highlightStyle.item) {
@@ -416,25 +418,33 @@ export function heuristicVersionDetection(model: ChartModel) {
     // eslint-disable-next-line no-restricted-properties
     const matchingHints = Object.entries(hints).filter(([_, match]) => match);
 
-    // eslint-disable-next-line no-console
-    if (DEBUG) console.log('AG Grid: ChartModel migration', { heuristicVersionCandidates: matchingHints });
+    if (DEBUG) {
+        // eslint-disable-next-line no-console
+        console.log('AG Grid: ChartModel migration', { heuristicVersionCandidates: matchingHints });
+    }
     const [heuristicVersion = defaultVersion] = matchingHints[0];
 
-    // eslint-disable-next-line no-console
-    if (DEBUG) console.log('AG Grid: ChartModel migration', { heuristicVersion });
+    if (DEBUG) {
+        // eslint-disable-next-line no-console
+        console.log('AG Grid: ChartModel migration', { heuristicVersion });
+    }
     return heuristicVersion;
 }
 
 function migrateIfBefore(maxVersion: string, model: ChartModel, migration: (m: ChartModel) => ChartModel): ChartModel {
     if (versionNumber(maxVersion) > versionNumber(model.version!)) {
-        // eslint-disable-next-line no-console
-        if (DEBUG) console.log('AG Grid: ChartModel migration', { migratingTo: maxVersion });
+        if (DEBUG) {
+            // eslint-disable-next-line no-console
+            console.log('AG Grid: ChartModel migration', { migratingTo: maxVersion });
+        }
 
         const result = migration(model);
         result.version = maxVersion;
 
-        // eslint-disable-next-line no-console
-        if (DEBUG) console.log('AG Grid: ChartModel migration', { migratedTo: maxVersion, result });
+        if (DEBUG) {
+            // eslint-disable-next-line no-console
+            console.log('AG Grid: ChartModel migration', { migratedTo: maxVersion, result });
+        }
         return result;
     }
 

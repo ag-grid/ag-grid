@@ -49,15 +49,15 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     }
 
     public setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
-        this.setColList(colKeys, this.columns, this.eventName, true, true, this.columnProcessors!.set, source);
+        this.setColList(colKeys, this.columns, this.eventName, true, true, this.columnProcessors.set, source);
     }
 
     public addColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
-        this.updateColList(colKeys, this.columns, true, true, this.columnProcessors!.add, this.eventName, source);
+        this.updateColList(colKeys, this.columns, true, true, this.columnProcessors.add, this.eventName, source);
     }
 
     public removeColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void {
-        this.updateColList(colKeys, this.columns, false, true, this.columnProcessors!.remove, this.eventName, source);
+        this.updateColList(colKeys, this.columns, false, true, this.columnProcessors.remove, this.eventName, source);
     }
 
     public getColumnIndex(colId: string): number | undefined {
@@ -204,7 +204,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const colsWithValue: AgColumn[] = [];
 
         const { setFlagFunc, getIndexFunc, getInitialIndexFunc, getValueFunc, getInitialValueFunc } =
-            this.columnExtractors!;
+            this.columnExtractors;
 
         const primaryCols = this.colModel.getColDefCols();
 
@@ -239,21 +239,19 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                     // grouping if the null check didn't exist above.
                     include = index >= 0;
                 }
-            } else {
-                if (colIsNew) {
-                    // as no value or index is 'present' we use the default / initial when col is new
-                    if (initialValuePresent) {
-                        include = initialValue!;
-                    } else if (initialIndexPresent) {
-                        include = initialIndex != null && initialIndex >= 0;
-                    } else {
-                        include = false;
-                    }
+            } else if (colIsNew) {
+                // as no value or index is 'present' we use the default / initial when col is new
+                if (initialValuePresent) {
+                    include = initialValue!;
+                } else if (initialIndexPresent) {
+                    include = initialIndex != null && initialIndex >= 0;
                 } else {
-                    // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
-                    // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
-                    include = previousCols.indexOf(col) >= 0;
+                    include = false;
                 }
+            } else {
+                // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
+                // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
+                include = previousCols.indexOf(col) >= 0;
             }
 
             if (include) {
@@ -369,10 +367,10 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         let hasAddedNewCols = false;
         let lastIndex = 0;
 
-        const enableProp = this.columnOrdering!.enableProp;
-        const initialEnableProp = this.columnOrdering!.initialEnableProp;
-        const indexProp = this.columnOrdering!.indexProp;
-        const initialIndexProp = this.columnOrdering!.initialIndexProp;
+        const enableProp = this.columnOrdering.enableProp;
+        const initialEnableProp = this.columnOrdering.initialEnableProp;
+        const indexProp = this.columnOrdering.indexProp;
+        const initialIndexProp = this.columnOrdering.initialIndexProp;
 
         const processPrecedingNewCols = (colId: string) => {
             const originalOrderIndex = originalOrderMap[colId];

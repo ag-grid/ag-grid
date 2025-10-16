@@ -216,7 +216,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     }
 
     private closeIfIsChild(e?: KeyboardEvent): boolean {
-        const parentItem = this.getParentComponent() as any;
+        const parentItem = this.getParentComponent();
 
         if (parentItem && parentItem instanceof AgMenuItemComponent) {
             if (e) {

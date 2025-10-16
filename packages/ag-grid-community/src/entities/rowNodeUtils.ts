@@ -3,6 +3,7 @@ import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
 export function _createGlobalRowEvent<T extends AgEventType>(
@@ -34,6 +35,7 @@ const IGNORED_SIBLING_PROPERTIES = new Set<
     '__checkAutoHeightsDebounced',
     '__localEventService',
     '__objectId',
+    '_leafs',
     'childStore',
     'oldRowTop',
     'sticky',
@@ -41,7 +43,7 @@ const IGNORED_SIBLING_PROPERTIES = new Set<
     'treeParent',
 ]);
 
-export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): RowNode {
+export const _createRowNodeSibling = (rowNode: RowNode, beans: BeanCollection): RowNode => {
     const sibling = new RowNode(beans);
 
     for (const key of Object.keys(rowNode) as (keyof RowNode)[]) {
@@ -56,4 +58,14 @@ export function _createRowNodeSibling(rowNode: RowNode, beans: BeanCollection): 
     sibling.oldRowTop = null;
 
     return sibling;
-}
+};
+
+export const _firstLeaf = (childrenAfterGroup: ReadonlyArray<IRowNode> | null | undefined): RowNode | undefined => {
+    while (childrenAfterGroup?.length) {
+        const node = childrenAfterGroup[0];
+        if (node.data) {
+            return node as RowNode;
+        }
+        childrenAfterGroup = node.childrenAfterGroup;
+    }
+};

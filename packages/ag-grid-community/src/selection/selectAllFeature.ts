@@ -248,13 +248,12 @@ export function isCheckboxSelection({ gos, selectionColSvc }: BeanCollection, co
         ) {
             result = _getHeaderCheckbox(rowSelection);
         }
+    }
+    // legacy selection config
+    else if (typeof headerCheckboxSelection === 'function') {
+        result = headerCheckboxSelection(_addGridCommonParams(gos, { column, colDef }));
     } else {
-        // legacy selection config
-        if (typeof headerCheckboxSelection === 'function') {
-            result = headerCheckboxSelection(_addGridCommonParams(gos, { column, colDef }));
-        } else {
-            result = !!headerCheckboxSelection;
-        }
+        result = !!headerCheckboxSelection;
     }
 
     return result;

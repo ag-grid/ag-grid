@@ -131,19 +131,30 @@ export class RowNode<TData = any>
     public __needsRefreshWhenVisible: boolean;
 
     /**
-     * The index of the row in the source rowData array including any updates via transactions.
+     * CSRM only - The index of the row in the source rowData array including any updates via transactions.
      * It does not change when sorting, filtering, grouping, pivoting or any other UI related operations.
      * If this is a filler node (a visual row created by AG Grid in tree data or grouping) the value is set to `-1`.
      */
     public sourceRowIndex: number = -1;
 
     /**
-     * All lowest level nodes beneath this node, no groups.
-     * In the root node, this array contains all rows, and is computed by the ClientSideRowModel.
-     * Do not modify this array directly. The grouping module relies on mutable references to the array.
-     * The array might also br frozen (immutable).
+     * CSRM only - all lowest level nodes beneath this node, no groups. Backing field for allLeafChildren property.
+     * - undefined if not yet loaded.
+     * - null if there are no no leaf children.
+     * - not empty array containing all the leaf children.
+     * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
-    public allLeafChildren: RowNode<TData>[] | null;
+    public _leafs: RowNode<TData>[] | null | undefined = undefined;
+
+    /** CSRM only - do not use this property internally, this is exposed to the end user only. Use `_leafs` instead. */
+    public get allLeafChildren(): RowNode<TData>[] | null {
+        const leafs = this._leafs;
+        return leafs === undefined ? this.beans.groupStage?.loadLeafs?.(this) ?? null : leafs;
+    }
+
+    public set allLeafChildren(value: RowNode<TData>[] | null | undefined) {
+        this._leafs = value;
+    }
 
     /**
      * Children of this group. If multi levels of grouping, shows only immediate children.

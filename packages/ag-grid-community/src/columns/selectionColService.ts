@@ -224,10 +224,12 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         }
 
         // There's only one selection column
-        const column = this.columns.list[0]!;
+        const column = this.columns.list[0];
 
         // If it's deliberately hidden, we needn't do anything
-        if (!column.isVisible()) return;
+        if (!column.isVisible()) {
+            return;
+        }
 
         const hideSelectionCol = () => {
             let cols;

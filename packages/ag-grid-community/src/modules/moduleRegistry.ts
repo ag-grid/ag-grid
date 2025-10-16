@@ -1,4 +1,4 @@
-import type { Module, ModuleName, ModuleValidationInvalidResult } from '../interfaces/iModule';
+import type { Module, ModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/log';
 
@@ -41,12 +41,9 @@ function runVersionChecks(module: Module) {
         );
     }
 
-    if (module.validate) {
-        const result = module.validate();
-        if (!result.isValid) {
-            const errorResult = result as ModuleValidationInvalidResult;
-            _errorOnce(`${errorResult.message}`);
-        }
+    const result = module.validate?.();
+    if (result && !result.isValid) {
+        _errorOnce(`${result.message}`);
     }
 }
 

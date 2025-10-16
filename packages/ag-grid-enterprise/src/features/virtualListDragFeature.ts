@@ -117,7 +117,7 @@ export class VirtualListDragFeature<
 
     private getListDragItem(e: GridDraggingEvent): VirtualListDragItem<R> {
         const virtualListGui = this.virtualList.getGui();
-        const paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop as string);
+        const paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop);
         const rowHeight = this.virtualList.getRowHeight();
         const scrollTop = this.virtualList.getScrollTop();
         const rowIndex = Math.max(0, (e.y - paddingTop + scrollTop) / rowHeight);

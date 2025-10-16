@@ -544,10 +544,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 if (filterComp.isExpanded() && !expandedColIds.has(groupId)) {
                     expandedGroupIds.push(groupId);
                 }
-            } else {
-                if (filterComp.isExpanded()) {
-                    expandedColIds.add(filterComp.getColumn().getColId());
-                }
+            } else if (filterComp.isExpanded()) {
+                expandedColIds.add(filterComp.getColumn().getColId());
             }
         };
 

@@ -190,7 +190,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
                     },
                 },
                 () => {
-                    for (const f of whenReadyFuncs.current) f();
+                    for (const f of whenReadyFuncs.current) {
+                        f();
+                    }
                     whenReadyFuncs.current.length = 0;
                     ready.current = true;
                 }

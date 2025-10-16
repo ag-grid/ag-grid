@@ -592,7 +592,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 const isMatch =
                     searchType === 'match'
                         ? currentValue.startsWith(valueToMatch)
-                        : currentValue.indexOf(valueToMatch) !== -1;
+                        : currentValue.includes(valueToMatch);
                 if (filterList && isMatch) {
                     filteredValues.push(this.values[idx]);
                 }
@@ -731,7 +731,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             if (!newValue) {
                 newValue = [];
             }
-            (newValue as TValue[]).push(value);
+            newValue.push(value);
         }
 
         if (Array.isArray(newValue)) {

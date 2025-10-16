@@ -57,7 +57,7 @@ export class SeriesItemsPanel extends Component {
 
         const seriesItemChangedCallback = (newValue: SeriesItemType) => {
             this.destroyActivePanels();
-            this.initSeriesControls(newValue as SeriesItemType);
+            this.initSeriesControls(newValue);
         };
 
         return this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams(

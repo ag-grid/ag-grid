@@ -58,11 +58,10 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
             // if aggFunc provided, we always override, as reactive property
             if (colDef.aggFunc != null && colDef.aggFunc != '') {
                 this.setColAggFunc(col, colDef.aggFunc);
-            } else {
-                // otherwise we use initialAggFunc only if no agg func set - which happens when new column only
-                if (!col.getAggFunc()) {
-                    this.setColAggFunc(col, colDef.initialAggFunc);
-                }
+            }
+            // otherwise we use initialAggFunc only if no agg func set - which happens when new column only
+            else if (!col.getAggFunc()) {
+                this.setColAggFunc(col, colDef.initialAggFunc);
             }
         }
 

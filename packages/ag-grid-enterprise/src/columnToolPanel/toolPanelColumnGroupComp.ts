@@ -397,10 +397,8 @@ export class ToolPanelColumnGroupComp extends Component {
                 if (col.isAnyFunctionAllowed()) {
                     colsThatCanAction++;
                 }
-            } else {
-                if (!col.getColDef().lockVisible) {
-                    colsThatCanAction++;
-                }
+            } else if (!col.getColDef().lockVisible) {
+                colsThatCanAction++;
             }
         }
 

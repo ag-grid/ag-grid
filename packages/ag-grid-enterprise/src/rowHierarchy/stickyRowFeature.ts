@@ -68,7 +68,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
      */
     private getFirstPixelOfGroup(row: RowNode): number {
         if (row.footer) {
-            return row.sibling!.rowTop! + row.sibling!.rowHeight! - 1;
+            return row.sibling.rowTop! + row.sibling.rowHeight! - 1;
         }
 
         if (row.hasChildren()) {
@@ -360,12 +360,10 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                 this.gridBodyCtrl.setStickyTopHeight(height);
                 hasSomethingChanged = true;
             }
-        } else {
-            if (this.bottomContainerHeight !== height) {
-                this.bottomContainerHeight = height;
-                this.gridBodyCtrl.setStickyBottomHeight(height);
-                hasSomethingChanged = true;
-            }
+        } else if (this.bottomContainerHeight !== height) {
+            this.bottomContainerHeight = height;
+            this.gridBodyCtrl.setStickyBottomHeight(height);
+            hasSomethingChanged = true;
         }
 
         // clean up removed ctrls
@@ -453,7 +451,7 @@ function getServerSideLastPixelOfGroup(row: RowNode): number {
             return row.rowTop! + row.rowHeight!;
         }
 
-        return row.sibling!.rowTop! + row.sibling!.rowHeight!;
+        return row.sibling.rowTop! + row.sibling.rowHeight!;
     }
     // if not a group, then this row shouldn't be sticky currently.
     return Number.MAX_SAFE_INTEGER;
@@ -492,7 +490,7 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
         if (row.footer) {
             return row.rowTop! + row.rowHeight!;
         }
-        return row.sibling!.rowTop! + row.sibling!.rowHeight!;
+        return row.sibling.rowTop! + row.sibling.rowHeight!;
     }
     // if not expandable, then this row shouldn't be sticky currently.
     return Number.MAX_SAFE_INTEGER;

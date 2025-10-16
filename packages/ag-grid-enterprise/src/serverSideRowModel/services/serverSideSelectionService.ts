@@ -75,7 +75,9 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         rowNode: RowNode<any>,
         source: SelectionEventSourceType
     ): number {
-        if (this.isRowSelectionBlocked(rowNode)) return 0;
+        if (this.isRowSelectionBlocked(rowNode)) {
+            return 0;
+        }
 
         let updatedRows = 0;
 

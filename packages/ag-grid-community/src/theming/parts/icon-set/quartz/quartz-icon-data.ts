@@ -98,9 +98,13 @@ export const getQuartzIconsCss = (args: { strokeWidth?: number } = {}) => {
 
 const quartzIconSvg = (name: string, strokeWidth = 1.5): string => {
     const fullSVG = iconNameToFullSvg[name];
-    if (fullSVG) return fullSVG;
+    if (fullSVG) {
+        return fullSVG;
+    }
     const svgFragment = iconNameToSvgFragment[name];
-    if (!svgFragment) throw new Error(`Missing icon data for ${name}`);
+    if (!svgFragment) {
+        throw new Error(`Missing icon data for ${name}`);
+    }
     return (
         `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-width="${strokeWidth}" viewBox="0 0 24 24">` +
         '<style>* { vector-effect: non-scaling-stroke; }</style>' +

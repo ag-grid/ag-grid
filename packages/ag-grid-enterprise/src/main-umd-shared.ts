@@ -1,6 +1,5 @@
-import { ModuleRegistry } from 'ag-grid-community';
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
-import { createGrid as originalCreateGrid } from 'ag-grid-community';
+import { ModuleRegistry, createGrid as originalCreateGrid } from 'ag-grid-community';
 
 import { IntegratedChartsModule, SparklinesModule } from './main';
 

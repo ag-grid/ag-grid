@@ -114,7 +114,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
 
             this.pivotResultCols = { tree, treeDepth, list, map };
             for (const col of this.pivotResultCols.list) {
-                this.pivotResultCols!.map[col.getId()] = col;
+                this.pivotResultCols.map[col.getId()] = col;
             }
             const hasPreviousCols = !!this.previousPivotResultCols;
             this.previousPivotResultCols = null;

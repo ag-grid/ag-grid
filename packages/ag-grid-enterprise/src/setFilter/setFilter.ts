@@ -572,14 +572,12 @@ export class SetFilter<V = string>
             } else {
                 isSelected = this.selectedKeys.has(item.key!);
             }
+        } else if (item === SET_FILTER_SELECT_ALL) {
+            isSelected = this.isSelectAllSelected();
+        } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
+            isSelected = this.isAddCurrentSelectionToFilterChecked();
         } else {
-            if (item === SET_FILTER_SELECT_ALL) {
-                isSelected = this.isSelectAllSelected();
-            } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
-                isSelected = this.isAddCurrentSelectionToFilterChecked();
-            } else {
-                isSelected = this.selectedKeys.has(item);
-            }
+            isSelected = this.selectedKeys.has(item);
         }
         return { isSelected, isExpanded };
     }
@@ -1033,7 +1031,7 @@ export class SetFilter<V = string>
         const formattedFilterText = handler.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && handler.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
+            valueToCheck != null && handler.caseFormat(valueToCheck).includes(formattedFilterText);
 
         const nullMatchesFilter = !!this.params.excelMode && matchesFilter(translateForSetFilter(this, 'blanks'));
 

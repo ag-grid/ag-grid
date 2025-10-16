@@ -102,11 +102,9 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                         // If placement goes up, we're not in the correct order
                         rulePassed = false;
                     }
-                } else {
-                    if (placement < lastPlacement) {
-                        // If placement goes down, we're not in the correct order
-                        rulePassed = false;
-                    }
+                } else if (placement < lastPlacement) {
+                    // If placement goes down, we're not in the correct order
+                    rulePassed = false;
                 }
                 lastPlacement = placement;
             }
@@ -123,7 +121,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
         const gridColumns = this.beans.colModel.getCols();
         const proposedColumnOrder = gridColumns.slice();
-        _moveInArray(proposedColumnOrder, columnsToMove as AgColumn[], toIndex);
+        _moveInArray(proposedColumnOrder, columnsToMove, toIndex);
         return proposedColumnOrder;
     }
 

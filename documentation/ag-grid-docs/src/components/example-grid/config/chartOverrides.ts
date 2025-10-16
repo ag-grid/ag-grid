@@ -27,7 +27,9 @@ const axisLabelFormatter = ({ value }) => {
     if (absolute >= 1e9 && absolute < 1e12) {
         standardised = '$' + +(absolute / 1e9).toFixed(1) + 'B';
     }
-    if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
+    if (absolute >= 1e12) {
+        standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
+    }
 
     return `${value < 0 ? '-' + standardised : standardised}`;
 };

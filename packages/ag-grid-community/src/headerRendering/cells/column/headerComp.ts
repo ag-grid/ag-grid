@@ -309,7 +309,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         );
         if (configured) {
             this.addManagedElementListeners(eFilterButton, {
-                click: () => params.showFilter(eFilterButton!),
+                click: () => params.showFilter(eFilterButton),
             });
         } else {
             this.eFilterButton = undefined;

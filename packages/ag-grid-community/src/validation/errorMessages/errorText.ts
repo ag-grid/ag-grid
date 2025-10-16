@@ -738,7 +738,7 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
     const errorBody = msgOrFunc(args as any);
     const errorLink = getErrorLink(errorId, args);
     const errorSuffix = `\nSee ${errorLink}`;
-    return Array.isArray(errorBody) ? (errorBody.concat(errorSuffix) as string[]) : [errorBody, errorSuffix];
+    return Array.isArray(errorBody) ? errorBody.concat(errorSuffix) : [errorBody, errorSuffix];
 }
 
 const MISSING_MODULE_REASONS = {

@@ -33,7 +33,9 @@ export class ThemeImpl {
     ) {}
 
     withPart(part: Part | (() => Part)): ThemeImpl {
-        if (typeof part === 'function') part = part();
+        if (typeof part === 'function') {
+            part = part();
+        }
         if (!(part instanceof PartImpl)) {
             // Can't use validation service as this is API is designed to be used before modules are registered
             this.themeLogger.preInitErr(259, 'Invalid part', { part });
@@ -60,9 +62,13 @@ export class ThemeImpl {
      * container is within a shadow root.
      */
     _startUse({ styleContainer, cssLayer, nonce, loadThemeGoogleFonts, moduleCss }: themeUseArgs): void {
-        if (IS_SSR) return;
+        if (IS_SSR) {
+            return;
+        }
 
-        if (FORCE_LEGACY_THEMES) return;
+        if (FORCE_LEGACY_THEMES) {
+            return;
+        }
 
         uninstallLegacyCSS();
 
@@ -88,7 +94,9 @@ export class ThemeImpl {
      * the provided class name
      */
     _getCssClass(this: ThemeImpl): string {
-        if (FORCE_LEGACY_THEMES) return 'ag-theme-quartz';
+        if (FORCE_LEGACY_THEMES) {
+            return 'ag-theme-quartz';
+        }
 
         return (this._cssClassCache ??= deduplicatePartsByFeature(this.parts)
             .map((part) => part.use(undefined, undefined, undefined))
@@ -251,7 +259,9 @@ let uninstalledLegacyCSS = false;
 // Remove the CSS from @ag-grid-community/styles that is automatically injected
 // by the UMD bundle
 const uninstallLegacyCSS = () => {
-    if (uninstalledLegacyCSS) return;
+    if (uninstalledLegacyCSS) {
+        return;
+    }
     uninstalledLegacyCSS = true;
     for (const style of Array.from(document.head.querySelectorAll('style[data-ag-scope="legacy"]'))) {
         style.remove();

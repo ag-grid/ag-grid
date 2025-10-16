@@ -333,7 +333,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
     const columnStateBeforeMap: { [colId: string]: ColumnState } = {};
 
     for (const col of columnStateBefore) {
-        columnStateBeforeMap[col.colId!] = col;
+        columnStateBeforeMap[col.colId] = col;
     }
 
     return () => {
@@ -618,28 +618,28 @@ function normaliseColumnMovedEventForColumnState(
 
     const colStateAfterMapped: { [id: string]: ColumnState } = {};
     for (const s of colStateAfter) {
-        colStateAfterMapped[s.colId!] = s;
+        colStateAfterMapped[s.colId] = s;
     }
 
     // get id's of cols in both before and after lists
     const colsIntersectIds: { [id: string]: boolean } = {};
     for (const s of colStateBefore) {
-        if (colStateAfterMapped[s.colId!]) {
-            colsIntersectIds[s.colId!] = true;
+        if (colStateAfterMapped[s.colId]) {
+            colsIntersectIds[s.colId] = true;
         }
     }
 
     // filter state lists, so we only have cols that were present before and after
-    const beforeFiltered = colStateBefore.filter((c) => colsIntersectIds[c.colId!]);
-    const afterFiltered = colStateAfter.filter((c) => colsIntersectIds[c.colId!]);
+    const beforeFiltered = colStateBefore.filter((c) => colsIntersectIds[c.colId]);
+    const afterFiltered = colStateAfter.filter((c) => colsIntersectIds[c.colId]);
 
     // see if any cols are in a different location
     const movedColumns: AgColumn[] = [];
 
-    afterFiltered!.forEach((csAfter: ColumnState, index: number) => {
+    afterFiltered.forEach((csAfter: ColumnState, index: number) => {
         const csBefore = beforeFiltered?.[index];
         if (csBefore && csBefore.colId !== csAfter.colId) {
-            const gridCol = colModel.getCol(csBefore.colId!);
+            const gridCol = colModel.getCol(csBefore.colId);
             if (gridCol) {
                 movedColumns.push(gridCol);
             }

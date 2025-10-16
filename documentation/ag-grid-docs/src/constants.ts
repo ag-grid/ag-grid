@@ -156,7 +156,9 @@ export const LIBRARY = 'grid';
  * Charts URL
  */
 function getChartsUrl() {
-    if (SITE_URL == null) return;
+    if (SITE_URL == null) {
+        return;
+    }
 
     if (SITE_URL?.includes('localhost')) {
         return 'https://localhost:4600';
@@ -170,7 +172,9 @@ export const CHARTS_SITE_URL = getChartsUrl();
 export const PRODUCTION_GRID_SITE_URL = 'https://www.ag-grid.com';
 export const GRID_ARCHIVE_BASE_URL = `${PRODUCTION_GRID_SITE_URL}/archive`;
 function calculateGridUrl() {
-    if (SITE_URL == null) return;
+    if (SITE_URL == null) {
+        return;
+    }
 
     if (SITE_URL?.includes('localhost')) {
         return SITE_URL; // NOTE: Will be different if this is on the charts website

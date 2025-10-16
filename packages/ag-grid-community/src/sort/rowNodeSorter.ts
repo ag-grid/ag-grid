@@ -3,6 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
+import { _firstLeaf } from '../entities/rowNodeUtils';
 import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
 
@@ -121,11 +122,8 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             // because they're group rows, no display cols exist, so groupData never populated.
             // instead delegate to getting value from leaf child.
             if (isGroupRows) {
-                const leafChild = node.allLeafChildren?.[0];
-                if (leafChild) {
-                    return valueSvc.getValue(column, leafChild, false);
-                }
-                return undefined;
+                const leafChild = node.data ? node : _firstLeaf(node.childrenAfterGroup);
+                return leafChild && valueSvc.getValue(column, leafChild, false);
             }
 
             const displayCol = showRowGroupCols?.getShowRowGroupCol(column.getId());

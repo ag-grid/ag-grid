@@ -518,12 +518,11 @@ export class GridBodyScrollFeature extends BeanStub {
                     indexToSelect = i;
                     break;
                 }
-            } else {
-                // check object equality against node and data
-                if (comparator === node || comparator === node!.data) {
-                    indexToSelect = i;
-                    break;
-                }
+            }
+            // check object equality against node and data
+            else if (comparator === node || comparator === node!.data) {
+                indexToSelect = i;
+                break;
             }
         }
         if (indexToSelect >= 0) {

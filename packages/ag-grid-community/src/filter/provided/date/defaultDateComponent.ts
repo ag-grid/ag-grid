@@ -133,10 +133,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
             } else {
                 inputElement.min = minValidDate;
             }
-        } else {
-            if (minValidYear) {
-                inputElement.min = `${minValidYear}-01-01`;
-            }
+        } else if (minValidYear) {
+            inputElement.min = `${minValidYear}-01-01`;
         }
 
         if (maxValidDate) {
@@ -145,10 +143,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
             } else {
                 inputElement.max = maxValidDate;
             }
-        } else {
-            if (maxValidYear) {
-                inputElement.max = `${maxValidYear}-12-31`;
-            }
+        } else if (maxValidYear) {
+            inputElement.max = `${maxValidYear}-12-31`;
         }
 
         this.isApply = params.location === 'floatingFilter' && !!buttons?.includes('apply');

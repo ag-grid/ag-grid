@@ -197,7 +197,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
-        this.businessKey = _escapeString(businessKey!);
+        this.businessKey = _escapeString(businessKey);
     }
 
     private updateGui(containerType: RowContainerType, gui: RowGui | undefined) {
@@ -624,11 +624,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             if (focusedSpan.firstNode !== this.rowNode || !focusedSpan.doesSpanContain(focusedCell)) {
                 return undefined;
             }
-        } else {
+        } else if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
             // if no span, and the focused cell is not in this row, don't create ctrl
-            if (!focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned)) {
-                return undefined;
-            }
+            return undefined;
         }
 
         return this.getNewCellCtrl(focusedCell.column as AgColumn);
@@ -704,7 +702,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (mightWantToKeepCell) {
             const displayedColumns = visibleCols.allCols;
-            const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
+            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
 

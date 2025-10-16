@@ -45,7 +45,9 @@ function getMsgOrDefault<TId extends ErrorId>(
  * Stringify object, removing any circular dependencies
  */
 function stringifyObject(inputObj: any) {
-    if (!inputObj) return String(inputObj);
+    if (!inputObj) {
+        return String(inputObj);
+    }
     const object: Record<string, any> = {};
     for (const prop of Object.keys(inputObj)) {
         if (typeof inputObj[prop] !== 'object' && typeof inputObj[prop] !== 'function') {
@@ -153,7 +155,7 @@ export function _logPreInitErr<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_errorOnce, id!, args as any, false, defaultMessage);
+    getMsgOrDefault(_errorOnce, id, args as any, false, defaultMessage);
 }
 
 export function _logPreInitWarn<
@@ -161,7 +163,7 @@ export function _logPreInitWarn<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_warnOnce, id!, args as any, true, defaultMessage);
+    getMsgOrDefault(_warnOnce, id, args as any, true, defaultMessage);
 }
 
 function getErrMsg<TId extends ErrorId>(

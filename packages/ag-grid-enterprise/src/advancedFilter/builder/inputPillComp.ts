@@ -160,7 +160,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         const [Comp, postConstruct] = inputComponentDescriptors[type];
         // eslint-disable-next-line sonarjs/new-operator-misuse
         const instance = this.createBean(new Comp());
-        if (postConstruct) postConstruct(instance);
+        postConstruct?.(instance);
         return instance;
     }
 
@@ -204,7 +204,7 @@ export class InputPillComp extends Component<InputPillCompEvent> {
         if (!this.eEditor) {
             return;
         }
-        const value = this.eEditor!.getValue() ?? '';
+        const value = this.eEditor.getValue() ?? '';
         this.dispatchLocalEvent<WithoutGridCommon<FieldValueEvent>>({
             type: 'fieldValueChanged',
             value,

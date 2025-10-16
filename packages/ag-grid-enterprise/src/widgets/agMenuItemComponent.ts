@@ -234,7 +234,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         const { popupSvc } = this;
         const positionCallback = () => {
-            const eventSource = this.eGui!;
+            const eventSource = this.eGui;
             const { column, node } = this.contextParams;
             popupSvc?.positionPopupForMenu({
                 eventSource,
@@ -275,7 +275,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
     private setAriaExpanded(expanded: boolean): void {
         if (!this.suppressAria) {
-            _setAriaExpanded(this.eGui!, expanded);
+            _setAriaExpanded(this.eGui, expanded);
         }
     }
 
@@ -306,11 +306,11 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         this.isActive = true;
         if (!this.suppressRootStyles) {
-            this.eGui!.classList.add(`${this.cssClassPrefix}-active`);
+            this.eGui.classList.add(`${this.cssClassPrefix}-active`);
         }
         this.menuItemComp.setActive?.(true);
         if (!this.suppressFocus) {
-            _preserveRangesWhile(this.beans, () => this.eGui!.focus({ preventScroll: !fromKeyNav }));
+            _preserveRangesWhile(this.beans, () => this.eGui.focus({ preventScroll: !fromKeyNav }));
         }
 
         if (openSubMenu && this.params.subMenu) {
@@ -327,7 +327,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     public deactivate() {
         this.cancelDeactivate();
         if (!this.suppressRootStyles) {
-            this.eGui!.classList.remove(`${this.cssClassPrefix}-active`);
+            this.eGui.classList.remove(`${this.cssClassPrefix}-active`);
         }
         this.menuItemComp.setActive?.(false);
         this.isActive = false;

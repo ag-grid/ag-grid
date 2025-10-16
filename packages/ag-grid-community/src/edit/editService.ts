@@ -120,13 +120,11 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
             if (hasCellValidation || hasRowValidation) {
                 this.stopEditing(undefined, CANCEL_PARAMS);
-            } else {
-                if (this.isEditing()) {
-                    if (this.isBatchEditing()) {
-                        _destroyEditors(beans, this.model.getEditPositions());
-                    } else {
-                        this.stopEditing(undefined, COMMIT_PARAMS);
-                    }
+            } else if (this.isEditing()) {
+                if (this.isBatchEditing()) {
+                    _destroyEditors(beans, this.model.getEditPositions());
+                } else {
+                    this.stopEditing(undefined, COMMIT_PARAMS);
                 }
             }
 
@@ -261,7 +259,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
-        this.strategy!.start({
+        this.strategy.start({
             position,
             event,
             source,
@@ -610,11 +608,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 if (!rowNode.data && !gos.get('enableGroupEdit')) {
                     return false;
                 }
-            } else {
-                // grouping - allow editing of groups if the user has enableGroupEdit option enabled
-                if (!gos.get('enableGroupEdit')) {
-                    return false;
-                }
+            }
+            // grouping - allow editing of groups if the user has enableGroupEdit option enabled
+            else if (!gos.get('enableGroupEdit')) {
+                return false;
             }
         }
 
@@ -921,7 +918,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         _syncFromEditors(beans, { persist: true });
 
         const edits: EditMap = this.model.getEditMap(true);
-        const editValue = edits.get(rowNode)?.get(column!)?.pendingValue;
+        const editValue = edits.get(rowNode)?.get(column)?.pendingValue;
 
         if (!this.batch) {
             // bulk edits occurring during batch are handled as a batch set of changes

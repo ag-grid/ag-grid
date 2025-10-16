@@ -45,7 +45,7 @@ interface RowNodeMap {
     [id: string]: IRowNode;
 }
 
-const ROW_ANIMATION_TIMEOUT = 400 as const;
+const ROW_ANIMATION_TIMEOUT = 400;
 
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
