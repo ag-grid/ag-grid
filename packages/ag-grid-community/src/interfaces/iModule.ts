@@ -10,7 +10,7 @@ type ModuleValidationValidResult = {
     isValid: true;
 };
 
-export type ModuleValidationInvalidResult = {
+type ModuleValidationInvalidResult = {
     isValid: false;
     message: string;
 };
