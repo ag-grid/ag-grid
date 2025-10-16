@@ -38,12 +38,12 @@ const StatusPanelComponent: ComponentType = {
 };
 
 const AgStatusBarValidationMap = {
-    agAggregationComponent: { rowModels: new Set(['clientSide', 'serverSide']), warnArgs: [221] },
-    agFilteredRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [222] },
-    agSelectedRowCountComponent: { rowModels: new Set(['clientSide', 'serverSide']), warnArgs: [223] },
-    agTotalAndFilteredRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [224] },
-    agTotalRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [225] },
-} as Record<StatusPanelComponentName, { rowModels: Set<RowModelType>; warnArgs: [number, ...any[]] }>;
+    agAggregationComponent: { rowModels: ['clientSide', 'serverSide'], warnArgs: [221] },
+    agFilteredRowCountComponent: { rowModels: ['clientSide'], warnArgs: [222] },
+    agSelectedRowCountComponent: { rowModels: ['clientSide', 'serverSide'], warnArgs: [223] },
+    agTotalAndFilteredRowCountComponent: { rowModels: ['clientSide'], warnArgs: [224] },
+    agTotalRowCountComponent: { rowModels: ['clientSide'], warnArgs: [225] },
+} as Record<StatusPanelComponentName, { rowModels: RowModelType[]; warnArgs: [number, ...any[]] }>;
 
 const AgStatusBarElement: ElementParams = {
     tag: 'div',
@@ -108,7 +108,7 @@ class AgStatusBar extends Component {
             if (!rowModels) {
                 return true;
             }
-            if (rowModels.has(gos.get('rowModelType'))) {
+            if (rowModels.includes(gos.get('rowModelType'))) {
                 return true;
             }
             _warn(...(warnArgs as Parameters<typeof _warn>));
