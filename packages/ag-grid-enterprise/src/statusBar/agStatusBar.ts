@@ -3,7 +3,6 @@ import type {
     ComponentSelector,
     ComponentType,
     ElementParams,
-    GridOptionsService,
     IStatusPanelComp,
     IStatusPanelParams,
     RowModelType,
@@ -33,21 +32,6 @@ function getStatusPanelCompDetails(
     return userCompFactory.getCompDetails(def, StatusPanelComponent, undefined, params, true);
 }
 
-/**
- * If false is returned the component should not be created
- */
-const supportsCurrentRowModel = (
-    expectedRowModels: Set<RowModelType>,
-    warnArgs: [number, ...any[]],
-    gos: GridOptionsService
-): boolean => {
-    if (expectedRowModels.has(gos.get('rowModelType'))) {
-        return true;
-    }
-    _warn(...(warnArgs as Parameters<typeof _warn>));
-    return false;
-};
-
 const StatusPanelComponent: ComponentType = {
     name: 'statusPanel',
     optionalMethods: ['refresh'],
@@ -59,7 +43,7 @@ const AgStatusBarValidationMap = {
     agSelectedRowCountComponent: { rowModels: new Set(['clientSide', 'serverSide']), warnArgs: [223] },
     agTotalAndFilteredRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [224] },
     agTotalRowCountComponent: { rowModels: new Set(['clientSide']), warnArgs: [225] },
-} satisfies Record<StatusPanelComponentName, { rowModels: Set<RowModelType>; warnArgs: [number, ...any[]] }>;
+} as Record<StatusPanelComponentName, { rowModels: Set<RowModelType>; warnArgs: [number, ...any[]] }>;
 
 const AgStatusBarElement: ElementParams = {
     tag: 'div',
@@ -120,7 +104,11 @@ class AgStatusBar extends Component {
         }
         return statusPanels.filter((panel) => {
             const { rowModels, warnArgs } = AgStatusBarValidationMap[panel.statusPanel as StatusPanelComponentName];
-            return supportsCurrentRowModel(rowModels, warnArgs, gos);
+            if (rowModels.has(gos.get('rowModelType'))) {
+                return true;
+            }
+            _warn(...(warnArgs as Parameters<typeof _warn>));
+            return false;
         });
     }
 
@@ -170,7 +158,7 @@ class AgStatusBar extends Component {
     }
 
     private updateStatusBar(): void {
-        const statusPanels = this.gos.get('statusBar')?.statusPanels;
+        const statusPanels = this.getValidPanels();
         const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
         this.setDisplayed(validStatusBarPanelsProvided);
 
