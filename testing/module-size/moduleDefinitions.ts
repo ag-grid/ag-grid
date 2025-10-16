@@ -79,7 +79,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SetFilterModule: 152.16,
     SideBarModule: 33.16,
     SparklinesModule: 20.5,
-    StatusBarModule: 27,
+    StatusBarModule: 28,
     TreeDataModule: 83.97,
     ViewportRowModelModule: 28,
 };
