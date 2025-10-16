@@ -1,5 +1,4 @@
 import type {
-    BeanCollection,
     GridApi,
     IClientSideRowModel,
     IExpansionService,
@@ -19,18 +18,18 @@ export class ClientSideExpansionService
 {
     beanName = 'expansionSvc' as const;
 
-    private rowModel: IClientSideRowModel;
-
     private events: RowGroupOpenedEvent[] | null = null;
-    private dispatchExpandedDebounced: () => void;
+    private dispatchExpandedDebounced: (() => void) | null = null;
 
-    public wireBeans(beans: BeanCollection): void {
-        this.rowModel = beans.rowModel as IClientSideRowModel;
+    public override destroy(): void {
+        super.destroy();
+        this.events = null;
+        this.dispatchExpandedDebounced = null;
     }
 
     public setExpansionState(state: RowGroupExpansionState): void {
         const rowIdsToExpandSet = new Set(state.expandedRowGroupIds);
-        this.rowModel.forEachNode((node) => {
+        this.beans.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
                 return;
@@ -44,7 +43,7 @@ export class ClientSideExpansionService
     public getExpansionState(): RowGroupExpansionState {
         const expandedRowGroupIds: string[] = [];
         const collapsedRowGroupIds: string[] = [];
-        this.rowModel.forEachNode((node) => {
+        this.beans.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
                 return;
@@ -60,8 +59,7 @@ export class ClientSideExpansionService
     }
 
     public expandAll(expand: boolean): void {
-        const { gos, colModel, eventSvc } = this.beans;
-        const rowModel = this.rowModel;
+        const { gos, rowModel, colModel, eventSvc } = this.beans;
         const usingTreeData = gos.get('treeData');
         const usingPivotMode = colModel.isPivotActive();
 
@@ -123,7 +121,7 @@ export class ClientSideExpansionService
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.rowModel.refreshModel({ step: 'map' });
+        (this.beans.rowModel as IClientSideRowModel).refreshModel({ step: 'map' });
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
@@ -150,38 +148,43 @@ export class ClientSideExpansionService
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void {
         (this.events ??= []).push(event);
 
-        const func = () => {
-            const eventsToDispatch = this.events;
-            if (!eventsToDispatch) {
+        if (forceSync) {
+            this.dispatchExpandedEvents();
+            return;
+        }
+
+        let dispatch = this.dispatchExpandedDebounced;
+        if (!dispatch) {
+            if (!this.isAlive()) {
                 return;
             }
-            this.events = null;
-
-            const { eventSvc, rowRenderer } = this.beans;
-
-            const rowNodes = new Array<IRowNode>(eventsToDispatch.length);
-            for (let i = 0, len = eventsToDispatch.length; i < len; i++) {
-                rowNodes[i] = eventsToDispatch[i].node;
-                eventSvc.dispatchEvent(eventsToDispatch[i]);
-            }
-
-            // ensure row model updates (e.g. footer creation) complete before refreshing cells
-            this.dispatchStateUpdatedEvent();
-
-            // when using footers we need to refresh the group row, as the aggregation
-            // values jump between group and footer, because the footer can be callback
-            // we refresh regardless as the output of the callback could be a moving target
-            rowRenderer.refreshCells({ rowNodes });
-        };
-
-        if (forceSync) {
-            func();
-        } else {
-            if (this.dispatchExpandedDebounced == null) {
-                this.dispatchExpandedDebounced = this.debounce(func);
-            }
-            this.dispatchExpandedDebounced();
+            this.dispatchExpandedDebounced = dispatch = this.debounce(() => this.dispatchExpandedEvents());
         }
+        dispatch();
+    }
+
+    private dispatchExpandedEvents() {
+        const eventsToDispatch = this.events;
+        if (!eventsToDispatch) {
+            return;
+        }
+        this.events = null;
+
+        const { eventSvc, rowRenderer } = this.beans;
+
+        const rowNodes = new Array<IRowNode>(eventsToDispatch.length);
+        for (let i = 0, len = eventsToDispatch.length; i < len; i++) {
+            rowNodes[i] = eventsToDispatch[i].node;
+            eventSvc.dispatchEvent(eventsToDispatch[i]);
+        }
+
+        // ensure row model updates (e.g. footer creation) complete before refreshing cells
+        this.dispatchStateUpdatedEvent();
+
+        // when using footers we need to refresh the group row, as the aggregation
+        // values jump between group and footer, because the footer can be callback
+        // we refresh regardless as the output of the callback could be a moving target
+        rowRenderer.refreshCells({ rowNodes });
     }
 
     // the advantage over normal debounce is the client can call flushAllFrames()
