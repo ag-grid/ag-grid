@@ -26,7 +26,7 @@ const rowData = [
     { rid: '1', A: 1, B: 2, C: 3 },
     { rid: '2', A: 4, B: 5, C: 6 },
     { rid: '3', A: 7, B: 8, C: 9 },
-    { rid: '4', A: '=ERRORIFONE(A1:A3)', B: '=ERRORIFONE(B1:B3)', C: '=ERRORIFONE(C1:C3)', D: '=CONCAT(A4:C4)', },
+    { rid: '4', A: '=ERRORIFONE(A1:A3)', B: '=ERRORIFONE(B1:B3)', C: '=ERRORIFONE(C1:C3)', D: '=CONCAT(A4:C4)' },
 ];
 
 const gridOptions: GridOptions<any> = {
@@ -49,10 +49,10 @@ const gridOptions: GridOptions<any> = {
             func: (params: FormulaFuncParams) => {
                 for (const value of params.values) {
                     if (String(value) === '1') {
-                        throw 'Error, discovered a \'1\' in params';
+                        throw "Error, discovered a '1' in params";
                     }
                 }
-                return 'SUCCESS, no \'1\' found.';
+                return "SUCCESS, no '1' found.";
             },
         },
     },

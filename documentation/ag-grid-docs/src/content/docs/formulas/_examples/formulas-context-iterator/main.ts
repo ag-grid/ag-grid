@@ -30,8 +30,8 @@ const rowData = [
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'A', colId: '0', width: 150, },
-        { field: 'B', colId: '1', width: 150, },
+        { field: 'A', colId: '0', width: 150 },
+        { field: 'B', colId: '1', width: 150 },
         { field: 'C', colId: '2', flex: 1 },
     ],
     getRowId: (params) => String(params.data.rid),
