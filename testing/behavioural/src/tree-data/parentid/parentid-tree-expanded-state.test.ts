@@ -36,7 +36,9 @@ describe('ag-grid parentId tree expanded state', () => {
             rowData: originalRowData,
             getRowId: ({ data }) => data.id,
             onRowGroupOpened: ({ data }) => {
-                if (!data) return;
+                if (!data) {
+                    return;
+                }
                 const yoo = `yoo-${++yooCounter}`;
 
                 const oldRowData = api.getGridOption('rowData')!;

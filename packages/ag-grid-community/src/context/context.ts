@@ -146,6 +146,13 @@ export type DynamicBeanName =
     | 'agDateColumnFilterHandler'
     | 'agTextColumnFilterHandler';
 
+export type StatusPanelComponentName =
+    | 'agAggregationComponent'
+    | 'agSelectedRowCountComponent'
+    | 'agTotalRowCountComponent'
+    | 'agFilteredRowCountComponent'
+    | 'agTotalAndFilteredRowCountComponent';
+
 export type UserComponentName =
     | 'agDragAndDropImage'
     | 'agColumnHeader'
@@ -191,11 +198,7 @@ export type UserComponentName =
     | 'agGroupCellRenderer'
     | 'agDetailCellRenderer'
     | 'agSparklineCellRenderer'
-    | 'agAggregationComponent'
-    | 'agSelectedRowCountComponent'
-    | 'agTotalRowCountComponent'
-    | 'agFilteredRowCountComponent'
-    | 'agTotalAndFilteredRowCountComponent'
+    | StatusPanelComponentName
     | 'agFindCellRenderer';
 
 interface ComponentMetaWithParams {
