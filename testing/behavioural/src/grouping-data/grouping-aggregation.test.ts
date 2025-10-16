@@ -150,7 +150,9 @@ describe('ag-grid grouping aggregation', () => {
                     field: 'scores',
                     aggFunc: (params) => {
                         const values = params.values as number[][];
-                        if (!values || values.length === 0) return null;
+                        if (!values || values.length === 0) {
+                            return null;
+                        }
 
                         const allScores = values.flat();
                         const avg = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
@@ -162,7 +164,9 @@ describe('ag-grid grouping aggregation', () => {
                     field: 'metadata',
                     aggFunc: (params) => {
                         const values = params.values as Array<{ priority: number }>;
-                        if (!values || values.length === 0) return null;
+                        if (!values || values.length === 0) {
+                            return null;
+                        }
 
                         const minPriority = Math.min(...values.map((v) => v.priority));
                         return { minPriority };

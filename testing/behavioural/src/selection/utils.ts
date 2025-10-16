@@ -13,7 +13,9 @@ export class GridActions {
         parentSelector = '#myGrid'
     ) {
         this.parent = document.querySelector(parentSelector)!;
-        if (!this.parent) throw new Error(`${parentSelector} not found.`);
+        if (!this.parent) {
+            throw new Error(`${parentSelector} not found.`);
+        }
     }
 
     getRowByIndex(index: number): HTMLElement | null {
