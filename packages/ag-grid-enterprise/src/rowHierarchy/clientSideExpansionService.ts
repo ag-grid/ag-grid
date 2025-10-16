@@ -160,7 +160,8 @@ export class ClientSideExpansionService
             if (!this.isAlive()) {
                 return;
             }
-            this.dispatchExpandedDebounced = dispatch = this.debounce(() => this.dispatchExpandedEvents());
+            dispatch = this.debounce(() => this.dispatchExpandedEvents());
+            this.dispatchExpandedDebounced = dispatch;
         }
         dispatch();
     }
