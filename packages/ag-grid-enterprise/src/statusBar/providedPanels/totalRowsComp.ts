@@ -3,14 +3,13 @@ import type {
     IStatusPanelComp,
     IStatusPanelParams,
     IStatusPanelValueFormatterParams,
-    IWithSupportedRowModels,
 } from 'ag-grid-community';
 import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 import { _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
-export class TotalRowsComp extends AgNameValue implements IStatusPanelComp, IWithSupportedRowModels {
+export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     supportedRowModels = new Set(['clientSide'] as const);
     public postConstruct(): void {
         this.setLabel('totalRows', 'Total Rows');

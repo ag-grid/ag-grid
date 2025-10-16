@@ -4,14 +4,13 @@ import type {
     IStatusPanelComp,
     IStatusPanelParams,
     IStatusPanelValueFormatterParams,
-    IWithSupportedRowModels,
 } from 'ag-grid-community';
 import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 import { _getFilteredRowCount, _getTotalRowCount, supportsCurrentRowModel } from './utils';
 
-export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp, IWithSupportedRowModels {
+export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPanelComp {
     supportedRowModels = new Set(['clientSide'] as const);
     public postConstruct(): void {
         if (!supportsCurrentRowModel(this.gos, this.supportedRowModels, [224])) {

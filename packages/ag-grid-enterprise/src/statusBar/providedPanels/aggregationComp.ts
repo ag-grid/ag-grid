@@ -18,7 +18,6 @@ import {
     _isRowBefore,
     _missing,
 } from 'ag-grid-community';
-import type { IWithSupportedRowModels } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
@@ -58,7 +57,7 @@ const AggregationCompElement: ElementParams = {
         },
     ],
 };
-export class AggregationComp extends Component implements IStatusPanelComp, IWithSupportedRowModels {
+export class AggregationComp extends Component implements IStatusPanelComp {
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
     private readonly countAggregationComp: AgNameValue = RefPlaceholder;
     private readonly minAggregationComp: AgNameValue = RefPlaceholder;
