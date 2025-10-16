@@ -3,6 +3,7 @@ import type {
     GridApi,
     IClientSideRowModel,
     IExpansionService,
+    IRowNode,
     NamedBean,
     RowGroupExpansionState,
     RowGroupOpenedEvent,
@@ -20,7 +21,7 @@ export class ClientSideExpansionService
 
     private rowModel: IClientSideRowModel;
 
-    private events: RowGroupOpenedEvent[] = [];
+    private events: RowGroupOpenedEvent[] | null = null;
     private dispatchExpandedDebounced: () => void;
 
     public wireBeans(beans: BeanCollection): void {
@@ -147,21 +148,30 @@ export class ClientSideExpansionService
     // rather than debounce() so this will get done if anyone flushes the animationFrameService
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void {
-        this.events.push(event);
+        (this.events ??= []).push(event);
 
         const func = () => {
-            for (const e of this.events) {
-                this.eventSvc.dispatchEvent(e);
+            const eventsToDispatch = this.events;
+            if (!eventsToDispatch) {
+                return;
             }
+            this.events = null;
+
+            const { eventSvc, rowRenderer } = this.beans;
+
+            const rowNodes = new Array<IRowNode>(eventsToDispatch.length);
+            for (let i = 0, len = eventsToDispatch.length; i < len; i++) {
+                rowNodes[i] = eventsToDispatch[i].node;
+                eventSvc.dispatchEvent(eventsToDispatch[i]);
+            }
+
+            // ensure row model updates (e.g. footer creation) complete before refreshing cells
+            this.dispatchStateUpdatedEvent();
 
             // when using footers we need to refresh the group row, as the aggregation
             // values jump between group and footer, because the footer can be callback
             // we refresh regardless as the output of the callback could be a moving target
-            const nodes = this.events.map((e) => e.node);
-            this.beans.rowRenderer.refreshCells({ rowNodes: nodes });
-
-            this.events = [];
-            this.dispatchStateUpdatedEvent();
+            rowRenderer.refreshCells({ rowNodes });
         };
 
         if (forceSync) {
