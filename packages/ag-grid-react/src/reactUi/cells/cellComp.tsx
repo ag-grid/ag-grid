@@ -333,7 +333,9 @@ const CellComp = ({
                     if (recoverFocus) {
                         compProxy.getFocusableElement().focus({ preventScroll: true });
                     }
-                    // stop editing
+                    // stop editing and clear the cellEditorRef to avoid the editService thinking the editor is still alive when calling getCellEditor.
+                    // Due to the use of React the cellEditorRef is cleared asynchronously after rendering is forced via setEditDetails(undefined)
+                    // We also need to clear the cellEditorRef here to cover the case that we are using a proxy
                     cellEditorRef.current = undefined;
                     setEditDetails(undefined);
                 }
