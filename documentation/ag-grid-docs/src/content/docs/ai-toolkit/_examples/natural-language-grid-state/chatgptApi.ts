@@ -74,6 +74,14 @@ Where possible, augment the provided state `;
                 },
             ],
         });
+
+        if (result.error) {
+            if (result.error.code === 'rate_limit_exceeded') {
+                throw new Error('Rate Limit Exceeded');
+            } else {
+                throw new Error('Unknown Error');
+            }
+        }
     } catch (error: any) {
         throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
     }
@@ -112,7 +120,11 @@ async function generateObject(options: any): Promise<any> {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        throw new Error(`OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+        const error =
+            errorData.error?.code === 'rate_limit_exceeded'
+                ? 'Open API Rate Limit Exceeded'
+                : `OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`;
+        throw new Error(error);
     }
 
     const data = await response.json();
