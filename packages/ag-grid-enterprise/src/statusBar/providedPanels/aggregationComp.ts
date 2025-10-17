@@ -15,11 +15,8 @@ import {
     _formatNumberCommas,
     _getRowBelow,
     _getRowNode,
-    _isClientSideRowModel,
     _isRowBefore,
-    _isServerSideRowModel,
     _missing,
-    _warn,
 } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
@@ -74,11 +71,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     public postConstruct(): void {
-        if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
-            _warn(221);
-            return;
-        }
-
         this.avgAggregationComp.setLabel('avg', 'Average');
         this.countAggregationComp.setLabel('count', 'Count');
         this.minAggregationComp.setLabel('min', 'Min');

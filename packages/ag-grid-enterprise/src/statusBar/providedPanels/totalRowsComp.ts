@@ -4,7 +4,7 @@ import type {
     IStatusPanelParams,
     IStatusPanelValueFormatterParams,
 } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
+import { _formatNumberCommas } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 import { _getTotalRowCount } from './utils';
@@ -12,11 +12,6 @@ import { _getTotalRowCount } from './utils';
 export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     public postConstruct(): void {
         this.setLabel('totalRows', 'Total Rows');
-
-        if (!_isClientSideRowModel(this.gos)) {
-            _warn(225);
-            return;
-        }
 
         this.addCss('ag-status-panel');
         this.addCss('ag-status-panel-total-row-count');
