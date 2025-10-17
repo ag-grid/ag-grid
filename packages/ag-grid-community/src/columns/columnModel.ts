@@ -511,14 +511,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
+    public getColumnDefs(sorted?: boolean): (ColDef | ColGroupDef)[] | undefined {
         return (
             this.colDefCols &&
             this.beans.colDefFactory?.getColumnDefs(
                 this.colDefCols.list,
                 this.showingPivotResult,
                 this.lastOrder,
-                this.cols?.list ?? []
+                this.cols?.list ?? [],
+                sorted
             )
         );
     }

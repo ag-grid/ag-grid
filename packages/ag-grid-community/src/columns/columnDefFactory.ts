@@ -57,13 +57,14 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         colDefColsList: AgColumn[],
         showingPivotResult: boolean,
         lastOrder: AgColumn[] | null,
-        colsList: AgColumn[]
+        colsList: AgColumn[],
+        sorted: boolean = false
     ): (ColDef | ColGroupDef)[] | undefined {
         const cols = colDefColsList.slice();
 
         if (showingPivotResult) {
             cols.sort((a, b) => lastOrder!.indexOf(a) - lastOrder!.indexOf(b));
-        } else {
+        } else if (lastOrder || sorted) {
             cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
         }
 
