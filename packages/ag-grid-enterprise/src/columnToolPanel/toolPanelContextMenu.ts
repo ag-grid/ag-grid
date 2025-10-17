@@ -2,7 +2,7 @@ import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-
 import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import { AgMenuList } from '../widgets/agMenuList';
+import { MenuList } from '../widgets/menuList';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -185,7 +185,7 @@ export class ToolPanelContextMenu extends Component {
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
         const eGui = this.getGui();
-        const menuList = this.createBean(new AgMenuList());
+        const menuList = this.createBean(new MenuList());
         const localeTextFunc = this.getLocaleTextFunc();
 
         let hideFunc = () => {};

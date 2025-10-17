@@ -3,7 +3,6 @@ import type {
     _AgComponent,
     _AgCoreBeanCollection,
     _BaseEvents,
-    _BasePopupPositionParams,
     _BaseProperties,
     _IPopupService,
     _IPropertiesService,
@@ -59,7 +58,7 @@ export class AgDialog<
     TComponentSelectorType,
     TDialogOptions
 > {
-    private popupSvc?: _IPopupService<_BasePopupPositionParams>;
+    private popupSvc?: _IPopupService<any>;
 
     public wireBeans(beans: TBeanCollection) {
         this.popupSvc = beans.popupSvc;

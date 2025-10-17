@@ -36,6 +36,13 @@ export {
     AgPanelPostProcessPopupParams as _AgPanelPostProcessPopupParams,
 } from './agStack/agPanel';
 export { IAgChartsExports as _IAgChartsExports } from './agStack/iAgChartsExports';
+export { AgMenuList as _AgMenuList } from './agStack/agMenuList';
+export {
+    AgMenuItemCallbacks as _AgMenuItemCallbacks,
+    AgCloseMenuEvent as _AgCloseMenuEvent,
+    AgMenuItemActivatedEvent as _AgMenuItemActivatedEvent,
+    AgMenuItemComponent as _AgMenuItemComponent,
+} from './agStack/agMenuItemComponent';
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';

@@ -46,7 +46,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             column,
             (eMenu) => {
                 this.popupSvc?.positionPopupUnderMouseEvent({
-                    column,
+                    additionalParams: { column },
                     type: containerType,
                     mouseEvent,
                     ePopup: eMenu,
@@ -92,7 +92,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
                     alignSide,
                     keepWithinBounds: true,
                     position: 'under',
-                    column,
+                    additionalParams: { column },
                 });
             },
             containerType,

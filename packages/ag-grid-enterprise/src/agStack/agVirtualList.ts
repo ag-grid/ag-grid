@@ -12,8 +12,7 @@ import type {
 import {
     KeyCode,
     RefPlaceholder,
-    _AgComponentStub,
-    _AgTabGuardFeature,
+    _AgTabGuardComp,
     _createAgElement,
     _getAriaPosInSet,
     _observeResize,
@@ -67,7 +66,7 @@ export class AgVirtualList<
     >,
     V = any,
     TEventType extends string = _AgComponentEvent,
-> extends _AgComponentStub<
+> extends _AgTabGuardComp<
     TBeanCollection,
     TProperties,
     TGlobalEvents,
@@ -80,13 +79,6 @@ export class AgVirtualList<
     private readonly ariaRole: string;
     private readonly listName?: string;
 
-    private tabGuardFeature: _AgTabGuardFeature<
-        TBeanCollection,
-        TProperties,
-        TGlobalEvents,
-        TCommon,
-        TPropertiesService
-    >;
     protected model: VirtualListModel;
     private readonly renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: V }>();
     private componentCreator: (value: V, listItemElement: HTMLElement) => C;
@@ -120,17 +112,16 @@ export class AgVirtualList<
         this.rowHeight = this.getItemHeight();
         this.addResizeObserver();
 
-        const tabGuardFeature = this.createManagedBean<
-            _AgTabGuardFeature<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
-        >(new _AgTabGuardFeature(this, this.stopPropagationCallbacks));
-        this.tabGuardFeature = tabGuardFeature;
-        tabGuardFeature.initialiseTabGuard({
-            onFocusIn: (e: FocusEvent) => this.onFocusIn(e),
-            onFocusOut: (e: FocusEvent) => this.onFocusOut(e),
-            focusInnerElement: (fromBottom: boolean) => this.focusInnerElement(fromBottom),
-            onTabKeyDown: (e) => this.onTabKeyDown(e),
-            handleKeyDown: (e) => this.handleKeyDown(e),
-        });
+        this.initialiseTabGuard(
+            {
+                onFocusIn: (e: FocusEvent) => this.onFocusIn(e),
+                onFocusOut: (e: FocusEvent) => this.onFocusOut(e),
+                focusInnerElement: (fromBottom: boolean) => this.focusInnerElement(fromBottom),
+                onTabKeyDown: (e) => this.onTabKeyDown(e),
+                handleKeyDown: (e) => this.handleKeyDown(e),
+            },
+            this.stopPropagationCallbacks
+        );
 
         this.refreshAriaProperties();
         this.addManagedEventListeners({ stylesChanged: this.onStylesChanged.bind(this) });
@@ -207,7 +198,7 @@ export class AgVirtualList<
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         this.stopPropagationCallbacks?.stopPropagation(e);
-        this.tabGuardFeature.forceFocusOutOfContainer(e.shiftKey);
+        this.forceFocusOutOfContainer(e.shiftKey);
     }
 
     private getNextRow(up: boolean): number | undefined {

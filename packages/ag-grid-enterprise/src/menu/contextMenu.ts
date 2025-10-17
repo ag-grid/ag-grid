@@ -34,9 +34,9 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
 import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
-import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
-import { AgMenuList } from '../widgets/agMenuList';
+import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';
 import type { MenuUtils } from './menuUtils';
 
@@ -318,8 +318,10 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         const positionParams = {
-            column,
-            rowNode: node,
+            additionalParams: {
+                column,
+                rowNode: node,
+            },
             type: 'contextMenu',
             mouseEvent,
             ePopup: eMenuGui,
@@ -378,7 +380,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener('closeMenu', (e: CloseMenuEvent) =>
+            menu.addEventListener('closeMenu', (e: AgCloseMenuEvent) =>
                 addPopupRes.hideFunc({
                     mouseEvent: e.mouseEvent ?? undefined,
                     keyboardEvent: e.keyboardEvent ?? undefined,
@@ -451,7 +453,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 type ContextMenuEvent = 'closeMenu';
 
 class ContextMenu extends Component<ContextMenuEvent> {
-    private menuList: AgMenuList | null = null;
+    private menuList: MenuList | null = null;
     private focusedCell: CellPosition | null = null;
 
     constructor(
@@ -465,7 +467,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
 
     public postConstruct(): void {
         const menuList = this.createManagedBean(
-            new AgMenuList(0, {
+            new MenuList(0, {
                 column: this.column,
                 node: this.node,
                 value: this.value,

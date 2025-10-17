@@ -88,7 +88,13 @@ export { LocaleTextFunc } from './agStack/interfaces/iLocaleService';
 export { CssClassManager } from './agStack/rendering/cssClassManager';
 export { LocalEventService } from './agStack/events/localEventService';
 export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
-export { PopupEventParams } from './agStack/interfaces/iPopup';
+export {
+    PopupEventParams,
+    AgPopupPositionParams,
+    AgComponentPopupPositionParams,
+    AgMenuPopupPositionParams,
+    AgMousePopupPositionParams,
+} from './agStack/interfaces/iPopup';
 export { ScrollDirection } from './agStack/interfaces/baseEvents';
 export { KeyCode } from './agStack/constants/keyCode';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
@@ -255,7 +261,6 @@ export { WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
 export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
 export { ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
 export { IPopupService as _IPopupService } from './agStack/interfaces/iPopupService';
-export { BasePopupPositionParams as _BasePopupPositionParams } from './agStack/interfaces/iPopup';
 export {
     AgPropertyKey as _AgPropertyKey,
     AgPropertyValueChangedListener as _AgPropertyValueChangedListener,
@@ -266,7 +271,7 @@ export {
 } from './agStack/interfaces/iProperties';
 export { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
-export { TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
+export { TooltipCtrl as _TooltipCtrl, ITooltipFeature as _ITooltipFeature } from './agStack/interfaces/iTooltip';
 export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
 export { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
@@ -284,11 +289,13 @@ export {
 export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
 export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
 export { AgEventService as _AgEventService } from './agStack/interfaces/iEvent';
+export { AgTabGuardComp as _AgTabGuardComp } from './agStack/focus/agTabGuardComp';
 export {
     AgTabGuardFeature as _AgTabGuardFeature,
     AgTabGuardParams as _AgTabGuardParams,
 } from './agStack/focus/agTabGuardFeature';
 export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
+export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
 
 // excel
 export {

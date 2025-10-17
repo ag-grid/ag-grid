@@ -1,20 +1,29 @@
-import type { AddPopupParams, AddPopupResult, BasePopupPositionParams } from './iPopup';
+import type {
+    AddPopupParams,
+    AddPopupResult,
+    AgComponentPopupPositionParams,
+    AgMenuPopupPositionParams,
+    AgMousePopupPositionParams,
+    AgPopupPositionParams,
+} from './iPopup';
 
-export interface IPopupService<TPopupPositionParams extends BasePopupPositionParams> {
+export interface IPopupService<TPopupPositionParams> {
     readonly beanName: 'popupSvc';
 
     getPopupParent(): HTMLElement;
 
     addPopup<TContainerType extends string>(params: AddPopupParams<TContainerType>): AddPopupResult;
 
-    positionPopupByComponent(params: TPopupPositionParams & { type: string; eventSource: HTMLElement }): void;
+    positionPopupByComponent(params: AgComponentPopupPositionParams<TPopupPositionParams>): void;
 
-    positionPopupUnderMouseEvent(params: TPopupPositionParams & { type: string; mouseEvent: MouseEvent | Touch }): void;
+    positionPopupUnderMouseEvent(params: AgMousePopupPositionParams<TPopupPositionParams>): void;
 
-    positionPopup(params: BasePopupPositionParams): void;
+    positionPopupForMenu(params: AgMenuPopupPositionParams<TPopupPositionParams>): void;
+
+    positionPopup(params: AgPopupPositionParams<TPopupPositionParams>): void;
 
     callPostProcessPopup(
-        params: Omit<TPopupPositionParams, keyof BasePopupPositionParams>,
+        params: TPopupPositionParams | undefined,
         type: string,
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,

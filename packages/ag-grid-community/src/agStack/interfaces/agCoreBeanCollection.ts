@@ -8,7 +8,6 @@ import type { IEnvironment } from './iEnvironment';
 import type { AgEventService } from './iEvent';
 import type { IIconService } from './iIconService';
 import type { ILocaleService } from './iLocaleService';
-import type { BasePopupPositionParams } from './iPopup';
 import type { IPopupService } from './iPopupService';
 import type { IPropertiesService } from './iProperties';
 import type { IRegistry } from './iRegistry';
@@ -26,7 +25,7 @@ export interface AgCoreBeanCollection<
     localeSvc?: ILocaleService;
     environment: IEnvironment;
     eRootDiv: HTMLElement;
-    popupSvc?: IPopupService<BasePopupPositionParams>;
+    popupSvc?: IPopupService<any>;
     registry: IRegistry<this, 'tooltipFeature' | 'highlightTooltipFeature' | 'tooltipStateManager'>;
     iconSvc: IIconService<string, any>;
     dragSvc?: IDragService;

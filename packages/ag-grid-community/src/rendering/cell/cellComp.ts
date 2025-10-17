@@ -1,3 +1,4 @@
+import type { AgComponentPopupPositionParams } from '../../agStack/interfaces/iPopup';
 import { CssClassManager } from '../../agStack/rendering/cssClassManager';
 import { _getActiveDomElement } from '../../agStack/utils/document';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../agStack/utils/dom';
@@ -517,10 +518,12 @@ export class CellComp extends Component {
             position != null ? position : cellEditor!.getPopupPosition?.() ?? 'over';
         const isRtl = gos.get('enableRtl');
 
-        const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
+        const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {
             ePopup: ePopupGui,
-            column,
-            rowNode,
+            additionalParams: {
+                column,
+                rowNode,
+            },
             type: 'popupCellEditor',
             eventSource: eCell,
             position: positionToUse,
