@@ -146,10 +146,6 @@ gridApi.setState(newGridState, propertiesToIgnore);
 
 Passing `propertiesToIgnore` (the properties that are unchanged by the LLM) to `setState` ensures that these properties are not overridden after the grid state is updated. 
 
-## Modifying the Schema
-
-You may modify the structured schema to surgically change options or add extra features. For example, you may wish to add schema for a custom filter, or limit which columns can be hidden by the LLM. If you choose to do this, make sure that the result is still a valid `GridState` object before passing it to `setState`. Be aware that the JSON schema supported by LLMs is a subset of the full JSON schema spec and build your schemas accordingly. 
-
 ## Excluding Features
 
 By default, all features are enabled and included in the schema. If you wish to limit the features returned in the schema, you can do so by providing a list of feature names to the `getStructuredSchema` method.
@@ -230,9 +226,9 @@ const prompt = `
 
 ## Best Practices
 
-### Augmenting Grid Schema
+### Modifying the Schema
 
-If required, you can layer additional constraints onto the schema returned by getStructuredSchema() (e.g., forbid hiding certain columns, restrict aggregates):
+You may modify the structured schema to surgically change options or add extra features. For example, you may wish to add schema for a custom filter, or limit which columns can be hidden by the LLM:
 
 ```ts
 // Generate base schema
@@ -266,6 +262,8 @@ function applyCustomRules(schema) {
 
 const customSchema = applyCustomRules(baseSchema);
 ```
+
+If you choose to do this, make sure that the result is still a valid `GridState` object before passing it to `setState`. Be aware that the JSON schema supported by LLMs is a subset of the full JSON schema spec and build your schemas accordingly. 
 
 ### Handling Schema Size Limits
 
