@@ -114,7 +114,7 @@ async function generateObject(options: any): Promise<any> {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         const error =
             errorData.error?.code === 'rate_limit_exceeded'
-                ? 'Open API Rate Limit Exceeded'
+                ? 'OpenAI Rate Limit Exceeded'
                 : `OpenAI API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`;
         throw new Error(error);
     }
