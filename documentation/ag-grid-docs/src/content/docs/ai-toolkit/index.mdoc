@@ -165,7 +165,7 @@ const gridStateStructuredSchema = gridApi.getStructuredSchema(
 Occasionally the LLM will need more information than can be provided by the grid alone. As such, you can pass in options for each column defining extra context.
 
  - `description` - This provides a description of what the column contains to the LLM inline in the schema. This might include details such as the type or format of the data, to aid it when filtering or aggregating.
- - `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#Handling-Schema-Size-Limits) for more information.
+ - `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#handling-schema-size-limits) for more information.
 
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema({ columns: {
