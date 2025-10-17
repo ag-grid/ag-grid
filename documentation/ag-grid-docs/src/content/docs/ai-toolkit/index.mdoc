@@ -64,7 +64,7 @@ To get started you'll need:
 - Input for user queries 
 - Knowledge of making requests to an LLM
 
-### Create a Schema 
+### Creating a Schema 
 
 The `getStructuredSchema` API returns a structured [JSON Schema](https://json-schema.org/) representation of the [Grid State](./grid-state/) that can then be used to create a LLM compatible schema:
 
@@ -103,7 +103,7 @@ The `schema` contains several properties for the LLM to populate:
 -   `propertiesToIgnore` a list of grid state properties which have been unchanged, to ensure they are not overridden when updating grid state (optional, but recommended).
 -   `explanation` a string the LLM can use to provide human-readable context to the user about the changes that have been applied (optional, but recommended).
 
-### Modify State with Any LLM
+### Modifying State with Any LLM
 
 To provide the LLM with sufficient context, we recommend sending the users' request, the current grid state, and the schema to the LLM:
 
@@ -120,7 +120,7 @@ const response = await callLLM(userRequest, gridState, schema)
 
 The `callLLM` function needs to be implemented in accordance with your chosen LLM. Refer to our example above for a [reference implementation](https://github.com/ag-grid/ag-grid/blob/9399cd046793a702ef0b0924f0203a5cc27b96c6/documentation/ag-grid-docs/src/content/docs/ai-toolkit/_examples/natural-language-grid-state/chatgptApi.ts#L10) using [ChatGPT's Completions API](https://platform.openai.com/docs/api-reference/chat?api-mode=chat) and the [Prompting](./prompting/) section for more information on creating system prompts.
 
-### Validate & Update Grid State
+### Updating Grid State
 
 Once the LLM has provided a response, it should be validated against your top-level schema. This is particularly important when using an LLM that does not support structured outputs. 
 
