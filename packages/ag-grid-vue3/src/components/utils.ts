@@ -1,4 +1,3 @@
-/* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
     AlignedGrid,
