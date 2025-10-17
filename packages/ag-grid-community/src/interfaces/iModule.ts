@@ -116,7 +116,6 @@ type InternalModuleName =
     | 'Testing';
 
 export type CommunityModuleName =
-    | 'AiToolkit'
     | 'AlignedGrids'
     | 'AllCommunity'
     | 'CellApi'
@@ -163,6 +162,7 @@ export type CommunityModuleName =
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
+    | 'AiToolkit'
     | 'AllEnterprise'
     | 'BatchEdit'
     | 'CellSelection'
