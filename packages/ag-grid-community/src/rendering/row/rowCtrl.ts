@@ -227,6 +227,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.initialiseRowComp(gui);
 
+        // this needs to be applied to only ag-sticky-bottom container rows
         gui.rowComp.toggleCss('ag-first-sticky-row', this.rowNode.sticky && this.rowNode.stickyRowTop === 0);
 
         const rowNode = this.rowNode;

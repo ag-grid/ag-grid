@@ -100,7 +100,7 @@
     border-bottom-color: transparent;
 }
 
-.ag-first-sticky-row {
+.ag-sticky-bottom .ag-first-sticky-row {
     border-top: var(--ag-row-border);
     box-sizing: content-box !important;
 }
