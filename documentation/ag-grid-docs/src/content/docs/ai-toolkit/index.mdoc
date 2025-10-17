@@ -165,7 +165,7 @@ const gridStateStructuredSchema = gridApi.getStructuredSchema(
 Occasionally the LLM will need more information than can be provided by the grid alone. As such, you can pass in options for each column defining extra context.
 
  - `description` - This provides a description of what the column contains to the LLM inline in the schema. This might include details such as the type or format of the data, to aid it when filtering or aggregating.
- - `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included.
+ - `includeSetValues` - When using the Set Filter, the LLM must be provided with the allowed values for it to correctly set those it wishes to filter. However, some Set Filters contain many values which lead to a schema which is too large for your LLM to process. By default we do not include the Set Filter values, however if you set this property to true then they will be included. Refer to the [Handling Schema Size Limits](#Handling-Schema-Size-Limits) for more information.
 
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema({ columns: {
@@ -224,9 +224,7 @@ const prompt = `
 `
 ```
 
-## Best Practices
-
-### Modifying the Schema
+## Modifying the Schema
 
 You may modify the structured schema to surgically change options or add extra features. For example, you may wish to add schema for a custom filter, or limit which columns can be hidden by the LLM:
 
@@ -246,7 +244,7 @@ const customSchema = applyCustomRules(baseSchema);
 
 If you choose to do this, make sure that the result is still a valid `GridState` object before passing it to `setState`. Be aware that the JSON schema supported by LLMs is a subset of the full JSON schema spec and build your schemas accordingly. 
 
-### Handling Schema Size Limits
+## Handling Schema Size Limits
 
 `includeSetValues: true` is useful when the LLM must pick from explicit allowed values (e.g., Set Filter), enabling precise filter construction. However, large cardinalities can inflate the prompt and exceed context limits.
 
