@@ -114,32 +114,6 @@ const App = {
         };
     },
     template: `
-        <div class="example-wrapper">
-            <div class="example-controls">
-                <div class="request-container">
-                    <form class="input-group" @submit.prevent="processRequest">
-                        <input 
-                            type="text" 
-                            v-model="naturalLanguageInput"
-                            :disabled="isProcessing"
-                            placeholder="Your prompt e.g. 'hide age column'"
-                        />
-                        <button type="submit" :disabled="isProcessing">→</button>
-                    </form>
-                    <div v-html="processingStatus"></div>
-                    <div>
-                        <button @click="resetGrid">Reset Grid</button>
-                    </div>
-                </div>
-
-                <div class="response-container">
-                    <div v-if="aiResponse" v-html="aiResponse"></div>
-                    <div v-if="currentState" v-html="currentState"></div>
-                </div>
-            </div>
-
-            <div id="myGrid"></div>
-        </div>
     `,
     mounted() {
         this.initializeGrid();
