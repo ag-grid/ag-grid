@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_HU = {
     november: 'November',
     december: 'December',
 
+    // Date-time parts
+    year: 'Év',
+    quarter: 'Negyedév',
+    month: 'Hónap',
+    day: 'Nap',
+    hour: 'Óra',
+    minute: 'Perc',
+    second: 'Másodperc',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'NN/HH/ÉÉÉÉ',
     timeFormatSlashesMMDDYYYY: 'HH/NN/ÉÉÉÉ',

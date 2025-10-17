@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_UA = {
     november: 'Листопад',
     december: 'Грудень',
 
+    // Date-time parts
+    year: 'Рік',
+    quarter: 'Квартал',
+    month: 'Місяць',
+    day: 'День',
+    hour: 'Година',
+    minute: 'Хвилина',
+    second: 'Секунда',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'ДД/ММ/РРРР',
     timeFormatSlashesMMDDYYYY: 'ММ/ДД/РРРР',

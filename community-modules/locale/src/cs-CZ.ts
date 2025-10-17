@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_CZ = {
     november: 'Listopad',
     december: 'Prosinec',
 
+    // Date-time parts
+    year: 'Rok',
+    quarter: 'Čtvrtletí',
+    month: 'Měsíc',
+    day: 'Den',
+    hour: 'Hodina',
+    minute: 'Minuta',
+    second: 'Sekunda',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/RRRR',
     timeFormatSlashesMMDDYYYY: 'MM/DD/RRRR',

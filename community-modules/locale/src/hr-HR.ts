@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_HR = {
     november: 'Studeni',
     december: 'Prosinac',
 
+    // Date-time parts
+    year: 'Godina',
+    quarter: 'Kvartal',
+    month: 'Mjesec',
+    day: 'Dan',
+    hour: 'Sat',
+    minute: 'Minuta',
+    second: 'Sekunda',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/GGGG',
     timeFormatSlashesMMDDYYYY: 'MM/DD/GGGG',
