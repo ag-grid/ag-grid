@@ -22,6 +22,25 @@ Suggested prompts:
 
 The AI Toolkit provides a `getStructuredSchema` API that generates Structured Output representations of the current grid state. These outputs can be passed to an LLM, which can then generate valid responses that can be passed directly to the `setState` API method. This ensures reliable, schema-aligned instructions for updating or manipulating the grid based on natural language input.
 
+1. **User Input Capture:** End user enters a natural language query.
+
+2. **Prompt Construction (Client/Server):** The application gathers three elements:
+   1. The user query
+   2. The current grid state, via `gridApi.getState()`
+   3. The structured output of grid state, via `gridApi.getStructuredSchema()`
+
+3. **LLM Service Request:** The complete prompt (including the structured schema) is sent to the LLM endpoint (e.g., OpenAI, Gemini).
+
+4. **Response Processing & Validation:** The LLM returns a JSON object conforming to the schema.  
+
+5. **State Application:** The validated JSON is passed to `gridApi.setState()`.
+
+{% imageCaption imagePath="resources/ai-toolkit-sequence-diagram.svg" alt="High Contrast Theme" constrained=true maxWidth="50rem" enableDarkModeFilter=true /%}
+
+{% note %}
+If you wish to integrate with an LLM that does not support structured data natively, you can still use the schema to [validate and parse the response](#invalid-response-handling) from the LLM before passing it to `setState`. There are multiple libraries that can do this for you, such as [ajv](https://ajv.js.org/).
+{% /note %}
+
 The schema is made up of a series of "features", each representing a different aspect of the grid that can be manipulated. The following features are currently supported:
 
 - [Filtering](./filtering/)
@@ -32,24 +51,18 @@ The schema is made up of a series of "features", each representing a different a
 - [Column Visibility](./column-properties/#reference-display-hide/)
 - [Column Sizing](./column-sizing/)
 
-{% note %}
-If you wish to integrate with an LLM that does not support structured data natively, you can still use the schema to validate and parse the response from the LLM before passing it to `setState`. There are multiple libraries that can do this for you, such as [ajv](https://ajv.js.org/).
-{% /note %}
-
-### Custom Filters
-
-The Structured Output does not include schema for any custom filters you may have provided to the grid. To handle these you will have to [modify the schema](#modifying-schema) yourself
-
 ## Getting Started
 
 To get started you'll need:
 
-API Key for LLM?
-Existing AG Grid implementation
+- API Key for LLM?
+- Existing AG Grid implementation
+- Knowledge of making requests to an LLM
+- A input for user queries 
 
 The following example is based on ChatGPTs Structured Outputs, using the `gpt-4o-mini` model. 
 
-### Creating Structured Outputs
+### Generating Structured Outputs
 
 The `getStructuredSchema` API returns a [JSON schema](https://json-schema.org/) that can be sent to an LLM as part of a prompt:
 
@@ -60,6 +73,8 @@ const { $defs, ...gridStateStructuredSchema } = gridApi.getStructuredSchema();
 The `...gridStateStructuredSchema` is a narrow representation of what can be achieved using the grid's API. For example, if a column is not sortable, the schema will not include that column in the list of sortable columns. This ensures that the LLM is only able to generate valid state changes for the grid.
 
 The `$defs` ...
+
+### Creating the Schema
 
 Once the structured output has been created, it can be  used to create a LLM compatible schema, e.g. for ChatGPT:
 
@@ -93,14 +108,26 @@ const schema = {
 
 ### Updating Grid State
 
-The schema can be sent to an LLM, and the response can be used to update state:
+The schema query and state sent to llm
 
 ```ts
 // Get Users' Request, e.g. from Input Element
 const userRequest = inputElement.value.trim();
 
+// Get Current Grid State
+
+
 // Send User Request & Schema to LLM
-const response = await callLLM(userRequest, schema)
+const response = await callLLM(userRequest, gridState, schema)
+```
+
+### Updating Grid State
+
+response... Validation...
+
+```ts
+// Validation
+
 
 // Update Grid State with LLM Response
 if (Object.keys(response.gridState).length > 0) {
@@ -123,8 +150,6 @@ For example, if you do not want to allow users to manipulate column visibility a
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema({ exclude: ['columnVisibility', 'sorting'] });
 ```
-
-
 
 ## Providing Additional Context
 
@@ -185,6 +210,20 @@ const prompt = `
     - Filtering
 `
 ```
+
+## Troubleshooting & Best Practices
+
+### Augmenting Grid Schema
+
+Mention that if needed developers can layer the returned object from LLM with their own “custom structuredSchema”. However warn them that this is error prone and if the grid state is invalidated it won’t work (Ask Josh for wording). Address the default behaviour of setState overwriting properties. Provide the recommended defensive pattern
+
+### Handling Schema Size Limits
+
+Detail the precise use case for includeSetValues: true. Warning: Advise developers on monitoring the resulting schema size against the context window limits of their chosen LLM.
+
+### Invalid Response Handling
+
+Advise on implementing a try...catch block around setState to handle scenarios where the LLM returns non-JSON or JSON that violates the schema, which will prevent runtime crashes.
 
 ## API
 
