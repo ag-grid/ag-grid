@@ -386,6 +386,17 @@
             ]
         },
         {
+            "name": "AI Features",
+            "children": [
+                {
+                    "moduleName": "AiToolkitModule",
+                    "name": "AI Toolkit",
+                    "path": "ai-toolkit",
+                    "isEnterprise": true
+                }
+            ]
+        },
+        {
             "name": "Import & Export",
             "children": [
                 {

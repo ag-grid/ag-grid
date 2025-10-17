@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Nx dev" type="NxRunConfigurationType">
+    <option name="nx-projects" value="dev" />
+    <option name="nx-targets" value="" />
+    <option name="nx-target-configuration" value="" />
+    <envs />
+    <option name="arguments" value="" />
+    <method v="2" />
+  </configuration>
+</component>

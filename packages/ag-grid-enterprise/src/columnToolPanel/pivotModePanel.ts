@@ -29,7 +29,9 @@ export class PivotModePanel extends Component {
             const newValue = !!cbPivotMode.getValue();
             if (newValue !== colModel.isPivotMode()) {
                 gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
-                ctrlsSvc.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
+                for (const c of ctrlsSvc.getHeaderRowContainerCtrls()) {
+                    c.refresh();
+                }
             }
         };
 

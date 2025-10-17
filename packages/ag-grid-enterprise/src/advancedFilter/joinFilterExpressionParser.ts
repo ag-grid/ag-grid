@@ -300,7 +300,7 @@ export class JoinFilterExpressionParser {
 
         if (!autocompleteType) {
             // beyond the end of the expression
-            if (expressionParserIndex! < this.expressionParsers.length - 1) {
+            if (expressionParserIndex < this.expressionParsers.length - 1) {
                 // in the middle of two expressions
                 return this.operatorParser.getAutocompleteListParams(position, expressionParserIndex);
             }

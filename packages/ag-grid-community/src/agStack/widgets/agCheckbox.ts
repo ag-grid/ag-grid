@@ -40,8 +40,12 @@ export class AgCheckbox<
         super.postConstruct();
 
         const { readOnly, passive, name } = this.config;
-        if (typeof readOnly === 'boolean') this.setReadOnly(readOnly);
-        if (typeof passive === 'boolean') this.setPassive(passive);
+        if (typeof readOnly === 'boolean') {
+            this.setReadOnly(readOnly);
+        }
+        if (typeof passive === 'boolean') {
+            this.setPassive(passive);
+        }
         if (name != null) {
             this.setName(name);
         }

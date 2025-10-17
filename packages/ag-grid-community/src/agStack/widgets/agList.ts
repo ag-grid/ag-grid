@@ -96,7 +96,9 @@ export class AgList<
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {
-        listOptions.forEach((listOption) => this.addOption(listOption));
+        for (const listOption of listOptions) {
+            this.addOption(listOption);
+        }
         return this;
     }
 
@@ -115,9 +117,9 @@ export class AgList<
     public clearOptions(): void {
         this.options = [];
         this.reset(true);
-        this.listItems.forEach((item) => {
+        for (const item of this.listItems) {
             item.destroy();
-        });
+        }
 
         _clearElement(this.getGui());
 

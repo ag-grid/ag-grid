@@ -127,10 +127,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
             }
             const { searchString } = autocompleteListParams;
             this.autocompleteList!.setSearch(searchString ?? '');
-        } else {
-            if (isListOpen) {
-                this.closeList();
-            }
+        } else if (isListOpen) {
+            this.closeList();
         }
     }
 

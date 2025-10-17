@@ -159,7 +159,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
 
 // Currently breaks rowGrouping
 const cashFormatter = (params: any) => {
-    if (!params.value) return '';
+    if (!params.value) {
+        return '';
+    }
     return '$' + params.value.toLocaleString();
 };
 

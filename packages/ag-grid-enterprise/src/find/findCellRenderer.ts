@@ -22,25 +22,24 @@ export class FindCellRenderer extends Component implements ICellRenderer {
         if (!parts) {
             eGui.textContent = _toString(displayValue) ?? '';
             eGui.classList.remove('ag-find-cell-active-match');
-            return true;
-        }
-        let hasActiveMatch = false;
-        for (const { value, match, activeMatch } of parts) {
-            const content = _toString(value) ?? '';
-            if (match) {
-                const element = _createElement({ tag: 'mark', cls: 'ag-find-match' });
-                element.textContent = content;
-                if (activeMatch) {
-                    element.classList.add('ag-find-active-match');
-                    hasActiveMatch = true;
+        } else {
+            let hasActiveMatch = false;
+            for (const { value, match, activeMatch } of parts) {
+                const content = _toString(value) ?? '';
+                if (match) {
+                    const element = _createElement({ tag: 'mark', cls: 'ag-find-match' });
+                    element.textContent = content;
+                    if (activeMatch) {
+                        element.classList.add('ag-find-active-match');
+                        hasActiveMatch = true;
+                    }
+                    eGui.appendChild(element);
+                } else {
+                    eGui.appendChild(document.createTextNode(content));
                 }
-                eGui.appendChild(element);
-            } else {
-                eGui.appendChild(document.createTextNode(content));
             }
+            eGui.classList.toggle('ag-find-cell-active-match', hasActiveMatch);
         }
-        eGui.classList.toggle('ag-find-cell-active-match', hasActiveMatch);
-
         return true;
     }
 }

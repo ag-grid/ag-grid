@@ -10,7 +10,7 @@ type ModuleValidationValidResult = {
     isValid: true;
 };
 
-export type ModuleValidationInvalidResult = {
+type ModuleValidationInvalidResult = {
     isValid: false;
     message: string;
 };
@@ -162,6 +162,7 @@ export type CommunityModuleName =
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
+    | 'AiToolkit'
     | 'AllEnterprise'
     | 'BatchEdit'
     | 'CellSelection'
@@ -196,6 +197,7 @@ export type EnterpriseModuleName =
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
+    | 'AiToolkitModule'
     | 'AlignedGridsModule'
     | 'AllCommunityModule'
     | 'CellApiModule'

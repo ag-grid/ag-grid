@@ -1,5 +1,4 @@
-import type { InternalFramework } from '@ag-grid-types';
-import type { Framework } from '@ag-grid-types';
+import type { Framework, InternalFramework } from '@ag-grid-types';
 import { FRAMEWORK_REDIRECT_PATH, SITE_BASE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
 

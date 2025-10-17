@@ -107,7 +107,7 @@ export abstract class BaseEnvironment<
         }
         if (themeClass) {
             const oldClass = el.className;
-            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ` ${extraClasses.join(' ')}` : ''}`;
+            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ' ' + extraClasses.join(' ') : ''}`;
         }
     }
 
@@ -163,12 +163,14 @@ export abstract class BaseEnvironment<
     }
 
     private measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' {
-        const sizeEl = this.getSizeEl(variable)!;
+        const sizeEl = this.getSizeEl(variable);
         if (sizeEl.offsetParent == null) {
             return 'detached';
         }
         const newSize = sizeEl.offsetWidth;
-        if (newSize === NO_VALUE_SENTINEL) return 'no-styles';
+        if (newSize === NO_VALUE_SENTINEL) {
+            return 'no-styles';
+        }
         this.sizesMeasured = true;
         return newSize;
     }

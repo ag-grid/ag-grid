@@ -268,10 +268,10 @@ export abstract class BasePopupService<
 
         const positions = ['right', 'left', 'over', 'above', 'under'];
 
-        positions.forEach((position) => {
+        for (const position of positions) {
             alignedToElement.classList.remove(`ag-has-popup-positioned-${position}`);
             ePopup.classList.remove(`ag-popup-positioned-${position}`);
-        });
+        }
 
         if (!positioned) {
             return;
@@ -487,7 +487,6 @@ export abstract class BasePopupService<
     ): (popupParams?: PopupEventParams) => void {
         const beans = this.beans;
         const eDocument = _getDocument(beans);
-        const ePopupParent = this.getPopupParent();
 
         const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
@@ -524,7 +523,7 @@ export abstract class BasePopupService<
 
             popupHidden = true;
 
-            ePopupParent.removeChild(wrapperEl);
+            wrapperEl.remove();
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
@@ -647,7 +646,7 @@ export abstract class BasePopupService<
 
         const sourceRect = element.getBoundingClientRect();
 
-        const extractFromPixelValue = (pxSize: string) => parseInt(pxSize.substring(0, pxSize.length - 1), 10);
+        const extractFromPixelValue = (pxSize: string) => Number.parseInt(pxSize.substring(0, pxSize.length - 1), 10);
         const createPosition = (prop: 'top' | 'left', direction: Direction) => {
             const initialDiff = parentRect[prop] - sourceRect[prop];
             const initial = extractFromPixelValue(ePopup.style[prop]);
@@ -817,11 +816,11 @@ export abstract class BasePopupService<
             }
 
             const innerEls = currentPopup.querySelectorAll('div');
-            innerEls.forEach((el) => {
+            for (const el of innerEls) {
                 if (el.scrollTop !== 0) {
                     innerElsScrollMap.push([el, el.scrollTop]);
                 }
-            });
+            }
 
             if (i === 0) {
                 parent.insertAdjacentElement('afterbegin', currentPopup);

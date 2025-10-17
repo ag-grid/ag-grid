@@ -10,7 +10,7 @@ import { TooltipStateManager } from './tooltipStateManager';
 
 /**
  * @feature Tooltips
- * @colDef tooltipField, tooltipValueGetter, headerTooltip
+ * @colDef tooltipField, tooltipValueGetter, headerTooltip, tooltipComponentSelector
  */
 export const TooltipModule: _ModuleWithoutApi = {
     moduleName: 'Tooltip',

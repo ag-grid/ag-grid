@@ -23,6 +23,7 @@ export interface RowNumbersOptions
             | 'tooltipValueGetter'
             | 'tooltipComponent'
             | 'tooltipComponentParams'
+            | 'tooltipComponentSelector'
             | 'valueGetter'
             | 'valueFormatter'
             | 'maxWidth'

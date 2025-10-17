@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_IL = {
     november: 'נובמבר',
     december: 'דצמבר',
 
+    // Date-time parts
+    year: 'שנה',
+    quarter: 'רבעון',
+    month: 'חודש',
+    day: 'יום',
+    hour: 'שעה',
+    minute: 'דקה',
+    second: 'שנייה',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

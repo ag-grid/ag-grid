@@ -84,7 +84,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private destroyColumnTree(): void {
         this.allColsTree = [];
-        this.destroyColumnItemFuncs.forEach((f) => f());
+        for (const f of this.destroyColumnItemFuncs) {
+            f();
+        }
         this.destroyColumnItemFuncs = [];
     }
 
@@ -269,9 +271,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         if (this.isInitialState) {
             const { expandedGroupIds } = this.params.initialState as ColumnToolPanelState;
-            expandedGroupIds.forEach((id) => {
+            for (const id of expandedGroupIds) {
                 res[id] = true;
-            });
+            }
             return res;
         }
 
@@ -353,13 +355,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             depth: number,
             parentList: ColumnModelItem[]
         ): void => {
-            tree.forEach((child) => {
+            for (const child of tree) {
                 if (isProvidedColumnGroup(child)) {
                     createGroupItem(child, depth, parentList);
                 } else {
                     createColumnItem(child, depth, parentList);
                 }
-            });
+            }
         };
 
         const createGroupItem = (
@@ -470,12 +472,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private forEachItem(callback: (item: ColumnModelItem) => void): void {
         const recursiveFunc = (items: ColumnModelItem[]) => {
-            items.forEach((item) => {
+            for (const item of items) {
                 callback(item);
                 if (item.group) {
                     recursiveFunc(item.children);
                 }
-            });
+            }
         };
 
         const allColsTree = this.allColsTree;
@@ -507,7 +509,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const groupId = item.columnGroup!.getId();
+            const groupId = item.columnGroup.getId();
             if (groupIds.indexOf(groupId) >= 0) {
                 item.expanded = expand;
                 expandedGroupIds.push(groupId);
@@ -564,7 +566,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const column = item.column!;
+            const column = item.column;
             const colDef = column.getColDef();
 
             let checked: boolean;
@@ -615,12 +617,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             let atLeastOneChildPassed = false;
             if (item.group) {
                 const groupPasses = passesFilter(item);
-                item.children.forEach((child) => {
+                for (const child of item.children) {
                     const childPasses = recursivelyCheckFilter(child, groupPasses || parentPasses);
                     if (childPasses) {
                         atLeastOneChildPassed = childPasses;
                     }
-                });
+                }
             }
 
             const filterPasses = parentPasses || atLeastOneChildPassed ? true : passesFilter(item);
@@ -628,7 +630,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return filterPasses;
         };
 
-        this.allColsTree.forEach((item) => recursivelyCheckFilter(item, false));
+        for (const item of this.allColsTree) {
+            recursivelyCheckFilter(item, false);
+        }
     }
 
     private notifyListeners(): void {
@@ -658,7 +662,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.forEachItem((item) => {
             if (item.group && item.expanded) {
-                expandedGroupIds.push(item.columnGroup!.getId());
+                expandedGroupIds.push(item.columnGroup.getId());
             }
         });
 

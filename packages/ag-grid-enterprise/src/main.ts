@@ -45,6 +45,7 @@ export {
 } from './agStack/agMenuItemComponent';
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
+export { AiToolkitModule } from './aiToolkit/aiToolkitModule';
 export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 export { MenuModule, ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 export { RichSelectModule } from './richSelect/richSelectModule';

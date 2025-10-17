@@ -3,6 +3,7 @@ import type {
     GridApi,
     _AdvancedFilterGridApi,
     _AggregationGridApi,
+    _AiToolkitGridApi,
     _BatchEditApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
@@ -437,5 +438,9 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
 
     ...mod<_StatusBarGridApi>('StatusBar', {
         getStatusPanel: 0,
+    }),
+
+    ...mod<_AiToolkitGridApi>('AiToolkit', {
+        getStructuredSchema: 0,
     }),
 };

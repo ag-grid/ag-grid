@@ -32,13 +32,13 @@ interface AggregationDetails {
 export class AggregationStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'aggStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+    public readonly step: ClientSideRowModelStage = 'aggregate';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'getGroupRowAgg',
         'alwaysAggregateAtRootLevel',
         'suppressAggFilteredOnly',
         'grandTotalRow',
-    ]);
-    public step: ClientSideRowModelStage = 'aggregate';
+    ];
 
     private colModel: ColumnModel;
     private valueSvc: ValueService;
@@ -250,9 +250,9 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         });
 
         if (notChangedValueColumns && oldValues) {
-            notChangedValueColumns.forEach((valueColumn) => {
+            for (const valueColumn of notChangedValueColumns) {
                 result[valueColumn.getId()] = oldValues[valueColumn.getId()];
-            });
+            }
         }
 
         return result;

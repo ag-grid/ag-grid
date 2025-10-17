@@ -341,7 +341,7 @@ export class AgMenuItemComponent<
 
         const popupSvc = this.beans.popupSvc;
         const positionCallback = () => {
-            const eventSource = this.eGui!;
+            const eventSource = this.eGui;
             popupSvc?.positionPopupForMenu({
                 eventSource,
                 ePopup,
@@ -380,7 +380,7 @@ export class AgMenuItemComponent<
 
     private setAriaExpanded(expanded: boolean): void {
         if (!this.suppressAria) {
-            _setAriaExpanded(this.eGui!, expanded);
+            _setAriaExpanded(this.eGui, expanded);
         }
     }
 
@@ -411,11 +411,11 @@ export class AgMenuItemComponent<
 
         this.isActive = true;
         if (!this.suppressRootStyles) {
-            this.eGui!.classList.add(`${this.cssClassPrefix}-active`);
+            this.eGui.classList.add(`${this.cssClassPrefix}-active`);
         }
         this.menuItemComp.setActive?.(true);
         if (!this.suppressFocus) {
-            this.callbacks.preserveRangesWhile(this.beans, () => this.eGui!.focus({ preventScroll: !fromKeyNav }));
+            this.callbacks.preserveRangesWhile(this.beans, () => this.eGui.focus({ preventScroll: !fromKeyNav }));
         }
 
         if (openSubMenu && this.params.subMenu) {
@@ -432,7 +432,7 @@ export class AgMenuItemComponent<
     public deactivate() {
         this.cancelDeactivate();
         if (!this.suppressRootStyles) {
-            this.eGui!.classList.remove(`${this.cssClassPrefix}-active`);
+            this.eGui.classList.remove(`${this.cssClassPrefix}-active`);
         }
         this.menuItemComp.setActive?.(false);
         this.isActive = false;
@@ -569,7 +569,9 @@ export class AgMenuItemComponent<
         this.suppressRootStyles = !!suppressRootStyles;
         if (!this.suppressRootStyles) {
             eGui.classList.add(cssClassPrefix);
-            cssClasses?.forEach((it) => eGui.classList.add(it));
+            for (const it of cssClasses ?? []) {
+                eGui.classList.add(it);
+            }
             if (disabled) {
                 eGui.classList.add(`${cssClassPrefix}-disabled`);
             }

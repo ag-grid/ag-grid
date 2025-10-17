@@ -187,12 +187,12 @@ export class AgPositionableFeature<
             const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
                 const paddingWidth = boundaryEl.offsetWidth - this.element.offsetWidth;
-                computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10) - paddingWidth;
+                computedMinWidth = Number.parseInt(offsetParentComputedStyles.minWidth, 10) - paddingWidth;
             }
 
             if (offsetParentComputedStyles.minHeight != null) {
                 const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
-                computedMinHeight = parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
+                computedMinHeight = Number.parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
             }
         }
 
@@ -225,8 +225,8 @@ export class AgPositionableFeature<
             }
 
             if (boundaryEl) {
-                const top = parseFloat(boundaryEl.style.top);
-                const left = parseFloat(boundaryEl.style.left);
+                const top = Number.parseFloat(boundaryEl.style.top);
+                const left = Number.parseFloat(boundaryEl.style.left);
 
                 if (initialisedDuringPositioning) {
                     this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top, postProcessCallback);
@@ -352,7 +352,7 @@ export class AgPositionableFeature<
 
         let isPercent = false;
 
-        if (typeof height === 'string' && height.indexOf('%') !== -1) {
+        if (typeof height === 'string' && height.includes('%')) {
             _setFixedHeight(eGui, height);
             height = _getAbsoluteHeight(eGui);
             isPercent = true;
@@ -377,7 +377,7 @@ export class AgPositionableFeature<
             } else {
                 eGui.style.height = `${height}px`;
                 eGui.style.flex = '0 0 auto';
-                this.lastSize.height = typeof height === 'number' ? height : parseFloat(height);
+                this.lastSize.height = typeof height === 'number' ? height : Number.parseFloat(height);
             }
         } else {
             eGui.style.maxHeight = 'unset';
@@ -430,7 +430,7 @@ export class AgPositionableFeature<
 
         let isPercent = false;
 
-        if (typeof width === 'string' && width.indexOf('%') !== -1) {
+        if (typeof width === 'string' && width.includes('%')) {
             _setFixedWidth(eGui, width);
             width = _getAbsoluteWidth(eGui);
             isPercent = true;
@@ -454,7 +454,7 @@ export class AgPositionableFeature<
             } else {
                 eGui.style.width = `${width}px`;
                 eGui.style.flex = ' unset';
-                this.lastSize.width = typeof width === 'number' ? width : parseFloat(width);
+                this.lastSize.width = typeof width === 'number' ? width : Number.parseFloat(width);
             }
         } else {
             eGui.style.maxWidth = 'unset';
@@ -478,7 +478,7 @@ export class AgPositionableFeature<
             postProcessCallback,
         });
 
-        this.setPosition(parseFloat(ePopup.style.left), parseFloat(ePopup.style.top));
+        this.setPosition(Number.parseFloat(ePopup.style.left), Number.parseFloat(ePopup.style.top));
     }
 
     public constrainSizeToAvailableHeight(constrain: boolean): void {
@@ -556,23 +556,20 @@ export class AgPositionableFeature<
                 // skip if we are moving to the right and the cursor
                 // is positioned to the left of the dialog
                 (diff > 0 && e.clientX < xPosition + parentRect.left);
+        } else if (anywhereWithin) {
+            // if anywhereWithin is true, we allow to move
+            // as long as the cursor is within the dialog
+            skipX =
+                (diff < 0 && e.clientX > boundaryElRect.right) || (diff > 0 && e.clientX < xPosition + parentRect.left);
         } else {
-            if (anywhereWithin) {
-                // if anywhereWithin is true, we allow to move
-                // as long as the cursor is within the dialog
-                skipX =
-                    (diff < 0 && e.clientX > boundaryElRect.right) ||
-                    (diff > 0 && e.clientX < xPosition + parentRect.left);
-            } else {
-                skipX =
-                    // if the movement is bound to the right side of the dialog
-                    // we skip if we are moving to the left and the cursor
-                    // is to the right of the dialog
-                    (diff < 0 && e.clientX > boundaryElRect.right) ||
-                    // or skip if we are moving to the right and the cursor
-                    // is to the left of the right side anchor
-                    (diff > 0 && e.clientX < boundaryElRect.right);
-            }
+            skipX =
+                // if the movement is bound to the right side of the dialog
+                // we skip if we are moving to the left and the cursor
+                // is to the right of the dialog
+                (diff < 0 && e.clientX > boundaryElRect.right) ||
+                // or skip if we are moving to the right and the cursor
+                // is to the left of the right side anchor
+                (diff > 0 && e.clientX < boundaryElRect.right);
         }
 
         return skipX;
@@ -652,9 +649,7 @@ export class AgPositionableFeature<
         this.resizerMap = undefined;
         const resizerEl = this.element.querySelector(`.${RESIZE_CONTAINER_STYLE}`);
 
-        if (resizerEl) {
-            this.element.removeChild(resizerEl);
-        }
+        resizerEl?.remove();
         this.resizersAdded = false;
     }
 
@@ -721,10 +716,10 @@ export class AgPositionableFeature<
             if (isFlex) {
                 const computedStyle = window.getComputedStyle(currentEl);
                 if (computedStyle.minHeight) {
-                    nextHeight = parseInt(computedStyle.minHeight, 10);
+                    nextHeight = Number.parseInt(computedStyle.minHeight, 10);
                 }
                 if (computedStyle.minWidth) {
-                    nextWidth = parseInt(computedStyle.minWidth, 10);
+                    nextWidth = Number.parseInt(computedStyle.minWidth, 10);
                 }
             } else {
                 nextHeight = currentEl.offsetHeight;
@@ -825,16 +820,14 @@ export class AgPositionableFeature<
                     skipHeight = true;
                     offsetTop = 0;
                 }
-            } else {
+            } else if (
                 // do not let the size of all siblings be higher than the parent container
-                if (
-                    !this.config.popup &&
-                    !this.config.forcePopupParentAsOffsetParent &&
-                    oldHeight! < newHeight &&
-                    this.getMinSizeOfSiblings().height + newHeight > this.element.parentElement!.offsetHeight
-                ) {
-                    skipHeight = true;
-                }
+                !this.config.popup &&
+                !this.config.forcePopupParentAsOffsetParent &&
+                oldHeight! < newHeight &&
+                this.getMinSizeOfSiblings().height + newHeight > this.element.parentElement!.offsetHeight
+            ) {
+                skipHeight = true;
             }
 
             if (!skipHeight) {

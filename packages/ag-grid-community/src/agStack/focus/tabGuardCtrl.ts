@@ -123,9 +123,9 @@ export class AgTabGuardCtrl<
 
         this.activateTabGuards();
 
-        [this.eTopGuard, this.eBottomGuard].forEach((guard) =>
-            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) })
-        );
+        for (const guard of [this.eTopGuard, this.eBottomGuard]) {
+            this.addManagedElementListeners(guard, { focus: this.onFocus.bind(this) });
+        }
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
@@ -220,8 +220,8 @@ export class AgTabGuardCtrl<
         const focusableRange = focusableEls.slice(start, end);
         const targetTabIndex = this.gos.get('tabIndex');
         focusableRange.sort((a: HTMLElement, b: HTMLElement) => {
-            const indexA = parseInt(a.getAttribute('tabindex') || '0');
-            const indexB = parseInt(b.getAttribute('tabindex') || '0');
+            const indexA = Number.parseInt(a.getAttribute('tabindex') || '0');
+            const indexB = Number.parseInt(b.getAttribute('tabindex') || '0');
 
             if (indexB === targetTabIndex) {
                 return 1;

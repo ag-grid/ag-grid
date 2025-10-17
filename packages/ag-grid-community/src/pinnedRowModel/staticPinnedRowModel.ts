@@ -152,10 +152,10 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
             }
         }
 
-        nodesToRemove.forEach((id) => {
+        for (const id of nodesToRemove) {
             getById(nodes, id)?.clearRowTopAndRowIndex();
             delete nodes.cache[id];
-        });
+        }
 
         nodes.order = newOrder;
     }

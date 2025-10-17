@@ -212,7 +212,9 @@ export class AgDialog<
 
     private clearMaximizebleListeners() {
         if (this.maximizeListeners.length) {
-            this.maximizeListeners.forEach((destroyListener) => destroyListener());
+            for (const destroyListener of this.maximizeListeners) {
+                destroyListener();
+            }
             this.maximizeListeners.length = 0;
         }
 

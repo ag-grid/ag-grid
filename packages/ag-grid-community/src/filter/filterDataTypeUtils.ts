@@ -53,7 +53,7 @@ function setFilterNumberComparator<TValue = any>(a: TValue | null, b: TValue | n
     if (b == null) {
         return 1;
     }
-    return parseFloat(a as string) - parseFloat(b as string);
+    return Number.parseFloat(a as string) - Number.parseFloat(b as string);
 }
 
 function isValidDate(value: any): boolean {

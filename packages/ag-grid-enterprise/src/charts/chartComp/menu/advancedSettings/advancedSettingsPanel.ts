@@ -34,14 +34,14 @@ export class AdvancedSettingsPanel extends Component {
     }
 
     private createPanels(chartType: ChartType, seriesType: ChartSeriesType): void {
-        INTERACTIVITY_GROUPS.forEach((group) => {
+        for (const group of INTERACTIVITY_GROUPS) {
             if (!this.isGroupPanelShownForSeries(group, seriesType)) {
-                return;
+                continue;
             }
 
             const comp = this.createPanel(group);
             this.chartPanelFeature.addComponent(comp);
-        });
+        }
     }
 
     private isGroupPanelShownForSeries(group: ChartInteractivityGroup, seriesType: ChartSeriesType): boolean {

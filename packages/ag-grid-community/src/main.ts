@@ -7,7 +7,7 @@ export {
 } from './columns/columnFactoryUtils';
 export type { ColumnGroupService } from './columns/columnGroups/columnGroupService';
 export type { ColumnModel } from './columns/columnModel';
-export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
+export { ColumnCollections as _ColumnCollections } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export { BaseColsService } from './columns/baseColsService';
 export {
@@ -78,7 +78,7 @@ export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 export { BeanStub } from './context/beanStub';
 export { Bean, NamedBean } from './context/bean';
 export type { Context } from './context/context';
-export { BeanName, SingletonBean, BeanCollection } from './context/context';
+export { BeanName, SingletonBean, BeanCollection, StatusPanelComponentName } from './context/context';
 
 // AG Stack (public)
 export { VisibleChangedEvent, RefPlaceholder, AgBaseComponent, _isComponent } from './agStack/interfaces/agComponent';
@@ -379,7 +379,7 @@ export {
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
 } from './entities/rowNode';
-export { _createGlobalRowEvent, _createRowNodeSibling } from './entities/rowNodeUtils';
+export { _createGlobalRowEvent, _createRowNodeSibling, _firstLeaf } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -561,6 +561,13 @@ export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
 export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
+
+export {
+    STRUCTURED_SCHEMA_FEATURES,
+    StructuredSchemaFeature,
+    StructuredSchemaColumnParams,
+    StructuredSchemaParams,
+} from './interfaces/structuredSchemaParams';
 
 export {
     FindMatch,
@@ -764,10 +771,8 @@ export {
     ClientSideRowModelStage,
     ClientSideRowModelStep,
     RefreshModelParams,
-    IChangedRowNodes,
 } from './interfaces/iClientSideRowModel';
-export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
-export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
+export type { ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
@@ -905,6 +910,7 @@ export {
     _PinnedRowGridApi,
     _FindApi,
     _BatchEditApi,
+    _AiToolkitGridApi,
 } from './api/gridApi';
 export { _getClientSideRowModel, _getViewportRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType, _GET_ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
@@ -952,12 +958,10 @@ export {
     _isUsingNewRowSelectionAPI,
     _isUsingNewCellSelectionAPI,
     _isGroupRowsSticky,
-    _getGroupingApproach,
     _getGridOption,
     _isSetFilterByDefault,
     _interpretAsRightClick,
 } from './gridOptionsUtils';
-export type { GroupingApproach } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export { SortedRowNode } from './sort/rowNodeSorter';
@@ -1038,6 +1042,7 @@ export {
     ColDefField,
     AbstractColDef,
     ColTypeDef,
+    ColKey,
     ValueSetterParams,
     ValueParserParams,
     ValueFormatterParams,
@@ -1209,7 +1214,7 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export type { IRowNodeStage, IRowGroupStage, StageExecuteParams } from './interfaces/iRowNodeStage';
+export type { IRowNodeStage, IRowGroupStage, StageExecuteParams, NestedDataGetter } from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';

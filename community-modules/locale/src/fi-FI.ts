@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_FI = {
     november: 'Marraskuu',
     december: 'Joulukuu',
 
+    // Date-time parts
+    year: 'Vuosi',
+    quarter: 'Vuosineljännes',
+    month: 'Kuukausi',
+    day: 'Päivä',
+    hour: 'Tunti',
+    minute: 'Minuutti',
+    second: 'Sekunti',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'PP/KK/VVVV',
     timeFormatSlashesMMDDYYYY: 'KK/PP/VVVV',

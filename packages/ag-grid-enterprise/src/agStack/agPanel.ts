@@ -214,7 +214,7 @@ export class AgPanel<
         eGui.focus();
 
         this.close = () => {
-            eGui.parentElement!.removeChild(eGui);
+            eGui.remove();
             this.destroy();
         };
     }
@@ -253,7 +253,7 @@ export class AgPanel<
             closeButtonComp.addManagedElementListeners(eGui, { click: this.onBtClose.bind(this) });
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
-            eGui.parentElement!.removeChild(eGui);
+            eGui.remove();
 
             this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }

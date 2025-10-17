@@ -8,7 +8,9 @@ if (typeof window !== 'undefined') {
         setTimeout(function () {
             for (var i = 0; i < document.styleSheets.length; i++) {
                 var sheet = document.styleSheets[i];
-                if (sheet.href == link.href) return callback();
+                if (sheet.href == link.href) {
+                    return callback();
+                }
             }
             webkitLoadCheck(link, callback);
         }, 10);
@@ -74,8 +76,11 @@ if (typeof window !== 'undefined') {
                         link.onerror = function (event) {
                             _callback(event.error || new Error('Error loading CSS file.'));
                         };
-                        if (existingLinks.length) head.insertBefore(link, existingLinks[0]);
-                        else head.appendChild(link);
+                        if (existingLinks.length) {
+                            head.insertBefore(link, existingLinks[0]);
+                        } else {
+                            head.appendChild(link);
+                        }
                     })
                         // Remove the old link regardless of loading outcome
                         .then(
@@ -101,13 +106,17 @@ if (typeof window !== 'undefined') {
     exports.fetch = function (load) {
         // dont reload styles loaded in the head
         var links = findExistingCSS(load.address);
-        if (!cssIsReloadable(links)) return '';
+        if (!cssIsReloadable(links)) {
+            return '';
+        }
         return loadCSS(load.address, links);
     };
 } else {
     var builderPromise;
     function getBuilder(loader) {
-        if (builderPromise) return builderPromise;
+        if (builderPromise) {
+            return builderPromise;
+        }
 
         return (builderPromise = System['import']('./css-plugin-base.js', module.id).then(function (CSSPluginBase) {
             return new CSSPluginBase(function compile(source, address) {
@@ -123,18 +132,24 @@ if (typeof window !== 'undefined') {
 
     exports.cssPlugin = true;
     exports.fetch = function (load, fetch) {
-        if (!this.builder) return '';
+        if (!this.builder) {
+            return '';
+        }
         return fetch(load);
     };
     exports.translate = function (load, opts) {
-        if (!this.builder) return '';
+        if (!this.builder) {
+            return '';
+        }
         var loader = this;
         return getBuilder(loader).then(function (builder) {
             return builder.translate.call(loader, load, opts);
         });
     };
     exports.instantiate = function (load, opts) {
-        if (!this.builder) return;
+        if (!this.builder) {
+            return;
+        }
         var loader = this;
         return getBuilder(loader).then(function (builder) {
             return builder.instantiate.call(loader, load, opts);
@@ -158,7 +173,9 @@ if (typeof window !== 'undefined') {
 function filter(arrayLike, func) {
     var arr = [];
     forEach(arrayLike, function (item) {
-        if (func(item)) arr.push(item);
+        if (func(item)) {
+            arr.push(item);
+        }
     });
     return arr;
 }

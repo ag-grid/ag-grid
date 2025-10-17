@@ -42,9 +42,9 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     }
 
     public setActiveButton(id: string | undefined): void {
-        this.buttonComps.forEach((comp) => {
+        for (const comp of this.buttonComps) {
             comp.setSelected(id === comp.getToolPanelId());
-        });
+        }
     }
 
     public addButtonComp(def: ToolPanelDef): SideBarButtonComp {

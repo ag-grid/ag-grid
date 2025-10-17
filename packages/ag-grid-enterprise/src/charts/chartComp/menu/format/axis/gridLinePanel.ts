@@ -63,7 +63,9 @@ export class GridLinePanel extends Component {
             },
             parseInputValue: (value: string) => {
                 const styles = this.chartOptions.getValue<AgAxisGridLineOptions['style']>('gridLine.style') ?? [];
-                if (styles.length === 0) return [{ stroke: value, lineDash: [] }];
+                if (styles.length === 0) {
+                    return [{ stroke: value, lineDash: [] }];
+                }
                 return [{ ...styles[0], stroke: value }];
             },
         });

@@ -120,11 +120,11 @@ export class AgPillSelect<TValue = string | null> extends Component {
         if (maxSelection && this.selectedValues.length >= maxSelection) {
             return options;
         }
-        this.valueList.forEach((value) => {
+        for (const value of this.valueList) {
             if (!this.selectedValues.includes(value)) {
                 options.push({ value, text: this.valueFormatter(value) });
             }
-        });
+        }
         return options;
     }
 

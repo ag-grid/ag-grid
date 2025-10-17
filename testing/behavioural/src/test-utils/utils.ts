@@ -95,7 +95,9 @@ export function unindentText(text: string | string[]) {
     let lines = Array.isArray(text) ? text : text.split('\n');
     lines = lines.filter((line) => line.trim().length > 0).map((line) => line.trimEnd());
     const minIndent = Math.min(...lines.map((line) => line.match(/^\s*/)?.[0].length ?? 0));
-    if (minIndent > 0) lines = lines.map((line) => line.slice(minIndent));
+    if (minIndent > 0) {
+        lines = lines.map((line) => line.slice(minIndent));
+    }
     return lines.join('\n');
 }
 

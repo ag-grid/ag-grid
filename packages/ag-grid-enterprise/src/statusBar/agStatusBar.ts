@@ -5,6 +5,8 @@ import type {
     ElementParams,
     IStatusPanelComp,
     IStatusPanelParams,
+    RowModelType,
+    StatusPanelComponentName,
     StatusPanelDef,
     UserCompDetails,
     UserComponentFactory,
@@ -16,6 +18,7 @@ import {
     _addGridCommonParams,
     _clearElement,
     _removeFromParent,
+    _warn,
 } from 'ag-grid-community';
 
 import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
@@ -33,6 +36,14 @@ const StatusPanelComponent: ComponentType = {
     name: 'statusPanel',
     optionalMethods: ['refresh'],
 };
+
+const AgStatusBarValidationMap = {
+    agAggregationComponent: { rowModels: ['clientSide', 'serverSide'], warnArgs: [221] },
+    agFilteredRowCountComponent: { rowModels: ['clientSide'], warnArgs: [222] },
+    agSelectedRowCountComponent: { rowModels: ['clientSide', 'serverSide'], warnArgs: [223] },
+    agTotalAndFilteredRowCountComponent: { rowModels: ['clientSide'], warnArgs: [224] },
+    agTotalRowCountComponent: { rowModels: ['clientSide'], warnArgs: [225] },
+} as Record<StatusPanelComponentName, { rowModels: RowModelType[]; warnArgs: [number, ...any[]] }>;
 
 const AgStatusBarElement: ElementParams = {
     tag: 'div',
@@ -85,8 +96,28 @@ class AgStatusBar extends Component {
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }
 
+    private getValidPanels(): StatusPanelDef[] | undefined {
+        const gos = this.gos;
+        const statusPanels = gos.get('statusBar')?.statusPanels;
+        if (!statusPanels) {
+            return statusPanels;
+        }
+        return statusPanels.filter((panel) => {
+            const { rowModels, warnArgs } =
+                AgStatusBarValidationMap[panel.statusPanel as StatusPanelComponentName] ?? {};
+            if (!rowModels) {
+                return true;
+            }
+            if (rowModels.includes(gos.get('rowModelType'))) {
+                return true;
+            }
+            _warn(...(warnArgs as Parameters<typeof _warn>));
+            return false;
+        });
+    }
+
     private processStatusPanels(existingStatusPanelsToReuse: Map<string, IStatusPanelComp>): void {
-        const statusPanels = this.gos.get('statusBar')?.statusPanels;
+        const statusPanels = this.getValidPanels();
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels.filter(
                 (componentConfig) => componentConfig.align === 'left'
@@ -131,14 +162,14 @@ class AgStatusBar extends Component {
     }
 
     private updateStatusBar(): void {
-        const statusPanels = this.gos.get('statusBar')?.statusPanels;
+        const statusPanels = this.getValidPanels();
         const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
         this.setDisplayed(validStatusBarPanelsProvided);
 
         const existingStatusPanelsToReuse: Map<string, IStatusPanelComp> = new Map();
 
         if (validStatusBarPanelsProvided) {
-            statusPanels.forEach((statusPanelConfig) => {
+            for (const statusPanelConfig of statusPanels) {
                 const key = statusPanelConfig.key ?? statusPanelConfig.statusPanel;
                 const existingStatusPanel = this.statusBarSvc.getStatusPanel(key);
                 if (existingStatusPanel?.refresh) {
@@ -153,7 +184,7 @@ class AgStatusBar extends Component {
                         _removeFromParent(existingStatusPanel.getGui());
                     }
                 }
-            });
+            }
         }
 
         this.resetStatusBar();
@@ -177,7 +208,9 @@ class AgStatusBar extends Component {
     }
 
     private destroyComponents(): void {
-        Object.values(this.compDestroyFunctions).forEach((func) => func());
+        for (const func of Object.values(this.compDestroyFunctions)) {
+            func();
+        }
         this.compDestroyFunctions = {};
     }
 
@@ -188,7 +221,7 @@ class AgStatusBar extends Component {
     ): AgPromise<void> {
         const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp> }[] = [];
 
-        statusBarComponents.forEach((componentConfig) => {
+        for (const componentConfig of statusBarComponents) {
             // default to the component name if no key supplied
             const key = componentConfig.key || componentConfig.statusPanel;
             const existingStatusPanel = existingStatusPanelsToReuse.get(key);
@@ -203,7 +236,7 @@ class AgStatusBar extends Component {
                 );
 
                 if (compDetails == null) {
-                    return;
+                    continue;
                 }
                 promise = compDetails.newAgStackInstance();
             }
@@ -212,10 +245,10 @@ class AgStatusBar extends Component {
                 key,
                 promise,
             });
-        });
+        }
 
         return AgPromise.all(componentDetails.map((details) => details.promise)).then(() => {
-            componentDetails.forEach((componentDetail) => {
+            for (const componentDetail of componentDetails) {
                 componentDetail.promise.then((component: IStatusPanelComp) => {
                     const destroyFunc = () => {
                         this.destroyBean(component);
@@ -229,7 +262,7 @@ class AgStatusBar extends Component {
                         destroyFunc();
                     }
                 });
-            });
+            }
         });
     }
 }

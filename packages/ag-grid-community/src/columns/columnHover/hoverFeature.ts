@@ -29,7 +29,9 @@ export class HoverFeature extends BeanStub {
                 mouseout: colHover.clearMouseOver.bind(colHover),
             });
         } else {
-            this.destroyManagedListeners.forEach((fn) => fn());
+            for (const fn of this.destroyManagedListeners) {
+                fn();
+            }
             this.destroyManagedListeners = [];
         }
     };

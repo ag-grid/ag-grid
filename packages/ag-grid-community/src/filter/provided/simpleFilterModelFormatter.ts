@@ -68,7 +68,7 @@ export abstract class SimpleFilterModelFormatter<
                 ? translateForFilter(this, model.type === 'blank' ? 'filterSummaryBlank' : 'filterSummaryNotBlank')
                 : translate(model.type, model.type);
         } else {
-            const condition = model as ISimpleFilterModel;
+            const condition = model;
             const customOption = this.optionsFactory.getCustomOption(condition.type);
 
             // For custom filter options we display the Name of the filter instead

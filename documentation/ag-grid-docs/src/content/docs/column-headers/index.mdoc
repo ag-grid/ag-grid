@@ -613,9 +613,11 @@ See the [Touch](./touch/) documentation for how the grid will handle touch suppo
 
 ## Tooltips
 
-Tooltips can be added to the Column Header by using the `headerTooltip` property of the `ColDef`.
+Tooltips can be added to the Column Header by using either the `headerTooltipValueGetter`, or `headerTooltip` property of the `ColDef`.
 
-The example below demonstrates using the `headerTooltip` property in the grid columns.
+{% apiDocumentation source="column-properties/properties.json" section="header" names=["headerTooltipValueGetter", "headerTooltip"] /%}
+
+The example below demonstrates using both `headerTooltipValueGetter` and `headerTooltip` properties to set tooltips in the grid columns.
 
 {% gridExampleRunner title="Header Tooltip" name="header-tooltip" /%}
 

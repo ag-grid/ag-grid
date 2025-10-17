@@ -49,10 +49,10 @@ export class MiniRadarLineClass extends MiniChartWithPolarAxes {
             const startIdx = i * n;
             const endIdx = startIdx + n;
             const markers = this.markers.slice(startIdx, endIdx);
-            markers.forEach((marker) => {
+            for (const marker of markers) {
                 marker.stroke = strokes[i];
                 marker.fill = fills[i];
-            });
+            }
         });
     }
 }

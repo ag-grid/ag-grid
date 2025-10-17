@@ -118,7 +118,9 @@ export class CartesianAxisPanel extends Component {
         registerGroupComponent(this.axisGroup);
 
         this.axisTypeSelect.setDisplayed(!!axisTypeSelectParams.options?.length);
-        if (!axisPositionSelectParams) this.removeTemplateComponent(this.axisPositionSelect);
+        if (!axisPositionSelectParams) {
+            this.removeTemplateComponent(this.axisPositionSelect);
+        }
         const updateTimeFormatVisibility = () => {
             const isTimeAxis = chartAxisOptionsProxy.getValue('type') === 'time';
             _setDisplayed(this.axisTimeFormatSelect.getGui(), isTimeAxis);
@@ -140,7 +142,11 @@ export class CartesianAxisPanel extends Component {
         this.initAxisTicks(chartAxisThemeOverrides);
         this.initAxisLabels(chartAxisThemeOverrides);
 
-        const updateFns = () => this.updateFuncs.forEach((func) => func());
+        const updateFns = () => {
+            for (const func of this.updateFuncs) {
+                func();
+            }
+        };
         this.addManagedListeners(this.chartController, {
             chartUpdated: updateFns,
             chartModelUpdate: () =>
@@ -164,7 +170,9 @@ export class CartesianAxisPanel extends Component {
         const params = chartAxisOptions.getDefaultSelectParams('type', 'axisType', axisTypeSelectOptions);
         params.onValueChange = (value: AgCartesianAxisOptions['type']): void => {
             const previousAxisType = chartOptions.getValue<AgCartesianAxisOptions['type']>('type');
-            if (value === previousAxisType) return;
+            if (value === previousAxisType) {
+                return;
+            }
             // If the axis type is changed, we need to carry over all the accumulated theme overrides
             // that have been applied to the existing axis type so far
             const previousAxisThemeOverrides = chartAxisAppliedThemeOverrides.getValue<AgCartesianAxisOptions>('*');
@@ -242,28 +250,28 @@ export class CartesianAxisPanel extends Component {
         chartAxisOptions: ChartMenuParamsFactory
     ): AgSelectParams<AgComponentSelectorType> | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
-            switch (chartType) {
-                // Some chart types do not support configuring the axis position
-                case 'heatmap':
-                    return null;
-                default:
-                    switch (axisType) {
-                        // Horizontal axis position can be changed between top and bottom
-                        case 'xAxis':
-                            return [
-                                { value: 'top', text: this.translate('top') },
-                                { value: 'bottom', text: this.translate('bottom') },
-                            ];
-                        // Vertical axis position can be changed between left and right
-                        case 'yAxis':
-                            return [
-                                { value: 'left', text: this.translate('left') },
-                                { value: 'right', text: this.translate('right') },
-                            ];
-                    }
+            // Some chart types do not support configuring the axis position
+            if (chartType === 'heatmap') {
+                return null;
+            }
+            if (axisType === 'xAxis') {
+                // Horizontal axis position can be changed between top and bottom
+                return [
+                    { value: 'top', text: this.translate('top') },
+                    { value: 'bottom', text: this.translate('bottom') },
+                ];
+            }
+            if (axisType === 'yAxis') {
+                // Vertical axis position can be changed between left and right
+                return [
+                    { value: 'left', text: this.translate('left') },
+                    { value: 'right', text: this.translate('right') },
+                ];
             }
         })(this.chartController.getChartType(), this.axisType);
-        if (!axisPositionSelectOptions) return null;
+        if (!axisPositionSelectOptions) {
+            return null;
+        }
         return chartAxisOptions.getDefaultSelectParams('position', 'position', axisPositionSelectOptions);
     }
 
@@ -300,7 +308,9 @@ export class CartesianAxisPanel extends Component {
         // changed, the value for `line.enabled` is inferred based on the whether the `line.width` value is non-zero.
         const getAxisLineWidth = (): number | null => {
             const isAxisLineEnabled = chartOptions.getValue<boolean>('line.enabled');
-            if (!isAxisLineEnabled) return null;
+            if (!isAxisLineEnabled) {
+                return null;
+            }
             return chartOptions.getValue<number>('line.width');
         };
         const setAxisLineWidth = (value: number | null): void => {
@@ -334,7 +344,9 @@ export class CartesianAxisPanel extends Component {
     }
 
     private initAxisTicks(chartAxisThemeOverrides: ChartMenuParamsFactory) {
-        if (!this.hasConfigurableAxisTicks()) return;
+        if (!this.hasConfigurableAxisTicks()) {
+            return;
+        }
         const axisTicksComp = this.createBean(new AxisTicksPanel(chartAxisThemeOverrides));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
@@ -399,7 +411,9 @@ export class CartesianAxisPanel extends Component {
 
         const updateAutoRotate = (autoRotate: boolean) => {
             // Remember the existing rotation before we clear it from the options
-            if (autoRotate) this.prevRotation = getLabelRotationValue();
+            if (autoRotate) {
+                this.prevRotation = getLabelRotationValue();
+            }
 
             // For the autoRotate option to take effect, we need to additionally clear the rotation option value
             chartOptions.setValues<boolean | number | undefined>([
@@ -490,10 +504,10 @@ export class CartesianAxisPanel extends Component {
     }
 
     private destroyActivePanels(): void {
-        this.activePanels.forEach((panel) => {
+        for (const panel of this.activePanels) {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
     }
 
     public override destroy(): void {

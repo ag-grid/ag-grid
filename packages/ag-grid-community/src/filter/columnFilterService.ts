@@ -695,7 +695,7 @@ export class ColumnFilterService
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+    public getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
         return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 
@@ -976,7 +976,7 @@ export class ColumnFilterService
         const providedFilterHandler = enableFilterHandlers ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
-            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
+            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName, true)!);
 
         let filterHandler: CreateFilterHandlerFunc | undefined;
         let handlerName: FilterHandlerName | undefined;
@@ -985,11 +985,9 @@ export class ColumnFilterService
             const userFilterHandler = gos.get('filterHandlers')?.[providedFilterHandler];
             if (userFilterHandler != null) {
                 filterHandler = userFilterHandler;
-            } else {
-                if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
-                    filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
-                    handlerName = providedFilterHandler as FilterHandlerName;
-                }
+            } else if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
+                filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
+                handlerName = providedFilterHandler as FilterHandlerName;
             }
         } else {
             filterHandler = providedFilterHandler;
@@ -1199,6 +1197,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null,
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null
     ): void {
+        const source = 'paramsUpdated';
         if (filterWrapper.isHandler) {
             const colId = column.getColId();
             delete this.initialModel[colId];
@@ -1206,21 +1205,29 @@ export class ColumnFilterService
             const filterUi = filterWrapper.filterUi;
             const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
             filterWrapper.filterUi = newFilterUi;
+            const eventSvc = this.eventSvc;
             // destroy the old one after creating the new one
             // so that anything listening to the destroyed event will receive the new comp
+
             if (filterUi?.created) {
                 filterUi.promise.then((filter) => {
                     this.destroyBean(filter);
 
-                    this.eventSvc.dispatchEvent({
+                    eventSvc.dispatchEvent({
                         type: 'filterDestroyed',
-                        source: 'paramsUpdated',
-                        column: filterWrapper.column,
+                        source,
+                        column,
                     });
+                });
+            } else {
+                eventSvc.dispatchEvent({
+                    type: 'filterHandlerDestroyed',
+                    source,
+                    column,
                 });
             }
         } else {
-            this.destroyFilter(column, 'paramsUpdated');
+            this.destroyFilter(column, source);
         }
     }
 
@@ -1400,7 +1407,7 @@ export class ColumnFilterService
         // If refresh() method is implemented - call it and destroy filter if it returns false
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         getFilterUiFromWrapper(filterWrapper, wasHandler)?.then((filter) => {
-            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams as any) : true;
+            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
                 this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);

@@ -49,9 +49,15 @@ export class SimplePRNG {
     /** Shuffle an array in place */
     shuffle<T>(array: T[], start: number = 0, end: number = array.length - 1): T[] {
         const len = array.length;
-        if (start < 0) start = 0;
-        if (end >= len) end = len - 1;
-        if (end < 0 || start >= end) return array;
+        if (start < 0) {
+            start = 0;
+        }
+        if (end >= len) {
+            end = len - 1;
+        }
+        if (end < 0 || start >= end) {
+            return array;
+        }
         for (let i = end; i > start; --i) {
             const j = this.nextInt(start, i);
             const tmp = array[i];

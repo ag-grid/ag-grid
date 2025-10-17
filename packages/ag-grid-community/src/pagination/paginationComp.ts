@@ -121,12 +121,12 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         if (!this.areListenersSetup) {
             this.addManagedEventListeners({ paginationChanged: this.onPaginationChanged.bind(this) });
 
-            [
+            for (const item of [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },
                 { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
                 { el: this.btNext, fn: this.onBtNext.bind(this) },
                 { el: this.btLast, fn: this.onBtLast.bind(this) },
-            ].forEach((item) => {
+            ]) {
                 const { el, fn } = item;
                 this.addManagedListeners(el, {
                     click: fn,
@@ -137,7 +137,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                         }
                     },
                 });
-            });
+            }
 
             _addFocusableContainerListener(this.beans, this, this.getGui());
 

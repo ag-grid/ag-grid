@@ -136,7 +136,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
         }
         const resultList: MenuItemDef[] = [];
 
-        originalList.forEach((menuItemOrString) => {
+        for (const menuItemOrString of originalList) {
             let result: MenuItemDef | null;
             if (typeof menuItemOrString === 'string') {
                 result = this.getStockMenuItem(
@@ -150,7 +150,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
                 result = { ...menuItemOrString };
             }
             if (!result) {
-                return;
+                continue;
             }
 
             const { subMenu } = result;
@@ -165,7 +165,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             }
 
             resultList.push(result);
-        });
+        }
 
         return resultList;
     }

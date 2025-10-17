@@ -58,7 +58,9 @@ export class FeatureModel {
 
     static for(featureId: string) {
         const featureModel = featureModels[featureId];
-        if (!featureModel) throw new Error(`Invalid feature ${featureId}`);
+        if (!featureModel) {
+            throw new Error(`Invalid feature ${featureId}`);
+        }
         return featureModel;
     }
 }

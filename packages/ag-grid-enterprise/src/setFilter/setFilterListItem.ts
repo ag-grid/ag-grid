@@ -183,10 +183,8 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             }
             if (this.isGroup) {
                 this.setupExpansion();
-            } else {
-                if (this.groupsExist) {
-                    this.addCss('ag-set-filter-add-group-indent');
-                }
+            } else if (this.groupsExist) {
+                this.addCss('ag-set-filter-add-group-indent');
             }
 
             _setAriaLevel(this.getAriaElement(), this.depth + 1);

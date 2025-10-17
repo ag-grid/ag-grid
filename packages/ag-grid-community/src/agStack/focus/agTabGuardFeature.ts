@@ -72,11 +72,11 @@ export class AgTabGuardFeature<
 
         const compProxy: ITabGuard = {
             setTabIndex: (tabIndex) => {
-                tabGuards.forEach((tabGuard) =>
+                for (const tabGuard of tabGuards) {
                     tabIndex != null
                         ? tabGuard.setAttribute('tabindex', tabIndex)
-                        : tabGuard.removeAttribute('tabindex')
-                );
+                        : tabGuard.removeAttribute('tabindex');
+                }
             },
         };
 
@@ -163,7 +163,7 @@ export class AgTabGuardFeature<
         const { eBottomGuard: bottomTabGuard } = this;
 
         if (bottomTabGuard) {
-            bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
+            bottomTabGuard.insertAdjacentElement('beforebegin', newChild);
         } else {
             appendChild(newChild, container);
         }

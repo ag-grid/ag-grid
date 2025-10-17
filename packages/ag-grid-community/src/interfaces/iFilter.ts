@@ -1,6 +1,6 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
 import type { AgPromise } from '../agStack/utils/promise';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, ColKey } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
@@ -277,10 +277,7 @@ export interface SharedFilterParams<TData = any, TContext = any> extends AgGridC
      * Get the cell value for the given row node and column, which can be the column ID, definition, or `Column` object.
      * If no column is provided, the column this filter is on will be used.
      */
-    getValue: <TValue = any>(
-        node: IRowNode<TData>,
-        column?: string | ColDef<TData, TValue> | Column<TValue>
-    ) => TValue | null | undefined;
+    getValue: <TValue = any>(node: IRowNode<TData>, column?: ColKey<TData, TValue>) => TValue | null | undefined;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.

@@ -50,9 +50,9 @@ interface EnterpriseColumnMenu extends Bean {
     showTabBasedOnPreviousSelection?(): void;
 }
 
-const TAB_FILTER = 'filterMenuTab' as const;
-const TAB_GENERAL = 'generalMenuTab' as const;
-const TAB_COLUMNS = 'columnsMenuTab' as const;
+const TAB_FILTER = 'filterMenuTab';
+const TAB_GENERAL = 'generalMenuTab';
+const TAB_COLUMNS = 'columnsMenuTab';
 const TABS_DEFAULT: ColumnMenuTab[] = [TAB_GENERAL, TAB_FILTER, TAB_COLUMNS];
 
 export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
@@ -209,7 +209,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             closeOnEsc: true,
             closedCallback: (e?: Event) => {
                 // menu closed callback
-                closedFuncs.forEach((f) => f(e));
+                for (const f of closedFuncs) {
+                    f(e);
+                }
                 this.dispatchVisibleChangedEvent(false, false, column, columnGroup, defaultTab);
             },
             afterGuiAttached: (params) =>
@@ -539,7 +541,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         this.tabItemFilter = {
             title: _createIconNoSpan('filterTab', this.beans, this.column)!,
             titleLabel: TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(comp?.getGui()) as AgPromise<HTMLElement>,
+            bodyPromise: AgPromise.resolve(comp?.getGui()),
             afterAttachedCallback,
             afterDetachedCallback,
             name: TAB_FILTER,
@@ -621,6 +623,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         this.eColumnMenu.appendChild(mainMenuList.getGui());
     }
 
+    // eslint-disable-next-line sonarjs/no-identical-functions
     private onHidePopup(event?: AgCloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,

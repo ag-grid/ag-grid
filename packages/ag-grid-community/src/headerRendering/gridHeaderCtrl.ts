@@ -86,11 +86,11 @@ export class GridHeaderCtrl extends BeanStub {
         const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (beans.filterManager?.hasFloatingFilters()) {
-            totalHeaderHeight += getFloatingFiltersHeight(beans)!;
+            totalHeaderHeight += getFloatingFiltersHeight(beans);
         }
 
         totalHeaderHeight += groupHeight;
-        totalHeaderHeight += headerHeight!;
+        totalHeaderHeight += headerHeight;
 
         if (this.headerHeight === totalHeaderHeight) {
             return;

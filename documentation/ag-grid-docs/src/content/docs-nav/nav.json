@@ -32,10 +32,6 @@
                             "path": "modules"
                         },
                         {
-                            "title": "MCP Server",
-                            "path": "mcp-server"
-                        },
-                        {
                             "title": "Installing Enterprise Licence",
                             "path": "license-install"
                         },
@@ -149,6 +145,22 @@
                             "path": "supported-browsers"
                         }
                     ]
+                }
+            ]
+        },
+        {
+            "title": "AI Features",
+            "children": [
+                {
+                    "type": "item",
+                    "title": "AI Toolkit",
+                    "path": "ai-toolkit",
+                    "isEnterprise": true
+                },
+                {
+                    "type": "item",
+                    "title": "MCP Server",
+                    "path": "mcp-server"
                 }
             ]
         },

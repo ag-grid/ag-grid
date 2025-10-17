@@ -83,7 +83,7 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
 
         if (descriptionContainer) {
             _clearElement(descriptionContainer);
-            descriptionContainer.parentElement?.removeChild(descriptionContainer);
+            descriptionContainer.remove();
         }
         this.descriptionContainer = null;
         this.pendingAnnouncements.clear();

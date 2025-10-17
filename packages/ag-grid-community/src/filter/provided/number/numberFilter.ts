@@ -109,7 +109,7 @@ export class NumberFilter extends SimpleFilter<
             return numberParser(filterText);
         }
 
-        return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
+        return filterText == null || filterText.trim() === '-' ? null : Number.parseFloat(filterText);
     }
 
     protected createCondition(position: number): NumberFilterModel {
@@ -143,7 +143,6 @@ export class NumberFilter extends SimpleFilter<
         this.forEachInput((element) => {
             if (!element.getInputElement().validity.valid) {
                 invalidInputs = true;
-                return;
             }
         });
         return invalidInputs;

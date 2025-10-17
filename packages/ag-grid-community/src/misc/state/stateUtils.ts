@@ -91,18 +91,18 @@ export function convertColumnState(
 // have invalid values resulting in sparse arrays which will break state persistence/restoration.
 // e.g. [ 'colId1', undefined, 'colId3' ] => [ 'colId1', 'colId3' ]
 function _removeEmptyValues<T>(array: T[]): T[] {
-    return array.filter((a) => a != undefined) as T[];
+    return array.filter((a) => a != undefined);
 }
 
 export function _convertColumnGroupState(
     columnGroupState: { groupId: string; open: boolean }[]
 ): ColumnGroupState | undefined {
     const openColumnGroups: string[] = [];
-    columnGroupState.forEach(({ groupId, open }) => {
+    for (const { groupId, open } of columnGroupState) {
         if (open) {
             openColumnGroups.push(groupId);
         }
-    });
+    }
     return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
 }
 

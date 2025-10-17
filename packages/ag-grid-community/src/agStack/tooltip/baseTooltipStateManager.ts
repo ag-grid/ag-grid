@@ -139,11 +139,11 @@ export abstract class BaseTooltipStateManager<
     private getTooltipDelay(type: 'show' | 'hide'): number {
         if (type === 'show') {
             return (
-                this.tooltipCtrl.getTooltipShowDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')!
+                this.tooltipCtrl.getTooltipShowDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')
             );
         }
 
-        return this.tooltipCtrl.getTooltipHideDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
+        return this.tooltipCtrl.getTooltipHideDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipHideDelay');
     }
 
     public override destroy(): void {
@@ -511,16 +511,16 @@ export abstract class BaseTooltipStateManager<
     }
 
     private clearTooltipListeners(): void {
-        [
+        for (const listener of [
             this.tooltipMouseEnterListener,
             this.tooltipMouseLeaveListener,
             this.tooltipFocusInListener,
             this.tooltipFocusOutListener,
-        ].forEach((listener) => {
+        ]) {
             if (listener) {
                 listener();
             }
-        });
+        }
 
         this.tooltipMouseEnterListener =
             this.tooltipMouseLeaveListener =

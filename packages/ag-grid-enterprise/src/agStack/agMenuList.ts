@@ -178,14 +178,14 @@ export class AgMenuList<
                 }
             })
         ).then((elements) => {
-            (elements ?? []).forEach((element) => {
+            for (const element of elements ?? []) {
                 if (element?.eGui) {
                     this.appendChild(element.eGui);
                     if (element.comp) {
                         this.menuItems.push(element.comp);
                     }
                 }
-            });
+            }
         });
     }
 
@@ -298,7 +298,7 @@ export class AgMenuList<
     }
 
     private closeIfIsChild(e?: KeyboardEvent): boolean {
-        const parentItem = this.getParentComponent() as any;
+        const parentItem = this.getParentComponent();
 
         if (parentItem && parentItem instanceof AgMenuItemComponent) {
             if (e) {

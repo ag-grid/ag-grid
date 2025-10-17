@@ -18,10 +18,17 @@ export interface AbstractColDef<TData = any, TValue = any> {
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc<TData, TValue>;
     /**
-     * Tooltip for the column header
+     * Tooltip for the column header, `headerTooltipValueGetter` takes precedence if set.
      * @agModule `TooltipModule`
      */
     headerTooltip?: string;
+
+    /**
+     * Callback that should return the string to use for a tooltip.
+     * @agModule `TooltipModule`
+     */
+    headerTooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
+
     /** An object of CSS values / or function returning an object of CSS values for a particular header. */
     headerStyle?: HeaderStyle | HeaderStyleFunc<TData, TValue>;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
@@ -129,6 +136,13 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
      */
     mainMenuItems?: (DefaultMenuItem | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
 }
+
+/** Select a column via:
+ * - the string (colId)
+ * - the colDef object
+ * - the Column instance
+ */
+export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 
 export interface IAggFunc<TData = any, TValue = any, TContext = any> {
     (params: IAggFuncParams<TData, TValue, TContext>): any;
@@ -267,6 +281,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `TooltipModule`
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
+
+    /**
+     * Callback to select which tooltip component to be used for a given row within the same column.
+     * @agModule `TooltipModule`
+     */
+    tooltipComponentSelector?: CellEditorSelectorFunc | CellRendererSelectorFunc;
+
     /**
      * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
@@ -716,9 +737,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     allowedAggFuncs?: string[];
     /**
-     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group by.
+     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *
-     * This can be used to group by values derived from a source column. The grid provides hierarchy types related to date components.
+     * This can be used to group/pivot by values derived from a source column. The grid provides hierarchy types related to date components.
      * Users can provide their own hierarchy types by specifying a `ColDef`, or referring to the name of a hierarchy type defined in `groupHierarchyConfig`.
      * @agModule `RowGroupingModule` / `PivotModule`
      *
@@ -726,9 +747,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     rowGroupingHierarchy?: (GroupHierarchyParts | string | ColDef<TData, TValue>)[];
     /**
-     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group by.
+     * Specify a grouping hierarchy for this column. This generates one or more virtual columns to group or pivot by when this column is grouped or pivoted.
      *
-     * This can be used to group by values derived from a source column. The grid provides hierarchy types related to date components.
+     * This can be used to group/pivot by values derived from a source column. The grid provides hierarchy types related to date components.
      * Users can provide their own hierarchy types by specifying a `ColDef`, or referring to the name of a hierarchy type defined in `groupHierarchyConfig`.
      * @agModule `RowGroupingModule` / `PivotModule`
      */

@@ -181,5 +181,4 @@ export type DefaultMenuItem =
     | 'columnChooser'
     | 'sortAscending'
     | 'sortDescending'
-    | 'sortUnSort'
-    | 'separator';
+    | 'sortUnSort';

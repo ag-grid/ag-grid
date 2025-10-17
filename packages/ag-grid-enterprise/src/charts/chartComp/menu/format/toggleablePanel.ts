@@ -62,10 +62,10 @@ export class ToggleablePanel extends Component {
     }
 
     private destroyActiveComps(): void {
-        this.activeComps.forEach((comp) => {
+        for (const comp of this.activeComps) {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
-        });
+        }
     }
 
     public override destroy(): void {

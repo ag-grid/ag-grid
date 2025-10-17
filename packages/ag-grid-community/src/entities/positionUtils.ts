@@ -90,7 +90,6 @@ export function _getLastRow(beans: BeanCollection): RowPosition | null {
         rowPinned = 'bottom';
         rowIndex = pinnedBottomCount - 1;
     } else if (beans.rowModel.getRowCount()) {
-        rowPinned = null;
         rowIndex = pageBounds.getLastRow();
     } else if (pinnedTopCount) {
         rowPinned = 'top';
@@ -134,7 +133,7 @@ export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: Ro
     node ??= rm?.getRowNode(rowId);
 
     if (rowPinned) {
-        node ??= prm?.getPinnedRowById(rowId, rowPinned!);
+        node ??= prm?.getPinnedRowById(rowId, rowPinned);
     } else {
         node ??= prm?.getPinnedRowById(rowId, 'top');
         node ??= prm?.getPinnedRowById(rowId, 'bottom');

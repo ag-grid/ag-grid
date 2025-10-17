@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_JP = {
     november: '11月',
     december: '12月',
 
+    // Date-time parts
+    year: '年',
+    quarter: '四半期',
+    month: '月',
+    day: '日',
+    hour: '時',
+    minute: '分',
+    second: '秒',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

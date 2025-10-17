@@ -123,7 +123,9 @@ export function _addStopEditingWhenGridLosesFocus(
         }
     };
 
-    viewports.forEach((viewport) => bean.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+    for (const viewport of viewports) {
+        bean.addManagedElementListeners(viewport, { focusout: focusOutListener });
+    }
 }
 
 export function _getColId(column?: Column | string | null): string | undefined {

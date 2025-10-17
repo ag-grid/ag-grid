@@ -528,7 +528,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         autoSizeStrategy: {
             validate: ({ autoSizeStrategy }) => {
-                if (!autoSizeStrategy) return null;
+                if (!autoSizeStrategy) {
+                    return null;
+                }
 
                 const validModes: NonNullable<GridOptions['autoSizeStrategy']>['type'][] = [
                     'fitCellContents',
@@ -547,12 +549,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
     };
     const validations: Validations<GridOptions> = {};
-    _BOOLEAN_GRID_OPTIONS.forEach((key) => {
+    for (const key of _BOOLEAN_GRID_OPTIONS) {
         validations[key] = { expectedType: 'boolean' };
-    });
-    _NUMBER_GRID_OPTIONS.forEach((key) => {
+    }
+    for (const key of _NUMBER_GRID_OPTIONS) {
         validations[key] = { expectedType: 'number' };
-    });
+    }
 
     _mergeDeep(validations, definedValidations);
     return validations;

@@ -49,7 +49,7 @@ function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
 function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
     // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
     const newCols: AgColumn[] = [...allMovingColumns];
-    allMovingColumns.forEach((col) => {
+    for (const col of allMovingColumns) {
         let movingGroup: AgColumnGroup | null = null;
 
         let parent = col.getParent();
@@ -65,13 +65,13 @@ function getColsToMove(allMovingColumns: AgColumn[]): AgColumn[] {
                   movingGroup.getProvidedColumnGroup().getLeafColumns()
                 : movingGroup.getLeafColumns();
 
-            columnsToMove.forEach((newCol) => {
+            for (const newCol of columnsToMove) {
                 if (!newCols.includes(newCol)) {
                     newCols.push(newCol);
                 }
-            });
+            }
         }
-    });
+    }
     return newCols;
 }
 
@@ -169,12 +169,12 @@ export function getBestColumnMoveIndexFromXPosition(
     // is not reliable for dictating where the column may now be placed.
     if (constrainDirection && !fakeEvent) {
         // only allow left drag if this column is moving left
-        if (!fromLeft && firstValidMove >= (oldIndex as number)) {
+        if (!fromLeft && firstValidMove >= oldIndex) {
             return;
         }
 
         // only allow right drag if this column is moving right
-        if (fromLeft && firstValidMove <= (oldIndex as number)) {
+        if (fromLeft && firstValidMove <= oldIndex) {
             return;
         }
     }
@@ -239,11 +239,11 @@ function groupFragCount(columns: AgColumn[]): number {
         let b = parents(columns[i + 1]);
         // iterate over the longest one
         [a, b] = a.length > b.length ? [a, b] : [b, a];
-        a.forEach((parent) => {
+        for (const parent of a) {
             if (b.indexOf(parent) === -1) {
                 count++; // More fragmented if other column doesn't share the parent
             }
-        });
+        }
     }
     return count;
 }
@@ -295,7 +295,9 @@ function calculateValidMoves(params: {
     // include the width of the moving columns
     if (draggingRight) {
         let widthOfMovingDisplayedCols = 0;
-        movingDisplayedCols.forEach((col) => (widthOfMovingDisplayedCols += col.getActualWidth()));
+        for (const col of movingDisplayedCols) {
+            widthOfMovingDisplayedCols += col.getActualWidth();
+        }
         availableWidth -= widthOfMovingDisplayedCols;
     }
 

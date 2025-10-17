@@ -71,13 +71,23 @@ export class GridRowsValidator {
         rowErrors.expectValueEqual('id', root.id, csrm ? 'ROOT_NODE_ID' : undefined);
         rowErrors.expectValueEqual('level', root.level, -1);
         rowErrors.expectValueEqual('expanded', root.expanded, undefined);
-        if (root.key) rowErrors.add('Root node has key ' + root.key);
-        if (root.rowIndex !== null) rowErrors.add('Root node has rowIndex ' + root.rowIndex);
-        if (csrm) {
-            if (!Array.isArray(root.allLeafChildren)) rowErrors.add('Root node has no allLeafChildren');
+        if (root.key) {
+            rowErrors.add('Root node has key ' + root.key);
         }
-        if (gridRows.isRowDisplayed(root)) rowErrors.add('Root node is displayed');
-        if (gridRows.treeData) rowErrors.expectValueEqual('group', root.group, true);
+        if (root.rowIndex !== null) {
+            rowErrors.add('Root node has rowIndex ' + root.rowIndex);
+        }
+        if (csrm) {
+            if (!Array.isArray(root.allLeafChildren)) {
+                rowErrors.add('Root node has no allLeafChildren');
+            }
+        }
+        if (gridRows.isRowDisplayed(root)) {
+            rowErrors.add('Root node is displayed');
+        }
+        if (gridRows.treeData) {
+            rowErrors.expectValueEqual('group', root.group, true);
+        }
     }
 
     private validateRowNodes(state: ValidationState): void {
@@ -91,9 +101,15 @@ export class GridRowsValidator {
             }
             const rowErrors = this.errors.get(row);
             const foundIndex = gridRows.getIndexInRowNodes(row);
-            if (foundIndex !== index) rowErrors.add(`rowNodes[${index}] is a duplicate of rowNodes[${foundIndex}]`);
-            if (row.footer) rowErrors.add(`rowNodes[${index}] is a footer node`);
-            if (row.detail) rowErrors.add(`rowNodes[${index}] is a detail node`);
+            if (foundIndex !== index) {
+                rowErrors.add(`rowNodes[${index}] is a duplicate of rowNodes[${foundIndex}]`);
+            }
+            if (row.footer) {
+                rowErrors.add(`rowNodes[${index}] is a footer node`);
+            }
+            if (row.detail) {
+                rowErrors.add(`rowNodes[${index}] is a detail node`);
+            }
             this.validateRow(state, row);
         }
 
@@ -116,8 +132,12 @@ export class GridRowsValidator {
                 }
                 rootAllLeafChildrenMap.set(row, index);
                 rowErrors.expectValueEqual('sourceRowIndex', row.sourceRowIndex, index);
-                if (row.footer) rowErrors.add(`root.allLeafChildren[${index}] is a footer node`);
-                if (row.detail) rowErrors.add(`root.allLeafChildren[${index}] is a detail node`);
+                if (row.footer) {
+                    rowErrors.add(`root.allLeafChildren[${index}] is a footer node`);
+                }
+                if (row.detail) {
+                    rowErrors.add(`root.allLeafChildren[${index}] is a detail node`);
+                }
                 this.validateRow(state, row);
             }
         }

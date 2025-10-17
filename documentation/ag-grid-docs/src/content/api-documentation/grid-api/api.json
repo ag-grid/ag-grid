@@ -589,6 +589,21 @@
             }
         }
     },
+    "ai-toolkit": {
+        "meta": {
+            "displayName": "AI Toolkit",
+            "page": {
+                "name": "AI Toolkit",
+                "url": "./ai-toolkit/"
+            }
+        },
+        "getStructuredSchema": {
+            "more": {
+                "name": "CSV Export",
+                "url": "./ai-toolkit/"
+            }
+        }
+    },
     "events": {
         "meta": {
             "displayName": "Events"

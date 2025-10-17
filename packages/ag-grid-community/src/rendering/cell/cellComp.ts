@@ -204,7 +204,7 @@ export class CellComp extends Component {
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
         if (takeWrapperOut) {
-            _removeFromParent(this.eCellWrapper!);
+            _removeFromParent(this.eCellWrapper);
             this.eCellWrapper = undefined;
         }
 
@@ -219,7 +219,7 @@ export class CellComp extends Component {
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
         if (takeCellValueOut) {
-            _removeFromParent(this.eCellValue!);
+            _removeFromParent(this.eCellValue);
             this.eCellValue = undefined;
         }
 
@@ -266,7 +266,7 @@ export class CellComp extends Component {
         const cellEditorPromise = compDetails.newAgStackInstance();
 
         const { params } = compDetails;
-        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
+        cellEditorPromise.then((c) => this.afterCellEditorCreated(versionCopy, c, params, popup, position));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -550,7 +550,7 @@ export class CellComp extends Component {
     }
 
     public detach(): void {
-        this.eRow.removeChild(this.getGui());
+        this.getGui().remove();
     }
 
     // if the row is also getting destroyed, then we don't need to remove from dom,

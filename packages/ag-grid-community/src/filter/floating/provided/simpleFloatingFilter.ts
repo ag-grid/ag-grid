@@ -53,7 +53,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            condition = combinedModel.conditions![0];
+            condition = combinedModel.conditions[0];
         } else {
             condition = model as ISimpleFilterModel;
         }

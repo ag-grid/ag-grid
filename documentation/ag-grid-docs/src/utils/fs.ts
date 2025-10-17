@@ -8,16 +8,22 @@ import { pathJoin } from './pathJoin';
  */
 export const getFolders = async (rootPath: string) => {
     const exists = fsOriginal.existsSync(rootPath);
-    if (!exists) return [];
+    if (!exists) {
+        return [];
+    }
 
     const files = await fs.readdir(rootPath);
     const directories = files.map(async (name) => {
         const dirPath = pathJoin(rootPath, name);
         const isDirectory = (await fs.stat(dirPath)).isDirectory();
-        if (!isDirectory) return undefined;
+        if (!isDirectory) {
+            return undefined;
+        }
 
         const dirContents = await fs.readdir(dirPath);
-        if (dirContents.length === 0) return undefined;
+        if (dirContents.length === 0) {
+            return undefined;
+        }
 
         return name;
     });

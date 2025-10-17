@@ -560,10 +560,8 @@ export class ChartDataModel extends BeanStub {
                     selectedValueCols.push(col);
                     numSelected++;
                 }
-            } else {
-                if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
-                    selectedValueCols.push(col);
-                }
+            } else if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
+                selectedValueCols.push(col);
             }
         });
 
@@ -625,7 +623,9 @@ export class ChartDataModel extends BeanStub {
 
     private syncDimensionCellRange() {
         const selectedDimensions = this.getSelectedDimensions();
-        if (selectedDimensions.length === 0) return;
+        if (selectedDimensions.length === 0) {
+            return;
+        }
         const selectedCols = selectedDimensions
             .map(({ column }) => column)
             .filter((value): value is NonNullable<typeof value> => value != null);

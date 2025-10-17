@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_TW = {
     november: '十一月',
     december: '十二月',
 
+    // Date-time parts
+    year: '年',
+    quarter: '季',
+    month: '月',
+    day: '日',
+    hour: '小时',
+    minute: '分钟',
+    second: '秒',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

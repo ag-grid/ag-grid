@@ -138,7 +138,7 @@ export class AgVirtualListDragFeature<
 
     private getListDragItem(e: _AgDraggingEvent<TDragSourceType, any, any, any>): VirtualListDragItem<TChildComponent> {
         const virtualListGui = this.virtualList.getGui();
-        const paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop as string);
+        const paddingTop = Number.parseFloat(window.getComputedStyle(virtualListGui).paddingTop);
         const rowHeight = this.virtualList.getRowHeight();
         const scrollTop = this.virtualList.getScrollTop();
         const rowIndex = Math.max(0, (e.y - paddingTop + scrollTop) / rowHeight);
@@ -176,11 +176,11 @@ export class AgVirtualListDragFeature<
 
     private clearHoveredItems(): void {
         const virtualListGui = this.virtualList.getGui();
-        virtualListGui.querySelectorAll(`.${LIST_ITEM_HOVERED}`).forEach((el) => {
-            [LIST_ITEM_HOVERED, 'ag-item-highlight-top', 'ag-item-highlight-bottom'].forEach((cls) => {
+        for (const el of virtualListGui.querySelectorAll(`.${LIST_ITEM_HOVERED}`)) {
+            for (const cls of [LIST_ITEM_HOVERED, 'ag-item-highlight-top', 'ag-item-highlight-bottom']) {
                 (el as HTMLElement).classList.remove(cls);
-            });
-        });
+            }
+        }
         this.lastHoveredListItem = null;
     }
 }
