@@ -2,14 +2,14 @@
     {
         "version": "34.3.0",
         "date": "22nd October 2025",
-        "landingPageHighlight": "MCP Server, AI Assistant, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support",
+        "landingPageHighlight": "MCP Server, AI Toolkit, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support",
         "highlights": [
             {
                 "text": "MCP Server",
                 "path": "./mcp-server"
             },
             {
-                "text": "AI Assistant",
+                "text": "AI Toolkit",
                 "path": "./ai-toolkit"
             },
             {
