@@ -1,4 +1,4 @@
-import { _exists, _logPreInitWarn } from 'MTc2MDcxOTI1MjQ1OQ==';
+import { _exists, _logPreInitWarn } from 'ag-grid-community';
 
 import { MD5 } from './md5';
 
@@ -14,7 +14,7 @@ export interface ILicenseManager {
 }
 
 export class LicenseManager {
-    private static readonly RELEASE_INFORMATION: string = 'MTc1NzA4ODUwMDMzNw==';
+    private static readonly RELEASE_INFORMATION: string = 'MTc2MDcyMDUxMDM5MQ==';
     private static licenseKey: string;
     private static chartsLicenseManager?: ILicenseManager;
     private watermarkMessage: string | undefined = undefined;
