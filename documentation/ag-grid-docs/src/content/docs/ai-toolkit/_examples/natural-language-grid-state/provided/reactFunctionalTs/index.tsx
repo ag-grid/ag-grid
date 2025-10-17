@@ -74,11 +74,7 @@ const GridExample = () => {
             try {
                 const response = await callChatGPT(userRequest, currentGridState, gridRef.current.api);
 
-<<<<<<< HEAD
                 if (response.gridState && Object.keys(response.gridState).length > 0) {
-=======
-                if (Object.keys(response.gridState).length > 0) {
->>>>>>> origin/latest
                     gridRef.current.api.setState(response.gridState, response.propertiesToIgnore);
                 }
 
