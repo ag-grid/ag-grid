@@ -6,7 +6,7 @@ There are some options that can be used to customise the Row Drag experience, so
 
 ## Entire Row Dragging
 
-When using row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
+When using row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without the need for a drag handle by enabling the `rowDragEntireRow` grid option.
 
 {% gridExampleRunner title="Entire Row Dragging" name="entire-row-dragging" /%}
 
@@ -111,7 +111,7 @@ const gridOptions = {
 
 ### Row Dragger inside Custom Cell Renderers
 
-Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved by using the `registerRowDragger` method in the [ICellRendererParams](./component-cell-renderer/) as follows:
+Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved by using the `registerRowDragger` method in the [ICellRendererParams](./component-cell-renderer/).
 
 {% gridExampleRunner title="Row Drag With Custom Cell Renderer" name="dragger-inside-custom-cell-renderer" /%}
 
@@ -189,7 +189,7 @@ For example, start dragging as soon as the `mousedown` event happens (dragged by
 
 {% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" /%}
 
-In the example above, the drag event starts as soon as mousedown is fired.
+In the example above, the drag event starts as soon as `mousedown` is fired.
 
 {% partial file="../shared-partials/_drag-and-drop-image-component.mdoc" /%}
 
