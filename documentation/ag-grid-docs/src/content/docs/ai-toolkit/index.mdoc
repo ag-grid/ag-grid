@@ -36,6 +36,10 @@ The schema is made up of a series of "features", each representing a different a
 If you wish to integrate with an LLM that does not support structured data natively, you can still use the schema to validate and parse the response from the LLM before passing it to `setState`. There are multiple libraries that can do this for you, such as [ajv](https://ajv.js.org/).
 {% /note %}
 
+### Custom Filters
+
+The Structured Output does not include schema for any custom filters you may have provided to the grid. To handle these you will have to [modify the schema](./modifying-schema) yourself
+
 ## Getting Started
 
 To get started you'll need:
@@ -106,6 +110,10 @@ if (Object.keys(response.gridState).length > 0) {
 
 Since `setState` will by default overwrite all properties of the grid state, you should make sure to use the secondary parameter in setGridState which allows you you to specify features to ignore in the change. You can even ask your LLM to include a list of features it hasn't changed, and pass that list directly to `setState`. Alternatively you may wish to merge the current state with the new state before passing it to `setState`. The example above asks the LLM to provide a set of features which should be ignored by `setState` so it doesn't overwrite other settings.
 
+## Modifying Schema
+
+You may modify the structured schema to surgically change options or add extra features. For example, you may wish to add schema for a custom filter, or limit which columns can be hidden by the LLM. If you choose to do this, please make sure that the result is still a valid `GridState` object before passing it to `setState`. Be aware that the JSON schema supported by LLMs is a subset of the full JSON schema spec and build your schemas accordingly. 
+
 ## Exclude Features
 
 By default, all features are enabled and included in the schema. If you wish to limit the features returned in the schema, you can do so by providing a list of feature names to the `getStructuredSchema` method.
@@ -115,6 +123,8 @@ For example, if you do not want to allow users to manipulate column visibility a
 ```ts
 const gridStateStructuredSchema = gridApi.getStructuredSchema({ exclude: ['columnVisibility', 'sorting'] });
 ```
+
+
 
 ## Providing Additional Context
 
