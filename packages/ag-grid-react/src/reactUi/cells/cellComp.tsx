@@ -268,7 +268,7 @@ const CellComp = ({
             setIncludeRowDrag: (include) => setIncludeRowDrag(include),
             setIncludeDndSource: (include) => setIncludeDndSource(include),
 
-            getCellEditor: () => cellEditorRef.current || null,
+            getCellEditor: () => cellEditorRef.current ?? null,
             getCellRenderer: () => cellRendererRef.current ?? jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
@@ -334,13 +334,8 @@ const CellComp = ({
                         compProxy.getFocusableElement().focus({ preventScroll: true });
                     }
                     // stop editing
-                    setEditDetails((editDetails) => {
-                        if (editDetails?.compProxy) {
-                            // if we're using the proxy, we have to manually clear the ref
-                            cellEditorRef.current = undefined;
-                        }
-                        return undefined;
-                    });
+                    cellEditorRef.current = undefined;
+                    setEditDetails(undefined);
                 }
             },
             refreshEditStyles: (editing, isPopup) => {
