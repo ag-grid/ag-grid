@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_IR = {
     november: 'نوامبر',
     december: 'دسامبر',
 
+    // Date-time parts
+    year: 'سال',
+    quarter: 'ربع',
+    month: 'ماه',
+    day: 'روز',
+    hour: 'ساعت',
+    minute: 'دقیقه',
+    second: 'ثانیه',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'روز/ماه/سال',
     timeFormatSlashesMMDDYYYY: 'ماه/روز/سال',

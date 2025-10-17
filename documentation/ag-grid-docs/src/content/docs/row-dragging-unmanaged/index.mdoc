@@ -2,8 +2,19 @@
 title: "Unmanaged Row Dragging"
 ---
 
-Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`. Unmanaged dragging differs from managed dragging in the following ways:
+Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`.
 
+{% gridExampleRunner title="Row Drag Simple Unmanaged" name="simple-unmanaged" /%}
+
+The example above shows how to implement simple row dragging using unmanaged row dragging and events similarly to the [Managed Row Dragging](./row-dragging-managed) example;
+however, the logic for moving the rows is in the application rather than the grid.
+
+The property `suppressRowDrag=true` is set by the application depending on whether sorting or filtering is active.
+This is because the logic in the example doesn't cover these scenarios and wants to prevent row dragging when sorting or filtering is active.
+
+### Differences from Managed Row Dragging
+
+Unmanaged dragging differs from managed dragging in the following ways:
 * The grid does not manage moving of the rows. The only thing the grid responds with is firing drag events. It is up to the application to do the moving of the rows (if that is what the application wants to do).
 * Dragging is allowed while sort is applied.
 * Dragging is allowed while filter is applied.
@@ -46,7 +57,7 @@ Each of the four row drag events extend the `RowDragEvent` interface.
 
 ### Example Events
 
-The below example demonstrates unmanaged row dragging with no attempt by the application or the grid to re-order the rows.
+The example above demonstrates unmanaged row dragging with no attempt by the application or the grid to re-order the rows.
 This is on purpose to demonstrate that the grid will not attempt to re-order rows unless the `rowDragManaged` property is set to true.
 The example also demonstrates all the events that are fired.
 
@@ -65,21 +76,6 @@ From the example the following can be noted:
 * While dragging the row, the `setRowDropPositionIndicator` API method is called to display the projected row drop location using a horizontal line indicator.
 
 {% gridExampleRunner title="Row Drag Events" name="dragging-events" /%}
-
-### Simple Unmanaged Example
-
-The example below shows how to implement simple row dragging using unmanaged row dragging and events. The example behaves the same as the [Managed Row Dragging](./row-dragging-managed) example; however, the logic for moving the rows is in the application rather than the grid.
-
-From the example the following can be noted:
-
-* The property `suppressRowDrag=true` is set by the application
-  depending on whether sorting or filtering is active. This is because the logic
-  in the example doesn't cover these scenarios and wants to prevent row
-  dragging when sorting or filtering is active.
-
-{% gridExampleRunner title="Row Drag Simple Unmanaged" name="simple-unmanaged" /%}
-
-The simple example doesn't add anything that managed dragging gives (the first example on this page).
 
 {% note %}
 When dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged.

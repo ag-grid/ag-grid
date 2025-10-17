@@ -662,6 +662,15 @@ export const AG_GRID_LOCALE_BG = {
     november: 'Ноември',
     december: 'Декември',
 
+    // Date-time parts
+    year: 'Година',
+    quarter: 'Тримесечие',
+    month: 'Месец',
+    day: 'Ден',
+    hour: 'Час',
+    minute: 'Минута',
+    second: 'Секунда',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'ДД/ММ/ГГГГ',
     timeFormatSlashesMMDDYYYY: 'ММ/ДД/ГГГГ',

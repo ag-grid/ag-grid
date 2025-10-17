@@ -1,0 +1,66 @@
+---
+title: "Upgrading to AG Grid 34.3"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v34.3."
+migrationVersion: "34.3.0"
+---
+
+MCP Server, AI Assistant, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support
+
+## What's New
+
+AG Grid {% migrationVersion() %} adds important new features - [MCP Server](./mcp-server), [AI Assistant](./ai-toolkit), [Scaled Column Auto-Sizing](./column-sizing/#auto-size-columns-to-fit-cell-contents), [Date and Time Pivoting](./pivoting-column-groups/#pivoting-by-dates-and-times), [React 19.2 Support](https://www.ag-grid.com/react-data-grid/compatibility/#ag-grid--react-compatibility-chart) as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-34-3/).
+These improvements involve no breaking changes as listed below.
+
+<!-- 
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+## Codemods
+
+Follow these steps to upgrade your project's AG Grid version to {% migrationVersion() %}:
+
+1. Locate your project's `package.json` and note the version of AG Grid that you are currently using.
+
+1. Update any AG Grid dependencies listed in the `package.json` to version {% migrationVersion() %}.
+
+1. Open a terminal and navigate to your project's root folder.
+
+1. Run the `migrate` command of version {% migrationVersion() %} of the AG Grid codemod runner, where `$FROM_VERSION` refers to your project's existing AG Grid version:
+
+    ```
+    npx @ag-grid-devtools/cli@latest migrate --from=$FROM_VERSION --to=34.4
+    ```
+
+    This will update your project's source files to prepare for the new release.
+
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+
+{% note %}
+The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
+{% /note %}
+
+The codemod only transforms source files that make use of deprecated features, so if you aren't currently making use of any of those APIs your source code will be unaffected by the codemod.
+
+See the [Codemods](./codemods/) documentation for more details.
+
+## Breaking Changes
+
+There are no breaking changes in AG Grid version {% migrationVersion() %}.
+
+## Behaviour Changes
+
+There are no behaviour changes in AG Grid version {% migrationVersion() %}.
+
+## Removal of Deprecated APIs
+
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
+
+## Deprecations
+
+### ColDef
+{% metaTag tags=["rowGroupingHierarchy"] /%}
+- `rowGroupingHierarchy` is deprecated, use `groupHierarchy` instead.
+
+{% changelogSection version=$migrationVersion /%}

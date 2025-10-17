@@ -268,7 +268,7 @@ const CellComp = ({
             setIncludeRowDrag: (include) => setIncludeRowDrag(include),
             setIncludeDndSource: (include) => setIncludeDndSource(include),
 
-            getCellEditor: () => cellEditorRef.current || null,
+            getCellEditor: () => cellEditorRef.current ?? null,
             getCellRenderer: () => cellRendererRef.current ?? jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
@@ -333,14 +333,11 @@ const CellComp = ({
                     if (recoverFocus) {
                         compProxy.getFocusableElement().focus({ preventScroll: true });
                     }
-                    // stop editing
-                    setEditDetails((editDetails) => {
-                        if (editDetails?.compProxy) {
-                            // if we're using the proxy, we have to manually clear the ref
-                            cellEditorRef.current = undefined;
-                        }
-                        return undefined;
-                    });
+                    // stop editing and clear the cellEditorRef to avoid the editService thinking the editor is still alive when calling getCellEditor.
+                    // Due to the use of React the cellEditorRef is cleared asynchronously after rendering is forced via setEditDetails(undefined)
+                    // We also need to clear the cellEditorRef here to cover the case that we are using a proxy
+                    cellEditorRef.current = undefined;
+                    setEditDetails(undefined);
                 }
             },
             refreshEditStyles: (editing, isPopup) => {

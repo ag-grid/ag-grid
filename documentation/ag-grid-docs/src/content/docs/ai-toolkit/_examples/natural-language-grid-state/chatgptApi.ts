@@ -74,14 +74,6 @@ Where possible, augment the provided state `;
                 },
             ],
         });
-
-        if (result.error) {
-            if (result.error.code === 'rate_limit_exceeded') {
-                throw new Error('Rate Limit Exceeded');
-            } else {
-                throw new Error('Unknown Error');
-            }
-        }
     } catch (error: any) {
         throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
     }

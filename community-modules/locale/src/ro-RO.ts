@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_RO = {
     november: 'Noiembrie',
     december: 'Decembrie',
 
+    // Date-time parts
+    year: 'An',
+    quarter: 'Trimestru',
+    month: 'Lună',
+    day: 'Zi',
+    hour: 'Oră',
+    minute: 'Minut',
+    second: 'Secundă',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

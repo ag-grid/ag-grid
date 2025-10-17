@@ -1,5 +1,34 @@
 [
     {
+        "version": "34.3.0",
+        "date": "22nd October 2025",
+        "landingPageHighlight": "MCP Server, AI Assistant, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support",
+        "highlights": [
+            {
+                "text": "MCP Server",
+                "path": "./mcp-server"
+            },
+            {
+                "text": "AI Assistant",
+                "path": "./ai-toolkit"
+            },
+            {
+                "text": "Scaled Column Auto-Sizing",
+                "path": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
+            },
+            {
+                "text": "Date and Time Pivoting",
+                "path": "./pivoting-column-groups/#pivoting-by-dates-and-times"
+            },
+            {
+                "text": "React 19.2 Support",
+                "path": "https://www.ag-grid.com/react-data-grid/compatibility/#ag-grid--react-compatibility-chart"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-34-3",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "34.2.0",
         "date": "10th September 2025",
         "landingPageHighlight": "Date and Time Grouping, Tool Panels Displayed Outside of grid, Expand/Collapse all group rows in the server-side row model, Clipboard and Row Dragging Improvements",
