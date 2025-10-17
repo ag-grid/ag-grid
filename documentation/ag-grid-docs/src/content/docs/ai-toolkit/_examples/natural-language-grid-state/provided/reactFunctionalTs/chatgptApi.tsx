@@ -19,6 +19,9 @@ export async function callChatGPT(userRequest: string, currentState: any, gridAp
         },
     });
 
+    const { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot } = currentState;
+    const state = { aggregation, rowGroup, columnSizing, columnVisibility, sort, filter, pivot };
+
     const schema = {
         type: 'object',
         $defs,
@@ -46,7 +49,7 @@ You are an assistant for a table displaying Olympic medal results. You help user
 
 The schema provided can be used to manipulate multiple features of the table to help the user with their query.
 
-Current grid state: ${JSON.stringify(currentState)}
+Current grid state: ${JSON.stringify(state)}
 
 Respond with only the necessary state changes, not the complete state. Provide a clear explanation of what you changed.
 

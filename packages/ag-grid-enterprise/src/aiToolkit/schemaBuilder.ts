@@ -294,7 +294,7 @@ class UnionSchemaBuilder {
     }
 
     protected _collectNestedDefs(schemas: JSONSchema[]): Record<string, JSONSchema> {
-        const allDefs: Record<string, JSONSchema> = { ...this._defs };
+        const allDefs: Record<string, JSONSchema> = this._defs;
 
         for (const schema of schemas) {
             if (schema && typeof schema === 'object' && '$defs' in schema) {

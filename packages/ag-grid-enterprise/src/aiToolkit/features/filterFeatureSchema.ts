@@ -19,7 +19,7 @@ const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, DateFilterKey];
 export const buildFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
     const { advancedFilter } = beans;
 
-    if (advancedFilter && advancedFilter.isEnabled()) {
+    if (advancedFilter?.isEnabled()) {
         return buildAdvancedFilterFeatureSchema(beans);
     } else {
         return buildColumnFilterFeatureSchema(beans, params);
@@ -55,7 +55,9 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
             colDef.filterParams,
             defaultFilter,
             (isMulti: boolean = false, multiIndex: number = 0) => {
-                if (!includeSetValues) return [];
+                if (!includeSetValues) {
+                    return [];
+                }
 
                 let handler: SetFilterHandler | undefined = undefined;
                 if (!isMulti) {
@@ -110,8 +112,12 @@ function buildColumnFilterSchema(
         const filterOptions = filterParams?.filterOptions
             ? filterParams.filterOptions
                   .map((option: any) => {
-                      if (typeof option === 'string') return option;
-                      if (typeof option === 'object' && option.displayKey) return option.displayKey;
+                      if (typeof option === 'string') {
+                          return option;
+                      }
+                      if (typeof option === 'object' && option.displayKey) {
+                          return option.displayKey;
+                      }
                       return null;
                   })
                   .filter(Boolean)
@@ -145,7 +151,9 @@ const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaPa
 };
 
 const buildJoinSchema = (schema: SchemaBuilder, filterType: string, maxConditions: number = 2) => {
-    if (maxConditions === 1) return schema;
+    if (maxConditions === 1) {
+        return schema;
+    }
 
     return s.object({
         filterType: s.literal(filterType, `Filter type identifier for ${filterType} filters with multiple conditions`),
