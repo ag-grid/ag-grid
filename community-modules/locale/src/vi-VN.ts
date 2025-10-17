@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_VN = {
     november: 'Tháng Mười Một',
     december: 'Tháng Mười Hai',
 
+    // Date-time parts
+    year: 'Năm',
+    quarter: 'Quý',
+    month: 'Tháng',
+    day: 'Ngày',
+    hour: 'Giờ',
+    minute: 'Phút',
+    second: 'Giây',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

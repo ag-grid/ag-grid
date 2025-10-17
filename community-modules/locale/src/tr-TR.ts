@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_TR = {
     november: 'Kasım',
     december: 'Aralık',
 
+    // Date-time parts
+    year: 'Yıl',
+    quarter: 'Çeyrek',
+    month: 'Ay',
+    day: 'Gün',
+    hour: 'Saat',
+    minute: 'Dakika',
+    second: 'Saniye',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'GG/AA/YYYY',
     timeFormatSlashesMMDDYYYY: 'AA/GG/YYYY',
