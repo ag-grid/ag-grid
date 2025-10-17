@@ -663,6 +663,15 @@ export const AG_GRID_LOCALE_FR = {
     november: 'Novembre',
     december: 'Décembre',
 
+    // Date-time parts
+    year: 'Année',
+    quarter: 'Trimestre',
+    month: 'Mois',
+    day: 'Jour',
+    hour: 'Heure',
+    minute: 'Minute',
+    second: 'Seconde',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'JJ/MM/AAAA',
     timeFormatSlashesMMDDYYYY: 'MM/JJ/AAAA',

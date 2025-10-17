@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_KR = {
     november: '11월',
     december: '12월',
 
+    // Date-time parts
+    year: '연',
+    quarter: '분기',
+    month: '월',
+    day: '일',
+    hour: '시간',
+    minute: '분',
+    second: '초',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

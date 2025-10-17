@@ -7,6 +7,7 @@ export type { MultiFilter } from './multiFilter/multiFilter';
 export type { SetFilter } from './setFilter/setFilter';
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
+export { AiToolkitModule } from './aiToolkit/aiToolkitModule';
 export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
 export { MenuModule, ColumnMenuModule, ContextMenuModule } from './menu/menuModule';
 export { RichSelectModule } from './richSelect/richSelectModule';

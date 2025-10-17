@@ -1,0 +1,21 @@
+<div class="example-wrapper">
+    <div class="example-controls">
+        <div class="request-container">
+            <form class="input-group" id="requestForm">
+                <input type="text" id="naturalLanguageInput" placeholder='Your prompt e.g. "hide age column"' />
+                <button type="submit" id="processRequest">→</button>
+            </form>
+            <div id="processingStatus"></div>
+            <div>
+                <button onclick="resetGrid()">Reset Grid</button>
+            </div>
+        </div>
+
+        <div class="response-container">
+            <div id="aiResponse" style="display: none"></div>
+            <div id="currentState" style="display: none"></div>
+        </div>
+    </div>
+
+    <div id="myGrid"></div>
+</div>

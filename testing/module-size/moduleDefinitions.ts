@@ -52,6 +52,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 217.72,
     AllEnterpriseModule: 1529.62,
+    AiToolkitModule: 18.27,
     BatchEditModule: 84.56,
     CellSelectionModule: 56.66,
     ClipboardModule: 47.54,

@@ -66,6 +66,7 @@ import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
+import type { StructuredSchemaParams } from '../interfaces/structuredSchemaParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface DetailGridInfo {
@@ -1856,6 +1857,15 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
+export interface _AiToolkitGridApi {
+    /**
+     * Returns the structured schema of the grid, which includes information about columns, data types, and relationships.
+     * This schema can be passed to I services to ensure the response is of the correct format.
+     * @agModule `AiToolkitModule`
+     */
+    getStructuredSchema(params?: StructuredSchemaParams): any;
+}
+
 export interface GridApi<TData = any>
     extends _CoreGridApi<TData>,
         _StateGridApi,
@@ -1906,6 +1916,7 @@ export interface GridApi<TData = any>
         _ClipboardGridApi,
         _GridChartsGridApi,
         _AdvancedFilterGridApi,
-        _BatchEditApi {
+        _BatchEditApi,
+        _AiToolkitGridApi {
     dispatchEvent(event: AgEvent): void;
 }

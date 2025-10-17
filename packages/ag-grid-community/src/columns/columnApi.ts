@@ -19,7 +19,7 @@ export function getColumnDef<TValue = any, TData = any>(
 }
 
 export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {
-    return beans.colModel.getColumnDefs();
+    return beans.colModel.getColumnDefs(true);
 }
 
 export function getDisplayNameForColumn(beans: BeanCollection, column: Column, location: HeaderLocation): string {

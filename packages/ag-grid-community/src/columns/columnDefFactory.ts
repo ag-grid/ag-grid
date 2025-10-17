@@ -57,13 +57,14 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         colDefColsList: AgColumn[],
         showingPivotResult: boolean,
         lastOrder: AgColumn[] | null,
-        colsList: AgColumn[]
+        colsList: AgColumn[],
+        sorted: boolean = false
     ): (ColDef | ColGroupDef)[] | undefined {
         const cols = colDefColsList.slice();
 
         if (showingPivotResult) {
             cols.sort((a, b) => lastOrder!.indexOf(a) - lastOrder!.indexOf(b));
-        } else if (lastOrder) {
+        } else if (lastOrder || sorted) {
             cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
         }
 
@@ -82,7 +83,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
 
         const colGroupDefs: { [id: string]: ColGroupDef } = {};
 
-        cols.forEach((col: AgColumn) => {
+        for (const col of cols) {
             const colDef = this.createDefFromColumn(col, rowGroupColumns, pivotColumns);
 
             let addToResult = true;
@@ -133,7 +134,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
             if (addToResult) {
                 res.push(childDef);
             }
-        });
+        }
 
         return res;
     }

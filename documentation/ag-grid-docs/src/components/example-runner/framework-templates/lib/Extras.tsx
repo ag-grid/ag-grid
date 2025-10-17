@@ -28,6 +28,9 @@ const extrasMap = {
     materialdesignicons: {
         styles: ['https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.css'],
     },
+    ajv: {
+        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/ajv/8.17.1/ajv7.min.js'],
+    },
 };
 
 interface Props {

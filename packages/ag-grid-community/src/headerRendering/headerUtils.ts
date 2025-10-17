@@ -1,5 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
+import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
@@ -86,4 +87,8 @@ function getPivotHeaderHeight(beans: BeanCollection): number {
 
 function getPivotGroupHeaderHeight(beans: BeanCollection): number {
     return beans.gos.get('pivotGroupHeaderHeight') ?? getGroupHeaderHeight(beans);
+}
+
+export function isHeaderPositionEqual(headerPosA: HeaderPosition, headerPosB: HeaderPosition): boolean {
+    return headerPosA.headerRowIndex === headerPosB.headerRowIndex && headerPosA.column === headerPosB.column;
 }

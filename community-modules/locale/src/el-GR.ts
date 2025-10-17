@@ -661,6 +661,15 @@ export const AG_GRID_LOCALE_GR = {
     november: 'Νοέμβριος',
     december: 'Δεκέμβριος',
 
+    // Date-time parts
+    year: 'Έτος',
+    quarter: 'Τρίμηνο',
+    month: 'Μήνας',
+    day: 'Ημέρα',
+    hour: 'Ώρα',
+    minute: 'Λεπτό',
+    second: 'Δεύτερο',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'ΗΗ/ΜΜ/ΕΕΕΕ',
     timeFormatSlashesMMDDYYYY: 'ΜΜ/ΗΗ/ΕΕΕΕ',
