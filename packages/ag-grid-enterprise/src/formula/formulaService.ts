@@ -19,26 +19,6 @@ import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
 // plunker: https://plnkr.co/edit/8idB7tTubExLB58S?open=main.js
 // plunker2: https://plnkr.co/edit/VsIBH0GJb3iyq45c?open=main.js
 
-/** Return the cell's formula string if present (starts with '='); otherwise null. */
-const getFormula = (column: AgColumn, node: RowNode): string | null => {
-    if (!node.data) {
-        return null;
-    }
-
-    const { valueGetter, field } = column.colDef;
-
-    let maybe: unknown = null;
-    if (field) {
-        maybe = (node.data as any)[field];
-    } else if (typeof valueGetter === 'function') {
-        maybe = valueGetter({ data: node.data, column, node } as any);
-    } else {
-        return null;
-    }
-
-    return typeof maybe === 'string' && maybe.startsWith('=') ? maybe : null;
-};
-
 /**
  * Cell Formula Cache
  * Caches the parsed AST until the formula changes, and the last computed value/error.
@@ -338,16 +318,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         }
     }
 
-    /** Does this cell contain a formula (by sniffing its data/valueGetter)? */
-    public isFormulaCell(column: AgColumn, node: RowNode): boolean {
-        return getFormula(column, node) != null;
-    }
-
-    /** Return the raw formula string if present. */
-    public getFormula(column: AgColumn, node: RowNode): string | null {
-        return getFormula(column, node);
-    }
-
     /** If the cell has been evaluated and errored, return its last error (else null). */
     public getFormulaError(column: AgColumn, node: RowNode): FormulaError | null {
         const rowMap = this.cachedResult.get(node);
@@ -364,30 +334,24 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     private ensureCellFormula(row: RowNode, col: AgColumn): CellFormula | null {
         // Get or create the per-row cache map
         let rowMap = this.cachedResult.get(row);
+
+        // See if it's already there
+        let cf = rowMap?.get(col);
+        if (cf) {
+            return cf;
+        }
+
+        const str = this.fetchRawValue(col, row);
+        if (typeof str !== 'string' || str[0] !== '=') {
+            return null;
+        }
+
+        cf = new CellFormula(row, col, str, this.beans);
         if (!rowMap) {
             rowMap = new Map<AgColumn, CellFormula>();
             this.cachedResult.set(row, rowMap);
         }
-
-        // See if it's already there
-        let cf = rowMap.get(col);
-        const str = this.getFormula(col, row);
-        if (!str) {
-            // Not a formula cell — clear any stale entry
-            // (Optional) if you want to keep stale CFs for diagnostics, remove the delete.
-            if (cf) {
-                rowMap.delete(col);
-            }
-            return null;
-        }
-
-        // Create or refresh
-        if (!cf) {
-            cf = new CellFormula(row, col, str, this.beans);
-            rowMap.set(col, cf);
-        } else if (cf.formulaString !== str) {
-            cf.setFormulaString(str);
-        }
+        rowMap.set(col, cf);
 
         return cf;
     }
@@ -397,8 +361,21 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return this.beans.valueSvc.getValue(col, row, false, 'ui');
     }
 
+    /**
+     * The context needs to be stored at the class level, as if a valueGetter trys to resolve another formula cell
+     * using api.getCellValue, cyclic dependency issues may occur.
+     */
+    private activeCtx: {
+        setVisiting: (r: RowNode, c: AgColumn) => void;
+        setVisited: (r: RowNode, c: AgColumn) => void;
+        errorAllVisitors: (error: FormulaError) => void;
+    } | null;
+
     private getVisitorContext() {
-        const stateByCell = new WeakMap<RowNode, Set<AgColumn>>();
+        if (this.activeCtx) {
+            return this.activeCtx;
+        }
+        const stateByCell = new Map<RowNode, Set<AgColumn>>();
         const setVisiting = (r: RowNode, c: AgColumn): void => {
             let colSet = stateByCell.get(r);
 
@@ -424,7 +401,17 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 }
             }
         };
-        return { setVisited, setVisiting };
+
+        const errorAllVisitors = (error: FormulaError) => {
+            for (const [row, cells] of stateByCell) {
+                for (const col of cells) {
+                    const cache = this.ensureCellFormula(row, col);
+                    cache?.setError(error);
+                }
+            }
+        };
+
+        return (this.activeCtx = { setVisited, setVisiting, errorAllVisitors });
     }
 
     private makeFormulaFrame(address: Addr): FormulaFrame {
@@ -451,6 +438,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         // If start cell isn't a formula, return raw value.
         const rootCachedCellFormula = this.ensureCellFormula(node, column);
         if (!rootCachedCellFormula) {
+            // if this isn't a formula shouldn't be resolving here.
+            // we don't try to return the formatted value as that could
+            // endlessly loop
             return this.fetchRawValue(column, node);
         }
 
@@ -459,13 +449,17 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return rootCachedCellFormula.getValue();
         }
 
-        const { setVisited, setVisiting } = this.getVisitorContext();
+        const hadCtx = !!this.activeCtx; // top level call
+        const { setVisited, setVisiting, errorAllVisitors } = this.getVisitorContext();
+
+        const evalStack: FormulaFrame[] = [];
 
         try {
             // Seed the stack with the root formula cell.
             // Dependencies will be added to tail, and the last item is picked each pass
             // As items are removed from the tail, items at the head should become resolvable.
-            const evalStack: FormulaFrame[] = [this.makeFormulaFrame({ row: node, column })];
+            evalStack.push(this.makeFormulaFrame({ row: node, column }));
+            setVisiting(node, column);
 
             while (evalStack.length) {
                 const { address, ast, unresolvedDepIterator } = evalStack[evalStack.length - 1];
@@ -497,8 +491,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                     }
 
                     // value not ready, so mark as visiting before adding any dependencies to the stack
-                    setVisiting(row, col);
-
+                    setVisiting(depAddr.row, depAddr.column);
                     evalStack.push(this.makeFormulaFrame(depAddr)); // push dependency to be resolved
                     continue;
                 }
@@ -525,6 +518,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                     { row, column: col }
                 );
 
+                // an inner valueGetter might have errored this path, if so rethrow to avoid
+                // overwriting the error with the error value string
+                const existing = cachedCellFormula.getError();
+                if (existing) {
+                    setVisited(row, col);
+                    throw existing;
+                }
+
                 // cache result and mark as completed
                 cachedCellFormula.setComputedValue(computed);
                 setVisited(row, col);
@@ -539,8 +540,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         } catch (e: any) {
             // wrap non-formula errors as they were sourced by a user function
             const normalized = e instanceof FormulaError ? e : new FormulaError(String(e?.message ?? e));
-            rootCachedCellFormula.setError(normalized);
+            errorAllVisitors(normalized);
             return normalized.type;
+        } finally {
+            // clear out the active ctx to ensure fresh visiting tree
+            if (!hadCtx) {
+                this.activeCtx = null;
+            }
         }
     }
 }
