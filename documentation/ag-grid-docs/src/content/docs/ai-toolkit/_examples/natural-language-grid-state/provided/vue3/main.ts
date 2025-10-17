@@ -114,7 +114,6 @@ const App = {
         };
     },
     template: `
-<<<<<<< HEAD
         <div class="example-wrapper">
             <div class="example-controls">
                 <div class="request-container">
@@ -141,8 +140,6 @@ const App = {
 
             <div id="myGrid"></div>
         </div>
-=======
->>>>>>> origin/latest
     `,
     mounted() {
         this.initializeGrid();
