@@ -35,7 +35,7 @@ function processRequest(event?: Event) {
 
     callChatGPT(userRequest, currentState, gridApi)
         .then(function (response) {
-            if (Object.keys(response.gridState).length > 0) {
+            if (response.gridState && Object.keys(response.gridState).length > 0) {
                 gridApi.setState(response.gridState, response.propertiesToIgnore);
             }
 
