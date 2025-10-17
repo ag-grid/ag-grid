@@ -600,7 +600,7 @@
         "getStructuredSchema": {
             "more": {
                 "name": "CSV Export",
-                "url": "./ai-toolkit/#structured-schema"
+                "url": "./ai-toolkit/"
             }
         }
     },
