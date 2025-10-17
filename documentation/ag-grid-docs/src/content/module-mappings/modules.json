@@ -391,7 +391,8 @@
                 {
                     "moduleName": "AiToolkitModule",
                     "name": "AI Toolkit",
-                    "path": "ai-toolkit"
+                    "path": "ai-toolkit",
+                    "isEnterprise": true
                 }
             ]
         },
