@@ -52,7 +52,7 @@ At a high level, the AI Toolkit works as follows:
 {% imageCaption imagePath="resources/ai-toolkit-sequence-diagram.svg" alt="High Contrast Theme" constrained=true maxWidth="50rem" enableDarkModeFilter=true /%}
 
 {% note %}
-If you wish to integrate with an LLM that does not support structured data natively, you can still use the schema to [validate and parse the response](#invalid-response-handling) from the LLM before passing it to `setState`. There are multiple libraries that can do this for you, such as [ajv](https://ajv.js.org/).
+If you wish to integrate with an LLM that does not support structured data natively, you can still use the schema to validate and parse the response from the LLM before passing it to `setState`. There are multiple libraries that can do this for you, such as [ajv](https://ajv.js.org/).
 {% /note %}
 
 ## Getting Started
@@ -118,7 +118,7 @@ const gridState = gridApi.getState();
 const response = await callLLM(userRequest, gridState, schema)
 ```
 
-The `callLLM` function needs to be implemented in accordance with your chosen LLM. Refer to our example above for a [reference implementation](https://github.com/ag-grid/ag-grid/blob/9399cd046793a702ef0b0924f0203a5cc27b96c6/documentation/ag-grid-docs/src/content/docs/ai-toolkit/_examples/natural-language-grid-state/chatgptApi.ts#L10) using [ChatGPT's Completions API](https://platform.openai.com/docs/api-reference/chat?api-mode=chat) and the [Prompting](./prompting/) section for more information on creating system prompts.
+The `callLLM` function needs to be implemented in accordance with your chosen LLM. Refer to our example above for a [reference implementation](https://github.com/ag-grid/ag-grid/blob/9399cd046793a702ef0b0924f0203a5cc27b96c6/documentation/ag-grid-docs/src/content/docs/ai-toolkit/_examples/natural-language-grid-state/chatgptApi.ts#L10) using [ChatGPT's Completions API](https://platform.openai.com/docs/api-reference/chat?api-mode=chat) and the [Prompting](#prompting) section for more information on creating system prompts.
 
 ### Updating Grid State
 
