@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_PK = {
     november: 'نومبر',
     december: 'دسمبر',
 
+    // Date-time parts
+    year: 'سال',
+    quarter: 'سہ ماہی',
+    month: 'مہینہ',
+    day: 'دن',
+    hour: 'گھنٹہ',
+    minute: 'منٹ',
+    second: 'سیکنڈ',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'ڈی ڈی/ایم ایم/وائی وائی وائی وائی',
     timeFormatSlashesMMDDYYYY: 'ایم ایم/ڈی ڈی/وائی وائی وائی وائی',

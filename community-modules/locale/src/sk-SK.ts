@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_SK = {
     november: 'November',
     december: 'December',
 
+    // Date-time parts
+    year: 'Rok',
+    quarter: 'Štvrťrok',
+    month: 'Mesiac',
+    day: 'Deň',
+    hour: 'Hodina',
+    minute: 'Minúta',
+    second: 'Sekunda',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
