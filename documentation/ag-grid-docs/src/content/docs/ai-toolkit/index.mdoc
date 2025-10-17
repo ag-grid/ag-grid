@@ -238,26 +238,7 @@ const baseSchema = gridApi.getStructuredSchema();
 function applyCustomRules(schema) {
   return {
     ...schema,
-    columns: schema.columns.map(col => {
-      // Example: Prevent hiding critical columns
-      if (col.field === 'id') {
-        return {
-          ...col,
-          allowHide: false
-        };
-      }
-
-      // Example: Restrict aggregate options
-      if (col.field === 'amount') {
-        return {
-          ...col,
-          aggregate: col.aggregate.filter(a => a !== 'AVG')
-        };
-      }
-
-      return col;
-    })
-  };
+    // custom schema rules...
 }
 
 const customSchema = applyCustomRules(baseSchema);
