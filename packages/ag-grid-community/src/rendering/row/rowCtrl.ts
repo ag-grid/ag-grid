@@ -227,6 +227,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.initialiseRowComp(gui);
 
+        gui.rowComp.toggleCss('ag-first-sticky-row', this.rowNode.sticky && this.rowNode.stickyRowTop === 0);
+
         const rowNode = this.rowNode;
         const isSsrmLoadingRow = this.rowType === 'FullWidthLoading' || rowNode.stub;
         const isIrmLoadingRow = !rowNode.data && this.beans.rowModel.getType() === 'infinite';
