@@ -164,6 +164,7 @@ export class BaseDragService<
         const keydownEvent = (ev: KeyboardEvent) => this.onKeyDown(ev);
         const rootEl = _getRootNode(beans);
         const eDocument = _getDocument(beans);
+
         addTempEventHandlers(
             drag.handlers,
             [rootEl, 'contextmenu', preventEventDefault],
@@ -193,6 +194,7 @@ export class BaseDragService<
         if (this.isPointer()) {
             return; // Another pointer drag in progress
         }
+
         const beans = this.beans;
         if (handledDragEvents?.has(pointerEvent)) {
             return; // Already handled
@@ -226,6 +228,9 @@ export class BaseDragService<
         const eElement = params.eElement;
         const pointerId = pointerEvent.pointerId;
         const pointerDrag = new Dragging(rootEl, params, pointerEvent, pointerId);
+
+        activePointerDrags ??= new WeakMap();
+        activePointerDrags.set(rootEl, pointerDrag);
 
         const onPointerMove = (ev: PointerEvent) => {
             if (ev.pointerId === pointerId) {
