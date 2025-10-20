@@ -147,7 +147,7 @@ export class AppComponent implements OnInit, OnDestroy {
         try {
             const response = await callChatGPT(userRequest, currentGridState, this.gridRef.api);
 
-            if (Object.keys(response.gridState).length > 0) {
+            if (response.gridState && Object.keys(response.gridState).length > 0) {
                 this.gridRef.api.setState(response.gridState, response.propertiesToIgnore);
             }
 
