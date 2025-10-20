@@ -75,7 +75,7 @@ if (isSuccess) {
         await addJiraComment(existingIssue.key, {
             content: [
                 paragraph([txt(`Transitioned to ${TRANSITIONS_MAP['READY TO VERIFY'].name}.`)]),
-                AUTOMATED_MESSAGE_BLOCKS,
+                ...AUTOMATED_MESSAGE_BLOCKS,
             ],
             type: 'doc',
             version: 1,
@@ -104,7 +104,7 @@ if (isSuccess) {
                 paragraph([
                     txt(`New failure detected${shouldAddComment ? ', reopening this issue' : ''}:\n\n${description}`),
                 ]),
-                AUTOMATED_MESSAGE_BLOCKS,
+                ...AUTOMATED_MESSAGE_BLOCKS,
             ],
             type: 'doc',
             version: 1,
