@@ -156,7 +156,7 @@ export async function addJiraComment(issueKey, body) {
     const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/comment`;
 
     try {
-        await commonFetch(url, { method: 'POST', body: JSON.stringify({ body }) });
+        await commonFetch(url, { method: 'POST', body: JSON.stringify({ body }) }); // fixme JIRA updated body format
         console.log(`Added comment to issue ${issueKey}`);
     } catch (error) {
         console.error('Error adding comment:', error.message);
