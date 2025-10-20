@@ -52,7 +52,7 @@ const UpcomingEvents = ({ images, events }) => {
         <div className={styles.container}>
             <div className={styles.eventDetailsContainer}>
                 <ScrollingGallery images={images} />
-                <div className={styles.eventTilesContainer}>
+                <div className={styles.eventTilesContainer} style={{ '--num-links': currEvents.length }}>
                     {currEvents.map((event, index) => (
                         <a href={event.eventPage} target="_blank" className={styles.linkWrapper} key={index}>
                             <div key={index} className={styles.eventTile}>

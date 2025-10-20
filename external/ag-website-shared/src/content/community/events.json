@@ -1,17 +1,5 @@
 [
     {
-        "title": "Frontend Nation",
-        "description": "Our first sponsorship of Frontend Nation, we're putting AG Charts front and centre in front of 50,000 attendees. This event is free to join - come along to hear from senior AG Charts Engineer, Jacob, on how we implemented the M4 algorithm to make our charts run flawlessly at 60fps with large (1-million-point) data sets, join our free 90 min workshop, and meet the team at our virtual booth.",
-        "location": "Online",
-        "logo": "/community/events/organiser-logos/frontend-nation.jpg",
-        "logoLight": "/community/events/organiser-logos/frontend-nation.jpg",
-        "countryIcon": "",
-        "startDate": "2025-06-05",
-        "eventPage": "https://frontendnation.com/",
-        "collage": "frontend-nation-2025.webp",
-        "recording": "https://www.youtube.com/watch?v=AZFy0_ldwWc"
-    },
-    {
         "title": "JSNation",
         "description": "The self titled 'main JS conference of 2025', we're returning to sponsor JSNation for the first time since 2022, this time, with a focus on AG Charts. You'll hear from senior AG Charts Engineer, Oli, on how we make AG Charts' Canvas accessible, and have a chance to meet the wider AG Charts team at our booth.",
         "location": "Amsterdam, NL",
