@@ -69,6 +69,12 @@
 
     @container (max-width: #{$breakpoint-table-small}) {
         display: block;
+
+        tbody,
+        tr,
+        td {
+            display: block;
+        }
     }
 
     @container (min-width: #{$breakpoint-table-small}) {
