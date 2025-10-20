@@ -880,7 +880,9 @@ export class CellCtrl extends BeanStub {
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
-        if (cellFocused) {
+        // require event to announce so we only announce
+        // a direct user interaction with the cell
+        if (cellFocused && event) {
             this.rowCtrl.announceDescription();
         }
     }
