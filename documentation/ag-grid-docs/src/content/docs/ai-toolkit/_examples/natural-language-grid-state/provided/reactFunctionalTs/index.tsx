@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ModuleRegistry } from 'ag-grid-community';
@@ -25,9 +25,7 @@ interface ProcessingState {
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
-    const { data: rowData, loading } = useFetchJson<IOlympicData>(
-        'https://www.ag-grid.com/example-assets/olympic-winners.json'
-    );
+    const { data: rowData } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
 
     const [naturalLanguageInput, setNaturalLanguageInput] = useState('');
     const [chatMessage, setChatMessage] = useState<ChatMessage | null>(null);
@@ -122,10 +120,6 @@ const GridExample = () => {
         }
     }, []);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div className="example-wrapper">
             <div className="example-controls">
@@ -194,8 +188,9 @@ const GridExample = () => {
     );
 };
 
-const container = document.getElementById('root');
-if (container) {
-    const root = createRoot(container);
-    root.render(<GridExample />);
-}
+const root = createRoot(document.getElementById('root')!);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);
