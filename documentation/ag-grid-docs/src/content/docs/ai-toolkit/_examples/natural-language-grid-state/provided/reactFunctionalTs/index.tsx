@@ -25,7 +25,9 @@ interface ProcessingState {
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
-    const { data: rowData } = useFetchJson<IOlympicData>('https://www.ag-grid.com/example-assets/olympic-winners.json');
+    const { data: rowData, loading } = useFetchJson<IOlympicData>(
+        'https://www.ag-grid.com/example-assets/olympic-winners.json'
+    );
 
     const [naturalLanguageInput, setNaturalLanguageInput] = useState('');
     const [chatMessage, setChatMessage] = useState<ChatMessage | null>(null);
@@ -183,6 +185,7 @@ const GridExample = () => {
                 columnDefs={gridOptions.columnDefs}
                 rowData={rowData}
                 gridOptions={gridOptions}
+                loading={loading}
             />
         </div>
     );
