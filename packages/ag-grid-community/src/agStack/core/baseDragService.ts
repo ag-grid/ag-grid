@@ -63,7 +63,7 @@ export class BaseDragService<
     }
 
     /** True if there is at least one active pointer drag in any BaseDragService instance in the page */
-    private isPointerActive(): boolean {
+    private isPointer(): boolean {
         return !!activePointerDrags?.has(_getRootNode(this.beans));
     }
 
@@ -190,7 +190,7 @@ export class BaseDragService<
 
     // Pointer Events path (preferred when supported)
     private onPointerDown(params: DragListenerParams, pointerEvent: PointerEvent): void {
-        if (this.isPointerActive()) {
+        if (this.isPointer()) {
             return; // Another pointer drag in progress
         }
         const beans = this.beans;
@@ -281,8 +281,7 @@ export class BaseDragService<
             touchEvent.stopPropagation();
         }
 
-        const drag = this.drag;
-        if (drag?.pointerId != null || this.isPointerActive()) {
+        if (this.isPointer()) {
             preventEventDefault(touchEvent);
             return; // Active pointer drag in progress, ignore legacy touch start
         }
@@ -323,7 +322,7 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        if (this.drag?.pointerId != null || this.isPointerActive()) {
+        if (this.isPointer()) {
             return; // Pointer-based drag in progress, ignore mouse down
         }
 
