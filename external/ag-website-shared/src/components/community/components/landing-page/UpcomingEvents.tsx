@@ -13,7 +13,9 @@ const filterEvents = (events) => {
         (event) => new Date(event.startDate).getFullYear() == new Date().getFullYear()
     );
 
-    return filteredEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate)).slice(0, NUM_UPCOMING_EVENTS);
+    return filteredEvents
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+        .slice(filteredEvents.length - NUM_UPCOMING_EVENTS, filteredEvents.length);
 };
 
 const UpcomingEvents = ({ images, events }) => {
