@@ -151,7 +151,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.setGridReadyState(state, source, ignoreSet);
 
-        this.setColumnsInitialisedState(state, source, false, ignoreSet);
+        this.setColumnsInitialisedState(state, source, !!ignoreSet, ignoreSet);
 
         this.setRowCountState(state, source, ignoreSet);
 

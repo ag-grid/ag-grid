@@ -6,11 +6,14 @@ import { useEffect, useState } from 'react';
 
 import styles from './UpcomingEvents.module.scss';
 
+const NUM_UPCOMING_EVENTS = 5;
+
 const filterEvents = (events) => {
     const filteredEvents = events.filter(
         (event) => new Date(event.startDate).getFullYear() == new Date().getFullYear()
     );
-    return filteredEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+    return filteredEvents.sort((a, b) => new Date(a.startDate) - new Date(b.startDate)).slice(0, NUM_UPCOMING_EVENTS);
 };
 
 const UpcomingEvents = ({ images, events }) => {
@@ -52,7 +55,7 @@ const UpcomingEvents = ({ images, events }) => {
         <div className={styles.container}>
             <div className={styles.eventDetailsContainer}>
                 <ScrollingGallery images={images} />
-                <div className={styles.eventTilesContainer}>
+                <div className={styles.eventTilesContainer} style={{ '--num-event-links': NUM_UPCOMING_EVENTS }}>
                     {currEvents.map((event, index) => (
                         <a href={event.eventPage} target="_blank" className={styles.linkWrapper} key={index}>
                             <div key={index} className={styles.eventTile}>

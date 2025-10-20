@@ -31,10 +31,13 @@
 }
 
 .eventTilesContainer {
+    --event-tiles-gap: #{$spacing-size-8};
+    --num-event-links: 5;
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: $spacing-size-8;
+    gap: var(--event-tiles-gap);
 
     @media screen and (max-width: $breakpoint-community-medium) {
         flex-direction: column;
@@ -44,8 +47,14 @@
 
 .linkWrapper {
     all: unset;
-    flex: 1;
     cursor: pointer;
+
+    @media screen and (min-width: $breakpoint-community-medium) {
+        width: calc(
+            100% / var(--num-event-links) - var(--event-tiles-gap) / var(--num-event-links) *
+                (var(--num-event-links) - 1)
+        );
+    }
 }
 
 .eventTile {
@@ -105,6 +114,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .title {
     font-weight: var(--text-semibold);
     font-size: var(--text-fs-lg);
@@ -115,7 +125,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 130px;
 }
 
 .description {
