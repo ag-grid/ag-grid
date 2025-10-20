@@ -67,7 +67,6 @@ export const Changelog = () => {
     const [fixVersion, setFixVersion] = useFixVersion();
     const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
-    const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
@@ -309,6 +308,7 @@ export const Changelog = () => {
                 filter: 'agTextColumnFilter',
                 wrapText: true,
                 autoHeight: true,
+                flex: 1,
                 cellStyle: { lineHeight: '24px', paddingTop: '8px', paddingBottom: '8px' },
             },
             {
@@ -388,7 +388,6 @@ export const Changelog = () => {
                 detailCellRenderer={DetailCellRenderer}
                 isRowMaster={isRowMaster}
                 masterDetail
-                autoSizeStrategy={autoSizeStrategy}
                 onGridReady={gridReady}
                 onFirstDataRendered={() => {
                     applyFixVersionFilter();
