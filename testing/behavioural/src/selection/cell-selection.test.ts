@@ -100,4 +100,39 @@ describe('Cell Selection', () => {
             expect(sports).toEqual(['football', 'rugby', 'tennis', 'tennis', 'tennis', 'tennis', 'tennis']);
         });
     });
+
+    describe('Column selection', () => {
+        test('CTRL-clicking a column adds that column to the cell selection', async () => {
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const headerCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+
+            await userEvent.click(headerCell);
+
+            const columns = api.getColumns()!;
+
+            expect(api.getCellRanges()).toEqual([
+                {
+                    startRow: {
+                        rowIndex: 0,
+                        rowPinned: null,
+                    },
+                    endRow: {
+                        rowIndex: 0,
+                        rowPinned: null,
+                    },
+                    columns: [columns[0]],
+                    startColumn: columns[0],
+                },
+            ]);
+        });
+    });
 });

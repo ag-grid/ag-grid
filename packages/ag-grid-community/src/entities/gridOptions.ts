@@ -2950,6 +2950,10 @@ export interface CellSelectionOptions<TData = any> {
      */
     enableHeaderHighlight?: boolean;
     /**
+     * TODO
+     */
+    headerCellSelection?: boolean;
+    /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
     handle?: RangeHandleOptions | FillHandleOptions<TData>;
