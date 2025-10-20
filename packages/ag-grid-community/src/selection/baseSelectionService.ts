@@ -93,7 +93,8 @@ export abstract class BaseSelectionService extends BeanStub {
         }
 
         const selected = rowNode.isSelected()!;
-        if (!rowNode.selectable) {
+        const isEditing = this.beans.editSvc?.isEditing({ rowNode });
+        if (!rowNode.selectable || isEditing) {
             return;
         }
 
