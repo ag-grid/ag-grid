@@ -319,7 +319,7 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
     setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean;
 
     /**
-     * Returns the route of the row node. If the Row Node does not have a key (i.e it's a group) returns undefined
+     * Returns the route of the row node. If the Row Node does not have a key (i.e it's a leaf row inside a row group) returns undefined
      */
     getRoute(): string[] | undefined;
 }
