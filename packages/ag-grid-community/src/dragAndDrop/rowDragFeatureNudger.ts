@@ -9,7 +9,6 @@ import type { IRowNode } from '../interfaces/iRowNode';
 export class RowDragFeatureNudger {
     public readonly autoScroll: AutoScrollService;
     public groupThrottled = false;
-    public scrolling = false;
     public scrollChanged = false;
     private scrollChanging = false;
     private oldVScroll: number | null = null;
@@ -36,7 +35,6 @@ export class RowDragFeatureNudger {
             onScrollCallback: () => {
                 const newVScroll = getScrollY();
                 if (this.oldVScroll !== newVScroll) {
-                    this.scrolling = true;
                     this.oldVScroll = newVScroll;
                     this.scrollChanging = true;
                     return;
@@ -46,6 +44,7 @@ export class RowDragFeatureNudger {
                 this.scrollChanging = false;
                 if (scrollChanged) {
                     this.beans.dragAndDrop?.nudge();
+                    this.scrollChanged = false;
                 }
             },
         });
@@ -96,6 +95,5 @@ export class RowDragFeatureNudger {
         this.oldVScroll = null;
         this.scrollChanged = false;
         this.scrollChanging = false;
-        this.scrolling = false;
     }
 }

@@ -25,6 +25,11 @@ export class AutoScrollService {
 
     private tickCount: number;
 
+    /** True while auto-scrolling */
+    public get scrolling(): boolean {
+        return this.tickingInterval !== null;
+    }
+
     constructor(params: {
         scrollContainer: HTMLElement;
         scrollAxis: 'x' | 'y' | 'xy';
