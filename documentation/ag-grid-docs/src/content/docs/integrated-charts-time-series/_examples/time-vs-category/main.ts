@@ -40,6 +40,7 @@ const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
     defaultColDef: { flex: 1 },
     cellSelection: true,
+    popupParent: document.body,
     enableCharts: true,
     chartThemeOverrides: {
         line: {
