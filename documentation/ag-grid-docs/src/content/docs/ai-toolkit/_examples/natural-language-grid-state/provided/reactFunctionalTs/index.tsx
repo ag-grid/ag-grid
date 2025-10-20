@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ModuleRegistry } from 'ag-grid-community';
@@ -122,10 +122,6 @@ const GridExample = () => {
         }
     }, []);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     return (
         <div className="example-wrapper">
             <div className="example-controls">
@@ -189,13 +185,15 @@ const GridExample = () => {
                 columnDefs={gridOptions.columnDefs}
                 rowData={rowData}
                 gridOptions={gridOptions}
+                loading={loading}
             />
         </div>
     );
 };
 
-const container = document.getElementById('root');
-if (container) {
-    const root = createRoot(container);
-    root.render(<GridExample />);
-}
+const root = createRoot(document.getElementById('root')!);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);
