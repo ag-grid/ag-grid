@@ -9,7 +9,6 @@ import type { IRowNode } from '../interfaces/iRowNode';
 export class RowDragFeatureNudger {
     public readonly autoScroll: AutoScrollService;
     public groupThrottled = false;
-    private oldVScroll: number | null = null;
     private groupTimer: number | null = null;
     private groupTarget: IRowNode | null = null;
     private readonly onGroupThrottle: () => void;
@@ -30,14 +29,6 @@ export class RowDragFeatureNudger {
             scrollAxis: 'y',
             getVerticalPosition: getScrollY,
             setVerticalPosition: (position) => gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
-            onScrollCallback: () => {
-                const newVScroll = getScrollY();
-                const oldVScroll = this.oldVScroll;
-                this.oldVScroll = newVScroll;
-                if (oldVScroll !== null && oldVScroll !== newVScroll) {
-                    this.beans.dragAndDrop?.nudge();
-                }
-            },
         });
     }
 
@@ -83,6 +74,5 @@ export class RowDragFeatureNudger {
     public clear() {
         this.clearGroup();
         this.autoScroll.ensureCleared();
-        this.oldVScroll = null;
     }
 }

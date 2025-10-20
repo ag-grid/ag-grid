@@ -152,7 +152,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rowsDrop.moved &&
             rowsDrop.allowed &&
             rowsDrop.sameGrid &&
-            !rowsDrop.suppressMoveWhenRowDragging
+            !rowsDrop.suppressMoveWhenRowDragging &&
+            !this.nudger?.autoScroll.scrolling // Prevent row move during auto-scroll to avoid flickering
         ) {
             this.dropRows(rowsDrop); // Drop the rows while dragging
         }
@@ -531,7 +532,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (
             rowsDrop?.allowed &&
             rowsDrop.rowDragManaged &&
-            (rowsDrop.suppressMoveWhenRowDragging || !rowsDrop.sameGrid)
+            (rowsDrop.suppressMoveWhenRowDragging || !rowsDrop.sameGrid || this.nudger?.autoScroll.scrolling)
         ) {
             this.dropRows(rowsDrop); // Drop the rows after dragging
         }
