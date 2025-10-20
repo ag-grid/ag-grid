@@ -20,6 +20,16 @@ import {
 } from '../utils/event';
 import { AgBeanStub } from './agBeanStub';
 
+/**
+ * We keep a map document - Dragging to keep only one active drag also if multiple instances
+ * of BaseDragService exists for pointer events, to avoid conflicts if there are multiple grids
+ * in a page. Only one drag can be active in the whole document at a time */
+let activePointerDrags: WeakMap<Document | ShadowRoot, Dragging> | undefined;
+
+/**
+ * We keep a WeakSet of events that have already been handled to avoid processing
+ * the same event multiple times when there are multiple instances of BaseDragService.
+ */
 let handledDragEvents: WeakSet<Event> | undefined;
 
 const addHandledDragEvent = (event: Event): boolean => {
@@ -50,6 +60,11 @@ export class BaseDragService<
 
     public get startTarget(): EventTarget | null {
         return this.drag?.start.target ?? null;
+    }
+
+    /** True if there is at least one active pointer drag in any BaseDragService instance in the page */
+    private isPointerActive(): boolean {
+        return !!activePointerDrags?.has(_getRootNode(this.beans));
     }
 
     public hasPointerCapture(): boolean {
@@ -163,6 +178,10 @@ export class BaseDragService<
         this.dragging = false;
         const drag = this.drag;
         if (drag) {
+            const rootEl = drag.rootEl;
+            if (activePointerDrags?.get(rootEl) === drag) {
+                activePointerDrags?.delete(rootEl);
+            }
             this.drag = null;
             releasePointerCapture(drag.pointerCapture);
             clearTempEventHandlers(drag.handlers);
@@ -171,6 +190,9 @@ export class BaseDragService<
 
     // Pointer Events path (preferred when supported)
     private onPointerDown(params: DragListenerParams, pointerEvent: PointerEvent): void {
+        if (this.isPointerActive()) {
+            return; // Another pointer drag in progress
+        }
         const beans = this.beans;
         if (handledDragEvents?.has(pointerEvent)) {
             return; // Already handled
@@ -200,10 +222,10 @@ export class BaseDragService<
 
         this.destroyDrag();
 
+        const rootEl = _getRootNode(beans);
         const eElement = params.eElement;
-        const eRootDiv = beans.eRootDiv;
         const pointerId = pointerEvent.pointerId;
-        const pointerDrag = new Dragging(params, pointerEvent, pointerId);
+        const pointerDrag = new Dragging(rootEl, params, pointerEvent, pointerId);
 
         const onPointerMove = (ev: PointerEvent) => {
             if (ev.pointerId === pointerId) {
@@ -225,11 +247,11 @@ export class BaseDragService<
 
         this.initDrag(
             pointerDrag,
-            [_getRootNode(beans), 'touchmove', preventEventDefault, { passive: false }],
-            [eElement, 'mousemove', preventEventDefault, { passive: false }],
-            [eRootDiv, 'pointermove', onPointerMove, { passive: false }],
-            [eRootDiv, 'pointerup', onUp],
-            [eRootDiv, 'pointercancel', onCancel]
+            [rootEl, 'pointerup', onUp],
+            [rootEl, 'pointercancel', onCancel],
+            [rootEl, 'pointermove', onPointerMove, { passive: false }],
+            [rootEl, 'touchmove', preventEventDefault, { passive: false }],
+            [eElement, 'mousemove', preventEventDefault, { passive: false }]
         );
 
         // start immediately if threshold is zero
@@ -260,7 +282,7 @@ export class BaseDragService<
         }
 
         const drag = this.drag;
-        if (drag?.pointerId != null) {
+        if (drag?.pointerId != null || this.isPointerActive()) {
             preventEventDefault(touchEvent);
             return; // Active pointer drag in progress, ignore legacy touch start
         }
@@ -268,7 +290,8 @@ export class BaseDragService<
         this.destroyDrag();
 
         const beans = this.beans;
-        const touchDrag = new Dragging(params, touchEvent.touches[0]);
+        const rootEl = _getRootNode(beans);
+        const touchDrag = new Dragging(rootEl, params, touchEvent.touches[0]);
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
@@ -300,14 +323,14 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        if (this.drag?.pointerId != null) {
+        if (this.drag?.pointerId != null || this.isPointerActive()) {
             return; // Pointer-based drag in progress, ignore mouse down
         }
 
         const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag = new Dragging(params, mouseEvent);
+        const mouseDrag = new Dragging(_getRootNode(beans), params, mouseEvent);
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseOrPointerMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseOrPointerUp(event);
@@ -481,9 +504,10 @@ class Dragging {
     public pointerCapture: PointerCapture | null = null;
 
     constructor(
-        readonly params: DragListenerParams,
-        readonly start: PointerEvent | MouseEvent | Touch,
-        readonly pointerId: number | null = null
+        public readonly rootEl: Document | ShadowRoot,
+        public readonly params: DragListenerParams,
+        public readonly start: PointerEvent | MouseEvent | Touch,
+        public readonly pointerId: number | null = null
     ) {
         this.eElement = params.eElement;
     }
