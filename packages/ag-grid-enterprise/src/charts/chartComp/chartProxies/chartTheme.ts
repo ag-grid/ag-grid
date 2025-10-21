@@ -130,27 +130,29 @@ function createCrossFilterThemeOverrides(
             [seriesType]: {
                 series: {
                     fills: {
-                        $if: [
-                            { $eq: [{ $value: '$index' }, 0] },
+                        $applyCycle: [
+                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
+                            { $palette: 'fills' },
                             {
-                                $map: [
+                                $if: [
+                                    { $eq: [{ $value: '$parentIndex' }, 0] },
                                     { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
-                                    { $palette: 'fills' },
+                                    { $value: '$1' },
                                 ],
                             },
-                            { $palette: 'fills' },
                         ],
                     },
                     strokes: {
-                        $if: [
-                            { $eq: [{ $value: '$index' }, 0] },
+                        $applyCycle: [
+                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
+                            { $palette: 'strokes' },
                             {
-                                $map: [
+                                $if: [
+                                    { $eq: [{ $value: '$parentIndex' }, 0] },
                                     { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
-                                    { $palette: 'strokes' },
+                                    { $value: '$1' },
                                 ],
                             },
-                            { $palette: 'strokes' },
                         ],
                     },
                 },
