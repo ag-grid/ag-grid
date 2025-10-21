@@ -56,9 +56,6 @@ export abstract class BaseEnvironment<
     private readonly globalCSS: [string, string][] = [];
 
     protected abstract initVariables(): void;
-
-    protected abstract fireStylesChangedEvent(change: keyof TChangeKeys): void;
-
     protected abstract getAdditionalCss(): Map<string, string[]>;
 
     protected abstract postProcessThemeChange(newTheme: ThemeImpl | undefined, themeProperty?: Theme | 'legacy'): void;
@@ -282,6 +279,13 @@ export abstract class BaseEnvironment<
 
         this.applyThemeClasses(eRootDiv);
         this.fireStylesChangedEvent('themeChanged');
+    }
+
+    protected fireStylesChangedEvent(change: keyof TChangeKeys): void {
+        this.eventSvc.dispatchEvent({
+            type: 'stylesChanged',
+            [change]: true,
+        });
     }
 }
 

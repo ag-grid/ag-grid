@@ -155,10 +155,7 @@ export class Environment
         if (change === 'rowBorderWidthChanged') {
             this.refreshRowBorderWidthVariable();
         }
-        this.eventSvc.dispatchEvent({
-            type: 'stylesChanged',
-            [change]: true,
-        });
+        super.fireStylesChangedEvent(change);
     }
 
     private refreshRowBorderWidthVariable(): void {

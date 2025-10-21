@@ -248,7 +248,10 @@ export {
     AgComponentEvent as _AgComponentEvent,
 } from './agStack/interfaces/agComponent';
 export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext } from './agStack/core/agContext';
-export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
+export {
+    BaseEnvironment as _BaseEnvironment,
+    BaseCssChangeKeys as _BaseCssChangeKeys,
+} from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
 export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
 export {
