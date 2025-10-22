@@ -9,7 +9,7 @@ import type {
     IMenuActionParams,
     IMenuItemComp,
 } from 'ag-grid-community';
-import { AgPromise, _addGridCommonParams } from 'ag-grid-community';
+import { AgPromise, _STOP_PROPAGATION_CALLBACKS, _addGridCommonParams, _warn } from 'ag-grid-community';
 
 import type { AgMenuItemActivatedEvent, AgMenuItemCallbacks } from '../agStack/agMenuItemComponent';
 import { AgMenuItemComponent } from '../agStack/agMenuItemComponent';
@@ -47,6 +47,10 @@ export const MENU_ITEM_CALLBACKS: AgMenuItemCallbacks<BeanCollection, IMenuActio
         rowNode: node,
     }),
     preserveRangesWhile: _preserveRangesWhile,
+    stopPropagationCallbacks: _STOP_PROPAGATION_CALLBACKS,
+    warnNoItem: (menuItemOrString: string) => {
+        _warn(228, { menuItemOrString });
+    },
 };
 
 export class MenuItemComponent extends AgMenuItemComponent<

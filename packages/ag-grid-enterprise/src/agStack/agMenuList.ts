@@ -6,15 +6,7 @@ import type {
     _IPropertiesService,
     _WithoutCommon,
 } from 'ag-grid-community';
-import {
-    AgPromise,
-    KeyCode,
-    _AgTabGuardComp,
-    _createAgElement,
-    _last,
-    _stopPropagationForAgGrid,
-    _warn,
-} from 'ag-grid-community';
+import { AgPromise, KeyCode, _AgTabGuardComp, _createAgElement, _last } from 'ag-grid-community';
 
 import type {
     AgCloseMenuEvent,
@@ -103,7 +95,7 @@ export class AgMenuList<
                 break;
             case KeyCode.ESCAPE:
                 if (this.closeIfIsChild()) {
-                    _stopPropagationForAgGrid(e);
+                    this.callbacks.stopPropagationCallbacks.stopPropagation(e);
                 }
                 break;
         }
@@ -171,7 +163,7 @@ export class AgMenuList<
                 if (menuItemOrString === 'separator') {
                     return AgPromise.resolve({ eGui: this.createSeparator() });
                 } else if (typeof menuItemOrString === 'string') {
-                    _warn(228, { menuItemOrString });
+                    this.callbacks.warnNoItem?.(menuItemOrString);
                     return AgPromise.resolve({ eGui: null });
                 } else {
                     return this.addItem(menuItemOrString);

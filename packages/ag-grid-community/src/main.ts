@@ -108,6 +108,7 @@ export {
 export { ITabGuard, TabGuardClassNames } from './agStack/focus/tabGuardCtrl';
 export { AutoScrollService } from './agStack/rendering/autoScrollService';
 export { ResizableStructure, ResizableSides, PositionableOptions } from './agStack/rendering/agPositionableFeature';
+export { IAriaAnnouncementService } from './agStack/interfaces/iAriaAnnouncementService';
 
 // AG Stack Utils (public)
 export {
@@ -299,6 +300,7 @@ export {
 } from './agStack/focus/agTabGuardFeature';
 export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
 export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
+export { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
 
 // excel
 export {
@@ -1261,7 +1263,6 @@ export {
 } from './interfaces/menuItem';
 export { IWatermark } from './interfaces/iWatermark';
 export { IRowChildrenService } from './interfaces/iRowChildrenService';
-export type { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 
 // utils

@@ -1,6 +1,7 @@
 import type { AgFrameworkOverrides } from './agFrameworkOverrides';
 import type { BaseEvents } from './baseEvents';
 import type { BaseProperties } from './baseProperties';
+import type { IAriaAnnouncementService } from './iAriaAnnouncementService';
 import type { IContext } from './iContext';
 import type { IDragService } from './iDrag';
 import type { IDragAndDropService } from './iDragAndDrop';
@@ -31,6 +32,7 @@ export interface AgCoreBeanCollection<
     dragSvc?: IDragService;
     dragAndDrop?: IDragAndDropService<any, any, any, any, any>;
     agChartsExports?: unknown; // this is intentionally left untyped
+    ariaAnnounce: IAriaAnnouncementService;
 }
 
 /** This is a cut down version to simplify typing for util functions that don't need/want all the generics */

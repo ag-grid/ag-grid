@@ -9,8 +9,7 @@ import { _getDocument } from '../utils/document';
 import { _clearElement, _isNodeOrElement, _removeFromParent } from '../utils/dom';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import type { ITabGuard } from './tabGuardCtrl';
-import { AgTabGuardCtrl } from './tabGuardCtrl';
-import { TabGuardClassNames } from './tabGuardCtrl';
+import { AgTabGuardCtrl, TabGuardClassNames } from './tabGuardCtrl';
 
 export interface AgTabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;

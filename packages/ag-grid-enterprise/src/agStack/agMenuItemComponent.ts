@@ -11,6 +11,7 @@ import type {
     _BaseProperties,
     _IPropertiesService,
     _ITooltipFeature,
+    _StopPropagationCallbacks,
     _TooltipCtrl,
     _WithoutCommon,
 } from 'ag-grid-community';
@@ -147,6 +148,8 @@ export interface AgMenuItemCallbacks<TBeanCollection, TMenuActionParams extends 
     ) => AgPromise<(IComponent<AgMenuItemParams<TMenuActionParams, TCommon>> & IMenuItem) | undefined>;
     getPostProcessPopupParams: (contextParams: _WithoutCommon<TCommon, TMenuActionParams>) => any;
     preserveRangesWhile: (beans: TBeanCollection, fn: () => void) => void;
+    stopPropagationCallbacks: _StopPropagationCallbacks;
+    warnNoItem?: (menuItem: string) => void;
 }
 
 export class AgMenuItemComponent<

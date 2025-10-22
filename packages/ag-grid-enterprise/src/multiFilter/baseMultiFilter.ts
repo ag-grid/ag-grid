@@ -11,9 +11,9 @@ import {
 } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../widgets/agGroupComponent';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import type { MenuItemActivatedEvent } from '../widgets/menuItemComponent';
 import { MenuItemComponent } from '../widgets/menuItemComponent';
+import { MenuItemRenderer } from '../widgets/menuItemRenderer';
 import { forEachReverse, getFilterTitle } from './multiFilterUtil';
 
 export interface BaseFilterComponent {
@@ -128,7 +128,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                     subMenu: [],
                     subMenuRole: 'dialog',
                     cssClasses: ['ag-multi-filter-menu-item'],
-                    menuItem: AgMenuItemRenderer,
+                    menuItem: MenuItemRenderer,
                     menuItemParams: {
                         cssClassPrefix: 'ag-compact-menu-option',
                         isCompact: true,

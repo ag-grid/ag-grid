@@ -42,7 +42,14 @@ export {
     AgCloseMenuEvent as _AgCloseMenuEvent,
     AgMenuItemActivatedEvent as _AgMenuItemActivatedEvent,
     AgMenuItemComponent as _AgMenuItemComponent,
+    AgMenuItemLeafDef as _AgMenuItemLeafDef,
+    AgMenuItemDef as _AgMenuItemDef,
 } from './agStack/agMenuItemComponent';
+export {
+    AgContextMenuService as _AgContextMenuService,
+    AgContextMenuServiceParams as _AgContextMenuServiceParams,
+} from './agStack/agContextMenuService';
+export { AgMenuItemRenderer as _AgMenuItemRenderer } from './agStack/agMenuItemRenderer';
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 export { AiToolkitModule } from './aiToolkit/aiToolkitModule';
