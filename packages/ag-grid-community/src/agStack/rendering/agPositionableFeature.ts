@@ -445,17 +445,15 @@ export class AgPositionableFeature<
             return;
         }
 
-        if (!isPercent) {
-            if (this.config.popup) {
-                _setFixedWidth(eGui, width);
-            } else {
-                eGui.style.width = `${width}px`;
-                eGui.style.flex = ' unset';
-                this.lastSize.width = typeof width === 'number' ? width : Number.parseFloat(width);
-            }
-        } else {
+        if (isPercent) {
             eGui.style.maxWidth = 'unset';
             eGui.style.minWidth = 'unset';
+        } else if (this.config.popup) {
+            _setFixedWidth(eGui, width);
+        } else {
+            eGui.style.width = `${width}px`;
+            eGui.style.flex = ' unset';
+            this.lastSize.width = typeof width === 'number' ? width : Number.parseFloat(width);
         }
     }
 
