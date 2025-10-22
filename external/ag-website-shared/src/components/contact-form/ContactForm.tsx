@@ -10,7 +10,9 @@ import { useForm } from 'react-hook-form';
 import styles from './ContactForm.module.scss';
 import { RETURN_URLS } from './constants';
 
-const { actionUrl, orgId, textAreaId } = getIsProduction() ? CONTACT_FORM_DATA.production : CONTACT_FORM_DATA.default;
+const { actionUrl, orgId, textAreaId, leadSource, recordType } = getIsProduction()
+    ? CONTACT_FORM_DATA.production
+    : CONTACT_FORM_DATA.default;
 
 const isDev = getIsDev();
 
@@ -20,7 +22,11 @@ type FormValues = {
     email: string;
 } & Record<string, string>;
 
-export const ContactForm: FunctionComponent = () => {
+interface Props {
+    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page';
+}
+
+export const ContactForm: FunctionComponent = ({ formLocation = 'About page' }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
@@ -69,6 +75,11 @@ export const ContactForm: FunctionComponent = () => {
         >
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
+
+            <input type="hidden" name="lead_source" id="lead_source" value={leadSource} />
+            <input type="hidden" name="recordType" id="recordType" value={recordType} />
+
+            <input type="hidden" name="00NS900000BCx1C" id="00NS900000BCx1C" value={formLocation} />
 
             {isDebug && (
                 <>
