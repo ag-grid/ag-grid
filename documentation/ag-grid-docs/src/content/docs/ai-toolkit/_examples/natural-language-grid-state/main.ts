@@ -28,14 +28,15 @@ function processRequest(event?: Event) {
     inputElement.disabled = true;
     submitButton.disabled = true;
 
-    statusElement.innerHTML = '<code class="process">Processing request with ChatGPT <b>⧖</b></code>';
+    statusElement.innerHTML =
+        '<code class="process">Processing request with ChatGPT. LLM may take up to 30s to respond. <b>⧖</b></code>';
     outputElement.innerHTML = '';
 
     const currentState = gridApi.getState();
 
     callChatGPT(userRequest, currentState, gridApi)
         .then(function (response) {
-            if (Object.keys(response.gridState).length > 0) {
+            if (response.gridState && Object.keys(response.gridState).length > 0) {
                 gridApi.setState(response.gridState, response.propertiesToIgnore);
             }
 

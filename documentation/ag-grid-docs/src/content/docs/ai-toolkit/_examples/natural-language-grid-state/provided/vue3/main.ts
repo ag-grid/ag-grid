@@ -43,7 +43,7 @@ const App = {
             try {
                 const response = await callChatGPT(userRequest, currentGridState, gridApi.value);
 
-                if (Object.keys(response.gridState).length > 0) {
+                if (response.gridState && Object.keys(response.gridState).length > 0) {
                     gridApi.value.setState(response.gridState, response.propertiesToIgnore);
                 }
 
@@ -118,23 +118,23 @@ const App = {
             <div class="example-controls">
                 <div class="request-container">
                     <form class="input-group" @submit.prevent="processRequest">
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             v-model="naturalLanguageInput"
                             :disabled="isProcessing"
                             placeholder="Your prompt e.g. 'hide age column'"
                         />
                         <button type="submit" :disabled="isProcessing">→</button>
                     </form>
-                    <div v-html="processingStatus"></div>
+                    <div id="processingStatus" v-html="processingStatus"></div>
                     <div>
                         <button @click="resetGrid">Reset Grid</button>
                     </div>
                 </div>
 
                 <div class="response-container">
-                    <div v-if="aiResponse" v-html="aiResponse"></div>
-                    <div v-if="currentState" v-html="currentState"></div>
+                    <div id="aiResponse" v-if="aiResponse" v-html="aiResponse"></div>
+                    <div id="currentState" v-if="currentState" v-html="currentState"></div>
                 </div>
             </div>
 

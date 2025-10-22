@@ -27,7 +27,8 @@ if (!newLicenseKey || newLicenseKey.length !== 20) {
 }
 
 const licenseManagerSrc = fs.readFileSync(LICENSE_MANAGER_FILE, 'utf8');
-const releaseInfoIndex = licenseManagerSrc.indexOf('private static RELEASE_INFORMATION');
+const releaseInfoIndex = licenseManagerSrc.indexOf('private static readonly RELEASE_INFORMATION');
+if (releaseInfoIndex === -1) throw new Error('Could not find RELEASE_INFORMATION in licenseManager.ts');
 const startOfValue = licenseManagerSrc.indexOf("'", releaseInfoIndex) + 1;
 const endOfValue = licenseManagerSrc.indexOf("'", startOfValue);
 const existingLicenseKey = licenseManagerSrc.substring(startOfValue, endOfValue);

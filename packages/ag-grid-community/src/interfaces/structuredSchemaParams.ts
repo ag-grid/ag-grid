@@ -1,4 +1,13 @@
-export const STRUCTURED_SCHEMA_FEATURES = [
+export type StructuredSchemaFeature =
+    | 'aggregation'
+    | 'filter'
+    | 'sort'
+    | 'pivot'
+    | 'columnVisibility'
+    | 'columnSizing'
+    | 'rowGroup';
+
+export const STRUCTURED_SCHEMA_FEATURES: StructuredSchemaFeature[] = [
     'aggregation',
     'filter',
     'sort',
@@ -6,9 +15,7 @@ export const STRUCTURED_SCHEMA_FEATURES = [
     'columnVisibility',
     'columnSizing',
     'rowGroup',
-] as const;
-
-export type StructuredSchemaFeature = (typeof STRUCTURED_SCHEMA_FEATURES)[number];
+];
 
 export type StructuredSchemaColumnParams = {
     description?: string;

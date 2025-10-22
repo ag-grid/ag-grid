@@ -157,7 +157,10 @@ const buildJoinSchema = (schema: SchemaBuilder, filterType: string, maxCondition
 
     return s.object({
         filterType: s.literal(filterType, `Filter type identifier for ${filterType} filters with multiple conditions`),
-        operator: s.enum(['AND', 'OR'], 'Logical operator to combine multiple filter conditions'),
+        operator: s.enum(
+            ['AND', 'OR'],
+            'Logical operator to combine multiple filter conditions. Must be included even with a single filter to adhere to the API.'
+        ),
         conditions: s.array(schema, 'Array of filter conditions to be combined').minItems(2).maxItems(maxConditions),
     });
 };
