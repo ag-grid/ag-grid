@@ -312,7 +312,7 @@ export class AgTabGuardCtrl<
         if (this.tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
             focusable.splice(0, 1);
-            focusable.splice(focusable.length - 1, 1);
+            focusable.splice(-1, 1);
         }
 
         if (!focusable.length) {

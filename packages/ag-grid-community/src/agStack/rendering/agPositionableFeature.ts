@@ -153,7 +153,7 @@ export class AgPositionableFeature<
         config?: PositionableOptions
     ) {
         super();
-        this.config = Object.assign({}, { popup: false }, config);
+        this.config = { popup: false, ...config };
     }
 
     public center(postProcessCallback?: () => void) {
@@ -229,7 +229,7 @@ export class AgPositionableFeature<
                 const left = Number.parseFloat(boundaryEl.style.left);
 
                 if (initialisedDuringPositioning) {
-                    this.offsetElement(isNaN(left) ? 0 : left, isNaN(top) ? 0 : top, postProcessCallback);
+                    this.offsetElement(Number.isNaN(left) ? 0 : left, Number.isNaN(top) ? 0 : top, postProcessCallback);
                 } else {
                     this.setPosition(left, top);
                 }
@@ -296,9 +296,8 @@ export class AgPositionableFeature<
             } as ResizableStructure;
         }
 
-        Object.keys(resizable).forEach((side: ResizableSides) => {
-            const resizableStructure = resizable as ResizableStructure;
-            const isSideResizable = !!resizableStructure[side];
+        for (const side of Object.keys(resizable) as ResizableSides[]) {
+            const isSideResizable = !!resizable[side];
             const resizerEl = this.getResizerElement(side);
 
             const params: DragListenerParams = {
@@ -319,7 +318,7 @@ export class AgPositionableFeature<
                 }
                 this.resizable[side] = isSideResizable;
             }
-        });
+        }
     }
 
     public removeSizeFromEl(): void {
@@ -371,17 +370,15 @@ export class AgPositionableFeature<
             return;
         }
 
-        if (!isPercent) {
-            if (popup) {
-                _setFixedHeight(eGui, height);
-            } else {
-                eGui.style.height = `${height}px`;
-                eGui.style.flex = '0 0 auto';
-                this.lastSize.height = typeof height === 'number' ? height : Number.parseFloat(height);
-            }
-        } else {
+        if (isPercent) {
             eGui.style.maxHeight = 'unset';
             eGui.style.minHeight = 'unset';
+        } else if (popup) {
+            _setFixedHeight(eGui, height);
+        } else {
+            eGui.style.height = `${height}px`;
+            eGui.style.flex = '0 0 auto';
+            this.lastSize.height = typeof height === 'number' ? height : Number.parseFloat(height);
         }
     }
 
@@ -702,8 +699,7 @@ export class AgPositionableFeature<
         let height = 0;
         let width = 0;
 
-        for (let i = 0; i < siblings.length; i++) {
-            const currentEl = siblings[i];
+        for (const currentEl of siblings) {
             const isFlex = !!currentEl.style.flex && currentEl.style.flex !== '0 0 auto';
 
             if (currentEl === this.element) {

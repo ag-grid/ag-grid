@@ -72,9 +72,9 @@ export class AgTabGuardFeature<
         const compProxy: ITabGuard = {
             setTabIndex: (tabIndex) => {
                 for (const tabGuard of tabGuards) {
-                    tabIndex != null
-                        ? tabGuard.setAttribute('tabindex', tabIndex)
-                        : tabGuard.removeAttribute('tabindex');
+                    tabIndex == null
+                        ? tabGuard.removeAttribute('tabindex')
+                        : tabGuard.setAttribute('tabindex', tabIndex);
                 }
             },
         };
@@ -133,8 +133,8 @@ export class AgTabGuardFeature<
 
     private addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
         const eFocusableElement = this.eFocusableElement;
-        eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
-        eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
+        eFocusableElement.prepend(topTabGuard);
+        eFocusableElement.append(bottomTabGuard);
     }
 
     public removeAllChildrenExceptTabGuards(): void {
@@ -162,7 +162,7 @@ export class AgTabGuardFeature<
         const { eBottomGuard: bottomTabGuard } = this;
 
         if (bottomTabGuard) {
-            bottomTabGuard.insertAdjacentElement('beforebegin', newChild);
+            bottomTabGuard.before(newChild);
         } else {
             appendChild(newChild, container);
         }
