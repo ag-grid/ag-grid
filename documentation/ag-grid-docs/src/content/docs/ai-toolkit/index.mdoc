@@ -8,13 +8,19 @@ Easily integrate AG Grid with your own LLM, enabling end users to query and mani
 
 The example below demonstrates a chat application, built using the AI Toolkit APIs and integrated with ChatGPT's `gpt-5-mini` model, that allows for manipulation of grid state via natural language. 
 
+This example does not maintain conversation state. If the LLM responds with a question, please update your initial query, instead of only answering the question. 
+
 Suggested prompts: 
 
 - "Show me all the gold medals won by the USA"
 - "Sort the competitors with the youngest first"
 - "Group by country and show the total number of medals won"
 
-{% gridExampleRunner title="Natural Language Grid State Management" name="natural-language-grid-state" /%}
+{% note  %}
+The LLM may take up to 30s to respond. Please be patient.
+{% /note %}
+
+{% gridExampleRunner title="Natural Language Grid State Management" name="natural-language-grid-state" exampleHeight=600 /%}
 
 ## How It Works
 

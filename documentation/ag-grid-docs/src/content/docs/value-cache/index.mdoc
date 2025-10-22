@@ -75,7 +75,7 @@ As before, we focus on the Value Getter of the **'Total'** column and can see ho
 * If you close and then re-open a group, the value getters are not re-executed, even though the values are needed to re-create the DOM elements that represent the cells.
 * Hitting **'Refresh Cells'** will refresh all the cells, but again the value getters will not get re-executed.
 * Hitting **'Invalidate Cache'** and then **'Refresh Cells'** will result in the value getters getting re-executed, as the cell refresh operation requires the values and the cache was invalidated. You will notice invalidating and then refreshing doesn't do anything noticeable to the grid, the data is the same, the only hint that anything happened is the value getter's console messages.
-* Changing any value in the grid, either editing via the UI directly or hitting the **'Change One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](./change-detection/) then updates any changes cells and only changed cells).
+* Changing any value in the grid, either editing via the UI directly or hitting the **'Update One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](./change-detection/) then updates any changes cells and only changed cells).
 
 {% gridExampleRunner title="Expiring Cache through Editing" name="expiring-through-editing" /%}
 
