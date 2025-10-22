@@ -28,7 +28,8 @@ function processRequest(event?: Event) {
     inputElement.disabled = true;
     submitButton.disabled = true;
 
-    statusElement.innerHTML = '<code class="process">Processing request with ChatGPT <b>⧖</b></code>';
+    statusElement.innerHTML =
+        '<code class="process">Processing request with ChatGPT. LLM may take up to 30s to respond. <b>⧖</b></code>';
     outputElement.innerHTML = '';
 
     const currentState = gridApi.getState();
