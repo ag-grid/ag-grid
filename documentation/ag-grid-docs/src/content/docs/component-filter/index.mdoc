@@ -285,8 +285,10 @@ export default forwardRef((props, ref) => {
 laterOnInYourApplicationSomewhere() {
     // get reference to the AG Grid Filter component on name column
     api.getColumnFilterInstance('name').then(filterInstance => {
-        getInstance(filterInstance, comp => if (comp != null) {
-            comp.myMethod();
+        getInstance(filterInstance, comp => {
+            if (comp != null) {
+                comp.myMethod();
+            }
         });
     });
 }

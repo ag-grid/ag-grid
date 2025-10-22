@@ -1860,7 +1860,7 @@ export interface _AdvancedFilterGridApi {
 export interface _AiToolkitGridApi {
     /**
      * Returns the structured schema of the grid, which includes information about columns, data types, and relationships.
-     * This schema can be passed to I services to ensure the response is of the correct format.
+     * This schema can be passed to AI services to ensure the response is of the correct format.
      * @agModule `AiToolkitModule`
      */
     getStructuredSchema(params?: StructuredSchemaParams): any;

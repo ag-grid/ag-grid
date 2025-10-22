@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { StrictMode, useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ModuleRegistry } from 'ag-grid-community';
@@ -74,7 +74,7 @@ const GridExample = () => {
             try {
                 const response = await callChatGPT(userRequest, currentGridState, gridRef.current.api);
 
-                if (Object.keys(response.gridState).length > 0) {
+                if (response.gridState && Object.keys(response.gridState).length > 0) {
                     gridRef.current.api.setState(response.gridState, response.propertiesToIgnore);
                 }
 
@@ -121,10 +121,6 @@ const GridExample = () => {
             setCurrentState('');
         }
     }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div className="example-wrapper">
@@ -189,13 +185,15 @@ const GridExample = () => {
                 columnDefs={gridOptions.columnDefs}
                 rowData={rowData}
                 gridOptions={gridOptions}
+                loading={loading}
             />
         </div>
     );
 };
 
-const container = document.getElementById('root');
-if (container) {
-    const root = createRoot(container);
-    root.render(<GridExample />);
-}
+const root = createRoot(document.getElementById('root')!);
+root.render(
+    <StrictMode>
+        <GridExample />
+    </StrictMode>
+);

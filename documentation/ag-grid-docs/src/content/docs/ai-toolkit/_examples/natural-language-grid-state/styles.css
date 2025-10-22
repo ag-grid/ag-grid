@@ -390,6 +390,9 @@ body > #highlighter {
 
 #aiResponse .response {
     margin-left: 32px !important;
+}
+
+#aiResponse i.response {
     text-align: right;
 }
 
