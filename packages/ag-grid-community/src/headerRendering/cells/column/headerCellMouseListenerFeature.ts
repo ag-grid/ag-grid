@@ -1,11 +1,21 @@
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
+import { _getHeaderCellSelection } from '../../../gridOptionsUtils';
 
 export class HeaderCellMouseListenerFeature extends BeanStub {
     private lastMovingChanged = 0;
 
-    constructor(private readonly column: AgColumn) {
+    constructor(
+        private readonly column: AgColumn,
+        private readonly eGui: HTMLElement
+    ) {
         super();
+    }
+
+    public postConstruct() {
+        this.addManagedElementListeners(this.eGui, {
+            click: (e) => e && this.onClick(e),
+        });
     }
 
     public onMovingChanged(): void {
@@ -14,10 +24,10 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
 
     public onClick(event: MouseEvent): void {
         const { gos, sortSvc, rangeSvc } = this.beans;
-        const headerCellSelection = gos.get('headerCellSelection');
+        const headerCellSelection = _getHeaderCellSelection(gos);
 
         if (headerCellSelection && (event.ctrlKey || event.metaKey)) {
-            rangeSvc?.handleColumnSelection(this.column);
+            rangeSvc?.handleColumnSelection(this.column, event);
         } else {
             // sometimes when moving a column via dragging, this was also firing a clicked event.
             // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076

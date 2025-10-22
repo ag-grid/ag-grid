@@ -400,6 +400,15 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
     return typeof selection !== 'boolean' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
+export function _getHeaderCellSelection(gos: GridOptionsService): boolean {
+    const cellSelection = gos.get('cellSelection');
+    if (typeof cellSelection != 'object') {
+        return false;
+    }
+
+    return cellSelection.headerCellSelection ?? false;
+}
+
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {
     const selection = gos.get('rowSelection') ?? 'single';
 

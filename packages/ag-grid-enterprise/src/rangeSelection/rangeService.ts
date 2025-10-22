@@ -375,8 +375,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         const isRowNumbersEnabled = _isRowNumbers(gos);
-        const allColumnsRange = isRowNumberCol(cell.column);
         if (isRowNumbersEnabled) {
+            const allColumnsRange = isRowNumberCol(cell.column);
             this.setSelectionMode(allColumnsRange);
         }
 
@@ -731,8 +731,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const { columns, startsOnTheRight } = columnInfo;
 
-        const startRow = this.createRowPosition(rowStartIndex, rowStartPinned);
-        const endRow = this.createRowPosition(rowEndIndex, rowEndPinned);
+        const startRow = createRowPosition(rowStartIndex, rowStartPinned);
+        const endRow = createRowPosition(rowEndIndex, rowEndPinned);
 
         return {
             startRow,
@@ -798,7 +798,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public areAllRangesAbleToMerge(): boolean {
-        const rowToColumnMap: Map<string, string[]> = new Map();
+        const rowToColumnMap = new Map<string, string[]>();
         const len = this.cellRanges.length;
 
         if (len <= 1) {
@@ -874,17 +874,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     // returns the number of ranges this cell is in
     public getCellRangeCount(cell: CellPosition): number {
-        if (this.isEmpty()) {
-            return 0;
-        }
-
         return this.cellRanges.filter((cellRange) => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
     public isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        const thisRow: RowPosition = { rowIndex, rowPinned: rowPinned || null };
+        const thisRow = createRowPosition(rowIndex, rowPinned);
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
@@ -951,8 +947,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     startColumn: intersectCols.includes(lastRange.startColumn)
                         ? lastRange.startColumn
                         : intersectCols[0],
-                    startRow: this.rowMax([{ ...intersectionStartRow }, { ...startRow }]),
-                    endRow: this.rowMin([{ ...intersectionEndRow }, { ...endRow }]),
+                    startRow: rowMax([{ ...intersectionStartRow }, { ...startRow }]),
+                    endRow: rowMin([{ ...intersectionEndRow }, { ...endRow }]),
                 };
                 newRanges.push(middle);
             }
@@ -1052,10 +1048,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             : undefined;
     }
 
-    private createRowPosition(rowIndex: number | null, rowPinned?: RowPinnedType): RowPosition | undefined {
-        return rowIndex != null ? { rowIndex, rowPinned } : undefined;
-    }
-
     private verifyCellRanges(gos: GridOptionsService): boolean {
         const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 1;
         if (invalid) {
@@ -1102,26 +1094,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return isLastColumn && isLastRow;
     }
 
-    private rowMax(rows: RowPosition[]): RowPosition | undefined {
-        let max: RowPosition | undefined;
-        for (const row of rows) {
-            if (max === undefined || _isRowBefore(max, row)) {
-                max = row;
-            }
-        }
-        return max;
-    }
-
-    private rowMin(rows: RowPosition[]): RowPosition | undefined {
-        let min: RowPosition | undefined;
-        for (const row of rows) {
-            if (min === undefined || _isRowBefore(row, min)) {
-                min = row;
-            }
-        }
-        return min;
-    }
-
     private updateValuesOnMove(eventTarget: EventTarget | null) {
         const cellCtrl = _getCellCtrlForEventTarget(this.gos, eventTarget);
         const cell = cellCtrl?.cellPosition;
@@ -1146,10 +1118,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         this.lastCellHovered = cell;
-    }
-
-    private shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
-        return isRowNumberCol(currentColumn);
     }
 
     private dispatchChangedEvent(started: boolean, finished: boolean, id?: string): void {
@@ -1183,7 +1151,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         for (const col of cols) {
             const column = this.getColumnFromModel(col);
-            if (!column || (isRowHeaderActive && this.shouldSkipCurrentColumn(column))) {
+            if (!column || (isRowHeaderActive && shouldSkipCurrentColumn(column))) {
                 continue;
             }
             columns.push(column);
@@ -1271,4 +1239,51 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature {
         return new CellRangeFeature(this.beans, ctrl);
     }
+
+    public handleColumnSelection(column: AgColumn<any>, event: MouseEvent): void {
+        if (!(event.ctrlKey || event.metaKey)) {
+            return;
+        }
+
+        const numRows = this.beans.rowModel.getRowCount();
+
+        this.addCellRange({
+            columnStart: column,
+            columnEnd: column,
+            columns: [column],
+            rowStartIndex: 0,
+            rowStartPinned: null,
+            rowEndIndex: numRows - 1,
+        });
+    }
+}
+
+function createRowPosition(rowIndex: number, rowPinned?: RowPinnedType): RowPosition;
+function createRowPosition(rowIndex: number | null, rowPinned?: RowPinnedType): RowPosition | undefined;
+function createRowPosition(rowIndex: number | null, rowPinned?: RowPinnedType): RowPosition | undefined {
+    return rowIndex != null ? { rowIndex, rowPinned } : undefined;
+}
+
+function rowMax(rows: RowPosition[]): RowPosition | undefined {
+    let max: RowPosition | undefined;
+    for (const row of rows) {
+        if (max === undefined || _isRowBefore(max, row)) {
+            max = row;
+        }
+    }
+    return max;
+}
+
+function rowMin(rows: RowPosition[]): RowPosition | undefined {
+    let min: RowPosition | undefined;
+    for (const row of rows) {
+        if (min === undefined || _isRowBefore(row, min)) {
+            min = row;
+        }
+    }
+    return min;
+}
+
+function shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
+    return isRowNumberCol(currentColumn);
 }

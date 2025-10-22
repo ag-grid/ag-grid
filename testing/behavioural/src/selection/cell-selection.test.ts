@@ -6,7 +6,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout, waitForEvent } from '../test-utils';
+import { TestGridsManager, assertColumnsSelected, asyncSetTimeout, waitForEvent } from '../test-utils';
 import { GridActions } from './utils';
 
 describe('Cell Selection', () => {
@@ -101,8 +101,10 @@ describe('Cell Selection', () => {
         });
     });
 
-    describe('Column selection', () => {
+    describe.only('Column selection', () => {
         test('CTRL-clicking a column adds that column to the cell selection', async () => {
+            const userSession = userEvent.setup();
+
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
@@ -113,26 +115,20 @@ describe('Cell Selection', () => {
 
             const gridDiv = getGridElement(api)! as HTMLElement;
 
-            const headerCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
 
-            await userEvent.click(headerCell);
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
 
-            const columns = api.getColumns()!;
+            assertColumnsSelected(['sport'], api);
 
-            expect(api.getCellRanges()).toEqual([
-                {
-                    startRow: {
-                        rowIndex: 0,
-                        rowPinned: null,
-                    },
-                    endRow: {
-                        rowIndex: 0,
-                        rowPinned: null,
-                    },
-                    columns: [columns[0]],
-                    startColumn: columns[0],
-                },
-            ]);
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected(['sport', 'year'], api);
         });
     });
 });

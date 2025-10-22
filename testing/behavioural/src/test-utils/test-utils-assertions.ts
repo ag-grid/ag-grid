@@ -17,9 +17,7 @@ export function assertSelectedRowElementsById(ids: string[], api: GridApi): void
 
 export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
     const selectedNodes = api.getSelectedNodes();
-
     expect(selectedNodes).toHaveLength(nodes.length);
-
     for (let i = 0; i < nodes.length; i++) {
         expect(selectedNodes[i]).toBe(nodes[i]);
     }
@@ -76,5 +74,27 @@ export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridA
             notFound.push(range);
         }
     }
+    expect(notFound).toEqual([]);
+}
+
+export function assertColumnsSelected(colIds: string[], api: GridApi): void {
+    const cellRanges = api.getCellRanges()?.slice();
+    const nRows = api.getDisplayedRowCount();
+    const notFound: string[] = [];
+
+    for (const colId of colIds) {
+        const containingRange = cellRanges?.find((range) => range.columns.find((col) => col.getColId() === colId));
+        if (!containingRange) {
+            notFound.push(colId);
+        } else {
+            expect(containingRange).toEqual(
+                expect.objectContaining({
+                    startRow: { rowIndex: 0, rowPinned: null },
+                    endRow: { rowIndex: nRows - 1, rowPinned: null },
+                })
+            );
+        }
+    }
+
     expect(notFound).toEqual([]);
 }

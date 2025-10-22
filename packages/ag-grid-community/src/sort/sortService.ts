@@ -276,36 +276,7 @@ export class SortService extends BeanStub implements NamedBean {
         return this.getIndexedSortMap().get(column);
     }
 
-    public setupHeader(comp: Component, column: AgColumn, clickElement?: HTMLElement): void {
-        let lastMovingChanged = 0;
-
-        // keep track of last time the moving changed flag was set
-        comp.addManagedListeners(column, {
-            movingChanged: () => {
-                lastMovingChanged = Date.now();
-            },
-        });
-
-        // add the event on the header, so when clicked, we do sorting
-        if (clickElement) {
-            comp.addManagedElementListeners(clickElement, {
-                click: (event: MouseEvent) => {
-                    // sometimes when moving a column via dragging, this was also firing a clicked event.
-                    // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
-                    // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
-                    const moving = column.isMoving();
-                    const nowTime = Date.now();
-                    // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
-                    const movedRecently = nowTime - lastMovingChanged < 50;
-                    const columnMoving = moving || movedRecently;
-
-                    if (!columnMoving) {
-                        this.progressSortFromEvent(column, event);
-                    }
-                },
-            });
-        }
-
+    public setupHeader(comp: Component, column: AgColumn): void {
         const onSortingChanged = () => {
             const sort = column.getSort();
             comp.toggleCss('ag-header-cell-sorted-asc', sort === 'asc');
@@ -315,9 +286,7 @@ export class SortService extends BeanStub implements NamedBean {
             if (column.getColDef().showRowGroup) {
                 const sourceColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
-                const sortDirectionsMatch = sourceColumns?.every(
-                    (sourceCol) => column.getSort() == sourceCol.getSort()
-                );
+                const sortDirectionsMatch = sourceColumns?.every((sourceCol) => sort == sourceCol.getSort());
                 const isMultiSorting = !sortDirectionsMatch;
 
                 comp.toggleCss('ag-header-cell-sorted-mixed', isMultiSorting);
