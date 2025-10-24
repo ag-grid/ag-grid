@@ -29,6 +29,7 @@ import {
     BeanStub,
     _areCellsEqual,
     _areEqual,
+    _columnsMatch,
     _exists,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
@@ -538,7 +539,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const endColumn = cellPosition.column as AgColumn;
         const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn as AgColumn, endColumn);
 
-        if (!colsToAdd || this.isLastCellOfRange(cellRange, cellPosition)) {
+        if (!colsToAdd || isLastCellOfRange(cellRange, cellPosition)) {
             return;
         }
 
@@ -1073,25 +1074,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     // as the user is dragging outside of the panel, the div starts to scroll, which in turn
-    // means we are selection more (or less) cells, but the mouse isn't moving, so we recalculate
+    // means we are selecting more (or less) cells, but the mouse isn't moving, so we recalculate
     // the selection my mimicking a new mouse event
     private onBodyScroll(): void {
         if (this.dragging && this.lastMouseEvent) {
             this.onDragging(this.lastMouseEvent);
         }
-    }
-
-    private isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
-        const { startRow, endRow } = cellRange;
-        const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
-        const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
-        const rangeFirstIndexColumn = cellRange.columns[0];
-        const rangeLastIndexColumn = _last(cellRange.columns);
-        const lastRangeColumn =
-            cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
-        const isLastColumn = cell.column === lastRangeColumn;
-
-        return isLastColumn && isLastRow;
     }
 
     private updateValuesOnMove(eventTarget: EventTarget | null) {
@@ -1247,6 +1235,20 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const numRows = this.beans.rowModel.getRowCount();
 
+        // const cellRangeParams = {
+        //     columnStart: column,
+        //     columnEnd: column,
+        //     columns: [column],
+        //     rowStartIndex: 0,
+        //     rowStartPinned: null,
+        //     rowEndIndex: numRows - 1,
+        // };
+
+        // const cellRange = this.createCellRangeFromCellRangeParams(cellRangeParams)!;
+        // const cellRanges = this.cellRanges;
+        // // if (cellRanges.some((r) => CellRanges.equal(r, cellRange))) {
+        // // }
+
         this.addCellRange({
             columnStart: column,
             columnEnd: column,
@@ -1287,3 +1289,30 @@ function rowMin(rows: RowPosition[]): RowPosition | undefined {
 function shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
     return isRowNumberCol(currentColumn);
 }
+
+function isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
+    const { startRow, endRow } = cellRange;
+    const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
+    const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
+    const rangeFirstIndexColumn = cellRange.columns[0];
+    const rangeLastIndexColumn = _last(cellRange.columns);
+    const lastRangeColumn =
+        cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+    const isLastColumn = cell.column === lastRangeColumn;
+
+    return isLastColumn && isLastRow;
+}
+
+/** Cell Range Utils */
+const CellRanges = {
+    equal: (a: CellRange, b: CellRange): boolean => {
+        return (
+            a.id != b.id ||
+            a.type != b.type ||
+            !_isSameRow(a.startRow, b.startRow) ||
+            !_isSameRow(a.endRow, b.endRow) ||
+            a.startColumn !== b.startColumn ||
+            _areEqual(a.columns, b.columns, (aCol, bCol) => _columnsMatch(aCol as AgColumn, bCol as AgColumn))
+        );
+    },
+};

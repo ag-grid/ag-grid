@@ -1,6 +1,6 @@
 import { expect } from 'vitest';
 
-import type { GridApi, IRowNode } from 'ag-grid-community';
+import type { CellRange, GridApi, IRowNode } from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
 
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
@@ -81,20 +81,23 @@ export function assertColumnsSelected(colIds: string[], api: GridApi): void {
     const cellRanges = api.getCellRanges()?.slice();
     const nRows = api.getDisplayedRowCount();
     const notFound: string[] = [];
+    const matchingRanges: CellRange[] = [];
 
     for (const colId of colIds) {
         const containingRange = cellRanges?.find((range) => range.columns.find((col) => col.getColId() === colId));
         if (!containingRange) {
             notFound.push(colId);
         } else {
-            expect(containingRange).toEqual(
-                expect.objectContaining({
-                    startRow: { rowIndex: 0, rowPinned: null },
-                    endRow: { rowIndex: nRows - 1, rowPinned: null },
-                })
-            );
+            matchingRanges.push(containingRange);
         }
     }
 
     expect(notFound).toEqual([]);
+
+    for (const range of matchingRanges) {
+        expect(range.columns).toHaveLength(1);
+        expect(range.columns[0]).toBe(range.startColumn);
+        expect(range.startRow).toEqual({ rowIndex: 0, rowPinned: null });
+        expect(range.endRow).toEqual({ rowIndex: nRows - 1, rowPinned: undefined });
+    }
 }

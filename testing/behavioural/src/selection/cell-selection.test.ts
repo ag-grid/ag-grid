@@ -44,15 +44,15 @@ describe('Cell Selection', () => {
         consoleWarnSpy.mockRestore();
     });
 
-    const columnDefs = [{ field: 'sport' }, { field: 'year' }];
+    const columnDefs = [{ field: 'sport' }, { field: 'year' }, { field: 'amount' }];
     const rowData = [
-        { sport: 'football', year: 2021 },
-        { sport: 'rugby', year: 2020 },
-        { sport: 'tennis', year: 2018 },
-        { sport: 'cricket', year: 2003 },
-        { sport: 'golf', year: 2021 },
-        { sport: 'swimming', year: 2020 },
-        { sport: 'rowing', year: 2019 },
+        { sport: 'football', year: 2021, amount: 43 },
+        { sport: 'rugby', year: 2020, amount: 102 },
+        { sport: 'tennis', year: 2018, amount: 235 },
+        { sport: 'cricket', year: 2003, amount: 11 },
+        { sport: 'golf', year: 2021, amount: 7 },
+        { sport: 'swimming', year: 2020, amount: 93 },
+        { sport: 'rowing', year: 2019, amount: 32 },
     ];
 
     describe('Fill Handle', () => {
@@ -129,6 +129,33 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Control}');
 
             assertColumnsSelected(['sport', 'year'], api);
+        });
+
+        test('CTRL-SHIFT-clicking a column selects all columns in the range', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const amountHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('amount'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
+
+            await userSession.keyboard('{Shift>}');
+            await userSession.click(amountHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Shift}');
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected(['sport', 'year', 'amount'], api);
         });
     });
 });
