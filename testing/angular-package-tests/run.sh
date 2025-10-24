@@ -9,7 +9,7 @@ dev_port=4200
 function install_fw {
     if [[ ${version} == "latest" ]] ; then
         echo ">>> npm i -g @angular/cli@latest"
-        npm i -g @angular/cli@19 --cache ${cache_location}
+        npm i -g @angular/cli@latest --cache ${cache_location}
     else
         echo ">>> npm i -g @angular/cli@^${version}.0.0"
         npm i -g @angular/cli@^${version}.0.0 --cache ${cache_location}
@@ -18,6 +18,15 @@ function install_fw {
     echo "" | ng new angular-${version}-test --defaults=true --strict --prefix=app --style=scss --package-manager=npm --routing=false --interactive=false --no-strict --skip-git
 
     cd angular-${version}-test
+
+    # look for the file called src/app/app.html and rename it to src/app/app.component.html
+    # From Angular v20 the suffix .component is not added by default
+    if [ -f src/app/app.html ]; then
+        mv src/app/app.html src/app/app.component.html
+    fi
+    if [ -f src/app/app.ts ]; then
+        mv src/app/app.ts src/app/app.component.ts
+    fi
 }
 
 function build_fw {
