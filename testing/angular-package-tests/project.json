@@ -21,19 +21,19 @@
     },
     "test:package:local-18": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh 18",
+      "command": "{projectRoot}/runLegacy.sh 18",
       "configurations": {
         "update": {
-          "command": "{projectRoot}/run.sh -u 18"
+          "command": "{projectRoot}/runLegacy.sh -u 18"
         }
       }
     },
     "test:package:local-19": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh 19",
+      "command": "{projectRoot}/runLegacy.sh 19",
       "configurations": {
         "update": {
-          "command": "{projectRoot}/run.sh -u 19"
+          "command": "{projectRoot}/runLegacy.sh -u 19"
         }
       }
     },

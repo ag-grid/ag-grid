@@ -5,7 +5,7 @@ set -eu
 fw=angular
 fw_package="@angular/cli"
 dev_port=4200
-patch_subdir=modern
+patch_subdir=legacy
 
 function install_fw {
     if [[ ${version} == "latest" ]] ; then
