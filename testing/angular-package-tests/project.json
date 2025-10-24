@@ -9,23 +9,14 @@
       "inputs": [],
       "outputs": [],
       "dependsOn": [
-        "test:package:local-17",
         "test:package:local-18",
         "test:package:local-19",
+        "test:package:local-20",
         "test:package:local-latest",
-        "test:package:production-19"
+        "test:package:production-20"
       ],
       "configurations": {
         "update": {}
-      }
-    },
-    "test:package:local-17": {
-      "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh 17",
-      "configurations": {
-        "update": {
-          "command": "{projectRoot}/run.sh -u 17"
-        }
       }
     },
     "test:package:local-18": {
@@ -46,13 +37,22 @@
         }
       }
     },
-    "test:package:production-19": {
+    "test:package:local-20": {
       "dependsOn": ["^pack"],
-      "command": "{projectRoot}/run.sh -p 19",
+      "command": "{projectRoot}/run.sh 20",
+      "configurations": {
+        "update": {
+          "command": "{projectRoot}/run.sh -u 20"
+        }
+      }
+    },
+    "test:package:production-20": {
+      "dependsOn": ["^pack"],
+      "command": "{projectRoot}/run.sh -p 20",
       "cache": false,
       "configurations": {
         "update": {
-          "command": "{projectRoot}/run.sh -p -u 19"
+          "command": "{projectRoot}/run.sh -p -u 20"
         }
       }
     },
