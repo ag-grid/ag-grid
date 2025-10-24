@@ -36,6 +36,10 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Yarm
+        run: |
+          yarn install --ci
+
       - name: Build
         run: |
           NODE_ENV=production yarn nx pack:verify --prod --skip-nx-cache
