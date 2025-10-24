@@ -3,14 +3,10 @@ name: Publish Package
 on:
   push:
     workflow_dispatch:
-    branches:
-      - 'AG-16189-migrate-prod-release'
     tags:
       - 'release-*'
 
 env:
-  SLACK_CHANNEL: '#ci-grid-gate'
-  AG_LIBRARY: grid
   CI: true
 
 permissions:
@@ -57,3 +53,10 @@ jobs:
         run: |
           node scripts/deployments/sanityCheckBaseUrl.js production
 
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Publish
+        run: |
+          ./scripts/deployments/release/publishDistArtifactsToNpm.sh
