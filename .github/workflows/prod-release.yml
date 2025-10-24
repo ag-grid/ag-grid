@@ -1,0 +1,62 @@
+name: Publish Package
+
+on:
+  push:
+    workflow_dispatch:
+    branches:
+      - 'AG-16189-migrate-prod-release'
+    tags:
+      - 'release-*'
+
+env:
+  SLACK_CHANNEL: '#ci-grid-gate'
+  AG_LIBRARY: grid
+  CI: true
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Build
+        run: |
+          NODE_ENV=production yarn nx pack:verify --prod --skip-nx-cache
+
+      - name: Generate SBOM
+        run: |
+          npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
+
+      - name: Validate Dist Folders
+        run: |
+          ./scripts/deployments/validateDistFolders.sh
+
+      - name: Sanity Check Base URL
+        run: |
+          node scripts/deployments/sanityCheckBaseUrl.js production
+
+
+      # Ensure npm 11.5.1 or later is installed
+#      - name: Update npm
+#        run: npm install -g npm@latest
+#      - run: npm ci
+#      - run: npm run build --if-present
+#      - run: npm publish
