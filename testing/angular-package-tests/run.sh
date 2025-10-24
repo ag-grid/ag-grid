@@ -23,9 +23,11 @@ function install_fw {
     # From Angular v20 the suffix .component is not added by default
     if [ -f src/app/app.html ]; then
         mv src/app/app.html src/app/app.component.html
+        sed -i '' "s/import { App } from '\.\/app\/app';/import { App } from '\.\/app\/app.component';/" src/main.ts
     fi
     if [ -f src/app/app.ts ]; then
         mv src/app/app.ts src/app/app.component.ts
+        sed -i '' "s/templateUrl: '.\/app.html',/templateUrl: '.\/app.component.html',/" src/app/app.component.ts
     fi
 }
 
