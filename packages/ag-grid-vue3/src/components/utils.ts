@@ -23,6 +23,7 @@ import type {
     FillOperationParams,
     FindOptions,
     FocusGridInnerElementParams,
+    FormulaFunctionParams,
     GetChartMenuItems,
     GetChartToolbarItems,
     GetContextMenuItems,
@@ -210,19 +211,19 @@ import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 import { isProxy, isReactive, isRef, toRaw } from 'vue';
 
 export interface Properties {
-    [propertyName: string]: any;
+     [propertyName: string]: any;
 }
 
 export interface Props<TData> {
-    /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
-    gridOptions?: GridOptions<TData> | undefined;
-    /**
-     * Used to register AG Grid Modules directly with this instance of the grid.
-     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/vue-data-grid/modules/#providing-modules-to-individual-grids) for more information.
-     */
-    modules?: Module[] | undefined;
+     /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
+     gridOptions?: GridOptions<TData> | undefined;
+     /**
+      * Used to register AG Grid Modules directly with this instance of the grid.
+      * See [Providing Modules To Individual Grids](https://www.ag-grid.com/vue-data-grid/modules/#providing-modules-to-individual-grids) for more information.
+      */
+     modules?: Module[] | undefined;
 
-// @START_PROPS@
+     // @START_PROPS@
     /** Specifies the status bar components to use in the status bar.
          * @agModule `StatusBarModule`
          */
@@ -926,6 +927,16 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
     aggFuncs?: { [key: string]: IAggFunc<TData> },
+    /** A map of 'function name' to 'function' for custom functions that are used for formulas.
+         * @initial
+         * @agModule `FormulaModule`
+         */
+    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } },
+    /** Enable or disable the processing of cell formulas
+         * @initial
+         * @agModule `FormulaModule`
+         */
+    enableFormulas?: boolean,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -1791,7 +1802,7 @@ export interface Props<TData> {
 
     // @END_PROPS@
 
-// @START_EVENT_PROP_TYPES@
+     // @START_EVENT_PROP_TYPES@
    'onTool-panel-visible-changed'?: ToolPanelVisibleChangedEvent<TData>,
    'onTool-panel-size-changed'?: ToolPanelSizeChangedEvent<TData>,
    'onColumn-menu-visible-changed'?: ColumnMenuVisibleChangedEvent<TData>,
@@ -1905,11 +1916,11 @@ export interface Props<TData> {
 }
 
 export function getProps() {
-    return {
-        gridOptions: {} as any,
-        modules: [] as any,
+     return {
+          gridOptions: {} as any,
+          modules: [] as any,
 
-// @START_DEFAULTS@
+          // @START_DEFAULTS@
         statusBar: undefined,
         sideBar: undefined,
         suppressContextMenu: undefined,
@@ -2054,6 +2065,8 @@ export function getProps() {
         suppressExpandablePivotGroups: undefined,
         functionsReadOnly: undefined,
         aggFuncs: undefined,
+        formulaFuncs: undefined,
+        enableFormulas: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,
         aggregateOnlyChangedColumns: undefined,
@@ -2238,7 +2251,7 @@ export function getProps() {
 
 // @END_DEFAULTS@
 
-// @START_EVENT_PROPS@
+          // @START_EVENT_PROPS@
         'onColumn-everything-changed': undefined,
         'onNew-columns-loaded': undefined,
         'onColumn-pivot-mode-changed': undefined,
@@ -2348,43 +2361,43 @@ export function getProps() {
         'onBatch-editing-stopped': undefined
 // @END_EVENT_PROPS@
 
-    };
+     };
 }
 
 
 export const debounce = (func: () => void, delay: number) => {
-    let timeout: number;
-    return () => {
-        const later = function () {
-            func();
-        };
-        window.clearTimeout(timeout);
-        timeout = window.setTimeout(later, delay);
-    };
+     let timeout: number;
+     return () => {
+          const later = function () {
+               func();
+          };
+          window.clearTimeout(timeout);
+          timeout = window.setTimeout(later, delay);
+     };
 };
 
 function isInputClass(input: any) {
-    return input &&
-        input.constructor &&
-        input.constructor.toString().substring(0, 5) === 'class';
+     return input &&
+          input.constructor &&
+          input.constructor.toString().substring(0, 5) === 'class';
 }
 
 // necessary for grid change detection to work - everything in vue is proxied
 export function deepToRaw<T extends Record<string, any>>(sourceObj: T): T {
-    const objectIterator = (input: any): any => {
-        if(isInputClass(input)) {
-            return toRaw(input);
-        }
-        if (Array.isArray(input)) {
-            return input.map((item) => objectIterator(item));
-        }
-        if (isRef(input) || isReactive(input) || isProxy(input)) {
-            return objectIterator(toRaw(input));
-        }
-        return input;
-    };
+     const objectIterator = (input: any): any => {
+          if (isInputClass(input)) {
+               return toRaw(input);
+          }
+          if (Array.isArray(input)) {
+               return input.map((item) => objectIterator(item));
+          }
+          if (isRef(input) || isReactive(input) || isProxy(input)) {
+               return objectIterator(toRaw(input));
+          }
+          return input;
+     };
 
-    return objectIterator(sourceObj);
+     return objectIterator(sourceObj);
 }
 
 // export const convertToRaw = (value: any) => (value ? (Object.isFrozen(value) ? value : markRaw(toRaw(value))) : value);

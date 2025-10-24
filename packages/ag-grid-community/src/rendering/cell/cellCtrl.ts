@@ -134,6 +134,7 @@ export class CellCtrl extends BeanStub {
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
+    private formulaTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -165,6 +166,7 @@ export class CellCtrl extends BeanStub {
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
         this.enableTooltipFeature();
+        this.enableFormulaTooltipFeature();
 
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
@@ -197,14 +199,23 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
 
         this.disableTooltipFeature();
+        this.disableFormulaTooltipFeature();
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
         this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
     }
 
+    private enableFormulaTooltipFeature() {
+        this.formulaTooltipFeature = this.beans.tooltipSvc?.setupFormulaTooltip(this);
+    }
+
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+    }
+
+    private disableFormulaTooltipFeature() {
+        this.formulaTooltipFeature = this.beans.context.destroyBean(this.formulaTooltipFeature);
     }
 
     public enableEditorTooltipFeature(editor: ICellEditor): void {
@@ -252,6 +263,7 @@ export class CellCtrl extends BeanStub {
         this.setupAutoHeight(eCellWrapper, compBean);
 
         this.refreshFirstAndLastStyles();
+        this.checkFormulaError();
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
@@ -282,6 +294,19 @@ export class CellCtrl extends BeanStub {
                 func();
             }
             this.onCompAttachedFuncs = [];
+        }
+    }
+
+    private checkFormulaError() {
+        const isFormulaError = !!this.beans.formula?.getFormulaError(this.column, this.rowNode);
+        this.eGui.classList.toggle('formula-error', isFormulaError);
+        this.formulaTooltipFeature?.refreshTooltip();
+
+        // don't allow multiple tooltips simultaneously
+        if (isFormulaError) {
+            this.disableTooltipFeature();
+        } else {
+            this.enableTooltipFeature();
         }
     }
 
@@ -613,6 +638,8 @@ export class CellCtrl extends BeanStub {
             customStyleFeature?.applyUserStyles();
             customStyleFeature?.applyClassesFromColDef();
             rowEditStyleFeature?.applyRowStyles();
+
+            this.checkFormulaError();
         }
 
         tooltipFeature?.refreshTooltip();

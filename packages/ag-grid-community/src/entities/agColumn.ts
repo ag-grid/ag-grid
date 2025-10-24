@@ -85,6 +85,7 @@ export class AgColumn<TValue = any>
     public resizing = false;
     public menuVisible = false;
     public highlighted: ColumnHighlightPosition | null;
+    public formulaRef: string | null = null;
 
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;

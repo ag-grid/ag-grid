@@ -114,6 +114,12 @@
                     "path": "tooltips"
                 },
                 {
+                    "moduleName": "FormulaModule",
+                    "name": "Formulas",
+                    "path": "formulas",
+                    "isEnterprise": true
+                },
+                {
                     "moduleName": "FindModule",
                     "name": "Find",
                     "path": "find",

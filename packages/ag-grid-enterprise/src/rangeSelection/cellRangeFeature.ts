@@ -34,6 +34,10 @@ function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
     return typeof selection !== 'boolean' ? selection.handle?.mode === 'range' : false;
 }
 function _isFillHandleEnabled(gos: GridOptionsService): boolean {
+    if (gos.get('enableFormulas')) {
+        return true;
+    }
+
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 

@@ -155,6 +155,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
+    enableFormulas: 'Formula',
 };
 
 /**
@@ -544,6 +545,31 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
                 }
+                return null;
+            },
+        },
+        enableFormulas: {
+            supportedRowModels: ['clientSide'],
+            validate: (options) => {
+                const unsupported: (keyof GridOptions)[] = [
+                    'pivotMode', // no row grouping
+                    'masterDetail', // breaks row indices
+                    'grandTotalRow', // no aggregations
+                    'quickFilterText', // no filtering
+                    'isExternalFilterPresent', // no filtering
+                    'doesExternalFilterPass', // no filtering
+                ];
+                const error = unsupported.find((key) => options[key]);
+                if (error) {
+                    return `${error} is not supported with enableFormulas.`;
+                }
+
+                const required: (keyof GridOptions)[] = ['getRowId'];
+                const req = required.find((key) => !options[key]);
+                if (req) {
+                    return `${req} is required when enableFormulas is true.`;
+                }
+
                 return null;
             },
         },

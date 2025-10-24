@@ -441,6 +441,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         rowNode: RowNode;
         idx: number;
     }): { value: any; fromUserFunction: boolean; sourceCol?: AgColumn; sourceRowNode?: RowNode } {
+        const { formula, valueSvc } = this.beans;
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
 
@@ -462,7 +463,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 initialNonAggregatedValues,
                 initialFormattedValues,
                 currentIndex: idx,
-                currentCellValue: this.beans.valueSvc.getValue(col, rowNode),
+                currentCellValue: valueSvc.getValue(col, rowNode),
                 direction,
                 column: col,
                 rowNode: rowNode,
@@ -473,10 +474,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
         }
 
-        const allNumbers = !values.some(({ value }) => {
-            const asFloat = parseFloat(value);
-            return isNaN(asFloat) || asFloat.toString() !== value.toString();
-        });
+        const isNumeric = (v: any) =>
+            (typeof v === 'number' && Number.isFinite(v)) ||
+            (typeof v === 'string' && /^[+-]?\d+(?:\.\d+)?$/.test(v.trim()));
+        const allNumbers = values.every(({ value }) => isNumeric(value));
 
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
@@ -484,12 +485,26 @@ export class AgFillHandle extends AbstractSelectionHandle {
         // value is a number and we are also pressing alt, then we should
         // increment or decrement the value by 1 based on direction.
         if (event.altKey || !allNumbers) {
+            // Use the last selected value as the candidate for numeric series and formula shifting
+            const valueForFunctions = String(_last(values)?.value ?? '');
+
+            // ALT + single numeric source: increment/decrement last value by 1
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = this.isUp || this.isLeft ? -1 : 1;
-                return { value: parseFloat(_last(values).value) + 1 * multiplier, fromUserFunction: false };
+                return {
+                    value: parseFloat(valueForFunctions) + 1 * multiplier,
+                    fromUserFunction: false,
+                };
             }
-            const { value, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
-            return { value, fromUserFunction: false, sourceCol, sourceRowNode };
+
+            // Compute the cyclic source for this target cell (fallback when not using a formula)
+            const { value: cyclicValue, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
+
+            const processedValue = formula?.isFormula(valueForFunctions)
+                ? formula.updateFormulaByOffset(valueForFunctions, direction)
+                : cyclicValue;
+
+            return { value: processedValue, fromUserFunction: false, sourceCol, sourceRowNode };
         }
 
         return {

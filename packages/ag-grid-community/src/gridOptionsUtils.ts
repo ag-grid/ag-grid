@@ -70,6 +70,10 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
     return gos.get('maintainColumnOrder');
 }
 
+export function _isRowNumbers(gos: GridOptionsService): boolean {
+    return !!gos.get('rowNumbers') || gos.get('enableFormulas');
+}
+
 export function _getRowHeightForNode(
     beans: BeanCollection,
     rowNode: IRowNode,
@@ -365,6 +369,10 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
 }
 
 export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
+    if (gos.get('enableFormulas')) {
+        return true;
+    }
+
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 

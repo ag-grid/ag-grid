@@ -145,7 +145,12 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        const value = this.getValue(column, node, ignoreAggData, source);
+        let value = this.getValue(column, node, ignoreAggData, source);
+
+        const { formula } = this.beans;
+        if (formula?.isFormula(value)) {
+            value = formula.resolveValue(column, node as RowNode);
+        }
 
         const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
         return {

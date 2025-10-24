@@ -528,6 +528,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             beans.colFilter?.refreshModel();
         }
 
+        const usingFormulas = this.beans.gos.get('enableFormulas');
+        if (usingFormulas) {
+            const allNodes = this.rootNode?.allLeafChildren ?? [];
+            this.rootNode!.childrenAfterGroup = allNodes;
+            this.rootNode!.childrenAfterFilter = allNodes;
+            this.rootNode!.childrenAfterAggFilter = allNodes;
+            this.rootNode!.childrenAfterSort = allNodes;
+
+            // when using formulas, we skip to the map step directly
+            // currently no additional steps between group and map that formulas support
+            params.step = 'map';
+        }
+
         // this goes through the pipeline of stages. what's in my head is similar to the diagram on this page:
         // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
         // however we want to keep the results of each stage, hence we manually call each step
@@ -971,7 +984,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doRowsToDisplay() {
-        const { beans, rootNode } = this;
+        const { rootNode, beans } = this;
+
+        const usingFormulas = beans.gos.get('enableFormulas');
+        if (usingFormulas) {
+            this.rowsToDisplay = rootNode?.allLeafChildren ?? [];
+
+            for (const row of this.rowsToDisplay) {
+                row.setUiLevel(0);
+            }
+            return;
+        }
+
         const flattenStage = beans.flattenStage;
         if (flattenStage) {
             this.rowsToDisplay = flattenStage.execute({ rowNode: rootNode! });

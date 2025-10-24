@@ -125,6 +125,7 @@ import type {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
+import type { FormulaFunctionParams } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
@@ -1096,6 +1097,19 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFuncs?: { [key: string]: IAggFunc<TData> };
+
+    /**
+     * A map of 'function name' to 'function' for custom functions that are used for formulas.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } };
+    /**
+     * Enable or disable the processing of cell formulas
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    enableFormulas?: boolean;
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false

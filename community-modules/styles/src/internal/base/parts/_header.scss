@@ -21,6 +21,11 @@
     }
 
     .ag-header-cell:not(.ag-right-aligned-header) {
+        .ag-header-col-ref {
+            margin-right: var(--ag-grid-size);
+            color: var(--ag-subtle-text-color);
+        }
+
         .ag-header-label-icon,
         .ag-header-menu-icon {
             @include ag.unthemed-rtl(
@@ -32,6 +37,11 @@
     }
 
     .ag-header-cell.ag-right-aligned-header {
+        .ag-header-col-ref {
+            margin-left: var(--ag-grid-size);
+            color: var(--ag-subtle-text-color);
+        }
+
         .ag-header-label-icon,
         .ag-header-menu-icon {
             @include ag.unthemed-rtl(

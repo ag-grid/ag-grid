@@ -13,7 +13,7 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
 
-function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParams {
+function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeSortIndicator: boolean): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };
     return {
         tag: 'div',
@@ -38,6 +38,7 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
                 cls: 'ag-header-cell-label',
                 role: 'presentation',
                 children: [
+                    includeColumnRefIndicator ? { tag: 'span', ref: 'eColRef', cls: 'ag-header-col-ref' } : null,
                     { tag: 'span', ref: 'eText', cls: 'ag-header-cell-text' },
                     {
                         tag: 'span',
@@ -51,8 +52,6 @@ function getHeaderCompElementParams(includeSortIndicator: boolean): ElementParam
         ],
     };
 }
-const HeaderCompElement = getHeaderCompElementParams(true);
-const HeaderCompElementNoSort = getHeaderCompElementParams(false);
 
 export class HeaderComp extends Component implements IHeaderComp {
     // All the elements are optional, as they are not guaranteed to be present if the user provides a custom template
@@ -62,6 +61,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public eMenu?: HTMLElement = RefPlaceholder;
     private readonly eLabel?: HTMLElement = RefPlaceholder;
     private readonly eText?: HTMLElement = RefPlaceholder;
+    private readonly eColRef?: HTMLElement = RefPlaceholder;
 
     /**
      * Selectors for custom headers templates, i.e when the ag-sort-indicator is not present.
@@ -79,6 +79,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private currentShowMenu: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
+    private currentRef: string | null;
 
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
     private isLoadingInnerComponent: boolean = false;
@@ -93,6 +94,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.workOutTemplate(params, !!this.beans?.sortSvc) != this.currentTemplate ||
             this.workOutShowMenu() != this.currentShowMenu ||
             params.enableSorting != this.currentSort ||
+            (params.column as AgColumn).formulaRef != this.currentRef ||
             (this.currentSuppressMenuHide != null && this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) ||
             oldParams.enableFilterButton != params.enableFilterButton ||
             oldParams.enableFilterIcon != params.enableFilterIcon
@@ -118,7 +120,8 @@ export class HeaderComp extends Component implements IHeaderComp {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         } else {
-            return isSorting ? HeaderCompElement : HeaderCompElementNoSort;
+            const isFormulas = this.beans.gos.get('enableFormulas');
+            return getHeaderCompElementParams(isFormulas, isSorting);
         }
     }
 
@@ -134,6 +137,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         this.setMenu();
         this.setupSort();
+        this.setupColumnRefIndicator();
         rowNumbersSvc?.setupForHeader(this);
         this.setupFilterIcon();
         this.setupFilterButton();
@@ -282,6 +286,16 @@ export class HeaderComp extends Component implements IHeaderComp {
         }
 
         sortSvc.setupHeader(this, column as AgColumn, this.eLabel);
+    }
+
+    private setupColumnRefIndicator(): void {
+        const { eColRef, params } = this;
+        if (!eColRef) {
+            return;
+        }
+        this.currentRef = (params.column as AgColumn).formulaRef;
+        eColRef.textContent = this.currentRef;
+        _setDisplayed(eColRef, !!this.currentRef);
     }
 
     private setupFilterIcon(): void {

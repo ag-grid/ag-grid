@@ -84,7 +84,7 @@ export function _setupEditors(
                     UNEDITED;
 
                 editModelSvc?.setEdit(cellPosition, {
-                    pendingValue: newValue,
+                    pendingValue: getNormalisedFormula(beans, newValue, false),
                     sourceValue: oldValue,
                     state: 'editing',
                 });
@@ -142,7 +142,7 @@ export function _setupEditor(
     }
 
     beans.editModelSvc?.setEdit(position, {
-        editorValue: newValue,
+        editorValue: getNormalisedFormula(beans, newValue, true),
         state: 'editing',
     });
 
@@ -234,14 +234,22 @@ function _createEditorParams(
     const { rowNode, column } = position;
 
     const editor = cellCtrl.comp?.getCellEditor();
+
     const initialNewValue =
         editSvc?.getCellDataValue(position, false) ??
         (editor ? _valueFromEditor(beans, editor)?.editorValue : undefined);
     const value =
         initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
 
+    // if formula, normalise the value to shorthand for users.
+    let paramsValue = enableGroupEditing ? initialNewValue : value;
+    if (beans.formula?.isFormula(paramsValue)) {
+        // normalise to shorthand for editing
+        paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
+    }
+
     return _addGridCommonParams(gos, {
-        value: enableGroupEditing ? initialNewValue : value,
+        value: paramsValue,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),
@@ -360,19 +368,31 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: edit ? edit.editorValue : UNEDITED,
+            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false) : UNEDITED,
         });
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
+        editorValue: valueSameAsSource ? getNormalisedFormula(beans, edit.sourceValue, true) : editorValue,
     });
 
     if (params?.persist) {
         _persistEditorValue(beans, position);
     }
+}
+
+/**
+ * Converts formula to shorthand or longhand depending on context
+ * @param forEditing if true, converts to shorthand (A1), if false converts to longhand (REF(COL(id),ROW(id))) for storage
+ */
+function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean): any {
+    const { formula } = beans;
+    if (formula?.isFormula(value)) {
+        return formula?.normaliseFormula(value, forEditing) ?? value;
+    }
+    return value;
 }
 
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
@@ -382,7 +402,7 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
 
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
-        pendingValue: edit?.editorValue,
+        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false),
     });
 }
 

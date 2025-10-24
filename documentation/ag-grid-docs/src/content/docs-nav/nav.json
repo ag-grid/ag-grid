@@ -746,6 +746,12 @@
                         },
                         {
                             "type": "item",
+                            "title": "Formulas",
+                            "path": "formulas",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Find",
                             "path": "find",
                             "isEnterprise": true

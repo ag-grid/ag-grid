@@ -124,8 +124,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader', 'enableAdvancedFilter'],
             () => this.refresh()
         );
-        compBean.addManagedListeners(column, { colDefChanged: () => this.refresh() });
-        compBean.addManagedListeners(column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
+        compBean.addManagedListeners(column, {
+            colDefChanged: () => this.refresh(),
+            formulaRefChanged: () => this.refresh(),
+            headerHighlightChanged: this.onHeaderHighlightChanged.bind(this),
+        });
 
         const listener = () => this.checkDisplayName();
         compBean.addManagedEventListeners({

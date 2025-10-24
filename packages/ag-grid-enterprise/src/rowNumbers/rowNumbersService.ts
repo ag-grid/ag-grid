@@ -13,6 +13,7 @@ import {
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
+    _isRowNumbers,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
@@ -89,7 +90,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             this.columns = null;
         };
 
-        if (!this.gos.get('rowNumbers')) {
+        if (!_isRowNumbers(this.gos)) {
             destroyCollection();
             return;
         }
@@ -413,7 +414,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private generateRowNumberCols(): AgColumn[] {
         const { gos } = this;
-        if (!gos.get('rowNumbers')) {
+        if (!_isRowNumbers(gos)) {
             return [];
         }
 

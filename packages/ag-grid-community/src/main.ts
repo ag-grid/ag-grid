@@ -946,6 +946,7 @@ export {
     _shouldUpdateColVisibilityAfterGroup,
     _getGroupAggFiltering,
     _isRowSelection,
+    _isRowNumbers,
     _isGetRowHeightFunction,
     _getGroupSelection,
     _getGroupSelectsDescendants,
@@ -1288,6 +1289,9 @@ export { BaseCreator } from './export/baseCreator';
 export { BaseGridSerializingSession } from './export/baseGridSerializingSession';
 export { _downloadFile } from './export/downloader';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './export/iGridSerializer';
+
+//formulas
+export { FormulaParam, RangeParam, ValueParam, FormulaFunctionParams, IFormulaService } from './interfaces/formulas';
 
 // modules
 export {
