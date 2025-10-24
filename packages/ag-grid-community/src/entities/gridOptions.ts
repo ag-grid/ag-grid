@@ -989,6 +989,11 @@ export interface GridOptions<TData = any> {
      */
     suppressNoRowsOverlay?: boolean;
 
+    activeOverlay?: any;
+
+    /** * Params to be passed to the `activeOverlay` component. */
+    activeOverlayParams?: any;
+
     // *** Pagination *** //
     /**
      * Set whether pagination is enabled.
