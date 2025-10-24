@@ -2,7 +2,7 @@
 /import { Component } from '@angular\/core';/ r ../global.partial
 /import { Component } from '@angular\/core';/ r ../imports.partial
 s/\imports: \[\]/imports: \[AgGridAngular\]/
-/title = .*/{
+/protected readonly title = .*/{
   a\
   gridOptions: any = {
   r ../gridOptions.shared.partial
