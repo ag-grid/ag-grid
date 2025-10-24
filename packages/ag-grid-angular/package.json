@@ -41,7 +41,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^18.0.0",
-    "typescript": "~5.4.5",
+    "typescript": "~5.9.3",
     "replace-in-file": "4.3.1",
     "rimraf": "3.0.2"
   }
