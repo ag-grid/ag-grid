@@ -1,4 +1,5 @@
 import type { BeanName } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
@@ -60,16 +61,25 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
-        this.startedRows.push(rowNode);
-
         const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
+        const editableColumns: AgColumn[] = [];
+
         for (const column of columns) {
-            if (!column.isCellEditable(rowNode)) {
-                continue;
+            if (column.isCellEditable(rowNode)) {
+                editableColumns.push(column);
             }
+        }
+
+        if (editableColumns.length == 0) {
+            return;
+        }
+
+        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
+        this.startedRows.push(rowNode);
+
+        for (const column of editableColumns) {
             const position: Required<EditPosition> = {
                 rowNode,
                 column,
@@ -82,7 +92,6 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         }
 
         this.rowNode = rowNode;
-
         this.setupEditors({ cells, position, startedEdit, event, ignoreEventKey });
     }
 
