@@ -73,10 +73,6 @@ jobs:
 #      - name: Update npm
 #        run: npm install -g npm@latest
 #
-##      - name: Publish
-##        run: |
-##          ./scripts/deployments/release/publishDistArtifactsToNpm.sh
-#
 #      - name: Create GitHub Release
 #        env:
 #          PRIVATE_KEY: |
