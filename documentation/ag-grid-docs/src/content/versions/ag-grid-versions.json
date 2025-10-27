@@ -1,6 +1,6 @@
 [
     {
-        "version": "100.0.",
+        "version": "100.0.0",
         "landingPageHighlight": "MCP Server, AI Toolkit, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support",
         "notesPath": "./upgrading-to-ag-grid-34-3",
         "hideBlogPostLink": false
