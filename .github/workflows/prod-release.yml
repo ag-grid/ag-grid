@@ -72,6 +72,11 @@ jobs:
       - name: Update npm
         run: npm install -g npm@latest
 
+      - name: Sign Artifacts
+        env:
+          GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+        run: ./scripts/deployments/release/performSigningActions.sh "$GPG_PUBLIC_KEY"
+
       - name: Create GitHub Release
         env:
           PRIVATE_KEY: |
