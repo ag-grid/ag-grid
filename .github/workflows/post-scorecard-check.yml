@@ -54,7 +54,8 @@ jobs:
                 const report = { results: { summary: { failed, passed, skipped } } };
                 fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
                 
-                process.exit(result);
+                // Exit with a numeric code to signal step success/failure to GitHub Actions
+                process.exit(result ? 1 : 0);
             }
 
             await exec();
