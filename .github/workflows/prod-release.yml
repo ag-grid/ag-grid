@@ -74,8 +74,13 @@ jobs:
 
       - name: Sign Artifacts
         env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
-        run: ./scripts/deployments/release/performSigningActions.sh "$GPG_PUBLIC_KEY"
+          GPG_PRIVATE_KEY_LOCATION: ${{ github.workspace }}/gpg-key.pem
+        run: |
+          echo "$GPG_PRIVATE_KEY" > $GPG_PRIVATE_KEY_LOCATION
+          gpg --import $GPG_PRIVATE_KEY_LOCATION
+          ./scripts/deployments/release/performSigningActions.sh "$GPG_PUBLIC_KEY"
 
       - name: Create GitHub Release
         env:
