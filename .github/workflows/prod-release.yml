@@ -20,6 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Authenticate with GitHub App
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ env.DEPLOYMENT_APP_ID }}
+          private-key: ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -40,13 +47,6 @@ jobs:
           git branch --contains tags/$TAG_NAME
           echo "Tag name: $TAG_NAME"
           echo "Branch name: $BRANCH_NAME"
-
-      - name: Authenticate with GitHub App
-        uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ env.DEPLOYMENT_APP_ID }}
-          private-key: ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
 
 #      - uses: actions/setup-node@v4
 #        with:
