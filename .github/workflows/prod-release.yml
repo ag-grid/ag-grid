@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Set env
         run: |
-          echo "BRANCH_NAME=$(git branch --contains tags/${{ env.TAG_NAME }})" >> $GITHUB_ENV
+          echo "BRANCH_NAME=`git branch --contains tags/$TAG_NAME` >> $GITHUB_ENV
 
      - name: Test
         run: |
