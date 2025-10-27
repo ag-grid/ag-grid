@@ -20,6 +20,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 ${{ github.ref_name }}
+
       - name: Set env
         run: |
           echo "BRANCH_NAME=`git branch --contains tags/$TAG_NAME`" >> $GITHUB_ENV
@@ -37,17 +48,6 @@ jobs:
           app-id: ${{ env.DEPLOYMENT_APP_ID }}
           private-key: ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
 
-#      - name: Checkout
-#        id: checkout
-#        uses: actions/checkout@v4
-#        with:
-#          token: ${{ steps.app-token.outputs.token }}
-#          fetch-depth: 1 # shallow copy
-#
-#      - name: Fetch Refs
-#        run: |
-#          git fetch origin --depth 1 ${{ github.ref_name }}
-#
 #      - uses: actions/setup-node@v4
 #        with:
 #          node-version: '20'
