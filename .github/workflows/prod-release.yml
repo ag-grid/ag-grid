@@ -58,7 +58,7 @@ jobs:
 
       - name: Generate SBOM
         run: |
-          yarn install @cyclonedx/cyclonedx-npm 
+          yarn add @cyclonedx/cyclonedx-npm 
           yarn @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
 
       - name: Validate Dist Folders
