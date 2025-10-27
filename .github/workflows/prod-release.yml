@@ -37,15 +37,9 @@ jobs:
         run: |
           git fetch origin --depth 1 ${{ github.ref_name }}
 
-      - name: Set env
+      - name: Set Env
         run: |
-          echo "BRANCH_NAME=`git branch -r --contains tags/$TAG_NAME`" >> $GITHUB_ENV
-
-      - name: Test
-        run: |
-          git branch -r --contains tags/$TAG_NAME
-          echo "Tag name: $TAG_NAME"
-          echo "Branch name: $BRANCH_NAME"
+          echo "RELEASE_VERSION=${{ env.TAG_NAME#release- }}" >> $GITHUB_ENV
 
 #      - uses: actions/setup-node@v4
 #        with:
@@ -89,7 +83,6 @@ jobs:
 #            --installation-id=${{ secrets.AG_AUTOMATED_RELEASE_INSTALLATION_ID }} \
 #            --private-key-path=$KEY_LOCATION \
 #            --release-version=%RELEASE_VERSION% \
-#            --release-branch=%RELEASE_BRANCH% \
 #            --artifacts-path=./dist/artifacts
 
 
