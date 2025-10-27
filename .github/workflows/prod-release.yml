@@ -9,7 +9,7 @@ on:
 env:
   CI: true
   DEPLOYMENT_APP_ID: 957224
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  TAG_NAME: ${{ github.head_ref || github.ref_name }}
 
 permissions:
   id-token: write  # Required for OIDC
@@ -20,11 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Test
+      - name: Set env
         run: |
+          echo "BRANCH_NAME=$(git branch --contains tags/${{ env.TAG_NAME }})" >> $GITHUB_ENV
+
+     - name: Test
+        run: |
+          echo "Tag name: $TAG_NAME"
           echo "Branch name: $BRANCH_NAME"
-          echo "head ref: ${{ github.head_ref }}"
-          echo "ref name: ${{ github.ref_name }}"
 
 #      - name: Authenticate with GitHub App
 #        uses: actions/create-github-app-token@v1
