@@ -340,6 +340,23 @@ body > #highlighter {
     line-height: 1;
 }
 
+#processingStatus code.process b {
+    transform-origin: 5.4px 7.2px;
+    animation-name: spin;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 #processingStatus code.success {
     --fg: var(--success);
 }
