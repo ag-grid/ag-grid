@@ -8,6 +8,8 @@ on:
 
 env:
   CI: true
+  DEPLOYMENT_APP_ID: 957224
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 permissions:
   id-token: write  # Required for OIDC
@@ -18,45 +20,75 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1 # shallow copy
-
-      - name: Fetch Refs
+      - name: Test
         run: |
-          git fetch origin --depth 1 ${{ github.ref_name }}
+          echo "Branch name: $BRANCH_NAME"
+          echo "head ref: ${{ github.head_ref }}"
+          echo "ref name: ${{ github.ref_name }}"
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+#      - name: Authenticate with GitHub App
+#        uses: actions/create-github-app-token@v1
+#        id: app-token
+#        with:
+#          app-id: ${{ env.DEPLOYMENT_APP_ID }}
+#          private-key: ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
+#
+#      - name: Checkout
+#        id: checkout
+#        uses: actions/checkout@v4
+#        with:
+#          token: ${{ steps.app-token.outputs.token }}
+#          fetch-depth: 1 # shallow copy
+#
+#      - name: Fetch Refs
+#        run: |
+#          git fetch origin --depth 1 ${{ github.ref_name }}
+#
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: '20'
+#          registry-url: 'https://registry.npmjs.org'
 
-      - name: Yarm
-        run: |
-          yarn install --ci
-
-      - name: Build
-        run: |
-          NODE_ENV=production yarn nx pack:verify --prod --skip-nx-cache
-
-      - name: Generate SBOM
-        run: |
-          npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
-
-      - name: Validate Dist Folders
-        run: |
-          ./scripts/deployments/validateDistFolders.sh
-
-      - name: Sanity Check Base URL
-        run: |
-          node scripts/deployments/sanityCheckBaseUrl.js production
-
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
-
-      - name: Publish
-        run: |
-          ./scripts/deployments/release/publishDistArtifactsToNpm.sh
+#      - name: Yarn
+#        run: |
+#          yarn install --ci
+#
+#      - name: Build
+#        run: |
+#          NODE_ENV=production yarn nx pack:verify --prod --skip-nx-cache
+#
+#      - name: Generate SBOM
+#        run: |
+#          npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
+#
+#      - name: Validate Dist Folders
+#        run: |
+#          ./scripts/deployments/validateDistFolders.sh
+#
+#      - name: Sanity Check Base URL
+#        run: |
+#          node scripts/deployments/sanityCheckBaseUrl.js production
+#
+#      # Ensure npm 11.5.1 or later is installed
+#      - name: Update npm
+#        run: npm install -g npm@latest
+#
+##      - name: Publish
+##        run: |
+##          ./scripts/deployments/release/publishDistArtifactsToNpm.sh
+#
+#      - name: Create GitHub Release
+#        env:
+#          PRIVATE_KEY: |
+#            ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
+#          KEY_LOCATION: ${{ github.workspace }}/key.pem
+#        run: |
+#          echo "$PRIVATE_KEY" > $KEY_LOCATION
+#
+#          node ./scripts/deployments/release/createGitHubReleaseAttachArtifacts.mjs \
+#            --app-id=${{ env.DEPLOYMENT_APP_ID }} \
+#            --installation-id=${{ secrets.AG_AUTOMATED_RELEASE_INSTALLATION_ID }} \
+#            --private-key-path=$KEY_LOCATION \
+#            --release-version=%RELEASE_VERSION% \
+#            --release-branch=%RELEASE_BRANCH% \
+#            --artifacts-path=./dist/artifacts
