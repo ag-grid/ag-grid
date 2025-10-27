@@ -355,11 +355,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
         // Rows that are in the pinned container take the row numbers of their pinned sibling rows
         if (node?.rowPinned && node.pinnedSibling) {
-            const { rowIndex } = node.pinnedSibling;
-            return `${rowIndex == null ? '-' : rowIndex + 1}`;
+            const { formulaRowIndex } = node.pinnedSibling;
+            return `${formulaRowIndex == null ? '-' : formulaRowIndex + 1}`;
         }
 
-        return String((node?.rowIndex || 0) + 1);
+        return String((node?.formulaRowIndex || 0) + 1);
     }
 
     private getHeaderClass(): string[] {

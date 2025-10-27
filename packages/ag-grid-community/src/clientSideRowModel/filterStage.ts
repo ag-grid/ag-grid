@@ -34,7 +34,11 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
 
     private filter(changedPath: ChangedPath): void {
         const filterActive: boolean = !!this.filterManager?.isChildFilterPresent();
-        this.filterNodes(filterActive, changedPath);
+        if (this.gos.get('enableFormulas')) {
+            this.softFilter(filterActive, changedPath);
+        } else {
+            this.filterNodes(filterActive, changedPath);
+        }
     }
 
     private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
@@ -97,6 +101,24 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
             const defaultFilterCallback = (rowNode: RowNode) => filterCallback(rowNode, false);
             changedPath.forEachChangedNodeDepthFirst(defaultFilterCallback, true);
         }
+    }
+
+    private softFilter(filterActive: boolean, changedPath: ChangedPath): void {
+        const filterCallback = (rowNode: RowNode) => {
+            // recursively get all children that are groups to also filter
+            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            if (rowNode.hasChildren()) {
+                for (const childNode of rowNode.childrenAfterGroup!) {
+                    childNode.softFiltered =
+                        filterActive &&
+                        !(childNode.data && this.filterManager!.doesRowPassFilter({ rowNode: childNode }));
+                }
+            }
+
+            updateRowNodeAfterFilter(rowNode);
+        };
+
+        changedPath.forEachChangedNodeDepthFirst(filterCallback, true);
     }
 
     private doingTreeDataFiltering() {

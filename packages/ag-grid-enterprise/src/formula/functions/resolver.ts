@@ -1,3 +1,4 @@
+import { _getClientSideRowModel } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, FormulaParam, RangeParam, RowNode } from 'ag-grid-community';
 
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
@@ -19,7 +20,9 @@ type CellAddress = { row: RowNode; column: AgColumn };
 function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
     const { row, column } = cell;
 
-    const rowNode = row.absolute ? beans.rowModel.getRow(Number(row.id) - 1) : beans.rowModel.getRowNode(row.id);
+    const rowNode = row.absolute
+        ? _getClientSideRowModel(beans)?.getFormulaRow(Number(row.id) - 1)
+        : beans.rowModel.getRowNode(row.id);
 
     const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
@@ -273,7 +276,7 @@ class RangeValuesIterator implements Iterator<unknown> {
         }
 
         if (this.currentRowIndex <= this.rowEndIndex) {
-            const row = this.beans.rowModel?.getRow(this.currentRowIndex);
+            const row = _getClientSideRowModel(this.beans)?.getFormulaRow(this.currentRowIndex);
             if (!row) {
                 throw new FormulaError('Unrecognised row in range', '#REF!');
             }
@@ -370,7 +373,7 @@ function* rangeAddrs(
     const [colIndexMin, colIndexMax] = colRange;
 
     for (let rowIndex = rowStartIndex; rowIndex <= rowEndIndex; rowIndex++) {
-        const rowNode = beans.rowModel?.getRow(rowIndex);
+        const rowNode = _getClientSideRowModel(beans)?.getFormulaRow(rowIndex);
         if (!rowNode) {
             continue;
         }

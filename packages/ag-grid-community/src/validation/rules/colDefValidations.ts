@@ -145,10 +145,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         sortIndex: UNSUPPORTED_WITH_FORMULAS('sortIndex'),
         initialSortIndex: UNSUPPORTED_WITH_FORMULAS('initialSortIndex'),
 
-        // filtering
-        filter: UNSUPPORTED_WITH_FORMULAS('filter'),
-        floatingFilter: UNSUPPORTED_WITH_FORMULAS('floatingFilter'),
-
         // row drag
         rowDrag: UNSUPPORTED_WITH_FORMULAS('rowDrag'),
 

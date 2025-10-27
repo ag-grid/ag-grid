@@ -1,3 +1,4 @@
+import { _getClientSideRowModel } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
 import { getDefBySymbol } from './operators';
@@ -42,7 +43,7 @@ export function rowIndexFromId(beans: BeanCollection, rowId: string): number | n
     return null;
 }
 export function rowIdFromIndex(beans: BeanCollection, idx: number): string | null {
-    return beans.rowModel?.getRow?.(idx - 1)?.id ?? null;
+    return _getClientSideRowModel(beans)?.getFormulaRow?.(idx - 1)?.id ?? null;
 }
 
 function quoteString(s: string): string {
