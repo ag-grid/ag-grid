@@ -42,52 +42,49 @@ jobs:
         run: |
           RELEASE_VERSION=$(echo $TAG_NAME | sed 's/release-//')
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
-          echo $TAG_NAME
-          echo $RELEASE_VERSION
-          
 
-#      - uses: actions/setup-node@v4
-#        with:
-#          node-version: '20'
-#          registry-url: 'https://registry.npmjs.org'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
-#      - name: Yarn
-#        run: |
-#          yarn install --ci
-#
-#      - name: Build
-#        run: |
-#          NODE_ENV=production yarn nx pack:verify --prod --skip-nx-cache
-#
-#      - name: Generate SBOM
-#        run: |
-#          npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
-#
-#      - name: Validate Dist Folders
-#        run: |
-#          ./scripts/deployments/validateDistFolders.sh
-#
-#      - name: Sanity Check Base URL
-#        run: |
-#          node scripts/deployments/sanityCheckBaseUrl.js production
-#
-#      # Ensure npm 11.5.1 or later is installed
-#      - name: Update npm
-#        run: npm install -g npm@latest
-#
-#      - name: Create GitHub Release
-#        env:
-#          PRIVATE_KEY: |
-#            ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
-#          KEY_LOCATION: ${{ github.workspace }}/key.pem
-#        run: |
-#          echo "$PRIVATE_KEY" > $KEY_LOCATION
-#
-#          node ./scripts/deployments/release/createGitHubReleaseAttachArtifacts.mjs \
-#            --app-id=${{ env.DEPLOYMENT_APP_ID }} \
-#            --installation-id=${{ secrets.AG_AUTOMATED_RELEASE_INSTALLATION_ID }} \
-#            --private-key-path=$KEY_LOCATION \
-#            --release-version=%RELEASE_VERSION% \
-#            --artifacts-path=./dist/artifacts
+      - name: Yarn
+        run: |
+          yarn install --ci
+
+      - name: Build
+        run: |
+          NODE_ENV=production yarn nx pack:verify --prod --skip-nx-cache
+
+      - name: Generate SBOM
+        run: |
+          npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
+
+      - name: Validate Dist Folders
+        run: |
+          ./scripts/deployments/validateDistFolders.sh
+
+      - name: Sanity Check Base URL
+        run: |
+          node scripts/deployments/sanityCheckBaseUrl.js production
+
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Create GitHub Release
+        env:
+          PRIVATE_KEY: |
+            ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
+          KEY_LOCATION: ${{ github.workspace }}/key.pem
+        run: |
+          echo "$PRIVATE_KEY" > $KEY_LOCATION
+
+          node ./scripts/deployments/release/createGitHubReleaseAttachArtifacts.mjs \
+            --app-id=${{ env.DEPLOYMENT_APP_ID }} \
+            --installation-id=${{ secrets.AG_AUTOMATED_RELEASE_INSTALLATION_ID }} \
+            --private-key-path=$KEY_LOCATION \
+            --release-version=$RELEASE_VERSION \
+            --artifacts-path=./dist/artifacts
 
 
