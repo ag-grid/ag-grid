@@ -60,17 +60,20 @@ jobs:
         run: |
           npx --yes @cyclonedx/cyclonedx-npm -o ./dist/artifacts/packages/sbom.json --ignore-npm-errors --omit dev --omit peer --omit optional
 
-      - name: Validate Dist Folders
-        run: |
-          ./scripts/deployments/validateDistFolders.sh
+      # Ensure npm 11.5.1 or later is installed - required for OIDC
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Sanity Check Base URL
         run: |
           node scripts/deployments/sanityCheckBaseUrl.js production
 
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
+      - name: Validate Dist Folders
+        run: |
+          ./scripts/deployments/validateDistFolders.sh
+
+      - name: Publish to npm
+        run: ./scripts/deployments/release/publishDistArtifactsToNpm.sh
 
       - name: Sign Artifacts
         env:
