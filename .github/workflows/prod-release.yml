@@ -39,7 +39,7 @@ jobs:
 
       - name: Set Env
         run: |
-          echo "RELEASE_VERSION=${{ env.TAG_NAME#release- }}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$(echo $TAG_NAME | sed 's/release-//')" >> $GITHUB_ENV
 
 #      - uses: actions/setup-node@v4
 #        with:
