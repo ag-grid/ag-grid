@@ -153,7 +153,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     private processData(data: any[] | null | undefined) {
         if (!data?.length) {
-            return [];
+            return data ?? []; // same reference if defined
         }
 
         if (this.dataRef !== data) {
