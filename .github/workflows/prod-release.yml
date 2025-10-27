@@ -32,7 +32,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ steps.app-token.outputs.token }}
-          fetch-depth: 1 # shallow copy
 
       - name: Fetch Refs
         run: |
