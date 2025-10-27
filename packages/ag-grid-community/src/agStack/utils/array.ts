@@ -1,7 +1,7 @@
 /** An array that is always empty and that cannot be modified */
 export const _EmptyArray = Object.freeze([]) as unknown as any[];
 
-export function _last<T>(arr: T[]): T;
+export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
     if (!arr?.length) {
@@ -67,6 +67,24 @@ export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[
 
     for (; i < array.length; i++) {
         if (!elementsToRemove.includes(array[i])) {
+            // elements that we want to keep are moved to the beginning of the array, maintaining original order
+            array[j] = array[i];
+            j++;
+        }
+    }
+
+    // j marks the elements we want to keep, so pop off the remaining elements (each pop is O(1))
+    while (j < array.length) {
+        array.pop();
+    }
+}
+
+export function _filterInPlace<T>(array: T[], pred: (x: T, i: number) => boolean): void {
+    let i = 0;
+    let j = 0;
+
+    for (; i < array.length; i++) {
+        if (pred(array[i], i)) {
             // elements that we want to keep are moved to the beginning of the array, maintaining original order
             array[j] = array[i];
             j++;

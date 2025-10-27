@@ -30,7 +30,7 @@ export interface IRangeService {
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
-    addCellRange(params: CellRangeParams): void;
+    addCellRange(params: CellRangeParams): CellRange | undefined;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void;
@@ -92,7 +92,7 @@ export interface CellRangeParams {
     /** End column for range */
     columnEnd?: string | Column;
     /** Specify Columns to include instead of using `columnStart` and `columnEnd` */
-    columns?: (string | Column)[];
+    columns?: readonly (string | Column)[];
 }
 
 export interface CellRangeBoundaryParams {

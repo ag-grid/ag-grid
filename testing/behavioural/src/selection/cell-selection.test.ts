@@ -131,6 +131,37 @@ describe('Cell Selection', () => {
             assertColumnsSelected(['sport', 'year'], api);
         });
 
+        test('CTRL-clicking a column header only selects cells on the current page', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData: rowData.concat(rowData),
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+                pagination: true,
+                paginationPageSize: 5,
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected(['sport'], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected(['sport', 'year'], api);
+        });
+
         test('CTRL-SHIFT-clicking a column selects all columns in the range', async () => {
             const userSession = userEvent.setup();
 

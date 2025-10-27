@@ -31,6 +31,7 @@ import {
     _areEqual,
     _columnsMatch,
     _exists,
+    _filterInPlace,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getRowAbove,
@@ -47,6 +48,7 @@ import {
     _last,
     _makeNull,
     _missing,
+    _removeFromArray,
     _warn,
     isRowNumberCol,
 } from 'ag-grid-community';
@@ -88,17 +90,21 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private lastCellHovered: CellPosition | undefined;
     private cellHasChanged: boolean;
 
-    // when a range is created, we mark the 'start cell' for further processing as follows:
-    // 1) if dragging, then the new range is extended from the start position
-    // 2) if user hits 'shift' click on a cell, the previous range is extended from the start position
+    /** when a range is created, we mark the 'start cell' for further processing as follows:
+     * 1) if dragging, then the new range is extended from the start position
+     * 2) if user hits 'shift' click on a cell, the previous range is extended from the start position
+     */
     private newestRangeStartCell?: CellPosition;
 
     private dragging = false;
     private draggingRange?: CellRange;
 
-    private intersectionRange = false; // When dragging ends, the current range will be used to intersect all other ranges
+    /** When dragging ends, the current range will be used to intersect all other ranges */
+    private intersectionRange = false;
 
     public autoScrollService: AutoScrollService;
+
+    private readonly columnRangeSelectionCtx: ColumnRangeSelectionContext = {};
 
     public postConstruct(): void {
         const onColumnsChanged = this.onColumnsChanged.bind(this);
@@ -744,7 +750,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
-    public addCellRange(params: CellRangeParams): void {
+    public addCellRange(params: CellRangeParams): CellRange | undefined {
         const gos = this.gos;
         if (!_isCellSelectionEnabled(gos) || !this.verifyCellRanges(gos)) {
             return;
@@ -765,6 +771,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             this.cellRanges.push(newRange);
             this.dispatchChangedEvent(false, true, newRange.id);
+            return newRange;
         }
     }
 
@@ -1233,30 +1240,91 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const numRows = this.beans.rowModel.getRowCount();
+        const ctx = this.columnRangeSelectionCtx;
+        const { pageBounds } = this.beans;
+        const first = pageBounds.getFirstRow();
+        const last = pageBounds.getLastRow();
 
-        // const cellRangeParams = {
-        //     columnStart: column,
-        //     columnEnd: column,
-        //     columns: [column],
-        //     rowStartIndex: 0,
-        //     rowStartPinned: null,
-        //     rowEndIndex: numRows - 1,
-        // };
+        const extendRangeToCell = (baseRange: CellRange, cellPos: CellPosition) => {
+            if (this.isEmpty() || !this.newestRangeStartCell) {
+                return;
+            }
 
-        // const cellRange = this.createCellRangeFromCellRangeParams(cellRangeParams)!;
-        // const cellRanges = this.cellRanges;
-        // // if (cellRanges.some((r) => CellRanges.equal(r, cellRange))) {
-        // // }
+            this.setSelectionMode(isRowNumberCol(cellPos.column));
+            this.updateRangeRowBoundary({ cellRange: baseRange, boundary: 'end', cellPosition: cellPos });
+        };
 
-        this.addCellRange({
-            columnStart: column,
-            columnEnd: column,
-            columns: [column],
-            rowStartIndex: 0,
-            rowStartPinned: null,
-            rowEndIndex: numRows - 1,
-        });
+        if (event.shiftKey) {
+            // doing range selection
+            const root = ctx.root;
+            if (!root) {
+                return;
+            }
+
+            const range = CellRangeUtil.findRangeContainingCol(
+                this.cellRanges,
+                root,
+                { rowIndex: first, rowPinned: null },
+                { rowIndex: last, rowPinned: null }
+            );
+            if (!range) {
+                // when no existing range exists, clear the last cell range
+                // and start from the root
+                _removeFromArray(this.cellRanges, ctx.lastCellRange);
+                this.addCellRange({
+                    columns: this.calculateColumnsBetween(root, column),
+                    columnStart: root,
+                    columnEnd: column,
+                    rowStartIndex: first,
+                    rowStartPinned: null,
+                    rowEndIndex: last,
+                    rowEndPinned: null,
+                });
+                return;
+            }
+
+            extendRangeToCell(range, {
+                column,
+                rowIndex: last,
+                rowPinned: null,
+            });
+        } else {
+            // doing normal selection
+
+            const isSelected = CellRangeUtil.isColSelected(this.cellRanges, column, first, last);
+
+            const lastCellRange = this.selectColumn(column, !isSelected);
+            if (!isSelected) {
+                ctx.lastCellRange = lastCellRange;
+            }
+            ctx.root = column;
+        }
+    }
+
+    private selectColumn(column: AgColumn, add = true): CellRange | undefined {
+        const { pageBounds } = this.beans;
+        const first = pageBounds.getFirstRow();
+        const last = pageBounds.getLastRow();
+
+        let newRange: CellRange | undefined = undefined;
+
+        if (add) {
+            newRange = this.addCellRange({
+                columns: [column],
+                columnStart: column,
+                columnEnd: column,
+                rowStartIndex: first,
+                rowStartPinned: null,
+                rowEndIndex: last,
+                rowEndPinned: null,
+            });
+        } else {
+            CellRangeUtil.removeCol(this.cellRanges, column);
+        }
+
+        this.dispatchChangedEvent(true, true);
+
+        return newRange;
     }
 }
 
@@ -1303,16 +1371,60 @@ function isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
     return isLastColumn && isLastRow;
 }
 
-/** Cell Range Utils */
-const CellRanges = {
-    equal: (a: CellRange, b: CellRange): boolean => {
+interface ColumnRangeSelectionContext {
+    lastCellRange?: CellRange;
+    root?: AgColumn;
+}
+
+const CellRangeUtil = {
+    equals(a: CellRange, b: CellRange): boolean {
         return (
-            a.id != b.id ||
-            a.type != b.type ||
-            !_isSameRow(a.startRow, b.startRow) ||
-            !_isSameRow(a.endRow, b.endRow) ||
-            a.startColumn !== b.startColumn ||
-            _areEqual(a.columns, b.columns, (aCol, bCol) => _columnsMatch(aCol as AgColumn, bCol as AgColumn))
+            a.id === b.id &&
+            a.type === b.type &&
+            a.startColumn === b.startColumn &&
+            _isSameRow(a.startRow, b.startRow) &&
+            _isSameRow(a.endRow, b.endRow) &&
+            a.columns.every((col, i) => _columnsMatch(col as AgColumn, b.columns[i]))
         );
+    },
+
+    removeCol(ranges: CellRange[], column: AgColumn): void {
+        for (const range of ranges) {
+            _removeFromArray(range.columns, column);
+            if (range.startColumn === column) {
+                range.startColumn = range.columns[0];
+            }
+        }
+
+        // clean up empty ranges
+        _filterInPlace(ranges, (r) => r.columns.length !== 0);
+    },
+
+    findRangeContainingCol(
+        ranges: readonly CellRange[],
+        col: AgColumn,
+        startRow: RowPosition,
+        endRow: RowPosition
+    ): CellRange | undefined {
+        // iterating backwards since we're likely interested in the most recently added range
+        for (let i = ranges.length - 1; i >= 0; i--) {
+            const range = ranges[i];
+            const hasCol = range.columns.includes(col);
+            const sameRows = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
+
+            if (hasCol && sameRows) {
+                return range;
+            }
+        }
+    },
+
+    isColSelected(ranges: readonly CellRange[], col: AgColumn, startRowIndex: number, endRowIndex: number): boolean {
+        return ranges.some((range) => {
+            return (
+                range.columns.includes(col) &&
+                range.startRow?.rowIndex === startRowIndex &&
+                range.endRow?.rowIndex === endRowIndex
+            );
+        });
     },
 };
