@@ -26,6 +26,7 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      # NOTE: This is done outside of the `scorecard` workflow as there are restrictions on `ossf/scorecard-action`
       - name: "Check Results"
         id: check_results
         uses: actions/github-script@v7
