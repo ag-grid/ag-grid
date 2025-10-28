@@ -1,6 +1,6 @@
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 
-export type AriaSortState = 'ascending' | 'descending' | 'other' | 'none';
+export type AriaSortState = 'ascending' | 'descending' | 'absoluteAscending' | 'absoluteDescending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
 function _toggleAriaAttribute(element: Element, attribute: string, value?: number | boolean | string | null) {
@@ -31,13 +31,17 @@ export function _setAriaRole(element: Element, role?: string | null) {
     }
 }
 
-export function _getAriaSortState(sortDirection: 'asc' | 'desc' | 'mixed' | null): AriaSortState {
+export function _getAriaSortState(sortDirection: 'asc' | 'desc' | 'aasc' | 'adesc' | 'mixed' | null): AriaSortState {
     let sort: AriaSortState;
 
     if (sortDirection === 'asc') {
         sort = 'ascending';
     } else if (sortDirection === 'desc') {
         sort = 'descending';
+    } else if (sortDirection === 'aasc') {
+        sort = 'absoluteAscending';
+    } else if (sortDirection === 'adesc') {
+        sort = 'absoluteDescending';
     } else if (sortDirection === 'mixed') {
         sort = 'other';
     } else {

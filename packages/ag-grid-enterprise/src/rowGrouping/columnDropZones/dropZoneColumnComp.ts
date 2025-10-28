@@ -124,6 +124,8 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         const sortDirection = {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
+            aasc: translate('ariaDropZoneColumnComponentSortAbsoluteAscending', 'absoluteAscending'),
+            adesc: translate('ariaDropZoneColumnComponentSortAbsoluteDescending', 'absoluteDescending'),
         };
         const columnSort = this.column.getSort();
         const isSortSuppressed = this.gos.get('rowGroupPanelSuppressSort');

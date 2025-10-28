@@ -25,6 +25,10 @@ export const SortModule: _ModuleWithApi<_SortGridApi> = {
         sortAscending: 'asc',
         // show on column header when column is sorted descending
         sortDescending: 'desc',
+        // show on column header when column is sorted absolute ascending
+        sortAbsoluteAscending: 'aasc',
+        // show on column header when column is sorted absolute descending
+        sortAbsoluteDescending: 'adesc',
         // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
         sortUnSort: 'none',
     },

@@ -132,6 +132,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             if (sort !== 'desc') {
                 result.push('sortDescending');
             }
+            if (sort !== 'aasc') {
+                result.push('sortAbsoluteAscending');
+            }
+            if (sort !== 'adesc') {
+                result.push('sortAbsoluteDescending');
+            }
             if (sort) {
                 result.push('sortUnSort');
             }

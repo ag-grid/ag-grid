@@ -425,6 +425,22 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () => sortSvc.setSortForColumn(column!, 'desc', false, source),
                           }
                         : null;
+                case 'sortAbsoluteAscending':
+                    return sortSvc
+                        ? {
+                              name: localeTextFunc('sortAbsoluteAscending', 'Sort Absolute Ascending'),
+                              icon: _createIconNoSpan('sortAbsoluteAscending', beans, null),
+                              action: () => sortSvc.setSortForColumn(column!, 'aasc', false, source),
+                          }
+                        : null;
+                case 'sortAbsoluteDescending':
+                    return sortSvc
+                        ? {
+                              name: localeTextFunc('sortAbsoluteDescending', 'Sort Absolute Descending'),
+                              icon: _createIconNoSpan('sortAbsoluteDescending', beans, null),
+                              action: () => sortSvc.setSortForColumn(column!, 'adesc', false, source),
+                          }
+                        : null;
                 case 'sortUnSort':
                     return sortSvc
                         ? {

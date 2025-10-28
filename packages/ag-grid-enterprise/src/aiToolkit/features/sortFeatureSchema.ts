@@ -23,7 +23,10 @@ export const buildSortFeatureSchema = (beans: BeanCollection) => {
                 sortModel: s.array(
                     s.object({
                         colId: s.enum(sortableColumnIds, 'Column ID that supports sorting'),
-                        sort: s.enum(['asc', 'desc'], 'Sort direction: ascending or descending'),
+                        sort: s.enum(
+                            ['asc', 'desc', 'aasc', 'adesc'],
+                            'Sort direction: ascending, descending, absolute ascending, or absolute descending'
+                        ),
                     }),
                     'Array of sort configurations'
                 ),

@@ -32,6 +32,8 @@ const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _Valida
     columnChooser: 'ColumnMenu',
     sortAscending: 'Sort',
     sortDescending: 'Sort',
+    sortAbsoluteAscending: 'Sort',
+    sortAbsoluteDescending: 'Sort',
     sortUnSort: 'Sort',
 };
 

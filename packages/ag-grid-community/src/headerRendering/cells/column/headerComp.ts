@@ -69,6 +69,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     private readonly eSortOrder?: HTMLElement = RefPlaceholder;
     private readonly eSortAsc?: HTMLElement = RefPlaceholder;
     private readonly eSortDesc?: HTMLElement = RefPlaceholder;
+    private readonly eSortAbsoluteAsc?: HTMLElement = RefPlaceholder;
+    private readonly eSortAbsoluteDesc?: HTMLElement = RefPlaceholder;
     private readonly eSortMixed?: HTMLElement = RefPlaceholder;
     private readonly eSortNone?: HTMLElement = RefPlaceholder;
 
@@ -273,8 +275,25 @@ export class HeaderComp extends Component implements IHeaderComp {
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
             this.eSortIndicator = this.createBean(sortSvc.createSortIndicator(true));
-            const { eSortIndicator, eSortOrder, eSortAsc, eSortDesc, eSortMixed, eSortNone } = this;
-            eSortIndicator.attachCustomElements(eSortOrder, eSortAsc, eSortDesc, eSortMixed, eSortNone);
+            const {
+                eSortIndicator,
+                eSortOrder,
+                eSortAsc,
+                eSortDesc,
+                eSortAbsoluteDesc,
+                eSortAbsoluteAsc,
+                eSortMixed,
+                eSortNone,
+            } = this;
+            eSortIndicator.attachCustomElements(
+                eSortOrder,
+                eSortAsc,
+                eSortDesc,
+                eSortAbsoluteAsc,
+                eSortAbsoluteDesc,
+                eSortMixed,
+                eSortNone
+            );
         }
         this.eSortIndicator.setupSort(column as AgColumn);
 

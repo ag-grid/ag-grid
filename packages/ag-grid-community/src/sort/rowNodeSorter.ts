@@ -73,6 +73,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             const validResult = !isNaN(comparatorResult);
 
             if (validResult && comparatorResult !== 0) {
+                if (sortOption.sort === 'aasc') {
+                    comparatorResult = Math.abs(comparatorResult);
+                } else if (sortOption.sort === 'adesc') {
+                    comparatorResult = Math.abs(comparatorResult) * -1;
+                }
+
                 return sortOption.sort === 'asc' ? comparatorResult : comparatorResult * -1;
             }
         }

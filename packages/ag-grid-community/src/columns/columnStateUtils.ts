@@ -29,7 +29,7 @@ export interface ColumnStateParams {
     /** Column's flex if flex is set */
     flex?: number | null;
     /** Sort applied to the column */
-    sort?: 'asc' | 'desc' | null;
+    sort?: 'asc' | 'desc' | 'aasc' | 'adesc' | null;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */

@@ -21,6 +21,8 @@ const SortIndicatorElement: ElementParams = {
         makeIconParams('Order', 'order'),
         makeIconParams('Asc', 'ascending-icon'),
         makeIconParams('Desc', 'descending-icon'),
+        makeIconParams('AbsoluteAsc', 'absolute-ascending-icon'),
+        makeIconParams('AbsoluteDesc', 'absolute-descending-icon'),
         makeIconParams('Mixed', 'mixed-icon'),
         makeIconParams('None', 'none-icon'),
     ],
@@ -31,6 +33,8 @@ export class SortIndicatorComp extends Component {
     private eSortOrder?: HTMLElement = RefPlaceholder;
     private eSortAsc?: HTMLElement = RefPlaceholder;
     private eSortDesc?: HTMLElement = RefPlaceholder;
+    private eSortAbsoluteAsc?: HTMLElement = RefPlaceholder;
+    private eSortAbsoluteDesc?: HTMLElement = RefPlaceholder;
     private eSortMixed?: HTMLElement = RefPlaceholder;
     private eSortNone?: HTMLElement = RefPlaceholder;
 
@@ -49,12 +53,16 @@ export class SortIndicatorComp extends Component {
         eSortOrder: HTMLElement | undefined,
         eSortAsc: HTMLElement | undefined,
         eSortDesc: HTMLElement | undefined,
+        eSortAbsoluteAsc: HTMLElement | undefined,
+        eSortAbsoluteDesc: HTMLElement | undefined,
         eSortMixed: HTMLElement | undefined,
         eSortNone: HTMLElement | undefined
     ) {
         this.eSortOrder = eSortOrder;
         this.eSortAsc = eSortAsc;
         this.eSortDesc = eSortDesc;
+        this.eSortAbsoluteAsc = eSortAbsoluteAsc;
+        this.eSortAbsoluteDesc = eSortAbsoluteDesc;
         this.eSortMixed = eSortMixed;
         this.eSortNone = eSortNone;
     }
@@ -106,7 +114,7 @@ export class SortIndicatorComp extends Component {
     }
 
     private updateIcons(): void {
-        const { eSortAsc, eSortDesc, eSortNone, column, gos, beans } = this;
+        const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
         const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
 
@@ -118,6 +126,16 @@ export class SortIndicatorComp extends Component {
         if (eSortDesc) {
             const isDescending = sortDirection === 'desc';
             _setDisplayed(eSortDesc, isDescending, { skipAriaHidden: true });
+        }
+
+        if (eSortAbsoluteAsc) {
+            const isAbsoluteAscending = sortDirection === 'aasc';
+            _setDisplayed(eSortAbsoluteAsc, isAbsoluteAscending, { skipAriaHidden: true });
+        }
+
+        if (eSortAbsoluteDesc) {
+            const isAbsoluteDescending = sortDirection === 'adesc';
+            _setDisplayed(eSortAbsoluteDesc, isAbsoluteDescending, { skipAriaHidden: true });
         }
 
         if (eSortNone) {

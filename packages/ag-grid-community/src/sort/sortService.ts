@@ -10,7 +10,7 @@ import type { SortOption } from '../interfaces/iSortOption';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
-export const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
+export const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', 'aasc', 'adesc', null];
 export class SortService extends BeanStub implements NamedBean {
     beanName = 'sortSvc' as const;
 
@@ -27,7 +27,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     public setSortForColumn(column: AgColumn, sort: SortDirection, multiSort: boolean, source: ColumnEventType): void {
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort !== 'asc' && sort !== 'desc') {
+        if (sort !== 'asc' && sort !== 'desc' && sort !== 'aasc' && sort !== 'adesc') {
             sort = null;
         }
 
@@ -128,7 +128,7 @@ export class SortService extends BeanStub implements NamedBean {
                 }
 
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
-                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
+                // if sort order is: ['desc', 'aasc', 'adesc', null , 'asc'], as it will start at null rather than 'desc'. // todo not sure about this comment
                 this.setColSort(columnToClear, undefined, source);
             }
         });
@@ -310,6 +310,8 @@ export class SortService extends BeanStub implements NamedBean {
             const sort = column.getSort();
             comp.toggleCss('ag-header-cell-sorted-asc', sort === 'asc');
             comp.toggleCss('ag-header-cell-sorted-desc', sort === 'desc');
+            comp.toggleCss('ag-header-cell-sorted-abs-asc', sort === 'aasc');
+            comp.toggleCss('ag-header-cell-sorted-abs-desc', sort === 'adesc');
             comp.toggleCss('ag-header-cell-sorted-none', !sort);
 
             if (column.getColDef().showRowGroup) {
@@ -333,10 +335,15 @@ export class SortService extends BeanStub implements NamedBean {
         const { sort, initialSort, sortIndex, initialSortIndex } = column.colDef;
 
         if (sort !== undefined) {
-            if (sort === 'asc' || sort === 'desc') {
+            if (sort === 'asc' || sort === 'desc' || sort === 'aasc' || sort === 'adesc') {
                 column.sort = sort;
             }
-        } else if (initialSort === 'asc' || initialSort === 'desc') {
+        } else if (
+            initialSort === 'asc' ||
+            initialSort === 'desc' ||
+            initialSort === 'aasc' ||
+            initialSort === 'adesc'
+        ) {
             column.sort = initialSort;
         }
 
@@ -351,7 +358,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     public updateColSort(column: AgColumn, sort: SortDirection | undefined, source: ColumnEventType): void {
         if (sort !== undefined) {
-            if (sort === 'desc' || sort === 'asc') {
+            if (sort === 'desc' || sort === 'asc' || sort === 'aasc' || sort === 'adesc') {
                 this.setColSort(column, sort, source);
             } else {
                 this.setColSort(column, undefined, source);

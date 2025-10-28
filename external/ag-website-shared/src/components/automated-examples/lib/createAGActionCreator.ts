@@ -95,7 +95,7 @@ export interface SortAction {
     actionType: 'sort';
     actionParams: {
         colId: string;
-        sort: 'asc' | 'desc';
+        sort: 'asc' | 'desc' | 'aasc' | 'adesc';
     };
 }
 

@@ -783,7 +783,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @initial
      */
     initialSortIndex?: number;
-    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
+    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc', 'desc', 'aasc', 'adesc', null]` */
     sortingOrder?: SortDirection[];
     /**
      * Override the default sorting order by providing a custom sort comparator.
@@ -1183,7 +1183,7 @@ export interface CellEditorSelectorResult {
     popupPosition?: 'over' | 'under';
 }
 
-export type SortDirection = 'asc' | 'desc' | null;
+export type SortDirection = 'asc' | 'desc' | 'aasc' | 'adesc' | null;
 
 export type GroupHierarchyParts =
     | 'year'

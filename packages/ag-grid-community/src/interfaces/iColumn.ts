@@ -154,7 +154,7 @@ export interface Column<TValue = any>
     /** Returns `true` if a menu is visible for this column. */
     isMenuVisible(): boolean;
 
-    /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
+    /** If sorting is active, returns the sort direction e.g. `'asc'`, `'desc'`, `'aasc'`, `'adesc'`. */
     getSort(): SortDirection | undefined;
 
     /** Returns `true` if sorting is enabled for this column via the `sortable` property. */

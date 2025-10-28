@@ -56,7 +56,7 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
     progressSort: (multiSort?: boolean) => void;
     /**
      * Callback to set the sort for this column.
-     * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).
+     * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc', 'aasc', 'adesc' or null (for no sort).
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
     setSort: (sort: SortDirection, multiSort?: boolean) => void;
