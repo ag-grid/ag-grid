@@ -13,7 +13,7 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, assertColumnsSelected, asyncSetTimeout, drawGrid, waitForEvent } from '../test-utils';
+import { TestGridsManager, assertColumnsSelected, asyncSetTimeout, waitForEvent } from '../test-utils';
 import { GridActions } from './utils';
 
 describe('Cell Selection', () => {
@@ -233,7 +233,7 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['year', 'amount', 'day']], api);
         });
 
-        test.only('CTRL-click column header selects cells in pinned rows as well', async () => {
+        test('CTRL-click column header selects cells in pinned rows as well', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -244,7 +244,6 @@ describe('Cell Selection', () => {
                 },
                 enableRowPinning: true,
                 isRowPinned: (node) => {
-                    console.log(node.data);
                     if (node.data?.year < 2010) {
                         return 'top';
                     }
@@ -255,20 +254,80 @@ describe('Cell Selection', () => {
                 },
             });
 
-            // drawGrid(api);
-
             const gridDiv = getGridElement(api)! as HTMLElement;
 
             const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
 
             await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
-            // await userSession.keyboard('{/Control}');
+            await userSession.keyboard('{/Control}');
 
-            // assertColumnsSelected([['year', 'amount', 'day']], api);
+            assertColumnsSelected([['sport']], api);
         });
 
-        test.skip('De-selecting column does not affect existing ranges', async () => {});
+        test('De-selecting column does not affect existing ranges', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+                enableRowPinning: true,
+                isRowPinned: (node) => {
+                    if (node.data?.year < 2010) {
+                        return 'top';
+                    }
+                    if (node.data?.year < 2020) {
+                        return 'bottom';
+                    }
+                    return null;
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const yearCol = api.getColumn('year')!;
+            const amountCol = api.getColumn('amount')!;
+
+            api.addCellRange({
+                columns: [yearCol, amountCol],
+                columnStart: yearCol,
+                columnEnd: amountCol,
+                rowStartIndex: 2,
+                rowStartPinned: null,
+                rowEndIndex: 4,
+                rowEndPinned: null,
+            });
+
+            const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
+
+            // Toggle selection on
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            const ranges = api.getCellRanges()!;
+            expect(ranges).toHaveLength(2);
+            expect(ranges[0].startRow?.rowIndex).toBe(2);
+            expect(ranges[0].endRow?.rowIndex).toBe(4);
+            expect(ranges[0].columns).toEqual([yearCol, amountCol]);
+            assertColumnsSelected([['year']], api);
+
+            // Toggle selection off
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            const ranges2 = api.getCellRanges()!;
+            expect(ranges2).toHaveLength(1);
+            expect(ranges2[0].startRow?.rowIndex).toBe(2);
+            expect(ranges2[0].endRow?.rowIndex).toBe(4);
+            expect(ranges2[0].columns).toHaveLength(2);
+            expect(ranges2[0].columns[0]).toBe(yearCol);
+        });
+
         test.skip('CTRL-click group column selects all child columns', async () => {});
         test.skip('Can partially de-select group column by CTRL-clicking child column', async () => {});
         test.skip('CTRL-SHIFT-click group column and partial selections', async () => {});

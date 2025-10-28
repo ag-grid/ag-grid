@@ -85,21 +85,18 @@ export function assertColumnsSelected(ranges: string[][], api: GridApi): void {
     const notFound: string[][] = [];
 
     for (const columnIds of ranges) {
-        const idx = cellRanges.findIndex((cellRange) =>
-            _areEqual(
+        const idx = cellRanges.findIndex((cellRange) => {
+            return _areEqual(
                 cellRange.columns.map((c) => c.getColId()),
                 columnIds
-            )
-        );
+            );
+        });
 
         if (idx > -1) {
-            console.log(cellRanges[idx].startRow);
-            console.log(cellRanges[idx].endRow);
-            console.log({ nRowsTop, nRowsBottom });
             expect(cellRanges[idx].startRow?.rowIndex).toEqual(0);
             expect(cellRanges[idx].startRow?.rowPinned).toEqual(nRowsTop > 0 ? 'top' : null);
 
-            expect(cellRanges[idx].endRow?.rowIndex).toEqual(lastRowIdx);
+            expect(cellRanges[idx].endRow?.rowIndex).toEqual(nRowsBottom > 0 ? nRowsBottom - 1 : lastRowIdx);
             expect(cellRanges[idx].endRow?.rowPinned).toEqual(nRowsBottom > 0 ? 'bottom' : null);
 
             cellRanges.splice(idx, 1);
@@ -107,4 +104,6 @@ export function assertColumnsSelected(ranges: string[][], api: GridApi): void {
             notFound.push(columnIds);
         }
     }
+
+    expect(notFound).toEqual([]);
 }

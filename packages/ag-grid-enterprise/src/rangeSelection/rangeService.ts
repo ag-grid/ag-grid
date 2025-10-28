@@ -889,7 +889,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        const thisRow = createRowPosition(rowIndex, rowPinned);
+        // TODO: This covers up a type error. `rowIndex: number` is wrong -- it could be `null`.
+        const thisRow: RowPosition = { rowIndex, rowPinned: rowPinned || null };
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
@@ -1299,13 +1300,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private selectColumn(column: AgColumn, add = true): CellRange | undefined {
         let newRange: CellRange | undefined = undefined;
+        const firstRow = _getFirstRow(this.beans);
+        const lastRow = _getLastRow(this.beans);
+        if (!firstRow || !lastRow) {
+            return;
+        }
 
         if (add) {
-            const firstRow = _getFirstRow(this.beans);
-            const lastRow = _getLastRow(this.beans);
-            if (!firstRow || !lastRow) {
-                return;
-            }
             newRange = this.addCellRange({
                 columns: [column],
                 columnStart: column,
@@ -1316,7 +1317,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 rowEndPinned: lastRow.rowPinned,
             });
         } else {
-            CellRangeUtil.removeCol(this.cellRanges, column);
+            CellRangeUtil.removeCol(this.cellRanges, column, firstRow, lastRow);
         }
 
         this.dispatchChangedEvent(true, true);
@@ -1374,11 +1375,13 @@ interface ColumnRangeSelectionContext {
 }
 
 const CellRangeUtil = {
-    removeCol(ranges: CellRange[], column: AgColumn): void {
+    removeCol(ranges: CellRange[], column: AgColumn, startRow: RowPosition, endRow: RowPosition): void {
         for (const range of ranges) {
-            _removeFromArray(range.columns, column);
-            if (range.startColumn === column) {
-                range.startColumn = range.columns[0];
+            if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
+                _removeFromArray(range.columns, column);
+                if (range.startColumn === column) {
+                    range.startColumn = range.columns[0];
+                }
             }
         }
 
