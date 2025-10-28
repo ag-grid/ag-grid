@@ -207,6 +207,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.destroyActiveOverlay();
         this.beans.overlays!.setOverlayWrapperComp(undefined);
         super.destroy();
+        this.eOverlayWrapper = null;
     }
 }
 export const OverlayWrapperSelector: ComponentSelector = {
