@@ -37,8 +37,8 @@ export function colIdFromIndex(cols: AgColumn[], idx: number): string | null {
 
 export function rowIndexFromId(beans: BeanCollection, rowId: string): number | null {
     const row = beans.rowModel?.getRowNode?.(rowId);
-    if (row?.rowIndex != null) {
-        return row.rowIndex + 1; // convert 0-based to 1-based
+    if (row?.formulaRowIndex != null) {
+        return row.formulaRowIndex + 1; // convert 0-based to 1-based
     }
     return null;
 }

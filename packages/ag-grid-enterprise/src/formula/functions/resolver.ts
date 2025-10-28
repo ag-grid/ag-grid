@@ -206,10 +206,10 @@ function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
         return n;
     }
     const node = beans.rowModel?.getRowNode?.(ref.id);
-    if (node?.rowIndex == null) {
+    if (node?.formulaRowIndex == null) {
         throw new FormulaError('Unrecognised row id', '#REF!');
     }
-    return node.rowIndex;
+    return node.formulaRowIndex;
 }
 
 function resolveCol(beans: BeanCollection, ref: CellRef): AgColumn {
