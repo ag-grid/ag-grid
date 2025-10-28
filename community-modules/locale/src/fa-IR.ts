@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_IR = {
     chooseColumns: 'انتخاب ستون‌ها',
     sortAscending: 'مرتب‌سازی صعودی',
     sortDescending: 'مرتب‌سازی نزولی',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: 'پاک کردن مرتب‌سازی',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -606,6 +608,8 @@ export const AG_GRID_LOCALE_IR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' از ',
     ariaDropZoneColumnComponentSortAscending: 'صعودی',
     ariaDropZoneColumnComponentSortDescending: 'نزولی',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: 'گفتگو',
     ariaLabelColumnMenu: 'منوی ستون',
     ariaLabelColumnFilter: 'فیلتر ستون',

@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_PK = {
     chooseColumns: 'کالمز منتخب کریں',
     sortAscending: 'آروہیبھک ترتیب',
     sortDescending: 'زوال پذیر ترتیب',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: 'ترتیب مٹائیں',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -605,6 +607,8 @@ export const AG_GRID_LOCALE_PK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' کا ',
     ariaDropZoneColumnComponentSortAscending: 'بڑھتے ہوئے ترتیب',
     ariaDropZoneColumnComponentSortDescending: 'گرتے ہوئے ترتیب',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: 'ڈائیلاگ',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',

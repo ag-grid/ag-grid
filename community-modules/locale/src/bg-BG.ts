@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_BG = {
     chooseColumns: 'Изберете колони',
     sortAscending: 'Сортиране във възходящ ред',
     sortDescending: 'Сортиране в низходящ ред',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: 'Изчистване на сортирането',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -606,6 +608,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' от ',
     ariaDropZoneColumnComponentSortAscending: 'възходящо',
     ariaDropZoneColumnComponentSortDescending: 'низходящо',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: 'Диалог',
     ariaLabelColumnMenu: 'Меню на колона',
     ariaLabelColumnFilter: 'Филтър на колона',

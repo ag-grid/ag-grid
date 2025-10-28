@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_FI = {
     chooseColumns: 'Valitse sarakkeet',
     sortAscending: 'Lajittele nousevasti',
     sortDescending: 'Lajittele laskevasti',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: 'Tyhjennä lajittelu',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -605,6 +607,8 @@ export const AG_GRID_LOCALE_FI = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' kohta ',
     ariaDropZoneColumnComponentSortAscending: 'nouseva',
     ariaDropZoneColumnComponentSortDescending: 'laskeva',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: 'Dialogi',
     ariaLabelColumnMenu: 'Sarakkeen valikko',
     ariaLabelColumnFilter: 'Sarakkeen suodatin',

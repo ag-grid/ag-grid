@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_EG = {
     chooseColumns: 'اختيار الأعمدة',
     sortAscending: 'ترتيب تصاعدي',
     sortDescending: 'ترتيب تنازلي',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: 'إلغاء الترتيب',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -605,6 +607,8 @@ export const AG_GRID_LOCALE_EG = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' من ',
     ariaDropZoneColumnComponentSortAscending: 'تصاعدي',
     ariaDropZoneColumnComponentSortDescending: 'تنازلي',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: 'حوار',
     ariaLabelColumnMenu: 'قائمة الأعمدة',
     ariaLabelColumnFilter: 'تصفية العمود',
