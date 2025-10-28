@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_SE = {
     chooseColumns: 'Välj kolumner',
     sortAscending: 'Sortera Stigande',
     sortDescending: 'Sortera Fallande',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: 'Sortera Absolut Stigande',
+    sortAbsoluteDescending: 'Sortera Absolut Fallande',
     sortUnSort: 'Rensa Sortering',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -607,8 +607,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' av ',
     ariaDropZoneColumnComponentSortAscending: 'stigande',
     ariaDropZoneColumnComponentSortDescending: 'fallande',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigande',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut fallande',
     ariaLabelDialog: 'Dialogruta',
     ariaLabelColumnMenu: 'Kolumnmeny',
     ariaLabelColumnFilter: 'Kolumnfilter',

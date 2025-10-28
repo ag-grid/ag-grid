@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_KR = {
     chooseColumns: '열 선택',
     sortAscending: '오름차순 정렬',
     sortDescending: '내림차순 정렬',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: '절대값 오름차순 정렬',
+    sortAbsoluteDescending: '절대값 내림차순 정렬',
     sortUnSort: '정렬 해제',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -607,8 +607,8 @@ export const AG_GRID_LOCALE_KR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' 의 ',
     ariaDropZoneColumnComponentSortAscending: '오름차순',
     ariaDropZoneColumnComponentSortDescending: '내림차순',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '절대값 오름차순',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '절대값 내림차순',
     ariaLabelDialog: '대화상자',
     ariaLabelColumnMenu: '컬럼 메뉴',
     ariaLabelColumnFilter: '컬럼 필터',

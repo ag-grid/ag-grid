@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_VN = {
     chooseColumns: 'Chọn Cột',
     sortAscending: 'Sắp Xếp Tăng Dần',
     sortDescending: 'Sắp Xếp Giảm Dần',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: 'Sắp Xếp Tuyệt Đối Tăng Dần',
+    sortAbsoluteDescending: 'Sắp Xếp Tuyệt Đối Giảm Dần',
     sortUnSort: 'Xóa Sắp Xếp',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -607,8 +607,8 @@ export const AG_GRID_LOCALE_VN = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' của ',
     ariaDropZoneColumnComponentSortAscending: 'tăng dần',
     ariaDropZoneColumnComponentSortDescending: 'giảm dần',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'tuyệt đối tăng dần',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'tuyệt đối giảm dần',
     ariaLabelDialog: 'Hộp thoại',
     ariaLabelColumnMenu: 'Menu Cột',
     ariaLabelColumnFilter: 'Bộ Lọc Cột',

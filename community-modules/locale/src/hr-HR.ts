@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_HR = {
     chooseColumns: 'Odaberi stupce',
     sortAscending: 'Sortiraj uzlazno',
     sortDescending: 'Sortiraj silazno',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: 'Sortiraj apsolutno uzlazno',
+    sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -608,8 +608,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' od ',
     ariaDropZoneColumnComponentSortAscending: 'uzlazno',
     ariaDropZoneColumnComponentSortDescending: 'silazno',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutno uzlazno',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutno silazno',
     ariaLabelDialog: 'Dijalog',
     ariaLabelColumnMenu: 'Izbornik stupca',
     ariaLabelColumnFilter: 'Filtar stupca',

@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_PT = {
     chooseColumns: 'Escolher Colunas',
     sortAscending: 'Ordenar Ascendente',
     sortDescending: 'Ordenar Descendente',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: 'Ordenar Absoluto Ascendente',
+    sortAbsoluteDescending: 'Ordenar Absoluto Descendente',
     sortUnSort: 'Limpar Ordenação',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -607,8 +607,8 @@ export const AG_GRID_LOCALE_PT = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendente',
     ariaDropZoneColumnComponentSortDescending: 'descendente',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluto ascendente',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluto descendente',
     ariaLabelDialog: 'Diálogo',
     ariaLabelColumnMenu: 'Menu da Coluna',
     ariaLabelColumnFilter: 'Filtro da Coluna',

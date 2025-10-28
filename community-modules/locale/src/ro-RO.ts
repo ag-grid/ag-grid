@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_RO = {
     chooseColumns: 'Alege Coloane',
     sortAscending: 'Sortare Ascendentă',
     sortDescending: 'Sortare Descendentă',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: 'Sortare Absolută Ascendentă',
+    sortAbsoluteDescending: 'Sortare Absolută Descendentă',
     sortUnSort: 'Șterge Sortarea',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -608,8 +608,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' din ',
     ariaDropZoneColumnComponentSortAscending: 'crescător',
     ariaDropZoneColumnComponentSortDescending: 'descrescător',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut crescător',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut descrescător',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Meniu Coloană',
     ariaLabelColumnFilter: 'Filtru Coloană',

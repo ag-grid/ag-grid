@@ -224,8 +224,8 @@ export const AG_GRID_LOCALE_JP = {
     chooseColumns: '列を選択',
     sortAscending: '昇順で並べ替え',
     sortDescending: '降順で並べ替え',
-    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
-    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
+    sortAbsoluteAscending: '絶対値で昇順にソート',
+    sortAbsoluteDescending: '絶対値で降順にソート',
     sortUnSort: 'ソート解除',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -608,8 +608,8 @@ export const AG_GRID_LOCALE_JP = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' の ',
     ariaDropZoneColumnComponentSortAscending: '昇順',
     ariaDropZoneColumnComponentSortDescending: '降順',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '絶対値で昇順にソート',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '絶対値で降順にソート',
     ariaLabelDialog: 'ダイアログ',
     ariaLabelColumnMenu: '列メニュー',
     ariaLabelColumnFilter: '列フィルター',
