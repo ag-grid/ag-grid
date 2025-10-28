@@ -988,7 +988,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const usingFormulas = beans.gos.get('enableFormulas');
         if (usingFormulas) {
-            const unfilteredRows = rootNode?.childrenAfterFilter ?? [];
+            const unfilteredRows = rootNode?.childrenAfterSort ?? [];
             this.formulaRows = unfilteredRows;
             this.rowsToDisplay = unfilteredRows.filter((row) => !row.softFiltered);
 

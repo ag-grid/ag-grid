@@ -105,7 +105,6 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
 
     private softFilter(filterActive: boolean, changedPath: ChangedPath): void {
         const filterCallback = (rowNode: RowNode) => {
-            // recursively get all children that are groups to also filter
             rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
             if (rowNode.hasChildren()) {
                 for (const childNode of rowNode.childrenAfterGroup!) {
