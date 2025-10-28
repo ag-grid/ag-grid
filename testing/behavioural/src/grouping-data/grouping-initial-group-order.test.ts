@@ -1,4 +1,5 @@
-import { ClientSideRowModelModule, InitialGroupOrderComparatorParams } from 'ag-grid-community';
+import type { InitialGroupOrderComparatorParams } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
