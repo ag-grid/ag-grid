@@ -1667,8 +1667,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
      */
     @Input({ transform: booleanAttribute }) public suppressClearOnFillReduction: boolean | undefined = undefined;
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-     * @default [null, 'asc', 'desc']
+    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'`, `'aasc'`, `'adesc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
+     * @default [null, 'asc', 'desc', 'aasc', 'adesc']
      * @deprecated v33 Use `defaultColDef.sortingOrder` instead
      */
     @Input() public sortingOrder: SortDirection[] | undefined = undefined;

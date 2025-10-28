@@ -49,11 +49,10 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
         const nodeA: RowNode = sortedNodeA.rowNode;
         const nodeB: RowNode = sortedNodeB.rowNode;
-
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             const sortOption = sortOptions[i];
-            const isDescending = sortOption.sort === 'desc' || sortOption.sort === 'adesc'; // todo not sure about 'adesc' here
+            const isDescending = sortOption.sort === 'desc' || sortOption.sort === 'adesc';
 
             const valueA = this.getValue(nodeA, sortOption.column as AgColumn);
             const valueB = this.getValue(nodeB, sortOption.column as AgColumn);
@@ -65,7 +64,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _defaultComparator(valueA, valueB, this.isAccentedSort);
+                const defaultSorterOptions: Parameters<typeof _defaultComparator>[2] = {
+                    accentedCompare: this.isAccentedSort,
+                };
+                if (sortOption.sort === 'aasc' || sortOption.sort === 'adesc') {
+                    defaultSorterOptions.transform = absoluteValueTransformer;
+                }
+                comparatorResult = _defaultComparator(valueA, valueB, defaultSorterOptions);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -73,13 +78,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             const validResult = !isNaN(comparatorResult);
 
             if (validResult && comparatorResult !== 0) {
-                if (sortOption.sort === 'aasc') {
-                    comparatorResult = Math.abs(comparatorResult);
-                } else if (sortOption.sort === 'adesc') {
-                    comparatorResult = Math.abs(comparatorResult) * -1;
-                }
-
-                return sortOption.sort === 'asc' ? comparatorResult : comparatorResult * -1;
+                return !isDescending ? comparatorResult : comparatorResult * -1;
             }
         }
         // All matched, we make is so that the original sort order is kept:
@@ -145,4 +144,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         return valueSvc.getValue(column, node, false);
     }
+}
+
+function absoluteValueTransformer(value: any): number | null {
+    if (value == null) {
+        return null;
+    }
+    const numberValue = Number(value);
+    return isNaN(numberValue) ? null : Math.abs(numberValue);
 }

@@ -1483,8 +1483,8 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
          */
     suppressClearOnFillReduction?: boolean,
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
-         * @default [null, 'asc', 'desc']
+    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'`, `'aasc'`, `'adesc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
+         * @default [null, 'asc', 'desc', 'aasc', 'adesc']
          * @deprecated v33 Use `defaultColDef.sortingOrder` instead
          */
     sortingOrder?: SortDirection[],
