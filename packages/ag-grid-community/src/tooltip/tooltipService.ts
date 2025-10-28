@@ -272,7 +272,7 @@ export class TooltipService extends BeanStub implements NamedBean {
                 const error = formula?.getFormulaError(cellCtrl.column, cellCtrl.rowNode);
                 return error ? error.message : undefined;
             },
-            getLocation: () => 'cell',
+            getLocation: () => 'cellFormula',
             shouldDisplayTooltip: () => {
                 const error = formula?.getFormulaError(cellCtrl.column, cellCtrl.rowNode);
                 return !!error;

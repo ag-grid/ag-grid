@@ -8,6 +8,7 @@ export type TooltipLocation =
     | 'advancedFilter'
     | 'cell'
     | 'cellEditor'
+    | 'cellFormula'
     | 'columnToolPanelColumn'
     | 'columnToolPanelColumnGroup'
     | 'filterToolPanelColumnGroup'

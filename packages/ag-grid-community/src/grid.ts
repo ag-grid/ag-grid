@@ -28,6 +28,7 @@ import {
     _getRegisteredModules,
     _hasUserRegistered,
     _isModuleRegistered,
+    _isUmd,
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
@@ -289,16 +290,23 @@ export class GridCoreCreator {
         }
 
         if (!_isModuleRegistered(rowModuleModelName, gridId, rowModelType)) {
+            const isUmd = _isUmd();
+            const reasonOrId = `rowModelType = '${rowModelType}'`;
+
+            const message = isUmd
+                ? `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`
+                : `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`;
             _logPreInitErr(
                 200,
                 {
-                    reasonOrId: `rowModelType = '${rowModelType}'`,
+                    reasonOrId,
                     moduleName: rowModuleModelName,
                     gridScoped: _areModulesGridScoped(),
                     gridId,
                     rowModelType,
+                    isUmd,
                 },
-                `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`
+                message
             );
             return;
         }

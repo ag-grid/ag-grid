@@ -215,7 +215,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             nextCell.focusCell(false, event);
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
-            } else if (!nextCell.comp?.getCellEditor()) {
+            } else if (!nextCell.editCompDetails) {
                 // Two possibilities:
                 // * Editor should be visible (but was destroyed due to column virtualisation)
                 //   = we shouldn't re-emit a startEdit event, so stay silent
