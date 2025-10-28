@@ -224,8 +224,6 @@ export const AG_GRID_LOCALE_CZ = {
     chooseColumns: 'Vybrat sloupce',
     sortAscending: 'Třídit vzestupně',
     sortDescending: 'Třídit sestupně',
-    sortAbsoluteAscending: 'Třídit absolutně vzestupně',
-    sortAbsoluteDescending: 'Třídit absolutně sestupně',
     sortUnSort: 'Zrušit třídění',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -607,8 +605,6 @@ export const AG_GRID_LOCALE_CZ = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' z ',
     ariaDropZoneColumnComponentSortAscending: 'vzestupně',
     ariaDropZoneColumnComponentSortDescending: 'sestupně',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutně vzestupně',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutně sestupně',
 
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Nabídka sloupců',

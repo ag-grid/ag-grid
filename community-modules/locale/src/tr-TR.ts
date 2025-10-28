@@ -224,8 +224,6 @@ export const AG_GRID_LOCALE_TR = {
     chooseColumns: 'Sütunları Seç',
     sortAscending: 'Artan Sıralı',
     sortDescending: 'Azalan Sıralı',
-    sortAbsoluteAscending: 'Mutlak Artan Sıralı',
-    sortAbsoluteDescending: 'Mutlak Azalan Sıralı',
     sortUnSort: 'Sıralamayı Temizle',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -608,8 +606,6 @@ export const AG_GRID_LOCALE_TR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'artan',
     ariaDropZoneColumnComponentSortDescending: 'azalan',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'mutlak artan',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'mutlak azalan',
     ariaLabelDialog: 'Diyalog',
     ariaLabelColumnMenu: 'Sütun Menüsü',
     ariaLabelColumnFilter: 'Sütun Filtresi',

@@ -224,8 +224,6 @@ export const AG_GRID_LOCALE_IL = {
     chooseColumns: 'בחר עמודות',
     sortAscending: 'מיין בסדר עולה',
     sortDescending: 'מיין בסדר יורד',
-    sortAbsoluteAscending: 'מיין בסדר עולה מוחלט',
-    sortAbsoluteDescending: 'מיין בסדר יורד מוחלט',
     sortUnSort: 'נקה מיון',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -607,8 +605,6 @@ export const AG_GRID_LOCALE_IL = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' של ',
     ariaDropZoneColumnComponentSortAscending: 'עולה',
     ariaDropZoneColumnComponentSortDescending: 'יורד',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'מוחלט עולה',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'מוחלט יורד',
     ariaLabelDialog: 'דיאלוג',
     ariaLabelColumnMenu: 'תפריט עמודה',
     ariaLabelColumnFilter: 'מסנן עמודה',

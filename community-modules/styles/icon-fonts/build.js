@@ -14,6 +14,8 @@ const nameToCodepoint = {
     aggregation: 0xf101,
     arrows: 0xf102,
     asc: 0xf103,
+    aasc: 0xf13c,
+    adesc: 0xf13d,
     cancel: 0xf104,
     chart: 0xf105,
     'checkbox-checked': 0xf106,

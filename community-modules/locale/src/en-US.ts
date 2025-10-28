@@ -608,8 +608,8 @@ export const AG_GRID_LOCALE_EN = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'ascending',
     ariaDropZoneColumnComponentSortDescending: 'descending',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluto ascendente',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluto descendente',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolute ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute descending',
 
     ariaLabelDialog: 'Dialog',
 

@@ -224,8 +224,6 @@ export const AG_GRID_LOCALE_GR = {
     chooseColumns: 'Επιλογή Στηλών',
     sortAscending: 'Επιλογή Αύξουσας Ταξινόμησης',
     sortDescending: 'Επιλογή Φθίνουσας Ταξινόμησης',
-    sortAbsoluteAscending: 'Επιλογή Απόλυτης Αύξουσας Ταξινόμησης',
-    sortAbsoluteDescending: 'Επιλογή Απόλυτης Φθίνουσας Ταξινόμησης',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -608,8 +606,6 @@ export const AG_GRID_LOCALE_GR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' από ',
     ariaDropZoneColumnComponentSortAscending: 'αύξουσα',
     ariaDropZoneColumnComponentSortDescending: 'φθίνουσα',
-    ariaDropZoneColumnComponentSortAbsoluteAscending: 'απόλυτη αύξουσα',
-    ariaDropZoneColumnComponentSortAbsoluteDescending: 'απόλυτη φθίνουσα',
 
     ariaLabelDialog: 'Διαλογή',
     ariaLabelColumnMenu: 'Μενού Στήλης',
