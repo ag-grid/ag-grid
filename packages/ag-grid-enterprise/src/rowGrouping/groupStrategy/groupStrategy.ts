@@ -2,10 +2,9 @@ import type {
     AgColumn,
     ChangedPath,
     ChangedRowNodes,
-    InitialGroupOrderComparatorParams,
-    IsGroupOpenByDefaultParams,
+    GridOptions,
+    IRowNode,
     StageExecuteParams,
-    WithoutGridCommon,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _areEqual, _firstLeaf, _warn } from 'ag-grid-community';
 
@@ -30,8 +29,8 @@ interface GroupingDetails {
     groupCols: GroupColumn[];
     groupColsChanged: boolean;
     groupAllowUnbalanced: boolean;
-    isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
-    initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
+    isGroupOpenByDefault: GridOptions['isGroupOpenByDefault'];
+    initialGroupOrderComparator: GridOptions['initialGroupOrderComparator'];
 }
 
 export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
@@ -134,8 +133,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
             groupAllowUnbalanced: gos.get('groupAllowUnbalanced'),
-            isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault') as any,
-            initialGroupOrderComparator: gos.getCallback('initialGroupOrderComparator') as any,
+            isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault'),
+            initialGroupOrderComparator: gos.getCallback('initialGroupOrderComparator'),
         };
 
         return details;
@@ -198,22 +197,25 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private orderGroups(details: GroupingDetails): void {
-        const comparator = details.initialGroupOrderComparator;
-        if (!comparator) {
+        const initialGroupOrderComparator = details.initialGroupOrderComparator;
+        if (!initialGroupOrderComparator) {
             return;
         }
-        const comparer = (nodeA: RowNode, nodeB: RowNode) => comparator({ nodeA, nodeB });
-        const recursiveSort = (rowNode: RowNode): void => {
+        const beans = this.beans;
+        const api = beans.gridApi;
+        const context = beans.gridOptions.context;
+        const comparer = (nodeA: IRowNode, nodeB: IRowNode) =>
+            initialGroupOrderComparator({ api, context, nodeA, nodeB });
+        const recursiveSort = (rowNode: IRowNode): void => {
             const childrenAfterGroup = rowNode.childrenAfterGroup;
             const childrenAfterGroupLen = childrenAfterGroup?.length;
-            if (!childrenAfterGroupLen) {
-                return;
-            }
-            if (!rowNode.leafGroup) {
+            if (!childrenAfterGroupLen || rowNode.leafGroup) {
                 return; // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
             }
-            childrenAfterGroup.sort(comparer);
-            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+            if (childrenAfterGroupLen > 1) {
+                childrenAfterGroup.sort(comparer);
+            }
+            for (let i = 0, len = childrenAfterGroupLen; i < len; ++i) {
                 recursiveSort(childrenAfterGroup[i]);
             }
         };
