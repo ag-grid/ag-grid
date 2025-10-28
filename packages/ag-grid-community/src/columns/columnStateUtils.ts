@@ -3,7 +3,7 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc } from '../entities/colDef';
+import type { IAggFunc, SortDirection } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
@@ -29,7 +29,7 @@ export interface ColumnStateParams {
     /** Column's flex if flex is set */
     flex?: number | null;
     /** Sort applied to the column */
-    sort?: 'asc' | 'desc' | 'aasc' | 'adesc' | null;
+    sort?: SortDirection;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */

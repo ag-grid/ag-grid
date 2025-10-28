@@ -1,3 +1,4 @@
+import { SortDirection } from '../../entities/colDef';
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 
 export type AriaSortState = 'ascending' | 'descending' | 'absoluteAscending' | 'absoluteDescending' | 'other' | 'none';
@@ -31,7 +32,7 @@ export function _setAriaRole(element: Element, role?: string | null) {
     }
 }
 
-export function _getAriaSortState(sortDirection: 'asc' | 'desc' | 'aasc' | 'adesc' | 'mixed' | null): AriaSortState {
+export function _getAriaSortState(sortDirection: SortDirection | 'mixed'): AriaSortState {
     let sort: AriaSortState;
 
     if (sortDirection === 'asc') {
