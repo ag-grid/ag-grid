@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_TW = {
     chooseColumns: '選擇欄位',
     sortAscending: '升序排列',
     sortDescending: '降序排列',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: '清除排列',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -605,6 +607,8 @@ export const AG_GRID_LOCALE_TW = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' 的 ',
     ariaDropZoneColumnComponentSortAscending: '升序',
     ariaDropZoneColumnComponentSortDescending: '降序',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: '對話框',
     ariaLabelColumnMenu: '欄位選單',
     ariaLabelColumnFilter: '欄位篩選器',

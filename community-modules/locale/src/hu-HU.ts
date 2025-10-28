@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_HU = {
     chooseColumns: 'Oszlopok kiválasztása',
     sortAscending: 'Rendezés növekvő sorrendben',
     sortDescending: 'Rendezés csökkenő sorrendben',
+    sortAbsoluteAscending: 'Sort by Absolute Value (Ascending)',
+    sortAbsoluteDescending: 'Sort by Absolute Value (Descending)',
     sortUnSort: 'Rendezés törlése',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -606,6 +608,8 @@ export const AG_GRID_LOCALE_HU = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' közül ',
     ariaDropZoneColumnComponentSortAscending: 'növekvő',
     ariaDropZoneColumnComponentSortDescending: 'csökkenő',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descending',
     ariaLabelDialog: 'Párbeszédpanel',
     ariaLabelColumnMenu: 'Oszlop menü',
     ariaLabelColumnFilter: 'Oszlop szűrő',
