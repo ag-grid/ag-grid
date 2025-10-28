@@ -53,7 +53,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             const sortOption = sortOptions[i];
-            const isDescending = sortOption.sort === 'desc';
+            const isDescending = sortOption.sort === 'desc' || sortOption.sort === 'adesc'; // todo not sure about 'adesc' here
 
             const valueA = this.getValue(nodeA, sortOption.column as AgColumn);
             const valueB = this.getValue(nodeB, sortOption.column as AgColumn);
