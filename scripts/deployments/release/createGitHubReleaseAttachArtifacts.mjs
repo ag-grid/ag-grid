@@ -3,12 +3,12 @@ import { App } from 'octokit';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-// node ./scripts/release/createRelease.mjs --app-id=$AG_AUTOMATED_RELEASE_APP_ID --installation-id=$AG_AUTOMATED_RELEASE_INSTALLATION_ID --private-key-path=$AG_AUTOMATED_RELEASE_PRIVATE_KEY --release-version=100.0.0 --release-branch=AG-12422 --artifacts-path=/Users/seanlandsman/dev/ag-grid/latest/dist/artifacts
+// node ./scripts/release/createRelease.mjs --app-id=$AG_AUTOMATED_RELEASE_APP_ID --installation-id=$AG_AUTOMATED_RELEASE_INSTALLATION_ID --private-key-path=$AG_AUTOMATED_RELEASE_PRIVATE_KEY --release-version=100.0.0 --artifacts-path=/Users/seanlandsman/dev/ag-grid/latest/dist/artifacts
 
 const args = yargs(hideBin(process.argv))
     .usage('Usage: $0 [package path] --private-key-path <path>')
     .demandOption(['app-id', 'installation-id', 'private-key-path'])
-    .demandOption(['release-version', 'release-branch', 'artifacts-path'])
+    .demandOption(['release-version', 'artifacts-path'])
     .boolean(['latest'])
     .default({ latest: true })
     .parse();

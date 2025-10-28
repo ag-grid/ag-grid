@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "vue": "^3.5.0",
-    "replace-in-file": "4.1.0",
+    "replace-in-file": "4.3.1",
     "@tsconfig/node20": "^20.1.4",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20.14.5",
