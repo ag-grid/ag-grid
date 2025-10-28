@@ -1,6 +1,6 @@
 import { expect } from 'vitest';
 
-import type { CellRange, GridApi, IRowNode } from 'ag-grid-community';
+import type { GridApi, IRowNode } from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
 
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
@@ -77,27 +77,34 @@ export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridA
     expect(notFound).toEqual([]);
 }
 
-export function assertColumnsSelected(colIds: string[], api: GridApi): void {
-    const cellRanges = api.getCellRanges()?.slice();
-    const nRows = api.getDisplayedRowCount();
-    const notFound: string[] = [];
-    const matchingRanges: CellRange[] = [];
+export function assertColumnsSelected(ranges: string[][], api: GridApi): void {
+    const cellRanges = api.getCellRanges()?.slice() ?? [];
+    const lastRowIdx = api.getLastDisplayedRowIndex();
+    const nRowsTop = api.getPinnedTopRowCount();
+    const nRowsBottom = api.getPinnedBottomRowCount();
+    const notFound: string[][] = [];
 
-    for (const colId of colIds) {
-        const containingRange = cellRanges?.find((range) => range.columns.find((col) => col.getColId() === colId));
-        if (!containingRange) {
-            notFound.push(colId);
+    for (const columnIds of ranges) {
+        const idx = cellRanges.findIndex((cellRange) =>
+            _areEqual(
+                cellRange.columns.map((c) => c.getColId()),
+                columnIds
+            )
+        );
+
+        if (idx > -1) {
+            console.log(cellRanges[idx].startRow);
+            console.log(cellRanges[idx].endRow);
+            console.log({ nRowsTop, nRowsBottom });
+            expect(cellRanges[idx].startRow?.rowIndex).toEqual(0);
+            expect(cellRanges[idx].startRow?.rowPinned).toEqual(nRowsTop > 0 ? 'top' : null);
+
+            expect(cellRanges[idx].endRow?.rowIndex).toEqual(lastRowIdx);
+            expect(cellRanges[idx].endRow?.rowPinned).toEqual(nRowsBottom > 0 ? 'bottom' : null);
+
+            cellRanges.splice(idx, 1);
         } else {
-            matchingRanges.push(containingRange);
+            notFound.push(columnIds);
         }
-    }
-
-    expect(notFound).toEqual([]);
-
-    for (const range of matchingRanges) {
-        expect(range.columns).toHaveLength(1);
-        expect(range.columns[0]).toBe(range.startColumn);
-        expect(range.startRow).toEqual({ rowIndex: 0, rowPinned: null });
-        expect(range.endRow).toEqual({ rowIndex: nRows - 1, rowPinned: undefined });
     }
 }
