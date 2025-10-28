@@ -110,7 +110,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (!this.eWrapper || gos.get('activeOverlay')) {
             return;
         }
-        if (this.isComponentSuppressed(LoadingOverlayDef)) {
+        if (this.isSuppressed(LoadingOverlayDef, false)) {
             return;
         }
         const loading = gos.get('loading');
@@ -127,7 +127,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             !this.eWrapper ||
             gos.get('activeOverlay') ||
             gos.get('loading') ||
-            this.isComponentSuppressed(NoRowsOverlayDef)
+            this.isSuppressed(NoRowsOverlayDef, false)
         ) {
             return;
         }
@@ -191,12 +191,12 @@ export class OverlayService extends BeanStub implements NamedBean {
         const clientSide = _isClientSideRowModel(gos);
         if (loading !== undefined) {
             this.showInitialOverlay = false; // If loading is defined, we don't show the initial overlay.
-        } else if (this.showInitialOverlay && !this.isComponentSuppressed(LoadingOverlayDef)) {
+        } else if (this.showInitialOverlay && !this.isSuppressed(LoadingOverlayDef, false)) {
             loading = !gos.get('columnDefs') || !beans.colModel.ready || (!gos.get('rowData') && clientSide);
         }
 
         if (loading) {
-            if (this.isComponentSuppressed(LoadingOverlayDef)) {
+            if (this.isSuppressed(LoadingOverlayDef, true)) {
                 return currentDef === LoadingOverlayDef && this.doHideOverlay();
             }
             if (currentDef === LoadingOverlayDef) {
@@ -216,7 +216,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             } else if (activeOverlay === 'agNoRowsOverlay') {
                 newDef = NoRowsOverlayDef;
             }
-            const suppressed = this.isComponentSuppressed(newDef);
+            const suppressed = this.isSuppressed(newDef, true);
             if (suppressed) {
                 return this.doHideOverlay();
             }
@@ -230,7 +230,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (clientSide && beans.rowModel.isEmpty() && !this.isComponentSuppressed(NoRowsOverlayDef)) {
+        if (clientSide && beans.rowModel.isEmpty() && !this.isSuppressed(NoRowsOverlayDef, false)) {
             if (currentDef === NoRowsOverlayDef) {
                 return false;
             }
@@ -333,10 +333,12 @@ export class OverlayService extends BeanStub implements NamedBean {
         eWrapper.updateOverlayWrapperPaddingTop(newPadding);
     }
 
-    private isComponentSuppressed(def: OverlayDef) {
-        const suppressKey = def.suppressKey;
-        if (suppressKey && this.gos.get(suppressKey)) {
-            return true;
+    private isSuppressed(def: OverlayDef, forced: boolean) {
+        if (!forced) {
+            const suppressKey = def.suppressKey;
+            if (suppressKey && this.gos.get(suppressKey)) {
+                return true;
+            }
         }
         const components = this.gos.get('components');
         if (!components) {

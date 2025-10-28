@@ -44,22 +44,22 @@ describe('ag-grid modern overlays state', () => {
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
-    const makeOverlayComp = (paramsMap: Record<string, any>, key: string, className?: string) => {
+    const makeOverlayComp = (paramsMap: Record<string, any>, className: string) => {
         return class {
             private e: HTMLElement;
             constructor() {
                 this.e = document.createElement('div');
-                this.e.className = className ?? `my-capture-${key}`;
-                this.e.textContent = `comp ${key}`;
+                this.e.className = className;
+                this.e.textContent = `comp ${className}`;
             }
             public getGui() {
                 return this.e;
             }
             public init(p?: any) {
-                paramsMap[key] = p;
+                paramsMap[className] = p;
             }
             public refresh(p?: any) {
-                paramsMap[key] = p;
+                paramsMap[className] = p;
             }
         };
     };
@@ -69,8 +69,8 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'agLoadingOverlay', 'my-custom-loading-overlay'),
-                agNoRowsOverlay: makeOverlayComp(capturedParams, 'agNoRowsOverlay', 'my-custom-no-rows-overlay'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-custom-loading-overlay'),
+                agNoRowsOverlay: makeOverlayComp(capturedParams, 'my-custom-no-rows-overlay'),
             },
         });
 
@@ -84,17 +84,59 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeTruthy();
 
         // verify components were instantiated and received the grid api
-        expect(capturedParams.agLoadingOverlay).toBeDefined();
-        expect(capturedParams.agLoadingOverlay.api).toBeDefined();
+        expect(capturedParams['my-custom-loading-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-loading-overlay'].api).toBeDefined();
 
         // ensure refresh reacts to activeOverlayParams updates (current active overlay is the no-rows overlay)
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam2' });
-        expect(capturedParams.agNoRowsOverlay.fromTest).toBe('activeParam2');
+        expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('activeParam2');
         // restore to undefined
         api.setGridOption('activeOverlayParams', undefined);
 
-        expect(capturedParams.agNoRowsOverlay).toBeDefined();
-        expect(capturedParams.agNoRowsOverlay.api).toBeDefined();
+        expect(capturedParams['my-custom-no-rows-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-no-rows-overlay'].api).toBeDefined();
+    });
+
+    test('loading=true has priority over activeOverlay', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            loading: true,
+            activeOverlay: 'agNoRowsOverlay',
+        });
+        expect(hasLoadingOverlay()).toBeTruthy();
+        expect(hasNoRowsOverlay()).toBeFalsy();
+
+        const capturedParams: Record<string, any> = {};
+        api.setGridOption('activeOverlay', makeOverlayComp(capturedParams, 'my-active-overlay'));
+
+        expect(hasLoadingOverlay()).toBeTruthy();
+        expect(hasNoRowsOverlay()).toBeFalsy();
+        expect(document.querySelector('.my-active-overlay')).toBeFalsy();
+        expect(capturedParams['my-active-overlay']).toBeUndefined();
+
+        api.setGridOption('loading', false);
+        expect(hasLoadingOverlay()).toBeFalsy();
+        expect(hasNoRowsOverlay()).toBeFalsy();
+        expect(document.querySelector('.my-active-overlay')).toBeTruthy();
+        expect(capturedParams['my-active-overlay']).toBeDefined();
+    });
+
+    test('activeOverlay has higher priority than suppressLoadingOverlay and suppressNoRowsOverlay', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            suppressLoadingOverlay: true,
+            suppressNoRowsOverlay: true,
+        });
+        expect(hasLoadingOverlay()).toBeFalsy();
+        expect(hasNoRowsOverlay()).toBeFalsy();
+
+        api.setGridOption('activeOverlay', 'agLoadingOverlay');
+        expect(hasLoadingOverlay()).toBeTruthy();
+        expect(hasNoRowsOverlay()).toBeFalsy();
+
+        api.setGridOption('activeOverlay', 'agNoRowsOverlay');
+        expect(hasLoadingOverlay()).toBeFalsy();
+        expect(hasNoRowsOverlay()).toBeTruthy();
     });
 
     test('activeOverlay set to name renders custom active overlay and hides loading/no-rows', () => {
@@ -102,26 +144,26 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                myActiveOverlay: makeOverlayComp(capturedParams, 'myActiveOverlay', 'my-custom-active-overlay'),
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'agLoadingOverlay', 'my-custom-loading-overlay'),
-                agNoRowsOverlay: makeOverlayComp(capturedParams, 'agNoRowsOverlay', 'my-custom-no-rows-overlay'),
+                myActiveOverlay: makeOverlayComp(capturedParams, 'my-custom-active-overlay'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-custom-loading-overlay'),
+                agNoRowsOverlay: makeOverlayComp(capturedParams, 'my-custom-no-rows-overlay'),
             },
             activeOverlayParams: { fromTest: 'activeParam' },
         });
         expect(document.querySelector('.my-custom-loading-overlay')).toBeTruthy();
 
-        expect(capturedParams.agLoadingOverlay).toBeDefined();
-        expect(capturedParams.agLoadingOverlay.api).toBeDefined();
-        expect(capturedParams.agLoadingOverlay.fromTest).toBe('activeParam');
+        expect(capturedParams['my-custom-loading-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-loading-overlay'].api).toBeDefined();
+        expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('activeParam');
 
         // Now trigger no-rows by setting empty rowData
         api.setGridOption('rowData', []);
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeTruthy();
 
         // verify no-rows overlay was instantiated and received api
-        expect(capturedParams.agNoRowsOverlay).toBeDefined();
-        expect(capturedParams.agNoRowsOverlay.api).toBeDefined();
-        expect(capturedParams.agNoRowsOverlay.fromTest).toBe('activeParam');
+        expect(capturedParams['my-custom-no-rows-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-no-rows-overlay'].api).toBeDefined();
+        expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('activeParam');
 
         // Clear overlays and ensure rows present so activeOverlay can take precedence
         api.setGridOption('rowData', [{}]);
@@ -135,13 +177,13 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeFalsy();
 
         // verify params were passed to the active component
-        expect(capturedParams.myActiveOverlay).toBeDefined();
-        expect(capturedParams.myActiveOverlay.api).toBeDefined();
-        expect(capturedParams.myActiveOverlay.fromTest).toBe('activeParam');
+        expect(capturedParams['my-custom-active-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-active-overlay'].api).toBeDefined();
+        expect(capturedParams['my-custom-active-overlay'].fromTest).toBe('activeParam');
 
         // updating activeOverlayParams while active overlay is shown should call refresh
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam2' });
-        expect(capturedParams.myActiveOverlay.fromTest).toBe('activeParam2');
+        expect(capturedParams['my-custom-active-overlay'].fromTest).toBe('activeParam2');
         // restore
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam' });
     });
@@ -152,7 +194,7 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'myLoader', 'my-resolve-loader'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-resolve-loader'),
             },
             loadingOverlayComponentParams: { fromTest: 'loadingParam' },
             loading: true,
@@ -162,10 +204,10 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.ag-overlay-loading-wrapper')).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
         expect(document.querySelector('.my-resolve-loader')).toBeTruthy();
-        expect(capturedParams.myLoader?.fromTest).toBe('loadingParam');
+        expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam');
         // update loadingOverlayComponentParams should refresh the component
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'loadingParam2' });
-        expect(capturedParams.myLoader?.fromTest).toBe('loadingParam2');
+        expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
     });
 
     test('loading=true and custom component with activeOverlayParams', () => {
@@ -173,7 +215,7 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'myLoader', 'my-resolve-loader'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-resolve-loader'),
             },
             activeOverlayParams: { fromTest: 'loadingParam' },
             loading: true,
@@ -183,10 +225,10 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.ag-overlay-loading-wrapper')).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
         expect(document.querySelector('.my-resolve-loader')).toBeTruthy();
-        expect(capturedParams.myLoader?.fromTest).toBe('loadingParam');
+        expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam');
         // updating activeOverlayParams should refresh the shown loading overlay
         api.setGridOption('activeOverlayParams', { fromTest: 'loadingParam2' });
-        expect(capturedParams.myLoader?.fromTest).toBe('loadingParam2');
+        expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
     });
 
     test('loading=true loadingOverlayComponent resolves to the loading overlay uses loading wrapper class', () => {
@@ -195,7 +237,7 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                myLoader: makeOverlayComp(capturedParams, 'myLoader', 'my-resolve-loader'),
+                myLoader: makeOverlayComp(capturedParams, 'my-resolve-loader'),
             },
             loadingOverlayComponent: 'myLoader',
             loadingOverlayComponentParams: { fromTest: 'loadingParam' },
@@ -206,10 +248,10 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.ag-overlay-loading-wrapper')).toBeTruthy();
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
         expect(document.querySelector('.my-resolve-loader')).toBeTruthy();
-        expect(capturedParams.myLoader?.fromTest).toBe('loadingParam');
+        expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam');
         // update specific loading params should refresh the component
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'loadingParam2' });
-        expect(capturedParams.myLoader?.fromTest).toBe('loadingParam2');
+        expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
     });
 
     test('activeOverlay that resolves to the loading overlay uses loading wrapper class', () => {
@@ -217,7 +259,7 @@ describe('ag-grid modern overlays state', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'myLoader', 'my-resolve-loader'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-resolve-loader'),
             },
             activeOverlay: 'agLoadingOverlay',
             loading: false,
@@ -233,7 +275,7 @@ describe('ag-grid modern overlays state', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agNoRowsOverlay: makeOverlayComp(capturedParams, 'myNoRows', 'my-resolve-no-rows'),
+                agNoRowsOverlay: makeOverlayComp(capturedParams, 'my-resolve-no-rows'),
             },
             rowData: [],
             activeOverlay: 'agNoRowsOverlay',
@@ -290,7 +332,7 @@ describe('ag-grid modern overlays state', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                myCustom: makeOverlayComp(capturedParams, 'myCustom', 'my-resolve-custom'),
+                myCustom: makeOverlayComp(capturedParams, 'my-resolve-custom'),
             },
             activeOverlay: 'myCustom',
             loading: false,
@@ -304,7 +346,7 @@ describe('ag-grid modern overlays state', () => {
 
     test('activeOverlay set to a component class uses the custom wrapper class', () => {
         const capturedParams: Record<string, any> = {};
-        const C = makeOverlayComp(capturedParams, 'classCustom', 'my-class-custom');
+        const C = makeOverlayComp(capturedParams, 'my-class-custom');
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -323,8 +365,8 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'agLoadingOverlay', 'my-custom-loading-overlay'),
-                agNoRowsOverlay: makeOverlayComp(capturedParams, 'agNoRowsOverlay', 'my-custom-no-rows-overlay'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-custom-loading-overlay'),
+                agNoRowsOverlay: makeOverlayComp(capturedParams, 'my-custom-no-rows-overlay'),
             },
             loadingOverlayComponentParams: { fromTest: 'loadingSpecific' },
             noRowsOverlayComponentParams: { fromTest: 'noRowsSpecific' },
@@ -333,30 +375,30 @@ describe('ag-grid modern overlays state', () => {
 
         // initial loading overlay should show and receive specific param
         expect(document.querySelector('.my-custom-loading-overlay')).toBeTruthy();
-        expect(capturedParams.agLoadingOverlay).toBeDefined();
-        expect(capturedParams.agLoadingOverlay.fromTest).toBe('loadingSpecific');
+        expect(capturedParams['my-custom-loading-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('loadingSpecific');
 
         // activeOverlayParams should not override overlay-specific params
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam2' });
-        expect(capturedParams.agLoadingOverlay.fromTest).toBe('loadingSpecific');
+        expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('loadingSpecific');
 
         // updating the specific loading params should refresh the component
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'loadingSpecific2' });
-        expect(capturedParams.agLoadingOverlay.fromTest).toBe('loadingSpecific2');
+        expect(capturedParams['my-custom-loading-overlay'].fromTest).toBe('loadingSpecific2');
 
         // trigger no-rows and verify it receives its specific param
         api.setGridOption('rowData', []);
         expect(document.querySelector('.my-custom-no-rows-overlay')).toBeTruthy();
-        expect(capturedParams.agNoRowsOverlay).toBeDefined();
-        expect(capturedParams.agNoRowsOverlay.fromTest).toBe('noRowsSpecific');
+        expect(capturedParams['my-custom-no-rows-overlay']).toBeDefined();
+        expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific');
 
         // activeOverlayParams should not override no-rows specific params
         api.setGridOption('activeOverlayParams', { fromTest: 'activeParam3' });
-        expect(capturedParams.agNoRowsOverlay.fromTest).toBe('noRowsSpecific');
+        expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific');
 
         // updating the specific no-rows params should refresh the component
         api.setGridOption('noRowsOverlayComponentParams', { fromTest: 'noRowsSpecific2' });
-        expect(capturedParams.agNoRowsOverlay.fromTest).toBe('noRowsSpecific2');
+        expect(capturedParams['my-custom-no-rows-overlay'].fromTest).toBe('noRowsSpecific2');
     });
 
     test('loading=true has priority over activeOverlay', () => {
@@ -365,8 +407,8 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'agLoadingOverlay', 'my-priority-loading-overlay'),
-                myActiveOverlay: makeOverlayComp(capturedParams, 'myActiveOverlay', 'my-priority-active-overlay'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-priority-loading-overlay'),
+                myActiveOverlay: makeOverlayComp(capturedParams, 'my-priority-active-overlay'),
             },
             // ensure rows exist so that after clearing `loading` there is no built-in no-rows overlay
             rowData: [{}],
@@ -382,15 +424,15 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.my-priority-active-overlay')).toBeFalsy();
 
         // loading overlay should receive its specific params
-        expect(capturedParams.agLoadingOverlay).toBeDefined();
-        expect(capturedParams.agLoadingOverlay.fromTest).toBe('loadingParam');
+        expect(capturedParams['my-priority-loading-overlay']).toBeDefined();
+        expect(capturedParams['my-priority-loading-overlay'].fromTest).toBe('loadingParam');
 
         // now clear loading and the active overlay should appear
         api.setGridOption('loading', false);
         expect(document.querySelector('.my-priority-loading-overlay')).toBeFalsy();
         expect(document.querySelector('.my-priority-active-overlay')).toBeTruthy();
-        expect(capturedParams.myActiveOverlay).toBeDefined();
-        expect(capturedParams.myActiveOverlay.fromTest).toBe('activeParam');
+        expect(capturedParams['my-priority-active-overlay']).toBeDefined();
+        expect(capturedParams['my-priority-active-overlay'].fromTest).toBe('activeParam');
     });
 
     test('loading/no-rows overlay accepts string keys from components map', () => {
@@ -400,8 +442,8 @@ describe('ag-grid modern overlays state', () => {
             columnDefs,
             // register components under custom keys
             components: {
-                customLoaderKey: makeOverlayComp(capturedParams, 'customLoaderKey', 'my-custom-loader-key'),
-                customNoRowsKey: makeOverlayComp(capturedParams, 'customNoRowsKey', 'my-custom-no-rows-key'),
+                customLoaderKey: makeOverlayComp(capturedParams, 'my-custom-loader-key'),
+                customNoRowsKey: makeOverlayComp(capturedParams, 'my-custom-no-rows-key'),
             },
             // point the overlay options at the string keys
             loadingOverlayComponent: 'customLoaderKey',
@@ -412,14 +454,14 @@ describe('ag-grid modern overlays state', () => {
 
         // loading overlay should be rendered via the component found by string key
         expect(document.querySelector('.my-custom-loader-key')).toBeTruthy();
-        expect(capturedParams.customLoaderKey).toBeDefined();
+        expect(capturedParams['my-custom-loader-key']).toBeDefined();
 
         // clear loading and trigger no-rows by setting empty rows
         api.setGridOption('loading', false);
         api.setGridOption('rowData', []);
 
         expect(document.querySelector('.my-custom-no-rows-key')).toBeTruthy();
-        expect(capturedParams.customNoRowsKey).toBeDefined();
+        expect(capturedParams['my-custom-no-rows-key']).toBeDefined();
     });
 
     test('activeOverlay can be switched between names and classes and unset', async () => {
@@ -427,8 +469,8 @@ describe('ag-grid modern overlays state', () => {
         const capturedParams: Record<string, any> = {};
 
         // create a named component and a class component
-        const NamedComp = makeOverlayComp(capturedParams, 'namedComp', 'my-named-overlay');
-        const ClassComp = makeOverlayComp(capturedParams, 'classComp', 'my-class-overlay');
+        const NamedComp = makeOverlayComp(capturedParams, 'my-named-overlay');
+        const ClassComp = makeOverlayComp(capturedParams, 'my-class-overlay');
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -446,7 +488,7 @@ describe('ag-grid modern overlays state', () => {
         api.setGridOption('activeOverlay', ClassComp);
         expect(document.querySelector('.my-class-overlay')).toBeTruthy();
         expect(hasCustomOverlayWrapper()).toBeTruthy();
-        expect(capturedParams.classComp).toBeDefined();
+        expect(capturedParams['my-class-overlay']).toBeDefined();
 
         // clear
         api.setGridOption('activeOverlay', null);
@@ -458,7 +500,7 @@ describe('ag-grid modern overlays state', () => {
         api.setGridOption('activeOverlay', 'namedComp');
         expect(document.querySelector('.my-named-overlay')).toBeTruthy();
         expect(hasCustomOverlayWrapper()).toBeTruthy();
-        expect(capturedParams.namedComp).toBeDefined();
+        expect(capturedParams['my-named-overlay']).toBeDefined();
 
         // clear
         api.setGridOption('activeOverlay', undefined);
@@ -528,8 +570,8 @@ describe('ag-grid modern overlays state', () => {
     test('activeOverlay accepts a component class and can be swapped live so only the new component is shown', async () => {
         const capturedParams: Record<string, any> = {};
 
-        const First = makeOverlayComp(capturedParams, 'first', 'my-first-active');
-        const Second = makeOverlayComp(capturedParams, 'second', 'my-second-active');
+        const First = makeOverlayComp(capturedParams, 'my-first-active');
+        const Second = makeOverlayComp(capturedParams, 'my-second-active');
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -656,7 +698,7 @@ describe('ag-grid modern overlays state', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             components: {
-                agLoadingOverlay: makeOverlayComp(capturedParams, 'agLoadingOverlay', 'my-refresh-loading'),
+                agLoadingOverlay: makeOverlayComp(capturedParams, 'my-refresh-loading'),
             },
             loadingOverlayComponentParams: { fromTest: 'v1' },
             loading: true,
@@ -665,17 +707,17 @@ describe('ag-grid modern overlays state', () => {
 
         expect(document.querySelector('.my-refresh-loading')).toBeTruthy();
         // initial params applied via init
-        expect(capturedParams.agLoadingOverlay?.fromTest).toBe('v1');
+        expect(capturedParams['my-refresh-loading']?.fromTest).toBe('v1');
 
         // update params and expect refresh to propagate
         api.setGridOption('loadingOverlayComponentParams', { fromTest: 'v2' });
-        expect(capturedParams.agLoadingOverlay?.fromTest).toBe('v2');
+        expect(capturedParams['my-refresh-loading']?.fromTest).toBe('v2');
     });
 
     test('refresh updates params for active overlay when activeOverlayParams change', () => {
         const capturedParams: Record<string, any> = {};
 
-        const NamedComp = makeOverlayComp(capturedParams, 'namedRefresh', 'my-refresh-active');
+        const NamedComp = makeOverlayComp(capturedParams, 'my-refresh-active');
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -690,9 +732,9 @@ describe('ag-grid modern overlays state', () => {
 
         expect(document.querySelector('.my-refresh-active')).toBeTruthy();
         expect(hasCustomOverlayWrapper()).toBeTruthy();
-        expect(capturedParams.namedRefresh?.fromTest).toBe('a1');
+        expect(capturedParams['my-refresh-active']?.fromTest).toBe('a1');
 
         api.setGridOption('activeOverlayParams', { fromTest: 'a2' });
-        expect(capturedParams.namedRefresh?.fromTest).toBe('a2');
+        expect(capturedParams['my-refresh-active']?.fromTest).toBe('a2');
     });
 });
