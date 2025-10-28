@@ -8,7 +8,8 @@
     white-space: normal;
     z-index: 99999;
 
-    &:where(.ag-cell-editor-tooltip) {
+    &:where(.ag-cell-editor-tooltip),
+    &:where(.ag-cell-formula-tooltip) {
         background-color: var(--ag-tooltip-error-background-color);
         color: var(--ag-tooltip-error-text-color);
         border: var(--ag-tooltip-error-border);

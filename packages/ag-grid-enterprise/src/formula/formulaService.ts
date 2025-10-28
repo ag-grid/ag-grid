@@ -102,7 +102,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     private colRefMap: Map<string, AgColumn> = new Map();
 
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
-    // eslint-disable-next-line @typescript-eslint/ban-types
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
 
     private formulasEnabled = false;
@@ -458,8 +457,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             // Seed the stack with the root formula cell.
             // Dependencies will be added to tail, and the last item is picked each pass
             // As items are removed from the tail, items at the head should become resolvable.
-            evalStack.push(this.makeFormulaFrame({ row: node, column }));
             setVisiting(node, column);
+            evalStack.push(this.makeFormulaFrame({ row: node, column }));
 
             while (evalStack.length) {
                 const { address, ast, unresolvedDepIterator } = evalStack[evalStack.length - 1];
