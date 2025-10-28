@@ -6,7 +6,7 @@ import type {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 6.88,
-    AllCommunityModule: 485,
+    AllCommunityModule: 490.26,
     CellApiModule: 0.28,
     CellSpanModule: 8.08,
     CellStyleModule: 2.24,
@@ -68,7 +68,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     IntegratedChartsModule: 400,
     MasterDetailModule: 85.8,
     MenuModule: 165,
-    MultiFilterModule: 145.8,
+    MultiFilterModule: 150.24,
     NewFiltersToolPanelModule: 175.32,
     PivotModule: 99.56,
     RangeSelectionModule: 57.81,
