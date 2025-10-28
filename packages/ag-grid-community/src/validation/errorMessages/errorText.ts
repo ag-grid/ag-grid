@@ -719,6 +719,8 @@ export const AG_GRID_ERRORS = {
         'License Key being set multiple times with different values. This can result in an incorrect license key being used,' as const,
     292: ({ colId }: { colId: string }) =>
         `The Multi Filter for column '${colId}' has buttons configured against the child filters. When 'enableFilterHandlers=true', buttons must instead be provided against the parent Multi Filter params. The child filter buttons will be ignored.` as const,
+    293: () =>
+        'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

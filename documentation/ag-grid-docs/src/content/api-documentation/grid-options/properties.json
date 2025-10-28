@@ -881,6 +881,12 @@
                 "name": "Active Overlay",
                 "url": "./overlays/#custom-overlay"
             }
+        },
+        "suppressNoRowsOverlay": {
+            "more": {
+                "name": "No rows overlay",
+                "url": "./overlays/#no-rows-overlay"
+            }
         }
     },
     "nav": {

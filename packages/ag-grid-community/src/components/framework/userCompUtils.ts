@@ -24,7 +24,6 @@ import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../in
 import type { ILoadingCellRendererComp } from '../../interfaces/iLoadingCellRenderer';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
-// loading/no-rows overlay types are not used in this module
 import type { ITooltipComp, ITooltipParams } from '../../tooltip/tooltipComponent';
 import type { UserComponentFactory } from './userComponentFactory';
 import { _getUserCompKeys } from './userComponentFactory';
