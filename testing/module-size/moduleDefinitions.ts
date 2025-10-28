@@ -50,7 +50,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ValueCacheModule: 0.65,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
-    AdvancedFilterModule: 217.72,
+    AdvancedFilterModule: 222.75,
     AllEnterpriseModule: 1544.68,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,

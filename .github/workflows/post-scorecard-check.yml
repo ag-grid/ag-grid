@@ -1,8 +1,5 @@
 name: OSS Scorecard Results Check
 on:
-  push:
-    branches:
-      - 'post-scorecard-check'
   workflow_dispatch:
   workflow_run:
     workflows: [ 'OSS Scorecard' ]
@@ -15,7 +12,8 @@ env:
   THRESHOLD: 7.5
   REPORT_FILE: ./ctrf-report.json
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   check_results:
@@ -28,6 +26,7 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      # NOTE: This is done outside of the `scorecard` workflow as there are restrictions on `ossf/scorecard-action`
       - name: "Check Results"
         id: check_results
         uses: actions/github-script@v7
@@ -60,8 +59,21 @@ jobs:
 
             await exec();
 
+      - name: Publish CTRF Report
+        uses: ctrf-io/github-test-reporter@v1
+        if: always()
+        with:
+          report-path: '${{ env.REPORT_FILE }}'
+
+      - name: Persist results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: oss-scorecard-results
+            path: ${{ env.REPORT_FILE }}
+
       - name: Slack Notification
-        if: failure() && (github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request')
+        if: success() && steps.check_results.outcome == 'failure'
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: ${{ env.AG_LIBRARY }}
@@ -69,3 +81,10 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           IS_SUCCESS: ${{ steps.check_results.outcome != 'failure' }}
+
+      - name: Fail job if scan failed
+        shell: bash
+        if: success() && steps.check_results.outcome == 'failure'
+        run: |
+            echo "Workflow failed, failing the build."
+            exit 1
