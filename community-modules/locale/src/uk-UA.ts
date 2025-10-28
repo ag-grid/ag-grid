@@ -224,6 +224,8 @@ export const AG_GRID_LOCALE_UA = {
     chooseColumns: 'Виберіть стовпці',
     sortAscending: 'Сортувати за Зростанням',
     sortDescending: 'Сортувати за Спаданням',
+    sortAbsoluteAscending: 'Сортувати за Зростанням Модуля',
+    sortAbsoluteDescending: 'Сортувати за Спаданням Модуля',
     sortUnSort: 'Очистити Сортування',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -606,6 +608,8 @@ export const AG_GRID_LOCALE_UA = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' з ',
     ariaDropZoneColumnComponentSortAscending: 'спадання',
     ariaDropZoneColumnComponentSortDescending: 'зростання',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'спадання модуля',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'зростання модуля',
     ariaLabelDialog: 'Діалог',
     ariaLabelColumnMenu: 'Меню стовпця',
     ariaLabelColumnFilter: 'Фільтр стовпця',

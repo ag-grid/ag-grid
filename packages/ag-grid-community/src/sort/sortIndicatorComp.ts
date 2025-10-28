@@ -79,6 +79,8 @@ export class SortIndicatorComp extends Component {
 
         this.addInIcon('sortAscending', this.eSortAsc, column);
         this.addInIcon('sortDescending', this.eSortDesc, column);
+        this.addInIcon('sortAbsoluteAscending', this.eSortAbsoluteAsc, column);
+        this.addInIcon('sortAbsoluteDescending', this.eSortAbsoluteDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
         const updateIcons = this.updateIcons.bind(this);
