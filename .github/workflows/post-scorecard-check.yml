@@ -10,6 +10,7 @@ env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
   THRESHOLD: 7.5
+  SCORECARD_FILE: ./scorecard.json
   REPORT_FILE: ./ctrf-report.json
 
 permissions:
@@ -34,43 +35,46 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const fs = require('fs');
+            const fs = require("fs");
 
             async function exec() {
-                const {
-                    belowThreshold
-                } = require('./external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs');
-            
-                const result = await belowThreshold(
-                    process.env.AG_LIBRARY,
-                    process.env.THRESHOLD
-                );
-            
-                const passed = !result;
-                const failed = result;
-                const skipped = 0;
+              const {
+                getOSSFScorecardResults,
+              } = require("./external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs");
 
-                const report = { results: { summary: { failed, passed, skipped } } };
-                fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
-                
-                // Exit with a numeric code to signal step success/failure to GitHub Actions
-                process.exit(result ? 1 : 0);
+              const project = process.env.AG_LIBRARY;
+              const threshold = process.env.THRESHOLD;
+
+              const { response, resport, hasPassed } = await getOSSFScorecardResults({ project, threshold });
+
+              fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
+              fs.writeFileSync("${{ env.SCORECARD_FILE }}", response);
+
+              // Exit with a numeric code to signal step success/failure to GitHub Actions
+              process.exit(hasPassed ? 0 : 1);
             }
 
             await exec();
+
+      - name: Persist scorecard report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: oss-scorecard-results
+            path: ${{ env.REPORT_FILE }}
+
+      - name: Persist scorecard response
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: oss-scorecard-response
+            path: ${{ env.SCORECARD_FILE }}
 
       - name: Publish CTRF Report
         uses: ctrf-io/github-test-reporter@v1
         if: always()
         with:
           report-path: '${{ env.REPORT_FILE }}'
-
-      - name: Persist results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-            name: oss-scorecard-results
-            path: ${{ env.REPORT_FILE }}
 
       - name: Slack Notification
         if: success() && steps.check_results.outcome == 'failure'
