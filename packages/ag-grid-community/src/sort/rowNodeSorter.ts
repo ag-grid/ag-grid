@@ -151,5 +151,5 @@ function absoluteValueTransformer(value: any): number | null {
         return null;
     }
     const numberValue = Number(value);
-    return isNaN(numberValue) ? null : Math.abs(numberValue);
+    return isNaN(numberValue) ? value : Math.abs(numberValue);
 }
