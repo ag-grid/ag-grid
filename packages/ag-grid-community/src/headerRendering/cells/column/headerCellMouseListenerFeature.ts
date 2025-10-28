@@ -16,10 +16,12 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
         this.addManagedElementListeners(this.eGui, {
             click: (e) => e && this.onClick(e),
         });
-    }
 
-    public onMovingChanged(): void {
-        this.lastMovingChanged = Date.now();
+        this.addManagedListeners(this.column, {
+            movingChanged: () => {
+                this.lastMovingChanged = Date.now();
+            },
+        });
     }
 
     public onClick(event: MouseEvent): void {
