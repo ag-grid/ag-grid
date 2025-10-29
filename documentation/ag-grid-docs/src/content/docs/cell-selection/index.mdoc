@@ -57,6 +57,25 @@ The following example demonstrates single range cell selection:
 
 {% gridExampleRunner title="Cell Range Selection Suppress Multi" name="range-selection-suppress-multi" /%}
 
+## Selecting Cells via Column Headers
+Users can select all visible cells in a column by holding {% kbd "^ Ctrl" /%} and clicking a column header. 
+Cells that have been selected in this manner may be de-selected by again holding {% kbd "^ Ctrl" /%} and clicking the column header.
+Users can extend the range of a column selection by holding {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} and then clicking on another column header.
+
+This functionality is enabled by setting the `cellSelection.headerCellSelection` option to `true`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    cellSelection: {
+        headerCellSelection: true,
+    }
+}
+```
+
+This is illustrated in the example below.
+
+{% gridExampleRunner title="Cell Selection via Column Headers" name="column-header-cell-selection" /%}
+
 ## Ranges with Pinned Columns and Rows
 
 It is possible to select a cell range that spans pinned and non-pinned sections of the grid. If you do this, the selected range will not have any gaps with regards to the column or row order. 
