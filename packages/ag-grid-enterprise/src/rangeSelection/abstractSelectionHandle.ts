@@ -43,7 +43,7 @@ export abstract class AbstractSelectionHandle extends Component {
 
                 this.updateValuesOnMove(e);
 
-                (this.beans.rangeSvc as RangeService).autoScrollService.check(e as MouseEvent);
+                (this.beans.rangeSvc as RangeService).autoScrollService.check(e);
 
                 if (this.changedCalculatedValues) {
                     this.onDrag(e);
