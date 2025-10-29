@@ -39,7 +39,8 @@ export abstract class AbstractSelectionHandle extends Component {
             onDragging: (e) => {
                 if (!this.dragging) {
                     this.dragging = true;
-                    document.body.classList.add(this.getDraggingCssClass());
+                    const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
+                    pageBody.classList?.add(this.getDraggingCssClass());
                 }
 
                 this.updateValuesOnMove(e);
