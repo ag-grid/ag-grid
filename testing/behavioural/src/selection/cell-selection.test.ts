@@ -191,8 +191,7 @@ describe('Cell Selection', () => {
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(amountHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Shift}');
-            await userSession.keyboard('{/Control}');
+            await userSession.keyboard('{/Shift}{/Control}');
 
             assertColumnsSelected([['sport', 'year', 'amount']], api);
         });
@@ -456,8 +455,7 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{Shift>}');
             await userSession.click(yearHeader.querySelector('.ag-header-cell-label')!);
 
-            await userSession.keyboard('{/Shift}');
-            await userSession.keyboard('{/Control}');
+            await userSession.keyboard('{/Shift}{/Control}');
 
             assertColumnsSelected([['sport', 'year']], api);
         });
@@ -485,8 +483,7 @@ describe('Cell Selection', () => {
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Shift}');
-            await userSession.keyboard('{/Control}');
+            await userSession.keyboard('{/Shift}{/Control}');
 
             assertColumnsSelected([['sport', 'amount', 'day']], api);
         });
