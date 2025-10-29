@@ -5,8 +5,8 @@ import { _exists } from '../../../agStack/utils/generic';
 import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { BeanCollection } from '../../../context/context';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import { _getHeaderCellSelection } from '../../../gridOptionsUtils';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { ElementParams } from '../../../utils/element';
@@ -148,7 +148,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             agOpened,
             agClosed,
             params: { columnGroup },
-            beans,
+            beans: { colGroupSvc },
         } = this;
         this.addInIcon('columnGroupOpened', agOpened);
         this.addInIcon('columnGroupClosed', agClosed);
@@ -159,15 +159,15 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !columnGroup.isExpanded();
-            beans.colGroupSvc!.setColumnGroupOpened(
+            colGroupSvc!.setColumnGroupOpened(
                 (columnGroup as AgColumnGroup).getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );
         };
 
-        this.addTouchAndClickListeners(beans, agClosed, expandAction);
-        this.addTouchAndClickListeners(beans, agOpened, expandAction);
+        this.addTouchAndClickListeners(agClosed, expandAction);
+        this.addTouchAndClickListeners(agOpened, expandAction);
 
         const stopPropagationAction = (event: MouseEvent) => {
             _stopPropagationForAgGrid(event);
@@ -193,12 +193,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         });
     }
 
-    private addTouchAndClickListeners(
-        beans: BeanCollection,
-        eElement: HTMLElement,
-        action: (event: MouseEvent) => void
-    ): void {
-        beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
+    private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
+        this.beans.touchSvc?.setupForHeaderGroupElement(this, eElement, action);
         this.addManagedElementListeners(eElement, { click: action });
     }
 
@@ -244,6 +240,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         }
 
         this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
+        this.toggleCss('ag-header-group-cell-selectable', _getHeaderCellSelection(this.gos));
 
         this.mouseListener ??= this.createManagedBean(
             new HeaderGroupCellMouseListenerFeature(params.columnGroup as AgColumnGroup, this.getGui())
