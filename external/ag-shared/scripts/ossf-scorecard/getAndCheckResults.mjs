@@ -27,17 +27,22 @@ export async function getOSSFScorecardResults({ project, threshold }) {
     const resultsUrl = `https://scorecard.dev/viewer/?uri=github.com/ag-grid/ag-${project}`;
 
     const report = {
+        reportFormat: 'ctrf',
+        specVersion: '0.0.0',
         results: {
-            summary,
-        },
-        tests: [
-            {
-                name: `OpenSSF Score >= ${threshold}`,
-                message: `Score = ${score}, from ${scorecardJsonUrl}. See ${resultsUrl} for full details.`,
-                status,
-                duration: 0,
+            tool: {
+                name: 'OpenSSF Scorecard',
             },
-        ],
+            summary,
+            tests: [
+                {
+                    name: `OpenSSF Score >= ${threshold}`,
+                    message: `Score = ${score}, from ${scorecardJsonUrl}. See ${resultsUrl} for full details.`,
+                    status,
+                    duration: 0,
+                },
+            ],
+        },
     };
 
     return {
