@@ -92,7 +92,7 @@ export interface CellRangeParams {
     /** End column for range */
     columnEnd?: string | Column;
     /** Specify Columns to include instead of using `columnStart` and `columnEnd` */
-    columns?: readonly (string | Column)[];
+    columns?: (string | Column)[];
 }
 
 export interface CellRangeBoundaryParams {
