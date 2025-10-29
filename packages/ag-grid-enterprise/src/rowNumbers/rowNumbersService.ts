@@ -396,7 +396,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         const shouldHighlight = typeof cellSelection === 'object' && cellSelection.enableHeaderHighlight;
 
         for (const range of ranges) {
-            if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
+            if (rangeSvc.isRowInRange({ rowIndex: node.rowIndex!, rowPinned: node.rowPinned }, range)) {
                 if (shouldHighlight) {
                     cssClasses.push('ag-row-number-range-highlight');
                 }

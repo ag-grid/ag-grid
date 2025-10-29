@@ -862,7 +862,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
         const columnInRange = range.columns?.includes(cell.column);
-        const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
+        const rowInRange = this.isRowInRange(cell, range);
 
         return columnInRange && rowInRange;
     }
@@ -885,11 +885,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return this.cellRanges.filter((cellRange) => this.isCellInSpecificRange(cell, cellRange)).length;
     }
 
-    public isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean {
+    public isRowInRange(thisRow: RowPosition, cellRange: CellRange): boolean {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
-        // TODO: This covers up a type error. `rowIndex: number` is wrong -- it could be `null`.
-        const thisRow: RowPosition = { rowIndex, rowPinned: rowPinned || null };
 
         // compare rowPinned with == instead of === because it can be `null` or `undefined`
         const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
