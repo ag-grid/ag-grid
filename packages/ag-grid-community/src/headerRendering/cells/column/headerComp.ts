@@ -374,11 +374,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public override destroy(): void {
         super.destroy();
 
-        if (this.innerHeaderComponent) {
-            this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
-        }
-        if (this.mouseListener) {
-            this.mouseListener = this.destroyBean(this.mouseListener);
-        }
+        this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
+        this.mouseListener = this.destroyBean(this.mouseListener);
     }
 }
