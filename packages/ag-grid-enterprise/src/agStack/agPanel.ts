@@ -1,9 +1,17 @@
-import type { AgColumn, ElementParams, IRowNode, PositionableOptions, ResizableStructure } from 'ag-grid-community';
+import type {
+    PositionableOptions,
+    ResizableStructure,
+    _AgComponent,
+    _AgCoreBeanCollection,
+    _AgElementParams,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
+} from 'ag-grid-community';
 import {
-    Component,
-    PositionableFeature,
     RefPlaceholder,
-    _createIconNoSpan,
+    _AgComponentStub,
+    _AgPositionableFeature,
     _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,
@@ -13,25 +21,30 @@ import {
 
 import { agPanelCSS } from './agPanel.css-GENERATED';
 
-interface PanelPostProcessPopupParams {
+export interface AgPanelPostProcessPopupParams {
     type: string;
     eventSource?: HTMLElement | null;
     mouseEvent?: MouseEvent | Touch | null;
-    column?: AgColumn | null;
-    rowNode?: IRowNode | null;
 }
 
-export interface PanelOptions extends PositionableOptions {
-    component?: Component<any>;
+export interface AgPanelOptions<
+    TBeanCollection,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TPanelPostProcessPopupParams extends AgPanelPostProcessPopupParams = AgPanelPostProcessPopupParams,
+> extends PositionableOptions {
+    component?: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>;
     hideTitleBar?: boolean | null;
     closable?: boolean | null;
     resizable?: boolean | ResizableStructure;
     title?: string | null;
     cssIdentifier?: string | null;
-    postProcessPopupParams?: PanelPostProcessPopupParams;
+    postProcessPopupParams?: TPanelPostProcessPopupParams;
 }
-function getTemplate(config: PanelOptions): ElementParams {
-    const cssIdentifier = config.cssIdentifier || 'default';
+function getTemplate<TComponentSelectorType extends string>(
+    cssIdentifier?: string | null
+): _AgElementParams<TComponentSelectorType> {
+    cssIdentifier ??= cssIdentifier || 'default';
     return {
         tag: 'div',
         cls: `ag-panel ag-${cssIdentifier}-panel`,
@@ -63,11 +76,37 @@ function getTemplate(config: PanelOptions): ElementParams {
     };
 }
 
-export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
+export class AgPanel<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+    TConfig extends AgPanelOptions<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        AgPanelPostProcessPopupParams
+    > = AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
+> extends _AgComponentStub<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType
+> {
     protected closable = true;
 
-    protected closeButtonComp: Component | undefined;
-    protected positionableFeature: PositionableFeature;
+    protected closeButtonComp: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined;
+    protected positionableFeature: _AgPositionableFeature<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >;
     public close: () => void;
 
     protected readonly eContentWrapper: HTMLElement = RefPlaceholder;
@@ -76,7 +115,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
     protected readonly eTitle: HTMLElement = RefPlaceholder;
 
     constructor(protected readonly config: TConfig) {
-        super(getTemplate(config));
+        super(getTemplate(config.cssIdentifier));
         this.registerCSS(agPanelCSS);
     }
 
@@ -99,17 +138,20 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         const beans = this.beans;
 
         const positionableFeature = this.createManagedBean(
-            new PositionableFeature(this.getGui(), {
-                minWidth,
-                width,
-                minHeight,
-                height,
-                centered,
-                x,
-                y,
-                popup,
-                calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight(),
-            })
+            new _AgPositionableFeature<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>(
+                this.getGui(),
+                {
+                    minWidth,
+                    width,
+                    minHeight,
+                    height,
+                    centered,
+                    x,
+                    y,
+                    popup,
+                    calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight(),
+                }
+            )
         );
         this.positionableFeature = positionableFeature;
 
@@ -199,11 +241,11 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new Component({ tag: 'div', cls: 'ag-button' }));
+            const closeButtonComp = (this.closeButtonComp = new _AgComponentStub({ tag: 'div', cls: 'ag-button' }));
             this.createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            const child = _createIconNoSpan('close', this.beans)!;
+            const child = this.beans.iconSvc.createIconNoSpan('close', this.beans)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
 
@@ -217,12 +259,15 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
     }
 
-    public setBodyComponent(bodyComponent: Component<any>) {
+    public setBodyComponent(bodyComponent: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>) {
         bodyComponent.setParentComponent(this);
         this.eContentWrapper.appendChild(bodyComponent.getGui());
     }
 
-    public addTitleBarButton(button: Component, position?: number) {
+    public addTitleBarButton(
+        button: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
+        position?: number
+    ) {
         const eTitleBarButtons = this.eTitleBarButtons;
         const buttons = eTitleBarButtons.children;
         const len = buttons.length;

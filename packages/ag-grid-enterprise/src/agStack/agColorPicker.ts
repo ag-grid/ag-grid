@@ -1,46 +1,54 @@
 import type {
-    AgComponentSelectorType,
-    AgEventTypeParams,
-    AgGridCommon,
     AgPickerFieldParams,
-    BeanCollection,
-    ComponentSelector,
-    GridOptionsService,
-    GridOptionsWithDefaults,
+    _AgComponentSelector,
+    _AgCoreBeanCollection,
+    _AgWidgetSelectorType,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
 } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
 
-import { AgDialog } from '../../widgets/agDialog';
-import type { AgChartsExports } from '../agChartsExports';
 import { AgColorPanel } from './agColorPanel';
+import type { AgDialogCallbacks } from './agDialog';
+import { AgDialog } from './agDialog';
+import type { IAgChartsExports } from './iAgChartsExports';
 
-export interface AgColorPickerParams
+export interface AgColorPickerParams<TComponentSelectorType extends string>
     extends Omit<
-        AgPickerFieldParams<AgComponentSelectorType>,
+        AgPickerFieldParams<TComponentSelectorType>,
         'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'
     > {
     pickerType?: string;
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;
+    dialogCallbacks?: AgDialogCallbacks<any, any>;
 }
 
-export class AgColorPicker extends AgPickerField<
-    BeanCollection,
-    GridOptionsWithDefaults,
-    AgEventTypeParams,
-    AgGridCommon<any, any>,
-    GridOptionsService,
-    AgComponentSelectorType,
+export class AgColorPicker<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+> extends AgPickerField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     string,
-    AgColorPickerParams & AgPickerFieldParams<AgComponentSelectorType>,
+    AgColorPickerParams<TComponentSelectorType> & AgPickerFieldParams<TComponentSelectorType>,
     string,
-    AgDialog
+    AgDialog<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService, TComponentSelectorType>
 > {
     private isDestroyingPicker: boolean;
     private eDisplayFieldColor: HTMLElement;
     private eDisplayFieldText: HTMLElement;
 
-    constructor(config?: AgColorPickerParams) {
+    constructor(config?: AgColorPickerParams<TComponentSelectorType>) {
         super({
             pickerAriaLabelKey: 'ariaLabelColorPicker',
             pickerAriaLabelValue: 'Color Picker',
@@ -75,20 +83,30 @@ export class AgColorPicker extends AgPickerField<
         const parentRect = this.beans.popupSvc!.getParentRect();
 
         const colorDialog = this.createBean(
-            new AgDialog({
-                closable: false,
-                modal: true,
-                hideTitleBar: true,
-                minWidth: 190,
-                width: 190,
-                height: 250,
-                x: eGuiRect.right - parentRect.left - 190,
-                y: eGuiRect.top - parentRect.top - 250 - (this.config.pickerGap ?? 0),
-                postProcessPopupParams: {
-                    type: 'colorPicker',
-                    eventSource: this.eWrapper,
+            new AgDialog<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType
+            >(
+                {
+                    closable: false,
+                    modal: true,
+                    hideTitleBar: true,
+                    minWidth: 190,
+                    width: 190,
+                    height: 250,
+                    x: eGuiRect.right - parentRect.left - 190,
+                    y: eGuiRect.top - parentRect.top - 250 - (this.config.pickerGap ?? 0),
+                    postProcessPopupParams: {
+                        type: 'colorPicker',
+                        eventSource: this.eWrapper,
+                    },
                 },
-            })
+                this.config.dialogCallbacks
+            )
         );
 
         return colorDialog;
@@ -96,7 +114,16 @@ export class AgColorPicker extends AgPickerField<
 
     protected override renderAndPositionPicker(): () => void {
         const pickerComponent = this.pickerComponent!;
-        const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
+        const colorPanel = this.createBean(
+            new AgColorPanel<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType
+            >({ picker: this })
+        );
 
         pickerComponent.addCss('ag-color-dialog');
 
@@ -139,7 +166,7 @@ export class AgColorPicker extends AgPickerField<
         }
 
         this.eDisplayFieldColor.style.backgroundColor = color;
-        this.eDisplayFieldText.textContent = (this.beans.agChartsExports as AgChartsExports)._Util.Color.fromString(
+        this.eDisplayFieldText.textContent = (this.beans.agChartsExports as IAgChartsExports)._Util.Color.fromString(
             color
         )
             .toHexString()
@@ -153,7 +180,7 @@ export class AgColorPicker extends AgPickerField<
     }
 }
 
-export const AgColorPickerSelector: ComponentSelector = {
+export const AgColorPickerSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-COLOR-PICKER',
     component: AgColorPicker,
 };

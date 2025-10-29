@@ -3,7 +3,7 @@ import { AgCheckboxSelector, Component } from 'ag-grid-community';
 
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -50,7 +50,7 @@ export class CrosshairPanel extends Component {
                 <ag-color-picker data-ref="crosshairStrokeColorPicker"></ag-color-picker>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgCheckboxSelector, AgColorPickerSelector],
+            [AgGroupComponentSelector, AgCheckboxSelector, ColorPickerSelector],
             {
                 crosshairGroup: crosshairGroupParams,
                 crosshairLabelCheckbox: crosshairLabelCheckboxParams,

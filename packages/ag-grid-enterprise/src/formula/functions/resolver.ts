@@ -16,7 +16,7 @@ function isRangeCell(cell: Cell): boolean {
 // Reference resolution (A1 abs vs id rel)
 type CellAddress = { row: RowNode; column: AgColumn };
 
-/** Resolve a Cell to concrete grid objects, honoring absolute vs relative semantics. */
+/** Resolve a Cell to concrete grid objects, honouring absolute vs relative semantics. */
 function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
     const { row, column } = cell;
 

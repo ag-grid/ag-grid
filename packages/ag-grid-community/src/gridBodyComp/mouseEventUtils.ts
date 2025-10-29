@@ -6,7 +6,7 @@ import { _getCellCtrlForEventTarget } from '../rendering/renderUtils';
 
 export function _getCellPositionForEvent(
     gos: GridOptionsService,
-    event: MouseEvent | KeyboardEvent
+    event: MouseEvent | KeyboardEvent | Touch
 ): CellPosition | null {
     return _getCellCtrlForEventTarget(gos, event.target)?.getFocusedCellPosition() ?? null;
 }

@@ -1,11 +1,11 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import type { AgSliderParams } from '../../../../../agStack/agSlider';
+import { AgSliderSelector } from '../../../../../agStack/agSlider';
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../widgets/agSlider';
-import { AgSliderSelector } from '../../../../widgets/agSlider';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -46,7 +46,7 @@ export class ShadowPanel extends Component {
                 <ag-slider data-ref="shadowYOffsetSlider"></ag-slider>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            [AgGroupComponentSelector, ColorPickerSelector, AgSliderSelector],
             {
                 shadowGroup: shadowGroupParams,
                 shadowColorPicker: shadowColorPickerParams,

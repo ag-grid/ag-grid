@@ -1,9 +1,10 @@
 import type { BeanCollection, GridSelect } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
+import { AgSlider } from '../../../../../agStack/agSlider';
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgSlider } from '../../../../widgets/agSlider';
+import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartController } from '../../../chartController';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuContext } from '../../chartMenuContext';
@@ -100,7 +101,7 @@ export class LegendPanel extends Component {
     }
 
     private getItems(chartMenuParamsFactory: ChartMenuParamsFactory): Component<any>[] {
-        const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number) =>
+        const createSlider = (expression: string, labelKey: ChartTranslationKey, defaultMaxValue: number): GridSlider =>
             this.createManagedBean(
                 new AgSlider(
                     chartMenuParamsFactory.getDefaultSliderParams(

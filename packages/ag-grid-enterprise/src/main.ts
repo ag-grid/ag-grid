@@ -6,6 +6,51 @@ export type { MultiFilter } from './multiFilter/multiFilter';
 
 export type { SetFilter } from './setFilter/setFilter';
 
+// AG Stack
+export { AgVirtualList as _AgVirtualList, VirtualListParams as _VirtualListParams } from './agStack/agVirtualList';
+export { AgVirtualListDragFeature as _AgVirtualListDragFeature } from './agStack/agVirtualListDragFeature';
+export { VirtualListModel as _VirtualListModel } from './agStack/iVirtualList';
+export {
+    VirtualListDragItem as _VirtualListDragItem,
+    AgVirtualListDragParams as _AgVirtualListDragParams,
+} from './agStack/iVirtualListDragFeature';
+export {
+    AgSlider as _AgSlider,
+    AgSliderParams as _AgSliderParams,
+    AgSliderSelector as _AgSliderSelector,
+} from './agStack/agSlider';
+export {
+    AgInputRange as _AgInputRange,
+    AgInputRangeSelector as _AgInputRangeSelector,
+    AgInputRangeParams as _AgInputRangeParams,
+} from './agStack/agInputRange';
+export {
+    AgColorPicker as _AgColorPicker,
+    AgColorPickerParams as _AgColorPickerParams,
+    AgColorPickerSelector as _AgColorPickerSelector,
+} from './agStack/agColorPicker';
+export { AgDialog as _AgDialog, AgDialogOptions as _AgDialogOptions } from './agStack/agDialog';
+export {
+    AgPanel as _AgPanel,
+    AgPanelOptions as _AgPanelOptions,
+    AgPanelPostProcessPopupParams as _AgPanelPostProcessPopupParams,
+} from './agStack/agPanel';
+export { IAgChartsExports as _IAgChartsExports } from './agStack/iAgChartsExports';
+export { AgMenuList as _AgMenuList } from './agStack/agMenuList';
+export {
+    AgMenuItemCallbacks as _AgMenuItemCallbacks,
+    AgCloseMenuEvent as _AgCloseMenuEvent,
+    AgMenuItemActivatedEvent as _AgMenuItemActivatedEvent,
+    AgMenuItemComponent as _AgMenuItemComponent,
+    AgMenuItemLeafDef as _AgMenuItemLeafDef,
+    AgMenuItemDef as _AgMenuItemDef,
+} from './agStack/agMenuItemComponent';
+export {
+    AgContextMenuService as _AgContextMenuService,
+    AgContextMenuServiceParams as _AgContextMenuServiceParams,
+} from './agStack/agContextMenuService';
+export { AgMenuItemRenderer as _AgMenuItemRenderer } from './agStack/agMenuItemRenderer';
+
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 export { AiToolkitModule } from './aiToolkit/aiToolkitModule';
 export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';

@@ -1,10 +1,11 @@
 import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
+import { AgSlider, AgSliderSelector } from '../../../../../agStack/agSlider';
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import { AgSlider, AgSliderSelector } from '../../../../widgets/agSlider';
+import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
 import type { FontPanelParams } from '../fontPanel';
@@ -45,7 +46,7 @@ export class PolarAxisPanel extends Component {
                 <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            [AgGroupComponentSelector, ColorPickerSelector, AgSliderSelector],
             {
                 axisGroup: axisGroupParams,
                 axisColorInput: axisColorInputParams,
@@ -159,7 +160,7 @@ export class PolarAxisPanel extends Component {
         defaultMaxValue: number;
         step?: number;
         property: string;
-    }): AgSlider {
+    }): GridSlider {
         const { labelKey, defaultMaxValue, step = 0.05, property } = config;
         const params = this.options.chartAxisMenuParamsFactory.getDefaultSliderParams(
             property,

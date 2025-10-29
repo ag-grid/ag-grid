@@ -1,4 +1,4 @@
-import { AutoScrollService } from '../autoScrollService';
+import { AutoScrollService } from '../agStack/rendering/autoScrollService';
 import type { BeanCollection } from '../context/context';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { IRowNode } from '../interfaces/iRowNode';

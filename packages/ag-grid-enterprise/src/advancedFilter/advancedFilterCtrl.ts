@@ -1,7 +1,7 @@
 import type { BeanCollection, CtrlsService, Environment, IAdvancedFilterCtrl, PopupService } from 'ag-grid-community';
 import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from 'ag-grid-community';
 
-import { AgDialog } from '../widgets/agDialog';
+import { Dialog } from '../widgets/dialog';
 import { AdvancedFilterComp } from './advancedFilterComp';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
@@ -25,7 +25,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     private eFilterComp: AdvancedFilterComp | undefined;
     private hasAdvancedFilterParent: boolean;
     private eBuilderComp: AdvancedFilterBuilderComp | undefined;
-    private eBuilderDialog: AgDialog | undefined;
+    private eBuilderDialog: Dialog | undefined;
     private builderDestroySource?: 'api' | 'ui';
 
     constructor(private enabled: boolean) {
@@ -118,7 +118,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(
-            new AgDialog({
+            new Dialog({
                 title: this.advFilterExpSvc.translate('advancedFilterBuilderTitle'),
                 component: this.eBuilderComp,
                 width,

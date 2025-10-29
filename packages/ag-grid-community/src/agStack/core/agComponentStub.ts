@@ -10,6 +10,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { CssClassManager } from '../rendering/cssClassManager';
 import type { AgElementParams } from '../utils/dom';
 import {
     DataRefAttribute,
@@ -20,11 +21,10 @@ import {
     _setVisible,
 } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
-import { CssClassManager } from './cssClassManager';
 
 let compIdSequence = 0;
 
-export abstract class AgComponentStub<
+export class AgComponentStub<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
@@ -232,8 +232,8 @@ export abstract class AgComponentStub<
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
 
-    protected activateTabIndex(elements?: Element[]): void {
-        const tabIndex = this.gos.get('tabIndex')!;
+    protected activateTabIndex(elements?: Element[], overrideTabIndex?: number): void {
+        const tabIndex = overrideTabIndex ?? this.gos.get('tabIndex')!;
 
         if (!elements) {
             elements = [];

@@ -1,17 +1,24 @@
-import type { BeanCollection, FocusableContainer, PopupService, ResizableStructure } from 'ag-grid-community';
-import {
-    Component,
-    TabGuardFeature,
-    _createIconNoSpan,
-    _findNextFocusableElement,
-    _focusNextGridCoreContainer,
-    _setDisplayed,
+import type {
+    ResizableStructure,
+    _AgComponent,
+    _AgCoreBeanCollection,
+    _BaseEvents,
+    _BaseProperties,
+    _IPopupService,
+    _IPropertiesService,
+    _StopPropagationCallbacks,
 } from 'ag-grid-community';
+import { _AgComponentStub, _AgTabGuardFeature, _findNextFocusableElement, _setDisplayed } from 'ag-grid-community';
 
-import type { PanelOptions } from './agPanel';
+import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
 
-interface DialogOptions extends PanelOptions {
+export interface AgDialogOptions<
+    TBeanCollection,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TPanelPostProcessPopupParams extends AgPanelPostProcessPopupParams = AgPanelPostProcessPopupParams,
+> extends AgPanelOptions<TBeanCollection, TProperties, TGlobalEvents, TPanelPostProcessPopupParams> {
     eWrapper?: HTMLElement;
     modal?: boolean;
     movable?: boolean;
@@ -21,18 +28,53 @@ interface DialogOptions extends PanelOptions {
     closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
-export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
-    private popupSvc?: PopupService;
+export interface AgDialogCallbacks<TBeanCollection, TDialog> {
+    stopPropagationCallbacks: _StopPropagationCallbacks;
 
-    public wireBeans(beans: BeanCollection) {
+    focusNextContainer(beans: TBeanCollection, backwards: boolean): boolean;
+
+    configureFocusableContainer(beans: TBeanCollection, dialog: TDialog): void;
+}
+
+export class AgDialog<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+    TDialogOptions extends AgDialogOptions<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        AgPanelPostProcessPopupParams
+    > = AgDialogOptions<TBeanCollection, TProperties, TGlobalEvents, AgPanelPostProcessPopupParams>,
+> extends AgPanel<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    TDialogOptions
+> {
+    private popupSvc?: _IPopupService<any>;
+
+    public wireBeans(beans: TBeanCollection) {
         this.popupSvc = beans.popupSvc;
     }
 
-    private tabGuardFeature: TabGuardFeature;
+    private tabGuardFeature: _AgTabGuardFeature<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService
+    >;
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;
     private readonly maximizeListeners: (() => void)[] = [];
-    private maximizeButtonComp: Component | undefined;
+    private maximizeButtonComp: _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | undefined;
     private maximizeIcon: Element | undefined;
     private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
@@ -44,7 +86,21 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         height: 0,
     };
 
-    constructor(config: DialogOptions) {
+    constructor(
+        config: TDialogOptions,
+        private readonly callbacks?: AgDialogCallbacks<
+            TBeanCollection,
+            AgDialog<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType,
+                TDialogOptions
+            >
+        >
+    ) {
         super({ ...config, popup: true });
     }
 
@@ -56,7 +112,9 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
 
         super.postConstruct();
 
-        this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
+        this.tabGuardFeature = this.createManagedBean(
+            new _AgTabGuardFeature(this, this.callbacks?.stopPropagationCallbacks)
+        );
         this.tabGuardFeature.initialiseTabGuard({
             isFocusableContainer: true,
             onFocusIn: () => {
@@ -69,7 +127,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
                 const backwards = e.shiftKey;
                 const nextFocusableElement = _findNextFocusableElement(this.beans, eGui, false, backwards);
                 if (!nextFocusableElement || this.tabGuardFeature.getTabGuardCtrl().isTabGuard(nextFocusableElement)) {
-                    if (_focusNextGridCoreContainer(this.beans, backwards)) {
+                    if (this.callbacks?.focusNextContainer(this.beans, backwards)) {
                         e.preventDefault();
                     }
                 }
@@ -87,9 +145,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         }
 
         if (!this.config.modal) {
-            const gridCtrl = this.beans.ctrlsSvc.get('gridCtrl');
-            gridCtrl.addFocusableContainer(this);
-            this.addDestroyFunc(() => gridCtrl.removeFocusableContainer(this));
+            this.callbacks?.configureFocusableContainer(this.beans, this);
         }
     }
 
@@ -225,18 +281,19 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         });
     }
 
-    private buildMaximizeAndMinimizeElements(): Component {
-        const maximizeButtonComp = (this.maximizeButtonComp = this.createBean(
-            new Component({ tag: 'div', cls: 'ag-dialog-button' })
-        ));
+    private buildMaximizeAndMinimizeElements(): _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> {
+        const maximizeButtonComp = (this.maximizeButtonComp = this.createBean<
+            _AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>
+        >(new _AgComponentStub({ tag: 'div', cls: 'ag-dialog-button' })));
 
         const eGui = maximizeButtonComp.getGui();
 
-        this.maximizeIcon = _createIconNoSpan('maximize', this.beans)!;
+        const iconSvc = this.beans.iconSvc;
+        this.maximizeIcon = iconSvc.createIconNoSpan('maximize')!;
         eGui.appendChild(this.maximizeIcon);
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
-        this.minimizeIcon = _createIconNoSpan('minimize', this.beans)!;
+        this.minimizeIcon = iconSvc.createIconNoSpan('minimize')!;
         eGui.appendChild(this.minimizeIcon);
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
 

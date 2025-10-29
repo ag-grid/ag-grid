@@ -18,7 +18,7 @@ import {
     _isNothingFocused,
 } from 'ag-grid-community';
 
-import { AgMenuList } from '../../../widgets/agMenuList';
+import { MenuList } from '../../../widgets/menuList';
 import type { ChartController } from '../chartController';
 import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
@@ -226,7 +226,7 @@ class ChartMenuList extends Component {
     private readonly eChartsMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: () => void;
-    private mainMenuList: AgMenuList;
+    private mainMenuList: MenuList;
 
     constructor(private readonly menuItems: MenuItemDef[]) {
         super(/* html */ `
@@ -235,7 +235,7 @@ class ChartMenuList extends Component {
     }
 
     public postConstruct(): void {
-        this.mainMenuList = this.createManagedBean(new AgMenuList(0));
+        this.mainMenuList = this.createManagedBean(new MenuList(0));
         this.mainMenuList.addMenuItems(this.menuItems);
         this.mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));
         this.eChartsMenu.appendChild(this.mainMenuList.getGui());

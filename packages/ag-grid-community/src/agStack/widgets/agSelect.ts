@@ -238,6 +238,13 @@ export class AgSelect<
         return this;
     }
 
+    public updateOptions(options: ListOption<TValue>[]): this {
+        if (this.listComponent?.updateOptions(options)) {
+            this.setValue(undefined, true);
+        }
+        return this;
+    }
+
     public override setValue(value?: TValue, silent?: boolean, fromPicker?: boolean): this {
         const {
             listComponent,

@@ -1,6 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged } from '../events';
+import type { StylesChangedEvent } from '../events';
 import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
@@ -28,7 +28,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.setPinnedRowData(gos.get('pinnedBottomRowData'), 'bottom');
         this.addManagedPropertyListener('pinnedTopRowData', (e) => this.setPinnedRowData(e.currentValue, 'top'));
         this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.setPinnedRowData(e.currentValue, 'bottom'));
-        this.addManagedEventListeners({ gridStylesChanged: this.onGridStylesChanges.bind(this) });
+        this.addManagedEventListeners({ stylesChanged: this.onGridStylesChanges.bind(this) });
     }
 
     public reset(): void {
@@ -51,7 +51,7 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // Not implemented for static pinned row model
     }
 
-    private onGridStylesChanges(e: CssVariablesChanged) {
+    private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged) {
             const estimateRowHeight = (rowNode: RowNode) => {
                 rowNode.setRowHeight(rowNode.rowHeight, true);

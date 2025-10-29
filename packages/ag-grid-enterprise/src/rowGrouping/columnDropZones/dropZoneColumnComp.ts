@@ -299,7 +299,9 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             eventSource: eGui,
             ePopup: ePopup,
             keepWithinBounds: true,
-            column: this.column,
+            additionalParams: {
+                column: this.column,
+            },
             position: 'under',
         });
 
