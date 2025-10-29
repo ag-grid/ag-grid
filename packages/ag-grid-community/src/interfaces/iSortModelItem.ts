@@ -1,8 +1,8 @@
-import type { SortDirection } from '../entities/colDef';
-
 export interface SortModelItem {
     /** Column Id to apply the sort to. */
     colId: string;
     /** Sort direction */
-    sort: NonNullable<SortDirection>;
+    sort: 'asc' | 'desc';
+    /** Sort type, undefined value means 'default' sort type */
+    sortType?: 'absolute';
 }

@@ -63,9 +63,12 @@ export class SortListener extends BeanStub implements NamedBean {
         }
 
         const differentSorts = (oldSortItem: SortModelItem | undefined, newSortItem: SortModelItem | undefined) => {
-            const oldSort = oldSortItem ? oldSortItem.sort : null;
-            const newSort = newSortItem ? newSortItem.sort : null;
-            return oldSort !== newSort;
+            const oldSortDirection = oldSortItem ? oldSortItem.sort : null;
+            const newSortDirection = newSortItem ? newSortItem.sort : null;
+            const oldSortType = oldSortItem ? oldSortItem.sortType : 'default';
+            const newSortType = newSortItem ? newSortItem.sortType : 'default';
+
+            return oldSortType !== newSortType || oldSortDirection !== newSortDirection;
         };
 
         const differentIndexes = (oldSortItem: SortModelItem | undefined, newSortItem: SortModelItem | undefined) => {

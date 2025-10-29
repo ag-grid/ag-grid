@@ -128,7 +128,7 @@ export class SortService extends BeanStub implements NamedBean {
                 }
 
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
-                // if sort order is: ['desc', 'aasc', 'adesc', null , 'asc'], as it will start at null rather than 'desc'. // todo not sure about this comment
+                // if sort order is: ['desc', 'aasc', 'adesc', null , 'asc'], as it will start at null rather than 'desc'.
                 this.setColSort(columnToClear, undefined, source);
             }
         });
@@ -235,6 +235,7 @@ export class SortService extends BeanStub implements NamedBean {
             .map((column) => ({
                 sort: column.getSort()!,
                 colId: column.getId(),
+                sortType: column.getSort(),
             }));
     }
 

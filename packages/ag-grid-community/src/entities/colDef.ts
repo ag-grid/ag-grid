@@ -1183,7 +1183,9 @@ export interface CellEditorSelectorResult {
     popupPosition?: 'over' | 'under';
 }
 
-export type SortDirection = 'asc' | 'desc' | 'aasc' | 'adesc' | null;
+export type SortDirection = 'asc' | 'desc' | null;
+/** @type {undefined} means 'default' sorting type */
+export type SortType = undefined | 'absolute';
 
 export type GroupHierarchyParts =
     | 'year'
