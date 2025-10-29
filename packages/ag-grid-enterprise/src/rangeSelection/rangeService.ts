@@ -61,6 +61,12 @@ enum SelectionMode {
     NORMAL,
     ALL_COLUMNS,
 }
+
+interface ColumnRangeSelectionContext {
+    lastCellRange?: CellRange;
+    root?: AgColumn;
+}
+
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeSvc' as const;
 
@@ -1330,8 +1336,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 }
 
-function createRowPosition(rowIndex: number, rowPinned?: RowPinnedType): RowPosition;
-function createRowPosition(rowIndex: number | null, rowPinned?: RowPinnedType): RowPosition | undefined;
 function createRowPosition(rowIndex: number | null, rowPinned?: RowPinnedType): RowPosition | undefined {
     return rowIndex != null ? { rowIndex, rowPinned } : undefined;
 }
@@ -1371,11 +1375,6 @@ function isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
     const isLastColumn = cell.column === lastRangeColumn;
 
     return isLastColumn && isLastRow;
-}
-
-interface ColumnRangeSelectionContext {
-    lastCellRange?: CellRange;
-    root?: AgColumn;
 }
 
 function findRangeContainingCols(
