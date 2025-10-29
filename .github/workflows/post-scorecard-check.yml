@@ -48,7 +48,7 @@ jobs:
               const { results, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
 
               fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
-              fs.writeFileSync("${{ env.SCORECARD_FILE }}", results);
+              fs.writeFileSync("${{ env.SCORECARD_FILE }}", JSON.stringify(results));
 
               // Exit with a numeric code to signal step success/failure to GitHub Actions
               process.exit(hasPassed ? 0 : 1);
@@ -76,15 +76,15 @@ jobs:
         with:
           report-path: '${{ env.REPORT_FILE }}'
 
-      - name: Slack Notification
-        if: success() && steps.check_results.outcome == 'failure'
-        uses: ./external/ag-shared/github/actions/slack-integration
-        with:
-          AG_LIBRARY: ${{ env.AG_LIBRARY }}
-          CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
-          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-          SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-          IS_SUCCESS: ${{ steps.check_results.outcome != 'failure' }}
+      # - name: Slack Notification
+      #   if: success() && steps.check_results.outcome == 'failure'
+      #   uses: ./external/ag-shared/github/actions/slack-integration
+      #   with:
+      #     AG_LIBRARY: ${{ env.AG_LIBRARY }}
+      #     CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
+      #     SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+      #     SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
+      #     IS_SUCCESS: ${{ steps.check_results.outcome != 'failure' }}
 
       - name: Fail job if scan failed
         shell: bash
