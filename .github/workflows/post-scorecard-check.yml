@@ -45,7 +45,7 @@ jobs:
               const project = process.env.AG_LIBRARY;
               const threshold = process.env.THRESHOLD;
 
-              const { response, resport, hasPassed } = await getOSSFScorecardResults({ project, threshold });
+              const { response, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
 
               fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
               fs.writeFileSync("${{ env.SCORECARD_FILE }}", response);
