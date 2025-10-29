@@ -52,6 +52,11 @@ ignore = true
 name = "@octokit/types"
 ignore = true
 
+# We don't use vite to serve files outside of development
+[[PackageOverrides]]
+name = "vite"
+ignore = true
+
 [[IgnoredVulns]]
 id = "GHSA-67mh-4wv8-2f99"
 reason = "We do not use the esbuild development server"
@@ -83,34 +88,6 @@ reason = "middleware is used in development/testing - it's not used in the final
 [[IgnoredVulns]]
 id = "GHSA-p8p7-x288-28g6"
 reason = "Request calls are only used in our examples - not in the production code"
-
-[[IgnoredVulns]]
-id = "GHSA-9cwx-2883-4wfx"
-reason = "We don't use vite to serve files outside of development"
-
-[[IgnoredVulns]]
-id = "GHSA-vg6x-rcgg-rjx6"
-reason = "We don't use vite to serve files outside of development"
-
-[[IgnoredVulns]]
-id = "GHSA-x574-m823-4x7w"
-reason = "We don't use vite to serve files outside of development"
-
-[[IgnoredVulns]]
-id = "GHSA-4r4m-qw57-chr8"
-reason = "We don't use vite to serve files outside of development"
-
-[[IgnoredVulns]]
-id = "GHSA-xcj6-pq6g-qj4x"
-reason = "We don't use vite to serve files outside of development"
-
-[[IgnoredVulns]]
-id = "GHSA-356w-63v5-8wf4"
-reason = "We don't use vite to serve files outside of development"
-
-[[IgnoredVulns]]
-id = "GHSA-859w-5945-r5v3"
-reason = "We don't use vite to serve files outside of development"
 
 [[IgnoredVulns]]
 id = "GHSA-9crc-q9x8-hgqq"
@@ -172,3 +149,14 @@ reason = "Low risk and determined to not be exploitable in our use case"
 id = "GHSA-52f5-9888-hmc6"
 reason = "Low risk and determined to not be exploitable in our use case"
 
+[[IgnoredVulns]]
+id = "GHSA-67mh-4wv8-2f99"
+reason = "esbuild dev server is only used for development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-5ff5-9fcw-vg88"
+reason = "astro is only used for generating a static site, so server vulnerabilities do not apply"
+
+[[IgnoredVulns]]
+id = "GHSA-4hjh-wcwx-xvwj"
+reason = "We only use axios for build and testing"
