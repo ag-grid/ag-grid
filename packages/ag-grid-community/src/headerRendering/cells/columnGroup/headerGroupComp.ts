@@ -15,6 +15,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _warn } from '../../../validation/logging';
 import { Component } from '../../../widgets/component';
+import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
 
 export interface IHeaderGroupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column group the header is for. */
@@ -93,6 +94,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private innerHeaderGroupComponent: IInnerHeaderGroupComponent | undefined;
     private isLoadingInnerComponent: boolean = false;
+    private mouseListener?: HeaderGroupCellMouseListenerFeature;
 
     constructor() {
         super(HeaderGroupCompElement);
@@ -242,6 +244,10 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         }
 
         this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
+
+        this.mouseListener ??= this.createManagedBean(
+            new HeaderGroupCellMouseListenerFeature(params.columnGroup as AgColumnGroup, this.getGui())
+        );
     }
 
     public override destroy(): void {

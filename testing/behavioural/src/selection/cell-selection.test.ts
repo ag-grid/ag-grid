@@ -328,8 +328,138 @@ describe('Cell Selection', () => {
             expect(ranges2[0].columns[0]).toBe(yearCol);
         });
 
-        test.skip('CTRL-click group column selects all child columns', async () => {});
-        test.skip('Can partially de-select group column by CTRL-clicking child column', async () => {});
-        test.skip('CTRL-SHIFT-click group column and partial selections', async () => {});
+        test('CTRL-click group column selects all child columns', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'sport',
+                    },
+                    {
+                        headerName: 'Category A1',
+                        children: [
+                            {
+                                headerName: 'Category A2',
+                                children: [{ field: 'year' }, { field: 'amount' }],
+                            },
+                        ],
+                    },
+                    {
+                        headerName: 'Category B1',
+                        children: [{ field: 'day' }],
+                    },
+                ],
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('0_0'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([['year', 'amount']], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([], api);
+        });
+
+        test('Can partially de-select group column by CTRL-clicking child column', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'sport',
+                    },
+                    {
+                        headerName: 'Category A1',
+                        children: [
+                            {
+                                headerName: 'Category A2',
+                                children: [{ field: 'year' }, { field: 'amount' }],
+                            },
+                        ],
+                    },
+                    {
+                        headerName: 'Category B1',
+                        children: [{ field: 'day' }],
+                    },
+                ],
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('0_0'));
+            const yearHeader = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeader.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([['amount']], api);
+        });
+
+        test('CTRL-SHIFT-click group column and partial selections', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'sport',
+                    },
+                    {
+                        headerName: 'Category A1',
+                        children: [
+                            {
+                                headerName: 'Category A2',
+                                children: [{ field: 'year' }, { field: 'amount' }],
+                            },
+                        ],
+                    },
+                    {
+                        headerName: 'Category B1',
+                        children: [{ field: 'day' }],
+                    },
+                ],
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const yearHeader = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+
+            await userSession.keyboard('{Shift>}');
+            await userSession.click(yearHeader.querySelector('.ag-header-cell-label')!);
+
+            await userSession.keyboard('{/Shift}');
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([['sport', 'year']], api);
+        });
     });
 });
