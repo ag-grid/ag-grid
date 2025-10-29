@@ -45,10 +45,10 @@ jobs:
               const project = process.env.AG_LIBRARY;
               const threshold = process.env.THRESHOLD;
 
-              const { response, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
+              const { results, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
 
               fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
-              fs.writeFileSync("${{ env.SCORECARD_FILE }}", response);
+              fs.writeFileSync("${{ env.SCORECARD_FILE }}", results);
 
               // Exit with a numeric code to signal step success/failure to GitHub Actions
               process.exit(hasPassed ? 0 : 1);

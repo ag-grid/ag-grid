@@ -41,7 +41,7 @@ export async function getOSSFScorecardResults({ project, threshold }) {
     };
 
     return {
-        response,
+        results,
         report,
         score,
         hasPassed,
