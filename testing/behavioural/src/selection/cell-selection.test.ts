@@ -461,5 +461,34 @@ describe('Cell Selection', () => {
 
             assertColumnsSelected([['sport', 'year']], api);
         });
+
+        test('Hidden columns do not form part of the cell selection', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    headerCellSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const dayHeader = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+
+            api.applyColumnState({ state: [{ colId: 'year', hide: true }] });
+
+            await userSession.keyboard('{Shift>}');
+            await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Shift}');
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([['sport', 'amount', 'day']], api);
+        });
     });
 });
