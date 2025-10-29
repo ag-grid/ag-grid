@@ -30,7 +30,6 @@ import {
     _areCellsEqual,
     _areEqual,
     _exists,
-    _filterInPlace,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getFirstRow,
@@ -1237,6 +1236,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return new CellRangeFeature(this.beans, ctrl);
     }
 
+    /**
+     * Handle a user clicking column header to (de)select one or more column of cells
+     * CTRL-clicking for toggling column selection + CTRL-SHIFT-clicking supported for selecting ranges of columns
+     */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent): void {
         if (!(event.ctrlKey || event.metaKey)) {
             return;
@@ -1260,7 +1263,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             const column = clickedColumn.isColumn ? clickedColumn : _last(clickedColumn.getLeafColumns());
 
-            const range = CellRangeUtil.findRangeContainingCols(this.cellRanges, [root], firstRow, lastRow);
+            const range = findRangeContainingCols(this.cellRanges, [root], firstRow, lastRow);
             if (!range) {
                 // when no existing range exists, clear the last cell range
                 // and start from the root
@@ -1271,12 +1274,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
         } else if (clickedColumn.isColumn) {
-            const foundRange = CellRangeUtil.findRangeContainingCols(
-                this.cellRanges,
-                [clickedColumn],
-                firstRow,
-                lastRow
-            );
+            const foundRange = findRangeContainingCols(this.cellRanges, [clickedColumn], firstRow, lastRow);
 
             const lastCellRange = foundRange
                 ? this.deselectColumn(clickedColumn, firstRow, lastRow)
@@ -1289,7 +1287,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         } else {
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();
-            const foundRange = CellRangeUtil.findRangeContainingCols(this.cellRanges, leafCols, firstRow, lastRow);
+            const foundRange = findRangeContainingCols(this.cellRanges, leafCols, firstRow, lastRow);
 
             if (foundRange) {
                 _removeFromArray(this.cellRanges, foundRange);
@@ -1306,7 +1304,18 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
-        CellRangeUtil.removeCol(this.cellRanges, column, startRow, endRow);
+        for (const range of this.cellRanges) {
+            if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
+                _removeFromArray(range.columns, column);
+                if (range.startColumn === column) {
+                    range.startColumn = range.columns[0];
+                }
+            }
+        }
+
+        // clean up empty ranges
+        this.cellRanges = this.cellRanges.filter((r) => r.columns.length !== 0);
+
         this.dispatchChangedEvent(true, true);
     }
 
@@ -1371,36 +1380,20 @@ interface ColumnRangeSelectionContext {
     root?: AgColumn;
 }
 
-const CellRangeUtil = {
-    removeCol(ranges: CellRange[], column: AgColumn, startRow: RowPosition, endRow: RowPosition): void {
-        for (const range of ranges) {
-            if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
-                _removeFromArray(range.columns, column);
-                if (range.startColumn === column) {
-                    range.startColumn = range.columns[0];
-                }
-            }
+function findRangeContainingCols(
+    ranges: readonly CellRange[],
+    cols: AgColumn[],
+    startRow: RowPosition,
+    endRow: RowPosition
+): CellRange | undefined {
+    // iterating backwards since we're likely interested in the most recently added range
+    for (let i = ranges.length - 1; i >= 0; i--) {
+        const range = ranges[i];
+        const hasCols = cols.every((c) => range.columns.includes(c));
+        const sameRows = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
+
+        if (hasCols && sameRows) {
+            return range;
         }
-
-        // clean up empty ranges
-        _filterInPlace(ranges, (r) => r.columns.length !== 0);
-    },
-
-    findRangeContainingCols(
-        ranges: readonly CellRange[],
-        cols: AgColumn[],
-        startRow: RowPosition,
-        endRow: RowPosition
-    ): CellRange | undefined {
-        // iterating backwards since we're likely interested in the most recently added range
-        for (let i = ranges.length - 1; i >= 0; i--) {
-            const range = ranges[i];
-            const hasCols = cols.every((c) => range.columns.includes(c));
-            const sameRows = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
-
-            if (hasCols && sameRows) {
-                return range;
-            }
-        }
-    },
-};
+    }
+}

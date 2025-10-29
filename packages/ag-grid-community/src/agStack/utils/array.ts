@@ -79,24 +79,6 @@ export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[
     }
 }
 
-export function _filterInPlace<T>(array: T[], pred: (x: T, i: number) => boolean): void {
-    let i = 0;
-    let j = 0;
-
-    for (; i < array.length; i++) {
-        if (pred(array[i], i)) {
-            // elements that we want to keep are moved to the beginning of the array, maintaining original order
-            array[j] = array[i];
-            j++;
-        }
-    }
-
-    // j marks the elements we want to keep, so pop off the remaining elements (each pop is O(1))
-    while (j < array.length) {
-        array.pop();
-    }
-}
-
 // should consider refactoring the callers to create a new array rather than mutating the original, which is expensive
 export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
     // first take out items from the array
