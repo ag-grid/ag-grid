@@ -23,9 +23,8 @@ export abstract class AbstractSelectionHandle extends Component {
     protected rangeStartRow: RowPosition;
     protected rangeEndRow: RowPosition;
 
-    private cellHoverListener: (() => void) | undefined;
-    private lastCellHovered: CellPosition | null | undefined;
     protected changedCalculatedValues: boolean = false;
+    private lastCellHovered: CellPosition | null | undefined;
     private dragging: boolean = false;
 
     protected abstract type: SelectionHandleType;
@@ -33,28 +32,28 @@ export abstract class AbstractSelectionHandle extends Component {
     protected shouldDestroyOnEndDragging: boolean = false;
 
     public postConstruct() {
-        const { dragSvc, rangeSvc } = this.beans;
-        dragSvc!.addDragSource({
+        this.beans.dragSvc!.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),
-            onDragStart: this.onDragStart.bind(this),
-            onDragging: (e: MouseEvent | Touch) => {
-                this.dragging = true;
-                (rangeSvc as RangeService).autoScrollService.check(e as MouseEvent);
+            onDragging: (e) => {
+                if (!this.dragging) {
+                    this.dragging = true;
+                    document.body.classList.add(this.getDraggingCssClass());
+                }
+
+                this.updateValuesOnMove(e);
+
+                (this.beans.rangeSvc as RangeService).autoScrollService.check(e as MouseEvent);
 
                 if (this.changedCalculatedValues) {
                     this.onDrag(e);
                     this.changedCalculatedValues = false;
                 }
             },
-            onDragStop: (e: MouseEvent | Touch) => {
+            onDragStop: (e) => {
                 this.dragging = false;
                 this.onDragEnd(e);
                 this.clearDragProperties();
-
-                if (this.shouldDestroyOnEndDragging) {
-                    this.destroy();
-                }
             },
             onDragCancel: () => {
                 this.dragging = false;
@@ -63,7 +62,10 @@ export abstract class AbstractSelectionHandle extends Component {
             },
         });
 
-        this.addManagedElementListeners(this.getGui(), { mousedown: this.preventRangeExtension.bind(this) });
+        this.addManagedElementListeners(this.getGui(), {
+            pointerdown: stopEventPropagation,
+            mousedown: stopEventPropagation,
+        });
     }
 
     protected abstract onDrag(e: MouseEvent | Touch): void;
@@ -74,23 +76,11 @@ export abstract class AbstractSelectionHandle extends Component {
         return this.lastCellHovered;
     }
 
-    private preventRangeExtension(e: MouseEvent) {
-        e.stopPropagation();
-    }
-
-    protected onDragStart(_: MouseEvent) {
-        [this.cellHoverListener] = this.addManagedElementListeners(this.beans.ctrlsSvc.get('gridCtrl').getGui(), {
-            mousemove: this.updateValuesOnMove.bind(this),
-        });
-
-        document.body.classList.add(this.getDraggingCssClass());
-    }
-
     private getDraggingCssClass(): string {
         return `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
     }
 
-    protected updateValuesOnMove(e: MouseEvent) {
+    protected updateValuesOnMove(e: MouseEvent | Touch) {
         const cell = _getCellPositionForEvent(this.gos, e);
 
         if (
@@ -112,6 +102,10 @@ export abstract class AbstractSelectionHandle extends Component {
         // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
         // be affected by a drag on any. Move it to the root element.
         document.body.classList.remove(this.getDraggingCssClass());
+
+        if (this.shouldDestroyOnEndDragging) {
+            this.destroy();
+        }
     }
 
     public getType(): SelectionHandleType {
@@ -152,15 +146,6 @@ export abstract class AbstractSelectionHandle extends Component {
 
     protected clearValues() {
         this.lastCellHovered = undefined;
-        this.removeListeners();
-    }
-
-    private removeListeners() {
-        const cellHoverListener = this.cellHoverListener;
-        if (cellHoverListener) {
-            cellHoverListener();
-            this.cellHoverListener = undefined;
-        }
     }
 
     public override destroy() {
@@ -173,8 +158,11 @@ export abstract class AbstractSelectionHandle extends Component {
         this.shouldDestroyOnEndDragging = false;
 
         super.destroy();
-        this.removeListeners();
 
         this.getGui()?.remove();
     }
 }
+
+const stopEventPropagation = (e: MouseEvent) => {
+    e.stopPropagation();
+};
