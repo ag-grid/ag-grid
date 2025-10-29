@@ -24,7 +24,7 @@ export async function getOSSFScorecardResults({ project, threshold }) {
               failed: 1,
               skipped: 0,
           };
-    const resultsUrl = `https://scorecard.dev/viewer/?uri=github.com/ag-grid/ag-${library}`;
+    const resultsUrl = `https://scorecard.dev/viewer/?uri=github.com/ag-grid/ag-${project}`;
 
     const report = {
         results: {
