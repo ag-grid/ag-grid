@@ -589,7 +589,7 @@ export const AG_GRID_ERRORS = {
     226: () => 'viewport is missing init method.' as const,
     227: () => 'menu item icon must be DOM node or string' as const,
     228: ({ menuItemOrString }: { menuItemOrString: string }) => `unrecognised menu item ${menuItemOrString}` as const,
-    229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
+    // 229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
         'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://www.ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
     // @deprecated v32 mark for removal as part of v32 deprecated features

@@ -6,6 +6,7 @@ import type {
     ColGroupDef,
     ColumnEventType,
     ColumnModel,
+    ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
     ColumnToolPanelState,
     ComponentSelector,
@@ -20,10 +21,10 @@ import {
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
-import type { VirtualListDragItem } from '../features/iVirtualListDragFeature';
+import type { VirtualListModel } from '../agStack/iVirtualList';
+import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
-import type { VirtualListModel } from '../widgets/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
@@ -151,18 +152,22 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private createItemDragFeature(): void {
-        const { gos, beans, eventSvc, virtualList } = this;
+        const { gos, beans, virtualList } = this;
         this.createManagedBean(
             new VirtualListDragFeature<
                 AgPrimaryColsList,
                 ToolPanelColumnGroupComp | ToolPanelColumnComp,
                 AgColumn | AgProvidedColumnGroup,
-                ColumnPanelItemDragStartEvent
+                ColumnPanelItemDragStartEvent,
+                ColumnPanelItemDragEndEvent
             >(this, virtualList, {
                 dragSourceType: DragSourceType.ToolPanel,
-                listItemDragStartEvent: 'columnPanelItemDragStart',
-                listItemDragEndEvent: 'columnPanelItemDragEnd',
-                eventSource: eventSvc,
+                addListeners: (parent, listItemDragStart, listItemDragEnd) => {
+                    parent.addManagedEventListeners({
+                        columnPanelItemDragStart: listItemDragStart,
+                        columnPanelItemDragEnd: listItemDragEnd,
+                    });
+                },
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
                     getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>

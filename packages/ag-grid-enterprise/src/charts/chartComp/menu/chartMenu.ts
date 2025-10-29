@@ -6,7 +6,8 @@ import type {
 } from 'ag-grid-community';
 import { AgPromise, Component, _warn } from 'ag-grid-community';
 
-import { AgPanel } from '../../../widgets/agPanel';
+import { AgPanel } from '../../../agStack/agPanel';
+import type { GridPanel } from '../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartController } from '../chartController';
 import type { ExtraPaddingDirection } from '../chartProxies/chartProxy';
 import type { ChartMenuService } from '../services/chartMenuService';
@@ -51,7 +52,7 @@ export class ChartMenu extends Component {
 
     private chartToolbar: ChartToolbar;
     private tabbedMenu: TabbedChartMenu;
-    private menuPanel?: AgPanel;
+    private menuPanel?: GridPanel;
     private menuVisible = false;
     private chartToolbarOptions: ChartToolbarMenuItemOptions[];
 
@@ -125,7 +126,7 @@ export class ChartMenu extends Component {
         this.chartToolbar.updateParams({ buttons });
     }
 
-    private createMenuPanel(defaultTab: number): AgPromise<AgPanel> {
+    private createMenuPanel(defaultTab: number): AgPromise<GridPanel> {
         const menuPanel = (this.menuPanel = this.createBean(
             new AgPanel({
                 height: '100%',

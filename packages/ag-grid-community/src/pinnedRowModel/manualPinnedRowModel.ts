@@ -4,7 +4,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED } from '../entities/rowNode';
 import type { RowNode } from '../entities/rowNode';
 import { _createRowNodeSibling } from '../entities/rowNodeUtils';
-import type { CssVariablesChanged } from '../events';
+import type { StylesChangedEvent } from '../events';
 import { _getRowHeightForNode, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { RowPinningState } from '../interfaces/gridState';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
@@ -37,7 +37,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         };
 
         this.addManagedEventListeners({
-            gridStylesChanged: this.onGridStylesChanges.bind(this),
+            stylesChanged: this.onGridStylesChanges.bind(this),
             modelUpdated: ({ keepRenderedRows }) => {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
@@ -322,7 +322,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         }
     }
 
-    private onGridStylesChanges(e: CssVariablesChanged) {
+    private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged) {
             this.forContainers((container) =>
                 container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))

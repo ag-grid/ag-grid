@@ -142,7 +142,7 @@ const _INTERNAL_EVENTS = [
     'headerHeightChanged',
     'columnGroupHeaderHeightChanged',
     'columnHeaderHeightChanged',
-    'gridStylesChanged',
+    'stylesChanged',
     'storeUpdated',
     'filterDestroyed',
     'filterHandlerDestroyed',

@@ -105,7 +105,7 @@ export class HeaderRowCtrl extends BeanStub {
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
             columnGroupHeaderHeightChanged: onHeightChanged,
             columnHeaderHeightChanged: onHeightChanged,
-            gridStylesChanged: onHeightChanged,
+            stylesChanged: onHeightChanged,
             advancedFilterEnabledChanged: onHeightChanged,
         });
 

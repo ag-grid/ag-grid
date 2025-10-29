@@ -324,7 +324,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedPropertyListener('animateRows', updateAnimationClass);
 
         this.addManagedEventListeners({
-            gridStylesChanged: () => {
+            stylesChanged: () => {
                 if (!initialSizeMeasurementComplete && environment.sizesMeasured) {
                     initialSizeMeasurementComplete = true;
                     updateAnimationClass();

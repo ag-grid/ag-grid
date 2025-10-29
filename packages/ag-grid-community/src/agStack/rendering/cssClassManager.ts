@@ -16,7 +16,7 @@ export class CssClassManager {
 
         // we check for spaces before doing the split, as doing the split
         // created a performance problem (on windows only, see AG-6765)
-        if (className.indexOf(' ') >= 0) {
+        if (className.includes(' ')) {
             const list = (className || '').split(' ');
             if (list.length > 1) {
                 for (const cls of list) {

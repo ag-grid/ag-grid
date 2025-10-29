@@ -1,28 +1,56 @@
-import type { ElementParams, IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
+import type {
+    IMenuItem,
+    _AgCoreBeanCollection,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
+} from 'ag-grid-community';
 import {
-    Component,
-    _createElement,
-    _createIconNoSpan,
+    _AgComponentStub,
+    _createAgElement,
     _isNodeOrElement,
     _setAriaChecked,
     _setAriaExpanded,
-    _warn,
 } from 'ag-grid-community';
+
+import type { AgMenuItemParams } from './agMenuItemComponent';
 
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
     isCompact?: boolean;
 }
-const MenuItemElement: ElementParams = { tag: 'div' };
-export class AgMenuItemRenderer extends Component implements IMenuItemComp {
-    private params: IMenuItemParams & AgMenuItemRendererParams;
+
+export class AgMenuItemRenderer<
+        TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+        TProperties extends _BaseProperties,
+        TGlobalEvents extends _BaseEvents,
+        TCommon,
+        TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+        TComponentSelectorType extends string,
+        TMenuActionParams extends TCommon,
+    >
+    extends _AgComponentStub<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    >
+    implements IMenuItem
+{
+    private params: AgMenuItemParams<TMenuActionParams, TCommon> & AgMenuItemRendererParams;
     private cssClassPrefix: string;
 
-    constructor() {
-        super(MenuItemElement);
+    constructor(
+        private readonly callbacks?: {
+            warnNoIcon?: () => void;
+        }
+    ) {
+        super({ tag: 'div' });
     }
 
-    public init(params: IMenuItemParams & AgMenuItemRendererParams): void {
+    public init(params: AgMenuItemParams<TMenuActionParams, TCommon> & AgMenuItemRendererParams): void {
         this.params = params;
         this.cssClassPrefix = this.params.cssClassPrefix ?? 'ag-menu-option';
 
@@ -56,7 +84,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
             return;
         }
 
-        const iconWrapper = _createElement({
+        const iconWrapper = _createAgElement({
             tag: 'span',
             ref: 'eIcon',
             cls: `${this.getClassName('part')} ${this.getClassName('icon')}`,
@@ -66,7 +94,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         const { checked, icon } = this.params;
 
         if (checked) {
-            iconWrapper.appendChild(_createIconNoSpan('check', this.beans)!);
+            iconWrapper.appendChild(this.beans.iconSvc.createIconNoSpan('check')!);
         } else if (icon) {
             if (_isNodeOrElement(icon)) {
                 iconWrapper.appendChild(icon);
@@ -74,7 +102,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
                 // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
                 iconWrapper.innerHTML = icon;
             } else {
-                _warn(227);
+                this.callbacks?.warnNoIcon?.();
             }
         }
 
@@ -82,7 +110,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addName(): void {
-        const name = _createElement({
+        const name = _createAgElement({
             tag: 'span',
             ref: 'eName',
             cls: `${this.getClassName('part')} ${this.getClassName('text')}`,
@@ -97,7 +125,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
             return;
         }
 
-        const shortcut = _createElement({
+        const shortcut = _createAgElement({
             tag: 'span',
             ref: 'eShortcut',
             cls: `${this.getClassName('part')} ${this.getClassName('shortcut')}`,
@@ -107,7 +135,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
     }
 
     private addSubMenu(): void {
-        const pointer = _createElement({
+        const pointer = _createAgElement({
             tag: 'span',
             ref: 'ePopupPointer',
             cls: `${this.getClassName('part')} ${this.getClassName('popup-pointer')}`,
@@ -117,7 +145,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
 
         if (this.params.subMenu) {
             const iconName = this.gos.get('enableRtl') ? 'subMenuOpenRtl' : 'subMenuOpen';
-            pointer.appendChild(_createIconNoSpan(iconName, this.beans)!);
+            pointer.appendChild(this.beans.iconSvc.createIconNoSpan(iconName)!);
         }
 
         eGui.appendChild(pointer);

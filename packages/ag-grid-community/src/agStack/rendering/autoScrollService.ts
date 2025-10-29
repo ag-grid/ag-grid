@@ -46,7 +46,7 @@ export class AutoScrollService {
         this.scrollHorizontally = params.scrollAxis.includes('x');
         this.scrollVertically = params.scrollAxis.includes('y');
 
-        this.scrollByTick = params.scrollByTick != null ? params.scrollByTick : 20;
+        this.scrollByTick = params.scrollByTick ?? 20;
 
         if (params.onScrollCallback) {
             this.onScrollCallback = params.onScrollCallback;

@@ -127,6 +127,15 @@ export class AgList<
         this.refreshAriaRole();
     }
 
+    public updateOptions(listOptions: ListOption<TValue>[]): boolean {
+        const needsUpdate = this.options !== listOptions;
+        if (needsUpdate) {
+            this.clearOptions();
+            this.addOptions(listOptions);
+        }
+        return needsUpdate;
+    }
+
     public setValue(value?: TValue | null, silent?: boolean): this {
         if (this.value === value) {
             this.fireItemSelected();
