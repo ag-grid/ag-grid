@@ -3,6 +3,7 @@ import {
     Component,
     _areCellsEqual,
     _getCellPositionForEvent,
+    _getPageBody,
     _isRowBefore,
     _isVisible,
     _last,
@@ -83,7 +84,8 @@ export abstract class AbstractSelectionHandle extends Component {
             mousemove: this.updateValuesOnMove.bind(this),
         });
 
-        document.body.classList.add(this.getDraggingCssClass());
+        const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
+        pageBody.classList?.add(this.getDraggingCssClass());
     }
 
     private getDraggingCssClass(): string {
@@ -111,7 +113,8 @@ export abstract class AbstractSelectionHandle extends Component {
 
         // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
         // be affected by a drag on any. Move it to the root element.
-        document.body.classList.remove(this.getDraggingCssClass());
+        const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
+        pageBody.classList?.remove(this.getDraggingCssClass());
     }
 
     public getType(): SelectionHandleType {
