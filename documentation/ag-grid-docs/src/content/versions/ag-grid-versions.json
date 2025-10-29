@@ -1,5 +1,9 @@
 [
     {
+        "version": "34.3.1",
+        "date": "29th October 2025"
+    },
+    {
         "version": "34.3.0",
         "date": "22nd October 2025",
         "landingPageHighlight": "MCP Server, AI Toolkit, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support",

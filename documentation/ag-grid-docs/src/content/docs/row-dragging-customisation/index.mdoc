@@ -35,7 +35,7 @@ const gridOptions = {
 [Cell Selection](./cell-selection/) is not supported when `rowDragEntireRow` is enabled.
 {% /warning %}
 
-### Custom Row Drag Text
+## Custom Row Drag Text
 
 When a row drag starts, a "floating" DOM element is created to indicate which row is being dragged. By default, this DOM element will contain the same value as the cell that started the row drag. It's possible to override that text by using the `gridOptions.rowDragText` callback.
 
@@ -70,7 +70,7 @@ const gridOptions = {
 {% apiDocumentation source="grid-options/properties.json" section="rowDragging" names=["rowDragText"] /%}
 
 
-### Custom Row Drag Text with Multiple Draggers
+## Custom Row Drag Text with Multiple Draggers
 
 If the grid has more than one column set with `rowDrag=true`, the `rowDragText` callback can be set in the `colDef`.
 
@@ -109,7 +109,7 @@ const gridOptions = {
 }
 ```
 
-### Row Dragger inside Custom Cell Renderers
+## Row Dragger inside Custom Cell Renderers
 
 Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved by using the `registerRowDragger` method in the [ICellRendererParams](./component-cell-renderer/).
 
@@ -174,7 +174,7 @@ When using `registerRowDragger` you should **not** set the property `rowDrag=tru
 Doing that will cause the cell to have two row draggers.
 {% /warning %}
 
-### Full Width Row Dragging
+## Full Width Row Dragging
 
 It is possible to drag [Full Width Rows](./full-width-rows/) by registering a [Custom Row Dragger](#row-dragger-inside-custom-cell-renderers).
 
@@ -182,7 +182,7 @@ It is possible to drag [Full Width Rows](./full-width-rows/) by registering a [C
 
 In the example above, only the full width rows are draggable.
 
-### Row Dragger with Custom Start Drag Pixels
+## Row Dragger with Custom Start Drag Pixels
 
 By default, the drag event only starts after the **Row Drag Element** has been dragged by `4px`, but sometimes it might be useful to start the drag with a different drag threshold.
 For example, start dragging as soon as the `mousedown` event happens (dragged by `0px`). For that reason, the `registerRowDragger` takes a second parameter to specify the number of pixels that will start the drag event.

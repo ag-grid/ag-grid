@@ -23,3 +23,4 @@ jest.setup.ts
 jest.setup.js
 jest.jsdom-env.cjs
 coverage
+.swcrc
