@@ -688,10 +688,22 @@ export class CellCtrl extends BeanStub {
         compBean.addDestroyFunc(() => _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, null));
     }
 
+    private getValueForEvent(defaultValue: any): any {
+        const { editSvc, editModelSvc } = this.beans;
+
+        if (editSvc?.isEditing(undefined, { withOpenEditor: true })) {
+            const edit = editModelSvc?.getEdit(this);
+
+            return edit ? edit.sourceValue : defaultValue;
+        }
+
+        return defaultValue;
+    }
+
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
         const { rowNode, column, value, beans } = this;
 
-        return _createCellEvent<T>(beans, domEvent, eventType, { rowNode, column }, value);
+        return _createCellEvent<T>(beans, domEvent, eventType, { rowNode, column }, this.getValueForEvent(value));
     }
 
     public processCharacter(event: KeyboardEvent): void {
