@@ -637,7 +637,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         for (const cellRange of cellRanges) {
             if (cellRange.columns && cellRange.startRow) {
-                const columns = this.getColumnsFromModel(cellRange.columns as (string | AgColumn)[]);
+                const columns = this.getColumnsFromModel(cellRange.columns as AgColumn[]);
                 if (!columns || columns.length === 0) {
                     continue;
                 }
@@ -1160,8 +1160,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private calculateColumnsBetween(columnA: string | AgColumn, columnB: string | AgColumn): AgColumn[] | undefined {
         const allColumns = this.visibleCols.allCols;
 
-        const fromColumn = this.getColumnFromModel(columnA) as AgColumn;
-        const toColumn = this.getColumnFromModel(columnB) as AgColumn;
+        const fromColumn = this.getColumnFromModel(columnA)!;
+        const toColumn = this.getColumnFromModel(columnB)!;
 
         const isSameColumn = fromColumn === toColumn;
         const fromIndex = allColumns.indexOf(fromColumn);
@@ -1251,15 +1251,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const extendRangeToCell = (baseRange: CellRange, cellPos: CellPosition) => {
-            if (this.isEmpty() || !this.newestRangeStartCell) {
-                return;
-            }
-
-            this.setSelectionMode(isRowNumberCol(cellPos.column));
-            this.updateRangeRowBoundary({ cellRange: baseRange, boundary: 'end', cellPosition: cellPos });
-        };
-
         if (event.shiftKey) {
             // doing range selection
             const root = ctx.root;
@@ -1269,33 +1260,32 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             const column = clickedColumn.isColumn ? clickedColumn : _last(clickedColumn.getLeafColumns());
 
-            const range = CellRangeUtil.findRangeContainingCol(this.cellRanges, root, firstRow, lastRow);
+            const range = CellRangeUtil.findRangeContainingCols(this.cellRanges, [root], firstRow, lastRow);
             if (!range) {
                 // when no existing range exists, clear the last cell range
                 // and start from the root
                 _removeFromArray(this.cellRanges, ctx.lastCellRange);
-                this.addCellRange({
-                    columns: this.calculateColumnsBetween(root, column),
-                    columnStart: root,
-                    columnEnd: column,
-                    rowStartIndex: firstRow.rowIndex,
-                    rowStartPinned: firstRow.rowPinned,
-                    rowEndIndex: lastRow.rowIndex,
-                    rowEndPinned: lastRow.rowPinned,
-                });
+                this.selectColumns(this.calculateColumnsBetween(root, column)!, firstRow, lastRow);
                 return;
             }
 
-            extendRangeToCell(range, { column, ...lastRow });
+            this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
         } else if (clickedColumn.isColumn) {
-            const column = clickedColumn;
-            const isSelected = CellRangeUtil.findRangeContainingCol(this.cellRanges, column, firstRow, lastRow);
+            const foundRange = CellRangeUtil.findRangeContainingCols(
+                this.cellRanges,
+                [clickedColumn],
+                firstRow,
+                lastRow
+            );
 
-            const lastCellRange = this.selectColumn(column, !isSelected);
-            if (!isSelected) {
+            const lastCellRange = foundRange
+                ? this.deselectColumn(clickedColumn, firstRow, lastRow)
+                : this.selectColumns([clickedColumn], firstRow, lastRow);
+
+            if (lastCellRange) {
                 ctx.lastCellRange = lastCellRange;
             }
-            ctx.root = column;
+            ctx.root = clickedColumn;
         } else {
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();
@@ -1303,49 +1293,33 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             if (foundRange) {
                 _removeFromArray(this.cellRanges, foundRange);
+                ctx.root = leafCols[0];
                 this.dispatchChangedEvent(true, true);
-                ctx.root = leafCols[0];
             } else {
-                const addedRange = this.addCellRange({
-                    columns: leafCols,
-                    columnStart: leafCols[0],
-                    columnEnd: _last(leafCols),
-                    rowStartIndex: firstRow.rowIndex,
-                    rowStartPinned: firstRow.rowPinned,
-                    rowEndIndex: lastRow.rowIndex,
-                    rowEndPinned: lastRow.rowPinned,
-                });
+                const addedRange = this.selectColumns(leafCols, firstRow, lastRow);
                 ctx.root = leafCols[0];
-                ctx.lastCellRange = addedRange;
+                if (addedRange) {
+                    ctx.lastCellRange = addedRange;
+                }
             }
         }
     }
 
-    private selectColumn(column: AgColumn, add = true): CellRange | undefined {
-        let newRange: CellRange | undefined = undefined;
-        const firstRow = _getFirstRow(this.beans);
-        const lastRow = _getLastRow(this.beans);
-        if (!firstRow || !lastRow) {
-            return;
-        }
-
-        if (add) {
-            newRange = this.addCellRange({
-                columns: [column],
-                columnStart: column,
-                columnEnd: column,
-                rowStartIndex: firstRow.rowIndex,
-                rowStartPinned: firstRow.rowPinned,
-                rowEndIndex: lastRow.rowIndex,
-                rowEndPinned: lastRow.rowPinned,
-            });
-        } else {
-            CellRangeUtil.removeCol(this.cellRanges, column, firstRow, lastRow);
-        }
-
+    private deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
+        CellRangeUtil.removeCol(this.cellRanges, column, startRow, endRow);
         this.dispatchChangedEvent(true, true);
+    }
 
-        return newRange;
+    private selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
+        return this.addCellRange({
+            columns: columns,
+            columnStart: columns[0],
+            columnEnd: _last(columns),
+            rowStartIndex: startRow.rowIndex,
+            rowStartPinned: startRow.rowPinned,
+            rowEndIndex: endRow.rowIndex,
+            rowEndPinned: endRow.rowPinned,
+        });
     }
 }
 
@@ -1410,24 +1384,6 @@ const CellRangeUtil = {
 
         // clean up empty ranges
         _filterInPlace(ranges, (r) => r.columns.length !== 0);
-    },
-
-    findRangeContainingCol(
-        ranges: readonly CellRange[],
-        col: AgColumn,
-        startRow: RowPosition,
-        endRow: RowPosition
-    ): CellRange | undefined {
-        // iterating backwards since we're likely interested in the most recently added range
-        for (let i = ranges.length - 1; i >= 0; i--) {
-            const range = ranges[i];
-            const hasCol = range.columns.includes(col);
-            const sameRows = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
-
-            if (hasCol && sameRows) {
-                return range;
-            }
-        }
     },
 
     findRangeContainingCols(
