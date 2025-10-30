@@ -155,7 +155,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push(MENU_ITEM_SEPARATOR);
         }
 
-        if (colAutosize) {
+        if (colAutosize && !colDef.suppressAutoSize) {
             result.push('autoSizeThis');
             result.push('autoSizeAll');
             result.push(MENU_ITEM_SEPARATOR);

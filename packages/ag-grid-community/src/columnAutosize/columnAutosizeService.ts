@@ -178,8 +178,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     }
                     const column = colModel.getCol(key);
 
-                    // if already autoSized, skip it
-                    if (!column || columnsAutoSized.has(column)) {
+                    // if already autoSized or suppressed, skip it
+                    if (!column || columnsAutoSized.has(column) || column.getColDef().suppressAutoSize) {
                         continue;
                     }
 
