@@ -18,6 +18,7 @@ export interface IRangeService {
     getRangeRowCount(cellRange: CellRange): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
+    isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean;
     isRowInRange(rowPos: RowPosition, cellRange: CellRange): boolean;
     isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;

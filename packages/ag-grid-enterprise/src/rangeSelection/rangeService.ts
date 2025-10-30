@@ -873,6 +873,19 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return columnInRange && rowInRange;
     }
 
+    public isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean {
+        const { beans, cellRanges } = this;
+        const firstRow = _getFirstRow(beans);
+        const lastRow = _getLastRow(beans);
+        if (!firstRow || !lastRow) {
+            return false;
+        }
+
+        const columns = column.isColumn ? [column] : column.getDisplayedLeafColumns();
+
+        return findRangeContainingCols(cellRanges, columns, firstRow, lastRow) != null;
+    }
+
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
         const allColumns = this.visibleCols.allCols;
         const allPositions = cellRange.columns.map((c: AgColumn) => allColumns.indexOf(c)).sort((a, b) => a - b);
