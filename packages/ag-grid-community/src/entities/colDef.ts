@@ -865,7 +865,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressSizeToFit?: boolean;
     /**
-     * Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge.
+     * Set to `true` if you do not want this column to be auto-resizable during 'size to contents' operations.
      * @default false
      */
     suppressAutoSize?: boolean;

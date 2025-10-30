@@ -1,13 +1,7 @@
 import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
-import {
-    _columnsMatch,
-    getWidthOfColsInList,
-    isColumnSelectionCol,
-    isRowNumberCol,
-    isSpecialCol,
-} from '../columns/columnUtils';
+import { _columnsMatch, getWidthOfColsInList, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -70,7 +64,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(params: AutoSizeColumnParams): void {
-        const { eventSvc, visibleCols } = this.beans;
+        const { eventSvc, visibleCols, colModel } = this.beans;
 
         this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             const dispatch = (cols: Set<AgColumn>) =>
@@ -85,15 +79,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const isLeftCol = (col: ColKey) => visibleCols.leftCols.some((leftCol) => _columnsMatch(leftCol, col));
             const isRightCol = (col: ColKey) => visibleCols.rightCols.some((rightCol) => _columnsMatch(rightCol, col));
 
-            // We have hardcoded the exclusion of the selection column here because `suppressAutoSize` currently
-            // ONLY applies when double-clicking the column resize handle. This is planned to be changed in AG-4178.
-            // As part of AG-4178, we should change this logic to respect on `suppressAutoSize`, which should default to
-            // true as part of the selection column definition (and should be overridable by the user).
-            // --
-            // We also exclude all pinned columns here, we only want columns in the main viewport to be scaled up
-            const colKeys = params.colKeys.filter(
-                (col) => !isColumnSelectionCol(col) && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col)
-            );
+            // We exclude all pinned columns here, we only want columns in the main viewport to be scaled up
+            const colKeys = params.colKeys.filter((col) => {
+                const suppressAutoSize = colModel.getCol(col)?.getColDef().suppressAutoSize;
+                return !suppressAutoSize && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
+            });
 
             this.sizeColumnsToFit(availableGridWidth, params.source, true, {
                 defaultMaxWidth: params.defaultMaxWidth,
