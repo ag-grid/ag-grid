@@ -70,16 +70,16 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(params: AutoSizeColumnParams): void {
-        const { eventSvc, visibleCols, ctrlsSvc } = this.beans;
+        const { eventSvc, visibleCols } = this.beans;
 
-        setWidthAnimation(ctrlsSvc, true);
+        setWidthAnimation(this.beans, true);
 
         this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             const dispatch = (cols: Set<AgColumn>) =>
                 dispatchColumnResizedEvent(eventSvc, Array.from(cols), true, 'autosizeColumns');
 
             if (!params.scaleUpToFitGridWidth) {
-                setWidthAnimation(ctrlsSvc, false);
+                setWidthAnimation(this.beans, false);
                 return dispatch(columnsAutoSized);
             }
 
@@ -104,9 +104,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 columnLimits: params.columnLimits?.map((limit) => ({ ...limit, key: limit.colId })),
                 colKeys,
                 onlyScaleUp: true,
+                animate: false,
             });
 
-            setWidthAnimation(ctrlsSvc, false);
+            setWidthAnimation(this.beans, false);
 
             dispatch(columnsAutoSized);
         });
@@ -353,11 +354,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         gridWidth: number,
         source: ColumnEventType = 'sizeColumnsToFit',
         silent?: boolean,
-        params?: ISizeColumnsToFitParams & { colKeys?: ColKey[]; onlyScaleUp?: boolean }
+        params?: ISizeColumnsToFitParams & { colKeys?: ColKey[]; onlyScaleUp?: boolean; animate?: boolean }
     ): void {
         if (this.shouldQueueResizeOperations) {
             this.pushResizeOperation(() => this.sizeColumnsToFit(gridWidth, source, silent, params));
             return;
+        }
+
+        const { beans } = this;
+        const animate = params?.animate ?? true;
+        if (animate) {
+            setWidthAnimation(beans, true);
         }
 
         const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'> } = {};
@@ -366,7 +373,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         // avoid divide by zero
-        const allDisplayedColumns = this.beans.visibleCols.allCols;
+        const allDisplayedColumns = beans.visibleCols.allCols;
 
         if (gridWidth <= 0 || !allDisplayedColumns.length) {
             return;
@@ -494,7 +501,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             col.fireColumnWidthChangedEvent(source);
         }
 
-        const visibleCols = this.beans.visibleCols;
+        const visibleCols = beans.visibleCols;
         visibleCols.setLeftValues(source);
         visibleCols.updateBodyWidths();
 
@@ -503,6 +510,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         dispatchColumnResizedEvent(this.eventSvc, colsToDispatchEventFor, true, source);
+
+        if (animate) {
+            setWidthAnimation(beans, false);
+        }
     }
 
     public applyAutosizeStrategy(): void {
@@ -604,7 +615,11 @@ function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): numb
 
 const WIDTH_ANIMATION_CLASS = 'ag-animate-autosize';
 
-function setWidthAnimation(ctrlsSvc: BeanCollection['ctrlsSvc'], enable: boolean): void {
+export function setWidthAnimation({ ctrlsSvc, gos }: BeanCollection, enable: boolean): void {
+    if (gos.get('suppressColumnResizeAnimation') || gos.get('enableRtl')) {
+        return;
+    }
+
     const classList = ctrlsSvc.getGridBodyCtrl().eGridBody.classList;
     if (enable) {
         classList.add(WIDTH_ANIMATION_CLASS);
