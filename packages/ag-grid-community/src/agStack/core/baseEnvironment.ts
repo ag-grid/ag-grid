@@ -1,3 +1,4 @@
+import { _error } from '../../validation/logging';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -69,8 +70,13 @@ export abstract class BaseEnvironment<
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
         gos.setInstanceDomData(eRootDiv);
+        const themeStyleContainer = gos.get('themeStyleContainer');
+        const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer =
-            gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
+            gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() instanceof ShadowRoot ? eRootDiv : document.head);
+        if (!themeStyleContainer && !isShadowRoot) {
+            warnOnAttachToShadowRoot(eRootDiv);
+        }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());
@@ -304,3 +310,12 @@ export interface BaseCssChangeKeys {
 }
 
 const NO_VALUE_SENTINEL = 15538;
+
+const warnOnAttachToShadowRoot = (el: HTMLElement) => {
+    const interval = setInterval(() => {
+        if (el.getRootNode() instanceof ShadowRoot) {
+            _error(293);
+            clearInterval(interval);
+        }
+    }, 1000);
+};
