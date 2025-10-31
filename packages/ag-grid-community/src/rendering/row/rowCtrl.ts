@@ -40,6 +40,7 @@ import {
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isRowSelection,
+    _isTreeData,
     _setDomData,
 } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -945,7 +946,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const aboveOn = highlighted === 'above';
         const insideOn = highlighted === 'inside';
         const belowOn = highlighted === 'below';
-        const treeData = this.gos.get('treeData');
+        const treeData = _isTreeData(this.gos);
         const indented = treeData && (belowOn || aboveOn);
         const uiLevel = this.rowNode.uiLevel.toString();
 

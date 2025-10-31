@@ -14,6 +14,7 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
+    _isTreeData,
     _warn,
 } from 'ag-grid-community';
 
@@ -154,7 +155,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gos.get('treeData')) {
+        if (_isTreeData(this.gos)) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
@@ -197,7 +198,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const treeData = this.gos.get('treeData');
+        const treeData = _isTreeData(this.gos);
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
@@ -239,7 +240,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.groupValue = rowNode.key;
 
         const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = _isTreeData(this.gos);
         for (const col of groupDisplayCols) {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};

@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
+import { _isTreeData } from '../gridOptionsUtils';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
@@ -121,6 +122,6 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     }
 
     private doingTreeDataFiltering() {
-        return this.gos.get('treeData') && !this.gos.get('excludeChildrenWhenTreeDataFiltering');
+        return _isTreeData(this.gos) && !this.gos.get('excludeChildrenWhenTreeDataFiltering');
     }
 }

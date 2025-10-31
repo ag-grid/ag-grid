@@ -937,6 +937,7 @@ export {
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
+    _isTreeData,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,

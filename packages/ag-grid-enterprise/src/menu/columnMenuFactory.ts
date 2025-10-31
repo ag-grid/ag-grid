@@ -5,6 +5,7 @@ import {
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
+    _isTreeData,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
@@ -115,7 +116,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const rowGroupCount = rowGroupColsSvc?.columns.length ?? 0;
         const doingGrouping = rowGroupCount > 0;
         const grandTotalRow = _getGrandTotalRow(gos);
-        const treeData = gos.get('treeData');
+        const treeData = _isTreeData(gos);
 
         const isPrimary = column.isPrimary();
 

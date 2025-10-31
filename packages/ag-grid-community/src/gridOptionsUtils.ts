@@ -191,9 +191,13 @@ export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
     return !(gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print'));
 }
 
+export function _isTreeData(gos: GridOptionsService): boolean {
+    return !!gos.get('treeData') && !gos.get('enableFormulas');
+}
+
 export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {
     const autoGroupColumnDef = gos.get('autoGroupColumnDef');
-    return !autoGroupColumnDef?.comparator && !gos.get('treeData');
+    return !autoGroupColumnDef?.comparator && !_isTreeData(gos);
 }
 
 export function _getGroupAggFiltering(

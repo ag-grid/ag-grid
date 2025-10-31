@@ -28,6 +28,7 @@ import {
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
+    _isTreeData,
     _last,
     _removeFromArray,
     _warn,
@@ -642,7 +643,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !gos.get('treeData');
+        const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !_isTreeData(gos);
 
         const getNextGoodRowNode = () => {
             while (true) {

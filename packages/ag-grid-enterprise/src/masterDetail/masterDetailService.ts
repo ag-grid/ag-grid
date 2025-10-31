@@ -15,6 +15,7 @@ import {
     _getClientSideRowModel,
     _isClientSideRowModel,
     _isServerSideRowModel,
+    _isTreeData,
     _observeResize,
 } from 'ag-grid-community';
 
@@ -83,7 +84,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
 
         const gos = this.gos;
         const isRowMaster = gos.get('isRowMaster');
-        const treeData = gos.get('treeData');
+        const treeData = _isTreeData(gos);
 
         if (enabled) {
             if (created || updated) {

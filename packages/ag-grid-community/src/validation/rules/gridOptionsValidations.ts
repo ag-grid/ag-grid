@@ -552,6 +552,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate: (options) => {
                 const unsupported: (keyof GridOptions)[] = [
+                    'treeData', // no tree data
                     'pivotMode', // no row grouping
                     'masterDetail', // breaks row indices
                     'grandTotalRow', // no aggregations
