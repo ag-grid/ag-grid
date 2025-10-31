@@ -9,7 +9,7 @@ import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';

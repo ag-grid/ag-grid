@@ -25,7 +25,7 @@ interface Props {
     formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page';
 }
 
-export const ContactForm: FunctionComponent = ({ formLocation = 'About page' }: Props) => {
+export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About page' }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
