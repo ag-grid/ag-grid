@@ -1,8 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgInputNumberFieldSelector, Component } from 'ag-grid-community';
 
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -18,7 +18,7 @@ export class AnimationPanel extends Component {
     }
 
     public postConstruct() {
-        const animationGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+        const animationGroupParams = this.chartMenuParamsFactory.addEnableParams<GroupComponentParams>(
             'animation.enabled',
             {
                 cssIdentifier: 'charts-advanced-settings-top-level',

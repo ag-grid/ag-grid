@@ -16,8 +16,6 @@ export type ComponentSelector<TComponent extends AgBaseComponent<BeanCollection>
 export type AgComponentSelectorType =
     | AgWidgetSelectorType
     | 'AG-AUTOCOMPLETE'
-    | 'AG-COLOR-INPUT'
-    | 'AG-COLOR-PICKER'
     | 'AG-FAKE-HORIZONTAL-SCROLL'
     | 'AG-FAKE-VERTICAL-SCROLL'
     | 'AG-FILTER-BUTTON'
@@ -25,9 +23,7 @@ export type AgComponentSelectorType =
     | 'AG-FILTERS-TOOL-PANEL-LIST'
     | 'AG-GRID-BODY'
     | 'AG-GRID-HEADER-DROP-ZONES'
-    | 'AG-GROUP-COMPONENT'
     | 'AG-HEADER-ROOT'
-    | 'AG-INPUT-RANGE'
     | 'AG-NAME-VALUE'
     | 'AG-OVERLAY-WRAPPER'
     | 'AG-PAGE-SIZE-SELECTOR'
@@ -37,7 +33,6 @@ export type AgComponentSelectorType =
     | 'AG-ROW-CONTAINER'
     | 'AG-SIDE-BAR'
     | 'AG-SIDE-BAR-BUTTONS'
-    | 'AG-SLIDER'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
     | 'AG-WATERMARK'

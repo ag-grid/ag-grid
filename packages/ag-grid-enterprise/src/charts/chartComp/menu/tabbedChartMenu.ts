@@ -1,8 +1,8 @@
 import type { BeanCollection, ChartToolPanelMenuOptions } from 'ag-grid-community';
 import { AgPromise, Component, _createElement } from 'ag-grid-community';
 
-import type { TabbedItem } from '../../../widgets/iTabbedLayout';
-import { TabbedLayout } from '../../../widgets/tabbedLayout';
+import { AgTabbedLayout } from '../../../agStack/agTabbedLayout';
+import type { TabbedItem, TabbedLayout } from '../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
 import { ChartDataPanel } from './data/chartDataPanel';
@@ -41,7 +41,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
             this.addDestroyFunc(() => this.destroyBean(panelComp));
         }
 
-        this.tabbedLayout = new TabbedLayout({
+        this.tabbedLayout = new AgTabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu',
             keepScrollPosition: true,

@@ -1,7 +1,7 @@
 import { Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
 
@@ -14,7 +14,7 @@ interface ToggleablePanelParams {
 }
 
 export class ToggleablePanel extends Component {
-    private readonly toggleableGroup: AgGroupComponent = RefPlaceholder;
+    private readonly toggleableGroup: GroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
     private readonly activeComps: Component[] = [];
@@ -26,8 +26,8 @@ export class ToggleablePanel extends Component {
 
     public postConstruct() {
         const { tag, cssIdentifier = 'charts-format-sub-level', title, suppressEnabledCheckbox } = this.params;
-        const groupParams: AgGroupComponentParams =
-            this.params.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(`${tag}.enabled`, {
+        const groupParams: GroupComponentParams =
+            this.params.chartMenuParamsFactory.addEnableParams<GroupComponentParams>(`${tag}.enabled`, {
                 cssIdentifier,
                 direction: 'vertical',
                 suppressOpenCloseIcons: true,

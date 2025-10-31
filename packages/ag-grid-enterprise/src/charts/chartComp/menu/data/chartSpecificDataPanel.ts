@@ -1,8 +1,8 @@
 import type { BeanCollection, GridSelect, GridToggleButton, IChartService } from 'ag-grid-community';
 import { AgSelect, AgToggleButton, Component, RefPlaceholder } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import {
     SERIES_GROUP_TYPES,
@@ -22,7 +22,7 @@ export class ChartSpecificDataPanel extends Component {
         this.chartSvc = beans.chartSvc!;
     }
 
-    private readonly chartSpecificGroup: AgGroupComponent = RefPlaceholder;
+    private readonly chartSpecificGroup: GroupComponent = RefPlaceholder;
 
     private directionSelect?: GridSelect;
     private reverseToggle?: GridToggleButton;
@@ -38,7 +38,7 @@ export class ChartSpecificDataPanel extends Component {
 
     public postConstruct(): void {
         const title = this.getTitle();
-        const chartSpecificGroupParams: AgGroupComponentParams = {
+        const chartSpecificGroupParams: GroupComponentParams = {
             title,
             enabled: true,
             suppressEnabledCheckbox: true,

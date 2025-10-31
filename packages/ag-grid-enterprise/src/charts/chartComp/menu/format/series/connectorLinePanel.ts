@@ -1,10 +1,10 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -20,7 +20,7 @@ export class ConnectorLinePanel extends Component {
     }
 
     public postConstruct() {
-        const lineGroupParams: AgGroupComponentParams = {
+        const lineGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('connectorLine'),

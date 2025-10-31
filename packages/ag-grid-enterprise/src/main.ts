@@ -50,6 +50,13 @@ export {
     AgContextMenuServiceParams as _AgContextMenuServiceParams,
 } from './agStack/agContextMenuService';
 export { AgMenuItemRenderer as _AgMenuItemRenderer } from './agStack/agMenuItemRenderer';
+export { AgTabbedLayout as _AgTabbedLayout } from './agStack/agTabbedLayout';
+export { AgTabbedItem as _AgTabbedItem, AgTabbedLayoutParams as _AgTabbedLayoutParams } from './agStack/iTabbedLayout';
+export {
+    AgGroupComponent as _AgGroupComponent,
+    AgGroupComponentSelector as _AgGroupComponentSelector,
+    AgGroupComponentParams as _AgGroupComponentParams,
+} from './agStack/agGroupComponent';
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
 export { AiToolkitModule } from './aiToolkit/aiToolkitModule';

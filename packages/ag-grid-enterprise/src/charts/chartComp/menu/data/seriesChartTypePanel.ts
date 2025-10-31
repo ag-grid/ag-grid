@@ -1,7 +1,8 @@
 import type { BeanCollection, ChartType, GridCheckbox, GridSelect, SeriesChartType } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
@@ -14,7 +15,7 @@ export class SeriesChartTypePanel extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    private seriesChartTypeGroupComp: AgGroupComponent;
+    private seriesChartTypeGroupComp: GroupComponent;
     private selectedColIds: string[] = [];
     private readonly chartTypeComps: Map<string, GridSelect> = new Map();
     private readonly secondaryAxisComps: Map<string, GridCheckbox> = new Map();
@@ -83,7 +84,7 @@ export class SeriesChartTypePanel extends Component {
 
             this.selectedColIds.push(col.colId);
 
-            const seriesItemGroup = this.seriesChartTypeGroupComp.createManagedBean(
+            const seriesItemGroup: GroupComponent = this.seriesChartTypeGroupComp.createManagedBean(
                 new AgGroupComponent({
                     title: col.displayName!,
                     enabled: true,

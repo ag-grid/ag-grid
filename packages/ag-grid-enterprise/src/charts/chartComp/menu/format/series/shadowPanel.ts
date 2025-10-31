@@ -1,10 +1,10 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -25,7 +25,7 @@ export class ShadowPanel extends Component {
     public postConstruct() {
         // Determine the path within the series options object to get/set the individual shadow options
         const propertyNamespace = this.propertyKey;
-        const shadowGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+        const shadowGroupParams = this.chartMenuUtils.addEnableParams<GroupComponentParams>(
             `${propertyNamespace}.enabled`,
             {
                 cssIdentifier: 'charts-format-sub-level',

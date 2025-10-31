@@ -3,7 +3,8 @@ import type { AgColorType } from 'ag-charts-types';
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartController } from '../../chartController';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
@@ -242,7 +243,7 @@ export class MiniChartsContainer extends Component {
 
         // Render the filtered menu items
         for (const { label, items } of displayedMenuGroups) {
-            const groupComponent = this.createBean(
+            const groupComponent: GroupComponent = this.createBean(
                 new AgGroupComponent({
                     title: label,
                     suppressEnabledCheckbox: true,

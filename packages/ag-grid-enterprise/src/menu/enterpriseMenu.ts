@@ -32,9 +32,9 @@ import {
 } from 'ag-grid-community';
 
 import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
-import type { TabbedItem } from '../widgets/iTabbedLayout';
+import { AgTabbedLayout } from '../agStack/agTabbedLayout';
+import type { TabbedItem, TabbedLayout } from '../widgets/gridEnterpriseWidgetTypes';
 import type { MenuList } from '../widgets/menuList';
-import { TabbedLayout } from '../widgets/tabbedLayout';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
 import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
@@ -401,7 +401,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
     public postConstruct(): void {
         const tabs = this.getTabsToCreate().map((name) => this.createTab(name));
 
-        const tabbedLayout = new TabbedLayout({
+        const tabbedLayout: TabbedLayout = new AgTabbedLayout({
             items: tabs,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),

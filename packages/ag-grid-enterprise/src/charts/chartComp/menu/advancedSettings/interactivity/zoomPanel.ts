@@ -1,10 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckboxSelector, Component, RefPlaceholder } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type { GridSlider, GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -22,7 +21,7 @@ export class ZoomPanel extends Component {
     }
 
     public postConstruct() {
-        const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>('zoom.enabled', {
+        const zoomGroupParams = this.chartMenuParamsFactory.addEnableParams<GroupComponentParams>('zoom.enabled', {
             cssIdentifier: 'charts-advanced-settings-top-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
