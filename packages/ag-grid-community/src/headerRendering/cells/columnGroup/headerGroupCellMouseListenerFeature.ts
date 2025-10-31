@@ -17,10 +17,16 @@ export class HeaderGroupCellMouseListenerFeature extends BeanStub {
     }
 
     public onClick(event: MouseEvent): void {
-        const { gos, rangeSvc } = this.beans;
+        const { gos, editSvc, rangeSvc } = this.beans;
         const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const editingFormulas = gos.get('enableFormulas') && editSvc?.isEditing();
+        const usingModifierKey = event.ctrlKey || event.metaKey;
 
-        if (!suppressColumnSelection && (event.ctrlKey || event.metaKey)) {
+        // When editing formulas, we don't require modifier keys to select columns (i.e. click selects the column)
+        // Otherwise, we require CTRL/CMD-click
+        const allowColumnSelection = !suppressColumnSelection && (editingFormulas || usingModifierKey);
+
+        if (allowColumnSelection) {
             rangeSvc?.handleColumnSelection(this.column, event);
         }
     }

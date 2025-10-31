@@ -1258,10 +1258,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
      * CTRL-clicking for toggling column selection + CTRL-SHIFT-clicking supported for selecting ranges of columns
      */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent): void {
-        if (!(event.ctrlKey || event.metaKey)) {
-            return;
-        }
-
         const ctx = this.columnRangeSelectionCtx;
 
         const firstRow = _getFirstRow(this.beans);
