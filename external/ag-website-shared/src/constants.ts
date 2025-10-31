@@ -11,14 +11,13 @@ export const CONTACT_FORM_DATA = {
         orgId: '00DS9000004CVdh',
         textAreaId: '00NS900000A3S21',
         leadSource: 'AG Grid Contact Form',
-        recordType: '0121t000000xc71AAA',
+        formLocationId: '00NS900000BCx1C',
     },
-    // TODO: PROD VALUES FOR LEADSOURCE & RECORDTYPE REQUIRED
     production: {
         actionUrl: 'https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00D1t000000u82X',
         orgId: '00D1t000000u82X',
         textAreaId: '00NQ500000B4jZh',
         leadSource: 'AG Grid Contact Form',
-        recordType: '0121t000000xc71AAA',
+        formLocationId: '00NQ500000CVgqT',
     },
 };
