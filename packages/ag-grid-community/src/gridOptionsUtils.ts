@@ -411,7 +411,7 @@ export function _getSuppressColumnSelection(gos: GridOptionsService): boolean {
     const suppressColumnSelection = cellSelection.suppressColumnSelection ?? false;
 
     // Automatically disabled when multiSortKey = ctrl
-    return multiSortKey === 'ctrl' ? false : suppressColumnSelection;
+    return multiSortKey === 'ctrl' || suppressColumnSelection;
 }
 
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {
