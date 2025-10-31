@@ -138,13 +138,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         initialPivot: UNSUPPORTED_WITH_FORMULAS('initialPivot'),
         initialPivotIndex: UNSUPPORTED_WITH_FORMULAS('initialPivotIndex'),
 
-        // sorting
-        sortable: UNSUPPORTED_WITH_FORMULAS('sortable'),
-        sort: UNSUPPORTED_WITH_FORMULAS('sort'),
-        initialSort: UNSUPPORTED_WITH_FORMULAS('initialSort'),
-        sortIndex: UNSUPPORTED_WITH_FORMULAS('sortIndex'),
-        initialSortIndex: UNSUPPORTED_WITH_FORMULAS('initialSortIndex'),
-
         // row drag
         rowDrag: UNSUPPORTED_WITH_FORMULAS('rowDrag'),
 

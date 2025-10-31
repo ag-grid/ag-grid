@@ -32,6 +32,11 @@ const gridOptions: GridOptions<any> = {
         { field: 'C', colId: '2', flex: 1 },
     ],
     getRowId: (params) => String(params.data.rid),
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        },
+    },
     enableFormulas: true,
     defaultColDef: {
         headerName: '',

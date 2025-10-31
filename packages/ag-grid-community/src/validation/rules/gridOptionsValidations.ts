@@ -555,9 +555,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     'pivotMode', // no row grouping
                     'masterDetail', // breaks row indices
                     'grandTotalRow', // no aggregations
-                    'quickFilterText', // no filtering
-                    'isExternalFilterPresent', // no filtering
-                    'doesExternalFilterPass', // no filtering
                 ];
                 const error = unsupported.find((key) => options[key]);
                 if (error) {

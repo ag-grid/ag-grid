@@ -3,22 +3,32 @@ title: "Formulas"
 ---
 Formula strings can be provided to cells in the grid, allowing for dynamic calculations based on other cell values.
 
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=450 /%}
-
 ## Enabling Formulas
 
 To enable formulas, set the `gridOption` property `enableFormulas` to `true`, and ensure that your rows have [Row IDs](./row-ids/#row-ids).
 
+```{% frameworkTransform=true %}
+const gridOptions = {
+    enableFormulas: true,
+    getRowId: (params) => String(params.data.rid),
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        }
+    },
+}
+```
+
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=450 /%}
+
 When using formulas, the grid enables the following features by default:
-- Range Selection and the Fill Handle
 - Row Numbers
 
 Certain features do not work in conjunction with formulas:
 - Tree Data & Row grouping
 - Pivoting & Aggregation
 - Master Detail
-- Row Sorting and Filtering
-- Cell data type detection is no longer enabled by default.
+- Cell data type detection.
 
 ## Formula Syntax
 
