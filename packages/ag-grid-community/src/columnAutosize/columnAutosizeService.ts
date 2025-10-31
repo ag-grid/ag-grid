@@ -615,7 +615,7 @@ function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): numb
 
 const WIDTH_ANIMATION_CLASS = 'ag-animate-autosize';
 
-export function setWidthAnimation({ ctrlsSvc, gos }: BeanCollection, enable: boolean): void {
+function setWidthAnimation({ ctrlsSvc, gos }: BeanCollection, enable: boolean): void {
     if (gos.get('suppressColumnResizeAnimation') || gos.get('enableRtl')) {
         return;
     }
