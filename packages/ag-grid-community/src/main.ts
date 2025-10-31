@@ -301,6 +301,9 @@ export {
 export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
 export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
 export { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
+export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
+export { paramValueToCss as _paramValueToCss } from './agStack/theming/themeTypeUtils';
+export { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
 
 // excel
 export {
