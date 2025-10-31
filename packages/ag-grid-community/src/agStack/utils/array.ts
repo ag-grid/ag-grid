@@ -38,13 +38,16 @@ export function _areEqual<T>(
 /**
  * Utility that uses the fastest looping approach to apply a callback to each element of the array
  * https://jsperf.app/for-for-of-for-in-foreach-comparison
+ * If callback returns true, exit early.
  */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => void) {
+export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
     if (!array) {
         return;
     }
     for (const value of array) {
-        callback(value);
+        if (callback(value)) {
+            return true;
+        }
     }
 }
 

@@ -164,6 +164,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
 
         colDefCloned.sort = col.getSort() ? col.getSort() : null;
+        colDefCloned.sortDef = col.getSortDef();
         colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
 
         return colDefCloned;

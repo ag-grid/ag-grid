@@ -3,7 +3,7 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc } from '../entities/colDef';
+import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
@@ -29,7 +29,9 @@ export interface ColumnStateParams {
     /** Column's flex if flex is set */
     flex?: number | null;
     /** Sort applied to the column */
-    sort?: 'asc' | 'desc' | null;
+    sort?: SortDirection;
+    /** The type of sort applied */
+    sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */
@@ -425,7 +427,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
-            cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
+            cs.sort != c.getSort() || cs.sortType != c.getSortDef()?.type || cs.sortIndex != c.getSortIndex();
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {
             sortSvc?.dispatchSortChangedEvents(source, changedColumns);
@@ -455,6 +457,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const sort = column.getSort() != null ? column.getSort() : null;
+        const sortType = column.getSortDef()?.type;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
         res.push({
@@ -463,6 +466,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             hide: !column.isVisible(),
             pinned: column.getPinned(),
             sort,
+            sortType,
             sortIndex,
             aggFunc,
             rowGroup: column.isRowGroupActive(),

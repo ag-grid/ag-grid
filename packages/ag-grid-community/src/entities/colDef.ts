@@ -771,6 +771,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     sortable?: boolean;
     /** If sorting by default, set it here. Set to `asc` or `desc`. */
     sort?: SortDirection;
+
+    /** Replaces the sort. Includes information about specific sort type applied to the column. */
+    sortDef?: SortDef;
     /**
      * Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
@@ -1184,6 +1187,14 @@ export interface CellEditorSelectorResult {
 }
 
 export type SortDirection = 'asc' | 'desc' | null;
+
+/** nullish is treated as default here */
+export type SortType = 'absolute' | 'default' | null;
+
+export type SortDef = {
+    type: SortType;
+    direction: SortDirection;
+};
 
 export type GroupHierarchyParts =
     | 'year'

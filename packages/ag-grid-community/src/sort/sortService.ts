@@ -100,6 +100,7 @@ export class SortService extends BeanStub implements NamedBean {
         this.beans.colModel.forAllCols((col) => {
             if (col.getSort()) {
                 isSorting = true;
+                return true; // exit loop early
             }
         });
         return isSorting;
@@ -228,23 +229,36 @@ export class SortService extends BeanStub implements NamedBean {
         return [...this.getIndexedSortMap().entries()].sort(([, idx1], [, idx2]) => idx1 - idx2).map(([col]) => col);
     }
 
-    // used by server side row models, to sent sort to server
+    /**
+     * Util method to collect sort items by going through sorted columns once.
+     */
+    private collectSortItems<T extends SortOption | SortModelItem>(asSortModel: boolean = false): T[] {
+        const sortItems: T[] = [];
+        const columnsWithSortingOrdered = this.getColumnsWithSortingOrdered();
+        for (const column of columnsWithSortingOrdered) {
+            const sort = column.getSort()!;
+            if (!sort) {
+                continue;
+            }
+            const type = column.getSortDef()?.type ?? null;
+            const sortItem = { sort, type } as T;
+            if (asSortModel) {
+                (sortItem as SortModelItem).colId = column.getId();
+            } else {
+                (sortItem as SortOption).column = column;
+            }
+            sortItems.push(sortItem);
+        }
+        return sortItems;
+    }
+
+    // used by server side row models, to send sort to server
     public getSortModel(): SortModelItem[] {
-        return this.getColumnsWithSortingOrdered()
-            .filter((column) => column.getSort())
-            .map((column) => ({
-                sort: column.getSort()!,
-                colId: column.getId(),
-            }));
+        return this.collectSortItems(true);
     }
 
     public getSortOptions(): SortOption[] {
-        return this.getColumnsWithSortingOrdered()
-            .filter((column) => column.getSort())
-            .map((column) => ({
-                sort: column.getSort()!,
-                column,
-            }));
+        return this.collectSortItems();
     }
 
     public canColumnDisplayMixedSort(column: AgColumn): boolean {

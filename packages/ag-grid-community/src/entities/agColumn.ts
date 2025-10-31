@@ -32,6 +32,7 @@ import type {
     ColumnFunctionCallbackParams,
     IAggFunc,
     RowSpanParams,
+    SortDef,
     SortDirection,
 } from './colDef';
 
@@ -80,6 +81,7 @@ export class AgColumn<TValue = any>
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
     public sort: SortDirection | undefined;
+    public sortDef: SortDef | undefined;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -425,7 +427,11 @@ export class AgColumn<TValue = any>
     }
 
     public getSort(): SortDirection | undefined {
-        return this.sort;
+        return this.sortDef?.direction ?? this.sort;
+    }
+
+    public getSortDef(): SortDef | undefined {
+        return this.sortDef;
     }
 
     public isSortable(): boolean {

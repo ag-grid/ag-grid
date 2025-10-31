@@ -362,6 +362,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     groupId: undefined,
     colId: undefined,
     sort: undefined,
+    sortDef: undefined,
     initialSort: undefined,
     field: undefined,
     type: undefined,
