@@ -261,12 +261,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature?.onSpaceKeyDown(e);
-        }
-        if (e.key === KeyCode.ENTER) {
+            if (e.ctrlKey || e.metaKey) {
+                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
+            } else {
+                this.selectAllFeature?.onSpaceKeyDown(e);
+            }
+        } else if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
-        }
-        if (e.key === KeyCode.DOWN && e.altKey) {
+        } else if (e.key === KeyCode.DOWN && e.altKey) {
             this.showMenuOnKeyPress(e, false);
         }
     }

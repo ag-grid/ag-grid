@@ -1257,7 +1257,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
      * Handle a user clicking column header to (de)select one or more column of cells
      * CTRL-clicking for toggling column selection + CTRL-SHIFT-clicking supported for selecting ranges of columns
      */
-    public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent): void {
+    public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void {
         const ctx = this.columnRangeSelectionCtx;
 
         const firstRow = _getFirstRow(this.beans);

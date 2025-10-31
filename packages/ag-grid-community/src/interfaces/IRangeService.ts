@@ -54,7 +54,7 @@ export interface IRangeService {
         headerComp: IAbstractHeaderCellComp
     ): void;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
-    handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent): void;
+    handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
 }
 
 export enum CellRangeType {

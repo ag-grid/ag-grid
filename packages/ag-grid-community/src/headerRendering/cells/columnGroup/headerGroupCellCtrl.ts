@@ -366,12 +366,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         const wrapperHasFocus = this.getWrapperHasFocus();
 
-        if (!this.expandable || !wrapperHasFocus) {
+        if (!wrapperHasFocus) {
             return;
         }
 
-        if (e.key === KeyCode.ENTER) {
-            const column = this.column;
+        const column = this.column;
+        if (e.key === KeyCode.ENTER && this.expandable) {
             const newExpandedValue = !column.isExpanded();
 
             this.beans.colGroupSvc!.setColumnGroupOpened(
@@ -379,6 +379,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 newExpandedValue,
                 'uiColumnExpanded'
             );
+        } else if (e.key === KeyCode.SPACE && (e.ctrlKey || e.metaKey)) {
+            this.beans.rangeSvc?.handleColumnSelection(column, e);
         }
     }
 
