@@ -55,6 +55,11 @@
 
         --ag-range-selection-border-color: var(--ag-foreground-color);
 
+        --ag-row-drag-indicator-color: var(--ag-range-selection-border-color);
+        --ag-row-drag-indicator-width: 3px;
+        --ag-column-drag-indicator-color: var(--ag-range-selection-border-color);
+        --ag-column-drag-indicator-width: 3px;
+
         --ag-range-selection-border-style: solid;
 
         --ag-range-selection-background-color: rgba(0, 0, 0, 0.2);

@@ -342,6 +342,14 @@ const docs: Record<AllThemeParams, string> = {
     colorPickerThumbBorderWidth: 'Border width of thumb (the draggable item) in color picker popup',
     colorPickerTrackBorderRadius: 'Border radius of track in color picker popup',
     colorPickerColorBorderRadius: 'Border radius of selected/recent colors in color picker',
+    rowDragIndicatorColor:
+        'Color of the indicator line used to show where a row will be inserted when dragging to reorder rows',
+    rowDragIndicatorWidth:
+        'Width of the indicator line used to show where a row will be inserted when dragging to reorder rows',
+    columnDragIndicatorColor:
+        'Color of the indicator line used to show where a row will be inserted when dragging to reorder columns',
+    columnDragIndicatorWidth:
+        'Width of the indicator line used to show where a row will be inserted when dragging to reorder columns',
 };
 
 export const getParamDocs = (param: string): string | undefined => {

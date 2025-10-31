@@ -487,6 +487,26 @@ interface CoreThemeParams extends SharedThemeParams {
     rangeHeaderHighlightColor: ColorValue;
 
     /**
+     * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
+     */
+    rowDragIndicatorColor: ColorValue;
+
+    /**
+     * Width of the indicator line used to show where a row will be inserted when dragging to reorder rows
+     */
+    rowDragIndicatorWidth: LengthValue;
+
+    /**
+     * Color of the indicator line used to show where a row will be inserted when dragging to reorder columns
+     */
+    columnDragIndicatorColor: ColorValue;
+
+    /**
+     * Width of the indicator line used to show where a row will be inserted when dragging to reorder columns
+     */
+    columnDragIndicatorWidth: LengthValue;
+
+    /**
      * Background color of the Row Numbers cells when the range selects all cells for that row.
      */
     rowNumbersSelectedColor: ColorValue;
@@ -951,4 +971,8 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
     pinnedRowTextColor: {
         ref: 'textColor',
     },
+    rowDragIndicatorColor: { ref: 'rangeSelectionBorderColor' },
+    rowDragIndicatorWidth: 3,
+    columnDragIndicatorColor: { ref: 'accentColor' },
+    columnDragIndicatorWidth: 3,
 };
