@@ -5,5 +5,6 @@ export interface SortModelItem {
     colId: string;
     /** Sort direction */
     sort: SortDirection;
+    /** Sort type */
     type?: SortType;
 }

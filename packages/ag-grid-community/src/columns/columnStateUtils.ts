@@ -493,15 +493,16 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 }
 
 export function getColumnStateFromColDef(column: AgColumn): ColumnState {
-    const getValueOrNull = (a: any, b: any) => (a != null ? a : b != null ? b : null);
+    const getValueOrNull = <T>(a: T, b: T) => (a != null ? a : b != null ? b : null);
 
     const colDef = column.getColDef();
     const sort = getValueOrNull(colDef.sort, colDef.initialSort);
+    const sortType = getValueOrNull(colDef.sortDef, colDef.initialSortDef)?.type;
     const sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
     const hide = getValueOrNull(colDef.hide, colDef.initialHide);
     const pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
 
-    const width = getValueOrNull(colDef.width, colDef.initialWidth);
+    const width = getValueOrNull(colDef.width, colDef.initialWidth) || undefined;
     const flex = getValueOrNull(colDef.flex, colDef.initialFlex);
 
     let rowGroupIndex: number | null | undefined = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);
@@ -525,6 +526,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     return {
         colId: column.getColId(),
         sort,
+        sortType,
         sortIndex,
         hide,
         pinned,

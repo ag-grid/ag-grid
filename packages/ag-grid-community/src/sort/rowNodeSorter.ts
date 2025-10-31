@@ -1,3 +1,4 @@
+import type { DefaultComparatorOptions } from '../agStack/utils/generic';
 import { _defaultComparator } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -65,7 +66,11 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _defaultComparator(valueA, valueB, this.isAccentedSort);
+                const opts = { accentedCompare: this.isAccentedSort } as DefaultComparatorOptions;
+                if (sortOption.type === 'absolute') {
+                    opts.transform = absoluteValueTransformer;
+                }
+                comparatorResult = _defaultComparator(valueA, valueB, opts);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -139,4 +144,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         return valueSvc.getValue(column, node, false);
     }
+}
+
+function absoluteValueTransformer(value: any): number | null {
+    if (value == null) {
+        return null;
+    }
+    const numberValue = Number(value);
+    return isNaN(numberValue) ? value : Math.abs(numberValue);
 }

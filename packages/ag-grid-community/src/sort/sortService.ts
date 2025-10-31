@@ -322,8 +322,11 @@ export class SortService extends BeanStub implements NamedBean {
 
         const onSortingChanged = () => {
             const sort = column.getSort();
+            const sortType = column.getSortDef()?.type ?? null;
             comp.toggleCss('ag-header-cell-sorted-asc', sort === 'asc');
             comp.toggleCss('ag-header-cell-sorted-desc', sort === 'desc');
+            comp.toggleCss('ag-header-cell-sorted-abs-asc', sortType === 'absolute' && sort === 'asc');
+            comp.toggleCss('ag-header-cell-sorted-abs-desc', sortType === 'absolute' && sort === 'desc');
             comp.toggleCss('ag-header-cell-sorted-none', !sort);
 
             if (column.getColDef().showRowGroup) {
@@ -344,7 +347,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public initCol(column: AgColumn): void {
-        const { sort, initialSort, sortIndex, initialSortIndex } = column.colDef;
+        const { sort, initialSort, sortDef, initialSortDef, sortIndex, initialSortIndex } = column.colDef;
 
         if (sort !== undefined) {
             if (sort === 'asc' || sort === 'desc') {
@@ -352,6 +355,12 @@ export class SortService extends BeanStub implements NamedBean {
             }
         } else if (initialSort === 'asc' || initialSort === 'desc') {
             column.sort = initialSort;
+        }
+
+        if (sortDef !== undefined) {
+            column.sortDef = sortDef;
+        } else if (initialSortDef !== undefined) {
+            column.sortDef = initialSortDef;
         }
 
         if (sortIndex !== undefined) {

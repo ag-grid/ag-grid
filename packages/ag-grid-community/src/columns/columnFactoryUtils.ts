@@ -380,7 +380,12 @@ export function _addColumnDefaultAndTypes(
         // override the sort for row group columns where the autoGroupColDef defines these values.
         _mergeDeep(
             res,
-            { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef,
+            {
+                sort: autoGroupColDef.sort,
+                initialSort: autoGroupColDef.initialSort,
+                initialSortDef: autoGroupColDef.initialSortDef,
+                sortDef: autoGroupColDef.sortDef,
+            } as ColDef,
             false,
             true
         );
