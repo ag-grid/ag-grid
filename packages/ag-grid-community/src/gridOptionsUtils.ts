@@ -402,11 +402,16 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
 
 export function _getSuppressColumnSelection(gos: GridOptionsService): boolean {
     const cellSelection = gos.get('cellSelection');
+    const multiSortKey = gos.get('multiSortKey');
+
     if (typeof cellSelection != 'object') {
         return false;
     }
 
-    return cellSelection.suppressColumnSelection ?? false;
+    const suppressColumnSelection = cellSelection.suppressColumnSelection ?? false;
+
+    // Automatically disabled when multiSortKey = ctrl
+    return multiSortKey === 'ctrl' ? false : suppressColumnSelection;
 }
 
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {
