@@ -39,6 +39,7 @@ import {
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
+    _isMasterDetail,
     _isRowSelection,
     _isTreeData,
     _setDomData,
@@ -447,14 +448,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private setRowType(): void {
         // groupHideOpenParents implicitly disables full width loading
+        const {
+            rowNode,
+            gos,
+            beans: { colModel },
+        } = this;
         const isStub =
-            this.rowNode.stub &&
-            !this.gos.get('suppressServerSideFullWidthLoadingRow') &&
-            !this.gos.get('groupHideOpenParents');
+            rowNode.stub && !gos.get('suppressServerSideFullWidthLoadingRow') && !gos.get('groupHideOpenParents');
         const isFullWidthCell = this.isNodeFullWidthCell();
-        const isDetailCell = this.gos.get('masterDetail') && this.rowNode.detail;
-        const pivotMode = this.beans.colModel.isPivotMode();
-        const isFullWidthGroup = _isFullWidthGroupRow(this.gos, this.rowNode, pivotMode);
+        const isDetailCell = _isMasterDetail(gos) && rowNode.detail;
+        const pivotMode = colModel.isPivotMode();
+        const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, pivotMode);
 
         if (isStub) {
             this.rowType = 'FullWidthLoading';

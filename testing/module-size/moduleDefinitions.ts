@@ -62,7 +62,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ExcelExportModule: 84,
     FiltersToolPanelModule: 137.67,
     FindModule: 14.51,
-    FormulaModule: 98.36,
+    FormulaModule: 59.13,
     GridChartsModule: 71.71,
     GroupFilterModule: 115.18,
     IntegratedChartsModule: 405.32,

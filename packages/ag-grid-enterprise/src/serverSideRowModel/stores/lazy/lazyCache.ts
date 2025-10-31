@@ -12,7 +12,7 @@ import type {
     SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
+import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _isMasterDetail, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
@@ -126,9 +126,11 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap = new Map();
         this.nodesToRefresh = new Set();
 
-        this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
-        this.getRowIdFunc = _getRowIdCallback(this.gos);
-        this.isMasterDetail = this.gos.get('masterDetail');
+        const { blockUtils, gos, store } = this;
+
+        this.defaultNodeIdPrefix = blockUtils.createNodeIdPrefix(store.getParentNode());
+        this.getRowIdFunc = _getRowIdCallback(gos);
+        this.isMasterDetail = _isMasterDetail(gos);
     }
 
     public override destroy() {

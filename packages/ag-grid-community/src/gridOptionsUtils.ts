@@ -110,7 +110,7 @@ export function _getRowHeightForNode(
         }
     }
 
-    if (rowNode.detail && gos.get('masterDetail')) {
+    if (rowNode.detail && _isMasterDetail(gos)) {
         return getMasterDetailRowHeight(gos);
     }
 
@@ -193,6 +193,10 @@ export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
 
 export function _isTreeData(gos: GridOptionsService): boolean {
     return !!gos.get('treeData') && !gos.get('enableFormulas');
+}
+
+export function _isMasterDetail(gos: GridOptionsService): boolean {
+    return !!gos.get('masterDetail') && !gos.get('enableFormulas');
 }
 
 export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {

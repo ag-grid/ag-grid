@@ -938,6 +938,7 @@ export {
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
     _isTreeData,
+    _isMasterDetail,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
