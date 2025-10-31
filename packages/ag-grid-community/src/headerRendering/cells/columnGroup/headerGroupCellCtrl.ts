@@ -8,7 +8,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
-import { _addGridCommonParams, _getHeaderCellSelection } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getSuppressColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _getActiveDomElement } from '../../../main';
@@ -385,9 +385,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private refreshAnnouncement(): void {
         let description: string | undefined;
         const { gos, column, beans } = this;
-        const headerCellSelection = _getHeaderCellSelection(gos);
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
 
-        if (headerCellSelection) {
+        if (!suppressColumnSelection) {
             const translate = this.getLocaleTextFunc();
             const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(

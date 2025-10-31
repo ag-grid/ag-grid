@@ -2947,12 +2947,14 @@ export interface CellSelectionOptions<TData = any> {
     suppressMultiRanges?: boolean;
     /**
      * If `true` the header of cells containing ranges will be highlighted.
+     * @default false;
      */
     enableHeaderHighlight?: boolean;
     /**
-     * TODO
+     * If `true`, prevents selection of a column of cells when CTRL+clicking the column header.
+     * @default false
      */
-    headerCellSelection?: boolean;
+    suppressColumnSelection?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */

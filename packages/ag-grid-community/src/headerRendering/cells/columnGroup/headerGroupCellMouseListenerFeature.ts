@@ -1,6 +1,6 @@
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import { _getHeaderCellSelection } from '../../../gridOptionsUtils';
+import { _getSuppressColumnSelection } from '../../../gridOptionsUtils';
 
 export class HeaderGroupCellMouseListenerFeature extends BeanStub {
     constructor(
@@ -18,9 +18,9 @@ export class HeaderGroupCellMouseListenerFeature extends BeanStub {
 
     public onClick(event: MouseEvent): void {
         const { gos, rangeSvc } = this.beans;
-        const headerCellSelection = _getHeaderCellSelection(gos);
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
 
-        if (headerCellSelection && (event.ctrlKey || event.metaKey)) {
+        if (!suppressColumnSelection && (event.ctrlKey || event.metaKey)) {
             rangeSvc?.handleColumnSelection(this.column, event);
         }
     }

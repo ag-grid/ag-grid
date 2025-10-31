@@ -1,6 +1,6 @@
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
-import { _getHeaderCellSelection } from '../../../gridOptionsUtils';
+import { _getSuppressColumnSelection } from '../../../gridOptionsUtils';
 
 export class HeaderCellMouseListenerFeature extends BeanStub {
     private lastMovingChanged = 0;
@@ -26,9 +26,9 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
 
     public onClick(event: MouseEvent): void {
         const { gos, sortSvc, rangeSvc } = this.beans;
-        const headerCellSelection = _getHeaderCellSelection(gos);
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
 
-        if (headerCellSelection && (event.ctrlKey || event.metaKey)) {
+        if (!suppressColumnSelection && (event.ctrlKey || event.metaKey)) {
             rangeSvc?.handleColumnSelection(this.column, event);
         } else {
             // sometimes when moving a column via dragging, this was also firing a clicked event.
