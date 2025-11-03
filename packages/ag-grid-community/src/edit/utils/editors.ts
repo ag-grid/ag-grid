@@ -126,7 +126,6 @@ export function _setupEditor(
         silent?: boolean;
     }
 ): void {
-    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const { key, event, cellStartedEdit, silent } = params ?? {};
     const cellCtrl = _getCellCtrl(beans, position)!;
     const editorComp = cellCtrl?.comp?.getCellEditor();
@@ -173,12 +172,7 @@ export function _setupEditor(
         const edit = beans.editModelSvc?.getEdit(position, true);
 
         if (!silent && !edit?.editorState?.cellStartedEditing) {
-            beans.editSvc?.dispatchCellEvent(
-                position,
-                event,
-                'cellEditingStarted',
-                enableGroupEditing ? { value: newValue } : {}
-            );
+            beans.editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
             beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
         }
     }
