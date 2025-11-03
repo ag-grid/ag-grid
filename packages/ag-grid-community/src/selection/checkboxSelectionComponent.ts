@@ -82,7 +82,7 @@ export class CheckboxSelectionComponent extends Component {
 
         this.onSelectionChanged();
 
-        this.addManagedListeners(this.eCheckbox.getInputElement(), {
+        this.addManagedListeners(this.eCheckbox.getWrapperElement(), {
             // we don't want double click on this icon to open a group
             dblclick: _stopPropagationForAgGrid,
             click: (event: MouseEvent) => {
