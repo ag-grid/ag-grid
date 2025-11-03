@@ -1,3 +1,4 @@
+import { _getClientSideRowModel } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, FormulaParam, RangeParam, RowNode } from 'ag-grid-community';
 
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
@@ -15,11 +16,13 @@ function isRangeCell(cell: Cell): boolean {
 // Reference resolution (A1 abs vs id rel)
 type CellAddress = { row: RowNode; column: AgColumn };
 
-/** Resolve a Cell to concrete grid objects, honoring absolute vs relative semantics. */
+/** Resolve a Cell to concrete grid objects, honouring absolute vs relative semantics. */
 function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
     const { row, column } = cell;
 
-    const rowNode = row.absolute ? beans.rowModel.getRow(Number(row.id) - 1) : beans.rowModel.getRowNode(row.id);
+    const rowNode = row.absolute
+        ? _getClientSideRowModel(beans)?.getFormulaRow(Number(row.id) - 1)
+        : beans.rowModel.getRowNode(row.id);
 
     const agCol = column.absolute ? beans.formula!.getColByRef(column.id) : beans.colModel.getColById(column.id);
 
@@ -203,10 +206,10 @@ function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
         return n;
     }
     const node = beans.rowModel?.getRowNode?.(ref.id);
-    if (node?.rowIndex == null) {
+    if (node?.formulaRowIndex == null) {
         throw new FormulaError('Unrecognised row id', '#REF!');
     }
-    return node.rowIndex;
+    return node.formulaRowIndex;
 }
 
 function resolveCol(beans: BeanCollection, ref: CellRef): AgColumn {
@@ -273,7 +276,7 @@ class RangeValuesIterator implements Iterator<unknown> {
         }
 
         if (this.currentRowIndex <= this.rowEndIndex) {
-            const row = this.beans.rowModel?.getRow(this.currentRowIndex);
+            const row = _getClientSideRowModel(this.beans)?.getFormulaRow(this.currentRowIndex);
             if (!row) {
                 throw new FormulaError('Unrecognised row in range', '#REF!');
             }
@@ -370,7 +373,7 @@ function* rangeAddrs(
     const [colIndexMin, colIndexMax] = colRange;
 
     for (let rowIndex = rowStartIndex; rowIndex <= rowEndIndex; rowIndex++) {
-        const rowNode = beans.rowModel?.getRow(rowIndex);
+        const rowNode = _getClientSideRowModel(beans)?.getFormulaRow(rowIndex);
         if (!rowNode) {
             continue;
         }

@@ -1,4 +1,5 @@
 import type {
+    AgComponentPopupPositionParams,
     AgEvent,
     BeanCollection,
     ComponentSelector,
@@ -275,7 +276,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
         );
         const ePopupGui = this.autocompleteList.getGui();
 
-        const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
+        const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {
             ePopup: ePopupGui,
             type: 'autocomplete',
             eventSource: this.getGui(),

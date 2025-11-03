@@ -1,36 +1,43 @@
 import type {
-    AgComponentSelectorType,
-    AgEventTypeParams,
-    AgGridCommon,
     AgInputFieldParams,
-    BeanCollection,
-    ComponentSelector,
-    GridOptionsService,
-    GridOptionsWithDefaults,
+    _AgComponentSelector,
+    _AgCoreBeanCollection,
+    _AgWidgetSelectorType,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
 } from 'ag-grid-community';
 import { AgAbstractInputField } from 'ag-grid-community';
 
-interface IInputRange extends AgInputFieldParams<AgComponentSelectorType> {
+export interface AgInputRangeParams<TComponentSelectorType extends string>
+    extends AgInputFieldParams<TComponentSelectorType> {
     min?: number;
     max?: number;
     step?: number;
 }
 
-export class AgInputRange extends AgAbstractInputField<
-    BeanCollection,
-    GridOptionsWithDefaults,
-    AgEventTypeParams,
-    AgGridCommon<any, any>,
-    GridOptionsService,
-    AgComponentSelectorType,
+export class AgInputRange<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+> extends AgAbstractInputField<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
     HTMLInputElement,
     string,
-    IInputRange
+    AgInputRangeParams<TComponentSelectorType>
 > {
     private min: number;
     private max: number;
 
-    constructor(config?: IInputRange) {
+    constructor(config?: AgInputRangeParams<TComponentSelectorType>) {
         super(config, 'ag-range-field', 'range');
     }
 
@@ -99,7 +106,7 @@ export class AgInputRange extends AgAbstractInputField<
     }
 }
 
-export const AgInputRangeSelector: ComponentSelector = {
+export const AgInputRangeSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-INPUT-RANGE',
     component: AgInputRange,
 };

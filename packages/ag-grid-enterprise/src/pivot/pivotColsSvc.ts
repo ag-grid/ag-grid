@@ -65,6 +65,10 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
     }
 
     private setColPivotActive(column: AgColumn, pivot: boolean, source: ColumnEventType): void {
+        if (this.gos.get('enableFormulas')) {
+            pivot = false;
+        }
+
         if (column.pivotActive !== pivot) {
             column.pivotActive = pivot;
 

@@ -37,7 +37,7 @@ if (!packageJsonFile) {
     process.exit(1);
 }
 
-const packageContents = glob.sync('**/*', { cwd: dir, nodir: true });
+const packageContents = glob.sync('**/*', { cwd: dir, nodir: true, dot: true });
 const packageJson = JSON.parse(packageJsonFile.toString());
 
 let exitStatus = 0;

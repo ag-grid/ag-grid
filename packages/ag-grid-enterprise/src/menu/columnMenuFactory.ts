@@ -5,10 +5,11 @@ import {
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
+    _isTreeData,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import { AgMenuList } from '../widgets/agMenuList';
+import { MenuList } from '../widgets/menuList';
 import { MENU_ITEM_SEPARATOR, _removeRepeatsFromArray } from './menuItemMapper';
 import type { MenuItemMapper } from './menuItemMapper';
 
@@ -16,13 +17,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
 
     public createMenu(
-        parent: { createManagedBean(bean: AgMenuList): AgMenuList },
+        parent: { createManagedBean(bean: MenuList): MenuList },
         menuItems: (DefaultMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement
-    ): AgMenuList {
+    ): MenuList {
         const menuList = parent.createManagedBean(
-            new AgMenuList(0, {
+            new MenuList(0, {
                 column: column ?? null,
                 node: null,
                 value: null,
@@ -115,7 +116,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const rowGroupCount = rowGroupColsSvc?.columns.length ?? 0;
         const doingGrouping = rowGroupCount > 0;
         const grandTotalRow = _getGrandTotalRow(gos);
-        const treeData = gos.get('treeData');
+        const treeData = _isTreeData(gos);
 
         const isPrimary = column.isPrimary();
 

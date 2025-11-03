@@ -8,7 +8,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { BatchEditingStartedEvent, BatchEditingStoppedEvent, CellFocusedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideRowModel, _isTreeData } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
@@ -602,7 +602,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { gos, beans } = this;
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
-            if (gos.get('treeData')) {
+            if (_isTreeData(gos)) {
                 // tree - allow editing of groups with data by default.
                 // Allow editing filler nodes (node without data) only if enableGroupEdit is true.
                 if (!rowNode.data && !gos.get('enableGroupEdit')) {

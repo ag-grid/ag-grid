@@ -1,41 +1,71 @@
-import type { ElementParams, IMenuActionParams, MenuItemDef, WithoutGridCommon } from 'ag-grid-community';
-import {
-    AgPromise,
-    KeyCode,
-    TabGuardComp,
-    _createElement,
-    _last,
-    _stopPropagationForAgGrid,
-    _warn,
+import type {
+    _AgCoreBeanCollection,
+    _AgElementParams,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
+    _WithoutCommon,
 } from 'ag-grid-community';
+import { AgPromise, KeyCode, _AgTabGuardComp, _createAgElement, _last } from 'ag-grid-community';
 
-import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
-import type { AgMenuItemComponentEvent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
+import type {
+    AgCloseMenuEvent,
+    AgMenuItemActivatedEvent,
+    AgMenuItemCallbacks,
+    AgMenuItemComponentEvent,
+    AgMenuItemDef,
+} from './agMenuItemComponent';
 import { AgMenuItemComponent } from './agMenuItemComponent';
 
 type AgMenuListEvent = AgMenuItemComponentEvent;
 
-export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
-    private readonly menuItems: AgMenuItemComponent[] = [];
-    private activeMenuItem: AgMenuItemComponent | null;
-    private readonly params: WithoutGridCommon<IMenuActionParams>;
-
+export class AgMenuList<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+    TMenuActionParams extends TCommon,
+> extends _AgTabGuardComp<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    AgMenuListEvent
+> {
+    private readonly menuItems: AgMenuItemComponent<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        TMenuActionParams
+    >[] = [];
+    private activeMenuItem: AgMenuItemComponent<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType,
+        TMenuActionParams
+    > | null;
     constructor(
         private readonly level = 0,
-        params?: WithoutGridCommon<IMenuActionParams>
+        private readonly menuActionParams: _WithoutCommon<TCommon, TMenuActionParams>,
+        private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>
     ) {
         super({ tag: 'div', cls: 'ag-menu-list', role: 'menu' });
-        this.params = params ?? {
-            column: null,
-            node: null,
-            value: null,
-        };
     }
 
     public postConstruct() {
         this.initialiseTabGuard({
             onTabKeyDown: (e) => this.onTabKeyDown(e),
-            handleKeyDown: (e) => _preserveRangesWhile(this.beans, () => this.handleKeyDown(e)),
+            handleKeyDown: (e) => this.callbacks.preserveRangesWhile(this.beans, () => this.handleKeyDown(e)),
             onFocusIn: (e) => this.handleFocusIn(e),
             onFocusOut: (e) => this.handleFocusOut(e),
         });
@@ -65,7 +95,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
                 break;
             case KeyCode.ESCAPE:
                 if (this.closeIfIsChild()) {
-                    _stopPropagationForAgGrid(e);
+                    this.callbacks.stopPropagationCallbacks.stopPropagation(e);
                 }
                 break;
         }
@@ -110,17 +140,30 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         }
     }
 
-    public addMenuItems(menuItems?: (MenuItemDef | string)[]): void {
+    public addMenuItems(menuItems?: (AgMenuItemDef<TMenuActionParams, TCommon> | string)[]): void {
         if (menuItems == null) {
             return;
         }
 
         AgPromise.all(
-            menuItems.map<AgPromise<{ eGui: HTMLElement | null; comp?: AgMenuItemComponent }>>((menuItemOrString) => {
+            menuItems.map<
+                AgPromise<{
+                    eGui: HTMLElement | null;
+                    comp?: AgMenuItemComponent<
+                        TBeanCollection,
+                        TProperties,
+                        TGlobalEvents,
+                        TCommon,
+                        TPropertiesService,
+                        TComponentSelectorType,
+                        TMenuActionParams
+                    >;
+                }>
+            >((menuItemOrString) => {
                 if (menuItemOrString === 'separator') {
                     return AgPromise.resolve({ eGui: this.createSeparator() });
                 } else if (typeof menuItemOrString === 'string') {
-                    _warn(228, { menuItemOrString });
+                    this.callbacks.warnNoItem?.(menuItemOrString);
                     return AgPromise.resolve({ eGui: null });
                 } else {
                     return this.addItem(menuItemOrString);
@@ -138,23 +181,54 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         });
     }
 
-    private addItem(menuItemDef: MenuItemDef): AgPromise<{ comp: AgMenuItemComponent; eGui: HTMLElement }> {
-        const menuItem = this.createManagedBean(new AgMenuItemComponent());
+    private addItem(menuItemDef: AgMenuItemDef<TMenuActionParams, TCommon>): AgPromise<{
+        comp: AgMenuItemComponent<
+            TBeanCollection,
+            TProperties,
+            TGlobalEvents,
+            TCommon,
+            TPropertiesService,
+            TComponentSelectorType,
+            TMenuActionParams
+        >;
+        eGui: HTMLElement;
+    }> {
+        const menuItem = this.createManagedBean(
+            new AgMenuItemComponent<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType,
+                TMenuActionParams
+            >(this.callbacks)
+        );
         return menuItem
             .init({
                 menuItemDef,
                 isAnotherSubMenuOpen: () => this.menuItems.some((m) => m.isSubMenuOpen()),
                 level: this.level,
-                contextParams: this.params,
+                contextParams: this.menuActionParams,
             })
             .then(() => {
                 menuItem.setParentComponent(this);
 
                 this.addManagedListeners(menuItem, {
-                    closeMenu: (event: CloseMenuEvent) => {
+                    closeMenu: (event: AgCloseMenuEvent) => {
                         this.dispatchLocalEvent(event);
                     },
-                    menuItemActivated: (event: MenuItemActivatedEvent) => {
+                    menuItemActivated: (
+                        event: AgMenuItemActivatedEvent<
+                            TBeanCollection,
+                            TProperties,
+                            TGlobalEvents,
+                            TCommon,
+                            TPropertiesService,
+                            TComponentSelectorType,
+                            TMenuActionParams
+                        >
+                    ) => {
                         if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
                             this.activeMenuItem.deactivate();
                         }
@@ -181,8 +255,8 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
     }
 
     private createSeparator(): HTMLElement {
-        const part: ElementParams = { tag: 'div', cls: 'ag-menu-separator-part' };
-        return _createElement({
+        const part: _AgElementParams<TComponentSelectorType> = { tag: 'div', cls: 'ag-menu-separator-part' };
+        return _createAgElement({
             tag: 'div',
             cls: 'ag-menu-separator',
             attrs: {
@@ -236,7 +310,19 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
         }
     }
 
-    private findNextItem(up?: boolean): AgMenuItemComponent | undefined {
+    private findNextItem(
+        up?: boolean
+    ):
+        | AgMenuItemComponent<
+              TBeanCollection,
+              TProperties,
+              TGlobalEvents,
+              TCommon,
+              TPropertiesService,
+              TComponentSelectorType,
+              TMenuActionParams
+          >
+        | undefined {
         const items = [...this.menuItems];
 
         if (!items.length) {
@@ -251,7 +337,17 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
             items.reverse();
         }
 
-        let nextItem: AgMenuItemComponent | undefined;
+        let nextItem:
+            | AgMenuItemComponent<
+                  TBeanCollection,
+                  TProperties,
+                  TGlobalEvents,
+                  TCommon,
+                  TPropertiesService,
+                  TComponentSelectorType,
+                  TMenuActionParams
+              >
+            | undefined;
         let foundCurrent = false;
 
         for (const item of items) {

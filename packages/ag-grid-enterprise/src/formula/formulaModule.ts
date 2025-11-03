@@ -1,6 +1,5 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
 
-import { CellSelectionModule } from '../rangeSelection/rangeSelectionModule';
 import { RowNumbersModule } from '../rowNumbers/rowNumbersModule';
 import { VERSION } from '../version';
 import { formulaStylesCSS } from './formula-styles.css-GENERATED';
@@ -13,6 +12,6 @@ export const FormulaModule: _ModuleWithoutApi = {
     moduleName: 'Formula',
     version: VERSION,
     beans: [FormulaService],
-    dependsOn: [CellSelectionModule, RowNumbersModule],
+    dependsOn: [RowNumbersModule],
     css: [formulaStylesCSS],
 };

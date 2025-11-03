@@ -1,7 +1,7 @@
 import type { AgEvent } from 'ag-grid-community';
 import { BeanStub, DragSourceType } from 'ag-grid-community';
 
-import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
+import type { VirtualListDragItem } from '../../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../../features/virtualListDragFeature';
 import type { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterBuilderComp } from './advancedFilterBuilderComp';
@@ -27,12 +27,16 @@ export class AdvancedFilterBuilderDragFeature extends BeanStub<AdvancedFilterBui
                 AdvancedFilterBuilderComp,
                 AdvancedFilterBuilderItemComp,
                 AdvancedFilterBuilderItem,
-                AdvancedFilterBuilderDragStartedEvent
+                AdvancedFilterBuilderDragStartedEvent,
+                AgEvent<'advancedFilterBuilderDragEnded'>
             >(this.comp, this.virtualList, {
                 dragSourceType: DragSourceType.AdvancedFilterBuilder,
-                listItemDragStartEvent: 'advancedFilterBuilderDragStarted',
-                listItemDragEndEvent: 'advancedFilterBuilderDragEnded',
-                eventSource: this,
+                addListeners: (parent, listItemDragStart, listItemDragEnd) => {
+                    parent.addManagedListeners(this, {
+                        advancedFilterBuilderDragStarted: listItemDragStart,
+                        advancedFilterBuilderDragEnded: listItemDragEnd,
+                    });
+                },
                 getCurrentDragValue: (listItemDragStartEvent: AdvancedFilterBuilderDragStartedEvent) =>
                     this.getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: () => false,

@@ -9,7 +9,9 @@ import { useForm } from 'react-hook-form';
 import styles from './ContactForm.module.scss';
 import { RETURN_URLS } from './constants';
 
-const { actionUrl, orgId, textAreaId } = getIsProduction() ? CONTACT_FORM_DATA.production : CONTACT_FORM_DATA.default;
+const { actionUrl, orgId, textAreaId, leadSource, formLocationId } = getIsProduction()
+    ? CONTACT_FORM_DATA.production
+    : CONTACT_FORM_DATA.default;
 
 const isDev = getIsDev();
 
@@ -19,7 +21,11 @@ type FormValues = {
     email: string;
 } & Record<string, string>;
 
-export const ContactForm: FunctionComponent = () => {
+interface Props {
+    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page';
+}
+
+export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About page' }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
@@ -69,6 +75,9 @@ export const ContactForm: FunctionComponent = () => {
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
 
+            <input type="hidden" name="lead_source" id="lead_source" value={leadSource} />
+            <input type="hidden" name={formLocationId} id={formLocationId} value={formLocation} />
+
             {isDebug && (
                 <>
                     <input type="hidden" name="debug" value={1} />
@@ -85,7 +94,9 @@ export const ContactForm: FunctionComponent = () => {
                         placeholder="First Name"
                         {...register('first_name', { required: 'First name is required', maxLength: 40 })}
                     />
-                    {errors.first_name && <p className="error">{errors.first_name.message}</p>}
+                    <div className={styles.errorContainer}>
+                        {errors.first_name && <p className="error">{errors.first_name.message}</p>}
+                    </div>
                 </div>
                 <div className="input-field">
                     <label htmlFor="last_name">Last Name</label>
@@ -95,17 +106,20 @@ export const ContactForm: FunctionComponent = () => {
                         placeholder="Last Name"
                         {...register('last_name', { maxLength: 80 })}
                     />
+                    <div className={styles.errorContainer}>
+                        {errors.last_name && <p className="error">{errors.last_name.message}</p>}
+                    </div>
                 </div>
             </div>
 
             <div className={classnames('input-field', { 'input-error': errors.email })}>
-                <label htmlFor="email">Work Email</label>
+                <label htmlFor="email">Work email</label>
                 <span className={styles.emailInputOuter}>
                     <Icon name="email" />
                     <input
                         id="email"
                         type="email"
-                        placeholder="Work Email"
+                        placeholder="Work email"
                         {...register('email', {
                             required: 'Email is required',
                             maxLength: 80,
@@ -116,7 +130,9 @@ export const ContactForm: FunctionComponent = () => {
                         })}
                     />
                 </span>
-                {errors.email && <p className="error">{errors.email.message}</p>}
+                <div className={styles.errorContainer}>
+                    {errors.email && <p className="error">{errors.email.message}</p>}
+                </div>
             </div>
             <div className={classnames('input-field', { 'input-error': errors[textAreaId] })}>
                 <label htmlFor={textAreaId}>Message</label>
@@ -127,7 +143,9 @@ export const ContactForm: FunctionComponent = () => {
                     placeholder="Tell us about your interest in AG Grid"
                     {...register(textAreaId as keyof FormValues, { required: 'Message is required' })}
                 ></textarea>
-                {errors[textAreaId] && <p className="error">{(errors as any)[textAreaId]?.message as string}</p>}
+                <div className={styles.errorContainer}>
+                    {errors[textAreaId] && <p className="error">{(errors as any)[textAreaId]?.message as string}</p>}
+                </div>
             </div>
 
             <input
@@ -135,13 +153,6 @@ export const ContactForm: FunctionComponent = () => {
                 type="submit"
                 value="Send us a message"
             />
-            <a
-                className={classnames('button-tertiary', styles.tertiaryButton)}
-                href="mailto:info@ag-grid.com"
-                role="button"
-            >
-                or email us at info@ag-grid.com
-            </a>
             <p className={styles.privacyMessage}>
                 By submitting this form you agree to our <a href="/privacy/">Privacy Policy</a>.
             </p>

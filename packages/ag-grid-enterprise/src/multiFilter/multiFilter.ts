@@ -203,6 +203,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     model: modelForFilter,
                     state: state?.state,
                 };
+                wrapper.state = newState;
+                wrapper.model = modelForFilter;
                 promises.push(
                     _refreshHandlerAndUi(
                         () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
@@ -212,9 +214,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         newState,
                         'api'
                     ).then(() => {
-                        wrapper.state = newState;
-                        wrapper.model = modelForFilter;
-                        this.updateActiveListForHandler(index, modelForFilter);
+                        this.updateActiveListForHandler(index, wrapper.model);
                     })
                 );
             } else {
@@ -302,6 +302,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 model,
                 state: wrapper.state?.state,
             };
+            wrapper.state = newState;
+            wrapper.model = model;
             _refreshHandlerAndUi(
                 () =>
                     AgPromise.resolve({
@@ -314,9 +316,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 newState,
                 'ui'
             ).then(() => {
-                wrapper.state = newState;
-                wrapper.model = model;
-                this.onHandlerModelChanged(index, model, additionalEventAttributes);
+                this.onHandlerModelChanged(index, wrapper.model, additionalEventAttributes);
             });
         };
 

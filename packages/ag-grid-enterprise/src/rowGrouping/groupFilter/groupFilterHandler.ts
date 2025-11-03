@@ -5,7 +5,7 @@ import type {
     FilterHandlerParams,
     IFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub, _isTreeData, _warn } from 'ag-grid-community';
 
 import type { GroupFilterService } from './groupFilterService';
 
@@ -56,7 +56,7 @@ export class GroupFilterHandler
 
     private getSourceColumns(): AgColumn[] {
         const groupColumn = this.params.column as AgColumn;
-        if (this.gos.get('treeData')) {
+        if (_isTreeData(this.gos)) {
             _warn(237);
             return [];
         }

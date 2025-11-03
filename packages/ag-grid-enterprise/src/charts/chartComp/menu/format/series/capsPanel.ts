@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import { AgSliderSelector } from '../../../../../agStack/agSlider';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgSliderSelector } from '../../../../widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 

@@ -46,7 +46,7 @@ export class AutoScrollService {
         this.scrollHorizontally = params.scrollAxis.includes('x');
         this.scrollVertically = params.scrollAxis.includes('y');
 
-        this.scrollByTick = params.scrollByTick != null ? params.scrollByTick : 20;
+        this.scrollByTick = params.scrollByTick ?? 20;
 
         if (params.onScrollCallback) {
             this.onScrollCallback = params.onScrollCallback;
@@ -66,7 +66,7 @@ export class AutoScrollService {
         this.shouldSkipHorizontalScroll = params.shouldSkipHorizontalScroll || (() => false);
     }
 
-    public check(mouseEvent: MouseEvent, forceSkipVerticalScroll: boolean = false): void {
+    public check(mouseEvent: MouseEvent | Touch, forceSkipVerticalScroll: boolean = false): void {
         const skipVerticalScroll = forceSkipVerticalScroll || this.shouldSkipVerticalScroll();
 
         if (skipVerticalScroll && this.shouldSkipHorizontalScroll()) {

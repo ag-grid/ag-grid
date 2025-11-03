@@ -1,8 +1,7 @@
-import type { BasePopupPositionParams } from '../agStack/interfaces/iPopup';
 import type { AgColumn } from '../entities/agColumn';
 import type { IRowNode } from './iRowNode';
 
-export interface PopupPositionParams extends BasePopupPositionParams {
+export interface PopupPositionParams {
     column?: AgColumn | null;
     rowNode?: IRowNode | null;
 }

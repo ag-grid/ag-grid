@@ -1,7 +1,12 @@
-import { _getDocument } from '../agStack/utils/document';
-import { _findFocusableElements, _findNextFocusableElement } from '../agStack/utils/focus';
-import { BeanStub } from '../context/beanStub';
-import { ManagedFocusFeature } from './managedFocusFeature';
+import { AgBeanStub } from '../core/agBeanStub';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
+import { _getDocument } from '../utils/document';
+import { _findFocusableElements, _findNextFocusableElement } from '../utils/focus';
+import type { StopPropagationCallbacks } from './agManagedFocusFeature';
+import { AgManagedFocusFeature } from './agManagedFocusFeature';
 
 export const TabGuardClassNames = {
     TAB_GUARD: 'ag-tab-guard',
@@ -13,7 +18,30 @@ export interface ITabGuard {
     setTabIndex(tabIndex?: string): void;
 }
 
-export class TabGuardCtrl extends BeanStub {
+export interface TabGuardCtrlParams {
+    comp: ITabGuard;
+    eTopGuard: HTMLElement;
+    eBottomGuard: HTMLElement;
+    eFocusableElement: HTMLElement;
+    focusTrapActive?: boolean;
+    forceFocusOutWhenTabGuardsAreEmpty?: boolean;
+    isFocusableContainer?: boolean;
+    focusInnerElement?: (fromBottom: boolean) => boolean;
+    onFocusIn?: (event: FocusEvent) => void;
+    onFocusOut?: (event: FocusEvent) => void;
+    shouldStopEventPropagation?: () => boolean;
+    onTabKeyDown?: (e: KeyboardEvent) => void;
+    handleKeyDown?: (e: KeyboardEvent) => void;
+    isEmpty?: () => boolean;
+}
+
+export class AgTabGuardCtrl<
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private readonly comp: ITabGuard;
     private readonly eTopGuard: HTMLElement;
     private readonly eBottomGuard: HTMLElement;
@@ -39,22 +67,10 @@ export class TabGuardCtrl extends BeanStub {
     // Used when `isFocusableContainer` enabled
     private allowFocus: boolean = false;
 
-    constructor(params: {
-        comp: ITabGuard;
-        eTopGuard: HTMLElement;
-        eBottomGuard: HTMLElement;
-        eFocusableElement: HTMLElement;
-        focusTrapActive?: boolean;
-        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
-        isFocusableContainer?: boolean;
-        focusInnerElement?: (fromBottom: boolean) => boolean;
-        onFocusIn?: (event: FocusEvent) => void;
-        onFocusOut?: (event: FocusEvent) => void;
-        shouldStopEventPropagation?: () => boolean;
-        onTabKeyDown?: (e: KeyboardEvent) => void;
-        handleKeyDown?: (e: KeyboardEvent) => void;
-        isEmpty?: () => boolean;
-    }) {
+    constructor(
+        params: TabGuardCtrlParams,
+        private readonly stopPropagationCallbacks?: StopPropagationCallbacks
+    ) {
         super();
 
         const {
@@ -93,8 +109,10 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public postConstruct() {
-        this.createManagedBean(
-            new ManagedFocusFeature(this.eFocusableElement, {
+        this.createManagedBean<
+            AgManagedFocusFeature<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+        >(
+            new AgManagedFocusFeature(this.eFocusableElement, this.stopPropagationCallbacks, {
                 shouldStopEventPropagation: () => this.shouldStopEventPropagation(),
                 onTabKeyDown: (e) => this.onTabKeyDown(e),
                 handleKeyDown: (e) => this.handleKeyDown(e),
@@ -132,7 +150,7 @@ export class TabGuardCtrl extends BeanStub {
         if (this.forcingFocusOut) {
             return;
         }
-        const tabIndex = this.gos.get('tabIndex');
+        const tabIndex = this.gos.get('tabIndex')!;
         this.comp.setTabIndex(tabIndex.toString());
     }
 
@@ -294,7 +312,7 @@ export class TabGuardCtrl extends BeanStub {
         if (this.tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
             focusable.splice(0, 1);
-            focusable.splice(focusable.length - 1, 1);
+            focusable.splice(-1, 1);
         }
 
         if (!focusable.length) {

@@ -1,5 +1,6 @@
 import type { AgSingletonBeanClass } from '../agStack/core/agContext';
 import type { AgCoreBeanCollection } from '../agStack/interfaces/agCoreBeanCollection';
+import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
 import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
@@ -99,7 +100,6 @@ import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
 import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
-import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { CellFlashService } from '../rendering/cell/cellFlashService';
 import type { ColumnDelayRenderService } from '../rendering/columnDelayRenderService';
@@ -264,7 +264,7 @@ interface CoreBeanCollection
     ctrlsSvc: CtrlsService;
     valueCache?: ValueCache;
     syncSvc: SyncService;
-    ariaAnnounce: AriaAnnouncementService;
+    ariaAnnounce: IAriaAnnouncementService;
     rangeSvc?: IRangeService;
     validation?: ValidationService;
     gridApi: GridApi;

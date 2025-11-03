@@ -3,7 +3,13 @@ import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
 import type { DragListenerParams } from '../interfaces/iDrag';
-import type { AgDragSource, AgDraggingEvent, AgDropTarget, IDragAndDropImage } from '../interfaces/iDragAndDrop';
+import type {
+    AgDragSource,
+    AgDraggingEvent,
+    AgDropTarget,
+    IDragAndDropImage,
+    IDragAndDropService,
+} from '../interfaces/iDragAndDrop';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _removeFromArray } from '../utils/array';
 import { _getPageBody, _getRootNode } from '../utils/document';
@@ -22,17 +28,20 @@ interface DragSourceAndParams<
 }
 
 export abstract class BaseDragAndDropService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
-    TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-    TDragSourceType extends number,
-    TDragItem,
-    TDragAndDropIcon extends string,
-    TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
-    TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+        TProperties extends BaseProperties,
+        TGlobalEvents extends BaseEvents,
+        TCommon,
+        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+        TDragSourceType extends number,
+        TDragItem,
+        TDragAndDropIcon extends string,
+        TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
+        TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
+    >
+    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    implements IDragAndDropService<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource>
+{
     beanName = 'dragAndDrop' as const;
 
     private readonly dragSourceAndParamsList: DragSourceAndParams<
@@ -323,7 +332,7 @@ export abstract class BaseDragAndDropService<
         return this.dropTargets.find((zone) => zone.external && zone.getContainer() === container) || null;
     }
 
-    public dropTargetEvent(
+    private dropTargetEvent(
         dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
         mouseEvent: MouseEvent,
         fromNudge: boolean

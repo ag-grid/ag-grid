@@ -17,6 +17,7 @@ const HREF_PATTERNS_TO_IGNORE = [
     '?', // Links with queries
     '#reference-', // API references, as it is rendered client side
     '#example-', // Example references, as they aren't headings
+    '#contact-section', // Contact form on about page
 ];
 
 const isCI =

@@ -3,7 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
-import type { CssVariablesChanged, FilterChangedEvent } from '../events';
+import type { FilterChangedEvent, StylesChangedEvent } from '../events';
 import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type {
     ClientSideRowModelStage,
@@ -35,6 +35,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private nodeManager: ClientSideNodeManager<any> | undefined = undefined;
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
+    private formulaRows: RowNode[] = [];
 
     /** Keep track if row data was updated. Important with suppressModelUpdateAfterUpdateTransaction and refreshModel api is called  */
     private rowDataUpdatedPending: boolean = false;
@@ -82,7 +83,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
             columnPivotModeChanged: refreshEverythingFunc,
-            gridStylesChanged: this.onGridStylesChanges.bind(this),
+            stylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
         });
@@ -294,6 +295,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNode.setRowTop(nextRowTop);
             rowNode.setRowIndex(i);
             nextRowTop += rowNode.rowHeight!;
+        }
+
+        if (this.gos.get('enableFormulas')) {
+            const formulaRows = this.formulaRows;
+            for (let i = 0, len = formulaRows.length; i < len; ++i) {
+                const rowNode = formulaRows[i];
+                rowNode.formulaRowIndex = i;
+            }
         }
     }
 
@@ -528,19 +537,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             beans.colFilter?.refreshModel();
         }
 
-        const usingFormulas = this.beans.gos.get('enableFormulas');
-        if (usingFormulas) {
-            const allNodes = this.rootNode?.allLeafChildren ?? [];
-            this.rootNode!.childrenAfterGroup = allNodes;
-            this.rootNode!.childrenAfterFilter = allNodes;
-            this.rootNode!.childrenAfterAggFilter = allNodes;
-            this.rootNode!.childrenAfterSort = allNodes;
-
-            // when using formulas, we skip to the map step directly
-            // currently no additional steps between group and map that formulas support
-            params.step = 'map';
-        }
-
         // this goes through the pipeline of stages. what's in my head is similar to the diagram on this page:
         // http://commons.apache.org/sandbox/commons-pipeline/pipeline_basics.html
         // however we want to keep the results of each stage, hence we manually call each step
@@ -648,6 +644,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getRow(index: number): RowNode {
         return this.rowsToDisplay[index];
+    }
+
+    public getFormulaRow(index: number): RowNode {
+        return this.formulaRows[index];
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
@@ -988,7 +988,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const usingFormulas = beans.gos.get('enableFormulas');
         if (usingFormulas) {
-            this.rowsToDisplay = rootNode?.allLeafChildren ?? [];
+            const unfilteredRows = rootNode?.childrenAfterSort ?? [];
+            this.formulaRows = unfilteredRows;
+            this.rowsToDisplay = unfilteredRows.filter((row) => !row.softFiltered);
 
             for (const row of this.rowsToDisplay) {
                 row.setUiLevel(0);
@@ -1049,7 +1051,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return atLeastOne;
     }
 
-    private onGridStylesChanges(e: CssVariablesChanged) {
+    private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged && !this.beans.rowAutoHeight?.active) {
             this.resetRowHeights();
         }

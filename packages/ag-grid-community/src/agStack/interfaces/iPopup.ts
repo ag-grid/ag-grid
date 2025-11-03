@@ -53,8 +53,12 @@ export interface AddPopupResult {
     hideFunc: (params?: PopupEventParams) => void;
 }
 
-export interface BasePopupPositionParams {
+interface BasePopupPositionParams<TParams> {
     ePopup: HTMLElement;
+    additionalParams?: TParams;
+}
+
+export interface AgPopupPositionParams<TParams> extends BasePopupPositionParams<TParams> {
     nudgeX?: number;
     nudgeY?: number;
     position?: 'over' | 'under';
@@ -63,4 +67,19 @@ export interface BasePopupPositionParams {
     skipObserver?: boolean;
     updatePosition?: () => { x: number; y: number };
     postProcessCallback?: () => void;
+}
+
+export interface AgComponentPopupPositionParams<TParams> extends AgPopupPositionParams<TParams> {
+    type: string;
+    eventSource: HTMLElement;
+}
+
+export interface AgMousePopupPositionParams<TParams> extends AgPopupPositionParams<TParams> {
+    type: string;
+    mouseEvent: MouseEvent | Touch;
+}
+
+export interface AgMenuPopupPositionParams<TParams> extends BasePopupPositionParams<TParams> {
+    eventSource: HTMLElement;
+    event?: MouseEvent | KeyboardEvent;
 }

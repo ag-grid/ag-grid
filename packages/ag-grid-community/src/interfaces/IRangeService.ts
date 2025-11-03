@@ -1,3 +1,4 @@
+import type { AutoScrollService } from '../agStack/rendering/autoScrollService';
 import type { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -11,6 +12,7 @@ import type { ICellRangeFeature } from './iCellRangeFeature';
 import type { RowPosition } from './iRowPosition';
 
 export interface IRangeService {
+    readonly autoScrollService: AutoScrollService;
     isEmpty(): boolean;
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;

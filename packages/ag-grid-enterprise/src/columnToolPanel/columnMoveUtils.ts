@@ -7,7 +7,7 @@ import type {
 } from 'ag-grid-community';
 import { isProvidedColumnGroup } from 'ag-grid-community';
 
-import type { VirtualListDragItem } from '../features/iVirtualListDragFeature';
+import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 

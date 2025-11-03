@@ -15,7 +15,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isServerSideRowModel, _isTreeData } from '../gridOptionsUtils';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -64,12 +64,13 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
-        this.executeValueGetter = this.valueCache
+        const { gos, valueCache } = this;
+        this.executeValueGetter = valueCache
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
-        this.isSsrm = _isServerSideRowModel(this.gos);
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
+        this.isSsrm = _isServerSideRowModel(gos);
+        this.cellExpressions = gos.get('enableCellExpressions');
+        this.isTreeData = _isTreeData(gos);
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,

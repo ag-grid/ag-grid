@@ -3,7 +3,7 @@ import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from '
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../widgets/agColorPicker';
+import { ColorPickerSelector } from '../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
@@ -82,7 +82,7 @@ export class FontPanel extends Component {
             </div>
         </ag-group-component>
     </div>`,
-            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector],
+            [AgGroupComponentSelector, AgSelectSelector, ColorPickerSelector],
             {
                 fontGroup: fontGroupParams,
                 familySelect: this.getFamilySelectParams(),

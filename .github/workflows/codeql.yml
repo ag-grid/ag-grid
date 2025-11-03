@@ -55,6 +55,7 @@ jobs:
                   config-file: ./.github/codeql/codeql-config-pr.yml
                   languages: ${{ matrix.language }}
                   build-mode: ${{ matrix.build-mode }}
+                  trap-caching: false
 
             - name: Initialize CodeQL (latest)
               uses: github/codeql-action/init@v3
@@ -63,6 +64,7 @@ jobs:
                   config-file: ./.github/codeql/codeql-config-latest.yml
                   languages: ${{ matrix.language }}
                   build-mode: ${{ matrix.build-mode }}
+                  trap-caching: false
 
             - name: Perform CodeQL Analysis
               uses: github/codeql-action/analyze@v3

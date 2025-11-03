@@ -181,7 +181,7 @@ export class BaseDragService<
         if (drag) {
             const rootEl = drag.rootEl;
             if (activePointerDrags?.get(rootEl) === drag) {
-                activePointerDrags?.delete(rootEl);
+                activePointerDrags.delete(rootEl);
             }
             this.drag = null;
             releasePointerCapture(drag.pointerCapture);
@@ -357,7 +357,7 @@ export class BaseDragService<
         const drag = this.drag;
         const lastDrag = drag?.lastDrag;
         if (lastDrag && this.dragging) {
-            drag.params?.onDragging(lastDrag);
+            drag.params?.onDragging?.(lastDrag);
         }
     }
 
@@ -420,7 +420,7 @@ export class BaseDragService<
                 target: dragSource.eElement,
             });
 
-            dragSource.onDragStart(start);
+            dragSource.onDragStart?.(start);
 
             // we need ONE drag action at the start event, so that we are guaranteed the drop target
             // at the start gets notified. this is because the drag can start outside of the element
@@ -434,14 +434,14 @@ export class BaseDragService<
                 return; // drag has been cancelled.
             }
 
-            dragSource.onDragging(start);
+            dragSource.onDragging?.(start);
 
             if (this.drag !== drag) {
                 return; // drag has been cancelled.
             }
         }
 
-        dragSource.onDragging(currentEvent);
+        dragSource.onDragging?.(currentEvent);
     }
 
     private onTouchUp(touchEvent: TouchEvent): void {
@@ -467,7 +467,7 @@ export class BaseDragService<
         }
         if (eventOrTouch && this.dragging) {
             this.dragging = false;
-            drag.params.onDragStop(eventOrTouch);
+            drag.params.onDragStop?.(eventOrTouch);
             this.eventSvc.dispatchEvent({
                 type: 'dragStopped',
                 target: drag.params.eElement,

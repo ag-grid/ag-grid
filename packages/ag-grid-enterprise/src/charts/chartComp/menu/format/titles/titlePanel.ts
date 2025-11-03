@@ -1,8 +1,9 @@
 import type { AgComponentSelectorType, AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
 import { AgInputTextField, Component } from 'ag-grid-community';
 
-import type { AgSliderParams } from '../../../../widgets/agSlider';
-import { AgSlider } from '../../../../widgets/agSlider';
+import type { AgSliderParams } from '../../../../../agStack/agSlider';
+import { AgSlider } from '../../../../../agStack/agSlider';
+import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -53,7 +54,7 @@ export class TitlePanel extends Component {
         this.fontPanel = this.createManagedBean(new FontPanel(fontPanelParams));
 
         this.fontPanel.addItem(this.createBean(new AgInputTextField(this.getTextInputParams())), true);
-        this.fontPanel.addItem(this.createBean(new AgSlider(this.getSpacingSliderParams())));
+        this.fontPanel.addItem(this.createBean<GridSlider>(new AgSlider(this.getSpacingSliderParams())));
 
         this.getGui().appendChild(this.fontPanel.getGui());
     }

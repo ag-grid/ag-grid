@@ -22,6 +22,7 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
+    _isTreeData,
     _warn,
 } from 'ag-grid-community';
 
@@ -88,7 +89,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
 
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = _isTreeData(this.gos);
 
         if (!usingTreeData && this.group && this.rowGroupColsSvc) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
