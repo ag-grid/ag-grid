@@ -399,7 +399,7 @@
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         padding-top: $spacing-size-24;
         padding-bottom: $spacing-size-20;
         border-top: 1px solid var(--color-border-secondary);
@@ -410,6 +410,9 @@
     flex: 1;
     padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-8;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
 
     h3 svg {
         --icon-size: 36px;
@@ -452,6 +455,21 @@
     }
 }
 
+.customerLogosWrapper {
+    margin-top: $spacing-size-8;
+    margin-bottom: $spacing-size-4;
+}
+
+.salesContactsubHeading {
+    margin-bottom: $spacing-size-24 !important;
+}
+
+.testimonalHeading {
+    font-weight: var(--text-semibold);
+    opacity: 0.6;
+    margin-bottom: 0;
+}
+
 .enterpriseIcon {
     --icon-color: var(--color-enterprise-icon);
 }
@@ -462,6 +480,69 @@
 
 .trialLicenceForm {
     flex: 1;
+}
+
+// Sales form variants with same styles as trial licence
+.salesForm {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4 $spacing-size-10;
+    padding-top: $spacing-size-16;
+    padding-bottom: $spacing-size-16;
+
+    > .trialLicenceSeparator {
+        width: 1px;
+        align-self: stretch;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        flex-direction: row;
+        align-items: center;
+        padding-top: $spacing-size-24;
+        padding-bottom: $spacing-size-20;
+        border-top: 1px solid var(--color-border-secondary);
+    }
+}
+
+.salesFormCopy {
+    flex: 1;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-8;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+
+    h3 svg {
+        --icon-size: 36px;
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-3px);
+    }
+
+    h4 svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-right: $spacing-size-2;
+        transform: translateY(-2px);
+    }
+
+    > p {
+        margin-bottom: $spacing-size-10;
+    }
+
+    > .trialLicenceSeparator {
+        height: 1px;
+        margin-top: $spacing-size-6;
+        margin-bottom: $spacing-size-6;
+    }
+}
+
+.salesFormForm {
+    flex: 1;
+}
+
+.trialButton {
+    width: fit-content;
 }
 
 .licenceKeyDocs {
