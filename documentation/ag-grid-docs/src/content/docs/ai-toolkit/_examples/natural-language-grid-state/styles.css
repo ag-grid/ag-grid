@@ -323,6 +323,7 @@ body > #highlighter {
 
 .chat-message {
     display: flex;
+    flex-direction: column;
     max-width: 85%;
     animation: slideIn 0.2s ease-out;
 }
