@@ -52,7 +52,7 @@ export class AgCheckbox<
     }
 
     protected override addInputListeners() {
-        this.addManagedElementListeners(this.eLabel, { click: this.onCheckboxClick.bind(this) });
+        this.addManagedElementListeners(this.eInput, { click: this.onCheckboxClick.bind(this) });
         this.addManagedElementListeners(this.eLabel, { click: this.toggle.bind(this) });
     }
 
