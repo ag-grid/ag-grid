@@ -1,9 +1,11 @@
+import type { AgComponentSelector } from '../interfaces/agComponent';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { AgCheckboxChangedEvent, BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { AgCheckbox } from './agCheckbox';
 import type { AgCheckboxParams } from './agFieldParams';
+import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 export interface AgRadioButtonParams<TComponentSelectorType extends string>
     extends AgCheckboxParams<TComponentSelectorType> {}
@@ -69,3 +71,8 @@ export class AgRadioButton<
         }
     }
 }
+
+export const AgRadioButtonSelector: AgComponentSelector<AgWidgetSelectorType> = {
+    selector: 'AG-RADIO-BUTTON',
+    component: AgRadioButton,
+};

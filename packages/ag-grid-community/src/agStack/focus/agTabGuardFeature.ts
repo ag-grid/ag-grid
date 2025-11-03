@@ -1,12 +1,17 @@
-import { _setAriaRole } from '../agStack/utils/aria';
-import { _getDocument } from '../agStack/utils/document';
-import { _clearElement, _isNodeOrElement, _removeFromParent } from '../agStack/utils/dom';
-import { BeanStub } from '../context/beanStub';
-import type { Component } from './component';
+import { AgBeanStub } from '../core/agBeanStub';
+import type { AgComponent } from '../interfaces/agComponent';
+import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
+import type { BaseEvents } from '../interfaces/baseEvents';
+import type { BaseProperties } from '../interfaces/baseProperties';
+import type { IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaRole } from '../utils/aria';
+import { _getDocument } from '../utils/document';
+import { _clearElement, _isNodeOrElement, _removeFromParent } from '../utils/dom';
+import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import type { ITabGuard } from './tabGuardCtrl';
-import { TabGuardClassNames, TabGuardCtrl } from './tabGuardCtrl';
+import { AgTabGuardCtrl, TabGuardClassNames } from './tabGuardCtrl';
 
-export interface TabGuardParams {
+export interface AgTabGuardParams {
     focusInnerElement?: (fromBottom: boolean) => boolean;
     shouldStopEventPropagation?: () => boolean;
     /**
@@ -35,32 +40,41 @@ export interface TabGuardParams {
     isFocusableContainer?: boolean;
 }
 
-export class TabGuardFeature extends BeanStub {
+export class AgTabGuardFeature<
+    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends BaseProperties,
+    TGlobalEvents extends BaseEvents,
+    TCommon,
+    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
     private eTopGuard: HTMLElement;
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;
 
-    private tabGuardCtrl: TabGuardCtrl;
+    private tabGuardCtrl: AgTabGuardCtrl<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>;
 
-    constructor(private readonly comp: Component<any>) {
+    constructor(
+        private readonly comp: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
+        private readonly stopPropagationCallbacks?: StopPropagationCallbacks
+    ) {
         super();
     }
 
-    public initialiseTabGuard(params: TabGuardParams) {
+    public initialiseTabGuard(params: AgTabGuardParams) {
         this.eTopGuard = this.createTabGuard('top');
         this.eBottomGuard = this.createTabGuard('bottom');
         this.eFocusableElement = this.comp.getFocusableElement();
 
-        const { eTopGuard, eBottomGuard, eFocusableElement } = this;
+        const { eTopGuard, eBottomGuard, eFocusableElement, stopPropagationCallbacks } = this;
 
         const tabGuards = [eTopGuard, eBottomGuard];
 
         const compProxy: ITabGuard = {
             setTabIndex: (tabIndex) => {
                 for (const tabGuard of tabGuards) {
-                    tabIndex != null
-                        ? tabGuard.setAttribute('tabindex', tabIndex)
-                        : tabGuard.removeAttribute('tabindex');
+                    tabIndex == null
+                        ? tabGuard.removeAttribute('tabindex')
+                        : tabGuard.setAttribute('tabindex', tabIndex);
                 }
             },
         };
@@ -81,26 +95,29 @@ export class TabGuardFeature extends BeanStub {
         } = params;
 
         this.tabGuardCtrl = this.createManagedBean(
-            new TabGuardCtrl({
-                comp: compProxy,
-                focusTrapActive,
-                eTopGuard,
-                eBottomGuard,
-                eFocusableElement,
-                onFocusIn,
-                onFocusOut,
-                focusInnerElement,
-                handleKeyDown,
-                onTabKeyDown,
-                shouldStopEventPropagation,
-                isEmpty,
-                forceFocusOutWhenTabGuardsAreEmpty,
-                isFocusableContainer,
-            })
+            new AgTabGuardCtrl(
+                {
+                    comp: compProxy,
+                    focusTrapActive,
+                    eTopGuard,
+                    eBottomGuard,
+                    eFocusableElement,
+                    onFocusIn,
+                    onFocusOut,
+                    focusInnerElement,
+                    handleKeyDown,
+                    onTabKeyDown,
+                    shouldStopEventPropagation,
+                    isEmpty,
+                    forceFocusOutWhenTabGuardsAreEmpty,
+                    isFocusableContainer,
+                },
+                stopPropagationCallbacks
+            )
         );
     }
 
-    public getTabGuardCtrl(): TabGuardCtrl {
+    public getTabGuardCtrl(): AgTabGuardCtrl<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
         return this.tabGuardCtrl;
     }
 
@@ -116,8 +133,8 @@ export class TabGuardFeature extends BeanStub {
 
     private addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
         const eFocusableElement = this.eFocusableElement;
-        eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
-        eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
+        eFocusableElement.prepend(topTabGuard);
+        eFocusableElement.append(bottomTabGuard);
     }
 
     public removeAllChildrenExceptTabGuards(): void {
@@ -131,8 +148,11 @@ export class TabGuardFeature extends BeanStub {
     }
 
     public appendChild(
-        appendChild: (newChild: HTMLElement | Component<any>, container?: HTMLElement) => void,
-        newChild: Component | HTMLElement,
+        appendChild: (
+            newChild: HTMLElement | AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>,
+            container?: HTMLElement
+        ) => void,
+        newChild: AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> | HTMLElement,
         container?: HTMLElement | undefined
     ): void {
         if (!_isNodeOrElement(newChild)) {
@@ -142,7 +162,7 @@ export class TabGuardFeature extends BeanStub {
         const { eBottomGuard: bottomTabGuard } = this;
 
         if (bottomTabGuard) {
-            bottomTabGuard.insertAdjacentElement('beforebegin', newChild);
+            bottomTabGuard.before(newChild);
         } else {
             appendChild(newChild, container);
         }

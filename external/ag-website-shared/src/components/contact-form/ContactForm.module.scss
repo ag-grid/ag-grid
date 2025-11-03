@@ -3,7 +3,7 @@
 .contactForm {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-size-4;
+    gap: $spacing-size-1;
     flex-direction: column;
 }
 
@@ -63,6 +63,12 @@
     justify-content: center;
     text-align: center;
     vertical-align: middle;
+}
+
+/* Reserve space for error messages to prevent layout shifts */
+.errorContainer {
+    min-height: 1.25rem; /* Reserve space for one line of error text */
+    margin-top: 0.25rem;
 }
 
 /* Make submit input visually match button heights */

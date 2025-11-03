@@ -29,7 +29,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import type { VirtualListModel } from '../widgets/iVirtualList';
+import type { VirtualListModel } from '../agStack/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';

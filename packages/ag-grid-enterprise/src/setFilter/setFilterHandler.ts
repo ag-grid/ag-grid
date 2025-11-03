@@ -18,6 +18,7 @@ import {
     _debounce,
     _error,
     _isClientSideRowModel,
+    _isTreeData,
     _last,
     _makeNull,
     _toStringOrNull,
@@ -106,7 +107,7 @@ export class SetFilterHandler<TValue = string>
         } = params;
         this.caseSensitive = !!caseSensitive;
         const isGroupCol = !!colDef.showRowGroup;
-        this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
+        this.treeDataTreeList = _isTreeData(this.gos) && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());

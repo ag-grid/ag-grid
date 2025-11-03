@@ -2,9 +2,17 @@ import { Direction } from '../constants/direction';
 import { KeyCode } from '../constants/keyCode';
 import { AgBeanStub } from '../core/agBeanStub';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
-import type { BaseEvents } from '../interfaces/baseEvents';
+import type { AgStylesChangedEvent, BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
-import type { AddPopupParams, AddPopupResult, BasePopupPositionParams, PopupEventParams } from '../interfaces/iPopup';
+import type {
+    AddPopupParams,
+    AddPopupResult,
+    AgComponentPopupPositionParams,
+    AgMenuPopupPositionParams,
+    AgMousePopupPositionParams,
+    AgPopupPositionParams,
+    PopupEventParams,
+} from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
@@ -47,7 +55,7 @@ export abstract class BasePopupService<
         TGlobalEvents extends BaseEvents,
         TCommon,
         TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TPopupPositionParams extends BasePopupPositionParams,
+        TPopupPositionParams,
     >
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IPopupService<TPopupPositionParams>
@@ -55,6 +63,10 @@ export abstract class BasePopupService<
     beanName = 'popupSvc' as const;
 
     protected popupList: AgPopup[] = [];
+
+    public postConstruct(): void {
+        this.addManagedEventListeners({ stylesChanged: this.handleThemeChange.bind(this) });
+    }
 
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gos.get('popupParent');
@@ -68,9 +80,7 @@ export abstract class BasePopupService<
 
     protected abstract getDefaultPopupParent(): HTMLElement;
 
-    public positionPopupUnderMouseEvent(
-        params: TPopupPositionParams & { type: string; mouseEvent: MouseEvent | Touch }
-    ): void {
+    public positionPopupUnderMouseEvent(params: AgMousePopupPositionParams<TPopupPositionParams>): void {
         const { ePopup, nudgeX, nudgeY, skipObserver } = params;
 
         this.positionPopup({
@@ -81,7 +91,7 @@ export abstract class BasePopupService<
             skipObserver,
             updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
             postProcessCallback: () =>
-                this.callPostProcessPopup(params, params.type, params.ePopup, null, params.mouseEvent),
+                this.callPostProcessPopup(params.additionalParams, params.type, params.ePopup, null, params.mouseEvent),
         });
     }
 
@@ -94,7 +104,7 @@ export abstract class BasePopupService<
         };
     }
 
-    public positionPopupByComponent(params: TPopupPositionParams & { type: string; eventSource: HTMLElement }) {
+    public positionPopupByComponent(params: AgComponentPopupPositionParams<TPopupPositionParams>) {
         const {
             ePopup,
             nudgeX,
@@ -141,7 +151,82 @@ export abstract class BasePopupService<
             nudgeY,
             keepWithinBounds,
             updatePosition,
-            postProcessCallback: () => this.callPostProcessPopup(params, type, ePopup, eventSource, null),
+            postProcessCallback: () =>
+                this.callPostProcessPopup(params.additionalParams, type, ePopup, eventSource, null),
+        });
+    }
+
+    public positionPopupForMenu(params: AgMenuPopupPositionParams<TPopupPositionParams>): void {
+        const { eventSource, ePopup, event } = params;
+
+        const sourceRect = eventSource.getBoundingClientRect();
+        const parentRect = this.getParentRect();
+
+        this.setAlignedTo(eventSource, ePopup);
+
+        let minWidthSet = false;
+
+        const updatePosition = () => {
+            const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, Direction.Vertical);
+
+            const minWidth = ePopup.clientWidth > 0 ? ePopup.clientWidth : 200;
+            if (!minWidthSet) {
+                ePopup.style.minWidth = `${minWidth}px`;
+                minWidthSet = true;
+            }
+            const widthOfParent = parentRect.right - parentRect.left;
+            const maxX = widthOfParent - minWidth;
+
+            // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
+            // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
+            // we try place it first to the left, and then if not to the right.
+            let x: number;
+            if (this.gos.get('enableRtl')) {
+                // for RTL, try left first
+                x = xLeftPosition();
+                if (x < 0) {
+                    x = xRightPosition();
+                    this.setAlignedStyles(ePopup, 'left');
+                }
+                if (x > maxX) {
+                    x = 0;
+                    this.setAlignedStyles(ePopup, 'right');
+                }
+            } else {
+                // for LTR, try right first
+                x = xRightPosition();
+                if (x > maxX) {
+                    x = xLeftPosition();
+                    this.setAlignedStyles(ePopup, 'right');
+                }
+                if (x < 0) {
+                    x = 0;
+                    this.setAlignedStyles(ePopup, 'left');
+                }
+            }
+            return { x, y };
+
+            function xRightPosition(): number {
+                return sourceRect.right - parentRect.left - 2;
+            }
+
+            function xLeftPosition(): number {
+                return sourceRect.left - parentRect.left - minWidth;
+            }
+        };
+
+        this.positionPopup({
+            ePopup,
+            keepWithinBounds: true,
+            updatePosition,
+            postProcessCallback: () =>
+                this.callPostProcessPopup(
+                    params.additionalParams,
+                    'subMenu',
+                    ePopup,
+                    eventSource,
+                    event instanceof MouseEvent ? event : undefined
+                ),
         });
     }
 
@@ -205,15 +290,15 @@ export abstract class BasePopupService<
         }
     }
 
-    protected abstract callPostProcessPopup(
-        params: Omit<TPopupPositionParams, keyof BasePopupPositionParams>,
+    public abstract callPostProcessPopup(
+        params: TPopupPositionParams | undefined,
         type: string,
         ePopup: HTMLElement,
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null
     ): void;
 
-    public positionPopup(params: BasePopupPositionParams): void {
+    public positionPopup(params: AgPopupPositionParams<TPopupPositionParams>): void {
         const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, updatePosition } = params;
         const lastSize = { width: 0, height: 0 };
 
@@ -747,6 +832,15 @@ export abstract class BasePopupService<
         while (innerElsScrollMap.length) {
             const currentEl = innerElsScrollMap.pop();
             currentEl![0].scrollTop = currentEl![1];
+        }
+    }
+
+    private handleThemeChange(e: AgStylesChangedEvent) {
+        if (e.themeChanged) {
+            const environment = this.beans.environment;
+            for (const popup of this.popupList) {
+                environment.applyThemeClasses(popup.wrapper);
+            }
         }
     }
 }

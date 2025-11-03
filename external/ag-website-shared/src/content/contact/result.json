@@ -1,12 +1,14 @@
 {
     "success": {
-        "name": "Contact Success",
-        "title": "AG Grid: Contact Form Success",
-        "message": "Thank you for getting in touch!"
+        "title": "Thanks for getting in touch - AG Grid",
+        "description": "We'll be in touch soon. In the meantime, check out our resources and see why AG Grid and AG Charts are used by millions every day.",
+        "heroTag": "Thanks for getting in touch",
+        "heroHeading": "We'll be in<br />touch soon"
     },
     "failure": {
-        "name": "Contact Failure",
-        "title": "AG Grid: Contact Form Error",
-        "message": "There was an error sending your message. Please try again later."
+        "title": "Something went wrong - AG Grid",
+        "description": "There's an issue with your contact form. In the meantime, check out our resources and see why AG Grid and AG Charts are used by millions every day.",
+        "heroTag": "There's an issue with your contact form",
+        "heroHeading": "Something went wrong:<br />Please try again later"
     }
 }

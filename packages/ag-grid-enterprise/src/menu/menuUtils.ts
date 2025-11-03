@@ -8,7 +8,7 @@ import {
     _last,
 } from 'ag-grid-community';
 
-import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
+import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
 
 export interface MenuRestoreFocusParams {
     column: AgColumn | undefined;
@@ -48,7 +48,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
     public closePopupAndRestoreFocusOnSelect(
         hidePopupFunc: (popupParams?: PopupEventParams) => void,
         restoreFocusParams: MenuRestoreFocusParams,
-        event?: CloseMenuEvent
+        event?: AgCloseMenuEvent
     ): void {
         let keyboardEvent: KeyboardEvent | undefined;
 

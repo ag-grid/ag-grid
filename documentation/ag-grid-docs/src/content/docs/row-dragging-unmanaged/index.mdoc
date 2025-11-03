@@ -12,7 +12,7 @@ however, the logic for moving the rows is in the application rather than the gri
 The property `suppressRowDrag=true` is set by the application depending on whether sorting or filtering is active.
 This is because the logic in the example doesn't cover these scenarios and wants to prevent row dragging when sorting or filtering is active.
 
-### Differences from Managed Row Dragging
+## Differences from Managed Row Dragging
 
 Unmanaged dragging differs from managed dragging in the following ways:
 * The grid does not manage moving of the rows. The only thing the grid responds with is firing drag events. It is up to the application to do the moving of the rows (if that is what the application wants to do).
@@ -27,7 +27,7 @@ fires events and the application is responsible for implementing what
 meets the application's requirements.
 {% /note %}
 
-### Row Drag Events
+## Row Drag Events
 
 Row drag events are raised by both [Managed Row Dragging](./row-dragging-managed) and unmanaged row dragging.
 
@@ -55,7 +55,7 @@ Each of the four row drag events extend the `RowDragEvent` interface.
 
 {% interfaceDocumentation interfaceName="RowDragEvent" /%}
 
-### Example Events
+## Example Events
 
 The example above demonstrates unmanaged row dragging with no attempt by the application or the grid to re-order the rows.
 This is on purpose to demonstrate that the grid will not attempt to re-order rows unless the `rowDragManaged` property is set to true.

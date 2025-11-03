@@ -181,7 +181,7 @@ const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.repl
             observer.observe(htmlEl, { attributes: true });
         </script>
 
-        <div class:list={styles.mainContainer}>
+        <div id="mainContainer" class:list={styles.mainContainer}>
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} apiPaths={apiPaths} />}
             <slot />
         </div>

@@ -33,6 +33,11 @@ const gridOptions: GridOptions<any> = {
     ],
     getRowId: (params) => String(params.data.rid),
     enableFormulas: true,
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        },
+    },
     defaultColDef: {
         headerName: '',
         editable: true,

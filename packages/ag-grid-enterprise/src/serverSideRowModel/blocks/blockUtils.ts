@@ -14,6 +14,8 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
+    _isMasterDetail,
+    _isTreeData,
     _warn,
 } from 'ag-grid-community';
 
@@ -154,7 +156,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gos.get('treeData')) {
+        if (_isTreeData(this.gos)) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
@@ -164,7 +166,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.gos.get('masterDetail')) {
+        } else if (_isMasterDetail(this.gos)) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -197,12 +199,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const treeData = this.gos.get('treeData');
+        const treeData = _isTreeData(this.gos);
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
 
-        if ((treeData || !group) && this.gos.get('masterDetail')) {
+        if ((treeData || !group) && _isMasterDetail(this.gos)) {
             this.setMasterDetailInfo(rowNode);
         }
 
@@ -239,7 +241,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.groupValue = rowNode.key;
 
         const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = _isTreeData(this.gos);
         for (const col of groupDisplayCols) {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};

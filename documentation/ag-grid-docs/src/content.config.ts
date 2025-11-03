@@ -291,9 +291,10 @@ const contactResults = defineCollection({
     schema: z.record(
         z.string(),
         z.object({
-            name: z.string(),
             title: z.string(),
-            message: z.string(),
+            description: z.string(),
+            heroTag: z.string(),
+            heroHeading: z.string(),
         })
     ),
 });

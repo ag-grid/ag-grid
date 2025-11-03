@@ -31,9 +31,9 @@ import {
     isColumn,
 } from 'ag-grid-community';
 
-import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
-import type { AgMenuList } from '../widgets/agMenuList';
+import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
 import type { TabbedItem } from '../widgets/iTabbedLayout';
+import type { MenuList } from '../widgets/menuList';
 import { TabbedLayout } from '../widgets/tabbedLayout';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import type { ColumnMenuFactory } from './columnMenuFactory';
@@ -82,7 +82,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
                 this.beans.popupSvc!.positionPopupUnderMouseEvent({
                     type: containerType,
-                    column,
+                    additionalParams: {
+                        column,
+                    },
                     mouseEvent,
                     ePopup,
                 });
@@ -142,7 +144,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
                 this.beans.popupSvc!.positionPopupByComponent({
                     type: containerType,
-                    column,
+                    additionalParams: {
+                        column,
+                    },
                     eventSource,
                     ePopup,
                     alignSide,
@@ -365,7 +369,7 @@ type TabbedColumnMenuEvent = 'tabSelected' | 'and';
 class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements EnterpriseColumnMenu {
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
-    private mainMenuList: AgMenuList;
+    private mainMenuList: MenuList;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -515,7 +519,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         return tabItemGeneral;
     }
 
-    private onHidePopup(event?: CloseMenuEvent): void {
+    private onHidePopup(event?: AgCloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,
             this.restoreFocusParams,
@@ -596,7 +600,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private readonly eColumnMenu: HTMLElement = RefPlaceholder;
 
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
-    private mainMenuList: AgMenuList;
+    private mainMenuList: MenuList;
 
     constructor(
         private readonly menuItems: (DefaultMenuItem | MenuItemDef)[],
@@ -620,7 +624,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     }
 
     // eslint-disable-next-line sonarjs/no-identical-functions
-    private onHidePopup(event?: CloseMenuEvent): void {
+    private onHidePopup(event?: AgCloseMenuEvent): void {
         (this.beans.menuUtils as MenuUtils).closePopupAndRestoreFocusOnSelect(
             this.hidePopupFunc,
             this.restoreFocusParams,

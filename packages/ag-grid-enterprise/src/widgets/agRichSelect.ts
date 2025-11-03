@@ -3,13 +3,13 @@ import type {
     AgEventTypeParams,
     AgGridCommon,
     AgPromise,
-    AriaAnnouncementService,
     BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
     GridInputTextField,
     GridOptionsService,
     GridOptionsWithDefaults,
+    IAriaAnnouncementService,
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
@@ -85,7 +85,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     AgRichSelectList<TValue, AgRichSelectEvent>
 > {
     private userCompFactory: UserComponentFactory;
-    private ariaAnnounce?: AriaAnnouncementService;
+    private ariaAnnounce?: IAriaAnnouncementService;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {

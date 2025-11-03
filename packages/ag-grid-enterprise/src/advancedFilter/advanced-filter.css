@@ -84,7 +84,8 @@
     padding-right: var(--ag-icon-size);
 }
 
-:where(.ag-virtual-list-viewport .ag-advanced-filter-builder-item-wrapper) .ag-tab-guard {
+/* stylelint-disable-next-line selector-max-specificity */
+:where(.ag-virtual-list-viewport) .ag-advanced-filter-builder-item-wrapper .ag-tab-guard {
     position: absolute;
 }
 

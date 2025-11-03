@@ -3,7 +3,7 @@ import type { ColumnNameService } from '../columns/columnNameService';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams, _isFullWidthGroupRow } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isFullWidthGroupRow, _isTreeData } from '../gridOptionsUtils';
 import type {
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -78,7 +78,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         if (
             this.processRowGroupCallback &&
-            (this.gos.get('treeData') || node.group) &&
+            (_isTreeData(this.gos) || node.group) &&
             (column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '') || isFullWidthGroup)
         ) {
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
@@ -108,7 +108,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const isTreeData = this.gos.get('treeData');
+        const isTreeData = _isTreeData(this.gos);
         const valueService = this.valueSvc;
 
         const isGrandTotalRow = node.level === -1 && node.footer;

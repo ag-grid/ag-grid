@@ -5,3 +5,18 @@
 .ag-invisible {
     visibility: hidden !important;
 }
+
+.ag-tab-guard {
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: block;
+}
+
+.ag-tab-guard-top {
+    top: 1px;
+}
+
+.ag-tab-guard-bottom {
+    bottom: 1px;
+}

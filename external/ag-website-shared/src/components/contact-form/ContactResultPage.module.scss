@@ -1,0 +1,201 @@
+@use 'design-system' as *;
+
+.contactSuccessPage {
+    padding-top: 96px;
+    padding-bottom: $spacing-size-24;
+}
+
+// Override the layout's min-height for this page
+:global(#mainContainer) {
+    min-height: auto !important;
+}
+
+.heroSection {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-8;
+    margin-bottom: $spacing-size-20;
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        grid-template-columns: 1fr 1fr;
+        gap: $spacing-size-12;
+        align-items: start;
+    }
+}
+
+.heroContent {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.heroHeadingContainer {
+    margin-bottom: $spacing-size-2;
+}
+
+.heroTag {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-link);
+    margin: 0 0 $spacing-size-3 0;
+}
+
+.heroHeading {
+    font-size: 36px;
+    font-weight: var(--text-bold);
+    line-height: var(--text-lh-tight);
+    margin: 0;
+    color: var(--color-fg-primary);
+
+    letter-spacing: -1px;
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        font-size: 48px;
+    }
+}
+
+.heroDescription {
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-relaxed);
+    color: var(--color-text-secondary);
+    margin-top: $spacing-size-4;
+    margin-bottom: $spacing-size-6;
+    max-width: 400px;
+    opacity: 0.8;
+}
+
+.heroCustomerLogos {
+    margin-top: $spacing-size-6;
+
+    div {
+        height: 56px;
+        background-size: auto 56px;
+    }
+}
+
+.heroImage {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        order: -1;
+    }
+}
+
+.gridPreview {
+    width: 100%;
+    height: auto;
+}
+
+.gridPreviewLight {
+    display: block;
+
+    #{$selector-darkmode} & {
+        display: none;
+    }
+}
+
+.gridPreviewDark {
+    display: none;
+
+    #{$selector-darkmode} & {
+        display: block;
+    }
+}
+
+.resourcesSection {
+    margin-top: $spacing-size-16;
+}
+
+.resourcesGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-6;
+
+    @media screen and (min-width: $breakpoint-pricing-small) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.resourceCard {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    padding: $spacing-size-6;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-primary);
+    transition: all $transition-default-timing;
+
+    &:hover {
+        border-color: var(--color-border-primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+    h3 {
+        font-size: var(--text-fs-lg);
+        font-weight: var(--text-semibold);
+        margin: 0;
+        color: var(--color-fg-primary);
+    }
+
+    p {
+        font-size: var(--text-fs-sm);
+        color: var(--color-text-secondary);
+        margin: 0;
+        flex: 1;
+    }
+}
+
+.resourceLink {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-1;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    color: var(--color-link);
+    text-decoration: none;
+    margin-top: $spacing-size-2;
+    transition: all $transition-default-timing;
+
+    &:hover {
+        gap: $spacing-size-2;
+        text-decoration: underline;
+    }
+}
+
+.footerSection {
+    margin-top: $spacing-size-20;
+    padding-top: $spacing-size-16;
+    text-align: center;
+}
+
+.headingContainer {
+    margin-bottom: $spacing-size-12;
+}
+
+.tag {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    color: var(--color-util-brand-600);
+    margin: 0 0 $spacing-size-2 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    #{$selector-darkmode} & {
+        color: var(--color-util-brand-400);
+    }
+}
+
+.heading {
+    font-size: var(--text-fs-3xl);
+    font-weight: var(--text-bold);
+    line-height: var(--text-lh-tight);
+    margin: 0;
+    color: var(--color-fg-primary);
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        font-size: var(--text-fs-4xl);
+    }
+}

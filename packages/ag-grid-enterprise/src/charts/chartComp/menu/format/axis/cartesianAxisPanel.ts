@@ -17,13 +17,14 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
+import type { AgSliderParams } from '../../../../../agStack/agSlider';
+import { AgSlider, AgSliderSelector } from '../../../../../agStack/agSlider';
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { AgAngleSelect } from '../../../../widgets/agAngleSelect';
-import type { AgColorPickerParams } from '../../../../widgets/agColorPicker';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../widgets/agSlider';
-import { AgSlider, AgSliderSelector } from '../../../../widgets/agSlider';
+import type { ColorPickerParams } from '../../../../widgets/colorPicker';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartController } from '../../../chartController';
 import type { ChartOptionsProxy, ChartOptionsService } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
@@ -104,7 +105,7 @@ export class CartesianAxisPanel extends Component {
                 <ag-slider data-ref="axisLineWidthSlider"></ag-slider>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector, AgSliderSelector],
+            [AgGroupComponentSelector, AgSelectSelector, ColorPickerSelector, AgSliderSelector],
             {
                 axisGroup: axisGroupParams,
                 axisTypeSelect: axisTypeSelectParams ?? undefined,
@@ -297,7 +298,7 @@ export class CartesianAxisPanel extends Component {
         return chartAxisOptions.getDefaultSelectParams('label.format', 'timeFormat', axisTimeFormatSelectOptions);
     }
 
-    private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuParamsFactory): AgColorPickerParams {
+    private getAxisColorInputParams(chartAxisThemeOverrides: ChartMenuParamsFactory): ColorPickerParams {
         return chartAxisThemeOverrides.getDefaultColorPickerParams('line.stroke');
     }
 
@@ -486,7 +487,7 @@ export class CartesianAxisPanel extends Component {
     }
 
     private addLabelPadding(labelPanelComp: FontPanel, chartAxisThemeOverrides: ChartMenuParamsFactory) {
-        const labelPaddingSlider = this.createBean(
+        const labelPaddingSlider = this.createBean<GridSlider>(
             new AgSlider(chartAxisThemeOverrides.getDefaultSliderParams('label.spacing', 'padding', 30))
         );
 

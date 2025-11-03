@@ -3,7 +3,7 @@ import { Component } from 'ag-grid-community';
 
 import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -36,7 +36,7 @@ export class BackgroundPanel extends Component {
                 <ag-color-picker data-ref="colorPicker"></ag-color-picker>
             </ag-group-component>
         <div>`,
-            [AgGroupComponentSelector, AgColorPickerSelector],
+            [AgGroupComponentSelector, ColorPickerSelector],
             {
                 chartBackgroundGroup: chartBackgroundGroupParams,
                 colorPicker: colorPickerParams,
