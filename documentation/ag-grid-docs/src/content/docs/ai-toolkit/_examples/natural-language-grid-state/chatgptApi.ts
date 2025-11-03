@@ -7,7 +7,17 @@ const ajv = new ajv7({
     strict: true,
 });
 
-export async function callChatGPT(userRequest: string, currentState: any, gridApi: GridApi): Promise<any> {
+interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
+export async function callChatGPT(
+    userRequest: string,
+    currentState: any,
+    gridApi: GridApi,
+    conversationHistory: ChatMessage[] = []
+): Promise<any> {
     const { $defs, ...structuredSchema } = gridApi.getStructuredSchema({
         columns: {
             sport: {
@@ -55,24 +65,39 @@ Respond with only the necessary state changes, not the complete state. Provide a
 
 Any unchanged properties that are present in the current state must be included in \`propertiesToIgnore\`. Otherwise they will be removed from the state.
 
+You are not able to make any changes to the grids configuration, e.g. enabling features, you are only able to modify state.
+
 Important: Only modify the properties that the user specifically requested. If they ask to "hide the age column", only include columnVisibility in your response, not other unrelated properties.
 Where possible, augment the provided state `;
+
+    // Build messages array with conversation history
+    const messages: any[] = [
+        {
+            role: 'system',
+            content: systemPrompt,
+        },
+    ];
+
+    // Add conversation history (excluding the current message which is already in userRequest)
+    for (let i = 0; i < conversationHistory.length - 1; i++) {
+        messages.push({
+            role: conversationHistory[i].role,
+            content: conversationHistory[i].content,
+        });
+    }
+
+    // Add current user request
+    messages.push({
+        role: 'user',
+        content: userRequest,
+    });
 
     let result;
     try {
         result = await generateObject({
             model: 'gpt-5-mini',
             schema,
-            messages: [
-                {
-                    role: 'system',
-                    content: systemPrompt,
-                },
-                {
-                    role: 'user',
-                    content: userRequest,
-                },
-            ],
+            messages,
         });
     } catch (error: any) {
         throw new Error(`OpenAI API error: ${error.message || 'Unknown error'}`);
