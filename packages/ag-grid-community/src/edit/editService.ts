@@ -912,18 +912,20 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (!ranges || ranges.length === 0) {
             return;
         }
-
         const { beans, rangeSvc, valueSvc } = this;
+        const { formula } = beans;
 
         _syncFromEditors(beans, { persist: true });
 
         const edits: EditMap = this.model.getEditMap(true);
-        const editValue = edits.get(rowNode)?.get(column)?.pendingValue;
+        let editValue = edits.get(rowNode)?.get(column)?.pendingValue;
 
         if (!this.batch) {
             // bulk edits occurring during batch are handled as a batch set of changes
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStarted' });
         }
+
+        const isFormula = formula?.isFormula(editValue);
 
         ranges.forEach((range: CellRange) => {
             rangeSvc?.forEachRowInRange(range, (position) => {
@@ -933,6 +935,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 }
 
                 const editRow: EditRow = edits.get(rowNode) ?? new Map();
+                let valueForColumn = editValue;
                 for (const column of range.columns) {
                     if (!column) {
                         continue;
@@ -943,7 +946,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                         let pendingValue = valueSvc.parseValue(
                             column as AgColumn,
                             rowNode ?? null,
-                            editValue,
+                            valueForColumn,
                             sourceValue
                         );
 
@@ -963,9 +966,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             },
                         });
                     }
+                    if (isFormula) {
+                        valueForColumn = formula?.updateFormulaByOffset(valueForColumn, 'right');
+                    }
                 }
                 if (editRow.size > 0) {
                     edits.set(rowNode, editRow);
+                }
+                if (isFormula) {
+                    editValue = formula?.updateFormulaByOffset(editValue, 'down');
                 }
             });
 
