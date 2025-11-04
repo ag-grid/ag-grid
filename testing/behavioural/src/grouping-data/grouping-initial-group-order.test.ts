@@ -305,10 +305,7 @@ describe('ag-grid initialGroupOrderComparator', () => {
 
         api.applyTransaction({
             add: getSampleData().slice(2),
-            update: [
-                { id: '6', country: 'Italy', athlete: 'Heidi' },
-                { id: '1', country: 'Spain', athlete: 'Alberto' },
-            ],
+            update: [{ id: '1', country: 'Spain', athlete: 'Alberto' }],
         });
 
         expect(state.called).toBe(true);
