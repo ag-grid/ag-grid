@@ -36,6 +36,11 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     filterParams: IFilterParams;
 
     /**
+     * Placeholder text for the filter textbox.
+     */
+    filterPlaceholder?: string;
+
+    /**
      * This is a shortcut to invoke getModel on the parent filter.
      * If the parent filter doesn't exist (filters are lazily created as needed)
      * then it returns null rather than calling getModel() on the parent filter.
