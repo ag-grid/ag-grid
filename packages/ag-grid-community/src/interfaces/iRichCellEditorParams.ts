@@ -7,23 +7,26 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
     cellRendererParams: any;
 }
 
-export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
+export interface RichSelectParams<TValue = any>
+    extends AgPickerFieldParams<AgComponentSelectorType>,
+        Pick<
+            IRichCellEditorParams<any, TValue>,
+            | 'filterList'
+            | 'searchType'
+            | 'highlightMatch'
+            | 'multiSelect'
+            | 'suppressDeselectAll'
+            | 'suppressMultiSelectPillRenderer'
+            | 'allowTyping'
+        > {
     value?: TValue[] | TValue;
     valueList?: TValue[];
-    allowTyping?: boolean;
+    onSearch?: (search?: string) => void;
     cellRenderer?: any;
     cellRendererParams?: any;
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
-
-    filterList?: boolean;
-    searchType?: 'match' | 'matchAny' | 'fuzzy';
-    highlightMatch?: boolean;
-
-    multiSelect?: boolean;
-    suppressDeselectAll?: boolean;
-    suppressMultiSelectPillRenderer?: boolean;
 
     placeholder?: string;
     initialInputValue?: string;
@@ -33,7 +36,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
 }
 
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
-    (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
+    (params: ICellEditorParams<TData, TValue>, search?: string): TValue[] | Promise<TValue[]>;
 }
 
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {
@@ -56,6 +59,13 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      * @default false
      */
     filterList?: boolean;
+
+    /**
+     * When `filterList` is `true`, setting this to `true` and user typing will
+     * call the `values` function to fetch filtered results asynchronously.
+     * @default false
+     */
+    filterListAsync?: boolean;
     /**
      * The type of search algorithm that is used when searching for values.
      *  - `match` - Matches if the value starts with the text typed.

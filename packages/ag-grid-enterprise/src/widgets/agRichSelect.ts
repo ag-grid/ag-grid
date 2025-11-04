@@ -87,6 +87,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private userCompFactory: UserComponentFactory;
     private ariaAnnounce?: IAriaAnnouncementService;
     private registry: Registry;
+    private readonly onSearch?: (search?: string | undefined) => void;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -127,7 +128,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
 
-        const { value, valueList, searchStringCreator } = config || {};
+        const { value, valueList, searchStringCreator, onSearch } = config || {};
 
         if (value !== undefined) {
             this.value = value;
@@ -140,6 +141,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (valueList != null) {
             this.setValues(valueList);
         }
+
+        this.onSearch = onSearch;
 
         this.registerCSS(agRichSelectCSS);
     }
@@ -343,7 +346,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     /**
-     * This method updates the list of values
+     * This method updates the list of select options
      */
     private setValues(values: TValue[]): void {
         this.values = values;
@@ -499,8 +502,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.listComponent) {
             return;
         }
-
-        const { values } = this;
+        if (this.onSearch) {
+            // this can potentially update the searchStrings asynchronously
+            this.onSearch(this.searchString);
+        }
         const searchStrings = this.searchStrings;
 
         if (!searchStrings) {
@@ -512,7 +517,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
         const shouldFilter = !!(filterList && this.searchString !== '');
 
-        this.filterListModel(shouldFilter ? filteredValues : values);
+        this.filterListModel(shouldFilter ? filteredValues : this.values);
 
         if (!this.highlightEmptyValue()) {
             this.highlightListValue(suggestions, filteredValues, shouldFilter);

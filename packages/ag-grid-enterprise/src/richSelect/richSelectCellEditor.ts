@@ -3,24 +3,28 @@ import type {
     ICellEditorParams,
     KeyCreatorParams,
     RichCellEditorParams,
+    RichCellEditorValuesCallback,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _debounce, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
+const ON_SEARCH_CALLBACK_DEBOUNCE_DELAY = 300;
 export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor {
     protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
+    private readonly onSearchCallbackDebounced;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
+        this.onSearchCallbackDebounced = _debounce(this, this.onSearchCallback, ON_SEARCH_CALLBACK_DEBOUNCE_DELAY);
     }
 
     public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
-        const { cellStartedEdit, values, eventKey } = this.params;
+        const { cellStartedEdit, values } = this.params;
 
         if (_missing(values)) {
             _warn(180);
@@ -35,15 +39,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         if (valuesPromise) {
             this.isAsync = true;
-            valuesPromise.then((values: TValue[]) => {
-                richSelect.setValueList({ valueList: values, refresh: true });
-                const searchStringCallback = this.getSearchStringCallback(values);
-                if (searchStringCallback) {
-                    richSelect.setSearchStringCreator(searchStringCallback);
-                }
-
-                this.processEventKey(eventKey);
-            });
+            valuesPromise.then(this.onValuesFulfilledCallback);
         }
 
         this.addManagedListeners(richSelect, {
@@ -51,6 +47,17 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         });
         this.focusAfterAttached = cellStartedEdit;
     }
+
+    private readonly onValuesFulfilledCallback = (values: TValue[]) => {
+        const richSelect = this.eEditor;
+        richSelect.setValueList({ valueList: values, refresh: true });
+        const searchStringCallback = this.getSearchStringCallback(values);
+        if (searchStringCallback) {
+            richSelect.setSearchStringCreator(searchStringCallback);
+        }
+
+        this.processEventKey(this.params.eventKey);
+    };
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         // there is an issue with focus handling when we call `stopEditing` while the
@@ -75,6 +82,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             valueListMaxWidth,
             allowTyping,
             filterList,
+            filterListAsync,
             searchType,
             highlightMatch,
             valuePlaceholder,
@@ -124,6 +132,16 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             valuesPromise = valuesResult;
         }
 
+        if (allowTyping && filterListAsync) {
+            // no warn here, as this is a historical behaviour which weirdly works, but no users complained
+            if (filterList && valuesPromise) {
+                ret.onSearch = this.onSearchCallbackDebounced;
+            } else {
+                params.filterListAsync = false;
+                _warn(293);
+            }
+        }
+
         if (multiSelect && allowTyping) {
             params.allowTyping = ret.allowTyping = false;
             _warn(181);
@@ -131,6 +149,16 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         return { params: ret, valuesPromise };
     }
+
+    private readonly onSearchCallback = (searchString: string) => {
+        // this.eEditor.setValueList({ refresh: true, valueList: [] });
+        const params = this.params;
+        const valuesCb = params.values as RichCellEditorValuesCallback<TData, TValue>;
+        const res = valuesCb(params as ICellEditorParams, searchString);
+        if (!Array.isArray(res)) {
+            res.then(this.onValuesFulfilledCallback);
+        }
+    };
 
     private getSearchStringCallback(values: TValue[]): ((values: TValue[]) => string[]) | undefined {
         if (typeof values[0] !== 'object') {
