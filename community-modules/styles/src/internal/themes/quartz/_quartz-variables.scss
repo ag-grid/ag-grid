@@ -61,6 +61,7 @@
     --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
     --ag-chart-menu-pill-select-button-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
     --ag-filter-panel-card-subtle-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
+    --ag-column-drag-indicator-color: var(--ag-active-color);
 
     // BORDERS
     --ag-borders: solid 1px;

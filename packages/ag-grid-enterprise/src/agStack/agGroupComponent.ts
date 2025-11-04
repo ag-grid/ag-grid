@@ -1,36 +1,41 @@
 import type {
     AgBaseComponent,
+    AgCheckbox,
     AgEvent,
-    BeanCollection,
-    ComponentSelector,
-    ElementParams,
-    GridCheckbox,
-    GridToggleButton,
+    _AgComponentSelector,
+    _AgCoreBeanCollection,
+    _AgElementParams,
+    _AgWidgetSelectorType,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
 } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgToggleButton,
-    Component,
     KeyCode,
     RefPlaceholder,
-    _createIcon,
+    _AgComponentStub,
     _isComponent,
+    _removeFromParent,
     _setAriaExpanded,
     _setDisplayed,
 } from 'ag-grid-community';
 
-type GroupItem = AgBaseComponent<BeanCollection> | HTMLElement;
+import { agGroupComponentCSS } from './agGroupComponent.css-GENERATED';
+
+type GroupItem<TBeanCollection> = AgBaseComponent<TBeanCollection> | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
 type GroupDirection = 'horizontal' | 'vertical';
 
-export interface AgGroupComponentParams {
+export interface AgGroupComponentParams<TBeanCollection> {
     title?: string;
     enabled?: boolean;
     suppressEnabledCheckbox?: boolean;
     suppressOpenCloseIcons?: boolean;
     suppressToggleExpandOnEnableChange?: boolean;
     cssIdentifier?: string;
-    items?: GroupItem[];
+    items?: GroupItem<TBeanCollection>[];
     alignItems?: Align;
     direction?: GroupDirection;
     onEnableChange?: (enabled: boolean) => void;
@@ -51,7 +56,9 @@ interface EnableChangeEvent extends AgEvent<'enableChange'> {
     enabled: boolean;
 }
 
-function getAgGroupComponentTemplate(params: AgGroupComponentParams): ElementParams {
+function getAgGroupComponentTemplate<TBeanCollection>(
+    params: AgGroupComponentParams<TBeanCollection>
+): _AgElementParams<_AgWidgetSelectorType> {
     const cssIdentifier = params.cssIdentifier || 'default';
     const direction: GroupDirection = params.direction || 'vertical';
 
@@ -75,8 +82,23 @@ function getAgGroupComponentTemplate(params: AgGroupComponentParams): ElementPar
     };
 }
 
-export class AgGroupComponent extends Component<AgGroupComponentEvent> {
-    private items: GroupItem[];
+export class AgGroupComponent<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+> extends _AgComponentStub<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    AgGroupComponentEvent
+> {
+    private items: GroupItem<TBeanCollection>[];
     private readonly cssIdentifier: string;
     private enabled: boolean;
     private expanded: boolean;
@@ -85,15 +107,41 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     private alignItems: Align | undefined;
     private readonly useToggle: boolean;
 
-    private eToggle?: GridToggleButton;
-    private eTitleBar?: DefaultTitleBar;
+    private eToggle?: AgToggleButton<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    >;
+    private eTitleBar?: DefaultTitleBar<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    >;
 
     private readonly eToolbar: HTMLElement = RefPlaceholder;
-    private readonly cbGroupEnabled: GridCheckbox = RefPlaceholder;
-    private readonly eContainer: HTMLElement = RefPlaceholder;
+    private readonly cbGroupEnabled: AgCheckbox<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    > = RefPlaceholder;
+    public readonly eContainer: HTMLElement = RefPlaceholder;
 
-    constructor(private readonly params: AgGroupComponentParams = {}) {
-        super(getAgGroupComponentTemplate(params), [AgCheckboxSelector]);
+    constructor(private readonly params: AgGroupComponentParams<TBeanCollection> = {}) {
+        super(
+            getAgGroupComponentTemplate(params) as _AgElementParams<TComponentSelectorType>,
+            [AgCheckboxSelector] as _AgComponentSelector<TComponentSelectorType>[]
+        );
+
+        this.registerCSS(agGroupComponentCSS);
 
         const {
             enabled,
@@ -173,7 +221,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         return this.expanded;
     }
 
-    public setAlignItems(alignment: AgGroupComponentParams['alignItems']): this {
+    public setAlignItems(alignment: AgGroupComponentParams<TBeanCollection>['alignItems']): this {
         if (this.alignItems !== alignment) {
             this.removeCss(`ag-group-item-alignment-${this.alignItems}`);
         }
@@ -212,21 +260,40 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         return this;
     }
 
-    public addItems(items: GroupItem[]) {
+    public addItems(items: GroupItem<TBeanCollection>[]) {
         for (const item of items) {
             this.addItem(item);
         }
     }
 
-    public prependItem(item: GroupItem) {
+    public prependItem(item: GroupItem<TBeanCollection>) {
         this.insertItem(item, true);
     }
 
-    public addItem(item: GroupItem) {
+    public addItem(item: GroupItem<TBeanCollection>) {
         this.insertItem(item, false);
     }
 
-    private insertItem(item: GroupItem, prepend?: boolean) {
+    public updateItems(newItems: GroupItem<TBeanCollection>[]): void {
+        const oldItems = this.items;
+        let newIndex = 0;
+        for (let prevIndex = 0; prevIndex < oldItems.length; ++prevIndex) {
+            const ePrevItem = oldItems[prevIndex];
+            if (ePrevItem === newItems[newIndex]) {
+                newIndex++;
+            } else {
+                const el = _isComponent(ePrevItem) ? ePrevItem.getGui() : ePrevItem;
+                _removeFromParent(el);
+            }
+        }
+
+        while (newIndex < newItems.length) {
+            this.insertItem(newItems[newIndex++]);
+        }
+        this.items = newItems;
+    }
+
+    private insertItem(item: GroupItem<TBeanCollection>, prepend?: boolean) {
         const container = this.eContainer;
         const el = _isComponent(item) ? item.getGui() : item;
 
@@ -246,7 +313,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         _setDisplayed(itemToHide, !hide);
     }
 
-    public getItemIndex(item: GroupItem): number | -1 {
+    public getItemIndex(item: GroupItem<TBeanCollection>): number | -1 {
         const el = _isComponent(item) ? item.getGui() : item;
         return this.items.indexOf(el);
     }
@@ -333,8 +400,24 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         this.eToolbar.insertAdjacentElement('beforebegin', titleBar.getGui());
     }
 
-    private createDefaultTitleBar(): DefaultTitleBar {
-        const titleBar = this.createManagedBean(new DefaultTitleBar(this.params));
+    private createDefaultTitleBar(): DefaultTitleBar<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    > {
+        const titleBar = this.createManagedBean(
+            new DefaultTitleBar<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType
+            >(this.params)
+        );
         this.eTitleBar = titleBar;
         titleBar.refreshOnExpand(this.expanded);
         this.addManagedListeners(titleBar, {
@@ -343,8 +426,24 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
         return titleBar;
     }
 
-    private createToggleTitleBar(): GridToggleButton {
-        const eToggle = this.createManagedBean<GridToggleButton>(
+    private createToggleTitleBar(): AgToggleButton<
+        TBeanCollection,
+        TProperties,
+        TGlobalEvents,
+        TCommon,
+        TPropertiesService,
+        TComponentSelectorType
+    > {
+        const eToggle = this.createManagedBean<
+            AgToggleButton<
+                TBeanCollection,
+                TProperties,
+                TGlobalEvents,
+                TCommon,
+                TPropertiesService,
+                TComponentSelectorType
+            >
+        >(
             new AgToggleButton({
                 value: this.enabled,
                 label: this.params.title,
@@ -365,7 +464,9 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
 }
 
 const TITLE_BAR_DISABLED_CLASS = 'ag-disabled-group-title-bar';
-function getDefaultTitleBarTemplate(params: AgGroupComponentParams): ElementParams {
+function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType extends string>(
+    params: AgGroupComponentParams<TBeanCollection>
+): _AgElementParams<TComponentSelectorType> {
     const cssIdentifier = params.cssIdentifier ?? 'default';
 
     return {
@@ -389,7 +490,22 @@ function getDefaultTitleBarTemplate(params: AgGroupComponentParams): ElementPara
         ],
     };
 }
-class DefaultTitleBar extends Component<ExpandedChangedEventType> {
+class DefaultTitleBar<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+> extends _AgComponentStub<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType,
+    ExpandedChangedEventType
+> {
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
     private readonly suppressKeyboardNavigation: boolean = false;
@@ -398,7 +514,7 @@ class DefaultTitleBar extends Component<ExpandedChangedEventType> {
     private readonly eGroupClosedIcon: HTMLElement = RefPlaceholder;
     private readonly eTitle: HTMLElement = RefPlaceholder;
 
-    constructor(params: AgGroupComponentParams = {}) {
+    constructor(params: AgGroupComponentParams<TBeanCollection> = {}) {
         super(getDefaultTitleBarTemplate(params));
 
         const { title, suppressOpenCloseIcons, suppressKeyboardNavigation } = params;
@@ -423,8 +539,9 @@ class DefaultTitleBar extends Component<ExpandedChangedEventType> {
     }
 
     private setupExpandContract(): void {
-        this.eGroupClosedIcon.appendChild(_createIcon('accordionClosed', this.beans, null));
-        this.eGroupOpenedIcon.appendChild(_createIcon('accordionOpen', this.beans, null));
+        const iconSvc = this.beans.iconSvc;
+        this.eGroupClosedIcon.appendChild(iconSvc.createIconNoSpan('accordionClosed')!);
+        this.eGroupOpenedIcon.appendChild(iconSvc.createIconNoSpan('accordionOpen')!);
         this.addManagedElementListeners(this.getGui(), {
             click: () => this.dispatchExpandChanged(),
             keydown: (e: KeyboardEvent) => {
@@ -524,7 +641,7 @@ class DefaultTitleBar extends Component<ExpandedChangedEventType> {
     }
 }
 
-export const AgGroupComponentSelector: ComponentSelector = {
+export const AgGroupComponentSelector: _AgComponentSelector<_AgWidgetSelectorType> = {
     selector: 'AG-GROUP-COMPONENT',
     component: AgGroupComponent,
 };

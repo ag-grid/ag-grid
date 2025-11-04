@@ -17,11 +17,14 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import { AgSlider, AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type {
+    GridSlider,
+    GroupComponent,
+    GroupComponentParams,
+} from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { AgAngleSelect } from '../../../../widgets/agAngleSelect';
 import type { ColorPickerParams } from '../../../../widgets/colorPicker';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
@@ -38,7 +41,7 @@ import { GridLinePanel } from './gridLinePanel';
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 
 export class CartesianAxisPanel extends Component {
-    private readonly axisGroup: AgGroupComponent = RefPlaceholder;
+    private readonly axisGroup: GroupComponent = RefPlaceholder;
     private readonly axisTypeSelect: GridSelect = RefPlaceholder;
     private readonly axisPositionSelect: GridSelect = RefPlaceholder;
     private readonly axisTimeFormatSelect: GridSelect = RefPlaceholder;
@@ -72,7 +75,7 @@ export class CartesianAxisPanel extends Component {
     public postConstruct() {
         const { isExpandedOnInit: expanded, chartOptionsService, registerGroupComponent } = this.options;
         const labelKey: ChartTranslationKey = this.axisType;
-        const axisGroupParams: AgGroupComponentParams = {
+        const axisGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
             title: this.translate(labelKey),

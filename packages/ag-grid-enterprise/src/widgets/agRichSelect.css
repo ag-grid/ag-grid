@@ -21,7 +21,8 @@
     padding: var(--ag-spacing);
 }
 
-.ag-rich-select-list {
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-virtual-list-viewport.ag-rich-select-list {
     position: relative;
     width: 100%;
     height: auto;
@@ -30,6 +31,7 @@
     border: var(--ag-picker-list-border);
     box-shadow: var(--ag-dropdown-shadow);
 
+    /* stylelint-disable-next-line selector-max-specificity */
     :where(.ag-loading-text) {
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     }

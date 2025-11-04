@@ -1,7 +1,7 @@
 import type { GridToggleButton } from 'ag-grid-community';
 import { AgToggleButton } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartOptionsService } from '../../services/chartOptionsService';

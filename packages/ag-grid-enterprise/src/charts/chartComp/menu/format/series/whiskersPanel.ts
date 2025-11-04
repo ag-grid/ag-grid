@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -19,7 +19,7 @@ export class WhiskersPanel extends Component {
     }
 
     public postConstruct() {
-        const whiskersGroupParams: AgGroupComponentParams = {
+        const whiskersGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('whisker'),

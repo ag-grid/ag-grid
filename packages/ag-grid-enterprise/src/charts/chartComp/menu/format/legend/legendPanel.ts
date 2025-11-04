@@ -1,10 +1,13 @@
 import type { BeanCollection, GridSelect } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
+import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type {
+    GridSlider,
+    GroupComponent,
+    GroupComponentParams,
+} from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartController } from '../../../chartController';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuContext } from '../../chartMenuContext';
@@ -20,8 +23,8 @@ export class LegendPanel extends Component {
     public wireBeans(beans: BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
-    private readonly legendGroup: AgGroupComponent = RefPlaceholder;
-    private enabledGroup: AgGroupComponent = RefPlaceholder;
+    private readonly legendGroup: GroupComponent = RefPlaceholder;
+    private enabledGroup: GroupComponent = RefPlaceholder;
 
     private readonly key: string;
     private readonly isGradient: boolean;
@@ -53,7 +56,7 @@ export class LegendPanel extends Component {
         );
         this.enabledGroup = this.createManagedBean(
             new AgGroupComponent(
-                chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(`${this.key}.enabled`, {
+                chartMenuParamsFactory.addEnableParams<GroupComponentParams>(`${this.key}.enabled`, {
                     cssIdentifier: 'charts-format-sub-level',
                     direction: 'vertical',
                     suppressOpenCloseIcons: true,
@@ -68,7 +71,7 @@ export class LegendPanel extends Component {
                 })
             )
         );
-        const legendGroupParams: AgGroupComponentParams = {
+        const legendGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('legend'),

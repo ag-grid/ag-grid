@@ -1,10 +1,13 @@
 import type { AgComponentSelectorType, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type {
+    GridSlider,
+    GroupComponent,
+    GroupComponentParams,
+} from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
@@ -12,7 +15,7 @@ import { FontPanel } from '../fontPanel';
 type SeriesItemType = 'positive' | 'negative';
 
 export class SeriesItemsPanel extends Component {
-    private readonly seriesItemsGroup: AgGroupComponent = RefPlaceholder;
+    private readonly seriesItemsGroup: GroupComponent = RefPlaceholder;
 
     private chartTranslation: ChartTranslationService;
 
@@ -26,7 +29,7 @@ export class SeriesItemsPanel extends Component {
     }
 
     public postConstruct() {
-        const seriesItemsGroupParams: AgGroupComponentParams = {
+        const seriesItemsGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('seriesItems'),

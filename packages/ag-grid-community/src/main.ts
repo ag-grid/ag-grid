@@ -239,6 +239,9 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './agStack/theming/themeTypes';
+export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
+export { paramValueToCss as _paramValueToCss, getParamType as _getParamType } from './agStack/theming/themeTypeUtils';
+export { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
 
 // AG Stack (private)
 export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
@@ -252,6 +255,7 @@ export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext 
 export {
     BaseEnvironment as _BaseEnvironment,
     BaseCssChangeKeys as _BaseCssChangeKeys,
+    CssVariable as _CssVariable,
 } from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
 export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';

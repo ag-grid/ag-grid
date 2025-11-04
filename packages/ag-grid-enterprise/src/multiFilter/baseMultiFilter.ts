@@ -10,7 +10,8 @@ import {
     _setAriaRole,
 } from 'ag-grid-community';
 
-import { AgGroupComponent } from '../widgets/agGroupComponent';
+import { AgGroupComponent } from '../agStack/agGroupComponent';
+import type { GroupComponent } from '../widgets/gridEnterpriseWidgetTypes';
 import type { MenuItemActivatedEvent } from '../widgets/menuItemComponent';
 import { MenuItemComponent } from '../widgets/menuItemComponent';
 import { MenuItemRenderer } from '../widgets/menuItemRenderer';
@@ -187,8 +188,8 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
             });
     }
 
-    private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): AgGroupComponent {
-        const group = this.createBean(
+    private insertFilterGroup(filter: SharedFilterUi, comp: BaseFilterComponent, title: string): GroupComponent {
+        const group: GroupComponent = this.createBean(
             new AgGroupComponent({
                 title,
                 cssIdentifier: 'multi-filter',

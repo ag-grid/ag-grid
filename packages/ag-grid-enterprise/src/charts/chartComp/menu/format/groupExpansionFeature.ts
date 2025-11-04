@@ -1,18 +1,18 @@
 import { BeanStub } from 'ag-grid-community';
 
-import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 
 // handles single group expansion
 export class GroupExpansionFeature extends BeanStub {
     private id: number = 0;
-    private readonly groupComponents: Map<number, AgGroupComponent> = new Map();
+    private readonly groupComponents: Map<number, GroupComponent> = new Map();
     private expandedGroupComponent?: number;
 
     constructor(private readonly groupContainer: HTMLElement) {
         super();
     }
 
-    public addGroupComponent(groupComponent: AgGroupComponent): void {
+    public addGroupComponent(groupComponent: GroupComponent): void {
         const id = this.id++;
         this.groupComponents.set(id, groupComponent);
         if (groupComponent.isExpanded()) {

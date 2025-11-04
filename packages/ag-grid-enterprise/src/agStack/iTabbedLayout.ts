@@ -1,10 +1,10 @@
-import type { AgPromise, IAfterGuiAttachedParams } from 'ag-grid-community';
+import type { AgPromise, _AfterGuiAttachedParams } from 'ag-grid-community';
 
-export interface TabbedLayoutParams {
-    items: TabbedItem[];
+export interface AgTabbedLayoutParams<TContainerType extends string> {
+    items: AgTabbedItem<TContainerType>[];
     cssClass?: string;
     keepScrollPosition?: boolean;
-    onItemClicked?: (event: { item: TabbedItem }) => void;
+    onItemClicked?: (event: { item: AgTabbedItem<TContainerType> }) => void;
     onActiveItemClicked?: () => void;
     suppressFocusBodyOnOpen?: boolean;
     suppressTrapFocus?: boolean;
@@ -13,12 +13,12 @@ export interface TabbedLayoutParams {
     onCloseClicked?: () => void;
 }
 
-export interface TabbedItem {
+export interface AgTabbedItem<TContainerType extends string> {
     title: Element;
     titleLabel: string;
     bodyPromise: AgPromise<HTMLElement>;
     name: string;
     getScrollableContainer?: () => HTMLElement;
-    afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
+    afterAttachedCallback?: (params: _AfterGuiAttachedParams<TContainerType>) => void;
     afterDetachedCallback?: () => void;
 }

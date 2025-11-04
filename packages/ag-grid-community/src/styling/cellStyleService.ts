@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { CellClassParams, ColDef } from '../entities/colDef';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
@@ -49,8 +48,8 @@ export class CellStyleService extends BeanStub implements NamedBean {
         return classOrClasses || [];
     }
 
-    public createCellCustomStyleFeature(ctrl: CellCtrl, beans: BeanCollection): CellCustomStyleFeature {
-        return new CellCustomStyleFeature(ctrl, beans);
+    public createCellCustomStyleFeature(ctrl: CellCtrl): CellCustomStyleFeature {
+        return new CellCustomStyleFeature(ctrl, this.beans);
     }
 
     private processStaticCellClasses(

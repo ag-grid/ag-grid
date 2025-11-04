@@ -97,6 +97,22 @@
             "description": "Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a rollover on one but not the other, use CSS selectors instead of this property",
             "type": "CSS color (e.g. `red` or `#fff`)"
         },
+        "--ag-row-drag-indicator-color": {
+            "description": "Color of the indicator line used to show where a row will be inserted when dragging to reorder rows",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-row-drag-indicator-width": {
+            "description": "Width of the indicator line used to show where a row will be inserted when dragging to reorder rows",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-column-drag-indicator-color": {
+            "description": "Color of the indicator line used to show where a row will be inserted when dragging to reorder columns",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
+        "--ag-column-drag-indicator-width": {
+            "description": "Width of the indicator line used to show where a row will be inserted when dragging to reorder columns",
+            "type": "CSS color (e.g. `red` or `#fff`)"
+        },
         "--ag-column-hover-color": {
             "description": "Background color when hovering over columns in the grid",
             "type": "CSS color (e.g. `red` or `#fff`)"

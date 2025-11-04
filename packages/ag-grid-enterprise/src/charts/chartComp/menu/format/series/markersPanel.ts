@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { getShapeSelectOptions } from './seriesUtils';
@@ -19,7 +19,7 @@ export class MarkersPanel extends Component {
     }
 
     public postConstruct() {
-        const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('marker.enabled', {
+        const seriesMarkersGroupParams = this.chartMenuUtils.addEnableParams<GroupComponentParams>('marker.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('markers'),

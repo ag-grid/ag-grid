@@ -1,10 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type { GridSlider, GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -23,7 +22,7 @@ export class AxisTicksPanel extends Component {
 
     public postConstruct() {
         const { chartMenuUtils } = this;
-        const axisTicksGroupParams = chartMenuUtils.addEnableParams<AgGroupComponentParams>('tick.enabled', {
+        const axisTicksGroupParams = chartMenuUtils.addEnableParams<GroupComponentParams>('tick.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,

@@ -184,7 +184,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
 
-        this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this, beans);
+        this.rowEditStyleFeature = beans.editSvc?.createRowStyleFeature(this);
 
         this.addListeners();
     }

@@ -219,7 +219,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         shiftNode(ast);
 
         // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ true);
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ false);
     }
 
     private setupFunctions() {
