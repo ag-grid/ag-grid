@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import type { SortDirection } from '../entities/colDef';
+import type { SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -25,12 +25,7 @@ export class SortService extends BeanStub implements NamedBean {
         this.progressSort(column, multiSort, 'uiColumnSorted');
     }
 
-    public setSortForColumn(column: AgColumn, sort: SortDirection, multiSort: boolean, source: ColumnEventType): void {
-        // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort !== 'asc' && sort !== 'desc') {
-            sort = null;
-        }
-
+    public setSortForColumn(column: AgColumn, sortDef: SortDef, multiSort: boolean, source: ColumnEventType): void {
         const { gos, showRowGroupCols } = this.beans;
 
         const isColumnsSortingCoupledToGroup = _isColumnsSortingCoupledToGroup(gos);
@@ -47,7 +42,7 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         for (const col of columnsToUpdate) {
-            this.setColSort(col, sort, source);
+            this.setColSort(col, sortDef, source);
         }
         const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
 
@@ -371,20 +366,25 @@ export class SortService extends BeanStub implements NamedBean {
             column.sortIndex = initialSortIndex;
         }
     }
+    /**
+     * Update a column's sort state from a sort definition.
+     * If `sortDef` is `undefined`, the call is a no-op (no change).
+     */
+    public updateColSort(column: AgColumn, sortDef: SortDef | undefined, source: ColumnEventType): void {
+        if (sortDef === undefined) {
+            return;
+        }
 
-    public updateColSort(column: AgColumn, sort: SortDirection | undefined, source: ColumnEventType): void {
-        if (sort !== undefined) {
-            if (sort === 'desc' || sort === 'asc') {
-                this.setColSort(column, sort, source);
-            } else {
-                this.setColSort(column, undefined, source);
-            }
+        if (_isSortDefValid(sortDef)) {
+            this.setColSort(column, sortDef, source);
+        } else {
+            this.setColSort(column, undefined, source);
         }
     }
 
-    private setColSort(column: AgColumn, sort: SortDirection | undefined, source: ColumnEventType): void {
-        if (column.sort !== sort) {
-            column.sort = sort;
+    private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
+        if (!_areSortDefsEqual(column.sortDef, sort)) {
+            column.sortDef = sort;
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');
@@ -402,4 +402,25 @@ export class SortService extends BeanStub implements NamedBean {
     public getSortIndicatorSelector(): ComponentSelector {
         return SortIndicatorSelector;
     }
+}
+
+export function _isSortDefValid(sortDef: SortDef | undefined): boolean {
+    return (
+        !!sortDef &&
+        (sortDef.type === 'default' || sortDef.type === 'absolute') &&
+        (sortDef.direction === 'asc' || sortDef.direction === 'desc')
+    );
+}
+
+export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
+    if (sortDef1 === sortDef2) {
+        return true;
+    }
+    if (!sortDef1 || !sortDef2) {
+        return false;
+    }
+    if (sortDef1.type !== sortDef2.type) {
+        return false;
+    }
+    return sortDef1.direction === sortDef2.direction;
 }

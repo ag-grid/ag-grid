@@ -1104,6 +1104,7 @@ export {
     ToolPanelClass,
     KeyCreatorParams,
     SortDirection,
+    SortDef,
     NestedFieldPaths,
     GetFindTextParams,
     GetFindTextFunc,

@@ -28,9 +28,9 @@ export interface ColumnStateParams {
     width?: number;
     /** Column's flex if flex is set */
     flex?: number | null;
-    /** Sort applied to the column */
+    /** The sort direction of the column */
     sort?: SortDirection;
-    /** The type of sort applied */
+    /** The type of sort applied to the column */
     sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
