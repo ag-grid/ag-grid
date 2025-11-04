@@ -214,7 +214,6 @@ const DEFAULT_CHART_TRANSLATIONS = {
     stackedSeriesGroupType: 'Stacked',
     normalizedSeriesGroupType: '100% Stacked',
     legendEnabled: 'Enabled',
-    invalidColor: 'Color value is invalid',
     groupedColumnFull: 'Grouped Column',
     stackedColumnFull: 'Stacked Column',
     normalizedColumnFull: '100% Stacked Column',

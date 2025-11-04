@@ -6,7 +6,7 @@ import type { IExpansionStrategy } from './iExpansionStrategy';
 export class ExpandAllStrategy extends BeanStub implements IExpansionStrategy<RowGroupBulkExpansionState> {
     name: string = 'expandAll';
 
-    private allExpanded = false;
+    private allExpanded: boolean | undefined = undefined;
     private flipped: Set<string> = new Set();
 
     public setExpandedState(state: RowGroupBulkExpansionState): void {

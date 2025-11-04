@@ -55,6 +55,10 @@
                 "url": "/about"
             },
             {
+                "name": "Contact Us",
+                "url": "/about#contact-section"
+            },
+            {
                 "name": "Blog",
                 "url": "https://blog.ag-grid.com/?_ga=2.213149716.106872681.1607518091-965402545.1605286673"
             },

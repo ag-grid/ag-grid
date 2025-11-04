@@ -72,7 +72,7 @@ export class GridHeaderCtrl extends BeanStub {
             columnHeaderHeightChanged: listener,
             // add this to the animation frame to avoid a feedback loop
             columnGroupHeaderHeightChanged: () => _requestAnimationFrame(this.beans, () => listener()),
-            gridStylesChanged: listener,
+            stylesChanged: listener,
             advancedFilterEnabledChanged: listener,
         });
     }
@@ -86,11 +86,11 @@ export class GridHeaderCtrl extends BeanStub {
         const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (beans.filterManager?.hasFloatingFilters()) {
-            totalHeaderHeight += getFloatingFiltersHeight(beans)!;
+            totalHeaderHeight += getFloatingFiltersHeight(beans);
         }
 
         totalHeaderHeight += groupHeight;
-        totalHeaderHeight += headerHeight!;
+        totalHeaderHeight += headerHeight;
 
         if (this.headerHeight === totalHeaderHeight) {
             return;

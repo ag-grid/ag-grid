@@ -1,8 +1,7 @@
 import util from 'util';
 import { expect } from 'vitest';
 
-import type { Column, GridApi, IRowNode } from 'ag-grid-community';
-import type { RowNode } from 'ag-grid-community';
+import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
 import { TestGridsManager } from '../testGridsManager';
 import { log, unindentText } from '../utils';
@@ -147,7 +146,9 @@ export class GridRows<TData = any> {
     }
 
     public isDuplicateIdRow(row: IRowNode<TData> | null | undefined): boolean {
-        if (!row || !('id' in row)) return false;
+        if (!row || !('id' in row)) {
+            return false;
+        }
         const found = this.getById(String(row.id));
         return !found || found !== row;
     }

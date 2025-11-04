@@ -40,7 +40,8 @@ export type AgComponentSelectorType =
     | 'AG-SLIDER'
     | 'AG-SORT-INDICATOR'
     | 'AG-STATUS-BAR'
-    | 'AG-WATERMARK';
+    | 'AG-WATERMARK'
+    | 'AG-FORMULA-INPUT-FIELD';
 
 export class Component<TLocalEvent extends string = AgComponentEvent> extends AgComponentStub<
     BeanCollection,

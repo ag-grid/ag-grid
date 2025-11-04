@@ -76,7 +76,9 @@ const GridBodyComp = () => {
         eRoot.current = eRef;
         if (!eRef || context.isDestroyed()) {
             beansToDestroy.current = context.destroyBeans(beansToDestroy.current);
-            destroyFuncs.current.forEach((f) => f());
+            for (const f of destroyFuncs.current) {
+                f();
+            }
             destroyFuncs.current = [];
 
             return;
@@ -84,7 +86,7 @@ const GridBodyComp = () => {
 
         const attachToDom = (eParent: HTMLElement, eChild: HTMLElement | Comment) => {
             eParent.appendChild(eChild);
-            destroyFuncs.current.push(() => eParent.removeChild(eChild));
+            destroyFuncs.current.push(() => eChild.remove());
         };
         const newComp = (compClass: ComponentSelector['component']) => {
             const comp = context.createBean(new compClass());

@@ -1,0 +1,28 @@
+/* special setting for lists to prevent scroll
+     while tabbing out of the container */
+:where(.ag-virtual-list-viewport) .ag-tab-guard {
+    /* this keeps the tabguard within "visible" range
+       while scrolling so focusing the tabguard doesn't
+       scroll the list viewport. */
+    position: sticky;
+}
+
+.ag-virtual-list-viewport {
+    position: relative;
+    height: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: auto;
+    width: 100%;
+}
+
+.ag-virtual-list-container {
+    overflow: hidden;
+    position: relative;
+}
+
+.ag-virtual-list-item {
+    height: var(--ag-list-item-height);
+    position: absolute;
+    width: 100%;
+}

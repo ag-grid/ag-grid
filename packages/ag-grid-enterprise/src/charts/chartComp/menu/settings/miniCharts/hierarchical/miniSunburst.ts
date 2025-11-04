@@ -44,11 +44,11 @@ export class MiniSunburstClass extends MiniChartWithPolarAxes {
 
         let maxDepth = 0;
         const findMaxDepth = (data: any[], parentDepth: number) => {
-            data.forEach((child) => {
+            for (const child of data) {
                 const depth = parentDepth + 1;
                 maxDepth = Math.max(maxDepth, depth);
                 findMaxDepth(child, depth);
-            });
+            }
         };
 
         findMaxDepth(data, 0);

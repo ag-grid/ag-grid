@@ -460,7 +460,9 @@ async function writeContents(
 
 // We want to replace Math.random() calls with agRandom() calls in the example runner so that tests are predictable.
 function useAgRandom<T extends string[] | Record<string, string>>(scripts: T): T {
-    if (!scripts) return scripts;
+    if (!scripts) {
+        return scripts;
+    }
 
     const replacer = (value: string) => value.replace(/Math\.random\(\)/g, 'window.agRandom()');
 

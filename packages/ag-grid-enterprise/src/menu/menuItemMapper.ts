@@ -169,7 +169,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         return {
                             name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                             icon: _createIconNoSpan('menuValue', beans, null),
-                            subMenu: createAggregationSubMenu(column!, aggFuncSvc, valueColsSvc, localeTextFunc),
+                            subMenu: createAggregationSubMenu(column, aggFuncSvc, valueColsSvc, localeTextFunc),
                             disabled: gos.get('functionsReadOnly'),
                         };
                     } else {
@@ -440,18 +440,18 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             }
         };
 
-        originalList.forEach((menuItemOrString) => {
+        for (const menuItemOrString of originalList) {
             let result: MenuItemDef | 'separator' | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = getStockMenuItem(menuItemOrString as DefaultMenuItem, column, sourceElement, source);
+                result = getStockMenuItem(menuItemOrString, column, sourceElement, source);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
                 result = { ...menuItemOrString };
             }
             // if no mapping, can happen when module is not loaded but user tries to use module anyway
             if (!result) {
-                return;
+                continue;
             }
 
             const resultDef = result as MenuItemDef;
@@ -470,7 +470,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             if (result != null) {
                 resultList.push(result);
             }
-        });
+        }
 
         // items could have been removed due to missing modules
         _removeRepeatsFromArray(resultList, MENU_ITEM_SEPARATOR);
@@ -506,16 +506,16 @@ function createAggregationSubMenu(
             checked: !columnIsAlreadyAggValue,
         });
 
-        funcNames.forEach((funcName) => {
+        for (const funcName of funcNames) {
             result.push({
                 name: localeTextFunc(funcName, aggFuncSvc.getDefaultFuncLabel(funcName)),
                 action: () => {
                     valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
                     valueColsSvc.addColumns([columnToUse!], 'contextMenu');
                 },
-                checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
+                checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName,
             });
-        });
+        }
     }
 
     return result;

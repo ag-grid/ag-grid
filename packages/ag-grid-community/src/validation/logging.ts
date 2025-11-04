@@ -1,4 +1,5 @@
 import { BASE_URL } from '../baseUrl';
+import { _isUmd } from '../modules/moduleRegistry';
 import { _errorOnce, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
@@ -44,7 +45,9 @@ function getMsgOrDefault<TId extends ErrorId>(
  * Stringify object, removing any circular dependencies
  */
 function stringifyObject(inputObj: any) {
-    if (!inputObj) return String(inputObj);
+    if (!inputObj) {
+        return String(inputObj);
+    }
     const object: Record<string, any> = {};
     for (const prop of Object.keys(inputObj)) {
         if (typeof inputObj[prop] !== 'object' && typeof inputObj[prop] !== 'function') {
@@ -122,7 +125,12 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
 
 const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessage?: string) => {
     const errorLink = getErrorLink(errorNum, args);
-    return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
+
+    const prefix = `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}`;
+    if (_isUmd()) {
+        return prefix;
+    }
+    return `${prefix}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
 export function _warn<
@@ -147,7 +155,15 @@ export function _logPreInitErr<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(_errorOnce, id!, args as any, false, defaultMessage);
+    getMsgOrDefault(_errorOnce, id, args as any, false, defaultMessage);
+}
+
+export function _logPreInitWarn<
+    TId extends ErrorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
+    getMsgOrDefault(_warnOnce, id, args as any, true, defaultMessage);
 }
 
 function getErrMsg<TId extends ErrorId>(

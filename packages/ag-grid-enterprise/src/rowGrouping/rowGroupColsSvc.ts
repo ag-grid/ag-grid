@@ -37,10 +37,6 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
     private readonly modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => {
-            // if this column has virtual columns associated to it, ensure those virtual columns are
-            // inserted before it in the list (and therefore the grouping hierarchy)
-            this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-
             if (!this.columns.includes(column)) {
                 this.columns.push(column);
             }
@@ -88,11 +84,9 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
                 if (rowIndex && typeof rowGroupIndex === 'number') {
                     rowIndex[column.getId()] = rowGroupIndex;
                 }
-            } else {
-                if (column.isRowGroupActive()) {
-                    this.setColRowGroupActive(column, false, source);
-                    this.modifyColumnsNoEventsCallbacks.removeCol(column);
-                }
+            } else if (column.isRowGroupActive()) {
+                this.setColRowGroupActive(column, false, source);
+                this.modifyColumnsNoEventsCallbacks.removeCol(column);
             }
         }
     }
@@ -114,11 +108,16 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     }
 
     private setColRowGroupActive(column: AgColumn, rowGroup: boolean, source: ColumnEventType): void {
+        if (this.gos.get('enableFormulas')) {
+            rowGroup = false;
+        }
+
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
 
             if (rowGroup) {
-                this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+                const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
+                addedCols?.forEach((c) => this.setColRowGroupActive(c, rowGroup, source));
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);

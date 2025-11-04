@@ -83,7 +83,9 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 });
             });
         }).then(() => {
-            this.afterFiltersReadyFuncs.forEach((f) => f());
+            for (const f of this.afterFiltersReadyFuncs) {
+                f();
+            }
             this.afterFiltersReadyFuncs.length = 0;
         });
     }
@@ -201,6 +203,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     model: modelForFilter,
                     state: state?.state,
                 };
+                wrapper.state = newState;
+                wrapper.model = modelForFilter;
                 promises.push(
                     _refreshHandlerAndUi(
                         () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
@@ -210,9 +214,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                         newState,
                         'api'
                     ).then(() => {
-                        wrapper.state = newState;
-                        wrapper.model = modelForFilter;
-                        this.updateActiveListForHandler(index, modelForFilter);
+                        this.updateActiveListForHandler(index, wrapper.model);
                     })
                 );
             } else {
@@ -229,14 +231,14 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     public applyModel(source: 'api' | 'ui' | 'rowDataUpdated' = 'api'): boolean {
         let result = false;
 
-        this.wrappers.forEach((wrapper) => {
+        for (const wrapper of this.wrappers) {
             if (wrapper) {
                 const filter = wrapper.filter;
                 if (filter instanceof ProvidedFilter) {
                     result = filter.applyModel(source) || result;
                 }
             }
-        });
+        }
 
         return result;
     }
@@ -250,10 +252,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     }
 
     public override destroy(): void {
-        this.wrappers.forEach((wrapper) => {
+        for (const wrapper of this.wrappers) {
             this.destroyBean(wrapper?.filter);
             this.destroyBean(wrapper?.handler);
-        });
+        }
 
         this.wrappers.length = 0;
 
@@ -300,6 +302,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 model,
                 state: wrapper.state?.state,
             };
+            wrapper.state = newState;
+            wrapper.model = model;
             _refreshHandlerAndUi(
                 () =>
                     AgPromise.resolve({
@@ -312,9 +316,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 newState,
                 'ui'
             ).then(() => {
-                wrapper.state = newState;
-                wrapper.model = model;
-                this.onHandlerModelChanged(index, model, additionalEventAttributes);
+                this.onHandlerModelChanged(index, wrapper.model, additionalEventAttributes);
             });
         };
 

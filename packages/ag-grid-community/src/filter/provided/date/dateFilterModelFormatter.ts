@@ -15,9 +15,11 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
         super(optionsFactory, filterParams, (value) => {
             const { dataTypeSvc, valueSvc } = this.beans;
             const column = (filterParams as SharedFilterParams).column as AgColumn;
-            const dateFormatFn = dataTypeSvc?.getDateFormatterFunction(column);
-            const dateStringStringValue = dateFormatFn?.(value ?? undefined);
-            return valueSvc.formatValue(column, null, dateStringStringValue);
+            const dateFormatFn = dataTypeSvc?.getDateFormatterFunction(column); // only exists for dateString.
+            // dateString value formatter requires a string, so format it first.
+            // date value formatter wants the original Date.
+            const valueToFormat = dateFormatFn ? dateFormatFn(value ?? undefined) : value;
+            return valueSvc.formatValue(column, null, valueToFormat);
         });
     }
 

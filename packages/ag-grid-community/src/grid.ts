@@ -1,11 +1,10 @@
-import { AgContext } from './agStack/core/agContext';
 import type { AgContextParams } from './agStack/core/agContext';
+import { AgContext } from './agStack/core/agContext';
 import { _missing } from './agStack/utils/generic';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { BeanCollection, SingletonBean } from './context/context';
-import type { Context } from './context/context';
+import type { BeanCollection, Context, SingletonBean } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventTypeParams } from './events';
@@ -29,6 +28,7 @@ import {
     _getRegisteredModules,
     _hasUserRegistered,
     _isModuleRegistered,
+    _isUmd,
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
@@ -205,17 +205,17 @@ export class GridCoreCreator {
         const registry = context.getBean('registry');
         const apiFunctionSvc = context.getBean('apiFunctionSvc');
 
-        registeredModules.forEach((module) => {
+        for (const module of registeredModules) {
             registry.registerModule(module);
 
             const apiFunctions = module.apiFunctions;
             if (apiFunctions) {
                 const names = Object.keys(apiFunctions) as ApiFunctionName[];
-                names.forEach((name) => {
-                    apiFunctionSvc?.addFunction(name, apiFunctions[name]!);
-                });
+                for (const name of names) {
+                    apiFunctionSvc?.addFunction(name, apiFunctions[name]);
+                }
             }
-        });
+        }
     }
 
     private createProvidedBeans(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams): any {
@@ -281,7 +281,7 @@ export class GridCoreCreator {
                 if (userRowModelType !== rowModelType) {
                     const params = {
                         moduleName,
-                        rowModelType: userRowModelType!,
+                        rowModelType: userRowModelType,
                     };
                     _logPreInitErr(275, params, missingRowModelTypeError(params));
                     return;
@@ -290,23 +290,34 @@ export class GridCoreCreator {
         }
 
         if (!_isModuleRegistered(rowModuleModelName, gridId, rowModelType)) {
+            const isUmd = _isUmd();
+            const reasonOrId = `rowModelType = '${rowModelType}'`;
+
+            const message = isUmd
+                ? `Unable to use ${reasonOrId} as that requires the ag-grid-enterprise script to be included.\n`
+                : `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`;
             _logPreInitErr(
                 200,
                 {
-                    reasonOrId: `rowModelType = '${rowModelType}'`,
+                    reasonOrId,
                     moduleName: rowModuleModelName,
                     gridScoped: _areModulesGridScoped(),
                     gridId,
                     rowModelType,
+                    isUmd,
                 },
-                `Missing module ${rowModuleModelName}Module for rowModelType ${rowModelType}.`
+                message
             );
             return;
         }
 
         const beans: Set<SingletonBean> = new Set();
 
-        registeredModules.forEach((module) => module.beans?.forEach((bean) => beans.add(bean)));
+        for (const module of registeredModules) {
+            for (const bean of module.beans ?? []) {
+                beans.add(bean);
+            }
+        }
 
         return Array.from(beans);
     }

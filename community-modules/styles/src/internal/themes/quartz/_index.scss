@@ -690,11 +690,6 @@
     .ag-pill .ag-pill-button:hover {
         color: var(--ag-active-color);
     }
-
-    .ag-header-highlight-before::after,
-    .ag-header-highlight-after::after {
-        background-color: var(--ag-active-color);
-    }
 }
 
 .ag-theme-quartz-dark {

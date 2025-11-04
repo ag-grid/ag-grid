@@ -85,6 +85,7 @@ export class AgColumn<TValue = any>
     public resizing = false;
     public menuVisible = false;
     public highlighted: ColumnHighlightPosition | null;
+    public formulaRef: string | null = null;
 
     private lastLeftPinned: boolean = false;
     private firstRightPinned: boolean = false;
@@ -205,8 +206,8 @@ export class AgColumn<TValue = any>
             colDef: { field, tooltipField },
         } = this;
         const suppressDotNotation = gos.get('suppressFieldDotNotation');
-        this.fieldContainsDots = _exists(field) && field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = _exists(tooltipField) && tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.fieldContainsDots = _exists(field) && field.includes('.') && !suppressDotNotation;
+        this.tooltipFieldContainsDots = _exists(tooltipField) && tooltipField.includes('.') && !suppressDotNotation;
     }
 
     private initMinAndMaxWidths(): void {
@@ -708,15 +709,15 @@ export class AgColumn<TValue = any>
     }
 
     public isAllowPivot(): boolean {
-        return this.colDef.enablePivot === true;
+        return this.colDef.enablePivot === true && !this.gos.get('enableFormulas');
     }
 
     public isAllowValue(): boolean {
-        return this.colDef.enableValue === true;
+        return this.colDef.enableValue === true && !this.gos.get('enableFormulas');
     }
 
     public isAllowRowGroup(): boolean {
-        return this.colDef.enableRowGroup === true;
+        return this.colDef.enableRowGroup === true && !this.gos.get('enableFormulas');
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {

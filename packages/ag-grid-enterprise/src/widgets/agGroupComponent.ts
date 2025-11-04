@@ -213,7 +213,9 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
     }
 
     public addItems(items: GroupItem[]) {
-        items.forEach((item) => this.addItem(item));
+        for (const item of items) {
+            this.addItem(item);
+        }
     }
 
     public prependItem(item: GroupItem) {

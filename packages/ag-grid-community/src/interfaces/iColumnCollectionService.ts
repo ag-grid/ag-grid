@@ -1,5 +1,6 @@
-import type { ColKey, ColumnCollections } from '../columns/columnModel';
+import type { ColumnCollections } from '../columns/columnModel';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';

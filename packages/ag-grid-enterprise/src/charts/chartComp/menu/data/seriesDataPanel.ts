@@ -94,12 +94,10 @@ export class SeriesDataPanel extends DragDataPanel {
 
             if (isInPairedMode) {
                 axisLabel = indexToAxisLabel.get(index % (isBubble ? 3 : 2));
+            } else if (index === 0) {
+                axisLabel = 'X';
             } else {
-                if (index === 0) {
-                    axisLabel = 'X';
-                } else {
-                    axisLabel = isBubble && index % 2 === 0 ? 'size' : 'Y';
-                }
+                axisLabel = isBubble && index % 2 === 0 ? 'size' : 'Y';
             }
 
             return `${escapedLabel} (${axisLabel})`;

@@ -1,5 +1,5 @@
 import type { AgColumn, IAggColumnNameService, IAggFunc, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists } from 'ag-grid-community';
+import { BeanStub, _exists, _isTreeData } from 'ag-grid-community';
 
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
     beanName = 'aggColNameSvc' as const;
@@ -30,7 +30,8 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
             aggFuncFound = true;
         } else {
             const measureActive = column.isValueActive();
-            const aggregationPresent = colModel.isPivotMode() || rowGroupColsSvc?.columns.length !== 0;
+            const isGrouping = rowGroupColsSvc?.columns.length !== 0;
+            const aggregationPresent = colModel.isPivotMode() || isGrouping || _isTreeData(this.gos);
 
             if (measureActive && aggregationPresent) {
                 aggFunc = column.getAggFunc();

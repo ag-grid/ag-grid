@@ -61,9 +61,9 @@ export const createPart = <T = unknown>(args: CreatePartArgs<T>): Part<ExpandTyp
 export const defaultModeName = '$default';
 let partCounter = 0;
 export class PartImpl implements Part {
-    feature?: string | undefined;
+    feature?: string;
     modeParams: Record<string, Record<string, unknown>>;
-    css?: string | (() => string) | undefined;
+    css?: string | (() => string);
     cssImports?: string[];
 
     _inject?: { css: string; class: string } | false;
@@ -92,7 +92,9 @@ export class PartImpl implements Part {
             let { css } = this;
             if (css) {
                 const className = `ag-theme-${this.feature ?? 'part'}-${++partCounter}`;
-                if (typeof css === 'function') css = css();
+                if (typeof css === 'function') {
+                    css = css();
+                }
                 css = `:where(.${className}) {\n${css}\n}\n`;
                 for (const cssImport of this.cssImports ?? []) {
                     css = `@import url(${JSON.stringify(cssImport)});\n${css}`;

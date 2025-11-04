@@ -1,6 +1,6 @@
 import type { AgComponentSelectorType, AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
 
-import type { AgSliderParams } from '../../../../widgets/agSlider';
+import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import type { ChartMenuService } from '../../../services/chartMenuService';
 import { TitlePanel } from './titlePanel';
 

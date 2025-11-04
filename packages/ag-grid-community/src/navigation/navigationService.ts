@@ -435,7 +435,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 previous.focusCell(true);
             }
 
-            if ((!backwards && focusSvc.focusOverlay(false)) || _focusNextGridCoreContainer(beans, backwards)) {
+            if (focusSvc.focusOverlay(false) || _focusNextGridCoreContainer(beans, backwards)) {
                 keyboardEvent.preventDefault();
             }
         }
@@ -477,7 +477,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const cellCtrl = previous instanceof CellCtrl ? previous : previous.getAllCellCtrls()?.[0];
 
         if (editSvc?.isEditing()) {
-            res = editSvc?.moveToNextCell(cellCtrl!, backwards, event, source);
+            res = editSvc?.moveToNextCell(cellCtrl, backwards, event, source);
         } else {
             res = this.moveToNextCellNotEditing(previous, backwards, event);
         }

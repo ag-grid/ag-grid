@@ -124,8 +124,12 @@ export function sortAndFilterProperties(properties: Properties, framework: Frame
             // Push mandatory props to the top
             const isP1Optional = p1.includes('?');
             const isP2Optional = p2.includes('?');
-            if (isP1Optional && !isP2Optional) return 1;
-            if (!isP1Optional && isP2Optional) return -1;
+            if (isP1Optional && !isP2Optional) {
+                return 1;
+            }
+            if (!isP1Optional && isP2Optional) {
+                return -1;
+            }
             if (!isP1Optional && !isP2Optional) {
                 return p1 < p2 ? -1 : 1;
             }
@@ -338,7 +342,9 @@ export function extractInterfaces(
     overrideIncludeInterfaceFunc: any,
     allDefs: string[] = []
 ) {
-    if (!definitionOrArray) return [];
+    if (!definitionOrArray) {
+        return [];
+    }
 
     if (allDefs.length > 1000) {
         // eslint-disable-next-line no-console

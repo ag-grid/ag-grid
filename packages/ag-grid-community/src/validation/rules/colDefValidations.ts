@@ -2,8 +2,18 @@ import type { UserComponentName } from '../../context/context';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
+import type {
+    Deprecations,
+    ModuleValidation,
+    OptionsValidation,
+    OptionsValidator,
+    Validations,
+} from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
+
+function quote(s: string): string {
+    return `"${s}"`;
+}
 
 const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> = () => ({
     checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
@@ -22,6 +32,10 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
     showDisabledCheckboxes: {
         version: '32.2',
         message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
+    },
+    rowGroupingHierarchy: {
+        version: '34.3',
+        message: 'Use `colDef.groupHierarchy` instead.',
     },
 });
 
@@ -72,6 +86,7 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     floatingFilter: 'ColumnFilter',
     getQuickFilterText: 'QuickFilter',
     headerTooltip: 'Tooltip',
+    headerTooltipValueGetter: 'Tooltip',
     mainMenuItems: 'ColumnMenu',
     menuTabs: (options: ColDef) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
@@ -87,12 +102,45 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     rowGroupIndex: 'SharedRowGrouping',
     tooltipField: 'Tooltip',
     tooltipValueGetter: 'Tooltip',
+    tooltipComponentSelector: 'Tooltip',
     spanRows: 'CellSpan',
-    rowGroupingHierarchy: 'SharedRowGrouping',
+    groupHierarchy: 'SharedRowGrouping',
 };
+
+const UNSUPPORTED_WITH_FORMULAS: (property: keyof ColDef) => OptionsValidation<ColDef> = (property) => ({
+    validate: (colDef, gridOptions) => {
+        if (colDef[property] != null && gridOptions.enableFormulas) {
+            return `${property} is not supported with gridOptions.enableFormulas`;
+        }
+        return null;
+    },
+});
 
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
     const validations: Validations<ColDef | ColGroupDef> = {
+        // row grouping
+        enableRowGroup: UNSUPPORTED_WITH_FORMULAS('enableRowGroup'),
+        rowGroup: UNSUPPORTED_WITH_FORMULAS('rowGroup'),
+        rowGroupIndex: UNSUPPORTED_WITH_FORMULAS('rowGroupIndex'),
+        initialRowGroup: UNSUPPORTED_WITH_FORMULAS('initialRowGroup'),
+        initialRowGroupIndex: UNSUPPORTED_WITH_FORMULAS('initialRowGroupIndex'),
+
+        // aggregation
+        enableValue: UNSUPPORTED_WITH_FORMULAS('enableValue'),
+        aggFunc: UNSUPPORTED_WITH_FORMULAS('aggFunc'),
+        initialAggFunc: UNSUPPORTED_WITH_FORMULAS('initialAggFunc'),
+        defaultAggFunc: UNSUPPORTED_WITH_FORMULAS('defaultAggFunc'),
+
+        // pivot
+        enablePivot: UNSUPPORTED_WITH_FORMULAS('enablePivot'),
+        pivot: UNSUPPORTED_WITH_FORMULAS('pivot'),
+        pivotIndex: UNSUPPORTED_WITH_FORMULAS('pivotIndex'),
+        initialPivot: UNSUPPORTED_WITH_FORMULAS('initialPivot'),
+        initialPivotIndex: UNSUPPORTED_WITH_FORMULAS('initialPivotIndex'),
+
+        // row drag
+        rowDrag: UNSUPPORTED_WITH_FORMULAS('rowDrag'),
+
         autoHeight: {
             supportedRowModels: ['clientSide', 'serverSide'],
             validate: (_colDef, { paginationAutoPageSize }) => {
@@ -252,7 +300,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
-        rowGroupingHierarchy: {
+        groupHierarchy: {
             validate(options, { groupHierarchyConfig = {} }, beans) {
                 const GROUP_HIERARCHY_PARTS = new Set([
                     'year',
@@ -267,20 +315,20 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 const unrecognisedParts: string[] = [];
 
-                options.rowGroupingHierarchy?.forEach((part) => {
+                for (const part of options.groupHierarchy ?? []) {
                     if (typeof part === 'object') {
                         beans.validation?.validateColDef(part);
-                        return null;
+                        continue;
                     }
 
                     if (!GROUP_HIERARCHY_PARTS.has(part) && !(part in groupHierarchyConfig)) {
-                        unrecognisedParts.push(part);
+                        unrecognisedParts.push(quote(part));
                     }
-                });
+                }
 
                 if (unrecognisedParts.length > 0) {
-                    const warning = `The following parts of colDef.rowGroupingHierarchy are not recognised: ${unrecognisedParts.map((s) => `"${s}"`).join(', ')}.`;
-                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map((s) => `"${s}"`).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
+                    const warning = `The following parts of colDef.groupHierarchy are not recognised: ${unrecognisedParts.join(', ')}.`;
+                    const suggestions = `Choose one of ${[...GROUP_HIERARCHY_PARTS].map(quote).join(', ')}, or define your own parts in gridOptions.groupHierarchyConfig.`;
                     return `${warning}\n${suggestions}`;
                 }
 
@@ -310,6 +358,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     tooltipComponent: undefined,
     tooltipField: undefined,
     headerTooltip: undefined,
+    headerTooltipValueGetter: undefined,
     cellClass: undefined,
     showRowGroup: undefined,
     filter: undefined,
@@ -421,6 +470,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     onCellContextMenu: undefined,
     rowDragText: undefined,
     tooltipValueGetter: undefined,
+    tooltipComponentSelector: undefined,
     cellRendererSelector: undefined,
     cellEditorSelector: undefined,
     suppressSpanHeaderHeight: undefined,
@@ -439,6 +489,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     dateComponentParams: undefined,
     getFindText: undefined,
     rowGroupingHierarchy: undefined,
+    groupHierarchy: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

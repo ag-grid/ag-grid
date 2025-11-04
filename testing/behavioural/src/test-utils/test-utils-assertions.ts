@@ -40,7 +40,9 @@ export function assertSelectableByIndex(indices: number[], api: GridApi): void {
 export function assertElementDisplayed(element: HTMLElement): boolean {
     let el: HTMLElement | null = element;
     while (el) {
-        if (el.classList.contains('ag-invisible')) return false;
+        if (el.classList.contains('ag-invisible')) {
+            return false;
+        }
         el = el.parentElement;
     }
     return true;

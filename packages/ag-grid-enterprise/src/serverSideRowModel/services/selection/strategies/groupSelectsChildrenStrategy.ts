@@ -11,7 +11,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _warn } from 'ag-grid-community';
+import { BeanStub, _error, _isMultiRowSelection, _isTreeData, _warn } from 'ag-grid-community';
 
 import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -51,7 +51,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public getSelectedState(): IServerSideGroupSelectionState {
         const { gos, rowGroupColsSvc, selectedState } = this;
-        const treeData = gos.get('treeData');
+        const treeData = _isTreeData(gos);
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,
@@ -150,11 +150,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         }
 
         let anyStateChanged = false;
-        removedNodeIds.forEach((id) => {
+        for (const id of removedNodeIds) {
             if (parentState?.toggledNodes.delete(id)) {
                 anyStateChanged = true;
             }
-        });
+        }
 
         if (anyStateChanged) {
             this.removeRedundantState();
@@ -163,7 +163,9 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public setNodesSelected({ nodes, newValue, clearSelection, source }: ISetNodesSelectedParams): number {
-        if (nodes.length === 0) return 0;
+        if (nodes.length === 0) {
+            return 0;
+        }
 
         const onlyThisNode = clearSelection && newValue;
         if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
@@ -174,11 +176,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             this.deselectAllRowNodes();
         }
 
-        nodes.forEach((rowNode) => {
+        for (const rowNode of nodes) {
             const node = rowNode.footer ? rowNode.sibling : rowNode;
             const idPathToNode = this.getRouteToNode(node);
             this.recursivelySelectNode(idPathToNode, this.selectedState, newValue);
-        });
+        }
         this.removeRedundantState();
         if (nodes.length === 1 && source === 'api') {
             this.selectionCtx.setRoot(nodes[0].footer ? nodes[0].sibling : nodes[0]);

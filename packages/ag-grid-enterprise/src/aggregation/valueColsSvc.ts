@@ -53,18 +53,17 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
         this.columns = super.extractCols(source, oldProvidedCols);
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
-        this.columns.forEach((col) => {
+        for (const col of this.columns) {
             const colDef = col.getColDef();
             // if aggFunc provided, we always override, as reactive property
             if (colDef.aggFunc != null && colDef.aggFunc != '') {
                 this.setColAggFunc(col, colDef.aggFunc);
-            } else {
-                // otherwise we use initialAggFunc only if no agg func set - which happens when new column only
-                if (!col.getAggFunc()) {
-                    this.setColAggFunc(col, colDef.initialAggFunc);
-                }
             }
-        });
+            // otherwise we use initialAggFunc only if no agg func set - which happens when new column only
+            else if (!col.getAggFunc()) {
+                this.setColAggFunc(col, colDef.initialAggFunc);
+            }
+        }
 
         return this.columns;
     }
@@ -141,6 +140,10 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
     }
 
     private setColValueActive(column: AgColumn, value: boolean, source: ColumnEventType): void {
+        if (this.gos.get('enableFormulas')) {
+            value = false;
+        }
+
         if (column.aggregationActive !== value) {
             column.aggregationActive = value;
             column.dispatchColEvent('columnValueChanged', source);

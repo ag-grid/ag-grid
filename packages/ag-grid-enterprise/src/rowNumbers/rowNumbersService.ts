@@ -13,6 +13,7 @@ import {
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
+    _isRowNumbers,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
@@ -89,7 +90,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             this.columns = null;
         };
 
-        if (!this.gos.get('rowNumbers')) {
+        if (!_isRowNumbers(this.gos)) {
             destroyCollection();
             return;
         }
@@ -148,11 +149,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
         this.refreshSelectionIntegration();
 
-        this.columns?.list.forEach((col) => {
+        for (const col of this.columns?.list ?? []) {
             const newColDef = this.createRowNumbersColDef();
             col.setColDef(newColDef, null, source);
             _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
-        });
+        }
     }
 
     public getColumn(): AgColumn | null {
@@ -226,6 +227,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             'tooltipValueGetter',
             'tooltipComponent',
             'tooltipComponentParams',
+            'tooltipComponentSelector',
             'valueGetter',
             'valueFormatter',
             'width',
@@ -323,7 +325,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             minWidth: 60,
             width: 60,
             resizable: false,
-            valueGetter: this.valueGetter,
+            valueGetter: this.valueGetter.bind(this),
             contextMenuItems: this.isIntegratedWithSelection || !contextMenuSvc ? undefined : () => [],
             // overrides
             ...this.rowNumberOverrides,
@@ -350,14 +352,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private valueGetter(params: ValueGetterParams): string {
         const node = params.node as RowNode | null;
+        const enableFormulas = this.gos.get('enableFormulas');
 
         // Rows that are in the pinned container take the row numbers of their pinned sibling rows
-        if (node?.rowPinned && node.pinnedSibling) {
-            const { rowIndex } = node.pinnedSibling;
+        const pinnedSibling = node?.pinnedSibling;
+        if (node?.rowPinned && pinnedSibling) {
+            const rowIndex = enableFormulas ? pinnedSibling.formulaRowIndex : pinnedSibling.rowIndex;
             return `${rowIndex == null ? '-' : rowIndex + 1}`;
         }
 
-        return String((node?.rowIndex || 0) + 1);
+        return String(((enableFormulas ? node?.formulaRowIndex : node?.rowIndex) || 0) + 1);
     }
 
     private getHeaderClass(): string[] {
@@ -412,7 +416,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private generateRowNumberCols(): AgColumn[] {
         const { gos } = this;
-        if (!gos.get('rowNumbers')) {
+        if (!_isRowNumbers(gos)) {
             return [];
         }
 

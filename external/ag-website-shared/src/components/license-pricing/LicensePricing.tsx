@@ -1,3 +1,4 @@
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
@@ -5,6 +6,7 @@ import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-activ
 import GridInactive from '@ag-website-shared/images/inline-svgs/pricing/grid-inactive.svg?react';
 import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
@@ -12,8 +14,6 @@ import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
-import { TrialLicenceForm } from '../trial-licence-form/TrialLicenceForm';
-import { InfoEmailLink } from './InfoEmailLink';
 import { Licenses } from './Licenses';
 import { DEV_LICENSE_DATA } from './Licenses';
 import SocialProof from './SocialProof';
@@ -170,26 +170,31 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 );
                             })}
                         </div>
+                        <div ref={contactSalesRef} className={styles.salesForm}>
+                            <div className={styles.salesFormCopy}>
+                                <h3 className="text-2xl" id="request-trial-licence">
+                                    <span>Contact Our Sales Team</span>
+                                </h3>
 
-                        <div ref={contactSalesRef} className={styles.contactSales}>
-                            <h3 className="text-2xl">Need help?</h3>
+                                <p className={styles.salesContactsubHeading}>
+                                    Get help with pricing, explore use-cases for your team, and more
+                                </p>
 
-                            <p className="text-secondary">
-                                Email{' '}
-                                <InfoEmailLink emailSubject="AG Grid Developer licence query" trackingType="headerLink">
-                                    info@ag-grid.com
-                                </InfoEmailLink>{' '}
-                                and start a conversation. We can provide quotes, give bulk pricing, and answer any sales
-                                or contract-related questions you may have.
-                            </p>
+                                <div className={styles.testimonialContainer}>
+                                    <p className={styles.testimonalHeading}>Millions use AG Grid every day:</p>
+                                    <div className={styles.customerLogosWrapper}>
+                                        <CustomerLogos />
+                                    </div>
+                                </div>
+                            </div>
 
-                            <InfoEmailLink
-                                emailSubject="AG Grid Developer licence query"
-                                className="button"
-                                trackingType="footer"
-                            >
-                                info@ag-grid.com
-                            </InfoEmailLink>
+                            <div className={classnames(styles.salesFormForm, 'trial-licence-form')}>
+                                <ContactForm
+                                    formLocation={
+                                        defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'
+                                    }
+                                />
+                            </div>
                         </div>
 
                         <div className={styles.trialLicence}>
@@ -199,8 +204,25 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     <span>Enterprise Bundle Trial</span>
                                 </h3>
 
-                                <p>Fill out the form to receive a trial licence for AG Grid and AG Charts</p>
+                                <p>
+                                    See the differences between our community and enterprise versions and request a
+                                    trial license
+                                </p>
 
+                                <a
+                                    className={classnames('button', styles.trialButton)}
+                                    href={gridUrlWithPrefix({
+                                        framework,
+                                        url: './community-vs-enterprise/#request-an-enterprise-bundle-trial-licence',
+                                    })}
+                                >
+                                    Get a trial license
+                                </a>
+                            </div>
+
+                            <div className={styles.trialLicenceSeparator}></div>
+
+                            <div className={classnames(styles.trialLicenceCopy, 'trial-licence-form')}>
                                 <div className={styles.trialLicenceCopyItem}>
                                     <Icon name="alarm" svgClasses={styles.alarmIcon} />
                                     <p>
@@ -234,12 +256,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                         <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
                                     </p>
                                 </div>
-                            </div>
-
-                            <div className={styles.trialLicenceSeparator}></div>
-
-                            <div className={classnames(styles.trialLicenceForm, 'trial-licence-form')}>
-                                <TrialLicenceForm />
                             </div>
                         </div>
 

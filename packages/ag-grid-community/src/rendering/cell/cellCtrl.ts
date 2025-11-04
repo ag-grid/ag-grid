@@ -134,6 +134,7 @@ export class CellCtrl extends BeanStub {
 
     public tooltipFeature: TooltipFeature | undefined = undefined;
     public editorTooltipFeature: TooltipFeature | undefined = undefined;
+    private formulaTooltipFeature: TooltipFeature | undefined = undefined;
 
     constructor(
         public readonly column: AgColumn,
@@ -165,11 +166,12 @@ export class CellCtrl extends BeanStub {
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
 
         this.enableTooltipFeature();
+        this.enableFormulaTooltipFeature();
 
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
         if (cellSelectionEnabled) {
-            this.rangeFeature = rangeSvc!.createCellRangeFeature(beans, this);
+            this.rangeFeature = rangeSvc.createCellRangeFeature(beans, this);
         }
 
         if (isRowNumberCol(this.column)) {
@@ -197,14 +199,23 @@ export class CellCtrl extends BeanStub {
         this.rowResizeFeature = context.destroyBean(this.rowResizeFeature);
 
         this.disableTooltipFeature();
+        this.disableFormulaTooltipFeature();
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
         this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
     }
 
+    private enableFormulaTooltipFeature() {
+        this.formulaTooltipFeature = this.beans.tooltipSvc?.setupFormulaTooltip(this);
+    }
+
     private disableTooltipFeature() {
         this.tooltipFeature = this.beans.context.destroyBean(this.tooltipFeature);
+    }
+
+    private disableFormulaTooltipFeature() {
+        this.formulaTooltipFeature = this.beans.context.destroyBean(this.formulaTooltipFeature);
     }
 
     public enableEditorTooltipFeature(editor: ICellEditor): void {
@@ -252,6 +263,7 @@ export class CellCtrl extends BeanStub {
         this.setupAutoHeight(eCellWrapper, compBean);
 
         this.refreshFirstAndLastStyles();
+        this.checkFormulaError();
         this.refreshAriaColIndex();
 
         this.positionFeature?.init();
@@ -278,8 +290,23 @@ export class CellCtrl extends BeanStub {
         }
 
         if (this.onCompAttachedFuncs.length) {
-            this.onCompAttachedFuncs.forEach((func) => func());
+            for (const func of this.onCompAttachedFuncs) {
+                func();
+            }
             this.onCompAttachedFuncs = [];
+        }
+    }
+
+    private checkFormulaError() {
+        const isFormulaError = !!this.beans.formula?.getFormulaError(this.column, this.rowNode);
+        this.eGui.classList.toggle('formula-error', isFormulaError);
+        this.formulaTooltipFeature?.refreshTooltip();
+
+        // don't allow multiple tooltips simultaneously
+        if (isFormulaError) {
+            this.disableTooltipFeature();
+        } else {
+            this.enableTooltipFeature();
         }
     }
 
@@ -320,8 +347,11 @@ export class CellCtrl extends BeanStub {
                 resolver = resolve;
             });
 
-            this.addManagedListeners(eventSvc, {
-                bodyScrollEnd: () => resolver(),
+            const [removeBodyScrollEnd] = this.addManagedListeners(eventSvc, {
+                bodyScrollEnd: () => {
+                    resolver();
+                    removeBodyScrollEnd();
+                },
             });
             return { loadingComp: loadingDetails, onReady };
         }
@@ -552,22 +582,32 @@ export class CellCtrl extends BeanStub {
     // + rowCtrl: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
     public refreshCell({ force, suppressFlash, newData }: RefreshCellsParams & { newData?: boolean } = {}): void {
+        const {
+            editStyleFeature,
+            customStyleFeature,
+            rowCtrl: { rowEditStyleFeature },
+            beans: { cellFlashSvc, filterManager },
+            column,
+            comp,
+            suppressRefreshCell,
+            tooltipFeature,
+        } = this;
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell) {
+        if (suppressRefreshCell) {
             return;
         }
 
-        const colDef = this.column.getColDef();
+        const { field, valueGetter, showRowGroup, enableCellChangeFlash } = column.getColDef();
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
         // non of {field, valueGetter, showRowGroup} is bad in the users application, however for this edge case, it's
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
-        const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
+        const noValueProvided = field == null && valueGetter == null && showRowGroup == null;
         const forceRefresh = force || noValueProvided || newData;
 
-        const isCellCompReady = !!this.comp;
+        const isCellCompReady = !!comp;
         // Only worth comparing values if the cellComp is ready
         const valuesDifferent = this.updateAndFormatValue(isCellCompReady);
         const dataNeedsUpdating = forceRefresh || valuesDifferent;
@@ -586,25 +626,27 @@ export class CellCtrl extends BeanStub {
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
-            const processingFilterChange = this.beans.filterManager?.isSuppressFlashingCellsBecauseFiltering();
+            const processingFilterChange = filterManager?.isSuppressFlashingCellsBecauseFiltering();
 
-            const flashCell = !suppressFlash && !processingFilterChange && colDef.enableCellChangeFlash;
+            const flashCell = !suppressFlash && !processingFilterChange && enableCellChangeFlash;
 
             if (flashCell) {
-                this.beans.cellFlashSvc?.flashCell(this);
+                cellFlashSvc?.flashCell(this);
             }
 
-            this.editStyleFeature?.applyCellStyles?.();
+            editStyleFeature?.applyCellStyles?.();
+            customStyleFeature?.applyUserStyles();
+            customStyleFeature?.applyClassesFromColDef();
+            rowEditStyleFeature?.applyRowStyles();
 
-            this.customStyleFeature?.applyUserStyles();
-            this.customStyleFeature?.applyClassesFromColDef();
+            this.checkFormulaError();
         }
 
-        this.tooltipFeature?.refreshTooltip();
+        tooltipFeature?.refreshTooltip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
-        this.customStyleFeature?.applyCellClassRules();
+        customStyleFeature?.applyCellClassRules();
     }
 
     public isCellEditable(): boolean {
@@ -865,7 +907,9 @@ export class CellCtrl extends BeanStub {
             focusEl.focus({ preventScroll: !!event.preventScrollOnBrowserFocus });
         }
 
-        if (cellFocused) {
+        // require event to announce so we only announce
+        // a direct user interaction with the cell
+        if (cellFocused && event) {
             this.rowCtrl.announceDescription();
         }
     }
@@ -1030,7 +1074,9 @@ export class CellCtrl extends BeanStub {
     }
 
     public cellEditorAttached(): void {
-        this.onEditorAttachedFuncs.forEach((func) => func());
+        for (const func of this.onEditorAttachedFuncs) {
+            func();
+        }
         this.onEditorAttachedFuncs = [];
     }
 

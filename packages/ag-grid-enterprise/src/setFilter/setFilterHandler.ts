@@ -18,6 +18,7 @@ import {
     _debounce,
     _error,
     _isClientSideRowModel,
+    _isTreeData,
     _last,
     _makeNull,
     _toStringOrNull,
@@ -106,7 +107,7 @@ export class SetFilterHandler<TValue = string>
         } = params;
         this.caseSensitive = !!caseSensitive;
         const isGroupCol = !!colDef.showRowGroup;
-        this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
+        this.treeDataTreeList = _isTreeData(this.gos) && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
@@ -145,7 +146,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     private getFormattedValue(key: string | null): string | null {
-        let value: TValue | string | null = this.valueModel.getValueForFormatter(key)!;
+        let value: TValue | string | null = this.valueModel.getValueForFormatter(key);
         if (this.noValueFormatterSupplied && this.isTreeDataOrGrouping() && Array.isArray(value)) {
             // essentially get back the cell value
             value = _last(value) as string;
@@ -329,7 +330,6 @@ export class SetFilterHandler<TValue = string>
                 // if all values selected, remove model
                 const newModel = allSelected ? null : { filterType: this.filterType, values: newValues };
                 params.onModelChange(newModel, additionalEventAttributes);
-                return;
             }
         });
     }
@@ -380,7 +380,7 @@ export class SetFilterHandler<TValue = string>
         if (keyCreator) {
             return (value, node = null) => {
                 const params = this.getKeyCreatorParams(value, node);
-                return _makeNull(keyCreator!(params));
+                return _makeNull(keyCreator(params));
             };
         }
         return (value) => _makeNull(_toStringOrNull(value));

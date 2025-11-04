@@ -1,4 +1,4 @@
-import type { BeanCollection, ColDef, ColGroupDef, Column } from 'ag-grid-community';
+import type { BeanCollection, ColDef, ColGroupDef, ColKey, Column } from 'ag-grid-community';
 
 export function isPivotMode(beans: BeanCollection): boolean {
     return beans.colModel.isPivotMode();
@@ -7,12 +7,12 @@ export function isPivotMode(beans: BeanCollection): boolean {
 export function getPivotResultColumn<TValue = any, TData = any>(
     beans: BeanCollection,
     pivotKeys: string[],
-    valueColKey: string | ColDef<TData, TValue> | Column<TValue>
+    valueColKey: ColKey<TData, TValue>
 ): Column<TValue> | null {
     return beans.pivotResultCols?.lookupPivotResultCol(pivotKeys, valueColKey) ?? null;
 }
 
-export function setValueColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function setValueColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.valueColsSvc?.setColumns(colKeys, 'api');
 }
 
@@ -20,23 +20,23 @@ export function getValueColumns(beans: BeanCollection): Column[] {
     return beans.valueColsSvc?.columns ?? [];
 }
 
-export function removeValueColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function removeValueColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.valueColsSvc?.removeColumns(colKeys, 'api');
 }
 
-export function addValueColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function addValueColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.valueColsSvc?.addColumns(colKeys, 'api');
 }
 
-export function setPivotColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function setPivotColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.pivotColsSvc?.setColumns(colKeys, 'api');
 }
 
-export function removePivotColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function removePivotColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.pivotColsSvc?.removeColumns(colKeys, 'api');
 }
 
-export function addPivotColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
+export function addPivotColumns(beans: BeanCollection, colKeys: ColKey[]): void {
     beans.pivotColsSvc?.addColumns(colKeys, 'api');
 }
 

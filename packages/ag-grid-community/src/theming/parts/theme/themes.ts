@@ -243,6 +243,8 @@ const makeStyleMaterialTreeShakeable = () => {
         colorPickerThumbBorderWidth: 2,
         colorPickerTrackBorderRadius: 2,
         colorPickerColorBorderRadius: 2,
+        rowDragIndicatorColor: { ref: 'primaryColor' },
+        columnDragIndicatorColor: { ref: 'primaryColor' },
     };
 
     const lightParams = {

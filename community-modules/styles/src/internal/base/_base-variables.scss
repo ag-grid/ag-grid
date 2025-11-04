@@ -39,7 +39,8 @@
 
         --ag-selected-row-background-color: #bbb;
 
-        --ag-odd-row-background-color: var(--ag-background-color);
+        --ag-data-background-color: var(--ag-background-color);
+        --ag-odd-row-background-color: var(--ag-data-background-color);
 
         --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
 
@@ -53,6 +54,11 @@
         --ag-column-hover-color: transparent;
 
         --ag-range-selection-border-color: var(--ag-foreground-color);
+
+        --ag-row-drag-indicator-color: var(--ag-range-selection-border-color);
+        --ag-row-drag-indicator-width: 3px;
+        --ag-column-drag-indicator-color: var(--ag-range-selection-border-color);
+        --ag-column-drag-indicator-width: 3px;
 
         --ag-range-selection-border-style: solid;
 

@@ -178,21 +178,19 @@ export class CellKeyboardListenerFeature extends BeanStub {
             } else {
                 startEditingAction(cellCtrl);
             }
+        } else if (beans.gos.get('enterNavigatesVertically')) {
+            const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
         } else {
-            if (beans.gos.get('enterNavigatesVertically')) {
-                const key = event.shiftKey ? KeyCode.UP : KeyCode.DOWN;
-                navigation?.navigateToNextCell(null, key, cellCtrl.cellPosition, false);
-            } else {
-                if (editSvc?.hasValidationErrors()) {
-                    return;
-                }
-
-                if (editSvc?.hasValidationErrors(cellCtrl)) {
-                    editSvc.revertSingleCellEdit(cellCtrl, true);
-                }
-
-                startEditingAction(cellCtrl);
+            if (editSvc?.hasValidationErrors()) {
+                return;
             }
+
+            if (editSvc?.hasValidationErrors(cellCtrl)) {
+                editSvc.revertSingleCellEdit(cellCtrl, true);
+            }
+
+            startEditingAction(cellCtrl);
         }
     }
     isCtrlEnter(e: KeyboardEvent) {

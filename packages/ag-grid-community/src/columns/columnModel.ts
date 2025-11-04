@@ -4,17 +4,16 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import type { Column } from '../interfaces/iColumn';
+import { _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _createColumnTree } from './columnFactoryUtils';
-import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';
+import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import {
     _columnsMatch,
     _convertColumnEventSourceType,
@@ -25,7 +24,6 @@ import {
     isRowNumberCol,
 } from './columnUtils';
 
-export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
 
 export interface ColumnCollections {
@@ -68,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public changeEventsDispatching = false;
 
     public postConstruct(): void {
-        this.pivotMode = this.gos.get('pivotMode');
+        this.pivotMode = this.gos.get('pivotMode') && !this.gos.get('enableFormulas');
 
         this.addManagedPropertyListeners(
             [
@@ -121,7 +119,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
-        list.forEach((col) => (map[col.getId()] = col));
+        for (const col of list) {
+            map[col.getId()] = col;
+        }
 
         this.colDefCols = { tree, treeDepth, list, map };
 
@@ -129,9 +129,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // so that any groupable date columns exist beforehand.
         this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
 
-        rowGroupColsSvc?.extractCols(source, oldCols);
-        pivotColsSvc?.extractCols(source, oldCols);
-        valueColsSvc?.extractCols(source, oldCols);
+        if (!this.gos.get('enableFormulas')) {
+            rowGroupColsSvc?.extractCols(source, oldCols);
+            pivotColsSvc?.extractCols(source, oldCols);
+            valueColsSvc?.extractCols(source, oldCols);
+        }
 
         this.ready = true;
 
@@ -281,7 +283,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const { valueColsSvc, selectionColSvc, gos } = this.beans;
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
-        const showRowNumbers = gos.get('rowNumbers');
+        const showRowNumbers = _isRowNumbers(gos);
         const valueColumns = valueColsSvc?.columns;
 
         const res = this.cols.list.filter((col) => {
@@ -511,15 +513,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        return this.colDefCols
-            ? this.beans.colDefFactory?.getColumnDefs(
-                  this.colDefCols.list,
-                  this.showingPivotResult,
-                  this.lastOrder,
-                  this.cols?.list ?? []
-              )
-            : undefined;
+    public getColumnDefs(sorted?: boolean): (ColDef | ColGroupDef)[] | undefined {
+        return (
+            this.colDefCols &&
+            this.beans.colDefFactory?.getColumnDefs(
+                this.colDefCols.list,
+                this.showingPivotResult,
+                this.lastOrder,
+                this.cols?.list ?? [],
+                sorted
+            )
+        );
     }
 
     private setColSpanActive(): void {
@@ -531,6 +535,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
+        if (this.gos.get('enableFormulas')) {
+            this.pivotMode = false;
+            return;
+        }
+
         if (pivotMode === this.pivotMode) {
             return;
         }

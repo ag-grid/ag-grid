@@ -33,7 +33,7 @@ function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
                 tag: 'div',
                 ref: 'eBody',
                 role: 'presentation',
-                cls: `ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}`,
+                cls: 'ag-tabs-body' + cssClass ? ` ${cssClass}-body` : '',
             },
         ],
     };
@@ -62,7 +62,9 @@ export class TabbedLayout extends TabGuardComp {
         this.setupHeader();
 
         if (this.params.items) {
-            this.params.items.forEach((item) => this.addItem(item));
+            for (const item of this.params.items) {
+                this.addItem(item);
+            }
         }
 
         this.initialiseTabGuard({

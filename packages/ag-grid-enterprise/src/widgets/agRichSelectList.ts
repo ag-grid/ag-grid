@@ -125,7 +125,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
 
         if (this.eLoading?.offsetParent) {
-            this.eLoading.parentElement?.removeChild(this.eLoading);
+            this.eLoading?.remove();
         }
 
         if (value == null) {
@@ -184,8 +184,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         return this.selectedItems;
     }
 
-    public getLastItemHovered(): TValue {
-        return this.currentList![this.lastRowHovered];
+    public getLastItemHovered(): TValue | undefined {
+        return this.currentList?.[this.lastRowHovered];
     }
 
     public highlightIndex(index: number, preventUnnecessaryScroll?: boolean): void {

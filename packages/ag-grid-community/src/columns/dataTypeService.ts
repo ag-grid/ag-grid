@@ -221,7 +221,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             colDef.cellDataType = false;
             return undefined;
         }
-        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
+        const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
             _warn(47, { cellDataType });
             return undefined;
@@ -288,7 +288,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gos.get('suppressFieldDotNotation');
+            const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
             value = _getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
@@ -310,7 +310,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         } else if (this.initialData) {
             return this.initialData;
         } else {
-            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?.allLeafChildren;
+            const rowNodes = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
             if (rowNodes?.length) {
                 return rowNodes[0].data;
             }
@@ -548,7 +548,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     }
                     const valA = a == null ? '' : formatValue({ column, node: null, value: a });
                     const valB = b == null ? '' : formatValue({ column, node: null, value: b });
-                    if (valA === valB) return 0;
+                    if (valA === valB) {
+                        return 0;
+                    }
                     return valA > valB ? 1 : -1;
                 },
                 keyCreator: formatValue,
@@ -666,7 +668,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private destroyColumnStateUpdateListeners(): void {
-        this.columnStateUpdateListenerDestroyFuncs.forEach((destroyFunc) => destroyFunc());
+        for (const destroyFunc of this.columnStateUpdateListenerDestroyFuncs) {
+            destroyFunc();
+        }
         this.columnStateUpdateListenerDestroyFuncs = [];
     }
 
@@ -807,7 +811,7 @@ function doColDefPropsPreventInference(
 
 function getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
     const columnState = getColumnStateFromColDef(column);
-    columnStateUpdates.forEach((key) => {
+    for (const key of columnStateUpdates) {
         // if the column state has been updated, don't update again
         delete columnState[key];
         if (key === 'rowGroup') {
@@ -815,6 +819,6 @@ function getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof C
         } else if (key === 'pivot') {
             delete columnState.pivotIndex;
         }
-    });
+    }
     return columnState;
 }

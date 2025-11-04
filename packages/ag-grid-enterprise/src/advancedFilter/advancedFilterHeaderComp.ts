@@ -53,7 +53,7 @@ export class AdvancedFilterHeaderComp extends Component {
         this.addManagedEventListeners({
             gridColumnsChanged: () => this.onGridColumnsChanged(),
             columnHeaderHeightChanged: heightListener,
-            gridStylesChanged: heightListener,
+            stylesChanged: heightListener,
         });
 
         this.addManagedPropertyListener('headerHeight', heightListener);

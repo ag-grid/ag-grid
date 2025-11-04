@@ -16,13 +16,13 @@ export function toolPanelCreateColumnTree(
             const groupId = typeof groupDef.groupId !== 'undefined' ? groupDef.groupId : groupDef.headerName;
             const group = new AgProvidedColumnGroup(groupDef, groupId!, false, depth);
             const children: (AgColumn | AgProvidedColumnGroup)[] = [];
-            groupDef.children.forEach((def) => {
+            for (const def of groupDef.children) {
                 const child = createDummyColGroup(def, depth + 1);
                 // check column exists in case invalid colDef is supplied for primary column
                 if (child) {
                     children.push(child);
                 }
-            });
+            }
             group.setChildren(children);
 
             return group;
@@ -40,13 +40,13 @@ export function toolPanelCreateColumnTree(
     };
 
     const mappedResults: (AgColumn | AgProvidedColumnGroup)[] = [];
-    colDefs.forEach((colDef) => {
+    for (const colDef of colDefs) {
         const result = createDummyColGroup(colDef, 0);
         if (result) {
             // only return correctly mapped colDef results
             mappedResults.push(result);
         }
-    });
+    }
 
     if (invalidColIds.length > 0) {
         _warn(217, { invalidColIds });

@@ -48,12 +48,5 @@ jobs:
               uses: EndBug/latest-tag@latest
               if: success()
               with:
-                ref: ${{ steps.next_version.outputs.tag }}
-                description: Latest commit to pass GitHub Actions workflow on latest branch.
-
-            - name: Tag Latest Successful Commit
-              uses: EndBug/latest-tag@latest
-              if: success()
-              with:
                   ref: latest-beta-version
                   description: Latest commit to pass GitHub Actions workflow on latest branch.

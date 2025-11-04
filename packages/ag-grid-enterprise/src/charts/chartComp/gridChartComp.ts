@@ -35,7 +35,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import { AgDialog } from '../../widgets/agDialog';
+import { Dialog } from '../../widgets/dialog';
 import type { AgChartsExports } from '../agChartsExports';
 import type { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
@@ -107,7 +107,7 @@ export class GridChartComp extends Component {
     private readonly eEmpty: HTMLElement = RefPlaceholder;
 
     private chartMenu: ChartMenu;
-    private chartDialog: AgDialog;
+    private chartDialog: Dialog;
 
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
@@ -164,7 +164,7 @@ export class GridChartComp extends Component {
             // don't add the theme if we're in a dialog, since dialogs already
             // add a theme, and legacy themes don't like being applied twice
             this.addManagedEventListeners({
-                gridStylesChanged: this.updateTheme.bind(this),
+                stylesChanged: this.updateTheme.bind(this),
             });
             this.updateTheme();
         }
@@ -322,7 +322,7 @@ export class GridChartComp extends Component {
             ? () => setTimeout(() => _focusInto(this.getGui()))
             : undefined;
 
-        this.chartDialog = new AgDialog({
+        this.chartDialog = new Dialog({
             resizable: true,
             movable: true,
             maximizable: true,
@@ -419,7 +419,9 @@ export class GridChartComp extends Component {
                 : undefined;
 
         // recreate chart if chart type has changed
-        if (updatedChartType) this.createChart();
+        if (updatedChartType) {
+            this.createChart();
+        }
 
         // combine any provided theme overrides with any retained theme overrides from changing chart type
         if (persistedThemeOverrides && params?.chartThemeOverrides) {
@@ -451,7 +453,9 @@ export class GridChartComp extends Component {
         if (chartEmpty) {
             // We don't have enough data to reinstantiate the chart with the new chart type,
             // but we still want to persist any theme overrides for when the data is present
-            if (updatedOverrides) this.chartController.updateThemeOverrides(updatedOverrides);
+            if (updatedOverrides) {
+                this.chartController.updateThemeOverrides(updatedOverrides);
+            }
             return;
         }
 
@@ -470,9 +474,13 @@ export class GridChartComp extends Component {
         const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
         const targetChartType = updatedChartType ? getCanonicalChartType(updatedChartType) : undefined;
         // If the grid chart component is out of sync with the existing chart instance type, return the correct chart type
-        if (this.chartType !== currentType) return targetChartType ?? currentType;
+        if (this.chartType !== currentType) {
+            return targetChartType ?? currentType;
+        }
         // If the target chart type is different to the current chart type, return the new chart type
-        if (targetChartType && currentType !== targetChartType) return targetChartType;
+        if (targetChartType && currentType !== targetChartType) {
+            return targetChartType;
+        }
         // Otherwise nothing has changed
         return null;
     }
@@ -569,11 +577,11 @@ export class GridChartComp extends Component {
     private getAllKeysInObjects(objects: any[]): string[] {
         const allValues: any = {};
 
-        objects
-            .filter((obj) => obj != null)
-            .forEach((obj) => {
-                Object.keys(obj).forEach((key) => (allValues[key] = null));
-            });
+        for (const obj of objects.filter((obj) => obj != null)) {
+            for (const key of Object.keys(obj)) {
+                allValues[key] = null;
+            }
+        }
 
         return Object.keys(allValues);
     }
@@ -582,11 +590,11 @@ export class GridChartComp extends Component {
         const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gos.get('customChartThemes');
         if (customChartThemes) {
-            this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
+            for (const customThemeName of this.getAllKeysInObjects([customChartThemes])) {
                 if (!suppliedThemes.includes(customThemeName)) {
                     _warn(139, { customThemeName });
                 }
-            });
+            }
         }
     }
 

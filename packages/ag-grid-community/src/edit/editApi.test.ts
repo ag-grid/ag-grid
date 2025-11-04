@@ -119,9 +119,8 @@ describe('Edit API', () => {
             },
             gos: {
                 get(key: string) {
-                    switch (key) {
-                        case 'editType':
-                            return 'fullRow';
+                    if (key === 'editType') {
+                        return 'fullRow';
                     }
                 },
             },

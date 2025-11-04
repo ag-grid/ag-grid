@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 import { basename } from 'path';
 
 import type { ExampleConfig, ParsedBindings } from '../types';

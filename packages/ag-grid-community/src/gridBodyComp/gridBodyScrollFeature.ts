@@ -110,7 +110,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.addManagedEventListeners({
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
-            gridSizeChanged: invalidateVerticalScroll,
+            bodyHeightChanged: invalidateVerticalScroll,
             // We only invalidate horizontal scrolling when the viewport switches
             // between scrollable and non-scrollable, avoiding unnecessary
             // invalidation on every gridSizeChanged event. If more properties
@@ -352,11 +352,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const clientHeight = _getInnerHeight(this.eBodyViewport);
         const { scrollHeight } = this.eBodyViewport;
 
-        if (scrollTo < 0 || scrollTo + clientHeight > scrollHeight) {
-            return true;
-        }
-
-        return false;
+        return !!(scrollTo < 0 || scrollTo + clientHeight > scrollHeight);
     }
 
     private shouldBlockHorizontalScroll(scrollTo: number): boolean {
@@ -371,11 +367,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return true;
         }
 
-        if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
-            return true;
-        }
-
-        return false;
+        return Math.abs(scrollTo) + clientWidth > scrollWidth;
     }
 
     private redrawRowsAfterScroll(): void {
@@ -526,12 +518,11 @@ export class GridBodyScrollFeature extends BeanStub {
                     indexToSelect = i;
                     break;
                 }
-            } else {
-                // check object equality against node and data
-                if (comparator === node || comparator === node!.data) {
-                    indexToSelect = i;
-                    break;
-                }
+            }
+            // check object equality against node and data
+            else if (comparator === node || comparator === node!.data) {
+                indexToSelect = i;
+                break;
             }
         }
         if (indexToSelect >= 0) {
@@ -676,7 +667,9 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private clearRetryListeners(): void {
-        this.clearRetryListenerFncs.forEach((callback) => callback());
+        for (const callback of this.clearRetryListenerFncs) {
+            callback();
+        }
         this.clearRetryListenerFncs = [];
     }
 

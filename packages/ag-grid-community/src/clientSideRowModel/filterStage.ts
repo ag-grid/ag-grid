@@ -4,21 +4,23 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
+import { _isTreeData } from '../gridOptionsUtils';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
 
 export function updateRowNodeAfterFilter(rowNode: RowNode): void {
-    if (rowNode.sibling) {
-        rowNode.sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
+    const sibling = rowNode.sibling;
+    if (sibling) {
+        sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
     }
 }
 
 export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'filterStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set(['excludeChildrenWhenTreeDataFiltering']);
-    public step: ClientSideRowModelStage = 'filter';
+    public readonly step: ClientSideRowModelStage = 'filter';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = ['excludeChildrenWhenTreeDataFiltering'];
 
     private filterManager?: FilterManager;
 
@@ -33,7 +35,11 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
 
     private filter(changedPath: ChangedPath): void {
         const filterActive: boolean = !!this.filterManager?.isChildFilterPresent();
-        this.filterNodes(filterActive, changedPath);
+        if (this.gos.get('enableFormulas')) {
+            this.softFilter(filterActive, changedPath);
+        } else {
+            this.filterNodes(filterActive, changedPath);
+        }
     }
 
     private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
@@ -98,7 +104,24 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
         }
     }
 
+    private softFilter(filterActive: boolean, changedPath: ChangedPath): void {
+        const filterCallback = (rowNode: RowNode) => {
+            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            if (rowNode.hasChildren()) {
+                for (const childNode of rowNode.childrenAfterGroup!) {
+                    childNode.softFiltered =
+                        filterActive &&
+                        !(childNode.data && this.filterManager!.doesRowPassFilter({ rowNode: childNode }));
+                }
+            }
+
+            updateRowNodeAfterFilter(rowNode);
+        };
+
+        changedPath.forEachChangedNodeDepthFirst(filterCallback, true);
+    }
+
     private doingTreeDataFiltering() {
-        return this.gos.get('treeData') && !this.gos.get('excludeChildrenWhenTreeDataFiltering');
+        return _isTreeData(this.gos) && !this.gos.get('excludeChildrenWhenTreeDataFiltering');
     }
 }

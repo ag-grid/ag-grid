@@ -660,6 +660,15 @@ export const AG_GRID_LOCALE_HK = {
     november: '十一月',
     december: '十二月',
 
+    // Date-time parts
+    year: '年',
+    quarter: '季度',
+    month: '月',
+    day: '日',
+    hour: '小時',
+    minute: '分',
+    second: '秒',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',

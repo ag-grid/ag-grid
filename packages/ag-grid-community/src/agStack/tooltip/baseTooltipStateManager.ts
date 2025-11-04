@@ -3,7 +3,6 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
-import type { BasePopupPositionParams } from '../interfaces/iPopup';
 import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import type { TooltipCtrl } from '../interfaces/iTooltip';
@@ -48,7 +47,7 @@ export abstract class BaseTooltipStateManager<
     TTooltipCtrlParams,
     TLocation extends string,
 > extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
-    private popupSvc?: IPopupService<BasePopupPositionParams>;
+    private popupSvc?: IPopupService<any>;
 
     public wireBeans(beans: TBeanCollection): void {
         this.popupSvc = beans.popupSvc;
@@ -140,11 +139,11 @@ export abstract class BaseTooltipStateManager<
     private getTooltipDelay(type: 'show' | 'hide'): number {
         if (type === 'show') {
             return (
-                this.tooltipCtrl.getTooltipShowDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')!
+                this.tooltipCtrl.getTooltipShowDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')
             );
         }
 
-        return this.tooltipCtrl.getTooltipHideDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
+        return this.tooltipCtrl.getTooltipHideDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipHideDelay');
     }
 
     public override destroy(): void {
@@ -512,16 +511,16 @@ export abstract class BaseTooltipStateManager<
     }
 
     private clearTooltipListeners(): void {
-        [
+        for (const listener of [
             this.tooltipMouseEnterListener,
             this.tooltipMouseLeaveListener,
             this.tooltipFocusInListener,
             this.tooltipFocusOutListener,
-        ].forEach((listener) => {
+        ]) {
             if (listener) {
                 listener();
             }
-        });
+        }
 
         this.tooltipMouseEnterListener =
             this.tooltipMouseLeaveListener =

@@ -14,7 +14,7 @@ import type {
     SortModelItem,
     SortOption,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType } from 'ag-grid-community';
+import { BeanStub, CellRangeType, _isTreeData } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -224,7 +224,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public isGrouping(): boolean {
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = _isTreeData(this.gos);
         const groupedCols = usingTreeData ? null : this.chartColSvc.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 
@@ -560,10 +560,8 @@ export class ChartDataModel extends BeanStub {
                     selectedValueCols.push(col);
                     numSelected++;
                 }
-            } else {
-                if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
-                    selectedValueCols.push(col);
-                }
+            } else if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
+                selectedValueCols.push(col);
             }
         });
 
@@ -625,7 +623,9 @@ export class ChartDataModel extends BeanStub {
 
     private syncDimensionCellRange() {
         const selectedDimensions = this.getSelectedDimensions();
-        if (selectedDimensions.length === 0) return;
+        if (selectedDimensions.length === 0) {
+            return;
+        }
         const selectedCols = selectedDimensions
             .map(({ column }) => column)
             .filter((value): value is NonNullable<typeof value> => value != null);

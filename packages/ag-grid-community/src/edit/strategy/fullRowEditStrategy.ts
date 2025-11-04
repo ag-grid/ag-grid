@@ -1,4 +1,5 @@
 import type { BeanName } from '../../context/context';
+import type { AgColumn } from '../../entities/agColumn';
 import type { CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
@@ -60,16 +61,25 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             super.cleanupEditors(position);
         }
 
-        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
-        this.startedRows.push(rowNode);
-
         const columns = this.beans.visibleCols.allCols;
         const cells: Required<EditPosition>[] = [];
 
-        columns.forEach((column) => {
-            if (!column.isCellEditable(rowNode)) {
-                return;
+        const editableColumns: AgColumn[] = [];
+
+        for (const column of columns) {
+            if (column.isCellEditable(rowNode)) {
+                editableColumns.push(column);
             }
+        }
+
+        if (editableColumns.length == 0) {
+            return;
+        }
+
+        this.dispatchRowEvent({ rowNode }, 'rowEditingStarted', silent);
+        this.startedRows.push(rowNode);
+
+        for (const column of editableColumns) {
             const position: Required<EditPosition> = {
                 rowNode,
                 column,
@@ -79,10 +89,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
             if (!this.model.hasEdits(position)) {
                 this.model.start(position);
             }
-        });
+        }
 
         this.rowNode = rowNode;
-
         this.setupEditors({ cells, position, startedEdit, event, ignoreEventKey });
     }
 
@@ -137,7 +146,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         super.stop(cancel, event);
 
-        changedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowValueChanged'));
+        for (const rowNode of changedRows) {
+            this.dispatchRowEvent({ rowNode }, 'rowValueChanged');
+        }
 
         this.cleanupEditors({ rowNode }, true);
 
@@ -172,7 +183,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
     public override cleanupEditors(position: EditRowPosition = {}, includeEditing?: boolean): void {
         super.cleanupEditors(position, includeEditing);
-        this.startedRows.forEach((rowNode) => this.dispatchRowEvent({ rowNode }, 'rowEditingStopped'));
+        for (const rowNode of this.startedRows) {
+            this.dispatchRowEvent({ rowNode }, 'rowEditingStopped');
+        }
         this.startedRows.length = 0;
     }
 

@@ -27,7 +27,9 @@ export const LengthValueEditor = ({
             icon={icon}
             getIconSwipeAdjustment={(value, pixels) => {
                 const proportion = parseFloat(value);
-                if (isNaN(proportion)) return value;
+                if (isNaN(proportion)) {
+                    return value;
+                }
 
                 const rawAdjustment = parseFloat(Math.max(proportion + pixels / swipeAdjustmentDivisor, 0).toFixed(1));
                 return stripFloatingPointErrors(rawAdjustment) + units;

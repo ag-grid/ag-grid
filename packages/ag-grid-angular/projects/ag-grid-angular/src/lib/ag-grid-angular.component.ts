@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-imports */
 // False positive lint error, ElementRef and co can't be type imports
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
@@ -100,6 +101,7 @@ import type {
     FirstDataRenderedEvent,
     FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
+    FormulaFunctionParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -283,10 +285,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             );
 
             const coercedGridOptions = {} as GridOptions<TData>;
-            gridOptionKeys.forEach((key) => {
+            for (const key of gridOptionKeys) {
                 const valueToUse = getValueOrCoercedValue(key, this[key as keyof AgGridAngular]);
                 coercedGridOptions[key as keyof GridOptions] = valueToUse;
-            });
+            }
 
             const mergedGridOps = _combineAttributesAndGridOptions(
                 this.gridOptions,
@@ -1105,6 +1107,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
+    /** A map of 'function name' to 'function' for custom functions that are used for formulas.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    @Input() public formulaFuncs: { [key: string]: { func: (params: FormulaFunctionParams) => any } } | undefined =
+        undefined;
+    /** Enable or disable the processing of cell formulas
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    @Input({ transform: booleanAttribute }) public enableFormulas: boolean | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -1385,7 +1398,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
-    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+    /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
     @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
@@ -1894,7 +1907,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    @Input() public ssrmExpandAllAffectsAllRows: boolean | undefined | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public ssrmExpandAllAffectsAllRows: boolean | undefined = undefined;
     /** Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */

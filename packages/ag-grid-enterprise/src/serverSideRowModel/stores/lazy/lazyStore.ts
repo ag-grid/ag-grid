@@ -22,6 +22,7 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
+    _isTreeData,
     _warn,
 } from 'ag-grid-community';
 
@@ -88,7 +89,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
 
-        const usingTreeData = this.gos.get('treeData');
+        const usingTreeData = _isTreeData(this.gos);
 
         if (!usingTreeData && this.group && this.rowGroupColsSvc) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -193,17 +194,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return;
         }
         const nodesToDeselect: RowNode[] = [];
-        updatedNodes?.forEach((node) => {
+        for (const node of updatedNodes ?? []) {
             if (node.isSelected() && !node.selectable) {
                 nodesToDeselect.push(node);
             }
-        });
+        }
 
-        removedNodes?.forEach((node) => {
+        for (const node of removedNodes ?? []) {
             if (node.isSelected()) {
                 nodesToDeselect.push(node);
             }
-        });
+        }
 
         if (nodesToDeselect.length) {
             this.selectionSvc.setNodesSelected({
@@ -267,7 +268,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns whether or not the row exists within this store
      */
     isDisplayIndexInStore(displayIndex: number): boolean {
-        if (this.cache.getRowCount() === 0) return false;
+        if (this.cache.getRowCount() === 0) {
+            return false;
+        }
 
         return this.displayIndexStart! <= displayIndex && displayIndex < this.getDisplayIndexEnd()!;
     }

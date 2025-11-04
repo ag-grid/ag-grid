@@ -108,7 +108,9 @@ export class FilterButtonComp extends Component<FilterAction> {
             fragment.append(button);
         };
 
-        buttons.forEach((button) => addButton(button));
+        for (const button of buttons) {
+            addButton(button);
+        }
 
         this.eApply = eApplyButton;
 
@@ -144,7 +146,9 @@ export class FilterButtonComp extends Component<FilterAction> {
     }
 
     private destroyListeners(): void {
-        this.listeners.forEach((destroyFunc) => destroyFunc());
+        for (const destroyFunc of this.listeners) {
+            destroyFunc();
+        }
         this.listeners = [];
     }
 

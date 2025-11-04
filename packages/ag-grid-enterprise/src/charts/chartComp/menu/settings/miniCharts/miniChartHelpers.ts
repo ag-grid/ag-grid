@@ -67,12 +67,12 @@ export function prepareXYScales(
     const xDomain: number[] = [];
     const yDomain: number[] = [];
 
-    data.forEach((item) => {
-        item.forEach(([x, y]) => {
+    for (const item of data) {
+        for (const [x, y] of item) {
             xDomain.push(x);
             yDomain.push(y);
-        });
-    });
+        }
+    }
 
     const xScale = new _Scene.LinearScale();
     xScale.domain = [Math.min(...xDomain), Math.max(...xDomain)];
@@ -94,7 +94,7 @@ export function prepareLinearScene(
     const xDomain = [0, data[0].length - 1];
     const yDomain = data.reduce(
         (acc, curr) => {
-            curr.forEach((datum) => {
+            for (const datum of curr) {
                 if (datum < acc[0]) {
                     acc[0] = datum;
                 }
@@ -102,7 +102,7 @@ export function prepareLinearScene(
                 if (datum > acc[1]) {
                     acc[1] = datum;
                 }
-            });
+            }
 
             return acc;
         },

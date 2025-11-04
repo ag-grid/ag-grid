@@ -1,11 +1,15 @@
-import type { MouseCapture } from '../events/mouseCapture';
-import { captureMouse, releaseMouseCapture } from '../events/mouseCapture';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IComponent } from '../interfaces/iComponent';
 import type { DragListenerParams } from '../interfaces/iDrag';
-import type { AgDragSource, AgDraggingEvent, AgDropTarget, IDragAndDropImage } from '../interfaces/iDragAndDrop';
+import type {
+    AgDragSource,
+    AgDraggingEvent,
+    AgDropTarget,
+    IDragAndDropImage,
+    IDragAndDropService,
+} from '../interfaces/iDragAndDrop';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _removeFromArray } from '../utils/array';
 import { _getPageBody, _getRootNode } from '../utils/document';
@@ -24,17 +28,20 @@ interface DragSourceAndParams<
 }
 
 export abstract class BaseDragAndDropService<
-    TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
-    TProperties extends BaseProperties,
-    TGlobalEvents extends BaseEvents,
-    TCommon,
-    TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-    TDragSourceType extends number,
-    TDragItem,
-    TDragAndDropIcon extends string,
-    TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
-    TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
-> extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService> {
+        TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+        TProperties extends BaseProperties,
+        TGlobalEvents extends BaseEvents,
+        TCommon,
+        TPropertiesService extends IPropertiesService<TProperties, TCommon>,
+        TDragSourceType extends number,
+        TDragItem,
+        TDragAndDropIcon extends string,
+        TDraggingEvent extends AgDraggingEvent<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
+        TDragSource extends AgDragSource<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
+    >
+    extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
+    implements IDragAndDropService<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource>
+{
     beanName = 'dragAndDrop' as const;
 
     private readonly dragSourceAndParamsList: DragSourceAndParams<
@@ -57,7 +64,6 @@ export abstract class BaseDragAndDropService<
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
     private dragImageLastLabel: string | null | undefined = undefined;
-    private mouseCapture: MouseCapture | null = null;
 
     private dropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
     private lastDropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null = null;
@@ -78,6 +84,7 @@ export abstract class BaseDragAndDropService<
 
     public addDragSource(dragSource: TDragSource, allowTouch = false): void {
         const entry: DragSourceAndParams<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent, TDragSource> = {
+            capturePointer: true,
             dragSource,
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
@@ -138,10 +145,6 @@ export abstract class BaseDragAndDropService<
         this.dragInitialSourcePointerOffsetY = mouseEvent.clientY - rect.top;
 
         dragSource.onDragStarted?.();
-
-        if (typeof PointerEvent !== 'undefined' && mouseEvent instanceof PointerEvent) {
-            this.mouseCapture = captureMouse(this.beans.eRootDiv, mouseEvent);
-        }
 
         this.createAndUpdateDragImageComp(dragSource);
     }
@@ -213,7 +216,6 @@ export abstract class BaseDragAndDropService<
     }
 
     private clearDragAndDropProperties(): void {
-        this.mouseCapture = releaseMouseCapture(this.mouseCapture);
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
         this.dragImageParent = null;
@@ -226,7 +228,6 @@ export abstract class BaseDragAndDropService<
         this.dragInitialSourcePointerOffsetX = 0;
         this.dragInitialSourcePointerOffsetY = 0;
         this.dragSource = null;
-        this.mouseCapture = null;
     }
 
     private getAllContainersFromDropTarget(
@@ -331,7 +332,7 @@ export abstract class BaseDragAndDropService<
         return this.dropTargets.find((zone) => zone.external && zone.getContainer() === container) || null;
     }
 
-    public dropTargetEvent(
+    private dropTargetEvent(
         dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>,
         mouseEvent: MouseEvent,
         fromNudge: boolean
@@ -381,8 +382,7 @@ export abstract class BaseDragAndDropService<
             this.dragImageComp = null;
         }
         if (comp) {
-            const eGui = comp.getGui();
-            this.dragImageParent?.removeChild(eGui);
+            comp.getGui()?.remove();
             this.destroyBean(comp);
         }
     }
@@ -419,8 +419,8 @@ export abstract class BaseDragAndDropService<
 
         style.position = 'absolute';
         style.zIndex = '9999';
-        if (this.mouseCapture != null) {
-            style.pointerEvents = 'none';
+        if (this.beans.dragSvc?.hasPointerCapture()) {
+            style.pointerEvents = 'none'; // stops the ghost image from interfering with scrolling
         }
 
         this.gos.setInstanceDomData(eGui);

@@ -1,4 +1,4 @@
-import { AutoScrollService } from '../autoScrollService';
+import { AutoScrollService } from '../agStack/rendering/autoScrollService';
 import type { BeanCollection } from '../context/context';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -9,6 +9,8 @@ import type { IRowNode } from '../interfaces/iRowNode';
 export class RowDragFeatureNudger {
     public readonly autoScroll: AutoScrollService;
     public groupThrottled = false;
+    public scrollChanged = false;
+    private scrollChanging = false;
     private oldVScroll: number | null = null;
     private groupTimer: number | null = null;
     private groupTarget: IRowNode | null = null;
@@ -32,10 +34,17 @@ export class RowDragFeatureNudger {
             setVerticalPosition: (position) => gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
             onScrollCallback: () => {
                 const newVScroll = getScrollY();
-                const oldVScroll = this.oldVScroll;
-                this.oldVScroll = newVScroll;
-                if (oldVScroll !== null && oldVScroll !== newVScroll) {
+                if (this.oldVScroll !== newVScroll) {
+                    this.oldVScroll = newVScroll;
+                    this.scrollChanging = true;
+                    return;
+                }
+                const scrollChanged = this.scrollChanging;
+                this.scrollChanged = scrollChanged;
+                this.scrollChanging = false;
+                if (scrollChanged) {
                     this.beans.dragAndDrop?.nudge();
+                    this.scrollChanged = false;
                 }
             },
         });
@@ -84,5 +93,7 @@ export class RowDragFeatureNudger {
         this.clearGroup();
         this.autoScroll.ensureCleared();
         this.oldVScroll = null;
+        this.scrollChanged = false;
+        this.scrollChanging = false;
     }
 }

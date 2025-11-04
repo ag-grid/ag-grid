@@ -5,7 +5,7 @@ import type {
     FilterHandlerParams,
     IFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub, _isTreeData, _warn } from 'ag-grid-community';
 
 import type { GroupFilterService } from './groupFilterService';
 
@@ -56,7 +56,7 @@ export class GroupFilterHandler
 
     private getSourceColumns(): AgColumn[] {
         const groupColumn = this.params.column as AgColumn;
-        if (this.gos.get('treeData')) {
+        if (_isTreeData(this.gos)) {
             _warn(237);
             return [];
         }
@@ -77,18 +77,16 @@ export class GroupFilterHandler
         if (!sourceColumns.length) {
             selectedColumn = undefined;
             hasMultipleColumns = false;
+        } else if (allSourceColumns.length === 1) {
+            selectedColumn = sourceColumns[0];
+            hasMultipleColumns = false;
         } else {
-            if (allSourceColumns.length === 1) {
+            // keep the old selected column if it's still valid
+            selectedColumn = this.selectedColumn;
+            if (!selectedColumn || !sourceColumns.some((column) => column.getId() === selectedColumn!.getId())) {
                 selectedColumn = sourceColumns[0];
-                hasMultipleColumns = false;
-            } else {
-                // keep the old selected column if it's still valid
-                selectedColumn = this.selectedColumn;
-                if (!selectedColumn || !sourceColumns.some((column) => column.getId() === selectedColumn!.getId())) {
-                    selectedColumn = sourceColumns[0];
-                }
-                hasMultipleColumns = true;
             }
+            hasMultipleColumns = true;
         }
         this.selectedColumn = selectedColumn;
         this.hasMultipleColumns = hasMultipleColumns;

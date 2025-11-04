@@ -41,7 +41,9 @@ describe('ag-grid hierarchical tree expanded state', () => {
             rowData: originalRowData,
             getRowId: ({ data }) => data.id,
             onRowGroupOpened: ({ data }) => {
-                if (!data) return;
+                if (!data) {
+                    return;
+                }
                 const yoo = `yoo-${++yooCounter}`;
 
                 data.children = [...data.children, { ...data, id: yoo, children: [] }];

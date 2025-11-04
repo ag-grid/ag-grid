@@ -8,13 +8,13 @@ import type {
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _getGroupAggFiltering, _isTreeData } from 'ag-grid-community';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'filterAggStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([]);
-    public step: ClientSideRowModelStage = 'filter_aggregates';
+    public readonly step: ClientSideRowModelStage = 'filter_aggregates';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [];
 
     private filterManager?: FilterManager;
 
@@ -46,7 +46,9 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             if (node.childrenAfterFilter) {
                 node.childrenAfterAggFilter = node.childrenAfterFilter;
                 if (recursive) {
-                    node.childrenAfterAggFilter.forEach((child) => preserveChildren(child, recursive));
+                    for (const child of node.childrenAfterAggFilter) {
+                        preserveChildren(child, recursive);
+                    }
                 }
                 this.setAllChildrenCount(node);
             }
@@ -119,7 +121,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             return;
         }
 
-        if (this.gos.get('treeData')) {
+        if (_isTreeData(this.gos)) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

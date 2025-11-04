@@ -61,7 +61,9 @@ export class RGBAColor {
         const numbers = Array.from(css.matchAll(/[\d.%-]+/g)).map(([m]) =>
             m.endsWith('%') ? parseFloat(m) / 100 : parseFloat(m)
         );
-        if (numbers.find(isNaN)) return null;
+        if (numbers.find(isNaN)) {
+            return null;
+        }
         const [r, g, b, a = 1] = numbers;
         if (/^color\(srgb/.test(css)) {
             return new RGBAColor(r, g, b, a);
@@ -78,9 +80,13 @@ export class RGBAColor {
      */
     static reinterpretCss(value: string): RGBAColor | null {
         const srgbColor = reinterpretCSSValue(`color-mix(in srgb, transparent, ${value} 100%)`, 'color');
-        if (!srgbColor) return null;
+        if (!srgbColor) {
+            return null;
+        }
         const parsed = RGBAColor.parseCss(srgbColor);
-        if (parsed) return parsed;
+        if (parsed) {
+            return parsed;
+        }
         logErrorMessageOnce(
             `The color ${JSON.stringify(value)} is valid CSS but converts to "${srgbColor}" which isn't an rgb color expression`
         );

@@ -543,7 +543,9 @@ describe('ag-grid grouping with pivot', () => {
                     aggFunc: (params) => {
                         // Custom aggregation: weighted average
                         const values = params.values;
-                        if (!values || values.length === 0) return null;
+                        if (!values || values.length === 0) {
+                            return null;
+                        }
                         const sum = values.reduce((acc, val) => acc + (val || 0), 0);
                         return Math.round((sum / values.length) * 100) / 100;
                     },
@@ -600,7 +602,9 @@ describe('ag-grid grouping with pivot', () => {
                     aggFunc: (params) => {
                         // Custom calc: profit margin
                         const values = params.values;
-                        if (!values || values.length === 0) return null;
+                        if (!values || values.length === 0) {
+                            return null;
+                        }
                         return values.reduce((acc, val) => acc + (val || 0), 0);
                     },
                     hide: true,

@@ -55,7 +55,9 @@ export function _batchCall(
         const funcsCopy = batch.funcs.slice();
         batch.funcs.length = 0;
         batch.pending = false;
-        funcsCopy.forEach((func) => func());
+        for (const func of funcsCopy) {
+            func();
+        }
     };
 
     if (mode === 'raf') {

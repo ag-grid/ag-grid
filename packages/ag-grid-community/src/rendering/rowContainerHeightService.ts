@@ -101,7 +101,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
         this.stretching =
             modelHeight != null && // null happens when in print layout
             this.maxDivHeight > 0 &&
-            modelHeight! > this.maxDivHeight;
+            modelHeight > this.maxDivHeight;
         if (this.stretching) {
             this.calculateOffset();
         } else {

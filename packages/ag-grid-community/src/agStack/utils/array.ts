@@ -48,11 +48,34 @@ export function _forAll<T>(array: T[] | undefined, callback: (value: T) => void)
     }
 }
 
-export function _removeFromArray<T>(array: T[], object: T) {
+export function _removeFromArray<T>(array: T[], object: T): void {
     const index = array.indexOf(object);
 
     if (index >= 0) {
         array.splice(index, 1);
+    }
+}
+
+/**
+ * O(N+M) way to remove M elements from an array of size N. Better than calling _removeFromArray in a loop
+ *
+ * Note: this implementation removes _any_ instances of the `elementsToRemove`
+ */
+export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[]): void {
+    let i = 0;
+    let j = 0;
+
+    for (; i < array.length; i++) {
+        if (!elementsToRemove.includes(array[i])) {
+            // elements that we want to keep are moved to the beginning of the array, maintaining original order
+            array[j] = array[i];
+            j++;
+        }
+    }
+
+    // j marks the elements we want to keep, so pop off the remaining elements (each pop is O(1))
+    while (j < array.length) {
+        array.pop();
     }
 }
 

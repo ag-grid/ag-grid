@@ -11,4 +11,11 @@ export interface AgFrameworkOverrides {
      * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
      */
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
+
+    /**
+     * This method is to cater for Angular's change detection.
+     * This is currently used for events that the user provides either via the component or via registration with the grid api.
+     * This method should not be implemented for the other frameworks to avoid unnecessary overhead.
+     */
+    wrapOutgoing: <T>(callback: () => T) => T;
 }

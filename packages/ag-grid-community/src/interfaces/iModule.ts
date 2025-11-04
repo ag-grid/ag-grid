@@ -10,7 +10,7 @@ type ModuleValidationValidResult = {
     isValid: true;
 };
 
-export type ModuleValidationInvalidResult = {
+type ModuleValidationInvalidResult = {
     isValid: false;
     message: string;
 };
@@ -162,6 +162,7 @@ export type CommunityModuleName =
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
+    | 'AiToolkit'
     | 'AllEnterprise'
     | 'BatchEdit'
     | 'CellSelection'
@@ -192,10 +193,12 @@ export type EnterpriseModuleName =
     | 'Sparklines'
     | 'StatusBar'
     | 'TreeData'
-    | 'ViewportRowModel';
+    | 'ViewportRowModel'
+    | 'Formula';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
+    | 'AiToolkitModule'
     | 'AlignedGridsModule'
     | 'AllCommunityModule'
     | 'CellApiModule'
@@ -271,7 +274,8 @@ export type AgModuleName =
     | 'SparklinesModule'
     | 'StatusBarModule'
     | 'TreeDataModule'
-    | 'ViewportRowModelModule';
+    | 'ViewportRowModelModule'
+    | 'FormulaModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;

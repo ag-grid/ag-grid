@@ -3,7 +3,7 @@ import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from '
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../widgets/agColorPicker';
+import { ColorPickerSelector } from '../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
@@ -82,7 +82,7 @@ export class FontPanel extends Component {
             </div>
         </ag-group-component>
     </div>`,
-            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector],
+            [AgGroupComponentSelector, AgSelectSelector, ColorPickerSelector],
             {
                 fontGroup: fontGroupParams,
                 familySelect: this.getFamilySelectParams(),
@@ -175,7 +175,7 @@ export class FontPanel extends Component {
             'size',
             options,
             `${size}`,
-            (newValue) => this.setFont({ fontSize: parseInt(newValue!, 10) })
+            (newValue) => this.setFont({ fontSize: parseInt(newValue, 10) })
         );
     }
 
@@ -219,10 +219,10 @@ export class FontPanel extends Component {
     }
 
     private destroyActiveComps(): void {
-        this.activeComps.forEach((comp) => {
+        for (const comp of this.activeComps) {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
-        });
+        }
     }
 
     public override destroy(): void {

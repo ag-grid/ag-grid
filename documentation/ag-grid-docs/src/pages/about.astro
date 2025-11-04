@@ -320,13 +320,15 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
                 </div>
             </section>
 
-            <section class={styles.contactSection}>
+            <section id="contact-section" class={styles.contactSection}>
                 <div class={styles.contactFlex}>
                     <div>
                         <h2>Get in touch</h2>
                         <p>We are here to help with licenses, developer support and any other queries.</p>
-                        <ContactForm client:load />
+
+                        <ContactForm client:load formLocation="About page" />
                     </div>
+
                     <div>
                         <h3>Where to find us</h3>
                         <div class={styles.contactOffice}>

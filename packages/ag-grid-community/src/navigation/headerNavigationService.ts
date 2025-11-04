@@ -166,7 +166,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         }
 
         return focusSvc.focusHeaderPosition({
-            headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn! },
+            headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn },
             allowUserOverride: true,
             event,
         });

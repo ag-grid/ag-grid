@@ -81,8 +81,12 @@ export function createAgChartTheme(
 
 function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
     const arrayCompare = (arrA?: any[], arrB?: any[]) => {
-        if (arrA === arrB) return true;
-        if (arrA?.length !== arrB?.length) return false;
+        if (arrA === arrB) {
+            return true;
+        }
+        if (arrA?.length !== arrB?.length) {
+            return false;
+        }
 
         return arrA?.every((v: any, i) => v === arrB?.[i]) ?? false;
     };
@@ -104,9 +108,9 @@ function createCrossFilterThemeOverrides(
             legendItemClick: (e: any) => {
                 const chart = proxy.getChart();
                 const eligibleSeriesIds = [e.seriesId, `${e.seriesId}-filtered-out`];
-                chart.series
-                    .filter((s) => eligibleSeriesIds.includes(s.id))
-                    .forEach((s) => s.toggleSeriesItem(undefined, 'category', e.itemId, undefined));
+                for (const s of chart.series.filter((s) => eligibleSeriesIds.includes(s.id))) {
+                    s.toggleSeriesItem(undefined, 'category', e.itemId, undefined);
+                }
             },
         },
     };
@@ -126,27 +130,29 @@ function createCrossFilterThemeOverrides(
             [seriesType]: {
                 series: {
                     fills: {
-                        $if: [
-                            { $eq: [{ $value: '$index' }, 0] },
+                        $applyCycle: [
+                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
+                            { $palette: 'fills' },
                             {
-                                $map: [
+                                $if: [
+                                    { $eq: [{ $value: '$parentIndex' }, 0] },
                                     { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
-                                    { $palette: 'fills' },
+                                    { $value: '$1' },
                                 ],
                             },
-                            { $palette: 'fills' },
                         ],
                     },
                     strokes: {
-                        $if: [
-                            { $eq: [{ $value: '$index' }, 0] },
+                        $applyCycle: [
+                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
+                            { $palette: 'strokes' },
                             {
-                                $map: [
+                                $if: [
+                                    { $eq: [{ $value: '$parentIndex' }, 0] },
                                     { $mix: [{ $value: '$1' }, { $ref: 'backgroundColor' }, 0.7] },
-                                    { $palette: 'strokes' },
+                                    { $value: '$1' },
                                 ],
                             },
-                            { $palette: 'strokes' },
                         ],
                     },
                 },

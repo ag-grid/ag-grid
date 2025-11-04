@@ -175,8 +175,8 @@ export const GRID_OPTION_DEFAULTS = {
     columnMenu: 'new',
     reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
-    rowNumbers: false,
     enableFilterHandlers: false,
+    enableFormulas: false,
 } as const;
 /**
  * Used simply to type check the default grid options.

@@ -14,6 +14,8 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
+    _isMasterDetail,
+    _isTreeData,
     _warn,
 } from 'ag-grid-community';
 
@@ -24,7 +26,7 @@ import type { ServerSideExpansionService } from '../services/serverSideExpansion
 import type { LazyStore } from '../stores/lazy/lazyStore';
 import type { StoreFactory } from '../stores/storeFactory';
 
-const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
+const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey';
 
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
@@ -154,7 +156,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gos.get('treeData')) {
+        if (_isTreeData(this.gos)) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
@@ -164,7 +166,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.gos.get('masterDetail')) {
+        } else if (_isMasterDetail(this.gos)) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -197,12 +199,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const treeData = this.gos.get('treeData');
+        const treeData = _isTreeData(this.gos);
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
 
-        if ((treeData || !group) && this.gos.get('masterDetail')) {
+        if ((treeData || !group) && _isMasterDetail(this.gos)) {
             this.setMasterDetailInfo(rowNode);
         }
 
@@ -239,8 +241,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.groupValue = rowNode.key;
 
         const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
-        const usingTreeData = this.gos.get('treeData');
-        groupDisplayCols.forEach((col) => {
+        const usingTreeData = _isTreeData(this.gos);
+        for (const col of groupDisplayCols) {
             if (rowNode.groupData == null) {
                 rowNode.groupData = {};
             }
@@ -250,7 +252,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
                 rowNode.groupData[col.getColId()] = groupValue;
             }
-        });
+        }
     }
 
     public clearDisplayIndex(rowNode: RowNode): void {
@@ -308,11 +310,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
             const childStore = rowNode.childStore as LazyStore;
             // unbalanced group always behaves as if it was expanded
             if (rowNode.expanded || isUnbalancedGroup) {
-                childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop, isUnbalancedGroup ? uiLevel : uiLevel + 1);
+                childStore.setDisplayIndexes(displayIndexSeq, nextRowTop, isUnbalancedGroup ? uiLevel : uiLevel + 1);
             } else {
                 // we need to clear the row tops, as the row renderer depends on
                 // this to know if the row should be faded out
-                childStore!.clearDisplayIndexes();
+                childStore.clearDisplayIndexes();
             }
         }
     }
