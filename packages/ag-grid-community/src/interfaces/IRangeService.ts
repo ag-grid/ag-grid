@@ -53,6 +53,7 @@ export interface IRangeService {
         column: AgColumn | AgColumnGroup,
         headerComp: IAbstractHeaderCellComp
     ): void;
+    createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
     handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
 }

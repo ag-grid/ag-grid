@@ -973,6 +973,7 @@ export {
     _getGridOption,
     _isSetFilterByDefault,
     _interpretAsRightClick,
+    _getSuppressColumnSelection,
 } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';

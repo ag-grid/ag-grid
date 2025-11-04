@@ -55,6 +55,7 @@ import {
 
 import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
+import { HeaderGroupCellMouseListenerFeature } from './headerGroupCellMouseListenerFeature';
 import { RangeHeaderHighlightFeature } from './rangeHeaderHighlightFeature';
 
 enum SelectionMode {
@@ -1251,6 +1252,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature {
         return new CellRangeFeature(this.beans, ctrl);
+    }
+
+    public createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub {
+        return new HeaderGroupCellMouseListenerFeature(column, eGui);
     }
 
     /**
