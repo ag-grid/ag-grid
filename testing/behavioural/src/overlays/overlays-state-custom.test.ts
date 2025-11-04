@@ -1,5 +1,3 @@
-import type { MockInstance } from 'vitest';
-
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
@@ -9,14 +7,13 @@ describe('ag-grid modern overlays state', () => {
         modules: [ClientSideRowModelModule],
     });
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
-    let consoleWarnSpy: MockInstance;
 
     function hasLoadingOverlay() {
-        return !!document.querySelector('.ag-overlay-loading-center');
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
     }
 
     function hasNoRowsOverlay() {
-        return !!document.querySelector('.ag-overlay-no-rows-center');
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'));
     }
 
     function hasLoadingOverlayWrapper() {
@@ -32,37 +29,15 @@ describe('ag-grid modern overlays state', () => {
     }
 
     beforeEach(() => {
-        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         gridsManager.reset();
     });
 
     afterEach(() => {
         gridsManager.reset();
-        consoleWarnSpy.mockRestore();
         expect(hasNoRowsOverlayWrapper()).toBeFalsy();
         expect(hasLoadingOverlayWrapper()).toBeFalsy();
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
-
-    const makeOverlayComp = (paramsMap: Record<string, any>, className: string) => {
-        return class {
-            private e: HTMLElement;
-            constructor() {
-                this.e = document.createElement('div');
-                this.e.className = className;
-                this.e.textContent = `comp ${className}`;
-            }
-            public getGui() {
-                return this.e;
-            }
-            public init(p?: any) {
-                paramsMap[className] = p;
-            }
-            public refresh(p?: any) {
-                paramsMap[className] = p;
-            }
-        };
-    };
 
     test('custom loading and no-rows overlays are rendered when provided via components map', () => {
         const capturedParams: Record<string, any> = {};
@@ -119,24 +94,6 @@ describe('ag-grid modern overlays state', () => {
         expect(hasNoRowsOverlay()).toBeFalsy();
         expect(document.querySelector('.my-active-overlay')).toBeTruthy();
         expect(capturedParams['my-active-overlay']).toBeDefined();
-    });
-
-    test('activeOverlay has higher priority than suppressLoadingOverlay and suppressNoRowsOverlay', () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs,
-            suppressLoadingOverlay: true,
-            suppressNoRowsOverlay: true,
-        });
-        expect(hasLoadingOverlay()).toBeFalsy();
-        expect(hasNoRowsOverlay()).toBeFalsy();
-
-        api.setGridOption('activeOverlay', 'agLoadingOverlay');
-        expect(hasLoadingOverlay()).toBeTruthy();
-        expect(hasNoRowsOverlay()).toBeFalsy();
-
-        api.setGridOption('activeOverlay', 'agNoRowsOverlay');
-        expect(hasLoadingOverlay()).toBeFalsy();
-        expect(hasNoRowsOverlay()).toBeTruthy();
     });
 
     test('activeOverlay set to name renders custom active overlay and hides loading/no-rows', () => {
@@ -270,7 +227,7 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.my-resolve-loader')).toBeTruthy();
     });
 
-    test.only('activeOverlay that resolves to the no-rows overlay uses no-rows wrapper class', () => {
+    test('activeOverlay that resolves to the no-rows overlay uses no-rows wrapper class', () => {
         const capturedParams: Record<string, any> = {};
         gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -596,24 +553,6 @@ describe('ag-grid modern overlays state', () => {
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
-    test('components.agLoadingOverlay = false suppresses the loading overlay', () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs,
-            // disable the loading overlay component via components map
-            components: { agLoadingOverlay: false },
-        });
-
-        // classic behaviour without rows would show loading; with component false it must not
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
-
-        // even when explicitly asked to show loading, nothing should appear
-        api.showLoadingOverlay();
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
-        // and enabling loading should not force it to appear when the component is suppressed
-        api.setGridOption('loading', true);
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
-    });
-
     test('components.agNoRowsOverlay = false suppresses the no-rows overlay', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -655,23 +594,10 @@ describe('ag-grid modern overlays state', () => {
         expect(document.querySelector('.my-suppressed-overlay')).toBeFalsy();
     });
 
-    test('components.agLoadingOverlay = null suppresses the loading overlay even when loading/showLoadingOverlay invoked', () => {
+    test('components.agNoRowsOverlay = false suppresses the no-rows overlay even when showNoRowsOverlay/empty rows invoked', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            components: { agLoadingOverlay: null },
-        });
-
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
-        api.setGridOption('loading', true);
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
-        api.showLoadingOverlay();
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
-    });
-
-    test('components.agNoRowsOverlay = null suppresses the no-rows overlay even when showNoRowsOverlay/empty rows invoked', () => {
-        const api = gridsManager.createGrid('myGrid', {
-            columnDefs,
-            components: { agNoRowsOverlay: null },
+            components: { agNoRowsOverlay: false },
             rowData: [],
         });
 
@@ -737,4 +663,144 @@ describe('ag-grid modern overlays state', () => {
         api.setGridOption('activeOverlayParams', { fromTest: 'a2' });
         expect(capturedParams['my-refresh-active']?.fromTest).toBe('a2');
     });
+
+    test('loadingOverlayComponent=false disables loading overlay even when forced', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            loadingOverlayComponent: false,
+        });
+
+        expect(hasLoadingOverlay()).toBeFalsy();
+        expect(hasLoadingOverlayWrapper()).toBeFalsy();
+
+        api.setGridOption('loading', true);
+        expect(hasLoadingOverlay()).toBeFalsy();
+        expect(hasLoadingOverlayWrapper()).toBeFalsy();
+
+        api.setGridOption('loading', false);
+        api.setGridOption('activeOverlay', 'agLoadingOverlay');
+        expect(hasLoadingOverlay()).toBeFalsy();
+        expect(hasLoadingOverlayWrapper()).toBeFalsy();
+    });
+
+    test('noRowsOverlayComponent=false disables no-rows overlay even when forced', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            noRowsOverlayComponent: false,
+            rowData: [],
+        });
+
+        expect(hasNoRowsOverlay()).toBeFalsy();
+        expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+
+        api.showNoRowsOverlay();
+        expect(hasNoRowsOverlay()).toBeFalsy();
+        expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+
+        api.setGridOption('activeOverlay', 'agNoRowsOverlay');
+        expect(hasNoRowsOverlay()).toBeFalsy();
+        expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+    });
+
+    describe('with warning disabled', () => {
+        let warnSpy: ReturnType<typeof vitest.spyOn>;
+
+        beforeEach(() => {
+            warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        });
+
+        afterEach(() => {
+            warnSpy.mockRestore();
+        });
+
+        test('activeOverlay=false suppresses built-in and custom overlays', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                components: {
+                    agLoadingOverlay: makeOverlayComp({}, 'my-suppress-loading'),
+                    agNoRowsOverlay: makeOverlayComp({}, 'my-suppress-no-rows'),
+                    mySuppressCustom: makeOverlayComp({}, 'my-suppress-custom'),
+                },
+            });
+
+            // initial loading overlay is shown while data/columns load
+            expect(document.querySelector('.my-suppress-loading')).toBeTruthy();
+
+            api.setGridOption('activeOverlay', false);
+            expect(hasLoadingOverlayWrapper()).toBeFalsy();
+            expect(document.querySelector('.my-suppress-loading')).toBeFalsy();
+
+            api.setGridOption('loading', true);
+            expect(hasLoadingOverlayWrapper()).toBeTruthy();
+
+            api.setGridOption('loading', false);
+            api.setGridOption('rowData', []);
+            expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+            expect(document.querySelector('.my-suppress-no-rows')).toBeFalsy();
+
+            api.showLoadingOverlay();
+            expect(hasLoadingOverlayWrapper()).toBeFalsy();
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+
+            api.setGridOption('rowData', [{}]);
+            api.setGridOption('activeOverlay', 'mySuppressCustom');
+            expect(document.querySelector('.my-suppress-custom')).toBeTruthy();
+
+            api.setGridOption('activeOverlay', false);
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
+            expect(document.querySelector('.my-suppress-custom')).toBeFalsy();
+        });
+
+        test('activeOverlay has higher priority than suppressLoadingOverlay and suppressNoRowsOverlay', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                suppressLoadingOverlay: true,
+                suppressNoRowsOverlay: true,
+            });
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('activeOverlay', 'agLoadingOverlay');
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('activeOverlay', 'agNoRowsOverlay');
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+        });
+
+        test('components.agLoadingOverlay = false suppresses the loading overlay even when loading/showLoadingOverlay invoked', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                components: { agLoadingOverlay: false },
+            });
+
+            expect(hasLoadingOverlayWrapper()).toBeFalsy();
+            api.setGridOption('loading', true);
+            expect(hasLoadingOverlayWrapper()).toBeFalsy();
+            api.showLoadingOverlay();
+            expect(hasLoadingOverlayWrapper()).toBeFalsy();
+        });
+    });
 });
+
+const makeOverlayComp = (paramsMap: Record<string, any>, className: string) => {
+    return class {
+        private e: HTMLElement;
+        constructor() {
+            this.e = document.createElement('div');
+            this.e.className = className;
+            this.e.textContent = `comp ${className}`;
+        }
+        public getGui() {
+            return this.e;
+        }
+        public init(p?: any) {
+            paramsMap[className] = p;
+        }
+        public refresh(p?: any) {
+            paramsMap[className] = p;
+        }
+    };
+};

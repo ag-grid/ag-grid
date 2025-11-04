@@ -989,9 +989,14 @@ export interface GridOptions<TData = any> {
      */
     suppressNoRowsOverlay?: boolean;
 
+    /**
+     * Display a specific overlay. Accepts `'agLoadingOverlay'`, `'agNoRowsOverlay'`, a key from `components`, or a component class/function. Set to `null`/`undefined` to hide the overlay. When `loading=true`, the loading overlay takes precedence.
+     */
     activeOverlay?: any;
 
-    /** * Params to be passed to the `activeOverlay` component. */
+    /**
+     * Custom parameters supplied to the active overlay component alongside the standard `IOverlayParams`.
+     */
     activeOverlayParams?: any;
 
     // *** Pagination *** //

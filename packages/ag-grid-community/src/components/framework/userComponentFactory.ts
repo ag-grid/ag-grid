@@ -103,9 +103,10 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         type: ComponentType,
         defaultName: string | undefined,
         params: AgGridCommon<any, any>,
-        mandatory = false
+        mandatory = false,
+        canBeDisabled: boolean = false
     ): UserCompDetails | undefined {
-        return this.getCompDetails(this.gridOptions, type, defaultName, params, mandatory);
+        return this.getCompDetails(this.gridOptions, type, defaultName, params, mandatory, canBeDisabled);
     }
 
     public getCompDetails<TDefinition, TComp extends IComponent<any>>(
@@ -113,7 +114,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         type: ComponentType,
         defaultName: string | undefined,
         params: AgGridCommon<any, any>,
-        mandatory = false
+        mandatory = false,
+        canBeDisabled: boolean = false
     ): UserCompDetails<TComp> | undefined {
         const { name, cellRenderer } = type;
 
@@ -125,7 +127,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         let defaultCompProcessParams: ProcessParamsFunc | undefined;
 
         const lookupFromRegistry = (key: string) => {
-            const item = this.registry.getUserComponent(name, key);
+            const item = this.registry.getUserComponent(name, key, canBeDisabled);
             if (item) {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;

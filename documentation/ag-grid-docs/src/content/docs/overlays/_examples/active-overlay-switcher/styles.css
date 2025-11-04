@@ -1,0 +1,38 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+}
+
+.button-row button {
+    padding: 4px 12px;
+}
+
+#myGrid {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.status-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 16px;
+}
+
+.status-overlay__body h2 {
+    margin: 0 0 8px;
+}
+
+.status-overlay__body p {
+    margin: 0;
+}

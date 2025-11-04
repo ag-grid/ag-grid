@@ -4,9 +4,32 @@ type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: stri
 
 export class CustomLoadingOverlay implements ILoadingOverlayComp {
     eGui!: HTMLElement;
+    private messageEl!: HTMLElement;
 
     init(params: CustomLoadingOverlayParams) {
         this.eGui = document.createElement('div');
+        const overlay = document.createElement('div');
+        overlay.className = 'ag-overlay-loading-center';
+        overlay.setAttribute('role', 'presentation');
+
+        const spinner = document.createElement('div');
+        spinner.setAttribute('role', 'presentation');
+        spinner.style.height = '100px';
+        spinner.style.width = '100px';
+        spinner.style.background =
+            'url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat';
+        spinner.style.margin = '0 auto';
+
+        const message = document.createElement('div');
+        message.setAttribute('aria-live', 'polite');
+        message.setAttribute('aria-atomic', 'true');
+
+        this.messageEl = message;
+
+        overlay.appendChild(spinner);
+        overlay.appendChild(message);
+        this.eGui.appendChild(overlay);
+
         this.refresh(params);
     }
 
@@ -15,9 +38,10 @@ export class CustomLoadingOverlay implements ILoadingOverlayComp {
     }
 
     refresh(params: CustomLoadingOverlayParams): void {
-        this.eGui.innerHTML = `<div class="ag-overlay-loading-center" role="presentation">
-        <div role="presentation" style="height:100px; width:100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"></div>
-        <div aria-live="polite" aria-atomic="true">${params.loadingMessage}</div>
-     </div>`;
+        if (!this.messageEl) {
+            return;
+        }
+
+        this.messageEl.textContent = params.loadingMessage;
     }
 }

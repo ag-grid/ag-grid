@@ -1,14 +1,14 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
-import { _addGridCommonParams, _isClientSideRowModel, _isServerSideRowModel } from '../../gridOptionsUtils';
+import { _isClientSideRowModel, _isServerSideRowModel } from '../../gridOptionsUtils';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
 
 const overlayCompTypeOptionalMethods = ['refresh'];
-const newOverlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
+const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
 
 interface OverlayDef {
     id: 'agLoadingOverlay' | 'agNoRowsOverlay' | 'activeOverlay';
@@ -22,7 +22,7 @@ interface OverlayDef {
 
 const LoadingOverlayDef: OverlayDef = {
     id: 'agLoadingOverlay',
-    comp: newOverlayCompType('loadingOverlayComponent'),
+    comp: overlayCompType('loadingOverlayComponent'),
     wrapperCls: 'ag-overlay-loading-wrapper',
     exclusive: true,
     compKey: 'loadingOverlayComponent',
@@ -32,7 +32,7 @@ const LoadingOverlayDef: OverlayDef = {
 
 const NoRowsOverlayDef: OverlayDef = {
     id: 'agNoRowsOverlay',
-    comp: newOverlayCompType('noRowsOverlayComponent'),
+    comp: overlayCompType('noRowsOverlayComponent'),
     wrapperCls: 'ag-overlay-no-rows-wrapper',
     compKey: 'noRowsOverlayComponent',
     paramsKey: 'noRowsOverlayComponentParams',
@@ -41,8 +41,9 @@ const NoRowsOverlayDef: OverlayDef = {
 
 const CustomOverlayDef: OverlayDef = {
     id: 'activeOverlay',
-    comp: newOverlayCompType('activeOverlay'),
+    comp: overlayCompType('activeOverlay'),
     wrapperCls: 'ag-overlay-custom-wrapper',
+    exclusive: true,
 };
 
 export class OverlayService extends BeanStub implements NamedBean {
@@ -50,15 +51,11 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     public eWrapper: OverlayWrapperComponent | undefined = undefined;
 
-    private exclusive: boolean = false;
+    public exclusive: boolean = false;
     private oldExclusive: boolean = false;
     private currentDef: OverlayDef | null = null;
     private showInitialOverlay: boolean = true;
     private wrapperPadding: number = 0;
-
-    public isExclusive(): boolean {
-        return this.exclusive;
-    }
 
     public postConstruct(): void {
         const updateOverlayVisibility = () => this.updateOverlay(false);
@@ -92,11 +89,16 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.eWrapper = undefined;
     }
 
-    public setOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent | undefined): void {
-        this.eWrapper = overlayWrapperComp;
-        if (overlayWrapperComp) {
-            this.updateOverlay(false);
+    public setWrapperComp(overlayWrapperComp: OverlayWrapperComponent, destroyed: boolean): void {
+        if (!this.isAlive()) {
+            return;
         }
+        if (!destroyed) {
+            this.eWrapper = overlayWrapperComp;
+        } else if (this.eWrapper === overlayWrapperComp) {
+            this.eWrapper = undefined;
+        }
+        this.updateOverlay(false);
     }
 
     /** Returns true if the overlay is visible. */
@@ -110,7 +112,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (!this.eWrapper || gos.get('activeOverlay')) {
             return;
         }
-        if (this.isSuppressed(LoadingOverlayDef, false)) {
+        if (this.isSuppressed(LoadingOverlayDef)) {
             return;
         }
         const loading = gos.get('loading');
@@ -123,12 +125,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     public showNoRowsOverlay(): void {
         this.showInitialOverlay = false;
         const gos = this.gos;
-        if (
-            !this.eWrapper ||
-            gos.get('activeOverlay') ||
-            gos.get('loading') ||
-            this.isSuppressed(NoRowsOverlayDef, false)
-        ) {
+        if (!this.eWrapper || gos.get('activeOverlay') || gos.get('loading') || this.isSuppressed(NoRowsOverlayDef)) {
             return;
         }
         this.doShowOverlay(NoRowsOverlayDef);
@@ -165,17 +162,11 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         const currentDef = this.currentDef;
         const activeOverlay = this.eWrapper?.activeOverlay;
-        if (!activeOverlay || !currentDef) {
-            return;
-        }
-        const gos = this.gos;
-        const legacyParamsKey = this.currentDef?.paramsKey;
-        if (changedProps.has('activeOverlayParams') || (legacyParamsKey && changedProps.has(legacyParamsKey))) {
-            let params = legacyParamsKey && gos.get(legacyParamsKey);
-            if (params === undefined) {
-                params = gos.get('activeOverlayParams');
+        if (activeOverlay && currentDef) {
+            const paramsKey = currentDef.paramsKey;
+            if (changedProps.has('activeOverlayParams') || (paramsKey && changedProps.has(paramsKey))) {
+                activeOverlay.refresh?.(this.makeCompParams(paramsKey));
             }
-            this.eWrapper?.activeOverlay?.refresh?.(_addGridCommonParams(gos, { ...params }));
         }
     }
 
@@ -191,12 +182,12 @@ export class OverlayService extends BeanStub implements NamedBean {
         const clientSide = _isClientSideRowModel(gos);
         if (loading !== undefined) {
             this.showInitialOverlay = false; // If loading is defined, we don't show the initial overlay.
-        } else if (this.showInitialOverlay && !this.isSuppressed(LoadingOverlayDef, false)) {
+        } else if (this.showInitialOverlay && !this.isSuppressed(LoadingOverlayDef)) {
             loading = !gos.get('columnDefs') || !beans.colModel.ready || (!gos.get('rowData') && clientSide);
         }
 
         if (loading) {
-            if (this.isSuppressed(LoadingOverlayDef, true)) {
+            if (this.isDisabled(LoadingOverlayDef)) {
                 return currentDef === LoadingOverlayDef && this.doHideOverlay();
             }
             if (currentDef === LoadingOverlayDef) {
@@ -216,8 +207,8 @@ export class OverlayService extends BeanStub implements NamedBean {
             } else if (activeOverlay === 'agNoRowsOverlay') {
                 newDef = NoRowsOverlayDef;
             }
-            const suppressed = this.isSuppressed(newDef, true);
-            if (suppressed) {
+            const disabled = this.isDisabled(newDef);
+            if (disabled) {
                 return this.doHideOverlay();
             }
             if (!activeOverlayChanged && currentDef === newDef) {
@@ -230,7 +221,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (clientSide && beans.rowModel.isEmpty() && !this.isSuppressed(NoRowsOverlayDef, false)) {
+        if (clientSide && beans.rowModel.isEmpty() && !this.isSuppressed(NoRowsOverlayDef)) {
             if (currentDef === NoRowsOverlayDef) {
                 return false;
             }
@@ -272,20 +263,28 @@ export class OverlayService extends BeanStub implements NamedBean {
             legacyParamsKey = componentDef.paramsKey;
         }
 
-        let params = legacyParamsKey ? gos.get(legacyParamsKey) : undefined;
-        if (params === undefined) {
-            params = gos.get('activeOverlayParams');
-        }
         const compDetails = beans.userCompFactory.getCompDetailsFromGridOptions(
             componentDef.comp,
             componentDef !== CustomOverlayDef ? componentDef.id : undefined,
-            _addGridCommonParams(gos, { ...params })
+            this.makeCompParams(legacyParamsKey),
+            false,
+            true
         );
 
         const promise = compDetails?.newAgStackInstance() ?? null;
         this.eWrapper?.showOverlay(promise, componentDef.wrapperCls, exclusive);
         this.refreshWrapperPadding();
-        this.updateBlocking(exclusive);
+        this.setExclusive(exclusive);
+    }
+
+    private makeCompParams(legacyParamsKey?: keyof GridOptions) {
+        const { gos, gridApi, gridOptions } = this.beans;
+        return {
+            ...gos.get('activeOverlayParams'),
+            ...((legacyParamsKey && gos.get(legacyParamsKey)) || null),
+            api: gridApi,
+            context: gridOptions.context,
+        };
     }
 
     private doHideOverlay(): boolean {
@@ -298,14 +297,14 @@ export class OverlayService extends BeanStub implements NamedBean {
         const eWrapper = this.eWrapper;
         if (eWrapper) {
             eWrapper.hideOverlay();
-            this.updateBlocking(false);
+            this.setExclusive(false);
         }
         return changed;
     }
 
-    private updateBlocking(blocking: boolean): void {
-        if (this.oldExclusive !== blocking) {
-            this.oldExclusive = blocking;
+    private setExclusive(exclusive: boolean): void {
+        if (this.oldExclusive !== exclusive) {
+            this.oldExclusive = exclusive;
             this.eventSvc.dispatchEvent({ type: 'overlayExclusiveChanged' });
         }
     }
@@ -333,18 +332,19 @@ export class OverlayService extends BeanStub implements NamedBean {
         eWrapper.updateOverlayWrapperPaddingTop(newPadding);
     }
 
-    private isSuppressed(def: OverlayDef, forced: boolean) {
-        if (!forced) {
-            const suppressKey = def.suppressKey;
-            if (suppressKey && this.gos.get(suppressKey)) {
-                return true;
-            }
+    private isDisabled(def: OverlayDef) {
+        const gos = this.gos;
+        const compKey = def.compKey;
+        const component = (compKey ? gos.get(compKey) : undefined) ?? gos.get('components')?.[def.id];
+        return component === false || (compKey && component !== undefined && !component);
+    }
+
+    private isSuppressed(def: OverlayDef) {
+        const gos = this.gos;
+        if (gos.get('activeOverlay') === false) {
+            return true; // activeOverlay set to false suppresses all overlays. Loading overlay can be still forced by setting loading=true
         }
-        const components = this.gos.get('components');
-        if (!components) {
-            return false;
-        }
-        const comp = components[def.id];
-        return def.compKey ? comp === false : comp !== undefined && !comp;
+        const suppressKey = def.suppressKey;
+        return !!(suppressKey && gos.get(suppressKey)) || this.isDisabled(def);
     }
 }

@@ -4,9 +4,25 @@ type CustomNoRowsOverlayParams = INoRowsOverlayParams & { noRowsMessageFunc: () 
 
 export class CustomNoRowsOverlay implements INoRowsOverlayComp {
     eGui!: HTMLElement;
+    private messageEl!: HTMLElement;
 
     init(params: CustomNoRowsOverlayParams) {
         this.eGui = document.createElement('div');
+        const overlay = document.createElement('div');
+        overlay.className = 'ag-overlay-loading-center';
+        overlay.setAttribute('role', 'presentation');
+        overlay.style.backgroundColor = '#b4bebe';
+
+        const icon = document.createElement('i');
+        icon.className = 'far fa-frown';
+        icon.setAttribute('aria-live', 'polite');
+        icon.setAttribute('aria-atomic', 'true');
+
+        this.messageEl = icon;
+
+        overlay.appendChild(icon);
+        this.eGui.appendChild(overlay);
+
         this.refresh(params);
     }
 
@@ -15,10 +31,10 @@ export class CustomNoRowsOverlay implements INoRowsOverlayComp {
     }
 
     refresh(params: CustomNoRowsOverlayParams): void {
-        this.eGui.innerHTML = `
-            <div role="presentation" class="ag-overlay-loading-center" style="background-color: #b4bebe;">
-                <i class="far fa-frown" aria-live="polite" aria-atomic="true"> ${params.noRowsMessageFunc()} </i>
-            </div>
-        `;
+        if (!this.messageEl) {
+            return;
+        }
+
+        this.messageEl.textContent = params.noRowsMessageFunc();
     }
 }

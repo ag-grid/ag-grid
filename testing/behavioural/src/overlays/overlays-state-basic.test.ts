@@ -12,11 +12,11 @@ describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance;
 
     function hasLoadingOverlay() {
-        return !!document.querySelector('.ag-overlay-loading-center');
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
     }
 
     function hasNoRowsOverlay() {
-        return !!document.querySelector('.ag-overlay-no-rows-center');
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'));
     }
 
     function hasLoadingOverlayWrapper() {
@@ -204,6 +204,25 @@ describe('ag-grid overlays state', () => {
             gridsManager.createGrid('myGrid', { columnDefs, loading: true });
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+
+        test('loading = true has precedence over rowData=[]', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: true });
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('rowData', []);
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', columnDefs); // to force a refresh
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
         });
 
         test('When rowData=null/undefined or empty array, no rows overlay is not displayed', () => {

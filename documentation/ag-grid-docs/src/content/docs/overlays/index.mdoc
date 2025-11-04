@@ -2,46 +2,30 @@
 title: "Overlays"
 ---
 
-Overlays are used for displaying messages over the top of the grid. There are two built-in overlays: loading and no-rows.
+Overlays are used for displaying messages over the top of the grid.
+There are built-in overlays and custom overlays.
 
 ## Loading overlay
 
 {% metaTag tags=["showLoadingOverlay"] /%}
 
-Show or hide the loading overlay by setting the `loading` property to `true` or `false`.
-
-{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
-
-The loading overlay takes precedence over the no-rows overlay and is not dependent of the state of `rowData`.
+When initial data or column definitions are pending, the grid automatically displays the loading overlay until both `rowData` and `columnDefs` are supplied with non-null values.
 
 {% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
 
-## No rows overlay
+Manual control is available by setting the `loading` grid option to `true` or `false`.
+Setting it to `true` force displays the loading overlay, while setting it to `false` hides any active overlay, and suppress the automatic behaviour.
+Loading overlay can be completely disabled by setting either `loadingOverlayComponent = false` or `components.agLoadingOverlay = false` in the grid options.
+The loading overlay takes precedence over the other overlays and is not dependent of the state of `rowData`.
 
-When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay. The no-rows overlay can also be programmatically shown / hidden via the grid API.
-
-{% apiDocumentation source="grid-api/api.json" section="overlays" names=["showNoRowsOverlay", "hideOverlay"] /%}
-
-The automatic displaying of the no-rows overlay can be suppressed by setting `suppressNoRowsOverlay` to `true`.
-
-{% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
-
-
-
-## Initial loading overlay
-
-If `loading` is not explicitly defined, the grid will automatically show the loading overlay until both `rowData` and `columnDefs` are provided with a non-null value for the first time. This behaviour can be suppressed by initialising the grid with an appropriate `loading` state.
-
-## Customisation
-
-Overlays can be customised by providing either a HTML string or custom component via grid properties.
-
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 
 ### Custom Loading Overlay
 
-The loading overlay can be customised via the grid properties `overlayLoadingTemplate` or `loadingOverlayComponent` and `loadingOverlayComponentParams`.
+The loading overlay can be customised via the grid properties `loadingOverlayComponent` and `loadingOverlayComponentParams`.
+It is also possible to define `agLoadingOverlay` in the [`components` map](./components/#registering-components-js) to provide a custom loading overlay component as well.
 
-{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayLoadingTemplate", "loadingOverlayComponent", "loadingOverlayComponentParams"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loadingOverlayComponent", "loadingOverlayComponentParams", "activeOverlayParams"] /%}
 
 {% if isFramework("javascript", "angular") %}
 Implement this interface to provide a custom overlay when data is being loaded.
@@ -67,11 +51,20 @@ This example demonstrates how to provide a custom loading overlay component cust
 
 {% gridExampleRunner title="Custom Loading Overlay Components" name="custom-overlay-loading" /%}
 
+## No rows overlay
+
+When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay. To control it programmatically use `activeOverlay`:
+
+The built-in no-rows overlay can be completely disabled by setting either `noRowsOverlayComponent = false` or `components.agNoRowsOverlay = false` or `activeOverlay = false` in the grid options.
+
+{% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
+
 ### Custom No Rows Overlay
 
-The no-rows overlay can be customised via the grid properties `overlayNoRowsTemplate` or `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
+The no-rows overlay can be customised via the grid properties `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
+It is also possible to define `agNoRowsOverlay` in the [`components` map](./components/#registering-components-js) to provide a custom no-rows overlay component as well.
 
-{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayNoRowsTemplate", "noRowsOverlayComponent", "noRowsOverlayComponentParams"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["noRowsOverlayComponent", "noRowsOverlayComponentParams", "activeOverlayParams"] /%}
 
 {% if isFramework("javascript", "angular") %}
 Implement this interface to provide a custom overlay when no-rows loaded.
@@ -96,3 +89,58 @@ Any valid Vue component can be a no-rows overlay component, however it is also p
 This example demonstrates how to provide a custom no-rows overlay component customised via parameters.
 
 {% gridExampleRunner title="Custom No Rows Overlay Components" name="custom-overlay-no-rows" /%}
+
+
+### Active Overlay
+
+Use the `activeOverlay` grid option to display an overlay programmatically, custom or built-in.
+- Pass `'agLoadingOverlay'` or `'agNoRowsOverlay'` to show the built-in overlays.
+- Pass a string key to resolve a component from the [`components` map](./components/#registering-components-js) on the grid options.
+- Pass a component class or function to instantiate the overlay directly.
+- Passing `false` suppresses all automatic overlays, including the built-in loading and no-rows overlays.
+
+The active overlay receives any values supplied via `activeOverlayParams` object together with the grid API and context.
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["activeOverlay", "activeOverlayParams"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="components" names=["components"] /%}
+
+{% if isFramework("javascript", "angular") %}
+Implement the `IOverlayComp` interface to provide a custom overlay; the grid will supply `IOverlayParams` whenever the component is created or refreshed.
+{% /if %}
+
+{% if isFramework("react") %}
+Pass a React component to the `activeOverlay` prop (or register it in [`components`](./components/#registering-components-js)); the grid will provide the overlay params as component props.
+{% /if %}
+
+{% if isFramework("vue") %}
+Any valid Vue component can be used, however the optional `IOverlay` interface exposes lifecycle hooks that receive `IOverlayParams`.
+{% /if %}
+
+
+{% if isFramework("vue") %}
+Any valid Vue component can be a loading overlay component, however it is also possible to implement the following optional methods:
+{% /if %}
+
+{% if isFramework("angular") %}
+{% interfaceDocumentation interfaceName="IOverlayAngularComp" config={"asCode":true } /%}
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% interfaceDocumentation interfaceName="IOverlayComp" config={"asCode":true } /%}
+{% /if %}
+
+{% if isFramework("vue") %}
+{% interfaceDocumentation interfaceName="IOverlay" config={"asCode":true } /%}
+{% /if %}
+
+Setting `activeOverlay` to `'agLoadingOverlay'` or `'agNoRowsOverlay'` will display the built-in overlays, while any other value will attempt to render the referenced custom component.
+When the `loading` property is `true`, the loading overlay takes precedence even if `activeOverlay` is set.
+Clear the overlay by resetting `activeOverlay` to `null` or `undefined` or `false`.
+
+{% gridExampleRunner title="Active Overlay (Component Class)" name="active-overlay-component" exampleHeight=350 /%}
+
+The example above demonstrates using a custom overlay component by passing the component class directly to `activeOverlay`.
+
+{% gridExampleRunner title="Active Overlay Switcher" name="active-overlay-switcher" exampleHeight=350 /%}
+
+The example above demonstrates switching between the built-in loading and no-rows overlays, as well as hiding the overlay entirely.

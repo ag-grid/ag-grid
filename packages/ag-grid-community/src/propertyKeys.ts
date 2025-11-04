@@ -94,6 +94,7 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'loadingCellRendererParams',
     'loadingOverlayComponentParams',
     'noRowsOverlayComponentParams',
+    'activeOverlayParams',
     'popupParent',
     'themeStyleContainer',
     'statusBar',
@@ -165,7 +166,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
 
 // If property does not fit above, i.e union that should not be coerced.
 // used internally
-const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
+const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection', 'activeOverlay'];
 
 // Used by Angular to support the user setting these
 // as plain HTML attributes and us correctly mapping that to true

@@ -308,7 +308,8 @@
         }
     }
 
-    .ag-overlay-loading-wrapper {
+    .ag-overlay-loading-wrapper,
+    .ag-overlay-custom-wrapper {
         background-color: var(--ag-modal-overlay-background-color);
     }
 

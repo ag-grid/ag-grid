@@ -27,6 +27,8 @@ import type {
     IMenuItemParams,
     INoRowsOverlay,
     INoRowsOverlayParams,
+    IOverlay,
+    IOverlayParams,
     IStatusPanel,
     IStatusPanelParams,
     IToolPanel,
@@ -82,6 +84,8 @@ export interface AgFilterComponent extends IFilterAngularComp {}
 export interface AgFloatingFilterComponent extends IFloatingFilterAngularComp {}
 
 export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {}
+
+export interface IOverlayAngularComp extends AgFrameworkComponent<IOverlayParams>, IOverlay {}
 
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {}
 

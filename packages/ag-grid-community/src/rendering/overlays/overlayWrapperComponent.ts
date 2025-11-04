@@ -87,7 +87,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
 
-        this.beans.overlays!.setOverlayWrapperComp(this);
+        this.beans.overlays!.setWrapperComp(this, false);
         this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
@@ -205,7 +205,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public override destroy(): void {
         this.elToFocusAfter = null;
         this.destroyActiveOverlay();
-        this.beans.overlays!.setOverlayWrapperComp(undefined);
+        this.beans.overlays!.setWrapperComp(this, true);
         super.destroy();
         this.eOverlayWrapper = null;
     }

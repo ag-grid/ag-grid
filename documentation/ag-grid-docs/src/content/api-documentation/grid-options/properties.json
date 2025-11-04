@@ -870,22 +870,42 @@
                 "url": "./overlays/#loading-overlay"
             }
         },
+        "loadingOverlayComponent": {
+            "description": "Provide a custom loading overlay component.",
+            "more": {
+                "name": "Loading Overlay Component",
+                "url": "./overlays/"
+            }
+        },
+        "loadingOverlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays/"
+            }
+        },
+        "noRowsOverlayComponent": {
+            "description": "Provide a custom no rows overlay component.",
+            "more": {
+                "name": "No Rows Overlay Component",
+                "url": "./overlays/"
+            }
+        },
+        "noRowsOverlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays/"
+            }
+        },
         "activeOverlay": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays/#custom-overlay"
+                "url": "./overlays/#custom-overlays"
             }
         },
         "activeOverlayParams": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays/#custom-overlay"
-            }
-        },
-        "suppressNoRowsOverlay": {
-            "more": {
-                "name": "No rows overlay",
-                "url": "./overlays/#no-rows-overlay"
+                "url": "./overlays/#custom-overlays"
             }
         }
     },

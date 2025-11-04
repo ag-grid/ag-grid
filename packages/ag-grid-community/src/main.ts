@@ -741,6 +741,7 @@ export {
 } from './interfaces/iNewFiltersToolPanel';
 
 // overlays
+export { IOverlay, IOverlayParams, IOverlayComp } from './rendering/overlays/overlayComponent';
 export {
     ILoadingOverlayComp,
     ILoadingOverlayParams,
