@@ -20,7 +20,6 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
-    BeanCollection,
     CellClassParams,
     CellCtrl,
     CellPosition,
@@ -180,15 +179,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
-    public createRowNumbersRowResizerFeature(
-        beans: BeanCollection,
-        ctrl: CellCtrl
-    ): IRowNumbersRowResizeFeature | undefined {
+    public createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined {
         if (!_isRowNumbersResizerEnabled(this.gos)) {
             return undefined;
         }
 
-        return new RowNumbersRowResizeFeature(beans, ctrl);
+        return new RowNumbersRowResizeFeature(this.beans, ctrl);
     }
 
     private refreshSelectionIntegration(): void {

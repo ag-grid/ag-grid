@@ -1,4 +1,3 @@
-import type { BeanCollection } from '../context/context';
 import type { ColDef } from '../entities/colDef';
 import type { HeaderComp } from '../headerRendering/cells/column/headerComp';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -62,7 +61,7 @@ export interface RowNumbersOptions
 export interface IRowNumbersService extends IColumnCollectionService {
     setupForHeader(comp: HeaderComp): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
-    createRowNumbersRowResizerFeature(beans: BeanCollection, ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;
+    createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined;
 }
 
 export interface IRowNumbersRowResizeFeature {

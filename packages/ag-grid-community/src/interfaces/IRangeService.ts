@@ -1,6 +1,5 @@
 import type { AutoScrollService } from '../agStack/rendering/autoScrollService';
 import type { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { IAbstractHeaderCellComp } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
@@ -47,7 +46,7 @@ export interface IRangeService {
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
     createDragListenerFeature(eContainer: HTMLElement): BeanStub;
-    createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature;
+    createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature;
     createRangeHighlightFeature(
         compBean: BeanStub,
         column: AgColumn | AgColumnGroup,

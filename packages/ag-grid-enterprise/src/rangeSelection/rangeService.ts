@@ -1268,7 +1268,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return new DragListenerFeature(eContainer);
     }
 
-    public createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature {
-        return new CellRangeFeature(beans, ctrl);
+    public createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature {
+        return new CellRangeFeature(this.beans, ctrl);
     }
 }

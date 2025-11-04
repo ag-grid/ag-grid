@@ -1,7 +1,6 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -996,12 +995,12 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
     }
 
-    public createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): CellEditStyleFeature {
-        return new CellEditStyleFeature(cellCtrl, beans);
+    public createCellStyleFeature(cellCtrl: CellCtrl): CellEditStyleFeature {
+        return new CellEditStyleFeature(cellCtrl, this.beans);
     }
 
-    public createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature {
-        return new RowEditStyleFeature(rowCtrl, beans);
+    public createRowStyleFeature(rowCtrl: RowCtrl): IRowStyleFeature {
+        return new RowEditStyleFeature(rowCtrl, this.beans);
     }
 
     public setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void {
