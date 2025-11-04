@@ -64,6 +64,7 @@ export abstract class TextInputFloatingFilter<
         inputSvc.setParams({
             ariaLabel: this.getAriaLabel(params),
             autoComplete,
+            placeholder: params.filterPlaceholder,
         });
 
         this.applyActive = _isUseApplyButton(params.filterParams as TextFilterParams);
