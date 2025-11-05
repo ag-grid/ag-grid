@@ -192,13 +192,14 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         const activeOverlay = this.activeOverlay;
         if (!activeOverlay) {
             this.overlayExclusive = false;
+            this.elToFocusAfter = null;
             this.refreshWrapperPadding();
             return; // Nothing to destroy
         }
 
         let elementToFocus = this.elToFocusAfter;
-        this.activeOverlay = null;
         this.elToFocusAfter = null;
+        this.activeOverlay = null;
         this.overlayExclusive = false;
 
         if (elementToFocus && !this.isGridFocused()) {
