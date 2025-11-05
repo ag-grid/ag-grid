@@ -28,7 +28,7 @@ function getValueFromServer(_params: ICellEditorParams, search?: string): Promis
         setTimeout(() => {
             console.log('Grid requested `' + search + '` from server.');
             resolve(languages.filter((l) => l.toLowerCase().includes(search)));
-        }, 100);
+        }, 1000);
     });
 }
 

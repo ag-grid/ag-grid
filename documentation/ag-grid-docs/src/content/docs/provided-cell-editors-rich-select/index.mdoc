@@ -194,7 +194,7 @@ The `agRichSelectCellEditor` supports asynchronous loading of dropdown values, e
 Values can be provided as a `Promise<TValue[]>` returned from the `values` function. The editor automatically handles promise resolution and updates the dropdown list accordingly.
 
 ```ts
-function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
+function fetchLanguages(_params: ICellEditorParams): Promise<string[]> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
   });
@@ -221,7 +221,7 @@ For advanced filtering scenarios, combine async `values` callback, `allowTyping`
 When `filterListAsync` is `true`, the cell editor:
 
 - Triggers the `values` callback with the current search string on every keystroke.
-- Debounces search requests using a default 300ms delay (configurable via `asyncDebounceMs`).
+- Debounces search requests using a default 300ms delay (configurable via `searchDebounceDelay`).
 - Displays a loading indicator during network requests.
 - Updates the dropdown with filtered results once the promise resolves.
 
@@ -234,26 +234,20 @@ function fetchLanguages(params: ICellEditorParams): Promise<string[]> {
 ```
 
 ```js
-cellEditorParams: {
-    allowTyping: true,
-        filterList: true,
-        filterListAsync: true,
-        values: (params, search) => {
-        return fetch(`/api/languages?search=${encodeURIComponent(search ?? '')}`)
-            .then(res => res.json())
-            .then(data => data.items);
+columnDefs: [
+    {
+        headerName: 'Language',
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+            values: fetchLanguages
+        }
     }
-}
+]
 ```
-
-{% note %}
-> `filterListAsync` only takes effect when:
-> - `allowTyping` is `true`
-> - `filterList` is `true`
-> - `filterListAsync` is `true`
-> - `values` returns a `Promise`
-{% /note %}
-
  
 ## API Reference
 
