@@ -517,7 +517,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
         const searchStrings = this.searchStrings;
 
-        if (!searchStrings?.length) {
+        if (!searchStrings) {
             this.listComponent.highlightIndex(-1);
             return;
         }
