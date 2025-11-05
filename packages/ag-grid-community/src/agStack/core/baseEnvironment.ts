@@ -13,7 +13,7 @@ import {
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
-import { _createAgElement, _observeResize } from '../utils/dom';
+import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 let paramsId = 0;
@@ -315,6 +315,9 @@ const warnOnAttachToShadowRoot = (el: HTMLElement) => {
     const interval = setInterval(() => {
         if (el.getRootNode() instanceof ShadowRoot) {
             _error(293);
+            clearInterval(interval);
+        }
+        if (_isInDOM(el)) {
             clearInterval(interval);
         }
     }, 1000);
