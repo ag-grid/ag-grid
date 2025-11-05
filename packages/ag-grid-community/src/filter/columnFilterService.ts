@@ -1130,16 +1130,11 @@ export class ColumnFilterService
     }
 
     public getFloatingFilterCompDetails(column: AgColumn, showParentFilter: () => void): UserCompDetails | undefined {
-        const { userCompFactory, frameworkOverrides, selectableFilter } = this.beans;
+        const { userCompFactory, frameworkOverrides, selectableFilter, gos } = this.beans;
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getOrCreateFilterUi(column);
-
-            if (filterComponent == null) {
-                return;
-            }
-
-            filterComponent.then((instance) => {
+            filterComponent?.then((instance) => {
                 callback(_unwrapUserComp(instance!));
             });
         };
@@ -1152,14 +1147,14 @@ export class ColumnFilterService
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
-        const isReactive = this.gos.get('enableFilterHandlers');
+        const isReactive = gos.get('enableFilterHandlers');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             filterDef,
             this.createFilterCompParams(column, isReactive, 'init', true) as IFilterParams
         );
 
-        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(this.gos, {
+        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(gos, {
             column,
             filterParams,
             currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
