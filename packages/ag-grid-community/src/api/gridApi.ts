@@ -216,14 +216,13 @@ export interface _OverlayGridApi {
 
     /**
      * Show the no-rows overlay. If `loading` is true, this will not do anything.
-     * `showNoRowsOverlay` is deprecated. Use the grid option "activeOverlay"='agNoRowsOverlay' or setGridOption("activeOverlay", 'agNoRowsOverlay') instead.
+     * **Prefer setting `activeOverlay`='agNoRowsOverlay' or setGridOption("activeOverlay", 'agNoRowsOverlay') instead.**
      */
     showNoRowsOverlay(): void;
 
     /**
      * Hide the no-rows overlay if it is showing.
-     * `hideOverlay` is deprecated. Use the grid option "activeOverlay"=false or setGridOption("activeOverlay", false) instead.
-     * To disable the no-rows overlay permanently, set the grid option `noRowsOverlayComponent` to `false`.
+     * **Prefer setting `activeOverlay` grid option instead, or set the grid option `noRowsOverlayComponent` to `false` to disable the no-rows overlay permanently.**
      */
     hideOverlay(): void;
 }

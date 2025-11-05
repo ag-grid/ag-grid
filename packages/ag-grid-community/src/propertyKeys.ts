@@ -166,7 +166,7 @@ export const _NUMBER_GRID_OPTIONS: KeysWithType<number>[] = [
 
 // If property does not fit above, i.e union that should not be coerced.
 // used internally
-const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection', 'activeOverlay'];
+const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
 
 // Used by Angular to support the user setting these
 // as plain HTML attributes and us correctly mapping that to true
@@ -344,6 +344,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'loadingCellRenderer',
     'loadingOverlayComponent',
     'noRowsOverlayComponent',
+    'activeOverlay',
     'detailCellRenderer',
     'quickFilterParser',
     'quickFilterMatcher',

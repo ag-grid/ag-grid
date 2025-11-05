@@ -992,7 +992,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
-     * Deprecated v35, prefer the use of `loadingOverlayComponent` instead.
+     *
+     *     **Prefer using `loadingOverlayComponent` instead.**
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
@@ -1009,7 +1010,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
-     * Deprecated v35, prefer the use of `noRowsOverlayComponent` instead.
+     *
+     *     **Prefer using `noRowsOverlayComponent` instead.**
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no-rows overlay component.
@@ -1020,15 +1022,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
+     *     **Prefer setting `noRowsOverlayComponent=false` instead, that permanently disable the no-rows overlay.**
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Display a specific overlay.
-     * Accepts `'agLoadingOverlay'`, `'agNoRowsOverlay'`, a key from `components` map, or a component class/function.
-     * When `loading=true`, the loading overlay takes precedence.
-     * When set to `false`, the automatic overlays will not be shown.
-     * When set to `undefined`, the grid will automatically show/hide overlays when appropriate.
+     * Accepts:
+     * - A component class/function.
+     * - A string key from `components` map.
+     * - `'agNoRowsOverlay'` to show the no rows overlay.
+     * - `null`/`undefined` to clear it.
+     * - `false` to disable automatic overlays.
+     *
+     * Note that when `loading=true`, the loading overlay takes precedence.
+     * @default undefined
      */
     @Input() public activeOverlay: any = undefined;
     /** Custom parameters supplied to the active overlay component alongside the standard `IOverlayParams`.

@@ -954,7 +954,8 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
-     * Deprecated v35, prefer the use of `loadingOverlayComponent` instead.
+     *
+     * **Prefer using `loadingOverlayComponent` instead.**
      */
     overlayLoadingTemplate?: string;
     /**
@@ -976,7 +977,8 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
-     * Deprecated v35, prefer the use of `noRowsOverlayComponent` instead.
+     *
+     * **Prefer using `noRowsOverlayComponent` instead.**
      */
     overlayNoRowsTemplate?: string;
     /**
@@ -990,6 +992,7 @@ export interface GridOptions<TData = any> {
     noRowsOverlayComponentParams?: any;
     /**
      * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
+     * **Prefer setting `noRowsOverlayComponent=false` instead, that permanently disable the no-rows overlay.**
      * @default false
      * @initial
      */
@@ -997,10 +1000,15 @@ export interface GridOptions<TData = any> {
 
     /**
      * Display a specific overlay.
-     * Accepts `'agLoadingOverlay'`, `'agNoRowsOverlay'`, a key from `components` map, or a component class/function.
-     * When `loading=true`, the loading overlay takes precedence.
-     * When set to `false`, the automatic overlays will not be shown.
-     * When set to `undefined`, the grid will automatically show/hide overlays when appropriate.
+     * Accepts:
+     * - A component class/function.
+     * - A string key from `components` map.
+     * - `'agNoRowsOverlay'` to show the no rows overlay.
+     * - `null`/`undefined` to clear it.
+     * - `false` to disable automatic overlays.
+     *
+     * Note that when `loading=true`, the loading overlay takes precedence.
+     * @default undefined
      */
     activeOverlay?: any;
 

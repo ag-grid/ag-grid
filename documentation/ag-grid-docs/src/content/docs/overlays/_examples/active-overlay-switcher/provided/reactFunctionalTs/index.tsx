@@ -47,11 +47,7 @@ const GridExample: React.FC = () => {
     const [activeOverlay, setActiveOverlay] = useState<string | undefined>();
     const [overlayParams, setOverlayParams] = useState<StatusOverlayParams | undefined>();
     const [statusOverlayCounter, setStatusOverlayCounter] = useState(0);
-
-    const setLoadingOverlay = () => {
-        setActiveOverlay('agLoadingOverlay');
-        setOverlayParams(undefined);
-    };
+    const [loading, setLoading] = useState<boolean | undefined>(undefined);
 
     const setNoRowsOverlay = () => {
         setActiveOverlay('agNoRowsOverlay');
@@ -70,13 +66,19 @@ const GridExample: React.FC = () => {
         setOverlayParams(undefined);
     };
 
+    const onLoadingToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setLoading(event.target.checked ? true : undefined);
+    };
+
     return (
         <div className="example-wrapper">
             <div className="button-row">
-                <button onClick={setLoadingOverlay}>Show loading overlay</button>
+                <label className="toggle loading-toggle">
+                    <input type="checkbox" checked={loading === true} onChange={onLoadingToggle} /> Loading
+                </label>
                 <button onClick={setNoRowsOverlay}>Show no-rows overlay</button>
                 <button onClick={setCustomOverlay}>Show custom overlay</button>
-                <button onClick={clearOverlay}>Hide overlay</button>
+                <button onClick={clearOverlay}>Hide active overlay</button>
             </div>
 
             <div className="grid-wrapper">
@@ -85,6 +87,7 @@ const GridExample: React.FC = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     components={components}
+                    loading={loading}
                     activeOverlay={activeOverlay}
                     activeOverlayParams={overlayParams}
                 />

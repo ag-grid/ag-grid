@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, computed, model, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
@@ -34,10 +35,10 @@ interface OverlayState {
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, StatusOverlayComponent],
+    imports: [AgGridAngular, FormsModule, StatusOverlayComponent],
     template: `<div class="example-wrapper">
         <div class="button-row">
-            <button type="button" (click)="showLoadingOverlay()">Show loading overlay</button>
+            <label class="toggle loading-toggle"><input type="checkbox" [(ngModel)]="loadingToggle" /> Loading</label>
             <button type="button" (click)="showNoRowsOverlay()">Show no-rows overlay</button>
             <button type="button" (click)="showCustomOverlay()">Show custom overlay</button>
             <button type="button" (click)="clearOverlay()">Hide overlay</button>
@@ -50,8 +51,9 @@ interface OverlayState {
                 [defaultColDef]="defaultColDef"
                 [rowData]="rowData"
                 [components]="components"
-                [activeOverlay]="overlayState.activeOverlay"
-                [activeOverlayParams]="overlayState.activeOverlayParams"
+                [loading]="loading()"
+                [activeOverlay]="overlayState().activeOverlay"
+                [activeOverlayParams]="overlayState().activeOverlayParams"
             />
         </div>
     </div>`,
@@ -74,39 +76,35 @@ export class AppComponent {
 
     public readonly components = { statusOverlay: StatusOverlayComponent };
 
-    public overlayState: OverlayState = {
+    public readonly overlayState = signal<OverlayState>({
         activeOverlay: undefined,
         activeOverlayParams: undefined,
-    };
+    });
+
+    public readonly loadingToggle = model<boolean>(false);
+    public readonly loading = computed<boolean | undefined>(() => (this.loadingToggle() ? true : undefined));
 
     private statusOverlayCounter = 0;
 
-    public showLoadingOverlay(): void {
-        this.overlayState = {
-            activeOverlay: 'agLoadingOverlay',
-            activeOverlayParams: undefined,
-        };
-    }
-
     public showNoRowsOverlay(): void {
-        this.overlayState = {
+        this.overlayState.set({
             activeOverlay: 'agNoRowsOverlay',
             activeOverlayParams: undefined,
-        };
+        });
     }
 
     public showCustomOverlay(): void {
         this.statusOverlayCounter += 1;
-        this.overlayState = {
+        this.overlayState.set({
             activeOverlay: 'statusOverlay',
             activeOverlayParams: { myCounter: this.statusOverlayCounter },
-        };
+        });
     }
 
     public clearOverlay(): void {
-        this.overlayState = {
+        this.overlayState.set({
             activeOverlay: undefined,
             activeOverlayParams: undefined,
-        };
+        });
     }
 }

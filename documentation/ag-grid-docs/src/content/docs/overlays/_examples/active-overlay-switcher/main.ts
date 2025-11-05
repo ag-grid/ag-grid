@@ -48,13 +48,6 @@ const gridOptions: GridOptions<IAthlete> = {
     },
 };
 
-function showLoadingOverlay() {
-    gridApi.updateGridOptions({
-        activeOverlay: 'agLoadingOverlay',
-        activeOverlayParams: undefined,
-    });
-}
-
 function showNoRowsOverlay() {
     gridApi.updateGridOptions({
         activeOverlay: 'agNoRowsOverlay',
@@ -78,7 +71,19 @@ function hideOverlay() {
     });
 }
 
+function setLoading(isChecked: boolean) {
+    gridApi.updateGridOptions({
+        loading: isChecked ? true : undefined,
+    });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    const loadingToggle = document.querySelector<HTMLInputElement>('#loading-toggle');
+    if (loadingToggle) {
+        loadingToggle.addEventListener('change', () => setLoading(loadingToggle.checked));
+        setLoading(loadingToggle.checked);
+    }
 });
