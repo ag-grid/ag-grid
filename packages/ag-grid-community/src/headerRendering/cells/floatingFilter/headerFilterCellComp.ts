@@ -78,10 +78,8 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     }
 
     private destroyFloatingFilterComp(): void {
-        if (this.floatingFilterComp) {
-            this.floatingFilterComp.getGui().remove();
-            this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
-        }
+        this.floatingFilterComp?.getGui().remove();
+        this.floatingFilterComp = this.destroyBean(this.floatingFilterComp);
     }
 
     private afterCompCreated(comp: IFloatingFilterComp | null): void {
@@ -99,8 +97,6 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.floatingFilterComp = comp;
         this.eFloatingFilterBody.appendChild(comp.getGui());
 
-        if (comp.afterGuiAttached) {
-            comp.afterGuiAttached();
-        }
+        comp.afterGuiAttached?.();
     }
 }
