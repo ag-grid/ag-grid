@@ -23,7 +23,7 @@ Loading overlay can be completely disabled by setting either `loadingOverlayComp
 ### Custom Loading Overlay
 
 The loading overlay can be customised via the grid properties `loadingOverlayComponent` and `loadingOverlayComponentParams`.
-It is also possible to define `agLoadingOverlay` in the [`components` map](./components/#registering-components-js) to provide a custom loading overlay component as well.
+It is also possible to define `agLoadingOverlay` in the [`components` map](./components/#2-by-name) to provide a custom loading overlay component as well.
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loadingOverlayComponent", "loadingOverlayComponentParams", "activeOverlayParams"] /%}
 
@@ -62,7 +62,7 @@ The built-in no-rows overlay can be completely disabled by setting either `noRow
 ### Custom No Rows Overlay
 
 The no-rows overlay can be customised via the grid properties `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
-It is also possible to define `agNoRowsOverlay` in the [`components` map](./components/#registering-components-js) to provide a custom no-rows overlay component as well.
+It is also possible to define `agNoRowsOverlay` in the [`components` map](./components/#2-by-name) to provide a custom no-rows overlay component as well.
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["noRowsOverlayComponent", "noRowsOverlayComponentParams", "activeOverlayParams"] /%}
 
@@ -95,7 +95,7 @@ This example demonstrates how to provide a custom no-rows overlay component cust
 
 Use the `activeOverlay` grid option to display an overlay programmatically, custom or built-in.
 - Pass `'agLoadingOverlay'` or `'agNoRowsOverlay'` to show the built-in overlays.
-- Pass a string key to resolve a component from the [`components` map](./components/#registering-components-js) on the grid options.
+- Pass a string key to resolve a component from the [`components` map](./components/#2-by-name) on the grid options.
 - Pass a component class or function to instantiate the overlay directly.
 - Passing `false` suppresses all automatic overlays, including the built-in loading and no-rows overlays.
 
@@ -109,7 +109,7 @@ Implement the `IOverlayComp` interface to provide a custom overlay; the grid wil
 {% /if %}
 
 {% if isFramework("react") %}
-Pass a React component to the `activeOverlay` prop (or register it in [`components`](./components/#registering-components-js)); the grid will provide the overlay params as component props.
+Pass a React component to the `activeOverlay` prop (or register it in [`components`](./components/#2-by-name)); the grid will provide the overlay params as component props.
 {% /if %}
 
 {% if isFramework("vue") %}
