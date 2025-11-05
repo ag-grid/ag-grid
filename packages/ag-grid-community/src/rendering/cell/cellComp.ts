@@ -124,6 +124,7 @@ export class CellComp extends Component {
             setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
 
             getCellEditor: () => this.cellEditor || null,
+            hasCellEditor: () => !!this.cellEditor,
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue(),
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),

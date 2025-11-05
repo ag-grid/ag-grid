@@ -129,6 +129,7 @@ export function _setupEditor(
     const { key, event, cellStartedEdit, silent } = params ?? {};
     const cellCtrl = _getCellCtrl(beans, position)!;
     const editorComp = cellCtrl?.comp?.getCellEditor();
+    // const hasEditor = cellCtrl?.comp?.hasCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
 
@@ -167,6 +168,10 @@ export function _setupEditor(
         cellCtrl.editCompDetails = compDetails;
         cellCtrl.onEditorAttachedFuncs.push(() => cellCtrl.rangeFeature?.unsetComp());
         cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
+        // if (hasEditor && !editorComp) {
+        //     return;
+        // }
+
         cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
 
         const edit = beans.editModelSvc?.getEdit(position, true);
