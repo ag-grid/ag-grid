@@ -187,11 +187,11 @@ columnDefs: [
 
 ## Async Values
 
-List values can be provided asynchronously to the editor as shown below:
+The `agRichSelectCellEditor` supports asynchronous loading of dropdown values, enabling efficient handling of large datasets and server-driven filtering. This feature is ideal for applications requiring dynamic, real-time filtering without loading all data upfront.
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
 
-The `values` property can receive a Promise that **resolves** an array of values.
+Values can be provided as a `Promise<TValue[]>` returned from the `values` function. The editor automatically handles promise resolution and updates the dropdown list accordingly.
 
 ```ts
 function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
@@ -204,15 +204,57 @@ function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
 ```js
 columnDefs: [
     {
+        headerName: 'Language',
+        field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            values: getValueFromServer,
+            values: fetchLanguages,
         }
-        // ...other props
     }
 ]
 ```
 
+### Server-Driven Filtering
+
+For advanced filtering scenarios, combine async `values` callback, `allowTyping`, `filterList`, and `filterListAsync` to enable real-time, server-side filtering.
+
+When `filterListAsync` is `true`, the cell editor:
+
+- Triggers the `values` callback with the current search string on every keystroke.
+- Debounces search requests using a default 300ms delay (configurable via `asyncDebounceMs`).
+- Displays a loading indicator during network requests.
+- Updates the dropdown with filtered results once the promise resolves.
+
+```ts
+function fetchLanguages(params: ICellEditorParams): Promise<string[]> {
+    return fetch(`/api/languages?search=${encodeURIComponent(search ?? '')}`)
+        .then(res => res.json())
+        .then(data => data.items as string[]);
+}
+```
+
+```js
+cellEditorParams: {
+    allowTyping: true,
+        filterList: true,
+        filterListAsync: true,
+        values: (params, search) => {
+        return fetch(`/api/languages?search=${encodeURIComponent(search ?? '')}`)
+            .then(res => res.json())
+            .then(data => data.items);
+    }
+}
+```
+
+{% note %}
+> `filterListAsync` only takes effect when:
+> - `allowTyping` is `true`
+> - `filterList` is `true`
+> - `filterListAsync` is `true`
+> - `values` returns a `Promise`
+{% /note %}
+
+ 
 ## API Reference
 
 
