@@ -7,18 +7,7 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
     cellRendererParams: any;
 }
 
-export interface RichSelectParams<TValue = any>
-    extends AgPickerFieldParams<AgComponentSelectorType>,
-        Pick<
-            IRichCellEditorParams<any, TValue>,
-            | 'filterList'
-            | 'searchType'
-            | 'highlightMatch'
-            | 'multiSelect'
-            | 'suppressDeselectAll'
-            | 'suppressMultiSelectPillRenderer'
-            | 'allowTyping'
-        > {
+export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
     onSearch?: (search?: string) => void;
@@ -27,6 +16,14 @@ export interface RichSelectParams<TValue = any>
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
+
+    allowTyping?: boolean;
+    filterList?: boolean;
+    searchType?: 'match' | 'matchAny' | 'fuzzy';
+    highlightMatch?: boolean;
+    multiSelect?: boolean;
+    suppressDeselectAll?: boolean;
+    suppressMultiSelectPillRenderer?: boolean;
 
     placeholder?: string;
     initialInputValue?: string;
@@ -61,8 +58,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     filterList?: boolean;
 
     /**
-     * When `filterList` is `true`, setting this to `true` and user typing will
-     * call the `values` function to fetch filtered results asynchronously.
+     * If set to `true` the option enables asynchronous filtering of value list items. In this mode, `values()` callback is expected to handle the filtering based on the provided search string.
+     * See `searchDebounceDelay` to control how often the `values()` callback is triggered as the user types.
+     * Note: This option is only relevant when `allowTyping` and `filterList` are both set to `true`, and when `values()` callback returns a Promise.
      * @default false
      */
     filterListAsync?: boolean;
