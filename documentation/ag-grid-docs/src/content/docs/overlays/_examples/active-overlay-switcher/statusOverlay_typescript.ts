@@ -1,28 +1,23 @@
-type StatusOverlayParams = {
-    heading?: string;
-    message?: string;
-};
+import type { IOverlayComp, IOverlayParams } from 'ag-grid-community';
 
-export class StatusOverlay {
-    private eGui!: HTMLElement;
-    private headingEl!: HTMLHeadingElement;
-    private messageEl!: HTMLParagraphElement;
+export interface StatusOverlayParams extends IOverlayParams {
+    myCounter?: number;
+}
 
-    public init(params: StatusOverlayParams = {}): void {
+export class StatusOverlay implements IOverlayComp {
+    private eGui: HTMLDivElement;
+    private eBody: HTMLDivElement;
+
+    public constructor() {
         this.eGui = document.createElement('div');
-        this.eGui.className = 'status-overlay';
+        this.eBody = document.createElement('div');
+    }
 
-        const bodyEl = document.createElement('div');
-        bodyEl.className = 'status-overlay__body';
-        bodyEl.setAttribute('role', 'presentation');
-        bodyEl.setAttribute('aria-live', 'polite');
-        bodyEl.setAttribute('aria-atomic', 'true');
+    public init(params: StatusOverlayParams): void {
+        const { eGui, eBody } = this;
 
-        this.headingEl = document.createElement('h2');
-        this.messageEl = document.createElement('p');
-
-        bodyEl.append(this.headingEl, this.messageEl);
-        this.eGui.append(bodyEl);
+        eGui.className = 'status-overlay';
+        eGui.append(eBody);
 
         this.refresh(params);
     }
@@ -31,12 +26,8 @@ export class StatusOverlay {
         return this.eGui;
     }
 
-    public refresh(params: StatusOverlayParams = {}): void {
-        const heading = params.heading ?? 'Status Update';
-        const message = params.message ?? 'Custom overlay supplied from the components map.';
-
-        this.headingEl.textContent = heading;
-        this.messageEl.textContent = message;
+    public refresh(params: StatusOverlayParams): void {
+        this.eBody.innerText = `custom: ${params.myCounter}`;
     }
 
     public destroy(): void {

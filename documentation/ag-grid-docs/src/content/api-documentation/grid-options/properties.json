@@ -899,13 +899,13 @@
         "activeOverlay": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays/#custom-overlays"
+                "url": "./overlays/"
             }
         },
         "activeOverlayParams": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays/#custom-overlays"
+                "url": "./overlays/"
             }
         }
     },

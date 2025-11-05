@@ -10,13 +10,13 @@ There are built-in overlays and custom overlays.
 {% metaTag tags=["showLoadingOverlay"] /%}
 
 When initial data or column definitions are pending, the grid automatically displays the loading overlay until both `rowData` and `columnDefs` are supplied with non-null values.
+The loading overlay takes precedence over the other overlays.
 
 {% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
 
 Manual control is available by setting the `loading` grid option to `true` or `false`.
 Setting it to `true` force displays the loading overlay, while setting it to `false` hides any active overlay, and suppress the automatic behaviour.
 Loading overlay can be completely disabled by setting either `loadingOverlayComponent = false` or `components.agLoadingOverlay = false` in the grid options.
-The loading overlay takes precedence over the other overlays and is not dependent of the state of `rowData`.
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
 

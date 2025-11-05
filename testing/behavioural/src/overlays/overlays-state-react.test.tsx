@@ -127,6 +127,31 @@ describe('ag-grid overlays state (react)', () => {
         await waitFor(() => expect(document.querySelector('.custom-no-rows')).toBeTruthy());
     });
 
+    test('react active overlay refreshes only when activeOverlayParams change', async () => {
+        const TrackingActiveOverlay: React.FC<{ fromTest?: string }> = ({ fromTest }) => (
+            <div className="tracking-active-overlay">{fromTest ?? ''}</div>
+        );
+
+        const baseProps = {
+            columnDefs,
+            rowData: [{}],
+            components: { myActiveOverlay: TrackingActiveOverlay },
+            activeOverlay: 'myActiveOverlay',
+        };
+
+        const getOverlayText = () => document.querySelector('.tracking-active-overlay')?.textContent;
+
+        const { rerender } = render(
+            <AgGridReact {...baseProps} activeOverlayParams={{ fromTest: 'active-initial' }} />
+        );
+
+        await waitFor(() => expect(getOverlayText()).toBe('active-initial'));
+
+        rerender(<AgGridReact {...baseProps} activeOverlayParams={{ fromTest: 'active-updated' }} />);
+
+        await waitFor(() => expect(getOverlayText()).toBe('active-updated'));
+    });
+
     test('loading=true custom component has precedence over rowData=[] in React StrictMode', async () => {
         const CustomLoadingOverlay: React.FC = () => <div className="custom-loading">Custom Loading</div>;
         const CustomNoRowsOverlay: React.FC = () => <div className="custom-no-rows">Custom No Rows</div>;

@@ -22,8 +22,7 @@ import type {
     IHeaderGroupParams,
     IHeaderParams,
     ILoadingCellRendererParams,
-    ILoadingOverlayParams,
-    INoRowsOverlayParams,
+    IOverlayParams,
     IStatusPanelParams,
     ITooltipParams,
     SharedFilterUi,
@@ -123,12 +122,8 @@ export interface CustomDragAndDropImageProps<TData = any, TContext = any>
 export interface CustomInnerHeaderProps<TData = any, TContext = any> extends IHeaderParams<TData, TContext> {}
 export interface CustomInnerHeaderGroupProps<TData = any, TContext = any> extends IHeaderGroupParams<TData, TContext> {}
 
-/** Props provided to custom loading overlay component */
-export interface CustomLoadingOverlayProps<TData = any, TContext = any>
-    extends ILoadingOverlayParams<TData, TContext> {}
-
-/** Props provided to custom no-rows overlay component */
-export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
+/** Props provided to custom overlay components */
+export interface CustomOverlayProps<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
 
 /** Props provided to custom status panel components */
 export interface CustomStatusPanelProps<TData = any, TContext = any> extends IStatusPanelParams<TData, TContext> {}

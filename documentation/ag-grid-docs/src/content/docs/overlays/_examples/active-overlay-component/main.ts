@@ -8,7 +8,7 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-import { CustomActiveOverlay } from './customActiveOverlay_typescript';
+import { CustomOverlay } from './customOverlay_typescript';
 
 ModuleRegistry.registerModules([
     TextEditorModule,
@@ -34,41 +34,27 @@ const rowData: IAthlete[] = [
     { athlete: 'Alicia Coutts', country: 'Australia' },
 ];
 
-let gridApi: GridApi<IAthlete> | undefined;
+let gridApi: GridApi<IAthlete>;
 
 const gridOptions: GridOptions<IAthlete> = {
     defaultColDef: {
-        editable: true,
         flex: 1,
         minWidth: 120,
-        filter: true,
     },
     columnDefs,
     rowData,
-    activeOverlayParams: {
-        heading: 'Updates in progress',
-        message: 'The grid content is temporarily paused while we fetch fresh data.',
-    },
 };
 
 function showActiveOverlay() {
-    gridApi?.setGridOption('activeOverlay', CustomActiveOverlay);
+    gridApi.setGridOption('activeOverlay', CustomOverlay);
 }
 
 function clearActiveOverlay() {
-    gridApi?.setGridOption('activeOverlay', undefined);
+    gridApi.setGridOption('activeOverlay', undefined);
 }
 
 // setup the grid after the page has finished loading
 window.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid');
-    if (!gridDiv) {
-        return;
-    }
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
-    Object.assign(window, {
-        showActiveOverlay,
-        clearActiveOverlay,
-    });
 });

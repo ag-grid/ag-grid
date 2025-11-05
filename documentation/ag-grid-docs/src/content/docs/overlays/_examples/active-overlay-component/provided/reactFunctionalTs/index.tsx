@@ -11,7 +11,7 @@ import {
 import type { ColDef } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import CustomActiveOverlay from './customActiveOverlay';
+import { CustomOverlay } from './customOverlay';
 import './styles.css';
 
 ModuleRegistry.registerModules([
@@ -39,36 +39,26 @@ const rowData: IAthlete[] = [
 ];
 
 const defaultColDef: ColDef = {
-    editable: true,
     flex: 1,
     minWidth: 120,
-    filter: true,
 };
 
 const GridExample: React.FC = () => {
-    const [activeOverlay, setActiveOverlay] = useState<typeof CustomActiveOverlay | undefined>();
-
-    const activeOverlayParams = useMemo(() => {
-        return {
-            heading: 'Updates in progress',
-            message: 'The grid content is temporarily paused while we fetch fresh data.',
-        };
-    }, []);
+    const [activeOverlay, setActiveOverlay] = useState<any>();
 
     return (
         <div className="example-wrapper">
             <div className="button-row">
-                <button onClick={() => setActiveOverlay(() => CustomActiveOverlay)}>Show active overlay</button>
-                <button onClick={() => setActiveOverlay(undefined)}>Hide active overlay</button>
+                <button onClick={() => setActiveOverlay(() => CustomOverlay)}>Show custom overlay</button>
+                <button onClick={() => setActiveOverlay(undefined)}>Hide custom overlay</button>
             </div>
 
-            <div className="grid-wrapper" style={{ height: '100%', width: '100%' }}>
+            <div className="grid-wrapper">
                 <AgGridReact<IAthlete>
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     activeOverlay={activeOverlay}
-                    activeOverlayParams={activeOverlayParams}
                 />
             </div>
         </div>

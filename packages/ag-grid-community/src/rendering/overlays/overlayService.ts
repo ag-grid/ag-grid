@@ -42,7 +42,7 @@ const NoRowsOverlayDef: OverlayDef = {
 const CustomOverlayDef: OverlayDef = {
     id: 'activeOverlay',
     comp: overlayCompType('activeOverlay'),
-    wrapperCls: 'ag-overlay-custom-wrapper',
+    wrapperCls: 'ag-overlay-modal-wrapper',
     exclusive: true,
 };
 

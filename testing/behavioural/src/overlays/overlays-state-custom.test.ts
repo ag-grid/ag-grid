@@ -25,7 +25,7 @@ describe('ag-grid modern overlays state', () => {
     }
 
     function hasCustomOverlayWrapper() {
-        return isAgHtmlElementVisible('.ag-overlay-custom-wrapper');
+        return isAgHtmlElementVisible('.ag-overlay-modal-wrapper');
     }
 
     beforeEach(() => {
@@ -662,6 +662,69 @@ describe('ag-grid modern overlays state', () => {
 
         api.setGridOption('activeOverlayParams', { fromTest: 'a2' });
         expect(capturedParams['my-refresh-active']?.fromTest).toBe('a2');
+    });
+
+    test('active overlay refreshes only when activeOverlayParams change', () => {
+        const initCalls: Array<{ id: number; params?: any }> = [];
+        const refreshCalls: Array<{ id: number; params?: any }> = [];
+        const destroyedIds: number[] = [];
+
+        class TrackingActiveOverlay {
+            private static nextId = 0;
+            private readonly id = TrackingActiveOverlay.nextId++;
+            private readonly eGui: HTMLElement;
+
+            constructor() {
+                this.eGui = document.createElement('div');
+                this.eGui.className = 'tracking-active-overlay';
+            }
+
+            public init(params?: any) {
+                initCalls.push({ id: this.id, params });
+            }
+
+            public refresh(params?: any) {
+                refreshCalls.push({ id: this.id, params });
+            }
+
+            public getGui() {
+                return this.eGui;
+            }
+
+            public destroy() {
+                destroyedIds.push(this.id);
+            }
+        }
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            components: {
+                agLoadingOverlay: makeOverlayComp({}, 'tracking-loading-overlay'),
+                agNoRowsOverlay: makeOverlayComp({}, 'tracking-no-rows-overlay'),
+                myActiveOverlay: TrackingActiveOverlay as any,
+            },
+            activeOverlay: 'myActiveOverlay',
+            activeOverlayParams: { fromTest: 'active-initial' },
+            rowData: [{}],
+            loading: false,
+        });
+
+        expect(initCalls).toHaveLength(1);
+        expect(initCalls[0]?.params?.fromTest).toBe('active-initial');
+        expect(refreshCalls).toHaveLength(0);
+        expect(destroyedIds).toHaveLength(0);
+
+        api.setGridOption('activeOverlayParams', { fromTest: 'active-updated' });
+
+        expect(refreshCalls).toHaveLength(1);
+        expect(refreshCalls[0]?.params?.fromTest).toBe('active-updated');
+        expect(initCalls).toHaveLength(1);
+        expect(destroyedIds).toHaveLength(0);
+
+        api.setGridOption('activeOverlay', false);
+
+        expect(destroyedIds).toHaveLength(1);
+        expect(destroyedIds[0]).toBe(initCalls[0].id);
     });
 
     test('loadingOverlayComponent=false disables loading overlay even when forced', () => {

@@ -20,24 +20,9 @@
     min-height: 0;
 }
 
-.grid-wrapper .ag-theme-quartz,
-.grid-wrapper .ag-theme-alpine {
-    height: 100%;
-}
-
 .status-overlay {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
     padding: 16px;
-}
-
-.status-overlay__body h2 {
-    margin: 0 0 8px;
-}
-
-.status-overlay__body p {
-    margin: 0;
+    border-radius: 16px;
+    border: 3px solid pink;
+    font-size: 32px;
 }

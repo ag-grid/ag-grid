@@ -28,7 +28,7 @@ describe('ag-grid overlays state', () => {
     }
 
     function hasCustomOverlayWrapper() {
-        return isAgHtmlElementVisible('.ag-overlay-custom-wrapper');
+        return isAgHtmlElementVisible('.ag-overlay-modal-wrapper');
     }
 
     beforeEach(() => {

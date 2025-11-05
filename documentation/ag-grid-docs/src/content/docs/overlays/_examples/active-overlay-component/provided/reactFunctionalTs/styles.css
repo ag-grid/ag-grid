@@ -6,6 +6,7 @@
 
 .button-row {
     display: flex;
+    flex-wrap: wrap;
     gap: 12px;
     padding: 12px;
 }
@@ -19,24 +20,9 @@
     min-height: 0;
 }
 
-.grid-wrapper .ag-theme-quartz,
-.grid-wrapper .ag-theme-alpine {
-    height: 100%;
-}
-
-.custom-active-overlay {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
+.my-custom-overlay {
     padding: 16px;
-}
-
-.custom-active-overlay__body h2 {
-    margin: 0 0 8px;
-}
-
-.custom-active-overlay__body p {
-    margin: 0;
+    font-size: 32px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
 }

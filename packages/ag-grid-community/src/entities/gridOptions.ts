@@ -945,16 +945,21 @@ export interface GridOptions<TData = any> {
     // *** Overlays *** //
     /**
      * Show or hide the loading overlay.
+     * When set to `true`, the loading overlay is shown.
+     * When set to `false`, the loading overlay is hidden, and the automatic overlay will not be shown.
+     * Leave to `undefined` to allow the grid to automatically show/hide the loading overlay when appropriate.
+     * @default undefined
      */
     loading?: boolean;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
+     * Deprecated v35, prefer the use of `loadingOverlayComponent` instead.
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * @initial
+     * To disable the loading overlay, set `loadingOverlayComponent=false`.
      */
     loadingOverlayComponent?: any;
     /**
@@ -971,11 +976,12 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
+     * Deprecated v35, prefer the use of `noRowsOverlayComponent` instead.
      */
     overlayNoRowsTemplate?: string;
     /**
      * Provide a custom no-rows overlay component.
-     * @initial
+     * To disable the no-rows overlay, set `noRowsOverlayComponent=false`.
      */
     noRowsOverlayComponent?: any;
     /**
@@ -990,7 +996,11 @@ export interface GridOptions<TData = any> {
     suppressNoRowsOverlay?: boolean;
 
     /**
-     * Display a specific overlay. Accepts `'agLoadingOverlay'`, `'agNoRowsOverlay'`, a key from `components`, or a component class/function. Set to `null`/`undefined` to hide the overlay. When `loading=true`, the loading overlay takes precedence.
+     * Display a specific overlay.
+     * Accepts `'agLoadingOverlay'`, `'agNoRowsOverlay'`, a key from `components` map, or a component class/function.
+     * When `loading=true`, the loading overlay takes precedence.
+     * When set to `false`, the automatic overlays will not be shown.
+     * When set to `undefined`, the grid will automatically show/hide overlays when appropriate.
      */
     activeOverlay?: any;
 

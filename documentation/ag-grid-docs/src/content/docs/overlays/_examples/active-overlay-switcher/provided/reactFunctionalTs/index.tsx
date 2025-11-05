@@ -11,6 +11,7 @@ import {
 import type { ColDef } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
+import type { StatusOverlayParams } from './statusOverlay';
 import StatusOverlay from './statusOverlay';
 import './styles.css';
 
@@ -34,55 +35,39 @@ const columnDefs: ColDef[] = [
 const rowData: IAthlete[] = [
     { athlete: 'Michael Phelps', country: 'United States' },
     { athlete: 'Natalie Coughlin', country: 'United States' },
-    { athlete: 'Aleksey Nemov', country: 'Russia' },
-    { athlete: 'Alicia Coutts', country: 'Australia' },
 ];
 
 const defaultColDef: ColDef = {
-    editable: true,
     flex: 1,
     minWidth: 120,
-    filter: true,
 };
 
 const GridExample: React.FC = () => {
     const components = useMemo(() => ({ statusOverlay: StatusOverlay }), []);
     const [activeOverlay, setActiveOverlay] = useState<string | undefined>();
-    const [overlayParams, setOverlayParams] = useState({
-        heading: 'Overlay message',
-        message: 'Use the buttons to pick which overlay should be visible.',
-    });
+    const [overlayParams, setOverlayParams] = useState<StatusOverlayParams | undefined>();
+    const [statusOverlayCounter, setStatusOverlayCounter] = useState(0);
 
     const setLoadingOverlay = () => {
-        setOverlayParams({
-            heading: 'Loading data',
-            message: 'Showing the built-in loading overlay via activeOverlay.',
-        });
         setActiveOverlay('agLoadingOverlay');
+        setOverlayParams(undefined);
     };
 
     const setNoRowsOverlay = () => {
-        setOverlayParams({
-            heading: 'No rows',
-            message: 'Displaying the built-in no-rows overlay via activeOverlay.',
-        });
         setActiveOverlay('agNoRowsOverlay');
+        setOverlayParams(undefined);
     };
 
     const setCustomOverlay = () => {
-        setOverlayParams({
-            heading: 'Scheduled maintenance',
-            message: 'This overlay comes from the components map using the key "statusOverlay".',
-        });
+        const newCounter = statusOverlayCounter + 1;
+        setStatusOverlayCounter(newCounter);
         setActiveOverlay('statusOverlay');
+        setOverlayParams({ myCounter: newCounter });
     };
 
     const clearOverlay = () => {
-        setOverlayParams({
-            heading: 'Overlay hidden',
-            message: 'No overlay is currently active.',
-        });
         setActiveOverlay(undefined);
+        setOverlayParams(undefined);
     };
 
     return (
@@ -94,8 +79,8 @@ const GridExample: React.FC = () => {
                 <button onClick={clearOverlay}>Hide overlay</button>
             </div>
 
-            <div className="grid-wrapper" style={{ height: '100%', width: '100%' }}>
-                <AgGridReact<IAthlete>
+            <div className="grid-wrapper">
+                <AgGridReact
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

@@ -805,13 +805,18 @@ export interface Props<TData> {
          */
     debug?: boolean,
     /** Show or hide the loading overlay.
+         * When set to `true`, the loading overlay is shown.
+         * When set to `false`, the loading overlay is hidden, and the automatic overlay will not be shown.
+         * Leave to `undefined` to allow the grid to automatically show/hide the loading overlay when appropriate.
+         * @default undefined
          */
     loading?: boolean,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
+         * Deprecated v35, prefer the use of `loadingOverlayComponent` instead.
          */
     overlayLoadingTemplate?: string,
     /** Provide a custom loading overlay component.
-         * @initial
+         * To disable the loading overlay, set `loadingOverlayComponent=false`.
          */
     loadingOverlayComponent?: any,
     /** Customise the parameters provided to the loading overlay component.
@@ -824,10 +829,11 @@ export interface Props<TData> {
          */
     suppressLoadingOverlay?: boolean,
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
+         * Deprecated v35, prefer the use of `noRowsOverlayComponent` instead.
          */
     overlayNoRowsTemplate?: string,
     /** Provide a custom no-rows overlay component.
-         * @initial
+         * To disable the no-rows overlay, set `noRowsOverlayComponent=false`.
          */
     noRowsOverlayComponent?: any,
     /** Customise the parameters provided to the no-rows overlay component.
@@ -838,6 +844,16 @@ export interface Props<TData> {
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
+    /** Display a specific overlay.
+         * Accepts `'agLoadingOverlay'`, `'agNoRowsOverlay'`, a key from `components` map, or a component class/function.
+         * When `loading=true`, the loading overlay takes precedence.
+         * When set to `false`, the automatic overlays will not be shown.
+         * When set to `undefined`, the grid will automatically show/hide overlays when appropriate.
+         */
+    activeOverlay?: any,
+    /** Custom parameters supplied to the active overlay component alongside the standard `IOverlayParams`.
+         */
+    activeOverlayParams?: any,
     /** Set whether pagination is enabled.
          * @default false
          * @agModule `PaginationModule`
@@ -2049,6 +2065,8 @@ export function getProps() {
         noRowsOverlayComponent: undefined,
         noRowsOverlayComponentParams: undefined,
         suppressNoRowsOverlay: undefined,
+        activeOverlay: undefined,
+        activeOverlayParams: undefined,
         pagination: undefined,
         paginationPageSize: undefined,
         paginationPageSizeSelector: undefined,
