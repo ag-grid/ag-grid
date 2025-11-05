@@ -20,7 +20,11 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
-        this.onSearchCallbackDebounced = _debounce(this, this.onSearchCallback, ON_SEARCH_CALLBACK_DEBOUNCE_DELAY);
+        this.onSearchCallbackDebounced = _debounce(
+            this,
+            this.onSearchCallback,
+            this.params.searchDebounceDelay ?? ON_SEARCH_CALLBACK_DEBOUNCE_DELAY
+        );
     }
 
     public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {

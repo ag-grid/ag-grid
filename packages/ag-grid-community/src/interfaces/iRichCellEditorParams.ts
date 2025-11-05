@@ -96,7 +96,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      */
     suppressMultiSelectPillRenderer?: boolean;
     /**
-     * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
+     * The value in `ms` for the search algorithm debounce delay
      * @default 300
      */
     searchDebounceDelay?: number;
