@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -29,6 +30,15 @@ describe('ag-grid overlays state', () => {
 
     function hasCustomOverlayWrapper() {
         return isAgHtmlElementVisible('.ag-overlay-modal-wrapper');
+    }
+
+    function getOverlayWrapperPadding(): number {
+        const wrapper = document.querySelector<HTMLElement>('.ag-overlay-wrapper');
+        if (!wrapper) {
+            return 0;
+        }
+        const padding = wrapper.style.getPropertyValue('padding-top');
+        return padding ? Number.parseFloat(padding) : 0;
     }
 
     beforeEach(() => {
@@ -534,6 +544,45 @@ describe('ag-grid overlays state', () => {
             api.setGridOption('rowData', []);
             expect(hasNoRowsOverlay()).toBeTruthy();
             expect(hasCustomOverlayWrapper()).toBeFalsy();
+        });
+    });
+
+    describe('overlay wrapper padding', () => {
+        test('no rows overlay applies header padding when first shown', async () => {
+            const headerHeight = 64;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23 }],
+                headerHeight,
+            });
+
+            expect(getOverlayWrapperPadding()).toBe(0);
+
+            api.setGridOption('rowData', []);
+
+            await waitFor(() => expect(hasNoRowsOverlay()).toBeTruthy());
+            await waitFor(() => expect(getOverlayWrapperPadding()).toBe(headerHeight));
+        });
+
+        test('no rows overlay applies header padding after loading overlay', async () => {
+            const headerHeight = 72;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                loading: true,
+                headerHeight,
+            });
+
+            await waitFor(() => expect(hasLoadingOverlay()).toBeTruthy());
+            expect(getOverlayWrapperPadding()).toBe(0);
+
+            api.setGridOption('rowData', []);
+            await waitFor(() => expect(hasLoadingOverlay()).toBeTruthy());
+            expect(getOverlayWrapperPadding()).toBe(0);
+
+            api.setGridOption('loading', false);
+
+            await waitFor(() => expect(hasNoRowsOverlay()).toBeTruthy());
+            await waitFor(() => expect(getOverlayWrapperPadding()).toBe(headerHeight));
         });
     });
 });

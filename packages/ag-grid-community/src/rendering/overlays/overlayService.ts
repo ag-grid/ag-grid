@@ -55,7 +55,6 @@ export class OverlayService extends BeanStub implements NamedBean {
     private oldExclusive: boolean = false;
     private currentDef: OverlayDef | null = null;
     private showInitialOverlay: boolean = true;
-    private wrapperPadding: number = 0;
 
     public postConstruct(): void {
         const updateOverlayVisibility = () => this.updateOverlay(false);
@@ -63,7 +62,6 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
             rowDataUpdated: updateOverlayVisibility,
-            gridSizeChanged: this.refreshWrapperPadding.bind(this),
             rowCountReady: () => {
                 // Support hiding the initial overlay when data is set via transactions.
                 this.showInitialOverlay = false;
@@ -273,7 +271,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         const promise = compDetails?.newAgStackInstance() ?? null;
         this.eWrapper?.showOverlay(promise, componentDef.wrapperCls, exclusive);
-        this.refreshWrapperPadding();
+        this.eWrapper?.refreshWrapperPadding();
         this.setExclusive(exclusive);
     }
 
@@ -297,6 +295,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         const eWrapper = this.eWrapper;
         if (eWrapper) {
             eWrapper.hideOverlay();
+            eWrapper.refreshWrapperPadding();
             this.setExclusive(false);
         }
         return changed;
@@ -307,29 +306,6 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.oldExclusive = exclusive;
             this.eventSvc.dispatchEvent({ type: 'overlayExclusiveChanged' });
         }
-    }
-
-    private refreshWrapperPadding(): void {
-        const eWrapper = this.eWrapper;
-        if (!eWrapper) {
-            return;
-        }
-
-        let newPadding: number = 0;
-
-        if (this.currentDef && !this.oldExclusive) {
-            const headerCtrl = this.beans.ctrlsSvc.get('gridHeaderCtrl');
-            const headerHeight = headerCtrl?.headerHeight || 0;
-
-            newPadding = headerHeight;
-        }
-
-        if (this.wrapperPadding === newPadding) {
-            return;
-        }
-
-        this.wrapperPadding = newPadding;
-        eWrapper.updateOverlayWrapperPaddingTop(newPadding);
     }
 
     private isDisabled(def: OverlayDef) {

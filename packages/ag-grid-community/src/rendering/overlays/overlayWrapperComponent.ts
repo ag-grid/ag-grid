@@ -36,6 +36,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private activePromise: AgPromise<IOverlayComp> | null = null;
     private activeCssClass: string | null = null;
     private elToFocusAfter: HTMLElement | null = null;
+    private overlayExclusive = false;
+    private oldWrapperPadding: number | null = null;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -89,6 +91,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         this.beans.overlays!.setWrapperComp(this, false);
         this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
+        this.addManagedEventListeners({ gridSizeChanged: this.refreshWrapperPadding.bind(this) });
     }
 
     private setWrapperTypeClass(overlayWrapperCssClass: string): void {
@@ -113,13 +116,16 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         this.elToFocusAfter = null;
         this.activePromise = overlayComponentPromise;
+        this.overlayExclusive = exclusive;
 
         if (!overlayComponentPromise) {
+            this.refreshWrapperPadding();
             return;
         }
 
         this.setWrapperTypeClass(overlayWrapperCssClass);
         this.setDisplayed(true, { skipAriaHidden: true });
+        this.refreshWrapperPadding();
 
         if (exclusive && this.isGridFocused()) {
             const activeElement = _getActiveDomElement(this.beans);
@@ -161,8 +167,23 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         });
     }
 
-    public updateOverlayWrapperPaddingTop(padding: number): void {
-        this.eOverlayWrapper?.style.setProperty('padding-top', `${padding}px`);
+    public refreshWrapperPadding(): void {
+        if (!this.eOverlayWrapper) {
+            this.oldWrapperPadding = null;
+            return;
+        }
+
+        const overlayActive = !!this.activeOverlay || !!this.activePromise;
+        let padding = 0;
+
+        if (overlayActive && !this.overlayExclusive) {
+            padding = this.beans.ctrlsSvc.get('gridHeaderCtrl')?.headerHeight || 0;
+        }
+
+        if (padding !== this.oldWrapperPadding) {
+            this.oldWrapperPadding = padding;
+            this.eOverlayWrapper.style.setProperty('padding-top', `${padding}px`);
+        }
     }
 
     private destroyActiveOverlay(): void {
@@ -170,12 +191,15 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         const activeOverlay = this.activeOverlay;
         if (!activeOverlay) {
+            this.overlayExclusive = false;
+            this.refreshWrapperPadding();
             return; // Nothing to destroy
         }
 
         let elementToFocus = this.elToFocusAfter;
         this.activeOverlay = null;
         this.elToFocusAfter = null;
+        this.overlayExclusive = false;
 
         if (elementToFocus && !this.isGridFocused()) {
             elementToFocus = null;
@@ -190,6 +214,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         // Focus the element that was focused before the exclusive overlay was shown
         elementToFocus?.focus?.({ preventScroll: true });
+
+        this.refreshWrapperPadding();
     }
 
     public hideOverlay(): void {
