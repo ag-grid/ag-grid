@@ -105,10 +105,14 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         const splitClasses = (s = '') => s.trim().split(/\s+/g).filter(Boolean);
         if (appliedClassName.current !== classNameFromReact) {
             for (const cls of splitClasses(appliedClassName.current)) {
-                classList?.remove(cls);
+                if (classList?.contains(cls)) {
+                    classList.remove(cls);
+                }
             }
             for (const cls of splitClasses(classNameFromReact)) {
-                classList?.add(cls);
+                if (!classList?.contains(cls)) {
+                    classList?.add(cls);
+                }
             }
             appliedClassName.current = classNameFromReact;
         }
