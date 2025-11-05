@@ -15,7 +15,7 @@ The loading overlay takes precedence over the other overlays.
 {% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
 
 Manual control is available by setting the `loading` grid option to `true` or `false`.
-Setting it to `true` force displays the loading overlay, while setting it to `false` hides any active overlay, and suppress the automatic behaviour.
+Setting it to `true` force displays the loading overlay, while setting it to `false` hides the loading overlay and suppresses its automatic behaviour; other overlays, such as the no-rows overlay, can still appear when their own conditions are met.
 Loading overlay can be completely disabled by setting either `loadingOverlayComponent = false` or `components.agLoadingOverlay = false` in the grid options.
 
 {% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}

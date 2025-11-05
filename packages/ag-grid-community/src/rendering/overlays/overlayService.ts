@@ -46,7 +46,10 @@ const CustomOverlayDef: OverlayDef = {
     exclusive: true,
 };
 
-const getOverlayDef = (activeOverlay: any): OverlayDef => {
+const getOverlayDef = (activeOverlay: any): OverlayDef | null => {
+    if (!activeOverlay) {
+        return null;
+    }
     if (activeOverlay === 'agLoadingOverlay') {
         return LoadingOverlayDef;
     }
@@ -185,65 +188,75 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private updateOverlay(activeOverlayChanged: boolean): boolean {
-        const { gos, beans, eWrapper, currentDef } = this;
+        const eWrapper = this.eWrapper;
         if (!eWrapper) {
             this.currentDef = null;
             return false;
         }
 
-        let loading = gos.get('loading');
+        const desiredDef = this.getOverlayDef();
 
-        if (loading !== undefined) {
-            this.showInitialOverlay = false; // If loading is defined, we don't show the initial overlay.
-        } else if (this.showInitialOverlay && !this.isSuppressed(LoadingOverlayDef)) {
-            loading = !gos.get('columnDefs') || !beans.colModel.ready || (!gos.get('rowData') && this.clientSide);
-        }
+        const currentDef = this.currentDef;
+        const shouldReload = desiredDef === CustomOverlayDef && activeOverlayChanged;
 
-        if (loading) {
-            if (this.isDisabled(LoadingOverlayDef)) {
-                return currentDef === LoadingOverlayDef && this.doHideOverlay();
-            }
-            if (currentDef === LoadingOverlayDef) {
-                return false;
-            }
-            this.doShowOverlay(LoadingOverlayDef);
-            return true;
-        }
-
-        this.showInitialOverlay = false;
-
-        const activeOverlay = gos.get('activeOverlay');
-        if (activeOverlay) {
-            const newDef = getOverlayDef(activeOverlay);
-            const disabled = this.isDisabled(newDef);
-            if (disabled) {
+        if (desiredDef !== currentDef) {
+            if (!desiredDef) {
+                this.showInitialOverlay = false;
+                if (currentDef === NoRowsOverlayDef && this.serverSide && !this.isSuppressed(NoRowsOverlayDef)) {
+                    return false;
+                }
                 return this.doHideOverlay();
             }
-            if (activeOverlayChanged) {
-                eWrapper.hideOverlay();
-            } else if (currentDef === newDef) {
-                return false;
-            }
-            this.doShowOverlay(newDef);
+            this.doShowOverlay(desiredDef);
             return true;
         }
 
-        if (this.clientSide && beans.rowModel.isEmpty() && !this.isSuppressed(NoRowsOverlayDef)) {
-            if (currentDef === NoRowsOverlayDef) {
-                return false;
-            }
-            this.doShowOverlay(NoRowsOverlayDef);
+        if (shouldReload && desiredDef) {
+            eWrapper.hideOverlay();
+            this.doShowOverlay(desiredDef);
             return true;
         }
 
-        if (
-            currentDef === LoadingOverlayDef ||
-            currentDef === CustomOverlayDef ||
-            (currentDef && (this.clientSide || !this.serverSide))
-        ) {
-            return this.doHideOverlay();
+        if (!desiredDef) {
+            this.showInitialOverlay = false;
         }
+
         return false;
+    }
+
+    private getOverlayDef(): OverlayDef | null {
+        const gos = this.gos;
+        const loading = gos.get('loading');
+
+        const loadingDefined = loading !== undefined;
+
+        if (loadingDefined) {
+            this.showInitialOverlay = false;
+            if (loading && !this.isDisabled(LoadingOverlayDef)) {
+                return LoadingOverlayDef;
+            }
+        } else if (this.showInitialOverlay && !this.isSuppressed(LoadingOverlayDef)) {
+            const needsInitialLoadingOverlay =
+                !gos.get('columnDefs') || !this.beans.colModel.ready || (this.clientSide && !gos.get('rowData'));
+
+            if (needsInitialLoadingOverlay) {
+                return LoadingOverlayDef;
+            }
+            this.showInitialOverlay = false;
+        } else {
+            this.showInitialOverlay = false;
+        }
+
+        const activeOverlayDef = getOverlayDef(this.gos.get('activeOverlay'));
+        if (activeOverlayDef && !this.isDisabled(activeOverlayDef)) {
+            return activeOverlayDef;
+        }
+
+        if (this.clientSide && !this.isSuppressed(NoRowsOverlayDef) && this.beans.rowModel.isEmpty()) {
+            return NoRowsOverlayDef;
+        }
+
+        return null;
     }
 
     /**
