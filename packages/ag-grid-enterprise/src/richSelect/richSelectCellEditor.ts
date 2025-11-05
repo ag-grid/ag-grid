@@ -23,7 +23,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         this.onSearchCallbackDebounced = _debounce(
             this,
             this.onSearchCallback,
-            this.params.searchDebounceDelay ?? ON_SEARCH_CALLBACK_DEBOUNCE_DELAY
+            this.params?.searchDebounceDelay ?? ON_SEARCH_CALLBACK_DEBOUNCE_DELAY
         );
     }
 
