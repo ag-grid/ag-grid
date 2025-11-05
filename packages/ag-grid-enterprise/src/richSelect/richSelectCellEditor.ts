@@ -38,8 +38,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         this.appendChild(richSelect);
 
         if (valuesPromise) {
-            this.isAsync = true;
-            valuesPromise.then(this.onValuesFulfilledCallback);
+            this.onValuesPromise(valuesPromise);
         }
 
         this.addManagedListeners(richSelect, {
@@ -48,15 +47,18 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         this.focusAfterAttached = cellStartedEdit;
     }
 
-    private readonly onValuesFulfilledCallback = (values: TValue[]) => {
+    private readonly onValuesPromise = (valuesPromise: Promise<TValue[]>) => {
+        this.isAsync = true;
         const richSelect = this.eEditor;
-        richSelect.setValueList({ valueList: values, refresh: true });
-        const searchStringCallback = this.getSearchStringCallback(values);
-        if (searchStringCallback) {
-            richSelect.setSearchStringCreator(searchStringCallback);
-        }
+        void richSelect.setValueListAsync({ valueList: valuesPromise, refresh: true });
+        void valuesPromise.then((values) => {
+            const searchStringCallback = this.getSearchStringCallback(values);
+            if (searchStringCallback) {
+                richSelect.setSearchStringCreator(searchStringCallback);
+            }
 
-        this.processEventKey(this.params.eventKey);
+            this.processEventKey(this.params.eventKey);
+        });
     };
 
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
@@ -150,13 +152,13 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         return { params: ret, valuesPromise };
     }
 
-    private readonly onSearchCallback = (searchString: string) => {
-        // this.eEditor.setValueList({ refresh: true, valueList: [] });
+    private readonly onSearchCallback = (searchString: string): void => {
+        this.eEditor.setValueList({ refresh: true, valueList: [] });
         const params = this.params;
         const valuesCb = params.values as RichCellEditorValuesCallback<TData, TValue>;
-        const res = valuesCb(params as ICellEditorParams, searchString);
-        if (!Array.isArray(res)) {
-            res.then(this.onValuesFulfilledCallback);
+        const valuesPromise = valuesCb(params as ICellEditorParams, searchString);
+        if (!Array.isArray(valuesPromise)) {
+            this.onValuesPromise(valuesPromise);
         }
     };
 

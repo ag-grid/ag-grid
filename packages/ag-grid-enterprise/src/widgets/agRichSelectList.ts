@@ -116,17 +116,25 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public selectValue(value?: TValue[] | TValue): boolean {
-        if (!this.currentList) {
-            if (this.eLoading) {
-                this.appendChild(this.eLoading);
-            }
-            return false;
+    public showLoadingOverlay(): void {
+        if (this.eLoading) {
+            this.appendChild(this.eLoading);
         }
+    }
 
+    public hideLoadingOverlay(): void {
         if (this.eLoading?.offsetParent) {
             this.eLoading?.remove();
         }
+    }
+
+    public selectValue(value?: TValue[] | TValue): boolean {
+        if (!this.currentList) {
+            this.showLoadingOverlay();
+            return false;
+        }
+
+        this.hideLoadingOverlay();
 
         if (value == null) {
             return false;

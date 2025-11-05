@@ -318,6 +318,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
+    public async setValueListAsync(params: { valueList: Promise<TValue[]>; refresh?: boolean }): Promise<void> {
+        const { valueList, refresh } = params;
+        this.listComponent?.showLoadingOverlay();
+        const values = await valueList;
+        this.listComponent?.hideLoadingOverlay();
+        this.setValueList({ valueList: values, refresh });
+    }
+
     public setValueList(params: { valueList: TValue[]; refresh?: boolean }): void {
         const { valueList, refresh } = params;
 
@@ -503,12 +511,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
         if (this.onSearch) {
-            // this can potentially update the searchStrings asynchronously
+            // this can potentially update the searchStrings synchronously and asynchronously
             this.onSearch(this.searchString);
+            return;
         }
         const searchStrings = this.searchStrings;
 
-        if (!searchStrings) {
+        if (!searchStrings?.length) {
             this.listComponent.highlightIndex(-1);
             return;
         }
