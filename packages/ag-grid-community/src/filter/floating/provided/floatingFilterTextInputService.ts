@@ -60,6 +60,7 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
             eInput.setAutoComplete(autoComplete);
         }
 
+        eInput.toggleCss('ag-floating-filter-search-icon', !!placeholder);
         eInput.setInputPlaceholder(placeholder);
     }
 }
