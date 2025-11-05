@@ -142,6 +142,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             // no warn here, as this is a historical behaviour which weirdly works, but no users complained
             if (filterList && valuesPromise) {
                 ret.onSearch = this.onSearchCallbackDebounced;
+                ret.allowNoResultsCopy = true;
             } else {
                 params.filterListAsync = false;
                 _warn(293);

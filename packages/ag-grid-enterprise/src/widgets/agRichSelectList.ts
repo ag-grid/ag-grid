@@ -21,10 +21,12 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     TValue,
     TEventType | AgRichSelectListEvent
 > {
-    private eLoading: HTMLElement | undefined;
+    private eLoadingStateComp: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
     private readonly selectedItems: Set<TValue> = new Set<TValue>();
+    private loadingLabel: string;
+    private noMatchesLabel: string;
 
     constructor(
         private readonly params: RichSelectParams,
@@ -41,10 +43,12 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public override postConstruct(): void {
         super.postConstruct();
 
-        this.eLoading = _createElement({
+        this.loadingLabel = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
+        this.noMatchesLabel = this.getLocaleTextFunc()('noMatches', 'No matches to show');
+        this.eLoadingStateComp = _createElement({
             tag: 'div',
             cls: 'ag-loading-text',
-            children: this.getLocaleTextFunc()('loadingOoo', 'Loading...'),
+            children: this.loadingLabel,
         });
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;
@@ -116,25 +120,34 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public showLoadingOverlay(): void {
-        if (this.eLoading) {
-            this.appendChild(this.eLoading);
+    public showLoadingStateComp(label?: string): void {
+        const eLoadingComp = this.eLoadingStateComp;
+        if (eLoadingComp) {
+            if (!label) {
+                label = this.loadingLabel;
+            }
+
+            if (eLoadingComp.textContent !== label) {
+                eLoadingComp.textContent = label;
+            }
+
+            this.appendChild(eLoadingComp);
         }
     }
 
-    public hideLoadingOverlay(): void {
-        if (this.eLoading?.offsetParent) {
-            this.eLoading?.remove();
+    public hideLoadingStateComp(): void {
+        if (this.eLoadingStateComp?.offsetParent) {
+            this.eLoadingStateComp?.remove();
         }
     }
 
     public selectValue(value?: TValue[] | TValue): boolean {
         if (!this.currentList) {
-            this.showLoadingOverlay();
+            this.showLoadingStateComp();
             return false;
         }
 
-        this.hideLoadingOverlay();
+        this.hideLoadingStateComp();
 
         if (value == null) {
             return false;
@@ -186,6 +199,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             getRow: (index: number) => list[index],
             areRowsEqual: (oldRow, newRow) => oldRow === newRow,
         });
+
+        if (!list.length && this.params.allowNoResultsCopy) {
+            this.showLoadingStateComp(this.noMatchesLabel);
+        }
     }
 
     public getSelectedItems(): Set<TValue> {
@@ -379,6 +396,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public override destroy(): void {
         super.destroy();
-        this.eLoading = undefined;
+        this.eLoadingStateComp = undefined;
     }
 }

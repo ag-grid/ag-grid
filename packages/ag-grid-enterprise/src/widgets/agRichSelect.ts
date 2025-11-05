@@ -320,9 +320,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
     public async setValueListAsync(params: { valueList: Promise<TValue[]>; refresh?: boolean }): Promise<void> {
         const { valueList, refresh } = params;
-        this.listComponent?.showLoadingOverlay();
+        this.listComponent?.showLoadingStateComp();
         const values = await valueList;
-        this.listComponent?.hideLoadingOverlay();
+        this.listComponent?.hideLoadingStateComp();
         this.setValueList({ valueList: values, refresh });
     }
 

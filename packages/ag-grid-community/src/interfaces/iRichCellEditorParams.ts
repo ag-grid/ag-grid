@@ -30,6 +30,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
 
     valueFormatter?: (value: TValue[] | TValue) => string;
     searchStringCreator?: (values: TValue[]) => string[];
+    allowNoResultsCopy?: boolean;
 }
 
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
