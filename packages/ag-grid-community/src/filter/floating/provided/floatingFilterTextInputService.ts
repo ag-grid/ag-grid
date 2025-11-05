@@ -44,12 +44,22 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         this.onValueChanged = listener;
     }
 
-    public setParams({ ariaLabel, autoComplete }: { ariaLabel: string; autoComplete?: boolean | string }): void {
+    public setParams({
+        ariaLabel,
+        autoComplete,
+        placeholder,
+    }: {
+        ariaLabel: string;
+        autoComplete?: boolean | string;
+        placeholder?: string;
+    }): void {
         const { eInput } = this;
         eInput.setInputAriaLabel(ariaLabel);
 
         if (autoComplete !== undefined) {
             eInput.setAutoComplete(autoComplete);
         }
+
+        eInput.setInputPlaceholder(placeholder);
     }
 }
