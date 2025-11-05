@@ -7,9 +7,10 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { FormulaModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    CellSelectionModule,
     ClientSideRowModelModule,
     FormulaModule,
     TextEditorModule,

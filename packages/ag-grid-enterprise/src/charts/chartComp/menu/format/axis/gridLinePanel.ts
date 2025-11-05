@@ -3,10 +3,10 @@ import type { AgAxisGridLineOptions } from 'ag-charts-types';
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ColorPickerParams } from '../../../../widgets/colorPicker';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
@@ -27,7 +27,7 @@ export class GridLinePanel extends Component {
     }
 
     public postConstruct() {
-        const gridLineGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('gridLine.enabled', {
+        const gridLineGroupParams = this.chartMenuUtils.addEnableParams<GroupComponentParams>('gridLine.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,

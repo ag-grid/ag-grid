@@ -20,7 +20,6 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
-    BeanCollection,
     CellClassParams,
     CellCtrl,
     CellPosition,
@@ -180,15 +179,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
-    public createRowNumbersRowResizerFeature(
-        beans: BeanCollection,
-        ctrl: CellCtrl
-    ): IRowNumbersRowResizeFeature | undefined {
+    public createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined {
         if (!_isRowNumbersResizerEnabled(this.gos)) {
             return undefined;
         }
 
-        return new RowNumbersRowResizeFeature(beans, ctrl);
+        return new RowNumbersRowResizeFeature(this.beans, ctrl);
     }
 
     private refreshSelectionIntegration(): void {
@@ -400,7 +396,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         const shouldHighlight = typeof cellSelection === 'object' && cellSelection.enableHeaderHighlight;
 
         for (const range of ranges) {
-            if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
+            if (rangeSvc.isRowInRange({ rowIndex: node.rowIndex!, rowPinned: node.rowPinned }, range)) {
                 if (shouldHighlight) {
                     cssClasses.push('ag-row-number-range-highlight');
                 }

@@ -1,11 +1,17 @@
-import type { ElementParams, IAfterGuiAttachedParams } from 'ag-grid-community';
+import type {
+    _AfterGuiAttachedParams,
+    _AgCoreBeanCollection,
+    _AgElementParams,
+    _BaseEvents,
+    _BaseProperties,
+    _IPropertiesService,
+} from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
-    TabGuardComp,
+    _AgTabGuardComp,
     _clearElement,
-    _createElement,
-    _createIconNoSpan,
+    _createAgElement,
     _findNextFocusableElement,
     _focusInto,
     _getActiveDomElement,
@@ -16,14 +22,16 @@ import {
 } from 'ag-grid-community';
 
 import { findFocusableElementBeforeTabGuard, isTargetUnderManagedComponent } from '../misc/enterpriseFocusUtils';
-import type { TabbedItem, TabbedLayoutParams } from './iTabbedLayout';
+import type { AgTabbedItem, AgTabbedLayoutParams } from './iTabbedLayout';
 
-interface TabbedItemWrapper {
-    tabbedItem: TabbedItem;
+interface TabbedItemWrapper<TContainerType extends string> {
+    tabbedItem: AgTabbedItem<TContainerType>;
     eHeaderButton: HTMLElement;
 }
 
-function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
+function getTabbedLayoutTemplate<TComponentSelectorType extends string>(
+    cssClass?: string
+): _AgElementParams<TComponentSelectorType> {
     return {
         tag: 'div',
         cls: `ag-tabs ${cssClass}`,
@@ -39,21 +47,36 @@ function getTabbedLayoutTemplate(cssClass?: string): ElementParams {
     };
 }
 
-export class TabbedLayout extends TabGuardComp {
+export class AgTabbedLayout<
+    TBeanCollection extends _AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
+    TProperties extends _BaseProperties,
+    TGlobalEvents extends _BaseEvents,
+    TCommon,
+    TPropertiesService extends _IPropertiesService<TProperties, TCommon>,
+    TComponentSelectorType extends string,
+    TContainerType extends string = string,
+> extends _AgTabGuardComp<
+    TBeanCollection,
+    TProperties,
+    TGlobalEvents,
+    TCommon,
+    TPropertiesService,
+    TComponentSelectorType
+> {
     private readonly eHeader: HTMLElement = RefPlaceholder;
     private readonly eBody: HTMLElement = RefPlaceholder;
 
-    private eTabHeader: HTMLElement;
+    private eTabHeader!: HTMLElement;
     private eCloseButton?: HTMLElement;
 
-    private readonly params: TabbedLayoutParams;
-    private afterAttachedParams: IAfterGuiAttachedParams;
-    private readonly items: TabbedItemWrapper[] = [];
-    private activeItem: TabbedItemWrapper;
+    private readonly params: AgTabbedLayoutParams<TContainerType>;
+    private afterAttachedParams: _AfterGuiAttachedParams<TContainerType>;
+    private readonly items: TabbedItemWrapper<TContainerType>[] = [];
+    private activeItem: TabbedItemWrapper<TContainerType>;
     private lastScrollListener: (() => null) | null | undefined;
     private readonly tabbedItemScrollMap = new Map<string, number>();
 
-    constructor(params: TabbedLayoutParams) {
+    constructor(params: AgTabbedLayoutParams<TContainerType>) {
         super(getTabbedLayoutTemplate(params.cssClass));
         this.params = params;
     }
@@ -87,7 +110,7 @@ export class TabbedLayout extends TabGuardComp {
         };
         if (enableCloseButton) {
             this.setupCloseButton(addCssClasses);
-            this.eTabHeader = _createElement({ tag: 'div', role: 'presentation' });
+            this.eTabHeader = _createAgElement({ tag: 'div', role: 'presentation' });
             addCssClasses(this.eHeader, 'header-wrapper');
             this.eHeader.appendChild(this.eTabHeader);
         } else {
@@ -98,13 +121,13 @@ export class TabbedLayout extends TabGuardComp {
     }
 
     private setupCloseButton(addCssClasses: (el: HTMLElement, suffix: string) => void): void {
-        const eCloseButton = _createElement({ tag: 'button' });
+        const eCloseButton = _createAgElement({ tag: 'button' });
         addCssClasses(eCloseButton, 'close-button');
-        const eIcon = _createIconNoSpan('close', this.beans)!;
+        const eIcon = this.beans.iconSvc.createIconNoSpan('close')!;
         _setAriaLabel(eCloseButton, this.params.closeButtonAriaLabel);
         eCloseButton.appendChild(eIcon);
         this.addManagedElementListeners(eCloseButton, { click: () => this.params.onCloseClicked?.() });
-        const eCloseButtonWrapper = _createElement({ tag: 'div', role: 'presentation' });
+        const eCloseButtonWrapper = _createAgElement({ tag: 'div', role: 'presentation' });
         addCssClasses(eCloseButtonWrapper, 'close-button-wrapper');
         eCloseButtonWrapper.appendChild(eCloseButton);
         this.eHeader.appendChild(eCloseButtonWrapper);
@@ -222,7 +245,7 @@ export class TabbedLayout extends TabGuardComp {
         return _focusInto(this.eBody, fromBottom);
     }
 
-    public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
+    public setAfterAttachedParams(params: _AfterGuiAttachedParams<TContainerType>): void {
         this.afterAttachedParams = params;
     }
 
@@ -232,8 +255,8 @@ export class TabbedLayout extends TabGuardComp {
         }
     }
 
-    private addItem(item: TabbedItem): void {
-        const eHeaderButton = _createElement({
+    private addItem(item: AgTabbedItem<TContainerType>): void {
+        const eHeaderButton = _createAgElement({
             tag: 'span',
             cls: 'ag-tab',
             role: 'tab',
@@ -244,7 +267,7 @@ export class TabbedLayout extends TabGuardComp {
         this.eTabHeader.appendChild(eHeaderButton);
         _setAriaLabel(eHeaderButton, item.titleLabel);
 
-        const wrapper: TabbedItemWrapper = {
+        const wrapper: TabbedItemWrapper<TContainerType> = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton,
         };
@@ -253,7 +276,7 @@ export class TabbedLayout extends TabGuardComp {
         eHeaderButton.addEventListener('click', this.showItemWrapper.bind(this, wrapper));
     }
 
-    public showItem(tabbedItem: TabbedItem): void {
+    public showItem(tabbedItem: AgTabbedItem<TContainerType>): void {
         const itemWrapper = this.items.find((wrapper) => wrapper.tabbedItem === tabbedItem);
 
         if (itemWrapper) {
@@ -261,7 +284,7 @@ export class TabbedLayout extends TabGuardComp {
         }
     }
 
-    private showItemWrapper(wrapper: TabbedItemWrapper): void {
+    private showItemWrapper(wrapper: TabbedItemWrapper<TContainerType>): void {
         const { tabbedItem, eHeaderButton } = wrapper;
 
         this.params.onItemClicked?.({ item: tabbedItem });

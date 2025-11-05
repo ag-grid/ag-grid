@@ -15,14 +15,14 @@ import {
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
-    private readonly filterGroupComp: AgGroupComponent = RefPlaceholder;
+    private readonly filterGroupComp: GroupComponent = RefPlaceholder;
 
     private filterGroupName: string | null;
     private tooltipFeature?: TooltipFeature;
@@ -38,7 +38,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public postConstruct(): void {
-        const groupParams: AgGroupComponentParams = {
+        const groupParams: GroupComponentParams = {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical',
         };

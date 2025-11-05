@@ -525,7 +525,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public copyRangeDown(): void {
-        const { rangeSvc, gos, valueSvc } = this.beans;
+        const { rangeSvc, gos, formula, valueSvc } = this.beans;
         if (!rangeSvc || rangeSvc.isEmpty()) {
             return;
         }
@@ -566,6 +566,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     columns.forEach((column: AgColumn, index) => {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                             return;
+                        }
+
+                        const isFormula = formula?.isFormula(firstRowValues[index]);
+
+                        if (isFormula) {
+                            firstRowValues[index] = formula?.updateFormulaByOffset(firstRowValues[index], 'down');
                         }
 
                         const firstRowValue = this.processCell(

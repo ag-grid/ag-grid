@@ -1,5 +1,4 @@
 import type { NamedBean } from '../context/bean';
-import type { BeanCollection } from '../context/context';
 import type { PopupEditorWrapper } from '../edit/cellEditors/popupEditorWrapper';
 import type { AgEventType } from '../eventTypes';
 import type { CellFocusedEvent } from '../events';
@@ -114,8 +113,8 @@ export interface IEditService extends NamedBean {
     ): void;
     applyBulkEdit(position: Required<EditPosition>, cellRanges: CellRange[]): void;
     validateEdit(): ICellEditorValidationError[] | null;
-    createCellStyleFeature(cellCtrl: CellCtrl, beans: BeanCollection): ICellStyleFeature;
-    createRowStyleFeature(rowCtrl: RowCtrl, beans: BeanCollection): IRowStyleFeature;
+    createCellStyleFeature(cellCtrl: CellCtrl): ICellStyleFeature;
+    createRowStyleFeature(rowCtrl: RowCtrl): IRowStyleFeature;
     setEditingCells(cells: EditingCellPosition[], params?: _SetEditingCellsParams): void;
     hasValidationErrors(position?: EditPosition): boolean;
     cellEditingInvalidCommitBlocks(): boolean;
