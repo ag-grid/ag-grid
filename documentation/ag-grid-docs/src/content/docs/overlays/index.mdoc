@@ -53,9 +53,12 @@ This example demonstrates how to provide a custom loading overlay component cust
 
 ## No rows overlay
 
-When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay. To control it programmatically use `activeOverlay`:
+When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay.
 
 The built-in no-rows overlay can be completely disabled by setting either `noRowsOverlayComponent = false` or `components.agNoRowsOverlay = false` or `activeOverlay = false` in the grid options.
+It can be manually shown by setting `activeOverlay` grid option to `'agNoRowsOverlay'`.
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["noRowsOverlayComponent", "activeOverlay"] /%}
 
 {% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
 
@@ -91,7 +94,7 @@ This example demonstrates how to provide a custom no-rows overlay component cust
 {% gridExampleRunner title="Custom No Rows Overlay Components" name="custom-overlay-no-rows" /%}
 
 
-## Active Overlay and user defined overlays
+## User Defined Overlays
 
 Use the `activeOverlay` grid option to display an overlay programmatically, custom or built-in.
 - Pass `'agNoRowsOverlay'`  to show the no-rows overlay.
