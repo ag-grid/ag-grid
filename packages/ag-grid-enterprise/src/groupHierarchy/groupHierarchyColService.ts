@@ -241,7 +241,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
         const base: ColDef = _addColumnDefaultAndTypes(beans, { colId, ...defaults }, colId, true);
 
-        const translate = beans.localeSvc?.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const translatePart = (part: string, fallback: string) => translate?.(part, fallback) ?? fallback;
 
         switch (part) {

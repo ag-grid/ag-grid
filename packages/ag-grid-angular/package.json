@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "34.3.1-beta.20251105.1030",
+  "version": "34.3.1-beta.20251105.1146",
   "description": "AG Grid Angular Component",
   "scripts": {
     "clean": "rimraf dist",
@@ -15,7 +15,7 @@
   "module": "./dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
   "dependencies": {
-    "ag-grid-community": "34.3.1-beta.20251105.1030",
+    "ag-grid-community": "34.3.1-beta.20251105.1146",
     "@angular/animations": "^18.0.7",
     "@angular/common": "^18.0.7",
     "@angular/compiler": "^18.0.7",
@@ -27,7 +27,7 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "ag-grid-community": "34.3.1-beta.20251105.1030",
+    "ag-grid-community": "34.3.1-beta.20251105.1146",
     "@angular-devkit/build-angular": "^18.0.7",
     "@angular/cli": "^18.0.7",
     "@angular/forms": "^18.0.7",

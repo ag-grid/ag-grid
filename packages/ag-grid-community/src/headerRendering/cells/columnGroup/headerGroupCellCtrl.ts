@@ -8,9 +8,10 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
-import { _addGridCommonParams } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getSuppressColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
+import { _getActiveDomElement } from '../../../main';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -38,6 +39,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private expandable: boolean;
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
+    private ariaAnnouncement?: string;
 
     public override wireComp(
         comp: IHeaderGroupCellComp,
@@ -59,6 +61,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupMovingCss(compBean);
         this.setupExpandable(compBean);
         this.setupTooltip();
+        this.refreshAnnouncement();
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
@@ -96,6 +99,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         this.addHighlightListeners(compBean, leafCols);
+
+        this.addManagedEventListeners({
+            cellSelectionChanged: () => this.refreshAnnouncement(),
+        });
 
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
@@ -350,6 +357,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             this.focusThis();
+            this.announceAriaDescription();
         }
     }
 
@@ -358,12 +366,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         const wrapperHasFocus = this.getWrapperHasFocus();
 
-        if (!this.expandable || !wrapperHasFocus) {
+        if (!wrapperHasFocus) {
             return;
         }
 
-        if (e.key === KeyCode.ENTER) {
-            const column = this.column;
+        const column = this.column;
+        if (e.key === KeyCode.ENTER && this.expandable) {
             const newExpandedValue = !column.isExpanded();
 
             this.beans.colGroupSvc!.setColumnGroupOpened(
@@ -371,7 +379,35 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 newExpandedValue,
                 'uiColumnExpanded'
             );
+        } else if (e.key === KeyCode.SPACE && (e.ctrlKey || e.metaKey)) {
+            this.beans.rangeSvc?.handleColumnSelection(column, e);
         }
+    }
+
+    private refreshAnnouncement(): void {
+        let description: string | undefined;
+        const { gos, column, beans } = this;
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+
+        if (!suppressColumnSelection) {
+            const translate = this.getLocaleTextFunc();
+            const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
+            description = translate(
+                'ariaColumnCellSelection',
+                `Press CTRL+SPACE to ${colSelected ? 'de' : ''}select all visible cells in this column group`
+            );
+        }
+
+        this.ariaAnnouncement = description;
+    }
+
+    private announceAriaDescription(): void {
+        const { beans, eGui, ariaAnnouncement } = this;
+        if (!ariaAnnouncement || !eGui.contains(_getActiveDomElement(beans))) {
+            return;
+        }
+
+        beans.ariaAnnounce?.announceValue(ariaAnnouncement, 'columnHeader');
     }
 
     // unlike columns, this will only get called once, as we don't react on props on column groups

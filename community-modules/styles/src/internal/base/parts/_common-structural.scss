@@ -453,7 +453,8 @@
         position: relative;
     }
 
-    .ag-header-cell-sortable .ag-header-cell-label {
+    .ag-header-cell-sortable .ag-header-cell-label,
+    .ag-header-group-cell-selectable.ag-header-group-cell-label {
         cursor: pointer;
     }
 

@@ -18,7 +18,8 @@ export interface IRangeService {
     getRangeRowCount(cellRange: CellRange): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
-    isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean;
+    isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean;
+    isRowInRange(rowPos: RowPosition, cellRange: CellRange): boolean;
     isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;
@@ -30,7 +31,7 @@ export interface IRangeService {
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
-    addCellRange(params: CellRangeParams): void;
+    addCellRange(params: CellRangeParams): CellRange | undefined;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void;
@@ -52,7 +53,9 @@ export interface IRangeService {
         column: AgColumn | AgColumnGroup,
         headerComp: IAbstractHeaderCellComp
     ): void;
+    createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
+    handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
 }
 
 export enum CellRangeType {

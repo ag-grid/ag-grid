@@ -571,6 +571,17 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        multiSortKey: {
+            validate: (options) => {
+                const suppressColumnSelection =
+                    (typeof options.cellSelection === 'object' && options.cellSelection.suppressColumnSelection) ??
+                    false;
+                if (options.multiSortKey === 'ctrl' && !suppressColumnSelection) {
+                    return 'Cannot set `multiSortKey = "ctrl" without also setting `cellSelection.suppressColumnSelection = true`. Column selection disabled';
+                }
+                return null;
+            },
+        },
     };
     const validations: Validations<GridOptions> = {};
     for (const key of _BOOLEAN_GRID_OPTIONS) {

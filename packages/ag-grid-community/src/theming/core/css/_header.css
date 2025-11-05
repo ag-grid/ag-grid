@@ -21,6 +21,7 @@
 .ag-panel-title-bar-button,
 .ag-floating-filter-button-button,
 :where(.ag-header-cell-sortable) .ag-header-cell-label,
+:where(.ag-header-group-cell-selectable).ag-header-group-cell-label,
 .ag-header-expand-icon {
     cursor: pointer;
 }
