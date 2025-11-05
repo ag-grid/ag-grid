@@ -972,7 +972,7 @@ export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParam
         ref: 'textColor',
     },
     rowDragIndicatorColor: { ref: 'rangeSelectionBorderColor' },
-    rowDragIndicatorWidth: 3,
+    rowDragIndicatorWidth: 2,
     columnDragIndicatorColor: { ref: 'accentColor' },
-    columnDragIndicatorWidth: 3,
+    columnDragIndicatorWidth: 2,
 };
