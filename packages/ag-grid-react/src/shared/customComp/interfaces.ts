@@ -22,6 +22,8 @@ import type {
     IHeaderGroupParams,
     IHeaderParams,
     ILoadingCellRendererParams,
+    ILoadingOverlayParams,
+    INoRowsOverlayParams,
     IOverlayParams,
     IStatusPanelParams,
     ITooltipParams,
@@ -124,6 +126,13 @@ export interface CustomInnerHeaderGroupProps<TData = any, TContext = any> extend
 
 /** Props provided to custom overlay components */
 export interface CustomOverlayProps<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
+
+/** Props provided to custom loading overlay component */
+export interface CustomLoadingOverlayProps<TData = any, TContext = any>
+    extends ILoadingOverlayParams<TData, TContext> {}
+
+/** Props provided to custom no-rows overlay component */
+export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
 
 /** Props provided to custom status panel components */
 export interface CustomStatusPanelProps<TData = any, TContext = any> extends IStatusPanelParams<TData, TContext> {}
