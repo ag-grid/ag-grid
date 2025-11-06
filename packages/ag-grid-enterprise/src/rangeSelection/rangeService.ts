@@ -1321,7 +1321,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    private deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
+    public deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
         for (const range of this.cellRanges) {
             if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
                 _removeFromArray(range.columns, column);
@@ -1337,7 +1337,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dispatchChangedEvent(true, true);
     }
 
-    private selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
+    public selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
         return this.addCellRange({
             columns: columns,
             columnStart: columns[0],

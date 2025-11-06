@@ -1570,6 +1570,21 @@ export interface _CellSelectionGridApi {
      * @agModule `CellSelectionModule`
      */
     clearCellSelection(): void;
+
+    /**
+     * Select or deselect one or more columns.
+     *
+     * When selecting multiple columns, all columns will be part of a single range.
+     * When de-selecting multiple columns, each column will be deselected individually.
+     *
+     * Pass `false` as the second argument to deselect columns.
+     *
+     * @param colIds Array of column IDs on which to perform (de-)selection
+     * @param select Boolean determining whether or not to perform selection or deselection. @default true
+     *
+     * @agModule `CellSelectionModule`
+     */
+    selectColumns(colIds: string[], select?: boolean): void;
 }
 
 export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {

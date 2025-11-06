@@ -378,6 +378,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         addCellRange: 0,
         clearRangeSelection: 0,
         clearCellSelection: 0,
+        selectColumns: 0,
     }),
 
     ...mod<_RowGroupingGridApi>('SharedRowGrouping', {
