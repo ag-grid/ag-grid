@@ -100,6 +100,8 @@ async function uploadArtifactsForRelease(release) {
         switch (folder) {
             case 'community-modules':
                 return `@ag-grid-community-${filename}`;
+            case 'enterprise-modules':
+                return `@ag-grid-enterprise-${filename}`;
             default:
                 return filename;
         }
