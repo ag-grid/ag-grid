@@ -23142,7 +23142,7 @@ prop-types-exact@^1.2.0:
     object.assign "^4.1.0"
     reflect.ownkeys "^0.2.0"
 
-prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "http://52.50.158.57:4873/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -23444,8 +23444,10 @@ react-dom@~18.2.0:
 
 react-gif-player@0.5.1:
   version "0.5.1"
-  resolved "http://52.50.158.57:4873/react-gif-player/-/react-gif-player-0.5.1.tgz#aae739081ea770b1c968fadd7d6df5fd01d2eb9c"
-  integrity sha512-hVUEZ0X24ohswGZi0+2ONb83lSgPk8EwbYGbB1UEYwmqnB7vQ8nfcq9BWmArWbAm/enKf54kRxflLcJ1c2eSuQ==
+  resolved "http://52.50.158.57:4873/react-gif-player/-/react-gif-player-0.5.1.tgz#526053f5f65d7ba71ccdae337772be8b57cf3cf4"
+  integrity sha512-txjepE8WEKumnGnFKnfg9Eym9Ww9qGEbmF/nt0MS/xd1ZjRKJD+Zp512DdixG2LewY75Mtw8QcreDWVOdUhpuw==
+  dependencies:
+    prop-types "^15.6.0"
 
 react-instantsearch-core@7.7.3:
   version "7.7.3"
