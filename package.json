@@ -22,7 +22,6 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@actions/core": "^1.11.1",
     "@axe-core/cli": "^4.10.2",
     "@axe-core/playwright": "^4.10.2",
     "@eslint/js": "^9.2.0",
