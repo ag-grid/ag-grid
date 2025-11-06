@@ -305,6 +305,7 @@ export {
 export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
 export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
 export { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
+export { AddPopupParams as _AddPopupParams, AddPopupResult as _AddPopupResult } from './agStack/interfaces/iPopup';
 
 // excel
 export {
