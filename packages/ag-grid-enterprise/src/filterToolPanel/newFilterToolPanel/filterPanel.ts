@@ -158,6 +158,7 @@ export class FilterPanel extends Component {
     }
 
     public override destroy(): void {
+        this.beans.filterPanelSvc?.clear?.();
         this.addFilterComp = this.destroyBean(this.addFilterComp);
         this.buttonComp = this.destroyBean(this.buttonComp);
         const filters = this.filters;
