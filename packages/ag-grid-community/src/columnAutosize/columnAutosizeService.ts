@@ -81,8 +81,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             // We exclude all pinned columns here, we only want columns in the main viewport to be scaled up
             const colKeys = params.colKeys.filter((col) => {
-                const suppressAutoSize = colModel.getCol(col)?.getColDef().suppressAutoSize;
-                return !suppressAutoSize && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
+                const allowAutoSize = !colModel.getCol(col)?.getColDef().suppressAutoSize;
+                return allowAutoSize && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
+                
             });
 
             this.sizeColumnsToFit(availableGridWidth, params.source, true, {
