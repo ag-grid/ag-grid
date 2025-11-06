@@ -1,5 +1,5 @@
 import type { HorizontalDirection } from '../../../agStack/constants/direction';
-import { KeyCode } from '../../../agStack/constants/keyCode';
+import { KeyCode, _normaliseQwertyAzerty } from '../../../agStack/constants/keyCode';
 import { _setAriaColIndex } from '../../../agStack/utils/aria';
 import { _getActiveDomElement, _getDocument } from '../../../agStack/utils/document';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../../agStack/utils/dom';
@@ -297,8 +297,8 @@ export abstract class AbstractHeaderCellCtrl<
         if (
             // if elements within the header are focused, we don't process the event
             activeEl !== this.eGui ||
-            // if shiftKey and altKey are not pressed, it's cell navigation so we don't process the event
-            (!e.shiftKey && !e.altKey)
+            // if shiftKey, ctrlKey, metaKey and altKey are not pressed, it's cell navigation so we don't process the event
+            (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey)
         ) {
             return;
         }
@@ -306,6 +306,12 @@ export abstract class AbstractHeaderCellCtrl<
         if (this.isResizing || isLeftOrRight) {
             e.preventDefault();
             e.stopImmediatePropagation();
+        }
+
+        const isCopy = (e.ctrlKey || e.metaKey) && _normaliseQwertyAzerty(e) === KeyCode.C;
+
+        if (isCopy) {
+            return this.beans.clipboardSvc?.copyToClipboard();
         }
 
         if (!isLeftOrRight) {
