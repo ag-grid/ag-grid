@@ -346,7 +346,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     public setValueList(params: { valueList: TValue[] | Promise<TValue[]> | undefined; refresh?: boolean }): void {
         const { valueList, refresh } = params;
 
-        if (Array.isArray(valueList) || !valueList) {
+        if (!valueList || Array.isArray(valueList)) {
             // if valueList is an array or null/undefined we can set it directly
             // special case when we need to both clear the list and hide the status label
             // this is useful when doing async search we want to clear the previous results
@@ -355,10 +355,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        this.listComponent?.showLoadingStateComp();
-        valueList.then((values) => {
-            this.setValueListInternal({ valueList: values, refresh });
-        });
+        this.listComponent?.setLoadingState(0); // set to LOADING
+        valueList.then((values) => this.setValueListInternal({ valueList: values, refresh }));
     }
 
     /**
@@ -370,7 +368,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public override showPicker() {
-        super.showPicker();
+        super.showPicker(); // todo this toggles the visibility
         const { listComponent, value } = this;
 
         if (!listComponent) {
@@ -395,8 +393,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         } else {
             listComponent.refresh();
         }
-
-        this.displayOrHidePicker();
     }
 
     private createOrUpdatePillContainer(container: HTMLElement): void {
@@ -544,7 +540,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.listComponent?.highlightFilterMatch(this.searchString);
         }
 
-        this.displayOrHidePicker();
+        this.listComponent?.toggleVisibility();
     }
 
     private highlightEmptyValue(): boolean {
@@ -623,18 +619,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         return { suggestions, filteredValues };
-    }
-
-    private displayOrHidePicker(): void {
-        if (!this.listComponent) {
-            return;
-        }
-
-        const eListGui = this.listComponent.getGui();
-        const list = this.listComponent.getCurrentList();
-        const toggleValue = list ? list.length === 0 : false;
-
-        eListGui.classList.toggle('ag-hidden', toggleValue);
     }
 
     private clearSearchString(): void {

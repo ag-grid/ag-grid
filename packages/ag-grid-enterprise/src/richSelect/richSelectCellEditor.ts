@@ -34,17 +34,18 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             _warn(180);
         }
 
-        const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
+        const { params: richSelectParams, valueList } = this.buildRichSelectParams();
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
 
         this.eEditor = richSelect;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
-        if (valuesPromise) {
-            this.eEditor.setValueList({ valueList: valuesPromise, refresh: true });
+        const isPromise = valueList && !Array.isArray(valueList);
+        if (isPromise) {
+            this.eEditor.setValueList({ valueList: valueList, refresh: true });
 
-            valuesPromise.then((values) => {
+            valueList.then((values) => {
                 const searchStringCallback = this.getSearchStringCallback(values);
                 if (searchStringCallback) {
                     richSelect.setSearchStringCreator(searchStringCallback);
@@ -60,8 +61,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         this.focusAfterAttached = cellStartedEdit;
     }
 
-    private readonly onValuesPromise = (valuesPromise: Promise<TValue[]>) => {};
-
     private onEditorPickerValueSelected(e: FieldPickerValueSelectedEvent): void {
         // there is an issue with focus handling when we call `stopEditing` while the
         // picker list is still collapsing, so we make this call async to guarantee that.
@@ -70,7 +69,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         }
     }
 
-    private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
+    private buildRichSelectParams(): { params: RichSelectParams<TValue>; valueList?: TValue[] | Promise<TValue[]> } {
         const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
         const {
             cellRenderer,
@@ -119,8 +118,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             suppressMultiSelectPillRenderer,
         };
 
-        let valuesResult;
-        let valuesPromise: Promise<TValue[]> | undefined;
+        let valueList;
 
         if (filterListAsync && !filterList) {
             _warn(293);
@@ -135,18 +133,17 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 ret.allowNoResultsCopy = true;
             }
             if (params.search) {
-                valuesResult = values({ ...params });
+                valueList = values({ ...params });
             }
         } else {
-            valuesResult = values ?? [];
+            valueList = values ?? [];
         }
 
-        if (Array.isArray(valuesResult)) {
-            ret.valueList = valuesResult;
-            ret.searchStringCreator = this.getSearchStringCallback(valuesResult);
-        } else if (valuesResult) {
+        if (Array.isArray(valueList)) {
+            ret.valueList = valueList;
+            ret.searchStringCreator = this.getSearchStringCallback(valueList);
+        } else if (valueList) {
             ret.isAsync = this.isAsync = true;
-            valuesPromise = valuesResult;
         }
 
         if (multiSelect && allowTyping) {
@@ -154,7 +151,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             _warn(181);
         }
 
-        return { params: ret, valuesPromise };
+        return { params: ret, valueList };
     }
 
     private readonly onSearchCallback = (searchString: string): void => {
@@ -163,7 +160,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         params.search = searchString;
         if (!params.search) {
-            // do something to remove No matches to show
             return;
         }
         if (typeof params.values !== 'function') {
