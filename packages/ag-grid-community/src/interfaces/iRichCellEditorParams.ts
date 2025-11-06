@@ -10,6 +10,7 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
+    isAsync?: boolean;
     onSearch?: (search?: string) => void;
     cellRenderer?: any;
     cellRendererParams?: any;
@@ -33,8 +34,13 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
     allowNoResultsCopy?: boolean;
 }
 
+export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any>
+    extends RichCellEditorParams<TData, TValue> {
+    search?: string;
+}
+
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
-    (params: ICellEditorParams<TData, TValue>, search?: string): TValue[] | Promise<TValue[]>;
+    (params: RichCellEditorValuesCallbackParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
 
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {

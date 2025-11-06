@@ -674,6 +674,7 @@ export type { DateStringCellEditor } from './edit/cellEditors/dateStringCellEdit
 export {
     IRichCellEditorParams,
     RichCellEditorValuesCallback,
+    RichCellEditorValuesCallbackParams,
     RichCellEditorParams,
     IRichCellEditorRendererParams,
 } from './interfaces/iRichCellEditorParams';

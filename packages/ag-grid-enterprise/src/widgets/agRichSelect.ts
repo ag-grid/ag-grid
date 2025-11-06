@@ -318,39 +318,47 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
-    public async setValueListAsync(params: { valueList: Promise<TValue[]>; refresh?: boolean }): Promise<void> {
+    private setValueListInternal(params: { valueList: TValue[] | undefined; refresh?: boolean }): void {
+        const { listComponent } = this;
         const { valueList, refresh } = params;
-        this.listComponent?.showLoadingStateComp();
-        const values = await valueList;
-        this.listComponent?.hideLoadingStateComp();
-        this.setValueList({ valueList: values, refresh });
+        if (!listComponent || listComponent.getCurrentList() === valueList) {
+            return;
+        }
+        listComponent.setCurrentList(valueList);
+
+        if (!refresh) {
+            return;
+        }
+        if (this.values) {
+            listComponent.refresh(true);
+        } else {
+            this.setValues(valueList ?? []);
+            if (this.isPickerDisplayed) {
+                const hasRefreshed = listComponent.selectValue(this.value);
+                if (!hasRefreshed) {
+                    listComponent.refresh();
+                }
+            }
+        }
+        this.alignPickerToComponent();
     }
 
-    public setValueList(params: { valueList: TValue[]; refresh?: boolean }): void {
+    public setValueList(params: { valueList: TValue[] | Promise<TValue[]> | undefined; refresh?: boolean }): void {
         const { valueList, refresh } = params;
 
-        if (!this.listComponent || this.listComponent.getCurrentList() === valueList) {
+        if (Array.isArray(valueList) || !valueList) {
+            // if valueList is an array or null/undefined we can set it directly
+            // special case when we need to both clear the list and hide the status label
+            // this is useful when doing async search we want to clear the previous results
+            // and only show a placeholder with a CTA (e.g. start typing...)
+            this.setValueListInternal({ valueList, refresh });
             return;
         }
 
-        this.listComponent.setCurrentList(valueList);
-
-        if (refresh) {
-            // if `values` is not present, it means the valuesList was set asynchronously
-            if (!this.values) {
-                this.setValues(valueList);
-                if (this.isPickerDisplayed) {
-                    const hasRefreshed = this.listComponent.selectValue(this.value);
-                    if (!hasRefreshed) {
-                        this.listComponent.refresh();
-                    }
-                }
-            } else {
-                this.listComponent.refresh(true);
-            }
-
-            this.alignPickerToComponent();
-        }
+        this.listComponent?.showLoadingStateComp();
+        valueList.then((values) => {
+            this.setValueListInternal({ valueList: values, refresh });
+        });
     }
 
     /**

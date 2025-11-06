@@ -142,7 +142,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public selectValue(value?: TValue[] | TValue): boolean {
-        if (!this.currentList) {
+        if (!this.currentList && this.params.isAsync) {
             this.showLoadingStateComp();
             return false;
         }
@@ -191,7 +191,15 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         return this.currentList;
     }
 
-    public setCurrentList(list: TValue[]): void {
+    public setCurrentList(list: TValue[] | undefined): void {
+        this.hideLoadingStateComp();
+        let showNoMatches = false;
+
+        if (list == null) {
+            list = [];
+        } else {
+            showNoMatches = list.length === 0 && !!this.params.allowNoResultsCopy;
+        }
         this.currentList = list;
 
         this.setModel({
@@ -200,7 +208,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
             areRowsEqual: (oldRow, newRow) => oldRow === newRow,
         });
 
-        if (!list.length && this.params.allowNoResultsCopy) {
+        if (showNoMatches) {
             this.showLoadingStateComp(this.noMatchesLabel);
         }
     }
