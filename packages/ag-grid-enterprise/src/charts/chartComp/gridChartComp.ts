@@ -79,6 +79,7 @@ export interface GridChartParams {
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
+    useGroupColumnAsCategory?: boolean;
 }
 
 export class GridChartComp extends Component {

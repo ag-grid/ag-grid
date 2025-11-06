@@ -191,6 +191,7 @@ function validateUpdateRangeChartParams(
                 value === undefined || (Array.isArray(value) && value.every(isValidSeriesChartType)),
             warnMessage: createWarnMessage('seriesChartTypes', 'Array of SeriesChartType'),
         },
+        { property: 'useGroupColumnAsCategory', validationFn: isBoolean, warnMessage: createWarnMessage('useGroupColumnAsCategory', 'boolean') },
     ];
 
     return validateProperties(
@@ -204,6 +205,7 @@ function validateUpdateRangeChartParams(
             'aggFunc',
             'seriesChartTypes',
             'seriesGroupType',
+            'useGroupColumnAsCategory',
         ],
         'UpdateRangeChartParams'
     );
