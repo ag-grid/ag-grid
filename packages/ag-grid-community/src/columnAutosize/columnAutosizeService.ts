@@ -83,7 +83,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const colKeys = params.colKeys.filter((col) => {
                 const allowAutoSize = !colModel.getCol(col)?.getColDef().suppressAutoSize;
                 return allowAutoSize && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
-                
             });
 
             this.sizeColumnsToFit(availableGridWidth, params.source, true, {
