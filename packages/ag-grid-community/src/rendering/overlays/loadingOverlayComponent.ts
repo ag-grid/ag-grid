@@ -34,7 +34,7 @@ export class LoadingOverlayComponent
         this.setTemplate(customTemplate ?? LoadingOverlayElement);
 
         if (!customTemplate) {
-            const eLoadingIcon = _createIconNoSpan('groupLoading', this.beans, null);
+            const eLoadingIcon = _createIconNoSpan('overlayLoading', this.beans, null);
             if (eLoadingIcon) {
                 this.eLoadingIcon.appendChild(eLoadingIcon);
             }
