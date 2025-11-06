@@ -45,6 +45,7 @@ export type IconName =
     | 'unlinked'
     | 'colorPicker' // deprecated v33
     | 'groupLoading'
+    | 'overlayLoading'
     | 'menu'
     | 'legacyMenu'
     | 'loadingMenuItems'
@@ -84,6 +85,7 @@ export type IconName =
     | 'selectOpen'
     | 'richSelectOpen'
     | 'richSelectRemove'
+    | 'richSelectLoading'
     | 'smallLeft' // deprecated v33
     | 'smallRight' // deprecated v33
     | 'panelDelimiter'

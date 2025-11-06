@@ -1417,7 +1417,8 @@
 
     .ag-rich-select-list {
         position: relative;
-        .ag-loading-text {
+        .ag-rich-select-loading {
+            display: flex;
             min-height: 2rem;
         }
     }

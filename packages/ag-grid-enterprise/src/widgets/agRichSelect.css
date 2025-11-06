@@ -32,7 +32,8 @@
     box-shadow: var(--ag-dropdown-shadow);
 
     /* stylelint-disable-next-line selector-max-specificity */
-    :where(.ag-loading-text) {
+    :where(.ag-rich-select-loading) {
+        display: flex;
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     }
 }
