@@ -158,15 +158,14 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         // is executing before the sort is set up, so server is not getting the sort
         // model. need to change with regards order - so the server side request is
         // AFTER thus it gets the right sort model.
-        const params: IGetRowsParams = {
+        const params: IGetRowsParams = _addGridCommonParams(gos, {
             startRow,
             endRow,
             successCallback: this.pageLoaded.bind(this, version),
             failCallback: this.pageLoadFailed.bind(this, version),
             sortModel,
             filterModel,
-            context: _addGridCommonParams(gos, {}).context,
-        };
+        });
         return params;
     }
 

@@ -1,5 +1,12 @@
 import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _addGridCommonParams,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+    _warn,
+} from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -168,11 +175,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         if (!viewportDatasource.init) {
             _warn(226);
         } else {
-            viewportDatasource.init({
-                setRowCount: this.setRowCount.bind(this),
-                setRowData: this.setRowData.bind(this),
-                getRow: this.getRow.bind(this),
-            });
+            viewportDatasource.init(
+                _addGridCommonParams(this.gos, {
+                    setRowCount: this.setRowCount.bind(this),
+                    setRowData: this.setRowData.bind(this),
+                    getRow: this.getRow.bind(this),
+                })
+            );
         }
     }
 
