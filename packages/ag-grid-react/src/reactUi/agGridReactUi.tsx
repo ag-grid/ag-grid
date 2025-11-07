@@ -4,6 +4,7 @@ import React, {
     useContext,
     useEffect,
     useImperativeHandle,
+    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -118,7 +119,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         }
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         updateClassName(props.className);
     }, [props.className]);
 
