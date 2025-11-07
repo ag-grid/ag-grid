@@ -36,6 +36,7 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
 
 export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any>
     extends RichCellEditorParams<TData, TValue> {
+    /** The current search string entered by the user. Is always defined when async filtering is enabled. */
     search?: string;
 }
 

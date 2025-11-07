@@ -196,7 +196,7 @@ Values can be provided as a `Promise<TValue[]>` returned from the `values` funct
 For example:
 
 ```ts
-function fetchLanguages(_params: ICellEditorParams): Promise<string[]> {
+function fetchLanguages(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
   });
@@ -230,7 +230,7 @@ When `filterListAsync` is `true`, the cell editor:
 For example:
 
 ```ts
-function fetchLanguages(params: ICellEditorParams): Promise<string[]> {
+function fetchLanguages(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
     return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
         .then(res => res.json())
         .then(data => data.items as string[]);
