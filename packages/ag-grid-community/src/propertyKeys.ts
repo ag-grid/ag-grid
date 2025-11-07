@@ -207,6 +207,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressAutoSize',
     'skipHeaderOnAutoSize',
     'suppressColumnMoveAnimation',
+    'suppressColumnResizeAnimation',
     'suppressMoveWhenColumnDragging',
     'suppressMovableColumns',
     'suppressFieldDotNotation',

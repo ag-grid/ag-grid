@@ -17,9 +17,7 @@ export function assertSelectedRowElementsById(ids: string[], api: GridApi): void
 
 export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
     const selectedNodes = api.getSelectedNodes();
-
     expect(selectedNodes).toHaveLength(nodes.length);
-
     for (let i = 0; i < nodes.length; i++) {
         expect(selectedNodes[i]).toBe(nodes[i]);
     }
@@ -76,5 +74,36 @@ export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridA
             notFound.push(range);
         }
     }
+    expect(notFound).toEqual([]);
+}
+
+export function assertColumnsSelected(ranges: string[][], api: GridApi): void {
+    const cellRanges = api.getCellRanges()?.slice() ?? [];
+    const lastRowIdx = api.getLastDisplayedRowIndex();
+    const nRowsTop = api.getPinnedTopRowCount();
+    const nRowsBottom = api.getPinnedBottomRowCount();
+    const notFound: string[][] = [];
+
+    for (const columnIds of ranges) {
+        const idx = cellRanges.findIndex((cellRange) => {
+            return _areEqual(
+                cellRange.columns.map((c) => c.getColId()),
+                columnIds
+            );
+        });
+
+        if (idx > -1) {
+            expect(cellRanges[idx].startRow?.rowIndex).toEqual(0);
+            expect(cellRanges[idx].startRow?.rowPinned).toEqual(nRowsTop > 0 ? 'top' : null);
+
+            expect(cellRanges[idx].endRow?.rowIndex).toEqual(nRowsBottom > 0 ? nRowsBottom - 1 : lastRowIdx);
+            expect(cellRanges[idx].endRow?.rowPinned).toEqual(nRowsBottom > 0 ? 'bottom' : null);
+
+            cellRanges.splice(idx, 1);
+        } else {
+            notFound.push(columnIds);
+        }
+    }
+
     expect(notFound).toEqual([]);
 }

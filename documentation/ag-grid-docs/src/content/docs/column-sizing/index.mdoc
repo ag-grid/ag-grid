@@ -138,13 +138,15 @@ then the calculation is as follows:
 
 ### Auto-Size Columns to Fit Cell Contents
 
-Columns can be resized to fit the contents of the cells. The example below demonstrates the use of `autoSizeStrategy` to size the columns by default. 
-The example button can restore this sizing by using the API if the columns are first resized by dragging the resize handle.
-
-By default the grid will resize the column to fit the header. If you do not want the headers to be included in the auto-size calculation, set the grid property `skipHeaderOnAutoSize = true`, or pass `skipHeader = true` to the `autoSizeStrategy` params or the API method.
+Columns can be resized to fit the contents of the cells. By default the grid will resize the column to fit the header. 
+If you do not want the headers to be included in the auto-size calculation, set the grid property `skipHeaderOnAutoSize = true`, or pass `skipHeader = true` to the `autoSizeStrategy` params or the API method.
+If you don't want a particular column to be included in the auto-resize, then set the column definition `suppressAutoSize = true`.
 The grid also provides the `scaleUpToFitGridWidth` option which proportionally scales up columns to fill any empty space in the grid after autosizing them.
 
-The example below provides controls to toggle on the `skipHeader` and `scaleUpToFitGridWidth` parameters. 
+The example below demonstrates the use of `autoSizeStrategy` to size the columns by default. 
+The example button can restore this sizing by using the API if the columns are first resized by dragging the resize handle.
+There are also controls provided to toggle on the `skipHeader` and `scaleUpToFitGridWidth` parameters. 
+The "Athlete" column has `suppressAutoSize = true`.
 
 {% gridExampleRunner title="Auto-Size Columns to Fit Cell Contents" name="column-resizing" /%}
 

@@ -85,6 +85,7 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     doAction(action: FilterAction): void;
     updateParams(params: IToolPanelNewFiltersCompParams, initialState?: NewFiltersToolPanelState): void;
     getGridState(): NewFiltersToolPanelState;
+    clear(): void;
 }
 
 export interface ISelectableFilterService {

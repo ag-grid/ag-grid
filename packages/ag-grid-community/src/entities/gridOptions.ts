@@ -443,6 +443,11 @@ export interface GridOptions<TData = any> {
      */
     suppressColumnMoveAnimation?: boolean;
     /**
+     * If `true`, the `ag-animate-autosize` class is not added to the grid while autosizing columns. In the default themes, this results in no animation when autosizing column widths.
+     * @default false
+     */
+    suppressColumnResizeAnimation?: boolean;
+    /**
      * Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
      * @default false
      */
@@ -2947,8 +2952,14 @@ export interface CellSelectionOptions<TData = any> {
     suppressMultiRanges?: boolean;
     /**
      * If `true` the header of cells containing ranges will be highlighted.
+     * @default false;
      */
     enableHeaderHighlight?: boolean;
+    /**
+     * If `true`, prevents selection of a column of cells when CTRL+clicking the column header.
+     * @default false
+     */
+    suppressColumnSelection?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */

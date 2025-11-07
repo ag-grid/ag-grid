@@ -85,7 +85,7 @@ export function isAgHtmlElementVisible(element: Element | null | undefined): boo
 }
 
 export function drawGrid(api: GridApi): void {
-    const gr = new GridRows(api);
+    const gr = new GridRows(api, undefined, { printRowIndices: true });
     const tr = new GridRowsDiagramTree(gr);
     console.log(tr.diagramToString(false, null));
 }

@@ -79,6 +79,7 @@ export interface GridChartParams {
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
+    useGroupColumnAsCategory?: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -223,7 +224,6 @@ export class GridChartComp extends Component {
             chartOptionsToRestore: this.params.chartOptionsToRestore,
             chartPaletteToRestore: this.params.chartPaletteToRestore,
             seriesChartTypes: this.chartController.getSeriesChartTypes(),
-            suppressFieldDotNotation: this.gos.get('suppressFieldDotNotation'),
             translate: (toTranslate: ChartTranslationKey) => this.chartTranslation.translate(toTranslate),
             context: _addGridCommonParams(this.gos, {}),
         };

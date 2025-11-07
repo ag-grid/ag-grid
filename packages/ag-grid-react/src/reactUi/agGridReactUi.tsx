@@ -96,8 +96,35 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
+    const appliedClassName = useRef<string>();
+    const updateClassName = (classNameFromReact: string | undefined) => {
+        // Fix for AG-16224. The grid sets the className on the div using
+        // el.classList, so we must use classList too - if we did
+        // `className={props.className}` we would overwrite the grid's changes
+        const classList = eGui.current?.classList;
+        const splitClasses = (s = '') => s.trim().split(/\s+/g).filter(Boolean);
+        if (appliedClassName.current !== classNameFromReact) {
+            for (const cls of splitClasses(appliedClassName.current)) {
+                if (classList?.contains(cls)) {
+                    classList.remove(cls);
+                }
+            }
+            for (const cls of splitClasses(classNameFromReact)) {
+                if (!classList?.contains(cls)) {
+                    classList?.add(cls);
+                }
+            }
+            appliedClassName.current = classNameFromReact;
+        }
+    };
+
+    useEffect(() => {
+        updateClassName(props.className);
+    }, [props.className]);
+
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
+        updateClassName(props.className);
         if (!eRef) {
             for (const f of destroyFuncs.current) {
                 f();
@@ -247,7 +274,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ? 'legacy'
             : 'default';
     return (
-        <div style={style} className={props.className} ref={setRef}>
+        // IMPORTANT! Don't set className here, we must use classList
+        // imperatively to avoid removing classes set by the grid
+        <div style={style} ref={setRef}>
             <RenderModeContext.Provider value={renderMode}>
                 {context && !context.isDestroyed() ? <GridComp key={context.instanceId} context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}

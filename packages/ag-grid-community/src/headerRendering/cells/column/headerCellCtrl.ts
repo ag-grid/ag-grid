@@ -10,7 +10,7 @@ import { _getHeaderCompDetails } from '../../../components/framework/userCompUti
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getSuppressColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -33,7 +33,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     removeSelectAllGui(): void;
 }
 
-type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
+type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton' | 'cellSelection';
 type RefreshFunction =
     | 'updateSortable'
     | 'tooltip'
@@ -261,12 +261,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature?.onSpaceKeyDown(e);
-        }
-        if (e.key === KeyCode.ENTER) {
+            if (e.ctrlKey || e.metaKey) {
+                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
+            } else {
+                this.selectAllFeature?.onSpaceKeyDown(e);
+            }
+        } else if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
-        }
-        if (e.key === KeyCode.DOWN && e.altKey) {
+        } else if (e.key === KeyCode.DOWN && e.altKey) {
             this.showMenuOnKeyPress(e, false);
         }
     }
@@ -573,67 +575,85 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private refreshAriaSort(): void {
-        if (this.sortable) {
+        let description: string | null = null;
+        const { beans, column, comp, sortable } = this;
+        if (sortable) {
             const translate = this.getLocaleTextFunc();
-            const sort = this.beans.sortSvc?.getDisplaySortForColumn(this.column) || null;
-            this.comp.setAriaSort(_getAriaSortState(sort));
-            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
+            const sort = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
+            comp.setAriaSort(_getAriaSortState(sort));
+            description = translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {
-            this.comp.setAriaSort();
-            this.setAriaDescriptionProperty('sort', null);
+            comp.setAriaSort();
         }
+        this.setAriaDescriptionProperty('sort', description);
     }
 
     private refreshAriaMenu(): void {
+        let description: string | null = null;
         if (this.menuEnabled) {
             const translate = this.getLocaleTextFunc();
-            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press ALT DOWN to open column menu'));
-        } else {
-            this.setAriaDescriptionProperty('menu', null);
+            description = translate('ariaMenuColumn', 'Press ALT DOWN to open column menu');
         }
+        this.setAriaDescriptionProperty('menu', description);
     }
 
     private refreshAriaFilterButton(): void {
-        if (this.openFilterEnabled && !_isLegacyMenuEnabled(this.gos)) {
+        let description: string | null = null;
+        const { openFilterEnabled, gos } = this;
+        if (openFilterEnabled && !_isLegacyMenuEnabled(gos)) {
             const translate = this.getLocaleTextFunc();
-            this.setAriaDescriptionProperty(
-                'filterButton',
-                translate('ariaFilterColumn', 'Press CTRL ENTER to open filter')
-            );
-        } else {
-            this.setAriaDescriptionProperty('filterButton', null);
+            description = translate('ariaFilterColumn', 'Press CTRL ENTER to open filter');
         }
+        this.setAriaDescriptionProperty('filterButton', description);
     }
 
     private refreshAriaFiltered(): void {
-        const translate = this.getLocaleTextFunc();
-        const isFilterActive = this.column.isFilterActive();
-        if (isFilterActive) {
-            this.setAriaDescriptionProperty('filter', translate('ariaColumnFiltered', 'Column Filtered'));
-        } else {
-            this.setAriaDescriptionProperty('filter', null);
+        let description: string | null = null;
+        if (this.column.isFilterActive()) {
+            const translate = this.getLocaleTextFunc();
+            description = translate('ariaColumnFiltered', 'Column Filtered');
         }
+        this.setAriaDescriptionProperty('filter', description);
+    }
+
+    private refreshAriaCellSelection(): void {
+        let description: string | null = null;
+        const { gos, column, beans } = this;
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+
+        if (!suppressColumnSelection) {
+            const translate = this.getLocaleTextFunc();
+            const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
+            description = translate(
+                'ariaColumnCellSelection',
+                `Press CTRL+SPACE to ${colSelected ? 'de' : ''}select all visible cells in this column`
+            );
+        }
+
+        this.setAriaDescriptionProperty('cellSelection', description);
     }
 
     public setAriaDescriptionProperty(property: HeaderAriaDescriptionKey, value: string | null): void {
+        const props = this.ariaDescriptionProperties;
         if (value != null) {
-            this.ariaDescriptionProperties.set(property, value);
+            props.set(property, value);
         } else {
-            this.ariaDescriptionProperties.delete(property);
+            props.delete(property);
         }
     }
 
     public announceAriaDescription(): void {
-        if (!this.eGui.contains(_getActiveDomElement(this.beans))) {
+        const { beans, eGui, ariaDescriptionProperties } = this;
+        if (!eGui.contains(_getActiveDomElement(beans))) {
             return;
         }
-        const ariaDescription = Array.from(this.ariaDescriptionProperties.keys())
+        const ariaDescription = Array.from(ariaDescriptionProperties.keys())
             // always announce the filter description first
-            .sort((a: string, b: string) => (a === 'filter' ? -1 : b.charCodeAt(0) - a.charCodeAt(0)))
-            .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
+            .sort((a, b) => (a === 'filter' ? -1 : b.charCodeAt(0) - a.charCodeAt(0)))
+            .map((key) => ariaDescriptionProperties.get(key))
             .join('. ');
 
-        this.beans.ariaAnnounce?.announceValue(ariaDescription, 'columnHeader');
+        beans.ariaAnnounce?.announceValue(ariaDescription, 'columnHeader');
     }
 
     private refreshAria(): void {
@@ -641,6 +661,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshAriaMenu();
         this.refreshAriaFilterButton();
         this.refreshAriaFiltered();
+        this.refreshAriaCellSelection();
     }
 
     private addColumnHoverListener(compBean: BeanStub): void {

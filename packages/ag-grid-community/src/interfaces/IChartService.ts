@@ -76,6 +76,7 @@ export interface ChartModel {
     unlinkChart?: boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
+    useGroupColumnAsCategory?: boolean;
 }
 
 export interface IChartService {
@@ -121,6 +122,8 @@ export interface CreateRangeChartParams extends BaseCreateChartParams {
     seriesChartTypes?: SeriesChartType[];
     /** Group type for chart types that support grouped series. */
     seriesGroupType?: SeriesGroupType;
+    /** Prefer using the auto group column as the category when grouping is active. */
+    useGroupColumnAsCategory?: boolean;
 }
 export interface CreateCrossFilterChartParams extends BaseCreateChartParams {
     /** The type of cross-filter chart to create. */
@@ -173,6 +176,8 @@ export interface UpdateRangeChartParams extends BaseUpdateChartParams {
     seriesChartTypes?: SeriesChartType[];
     /** Group type for chart types that support grouped series. */
     seriesGroupType?: SeriesGroupType;
+    /** Prefer using the auto group column as the category when grouping is active. */
+    useGroupColumnAsCategory?: boolean;
 }
 
 // When updating, also update `ChartParamsValidator`
