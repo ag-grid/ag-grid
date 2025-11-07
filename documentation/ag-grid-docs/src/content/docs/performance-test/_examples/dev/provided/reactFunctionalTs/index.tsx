@@ -3,9 +3,12 @@ import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+import { AllEnterpriseModule, CellSelectionModule, LicenseManager } from 'ag-grid-enterprise';
+import { AgGridReact, AgContext } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+// ModuleRegistry.registerModules([AllCommunityModule]);
+
+// LicenseManager.setLicenseKey('your-license-key-here');
 
 // Row Data Interface
 interface IRow {
@@ -51,6 +54,8 @@ const GridExample = () => {
 const root = createRoot(document.getElementById('root')!);
 root.render(
     <StrictMode>
-        <GridExample />
+        <AgContext value={{ modules: [AllCommunityModule], licenseKey: 'dfe' }} >
+            <GridExample />
+        </AgContext>
     </StrictMode>
 );

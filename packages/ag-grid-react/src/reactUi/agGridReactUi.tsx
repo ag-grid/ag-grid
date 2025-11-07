@@ -19,7 +19,7 @@ import type {
     GridParams,
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
-    IDetailCellRendererParams,
+    IDetailCellRendererParams, Module,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
@@ -58,6 +58,7 @@ import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
+import { AgContext } from './agContext';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
     setGridApi: undefined,
@@ -80,6 +81,9 @@ const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
+
+    const agContext = useContext(AgContext);
+
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
@@ -133,7 +137,34 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules = props.modules || [];
+        const modules = [...(props.modules ?? []), ...(agContext.modules as Module[] ?? [])];
+        if (agContext.licenseKey) {
+            // find the EnterpriseCore module recursively and get the LicenseManager bean to initialise licensing
+
+            const findModule = (moduleName: string, modulesToSearch: any[]): any | null => {
+                for (const mod of modulesToSearch) {
+                    if (mod.moduleName === moduleName) {
+                        return mod;
+                    }
+                    if (mod.dependsOn && mod.dependsOn.length > 0) {
+                        const found = findModule(moduleName, mod.dependsOn);
+                        if (found) {
+                            return found;
+                        }
+                    }
+                }
+                return null;
+            }
+            const enterpriseCoreModule = findModule('EnterpriseCore', modules);
+
+            if (enterpriseCoreModule) {
+                // look for static method to set license key
+                const licenseManager = enterpriseCoreModule.beans?.find((bean: any) => bean.setLicenseKey) as any;
+                if (licenseManager) {
+                    licenseManager.setLicenseKey('YOUR_LICENSE_KEY_HERE');
+                }
+            }
+        }
 
         if (!portalManager.current) {
             portalManager.current = new PortalManager(
@@ -305,8 +336,7 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper
-{
+    implements FrameworkComponentWrapper {
     constructor(
         private readonly parent: PortalManager,
         private readonly gridOptions: GridOptions
@@ -314,7 +344,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
         const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {
