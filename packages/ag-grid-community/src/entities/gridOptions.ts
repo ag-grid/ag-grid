@@ -1319,7 +1319,7 @@ export interface GridOptions<TData = any> {
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
-    autoGroupColumnDef?: ColDef<TData>;
+    autoGroupColumnDef?: AutoGroupColumnDef<TData>;
     /**
      * When `true`, preserves the current group order when sorting on non-group columns.
      * @default false
@@ -3089,6 +3089,9 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = 
      */
     ctrlASelectsRows?: boolean;
 }
+
+/** Configuration for the `autoGroupColumnDef` property. Equivalent to `ColDef` but without the `colId` as this is defined by the grid. */
+export type AutoGroupColumnDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'colId'>;
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */
 export type SelectionColumnDef = Pick<

@@ -1138,6 +1138,7 @@ export {
 export type { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
+    AutoGroupColumnDef,
     GroupSelectionMode,
     SelectAllMode,
     SelectionColumnDef,

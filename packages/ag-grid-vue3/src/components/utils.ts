@@ -2,6 +2,7 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
+    AutoGroupColumnDef,
     AutoSizeStrategy,
     CellPosition,
     CellSelectionOptions,
@@ -1100,7 +1101,7 @@ export interface Props<TData> {
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
-    autoGroupColumnDef?: ColDef<TData>,
+    autoGroupColumnDef?: AutoGroupColumnDef<TData>,
     /** When `true`, preserves the current group order when sorting on non-group columns.
          * @default false
          * @agModule `RowGroupingModule`
