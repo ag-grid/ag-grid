@@ -271,6 +271,7 @@ const CellComp = ({
             setIncludeDndSource: (include) => setIncludeDndSource(include),
 
             getCellEditor: () => cellEditorRef.current ?? null,
+            // hasCellEditor: () => !!cellEditorRef.current,
             hasCellEditor: () => !!cellEditorRef.current || editorRequestedRef.current,
             getCellRenderer: () => cellRendererRef.current ?? jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
