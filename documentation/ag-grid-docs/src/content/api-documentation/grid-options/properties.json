@@ -324,6 +324,10 @@
                 "name": "Auto-Size Columns to Fit Cell Contents",
                 "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
+        },
+        "suppressColumnResizeAnimation": {
+            "more": "Auto-Size Columns to Fit Cell Contents",
+            "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
         }
     },
     "columnPinning": {
