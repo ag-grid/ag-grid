@@ -1,13 +1,21 @@
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule, TooltipModule } from 'ag-grid-community';
-import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
+import type { SetFilter } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, FormulaModule, TextEditorModule, TooltipModule],
+        modules: [
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            FormulaModule,
+            SetFilterModule,
+            TextEditorModule,
+            TooltipModule,
+        ],
     });
 
     beforeEach(() => {
@@ -169,6 +177,193 @@ describe('ag-grid master detail', () => {
         `);
     });
 
+    test('TC3-2 Set filter lists evaluated formula values', async () => {
+        const personData = [
+            {
+                id: '1',
+                athlete: 'Michael Phelps',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2008,
+                gold: 8,
+                silver: 0,
+                bronze: 0,
+                total: 8,
+            },
+            {
+                id: '2',
+                athlete: 'Ref Judge',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2008,
+                gold: 0,
+                silver: 1,
+                bronze: 0,
+                total: 1,
+            },
+            {
+                id: '3',
+                athlete: 'Laura Trott',
+                country: 'Great Britain',
+                sport: 'Cycling',
+                year: 2012,
+                gold: 2,
+                silver: 0,
+                bronze: 0,
+                total: 2,
+            },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowData: personData,
+            columnDefs: [{ field: 'athlete', filter: 'agSetColumnFilter' }, { field: 'country' }, { field: 'sport' }],
+            getRowId: (params) => params.data?.id,
+        };
+
+        const api = gridsManager.createGrid('tc3-2', gridOptions);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const setFilter = (await api.getColumnFilterInstance('athlete')) as SetFilter<any> | null | undefined;
+        if (!setFilter) {
+            throw new Error('Expected SetFilter instance for athlete column');
+        }
+
+        const initialKeys = (await setFilter.handler.valueModel.allKeys) ?? [];
+        expect(initialKeys.filter((key): key is string => typeof key === 'string').sort()).toEqual([
+            'Laura Trott',
+            'Michael Phelps',
+            'Ref Judge',
+        ]);
+
+        const cellChanged = waitForEvent('cellValueChanged', api);
+        api.getRowNode('2')?.setDataValue('athlete', '=A1');
+        await cellChanged;
+
+        await setFilter.handler.valueModel.refreshAll();
+        const updatedKeys = (await setFilter.handler.valueModel.allKeys) ?? [];
+
+        expect(updatedKeys.filter((key): key is string => typeof key === 'string').sort()).toEqual([
+            'Laura Trott',
+            'Michael Phelps',
+        ]);
+    });
+
+    test('TC3-3 Set filter applies evaluated formulas when refiltering', async () => {
+        const athleteData = [
+            {
+                id: '1',
+                athlete: 'Michael Phelps',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2008,
+                gold: 8,
+                silver: 0,
+                bronze: 0,
+                total: 8,
+            },
+            {
+                id: '2',
+                athlete: 'Ref Judge',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2008,
+                gold: 0,
+                silver: 1,
+                bronze: 0,
+                total: 1,
+            },
+            {
+                id: '3',
+                athlete: 'Michael Phelps',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2012,
+                gold: 4,
+                silver: 2,
+                bronze: 0,
+                total: 6,
+            },
+            {
+                id: '4',
+                athlete: 'Chad Le Clos',
+                country: 'South Africa',
+                sport: 'Swimming',
+                year: 2016,
+                gold: 1,
+                silver: 3,
+                bronze: 0,
+                total: 4,
+            },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowNumbers: true,
+            rowData: athleteData,
+            columnDefs: [
+                { field: 'athlete', filter: 'agSetColumnFilter', minWidth: 150 },
+                { field: 'country', minWidth: 120 },
+                { field: 'sport', minWidth: 120 },
+            ],
+            getRowId: (params) => params.data?.id,
+        };
+
+        const api = gridsManager.createGrid('tc3-3', gridOptions);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const toMichaelFilter = async () => {
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel({ athlete: { filterType: 'set', values: ['Michael Phelps'] } });
+            await filterChanged;
+        };
+
+        const clearFilter = async () => {
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel(null);
+            await filterChanged;
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            printHiddenRows: true,
+            checkDom: true,
+            columns: ['athlete'],
+        };
+
+        let cellChanged = waitForEvent('cellValueChanged', api);
+        api.getRowNode('2')?.setDataValue('athlete', '=A1');
+        await cellChanged;
+
+        await toMichaelFilter();
+
+        let gridRows = new GridRows(api, 'filter Michael Phelps after row 2 edit', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 athlete:"Michael Phelps"
+            ├── LEAF id:2 athlete:"Michael Phelps"
+            └── LEAF id:3 athlete:"Michael Phelps"
+        `);
+
+        await clearFilter();
+
+        cellChanged = waitForEvent('cellValueChanged', api);
+        api.getRowNode('4')?.setDataValue('athlete', '=A1');
+        await cellChanged;
+
+        await toMichaelFilter();
+
+        gridRows = new GridRows(api, 'filter Michael Phelps after row 4 edit', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 athlete:"Michael Phelps"
+            ├── LEAF id:2 athlete:"Michael Phelps"
+            ├── LEAF id:3 athlete:"Michael Phelps"
+            └── LEAF id:4 athlete:"Michael Phelps"
+        `);
+    });
+
     test('TC4 Range reference across filtered rows', async () => {
         const rangeRowData = [
             { id: '1', A: 1, B: '=SUM(A1:A6)' },
@@ -205,6 +400,7 @@ describe('ag-grid master detail', () => {
             └── LEAF id:6 row-number:"6" A:6 B:21
         `);
 
+        const modelUpdated = waitForEvent('modelUpdated', api);
         api.setFilterModel({
             A: {
                 filterType: 'number',
@@ -215,6 +411,7 @@ describe('ag-grid master detail', () => {
                 ],
             },
         });
+        await modelUpdated;
 
         gridRows = new GridRows(api, 'filtered 2 < A < 6', gridRowsOptions);
         await gridRows.check(`
@@ -255,5 +452,159 @@ describe('ag-grid master detail', () => {
             ├── LEAF id:5 row-number:"5" A:5 B:31
             └── LEAF id:6 row-number:"6" A:6 B:26
         `);
+    });
+
+    test('TC4-2 Custom filter honours formula edits', async () => {
+        const personData = [
+            {
+                id: '1',
+                athlete: 'Michael Phelps',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2008,
+                gold: 8,
+                silver: 0,
+                bronze: 0,
+                total: 8,
+            },
+            {
+                id: '2',
+                athlete: 'Ref Judge',
+                country: 'United States',
+                sport: 'Swimming',
+                year: 2008,
+                gold: 0,
+                silver: 1,
+                bronze: 0,
+                total: 1,
+            },
+            {
+                id: '3',
+                athlete: 'Laura Trott',
+                country: 'Great Britain',
+                sport: 'Cycling',
+                year: 2012,
+                gold: 2,
+                silver: 0,
+                bronze: 0,
+                total: 2,
+            },
+        ];
+
+        class PersonFilter {
+            private model: string | null = null;
+            private params!: any;
+            private readonly eGui = document.createElement('div');
+
+            public init(params: any) {
+                this.params = params;
+                this.model = params.model ?? null;
+            }
+
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+
+            public isFilterActive(): boolean {
+                return !!this.model && this.model.trim() !== '';
+            }
+
+            public getModel(): string | null {
+                return this.model;
+            }
+
+            public setModel(model: any): void {
+                const nextModel = typeof model === 'string' ? model : model ?? null;
+                if (nextModel === this.model) {
+                    return;
+                }
+
+                this.model = nextModel;
+                this.params.filterChangedCallback();
+            }
+
+            public doesFilterPass(params: any): boolean {
+                if (!this.isFilterActive()) {
+                    return true;
+                }
+
+                const filterWords = (this.model ?? '')
+                    .toLowerCase()
+                    .split(' ')
+                    .filter((word) => word !== '');
+
+                const resolvedValue = this.params.getValue(params.node);
+                const value = String(resolvedValue ?? '').toLowerCase();
+
+                return filterWords.every((word) => value.includes(word));
+            }
+
+            public afterGuiAttached(): void {}
+            public destroy(): void {}
+            public refresh(): boolean {
+                return true;
+            }
+        }
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowNumbers: true,
+            components: {
+                personFilter: PersonFilter,
+            },
+            defaultColDef: {
+                editable: true,
+                flex: 1,
+                minWidth: 100,
+            },
+            columnDefs: [
+                {
+                    field: 'athlete',
+                    minWidth: 150,
+                    filter: 'personFilter',
+                },
+                { field: 'country', minWidth: 120 },
+                { field: 'sport', minWidth: 120 },
+                { field: 'year', minWidth: 110 },
+                { field: 'gold' },
+                { field: 'silver' },
+                { field: 'bronze' },
+                { field: 'total' },
+            ],
+            rowData: personData,
+            getRowId: (params) => params.data?.id,
+        };
+
+        const api = gridsManager.createGrid('tc4-2', gridOptions);
+
+        const cellChanged = waitForEvent('cellValueChanged', api);
+        api.getRowNode('2')?.setDataValue('athlete', '=A1');
+        await cellChanged;
+
+        const applyFilter = async (value: string | null) => {
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel(value ? { athlete: value } : null);
+            await filterChanged;
+        };
+
+        await applyFilter('Michael');
+        let gridRows = new GridRows(api, 'custom filter', {
+            printHiddenRows: true,
+            checkDom: true,
+            columns: ['athlete'],
+        });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 athlete:"Michael Phelps"
+            └── LEAF id:2 athlete:"Michael Phelps"
+        `);
+
+        await applyFilter('REF');
+        gridRows = new GridRows(api, 'custom filter', {
+            printHiddenRows: true,
+            checkDom: true,
+            columns: ['athlete'],
+        });
+        await gridRows.check('empty');
     });
 });
