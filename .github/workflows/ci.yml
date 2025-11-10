@@ -403,6 +403,10 @@ jobs:
 
       - name: Collate Dist folders
         run: |
+          # Debugging
+          ls -la
+          du -sh *
+
           # Use `other` as the base
           mv website-dist-other dist
 
