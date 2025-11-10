@@ -1,5 +1,5 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextEditorModule, TooltipModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
@@ -14,6 +14,7 @@ describe('ag-grid master detail', () => {
             FormulaModule,
             SetFilterModule,
             TextEditorModule,
+            TextFilterModule,
             TooltipModule,
         ],
     });
@@ -86,6 +87,56 @@ describe('ag-grid master detail', () => {
         `);
     });
 
+    test('TC1-2 Set filter retains formula in editor after filtering', async () => {
+        const athleteData = [
+            { id: '1', athlete: 'Michael Phelps', age: '23', country: 'United States', year: 2008, total: 8 },
+            { id: '2', athlete: 'Ian Thorpe', age: '24', country: 'Australia', year: 2004, total: 5 },
+            { id: '3', athlete: 'Ryan Lochte', age: '27', country: 'United States', year: 2012, total: 5 },
+            { id: '4', athlete: 'Chad Le Clos', age: '20', country: 'South Africa', year: 2016, total: 4 },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowNumbers: true,
+            rowData: athleteData,
+            columnDefs: [
+                { field: 'athlete', filter: 'agSetColumnFilter', editable: true },
+                { field: 'age', cellDataType: 'text', editable: true },
+                { field: 'country' },
+                { field: 'year' },
+                { field: 'total' },
+            ],
+            getRowId: (params) => params.data?.id,
+            defaultColDef: {
+                editable: true,
+                filter: true,
+            },
+        };
+
+        const api = gridsManager.createGrid('tc1-2', gridOptions);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const cellChanged = waitForEvent('cellValueChanged', api);
+        api.getRowNode('1')?.setDataValue('athlete', '=B2');
+        await cellChanged;
+
+        const filterChanged = waitForEvent('filterChanged', api);
+        api.setFilterModel({ athlete: { filterType: 'set', values: ['24'] } });
+        await filterChanged;
+
+        const editingStarted = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'athlete' });
+        await editingStarted;
+
+        const [editor] = api.getCellEditorInstances();
+        expect(editor?.getValue()).toEqual('=B2');
+
+        const editingStopped = waitForEvent('cellEditingStopped', api);
+        api.stopEditing(true);
+        await editingStopped;
+    });
+
     test('TC2 Reference to filtered row', async () => {
         const formulaRowData = [
             { id: '1', A: 5, B: '=A1*3' },
@@ -137,6 +188,91 @@ describe('ag-grid master detail', () => {
         `);
     });
 
+    test('TC2-1 Text filter honours evaluated formulas when refiltering', async () => {
+        const athleteData = [
+            { id: '1', athlete: 'Michael Phelps' },
+            { id: '2', athlete: 'Michael Phelps' },
+            { id: '3', athlete: 'Michael Phelps' },
+            { id: '4', athlete: 'Chad Le Clos' },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowNumbers: true,
+            rowData: athleteData,
+            columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter', cellDataType: 'text', editable: true }],
+            getRowId: (params) => params.data?.id,
+            undoRedoCellEditing: true,
+            cellSelection: {
+                handle: { mode: 'fill' },
+            },
+            defaultColDef: {
+                flex: 1,
+                minWidth: 150,
+                filter: 'agTextColumnFilter',
+                suppressHeaderMenuButton: true,
+                suppressHeaderContextMenu: true,
+                editable: true,
+                cellDataType: 'text',
+            },
+        };
+
+        const api = gridsManager.createGrid('tc2-2', gridOptions);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const applyMichaelFilter = async () => {
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel({
+                athlete: {
+                    filterType: 'text',
+                    type: 'equals',
+                    filter: 'Michael Phelps',
+                },
+            });
+            await filterChanged;
+        };
+
+        const clearFilter = async () => {
+            const filterChanged = waitForEvent('filterChanged', api);
+            api.setFilterModel(null);
+            await filterChanged;
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            printHiddenRows: true,
+            checkDom: true,
+            columns: ['athlete'],
+        };
+
+        await applyMichaelFilter();
+
+        let gridRows = new GridRows(api, 'filter Michael Phelps initial', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 athlete:"Michael Phelps"
+            ├── LEAF id:2 athlete:"Michael Phelps"
+            └── LEAF id:3 athlete:"Michael Phelps"
+        `);
+
+        await clearFilter();
+
+        const cellChanged = waitForEvent('cellValueChanged', api);
+        api.getRowNode('4')?.setDataValue('athlete', '=A1');
+        await cellChanged;
+
+        await applyMichaelFilter();
+
+        gridRows = new GridRows(api, 'filter Michael Phelps after row 4 edit', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 athlete:"Michael Phelps"
+            ├── LEAF id:2 athlete:"Michael Phelps"
+            ├── LEAF id:3 athlete:"Michael Phelps"
+            └── LEAF id:4 athlete:"Michael Phelps"
+        `);
+    });
+
     test('TC3 Circular reference with filtering', async () => {
         const circularRowData = [
             { id: '1', A: '=B2', B: 10 },
@@ -177,7 +313,7 @@ describe('ag-grid master detail', () => {
         `);
     });
 
-    test('TC3-2 Set filter lists evaluated formula values', async () => {
+    test('TC3-1 Set filter lists evaluated formula values', async () => {
         const personData = [
             {
                 id: '1',
@@ -250,7 +386,7 @@ describe('ag-grid master detail', () => {
         ]);
     });
 
-    test('TC3-3 Set filter applies evaluated formulas when refiltering', async () => {
+    test('TC3-2 Set filter applies evaluated formulas when refiltering', async () => {
         const athleteData = [
             {
                 id: '1',
@@ -454,7 +590,7 @@ describe('ag-grid master detail', () => {
         `);
     });
 
-    test('TC4-2 Custom filter honours formula edits', async () => {
+    test('TC4-1 Custom filter honours formula edits', async () => {
         const personData = [
             {
                 id: '1',
