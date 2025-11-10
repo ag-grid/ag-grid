@@ -331,16 +331,12 @@ describe('formulas sorting', () => {
             defaultState: { sort: null },
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
-        api.refreshClientSideRowModel('sort');
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
-        api.refreshClientSideRowModel('sort');
-        await asyncSetTimeout(rowNumberRefreshBufferMs);
         gridRows = new GridRows(api, 'filtered keep sorted B desc', defaultGridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:5 row-number:"1" A:20 B:50 category:"Keep"
-            ├── LEAF id:3 row-number:"3" A:30 B:70 category:"Keep"
-            └── LEAF id:1 row-number:"5" A:10 B:30 category:"Keep"
+            ├── LEAF id:3 row-number:"1" A:30 B:70 category:"Keep"
+            ├── LEAF id:5 row-number:"3" A:20 B:50 category:"Keep"
+            └── LEAF id:1 row-number:"4" A:10 B:30 category:"Keep"
         `);
     });
 });
