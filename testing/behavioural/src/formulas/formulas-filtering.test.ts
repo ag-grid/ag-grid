@@ -3,7 +3,7 @@ import { ClientSideRowModelModule, TextEditorModule, TooltipModule } from 'ag-gr
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
