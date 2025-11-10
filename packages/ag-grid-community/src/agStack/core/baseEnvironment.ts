@@ -1,4 +1,3 @@
-import { _error } from '../../validation/logging';
 import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
@@ -65,6 +64,8 @@ export abstract class BaseEnvironment<
 
     protected abstract themeError(theme: Theme | 'legacy'): void;
 
+    protected abstract shadowRootError(): void;
+
     protected abstract varError(variable: CssVariable<TChangeKeys>): void;
 
     public postConstruct(): void {
@@ -74,7 +75,7 @@ export abstract class BaseEnvironment<
         const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
         if (!themeStyleContainer && !isShadowRoot) {
-            warnOnAttachToShadowRoot(eRootDiv);
+            warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this));
         }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
@@ -310,13 +311,17 @@ export interface BaseCssChangeKeys {
 
 const NO_VALUE_SENTINEL = 15538;
 
-const warnOnAttachToShadowRoot = (el: HTMLElement) => {
+const warnOnAttachToShadowRoot = (el: HTMLElement, errorCallback: () => void) => {
+    // only retry for a minute, to prevent our tests (and potentially customer's
+    // tests) from hanging if they try to use vi.runAllTimers() to run the interval
+    // until it terminates
+    let retries = 60;
     const interval = setInterval(() => {
         if (el.getRootNode() instanceof ShadowRoot) {
-            _error(293);
+            errorCallback();
             clearInterval(interval);
         }
-        if (_isInDOM(el)) {
+        if (_isInDOM(el) || --retries < 0) {
             clearInterval(interval);
         }
     }, 1000);

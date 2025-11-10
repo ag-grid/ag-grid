@@ -199,6 +199,10 @@ export class Environment
     protected override themeError(theme: Theme | 'legacy'): void {
         _error(240, { theme });
     }
+
+    protected override shadowRootError(): void {
+        _error(293);
+    }
 }
 
 interface CssChangeKeys extends BaseCssChangeKeys {
