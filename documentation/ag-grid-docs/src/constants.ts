@@ -1,12 +1,28 @@
 import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import gridEnterprisePackageJson from '../../../packages/ag-grid-enterprise/package.json';
-import type { Framework, InternalFramework } from './types/ag-grid';
+import type { Framework, InternalFramework, RestrictedBuildPages } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
 
 // Speed up the builds by only building some of the frameworks/pages
 const quickBuildPages = import.meta.env?.QUICK_BUILD_PAGES;
 export const QUICK_BUILD_PAGES: string[] = quickBuildPages ? quickBuildPages.split(',') : undefined;
+
+const restrictedBuildPages = import.meta.env?.RESTRICTED_BUILD_PAGES;
+export const RESTRICTED_BUILD_PAGES: RestrictedBuildPages[] = restrictedBuildPages
+    ? restrictedBuildPages.split(',').map((page: string) => page.trim() as RestrictedBuildPages)
+    : undefined;
+
+export const RESTRICTED_PAGE_TYPES: RestrictedBuildPages[] = [
+    'examples',
+    'debug',
+    'react-data-grid',
+    'angular-data-grid',
+    'vue-data-grid',
+    'javascript-data-grid',
+    'other',
+];
+export const RESTRICTED_PAGE_PLACEHOLDER_PAGE = 'PLACEHOLDER PAGE';
 
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];

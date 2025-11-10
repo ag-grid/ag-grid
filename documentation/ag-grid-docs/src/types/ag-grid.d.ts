@@ -49,3 +49,12 @@ export interface VersionData {
     hideBlogPostLink?: boolean;
     noDocs?: boolean;
 }
+
+export type RestrictedBuildPages =
+    | 'examples'
+    | 'debug'
+    | 'react-data-grid'
+    | 'angular-data-grid'
+    | 'vue-data-grid'
+    | 'javascript-data-grid'
+    | 'other';

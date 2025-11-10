@@ -70,6 +70,7 @@ jobs:
       e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
       bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
       bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
+      website_matrix: ${{ steps.matrix.outputs.website_matrix }}
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
@@ -160,7 +161,12 @@ jobs:
           echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
 
-      - name: Perist build outputs
+          # Website matrix based on all possible page type builds
+          website_matrix=$(npx tsx -e "import { RESTRICTED_PAGE_TYPES } from './documentation/ag-grid-docs/src/constants.ts'; console.log(JSON.stringify({ pageType: RESTRICTED_PAGE_TYPES }))")
+          echo "website_matrix=${website_matrix}" >> $GITHUB_OUTPUT
+          echo "Website build matrix determined to be: ${website_matrix}"
+
+      - name: Persist build outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -318,6 +324,7 @@ jobs:
     needs: build_lint
     if: ${{ needs.build_lint.result == 'success' && !inputs.skip_docs }}
     strategy:
+      matrix: ${{ fromJson(needs.build_lint.outputs.website_matrix )}}
       fail-fast: false
     env:
       NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
@@ -343,31 +350,33 @@ jobs:
 
       - name: validate grid modules
         run: node scripts/deployments/validateGridModulesList.js
+
       - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+        run: CHECK_LINKS=true CHECK_REDIRECTS=true RESTRICTED_BUILD_PAGES=${{ matrix.pageType }} yarn nx run ag-grid-docs:build -c staging
 
-      - name: Deploy to Staging
-        id: deploy_to_staging
-        if: ${{ github.ref == 'refs/heads/latest' }}
-        env:
-          SSH_PRIVATE_KEY: |
-            ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_HOST }}
-          SSH_USER: ubuntu
-          SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-          WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-          chmod 400 $SSH_KEY_LOCATION
-          ./scripts/deployments/createAndDeployDocsToTCGH.sh
-
-      - name: Persist test results
+      - name: Persist website build
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-docs
+          name: website-dist-${{ matrix.pageType }}
           path: |
-            reports/
+            documentation/ag-grid-docs/dist
+
+  # TODO: Collate builds and deploy if latest
+  # - name: Deploy to Staging
+  #   id: deploy_to_staging
+  #   if: ${{ github.ref == 'refs/heads/latest' }}
+  #   env:
+  #     SSH_PRIVATE_KEY: |
+  #       ${{ secrets.STAGING_SSH_KEY }}
+  #     SSH_HOST: ${{ secrets.STAGING_HOST }}
+  #     SSH_USER: ubuntu
+  #     SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+  #     WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+  #   run: |
+  #     echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+  #     chmod 400 $SSH_KEY_LOCATION
+  #     ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   fw_pkg_test:
     runs-on: ubuntu-24.04

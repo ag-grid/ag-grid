@@ -87,6 +87,14 @@ const {
      */
     CHECK_LINKS = 'false',
 
+    /**
+     * Select pages to build.
+     *
+     * Filtered using middleware, so pages not selected are generated as a simple dummy page.
+     * If not set, all pages are built.
+     */
+    RESTRICTED_BUILD_PAGES,
+
     /*
      * Select pages to build
      *
@@ -125,6 +133,7 @@ console.log(
             HTACCESS,
             CHECK_LINKS,
             CHECK_REDIRECTS,
+            RESTRICTED_BUILD_PAGES,
             QUICK_BUILD_PAGES,
             DISABLE_EXAMPLE_RUNNER,
             CHARTS_SITEMAP_INDEX_URL,
