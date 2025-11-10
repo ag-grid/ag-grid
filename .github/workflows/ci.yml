@@ -318,9 +318,9 @@ jobs:
           path: |
             reports/
 
-  docs:
+  build_docs:
     runs-on: ubuntu-latest
-    name: Docs Build & Link Checker
+    name: Docs Build
     needs: build_lint
     if: ${{ needs.build_lint.result == 'success' && !inputs.skip_docs }}
     strategy:
@@ -352,7 +352,12 @@ jobs:
         run: node scripts/deployments/validateGridModulesList.js
 
       - name: docs build and link checker
-        run: CHECK_LINKS=true CHECK_REDIRECTS=true RESTRICTED_BUILD_PAGES=${{ matrix.pageType }} yarn nx run ag-grid-docs:build -c staging
+        run: CHECK_REDIRECTS=true RESTRICTED_BUILD_PAGES=${{ matrix.pageType }} yarn nx run ag-grid-docs:build -c staging
+
+
+      - name: Move dist folder
+        run: |
+          mv documentation/ag-grid-docs/dist documentation/ag-grid-docs/dist-${{ matrix.pageType }}
 
       - name: Persist website build
         if: always()
@@ -360,23 +365,71 @@ jobs:
         with:
           name: website-dist-${{ matrix.pageType }}
           path: |
-            documentation/ag-grid-docs/dist
+            documentation/ag-grid-docs/dist-${{ matrix.pageType }}
 
-  # TODO: Collate builds and deploy if latest
-  # - name: Deploy to Staging
-  #   id: deploy_to_staging
-  #   if: ${{ github.ref == 'refs/heads/latest' }}
-  #   env:
-  #     SSH_PRIVATE_KEY: |
-  #       ${{ secrets.STAGING_SSH_KEY }}
-  #     SSH_HOST: ${{ secrets.STAGING_HOST }}
-  #     SSH_USER: ubuntu
-  #     SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
-  #     WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
-  #   run: |
-  #     echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
-  #     chmod 400 $SSH_KEY_LOCATION
-  #     ./scripts/deployments/createAndDeployDocsToTCGH.sh
+  collate_docs:
+    runs-on: ubuntu-latest
+    name: Collate Docs Build & Link Checker
+    needs: build_docs
+    if: ${{ needs.build_docs.result == 'success' && !inputs.skip_docs }}
+    steps:
+      - name: Restore Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: website-dist-*
+
+      - name: Collate Dist folders
+        run: |
+          # Use `other` as the base
+          mv website-dist-other dist
+
+          # Store dummy files (faster than deleting)
+          mkdir tmp
+
+          # Move relevant dist folders into main `dist` folder
+          mv dist/examples tmp
+          mv website-dist-examples/examples dist/examples
+
+          mv dist/debug tmp
+          mv website-dist-debug/debug dist/debug
+
+          mv dist/react-data-grid tmp
+          mv website-dist-react-data-grid/react-data-grid dist/react-data-grid
+
+          mv dist/angular-data-grid tmp
+          mv website-dist-angular-data-grid/angular-data-grid dist/angular-data-grid
+
+          mv dist/vue-data-grid tmp
+          mv website-dist-vue-data-grid/vue-data-grid dist/vue-data-grid
+
+          mv dist/javascript-data-grid tmp
+          mv website-dist-javascript-data-grid/javascript-data-grid dist/javascript-data-grid
+
+      - name: Persist website build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-dist-all
+          path: |
+            dist
+
+      # TODO: Check links
+
+      # TODO: Collate builds and deploy if latest
+      # - name: Deploy to Staging
+      #   id: deploy_to_staging
+      #   if: ${{ github.ref == 'refs/heads/latest' }}
+      #   env:
+      #     SSH_PRIVATE_KEY: |
+      #       ${{ secrets.STAGING_SSH_KEY }}
+      #     SSH_HOST: ${{ secrets.STAGING_HOST }}
+      #     SSH_USER: ubuntu
+      #     SSH_KEY_LOCATION: ${{ github.workspace }}/staging.pem
+      #     WWW_ROOT_DIR: ${{ vars.WWW_ROOT_DIR }}
+      #   run: |
+      #     echo "$SSH_PRIVATE_KEY" > $SSH_KEY_LOCATION
+      #     chmod 400 $SSH_KEY_LOCATION
+      #     ./scripts/deployments/createAndDeployDocsToTCGH.sh
 
   fw_pkg_test:
     runs-on: ubuntu-24.04
@@ -415,7 +468,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ build_lint, test, e2e, build_docs, collate_docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -475,7 +528,9 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.docs.result }}" == "failure" ] ; then
+          elif [ "${{ needs.build_docs.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.collate_docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -549,7 +604,7 @@ jobs:
               "runId": "${{ github.run_id }}",
               "project": "AgGrid",
               "reportUrl": "${{ steps.testReport.outputs.url_html }}",
-              "deployToStaging": ${{ needs.docs.outputs.docs_deployed == 'success' }},
+              "deployToStaging": ${{ needs.collate_docs.outputs.docs_deployed == 'success' }},
               "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
               "jobStatuses":
                 {
@@ -559,7 +614,8 @@ jobs:
                     "Test": "${{ needs.test.result }}",
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}",            
                     "e2e": "${{ needs.e2e.result }}",
-                    "Docs": "${{ needs.docs.result }}",
+                    "Build Docs": "${{ needs.build_docs.result }}",
+                    "Collate Docs": "${{ needs.collate_docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
                     "SonarCommunity": "${{ needs.sonar_community.result }}",
                     "SonarEnterprise": "${{ needs.sonar_enterprise.result }}"
