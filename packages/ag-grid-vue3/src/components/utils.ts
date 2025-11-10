@@ -421,10 +421,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressColumnMoveAnimation?: boolean,
-    /** If `true`, the `ag-animate-autosize` class is not added to the grid while autosizing columns. In the default themes, this results in no animation when autosizing column widths.
-         * @default false
-         */
-    suppressColumnResizeAnimation?: boolean,
     /** Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
          * @default false
          */
@@ -471,6 +467,10 @@ export interface Props<TData> {
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy,
+    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+         * @default false
+         */
+    animateColumnResizing?: boolean,
     /** A map of component names to components.
          * @initial
          */
@@ -1967,7 +1967,6 @@ export function getProps() {
         allowDragFromColumnsToolPanel: undefined,
         suppressMovableColumns: undefined,
         suppressColumnMoveAnimation: undefined,
-        suppressColumnResizeAnimation: undefined,
         suppressMoveWhenColumnDragging: undefined,
         suppressDragLeaveHidesColumns: undefined,
         suppressGroupChangesColumnVisibility: undefined,
@@ -1978,6 +1977,7 @@ export function getProps() {
         autoSizePadding: undefined,
         skipHeaderOnAutoSize: undefined,
         autoSizeStrategy: undefined,
+        animateColumnResizing: undefined,
         components: undefined,
         editType: undefined,
         suppressStartEditOnTab: undefined,
