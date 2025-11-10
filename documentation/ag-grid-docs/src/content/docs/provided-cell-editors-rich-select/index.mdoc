@@ -151,10 +151,13 @@ const colors = [
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
-        keyCreator: params => params.value.name,
+        valueFormatter: (p) => `${p.value.name} (${p.value.code})`,
+        valueParser: (p) => p.newValue,
         cellEditorParams: {
             values: colors,
-            formatValue: value => value.toUpperCase()
+            formatValue: (v) => v.name,
+            allowTyping: true,
+            filterList: true,
         }
         // ...other props
     }
