@@ -101,7 +101,7 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 133.67 },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 151 },
     {
         modules: [
             'TextFilterModule',

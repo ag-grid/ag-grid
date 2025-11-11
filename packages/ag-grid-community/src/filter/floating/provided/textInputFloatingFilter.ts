@@ -2,6 +2,7 @@ import { KeyCode } from '../../../agStack/constants/keyCode';
 import { RefPlaceholder } from '../../../agStack/interfaces/agComponent';
 import { _clearElement } from '../../../agStack/utils/dom';
 import { _debounce } from '../../../agStack/utils/function';
+import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
 import { _isUseApplyButton, getDebounceMs } from '../../provided/providedFilterUtils';
@@ -58,30 +59,23 @@ export abstract class TextInputFloatingFilter<
     }
 
     private setTextInputParams(params: TParams): void {
-        const autoComplete = params.browserAutoComplete ?? false;
         const { inputSvc, defaultDebounceMs, readOnly } = this;
 
         this.params.parentFilterInstance((instance) => {
-            const fallbackPlaceholder = instance.getPlaceholderText('filterOoo', 0);
+            const parentPlaceholder = instance.getPlaceholderText('filterOoo', 0);
+            const { filterPlaceholder, column, browserAutoComplete, filterParams } = params;
 
             inputSvc.setParams({
-                ariaLabel: this.getAriaLabel(params),
-                autoComplete,
-                placeholder:
-                    params.filterPlaceholder === true ? fallbackPlaceholder : params.filterPlaceholder || undefined,
+                ariaLabel: this.getAriaLabel(column as AgColumn),
+                autoComplete: browserAutoComplete ?? false,
+                placeholder: filterPlaceholder === true ? parentPlaceholder : filterPlaceholder || undefined,
             });
 
-            this.applyActive = _isUseApplyButton(params.filterParams as TextFilterParams);
+            this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
 
             if (!readOnly) {
-                const debounceMs = getDebounceMs(params.filterParams as TextFilterParams, defaultDebounceMs);
-                const toDebounce: (e: KeyboardEvent) => void = _debounce(
-                    this,
-                    this.syncUpWithParentFilter.bind(this),
-                    debounceMs
-                );
-
-                inputSvc.setValueChangedListener(toDebounce);
+                const debounceMs = getDebounceMs(filterParams as TextFilterParams, defaultDebounceMs);
+                inputSvc.setValueChangedListener(_debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs));
             }
         });
     }
