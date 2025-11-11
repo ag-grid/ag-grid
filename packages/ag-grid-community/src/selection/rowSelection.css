@@ -1,0 +1,8 @@
+:where(.ag-selection-checkbox) .ag-checkbox-input-wrapper {
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        cursor: pointer;
+    }
+}

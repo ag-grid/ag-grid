@@ -2,6 +2,7 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
+    AutoGroupColumnDef,
     AutoSizeStrategy,
     CellPosition,
     CellSelectionOptions,
@@ -466,6 +467,10 @@ export interface Props<TData> {
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy,
+    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+         * @default false
+         */
+    animateColumnResizing?: boolean,
     /** A map of component names to components.
          * @initial
          */
@@ -1120,7 +1125,7 @@ export interface Props<TData> {
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
-    autoGroupColumnDef?: ColDef<TData>,
+    autoGroupColumnDef?: AutoGroupColumnDef<TData>,
     /** When `true`, preserves the current group order when sorting on non-group columns.
          * @default false
          * @agModule `RowGroupingModule`
@@ -1996,6 +2001,7 @@ export function getProps() {
         autoSizePadding: undefined,
         skipHeaderOnAutoSize: undefined,
         autoSizeStrategy: undefined,
+        animateColumnResizing: undefined,
         components: undefined,
         editType: undefined,
         suppressStartEditOnTab: undefined,

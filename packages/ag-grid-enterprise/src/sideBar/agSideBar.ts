@@ -308,6 +308,7 @@ class AgSideBar extends Component implements ISideBar {
         existingToolPanelWrapper?: ToolPanelWrapper
     ): void {
         if (!this.validateDef(def)) {
+            this.destroyBean(existingToolPanelWrapper);
             return;
         }
         let wrapper: ToolPanelWrapper;

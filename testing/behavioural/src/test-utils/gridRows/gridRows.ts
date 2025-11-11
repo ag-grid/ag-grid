@@ -32,6 +32,9 @@ export interface GridRowsOptions<TData = any> {
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
 
+    /** If true, columns whose value resolves to undefined will be omitted from the diagram output. Default is false. */
+    ignoreUndefinedCells?: boolean;
+
     errors?: GridRowsErrors<TData>;
 
     /** Forces treeData to be checked as true or false */
@@ -52,7 +55,7 @@ export class GridRows<TData = any> {
     #indexMap: Map<IRowNode<TData>, number> | null = null;
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
     #rowsHtmlElements: HTMLElement[] | null = null;
-    #rowsHtmlElementsMap: Map<string, HTMLElement> | null = null;
+    #rowsHtmlElementsMap: Map<string, HTMLElement[]> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
     public constructor(
@@ -161,26 +164,32 @@ export class GridRows<TData = any> {
         return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
     }
 
-    public getRowHtmlElement(id: string | { readonly id: string | null } | null | undefined): HTMLElement | null {
+    public getRowHtmlElements(id: string | { readonly id: string | null } | null | undefined): HTMLElement[] {
         if (typeof id === 'object') {
             id = id?.id ?? null;
             if (id === null) {
-                return null;
+                return [];
             }
         }
         id = String(id);
         let map = this.#rowsHtmlElementsMap;
         if (!map) {
-            map = new Map<string, HTMLElement>();
+            map = new Map<string, HTMLElement[]>();
             for (const rowElement of this.rowsHtmlElements) {
                 const rowId = rowElement.getAttribute('row-id');
                 if (rowId !== null) {
-                    map.set(rowId, rowElement);
+                    const existing = map.get(rowId);
+                    if (existing) {
+                        existing.push(rowElement);
+                    } else {
+                        const rowElementArray = [rowElement];
+                        map.set(rowId, rowElementArray);
+                    }
                 }
             }
             this.#rowsHtmlElementsMap = map;
         }
-        return map.get(id) ?? null;
+        return map.get(id) ?? [];
     }
 
     public loadErrors(): this {

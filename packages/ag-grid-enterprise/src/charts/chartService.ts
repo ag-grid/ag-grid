@@ -53,6 +53,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
     focusDialogOnOpen?: boolean;
+    useGroupColumnAsCategory?: boolean;
 }
 
 export class ChartService extends BeanStub implements NamedBean, IChartService {

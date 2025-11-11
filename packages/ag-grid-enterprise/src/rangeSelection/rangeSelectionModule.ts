@@ -6,7 +6,7 @@ import { VERSION } from '../version';
 import { AgFillHandle } from './agFillHandle';
 import { AgRangeHandle } from './agRangeHandle';
 import { rangeSelectionCSS } from './rangeSelection.css-GENERATED';
-import { addCellRange, clearRangeSelection, getCellRanges } from './rangeSelectionApi';
+import { addCellRange, clearRangeSelection, getCellRanges, selectColumns } from './rangeSelectionApi';
 import { RangeService } from './rangeService';
 
 /**
@@ -23,6 +23,7 @@ export const CellSelectionModule: _ModuleWithApi<_CellSelectionGridApi> = {
         addCellRange,
         clearRangeSelection,
         clearCellSelection: clearRangeSelection,
+        selectColumns,
     },
     dependsOn: [EnterpriseCoreModule, _KeyboardNavigationModule, _DragModule],
     css: [rangeSelectionCSS],

@@ -69,7 +69,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
 
         this.setupUserComp();
-        this.addHeaderMouseListeners(compBean);
+        this.addHeaderMouseListeners(compBean, eHeaderCompWrapper);
 
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
@@ -247,12 +247,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    private addHeaderMouseListeners(compBean: BeanStub): void {
+    private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
+        const {
+            column,
+            comp,
+            beans: { rangeSvc },
+            gos,
+        } = this;
+
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () =>
-            this.dispatchColumnMouseEvent('columnHeaderClicked', this.column.getProvidedColumnGroup());
+            this.dispatchColumnMouseEvent('columnHeaderClicked', column.getProvidedColumnGroup());
         const contextMenuListener = (event: MouseEvent) =>
-            this.handleContextMenuMouseEvent(event, undefined, this.column.getProvidedColumnGroup());
+            this.handleContextMenuMouseEvent(event, undefined, column.getProvidedColumnGroup());
 
         compBean.addManagedListeners(this.eGui, {
             mouseenter: listener,
@@ -260,6 +267,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             click: clickListener,
             contextmenu: contextMenuListener,
         });
+
+        comp.toggleCss('ag-header-group-cell-selectable', !_getSuppressColumnSelection(gos));
+        const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(this.column, eHeaderCompWrapper);
+        if (mouseListener) {
+            this.createManagedBean(mouseListener);
+        }
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {

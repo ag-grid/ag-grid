@@ -573,10 +573,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         multiSortKey: {
             validate: (options) => {
+                const cellSelectionEnabled = options.cellSelection != null;
                 const suppressColumnSelection =
                     (typeof options.cellSelection === 'object' && options.cellSelection.suppressColumnSelection) ??
                     false;
-                if (options.multiSortKey === 'ctrl' && !suppressColumnSelection) {
+
+                if (options.multiSortKey === 'ctrl' && cellSelectionEnabled && !suppressColumnSelection) {
                     return 'Cannot set `multiSortKey = "ctrl" without also setting `cellSelection.suppressColumnSelection = true`. Column selection disabled';
                 }
                 return null;

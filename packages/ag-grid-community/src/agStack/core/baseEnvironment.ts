@@ -12,7 +12,7 @@ import {
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
-import { _createAgElement, _observeResize } from '../utils/dom';
+import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 let paramsId = 0;
@@ -64,13 +64,19 @@ export abstract class BaseEnvironment<
 
     protected abstract themeError(theme: Theme | 'legacy'): void;
 
+    protected abstract shadowRootError(): void;
+
     protected abstract varError(variable: CssVariable<TChangeKeys>): void;
 
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
         gos.setInstanceDomData(eRootDiv);
-        this.eStyleContainer =
-            gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
+        const themeStyleContainer = gos.get('themeStyleContainer');
+        const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
+        this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
+        if (!themeStyleContainer && !isShadowRoot) {
+            warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this));
+        }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());
@@ -304,3 +310,19 @@ export interface BaseCssChangeKeys {
 }
 
 const NO_VALUE_SENTINEL = 15538;
+
+const warnOnAttachToShadowRoot = (el: HTMLElement, errorCallback: () => void) => {
+    // only retry for a minute, to prevent our tests (and potentially customer's
+    // tests) from hanging if they try to use vi.runAllTimers() to run the interval
+    // until it terminates
+    let retries = 60;
+    const interval = setInterval(() => {
+        if (el.getRootNode() instanceof ShadowRoot) {
+            errorCallback();
+            clearInterval(interval);
+        }
+        if (_isInDOM(el) || --retries < 0) {
+            clearInterval(interval);
+        }
+    }, 1000);
+};

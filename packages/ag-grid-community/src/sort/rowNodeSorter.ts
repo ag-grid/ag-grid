@@ -111,32 +111,36 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
-        const { valueSvc, colModel, showRowGroupCols, gos } = this.beans;
-        if (!this.primaryColumnsSortGroups) {
-            return valueSvc.getValue(column, node, false);
-        }
-
-        const isNodeGroupedAtLevel = node.rowGroupColumn === column;
-        if (isNodeGroupedAtLevel) {
-            const isGroupRows = _isGroupUseEntireRow(gos, colModel.isPivotActive());
-            // because they're group rows, no display cols exist, so groupData never populated.
-            // instead delegate to getting value from leaf child.
-            if (isGroupRows) {
-                const leafChild = node.data ? node : _firstLeaf(node.childrenAfterGroup);
-                return leafChild && valueSvc.getValue(column, leafChild, false);
-            }
-
-            const displayCol = showRowGroupCols?.getShowRowGroupCol(column.getId());
-            if (!displayCol) {
-                return undefined;
-            }
-            return node.groupData?.[displayCol.getId()];
+        if (this.primaryColumnsSortGroups && node.rowGroupColumn === column) {
+            return this.getGroupDataValue(node, column);
         }
 
         if (node.group && column.getColDef().showRowGroup) {
             return undefined;
         }
 
-        return valueSvc.getValue(column, node, false);
+        const { valueSvc, formula } = this.beans;
+        const value = valueSvc.getValue(column, node, false);
+        if (formula?.isFormula(value)) {
+            return formula.resolveValue(column, node);
+        }
+        return value;
+    }
+
+    private getGroupDataValue(node: RowNode, column: AgColumn): any {
+        const { gos, valueSvc, colModel, showRowGroupCols } = this.beans;
+        const isGroupRows = _isGroupUseEntireRow(gos, colModel.isPivotActive());
+        // because they're group rows, no display cols exist, so groupData never populated.
+        // instead delegate to getting value from leaf child.
+        if (isGroupRows) {
+            const leafChild = node.data ? node : _firstLeaf(node.childrenAfterGroup);
+            return leafChild && valueSvc.getValue(column, leafChild, false);
+        }
+
+        const displayCol = showRowGroupCols?.getShowRowGroupCol(column.getId());
+        if (!displayCol) {
+            return undefined;
+        }
+        return node.groupData?.[displayCol.getId()];
     }
 }

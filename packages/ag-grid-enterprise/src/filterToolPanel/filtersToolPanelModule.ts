@@ -40,6 +40,8 @@ export const NewFiltersToolPanelModule: _ModuleWithoutApi = {
         richSelectOpen: 'small-down',
         // remove for rich select editor pills
         richSelectRemove: 'cancel',
+        // loading async values
+        richSelectLoading: 'loading',
         // button to expand filter card in new filter tool panel
         filterCardExpand: 'chevron-down',
         // button to collapse filter card in new filter tool panel

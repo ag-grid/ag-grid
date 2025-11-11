@@ -54,7 +54,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     AllEnterpriseModule: 1551,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
-    CellSelectionModule: 57.75,
+    CellSelectionModule: 58,
     ClipboardModule: 47.54,
     ColumnMenuModule: 158.29,
     ColumnsToolPanelModule: 150.41,
@@ -71,8 +71,8 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MultiFilterModule: 150.24,
     NewFiltersToolPanelModule: 175.32,
     PivotModule: 99.56,
-    RangeSelectionModule: 57.81,
-    RichSelectModule: 124.09,
+    RangeSelectionModule: 58,
+    RichSelectModule: 127.92,
     RowNumbersModule: 32.03,
     RowGroupingModule: 88.46,
     RowGroupingPanelModule: 73.57,
@@ -136,7 +136,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 495 };
+export const baseModule = { modules: [], expectedSize: 505 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,
