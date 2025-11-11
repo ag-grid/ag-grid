@@ -160,7 +160,7 @@ jobs:
           echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
 
-      - name: Perist build outputs
+      - name: Persist build outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
