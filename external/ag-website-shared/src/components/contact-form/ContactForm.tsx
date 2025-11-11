@@ -29,6 +29,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
+    const [isDisabled, setIsDisabled] = useState(false);
 
     const {
         register,
@@ -60,6 +61,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
     }, []);
 
     const onValidSubmit = () => {
+        setIsDisabled(true);
         formRef.current?.submit();
     };
 
@@ -149,7 +151,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             </div>
 
             <input
-                className={classnames('button-primary', styles.submitButton)}
+                className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
                 type="submit"
                 value="Send us a message"
             />
