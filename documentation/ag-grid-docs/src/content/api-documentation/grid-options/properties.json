@@ -325,7 +325,7 @@
                 "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         },
-        "suppressColumnResizeAnimation": {
+        "animateColumnResizing": {
             "more": "Auto-Size Columns to Fit Cell Contents",
             "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
         }

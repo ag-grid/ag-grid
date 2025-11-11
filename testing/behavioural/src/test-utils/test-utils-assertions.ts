@@ -84,13 +84,40 @@ export function assertColumnsSelected(ranges: string[][], api: GridApi): void {
     const nRowsBottom = api.getPinnedBottomRowCount();
     const notFound: string[][] = [];
 
+    if (ranges.length === 0) {
+        // negative assertion; i.e. that no full columns are selected
+        for (const { startRow, endRow } of cellRanges) {
+            const startsAtFirstRow = startRow?.rowIndex === 0;
+            const endsAtLastRow =
+                nRowsBottom > 0
+                    ? endRow?.rowPinned === 'bottom' && endRow.rowIndex === nRowsBottom
+                    : endRow?.rowIndex === lastRowIdx;
+
+            if (startsAtFirstRow) {
+                // range starts at first row, then last row can't be at the bottom of the grid
+                if (nRowsBottom > 0 && endRow?.rowPinned === 'bottom') {
+                    expect(endRow?.rowIndex).not.toBe(nRowsBottom);
+                } else if (nRowsBottom > 0) {
+                    expect(endRow?.rowPinned).not.toBe('bottom');
+                } else {
+                    expect(endRow?.rowIndex).not.toBe(lastRowIdx);
+                }
+            } else if (endsAtLastRow) {
+                // range ends at last row, then first row can't be at the top of the grid
+                expect(startRow).not.toEqual({ rowIndex: 0, rowPinned: nRowsTop > 0 ? 'top' : null });
+            } else {
+                // we're fine
+            }
+        }
+    }
+
     for (const columnIds of ranges) {
-        const idx = cellRanges.findIndex((cellRange) => {
-            return _areEqual(
+        const idx = cellRanges.findIndex((cellRange) =>
+            _areEqual(
                 cellRange.columns.map((c) => c.getColId()),
                 columnIds
-            );
-        });
+            )
+        );
 
         if (idx > -1) {
             expect(cellRanges[idx].startRow?.rowIndex).toEqual(0);

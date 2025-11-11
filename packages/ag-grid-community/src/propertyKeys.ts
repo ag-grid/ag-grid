@@ -207,7 +207,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressAutoSize',
     'skipHeaderOnAutoSize',
     'suppressColumnMoveAnimation',
-    'suppressColumnResizeAnimation',
     'suppressMoveWhenColumnDragging',
     'suppressMovableColumns',
     'suppressFieldDotNotation',
@@ -328,6 +327,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressStartEditOnTab',
     'hidePaddedHeaderRows',
     'ssrmExpandAllAffectsAllRows',
+    'animateColumnResizing',
 ];
 
 /** @knipIgnore Used in example generation */

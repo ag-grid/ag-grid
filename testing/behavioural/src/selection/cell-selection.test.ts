@@ -116,9 +116,7 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -146,7 +144,7 @@ describe('Cell Selection', () => {
                 columnDefs,
                 rowData: rowData.concat(rowData),
                 cellSelection: {
-                    headerCellSelection: true,
+                    suppressColumnSelection: false,
                 },
                 pagination: true,
                 paginationPageSize: 5,
@@ -176,9 +174,7 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -203,7 +199,7 @@ describe('Cell Selection', () => {
                 columnDefs,
                 rowData,
                 cellSelection: {
-                    headerCellSelection: true,
+                    suppressColumnSelection: false,
                 },
             });
 
@@ -238,9 +234,7 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
                 enableRowPinning: true,
                 isRowPinned: (node) => {
                     if (node.data?.year < 2010) {
@@ -270,9 +264,7 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
                 enableRowPinning: true,
                 isRowPinned: (node) => {
                     if (node.data?.year < 2010) {
@@ -350,9 +342,7 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -395,9 +385,7 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -439,9 +427,7 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -466,9 +452,7 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: {
-                    headerCellSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -486,6 +470,123 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{/Shift}{/Control}');
 
             assertColumnsSelected([['sport', 'amount', 'day']], api);
+        });
+
+        test('suppressMultiRanges prevents multiple column selections', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    suppressMultiRanges: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const dayHeader = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['sport']], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['sport']], api);
+        });
+
+        test('suppressMultiRanges prevents column selections when cell selection exists (header)', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    suppressMultiRanges: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+
+            api.addCellRange({
+                columns: [api.getColumn('sport')!, api.getColumn('year')!],
+                rowStartIndex: 1,
+                rowEndIndex: 3,
+            });
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([], api);
+        });
+
+        test('suppressMultiRanges prevents column selections when cell selection exists (group header)', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'sport',
+                    },
+                    {
+                        headerName: 'Category A1',
+                        children: [
+                            {
+                                headerName: 'Category A2',
+                                children: [{ field: 'year' }, { field: 'amount' }],
+                            },
+                        ],
+                    },
+                    {
+                        headerName: 'Category B1',
+                        children: [{ field: 'day' }],
+                    },
+                ],
+                rowData,
+                cellSelection: { suppressMultiRanges: true },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('0_0'));
+
+            api.addCellRange({
+                columns: [api.getColumn('sport')!, api.getColumn('year')!],
+                rowStartIndex: 1,
+                rowEndIndex: 3,
+            });
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([], api);
+        });
+
+        test('Can use API method to select and de-select columns', async () => {
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: true,
+            });
+
+            api.selectColumns(['sport']);
+            assertColumnsSelected([['sport']], api);
+
+            api.selectColumns(['year', 'amount', 'day']);
+            assertColumnsSelected([['sport'], ['year', 'amount', 'day']], api);
+
+            api.selectColumns(['amount'], false);
+            assertColumnsSelected([['sport'], ['year', 'day']], api);
+
+            api.selectColumns(['sport'], false);
+            assertColumnsSelected([['year', 'day']], api);
         });
     });
 });

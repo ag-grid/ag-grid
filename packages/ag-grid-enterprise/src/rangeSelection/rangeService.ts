@@ -1263,10 +1263,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
      * CTRL-clicking for toggling column selection + CTRL-SHIFT-clicking supported for selecting ranges of columns
      */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void {
-        const ctx = this.columnRangeSelectionCtx;
+        const { gos, beans, columnRangeSelectionCtx: ctx, cellRanges } = this;
+        const suppressMultiRanges = _getSuppressMultiRanges(gos);
+        const hasRanges = cellRanges.length > 0;
 
-        const firstRow = _getFirstRow(this.beans);
-        const lastRow = _getLastRow(this.beans);
+        const firstRow = _getFirstRow(beans);
+        const lastRow = _getLastRow(beans);
         if (!firstRow || !lastRow) {
             // No rows yet
             return;
@@ -1281,18 +1283,21 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             const column = clickedColumn.isColumn ? clickedColumn : _last(clickedColumn.getLeafColumns());
 
-            const range = findRangeContainingCols(this.cellRanges, [root], firstRow, lastRow);
+            const range = findRangeContainingCols(cellRanges, [root], firstRow, lastRow);
             if (!range) {
                 // when no existing range exists, clear the last cell range
                 // and start from the root
-                _removeFromArray(this.cellRanges, ctx.lastCellRange);
+                _removeFromArray(cellRanges, ctx.lastCellRange);
                 this.selectColumns(this.calculateColumnsBetween(root, column)!, firstRow, lastRow);
                 return;
             }
 
             this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
         } else if (clickedColumn.isColumn) {
-            const foundRange = findRangeContainingCols(this.cellRanges, [clickedColumn], firstRow, lastRow);
+            if (hasRanges && suppressMultiRanges) {
+                return;
+            }
+            const foundRange = findRangeContainingCols(cellRanges, [clickedColumn], firstRow, lastRow);
 
             const lastCellRange = foundRange
                 ? this.deselectColumn(clickedColumn, firstRow, lastRow)
@@ -1303,12 +1308,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             }
             ctx.root = clickedColumn;
         } else {
+            if (hasRanges && suppressMultiRanges) {
+                return;
+            }
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();
-            const foundRange = findRangeContainingCols(this.cellRanges, leafCols, firstRow, lastRow);
+            const foundRange = findRangeContainingCols(cellRanges, leafCols, firstRow, lastRow);
 
             if (foundRange) {
-                _removeFromArray(this.cellRanges, foundRange);
+                _removeFromArray(cellRanges, foundRange);
                 ctx.root = leafCols[0];
                 this.dispatchChangedEvent(true, true);
             } else {
@@ -1321,7 +1329,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    private deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
+    public deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
         for (const range of this.cellRanges) {
             if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
                 _removeFromArray(range.columns, column);
@@ -1337,7 +1345,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dispatchChangedEvent(true, true);
     }
 
-    private selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
+    public selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
         return this.addCellRange({
             columns: columns,
             columnStart: columns[0],

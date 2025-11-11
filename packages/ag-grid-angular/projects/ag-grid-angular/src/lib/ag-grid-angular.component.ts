@@ -589,10 +589,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressColumnMoveAnimation: boolean | undefined = undefined;
-    /** If `true`, the `ag-animate-autosize` class is not added to the grid while autosizing columns. In the default themes, this results in no animation when autosizing column widths.
-     * @default false
-     */
-    @Input({ transform: booleanAttribute }) public suppressColumnResizeAnimation: boolean | undefined = undefined;
     /** Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
      * @default false
      */
@@ -644,6 +640,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ColumnAutoSizeModule`
      */
     @Input() public autoSizeStrategy: AutoSizeStrategy | undefined = undefined;
+    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public animateColumnResizing: boolean | undefined = undefined;
     /** A map of component names to components.
      * @initial
      */

@@ -21,8 +21,8 @@
     "ag-grid-angular": "34.3.1-beta.20251109.2048",
     "ag-grid-community": "34.3.1-beta.20251109.2048",
     "ag-grid-enterprise": "34.3.1-beta.20251109.2048",
-    "ag-charts-community": "12.3.1-beta.20251109",
-    "ag-charts-enterprise": "12.3.1-beta.20251109",
+    "ag-charts-community": "12.3.1-beta.20251110",
+    "ag-charts-enterprise": "12.3.1-beta.20251110",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

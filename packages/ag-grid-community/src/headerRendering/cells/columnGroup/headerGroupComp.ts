@@ -5,9 +5,7 @@ import { _exists } from '../../../agStack/utils/generic';
 import { _toString } from '../../../agStack/utils/string';
 import { _getInnerHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import { _getSuppressColumnSelection } from '../../../gridOptionsUtils';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { ElementParams } from '../../../utils/element';
@@ -94,7 +92,6 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private innerHeaderGroupComponent: IInnerHeaderGroupComponent | undefined;
     private isLoadingInnerComponent: boolean = false;
-    private mouseListener?: BeanStub;
 
     constructor() {
         super(HeaderGroupCompElement);
@@ -232,11 +229,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private setupLabel(params: IHeaderGroupParams): void {
         // no renderer, default text render
         const { displayName, columnGroup } = params;
-        const {
-            beans: { rangeSvc },
-            innerHeaderGroupComponent,
-            isLoadingInnerComponent,
-        } = this;
+        const { innerHeaderGroupComponent, isLoadingInnerComponent } = this;
 
         const hasInnerComponent = innerHeaderGroupComponent || isLoadingInnerComponent;
 
@@ -245,13 +238,6 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         }
 
         this.toggleCss('ag-sticky-label', !columnGroup.getColGroupDef()?.suppressStickyLabel);
-        this.toggleCss('ag-header-group-cell-selectable', !_getSuppressColumnSelection(this.gos));
-
-        const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(
-            params.columnGroup as AgColumnGroup,
-            this.getGui()
-        );
-        this.mouseListener ??= mouseListener && this.createManagedBean(mouseListener);
     }
 
     public override destroy(): void {
