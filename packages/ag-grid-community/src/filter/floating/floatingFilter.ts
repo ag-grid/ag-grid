@@ -36,7 +36,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     filterParams: IFilterParams;
 
     /**
-     * Placeholder text for the filter textbox.
+     * Placeholder text for the filter textbox. When set to `true`, inherits the placeholder text of the parent filter.
      */
     filterPlaceholder?: string | boolean;
 
