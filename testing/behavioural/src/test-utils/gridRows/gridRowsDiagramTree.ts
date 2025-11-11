@@ -309,15 +309,18 @@ export class GridRowsDiagramTree {
 
         if (columns) {
             const rootRowNode = gridRows.rootRowNode;
+            const omitUndefined = gridRows.options.ignoreUndefinedCells ?? false;
             for (const column of columns) {
                 const columnId = column.getColId();
                 if (row === rootRowNode && isRowNumberCol(columnId)) {
                     continue;
                 }
                 const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });
-                if (value !== undefined || row.data) {
-                    const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
+                const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
+                if (value !== undefined) {
                     result += ' ' + diagramColumnId + ':' + JSON.stringify(value);
+                } else if (!omitUndefined && row.data != null) {
+                    result += ' ' + diagramColumnId + ':undefined';
                 }
             }
         }

@@ -278,6 +278,201 @@ describe('formulas sorting', () => {
         `);
     });
 
+    test('Absolute and relative references remain stable through ascending and descending sorts', async () => {
+        const rowData = [
+            { id: '1', A: 100 },
+            { id: '2', A: 10, B: '=A1', C: '=A$1', D: '=$A1', E: '=$A$1' },
+            { id: '3', A: 50 },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowData,
+            columnDefs: [
+                { field: 'A', sortable: true },
+                { field: 'B' },
+                { field: 'C' },
+                { field: 'D' },
+                { field: 'E' },
+            ],
+            getRowId: (params) => params.data?.id,
+        };
+
+        const api = gridsManager.createGrid('sorting-tc6', gridOptions);
+
+        const gridRowsOptions: GridRowsOptions = {
+            ...defaultGridRowsOptions,
+            ignoreUndefinedCells: true,
+            columns: true,
+        };
+
+        let gridRows = new GridRows(api, 'initial order', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 row-number:"1" A:100
+            ├── LEAF id:2 row-number:"2" A:10 B:100 C:100 D:100 E:100
+            └── LEAF id:3 row-number:"3" A:50
+        `);
+
+        api.applyColumnState({
+            state: [{ colId: 'A', sort: 'asc' }],
+            defaultState: { sort: null },
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'sorted A asc', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 row-number:"1" A:10 B:100 C:100 D:100 E:100
+            ├── LEAF id:3 row-number:"2" A:50
+            └── LEAF id:1 row-number:"3" A:100
+        `);
+
+        api.applyColumnState({
+            state: [{ colId: 'A', sort: 'desc' }],
+            defaultState: { sort: null },
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'sorted A desc', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 row-number:"1" A:100
+            ├── LEAF id:3 row-number:"2" A:50
+            └── LEAF id:2 row-number:"3" A:10 B:100 C:100 D:100 E:100
+        `);
+    });
+
+    test('Model refresh preserves relative references after sorting and filtering', async () => {
+        const rowData = [
+            { id: 'base', A: 40 },
+            { id: 'relative', A: 5, B: '=A1', C: '=A$1', D: '=$A1', E: '=$A$1' },
+            { id: 'mid', A: 60 },
+            { id: 'high', A: 80 },
+            { id: 'top', A: 100 },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: true,
+            rowNumbers: true,
+            rowData,
+            columnDefs: [
+                { field: 'A', sortable: true, filter: 'agNumberColumnFilter' },
+                { field: 'B' },
+                { field: 'C' },
+                { field: 'D' },
+                { field: 'E' },
+            ],
+            getRowId: (params) => params.data?.id,
+        };
+
+        const api = gridsManager.createGrid('sorting-tc7', gridOptions);
+
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        const gridRowsOptions: GridRowsOptions = {
+            ...defaultGridRowsOptions,
+            ignoreUndefinedCells: true,
+            columns: true,
+        };
+
+        const assertRelativeValues = () => {
+            const rowNode = api.getRowNode('relative');
+            expect(rowNode).toBeDefined();
+            const getValue = (colId: string) => api.getCellValue<number>({ rowNode: rowNode!, colKey: colId });
+            expect(getValue('B')).toBe(40);
+            expect(getValue('C')).toBe(40);
+            expect(getValue('D')).toBe(40);
+            expect(getValue('E')).toBe(40);
+        };
+
+        let gridRows = new GridRows(api, 'initial order', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:base row-number:"1" A:40
+            ├── LEAF id:relative row-number:"2" A:5 B:40 C:40 D:40 E:40
+            ├── LEAF id:mid row-number:"3" A:60
+            ├── LEAF id:high row-number:"4" A:80
+            └── LEAF id:top row-number:"5" A:100
+        `);
+        assertRelativeValues();
+
+        api.applyColumnState({
+            state: [{ colId: 'A', sort: 'asc' }],
+            defaultState: { sort: null },
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'sorted A asc', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:relative row-number:"1" A:5 B:40 C:40 D:40 E:40
+            ├── LEAF id:base row-number:"2" A:40
+            ├── LEAF id:mid row-number:"3" A:60
+            ├── LEAF id:high row-number:"4" A:80
+            └── LEAF id:top row-number:"5" A:100
+        `);
+        assertRelativeValues();
+
+        api.setFilterModel({
+            A: {
+                filterType: 'number',
+                type: 'lessThan',
+                filter: 90,
+            },
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'sorted asc filtered A < 90', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:relative row-number:"1" A:5 B:40 C:40 D:40 E:40
+            ├── LEAF id:base row-number:"2" A:40
+            ├── LEAF id:mid row-number:"3" A:60
+            └── LEAF id:high row-number:"4" A:80
+        `);
+        assertRelativeValues();
+
+        api.refreshClientSideRowModel('everything');
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'after refreshModel everything', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:relative row-number:"1" A:5 B:40 C:40 D:40 E:40
+            ├── LEAF id:base row-number:"2" A:40
+            ├── LEAF id:mid row-number:"3" A:60
+            └── LEAF id:high row-number:"4" A:80
+        `);
+        assertRelativeValues();
+
+        api.refreshClientSideRowModel('sort');
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'after refreshModel sort', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:relative row-number:"1" A:5 B:40 C:40 D:40 E:40
+            ├── LEAF id:base row-number:"2" A:40
+            ├── LEAF id:mid row-number:"3" A:60
+            └── LEAF id:high row-number:"4" A:80
+        `);
+        assertRelativeValues();
+
+        api.refreshClientSideRowModel('filter');
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'after refreshModel filter', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:relative row-number:"1" A:5 B:40 C:40 D:40 E:40
+            ├── LEAF id:base row-number:"2" A:40
+            ├── LEAF id:mid row-number:"3" A:60
+            └── LEAF id:high row-number:"4" A:80
+        `);
+        assertRelativeValues();
+    });
+
     test('Formulas referencing filtered-out rows remain valid after resort', async () => {
         const rowData = [
             { id: '1', category: 'Keep', A: 10, B: '=A1+A5' },

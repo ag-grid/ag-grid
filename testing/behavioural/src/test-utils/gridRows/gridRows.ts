@@ -32,6 +32,9 @@ export interface GridRowsOptions<TData = any> {
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
 
+    /** If true, columns whose value resolves to undefined will be omitted from the diagram output. Default is false. */
+    ignoreUndefinedCells?: boolean;
+
     errors?: GridRowsErrors<TData>;
 
     /** Forces treeData to be checked as true or false */
