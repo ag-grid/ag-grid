@@ -35,6 +35,72 @@ describe('formulas sorting', () => {
         columns: true,
     };
 
+    test('Sorting and filtering still work when formulas are disabled', async () => {
+        const rowData = [
+            { id: '1', A: 1, B: 'alpha' },
+            { id: '2', A: 3, B: 'bravo' },
+            { id: '3', A: 2, B: 'charlie' },
+            { id: '4', A: 5, B: 'delta' },
+            { id: '5', A: 4, B: 'echo' },
+        ];
+
+        const gridOptions: GridOptions = {
+            enableFormulas: false,
+            rowNumbers: true,
+            rowData,
+            columnDefs: [
+                { field: 'A', sortable: true, filter: 'agNumberColumnFilter' },
+                { field: 'B', sortable: true },
+            ],
+            getRowId: (params) => params.data?.id,
+        };
+
+        const api = gridsManager.createGrid('sorting-no-formulas', gridOptions);
+
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        let gridRows = new GridRows(api, 'initial no formulas', defaultGridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 row-number:"1" A:1 B:"alpha"
+            ├── LEAF id:2 row-number:"2" A:3 B:"bravo"
+            ├── LEAF id:3 row-number:"3" A:2 B:"charlie"
+            ├── LEAF id:4 row-number:"4" A:5 B:"delta"
+            └── LEAF id:5 row-number:"5" A:4 B:"echo"
+        `);
+
+        api.setFilterModel({
+            A: {
+                filterType: 'number',
+                type: 'greaterThan',
+                filter: 2,
+            },
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'filter A > 2 no formulas', defaultGridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 row-number:"1" A:3 B:"bravo"
+            ├── LEAF id:4 row-number:"2" A:5 B:"delta"
+            └── LEAF id:5 row-number:"3" A:4 B:"echo"
+        `);
+
+        api.applyColumnState({
+            state: [{ colId: 'A', sort: 'desc' }],
+            defaultState: { sort: null },
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        gridRows = new GridRows(api, 'filter A > 2 sort desc no formulas', defaultGridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 row-number:"1" A:5 B:"delta"
+            ├── LEAF id:5 row-number:"2" A:4 B:"echo"
+            └── LEAF id:2 row-number:"3" A:3 B:"bravo"
+        `);
+    });
+
     test('TC1 Same row references remain correct when sorting without order change', async () => {
         const rowData = [
             { id: '1', A: 10, B: '=A1*2' },
