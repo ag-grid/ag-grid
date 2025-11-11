@@ -6,7 +6,7 @@ import type { SetFilter } from 'ag-grid-enterprise';
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
 
-describe('ag-grid master detail', () => {
+describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,

@@ -8,7 +8,7 @@ import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 /** Row numbers refresh on a debounced path (~10ms), so allow a small buffer before asserting the DOM. */
 const rowNumberRefreshBufferMs = 25;
 
-describe('formulas sorting', () => {
+describe('ag-grid formulas sorting', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,

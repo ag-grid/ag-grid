@@ -10,7 +10,7 @@ import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 
-describe('formulas general behaviour', () => {
+describe('ag-grid formulas general behaviour', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, CellSelectionModule, FormulaModule, TextEditorModule] as Module[],
     });
