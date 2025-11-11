@@ -376,7 +376,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public override showPicker() {
-        super.showPicker(); // todo this toggles the visibility
+        super.showPicker();
         const { listComponent, value } = this;
 
         if (!listComponent) {

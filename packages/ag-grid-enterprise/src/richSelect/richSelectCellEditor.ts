@@ -121,7 +121,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         let valueList;
 
         if (filterListAsync && !filterList) {
-            _warn(293);
+            _warn(294);
         }
 
         const fullAsync = filterListAsync && filterList && allowTyping;
