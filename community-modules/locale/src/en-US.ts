@@ -6,6 +6,7 @@ export const AG_GRID_LOCALE_EN = {
     searchOoo: 'Search...',
     blanks: '(Blanks)',
     noMatches: 'No matches',
+    typeToSearchOoo: 'Type to search...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',

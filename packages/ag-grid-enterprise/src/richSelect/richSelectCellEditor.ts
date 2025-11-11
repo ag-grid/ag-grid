@@ -69,7 +69,27 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         }
     }
 
-    private buildRichSelectParams(): { params: RichSelectParams<TValue>; valueList?: TValue[] | Promise<TValue[]> } {
+    private getPlaceholderText(): string {
+        const { valuePlaceholder } = this.params;
+
+        if (valuePlaceholder !== undefined) {
+            return valuePlaceholder;
+        }
+        const i18n = this.getLocaleTextFunc();
+        return this.isFullAsync()
+            ? i18n('typeToSearchOoo', 'Type to search...')
+            : i18n('advancedFilterBuilderSelectOption', 'Select an option...');
+    }
+
+    private isFullAsync(): boolean {
+        const { allowTyping, filterList, filterListAsync } = this.params;
+        return !!(filterListAsync && filterList && allowTyping);
+    }
+
+    private buildRichSelectParams(): {
+        params: RichSelectParams<TValue>;
+        valueList?: TValue[] | Promise<TValue[]>;
+    } {
         const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
         const {
             cellRenderer,
@@ -87,7 +107,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             filterListAsync,
             searchType,
             highlightMatch,
-            valuePlaceholder,
             eventKey,
             multiSelect,
             suppressDeselectAll,
@@ -95,7 +114,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         } = this.params;
 
         const ret: RichSelectParams = {
-            value: value,
+            value,
             cellRenderer,
             cellRendererParams,
             cellRowHeight: cellHeight,
@@ -111,7 +130,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             highlightMatch,
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth,
-            placeholder: valuePlaceholder ?? 'Select value...',
+            placeholder: this.getPlaceholderText(),
             initialInputValue: eventKey?.length === 1 ? eventKey : eventKey === KeyCode.BACKSPACE ? '' : undefined,
             multiSelect,
             suppressDeselectAll,
@@ -124,15 +143,17 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             _warn(294);
         }
 
-        const fullAsync = filterListAsync && filterList && allowTyping;
-
         if (typeof values === 'function') {
+            const fullAsync = this.isFullAsync();
             if (fullAsync) {
                 params.search = formatValue?.(value);
                 ret.onSearch = this.onSearchCallbackDebounced;
                 ret.allowNoResultsCopy = true;
             }
-            valueList = values({ ...params });
+            if (!fullAsync) {
+                // we never call values() with empty search string, even if initial
+                valueList = values({ ...params });
+            }
         } else {
             valueList = values ?? [];
         }

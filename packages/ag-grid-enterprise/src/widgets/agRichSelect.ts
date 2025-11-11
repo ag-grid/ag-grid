@@ -43,8 +43,14 @@ import {
 
 import { AgPillContainer } from './AgPillContainer';
 import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
-import type { AgRichSelectListEvent } from './agRichSelectList';
-import { AgRichSelectList } from './agRichSelectList';
+import type { AgRichSelectListEvent, AgRichSelectListState } from './agRichSelectList';
+import {
+    AgRichSelectList,
+    AgRichSelectListStateLoading,
+    AgRichSelectListStateNoResults,
+    AgRichSelectListStateReadyForInput,
+    AgRichSelectListStateReadyWithResults,
+} from './agRichSelectList';
 
 type AgRichSelectEvent = AgRichSelectListEvent;
 
@@ -318,10 +324,28 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
+    private getListStateBasedOnResults(valueList: TValue[] | undefined): AgRichSelectListState {
+        if (!valueList) {
+            return AgRichSelectListStateReadyForInput;
+        }
+        if (valueList.length) {
+            return AgRichSelectListStateReadyWithResults;
+        } else {
+            return AgRichSelectListStateNoResults;
+        }
+    }
+
     private setValueListInternal(params: { valueList: TValue[] | undefined; refresh?: boolean }): void {
         const { listComponent } = this;
         const { valueList, refresh } = params;
-        if (!listComponent || listComponent.getCurrentList() === valueList) {
+        if (!listComponent) {
+            return;
+        }
+
+        const newState = this.getListStateBasedOnResults(valueList);
+        listComponent.setLoadingState(newState);
+
+        if (listComponent.getCurrentList() === valueList) {
             return;
         }
         listComponent.setCurrentList(valueList);
@@ -358,11 +382,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        this.listComponent?.setLoadingState(0); // set to LOADING
+        this.listComponent?.setLoadingState(AgRichSelectListStateLoading);
         valueList.then((values) => {
-            // ensure we show most recent search results, even if user clears the search field
-            // unless the last search was empty in which case we show initial value
-            this.setValues(values ?? (Array.isArray(this.value) ? this.value : [this.value]));
             this.setValueListInternal({ valueList: values, refresh });
         });
     }
@@ -376,12 +397,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public override showPicker() {
-        super.showPicker();
         const { listComponent, value } = this;
 
         if (!listComponent) {
             return;
         }
+
+        super.showPicker();
 
         let idx = null;
         let valueToUse: TValue[] | TValue = value;

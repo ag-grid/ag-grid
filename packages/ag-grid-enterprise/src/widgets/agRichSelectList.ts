@@ -18,9 +18,13 @@ const LIST_COMPONENT_NAME = 'ag-rich-select-list';
 const ROW_COMPONENT_NAME = 'ag-rich-select-row';
 
 /**
- *  0: 'LOADING' | 1: 'READY_RESULTS' | 2: 'READY_NO_RESULTS' | 3: 'NO_MATCHES';
+ *  0: 'LOADING' | 1: 'READY_RESULTS' | 2: 'NO_MATCHES' | 3: 'READY_FOR_INPUT'
  */
-type State = 0 | 1 | 2 | 3;
+export type AgRichSelectListState = 0 | 1 | 2 | 3;
+export const AgRichSelectListStateLoading = 0;
+export const AgRichSelectListStateReadyWithResults = 1;
+export const AgRichSelectListStateNoResults = 2;
+export const AgRichSelectListStateReadyForInput = 3;
 
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
     Component<TEventType | AgRichSelectListEvent | HighlightTooltipEventType>,
@@ -46,30 +50,44 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.setComponentUpdater(() => {});
     }
 
-    /**
-     * @param state 0: 'LOADING' | 1: 'READY_RESULTS' | 2: 'READY_FOR_INPUT' | 3: 'NO_MATCHES'
-     */
-    public setLoadingState(state: State): void {
+    public setLoadingState(state: AgRichSelectListState): void {
+        const loadingLabel = this.loadingLabel;
         switch (state) {
-            case 0: // LOADING
-                this.toggleVisibility(true);
-                this.showStateComp();
+            case AgRichSelectListStateLoading:
+                this.toggleStateComp(loadingLabel);
                 break;
-            case 1: // READY_RESULTS
-                this.toggleVisibility(true);
-                this.hideStateComp();
+            case AgRichSelectListStateReadyWithResults:
+                this.toggleStateComp();
                 break;
-            case 2: // READY_FOR_INPUT
-                this.toggleVisibility(false);
-                this.hideStateComp();
-                break;
-            case 3: // NO_MATCHES
+            case AgRichSelectListStateNoResults:
                 if (this.params.allowNoResultsCopy) {
-                    this.toggleVisibility(true);
-                    this.showStateComp(this.noMatchesLabel);
+                    this.toggleStateComp(this.noMatchesLabel);
                 }
                 break;
+            case AgRichSelectListStateReadyForInput:
+                this.toggleStateComp();
+                break;
         }
+    }
+
+    public toggleStateComp(label?: string): void {
+        const eStateComp = this.eStateComp;
+        if (!eStateComp) {
+            return;
+        }
+        if (label && eStateComp.textContent !== label) {
+            eStateComp.textContent = label;
+        }
+
+        if (!label || this.isStateCompVisible()) {
+            eStateComp.remove();
+        } else {
+            this.appendChild(eStateComp);
+        }
+    }
+
+    public isStateCompVisible(): boolean {
+        return !!this.eStateComp?.offsetParent;
     }
 
     public toggleVisibility(forceVisible?: boolean) {
@@ -165,29 +183,6 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         });
     }
 
-    public showStateComp(label?: string): void {
-        const eStateComp = this.eStateComp;
-        if (eStateComp) {
-            if (!label) {
-                label = this.loadingLabel;
-            }
-
-            if (eStateComp.textContent !== label) {
-                eStateComp.textContent = label;
-            }
-
-            this.appendChild(eStateComp);
-        }
-    }
-
-    private hideStateComp(): void {
-        const eStateComp = this.eStateComp;
-
-        if (eStateComp?.offsetParent) {
-            eStateComp?.remove();
-        }
-    }
-
     public selectValue(value?: TValue[] | TValue): boolean {
         if (!this.currentList || value == null) {
             return false;
@@ -232,14 +227,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public setCurrentList(list: TValue[] | undefined): void {
-        if (!list) {
-            this.setLoadingState(2); // set to READY_FOR_INPUT
-            list = [];
-        } else if (list.length) {
-            this.setLoadingState(1); // set to READY_RESULTS
-        } else {
-            this.setLoadingState(3); // set to NO_MATCHES
-        }
+        list ||= [];
 
         this.currentList = list;
 
