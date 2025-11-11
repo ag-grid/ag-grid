@@ -61,24 +61,29 @@ export abstract class TextInputFloatingFilter<
         const autoComplete = params.browserAutoComplete ?? false;
         const { inputSvc, defaultDebounceMs, readOnly } = this;
 
-        inputSvc.setParams({
-            ariaLabel: this.getAriaLabel(params),
-            autoComplete,
-            placeholder: params.filterPlaceholder,
+        this.params.parentFilterInstance((instance) => {
+            const fallbackPlaceholder = instance.getPlaceholderText('filterOoo', 0);
+
+            inputSvc.setParams({
+                ariaLabel: this.getAriaLabel(params),
+                autoComplete,
+                placeholder:
+                    params.filterPlaceholder === true ? fallbackPlaceholder : params.filterPlaceholder || undefined,
+            });
+
+            this.applyActive = _isUseApplyButton(params.filterParams as TextFilterParams);
+
+            if (!readOnly) {
+                const debounceMs = getDebounceMs(params.filterParams as TextFilterParams, defaultDebounceMs);
+                const toDebounce: (e: KeyboardEvent) => void = _debounce(
+                    this,
+                    this.syncUpWithParentFilter.bind(this),
+                    debounceMs
+                );
+
+                inputSvc.setValueChangedListener(toDebounce);
+            }
         });
-
-        this.applyActive = _isUseApplyButton(params.filterParams as TextFilterParams);
-
-        if (!readOnly) {
-            const debounceMs = getDebounceMs(params.filterParams as TextFilterParams, defaultDebounceMs);
-            const toDebounce: (e: KeyboardEvent) => void = _debounce(
-                this,
-                this.syncUpWithParentFilter.bind(this),
-                debounceMs
-            );
-
-            inputSvc.setValueChangedListener(toDebounce);
-        }
     }
 
     protected override updateParams(params: TParams): void {

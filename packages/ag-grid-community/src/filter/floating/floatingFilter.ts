@@ -38,7 +38,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     /**
      * Placeholder text for the filter textbox.
      */
-    filterPlaceholder?: string;
+    filterPlaceholder?: string | boolean;
 
     /**
      * This is a shortcut to invoke getModel on the parent filter.

@@ -596,7 +596,7 @@ export abstract class SimpleFilter<
         return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
-    private getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string {
+    public getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
         if (typeof this.filterPlaceholder === 'function') {
             const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
