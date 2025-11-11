@@ -7,17 +7,20 @@ import type { UpdateParams } from '../chartProxy';
 export abstract class StatisticalChartProxy<
     TSeries extends 'box-plot' | 'range-area' | 'range-bar',
 > extends CartesianChartProxy<TSeries> {
-    public getAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
-        return [
-            {
+    public getAxes(
+        params: UpdateParams,
+        commonChartOptions: AgCartesianChartOptions
+    ): Record<string, AgCartesianAxisOptions> {
+        return {
+            x: {
                 type: this.getXAxisType(params),
                 position: this.isHorizontal(commonChartOptions) ? 'left' : 'bottom',
             },
-            {
+            y: {
                 type: 'number',
                 position: this.isHorizontal(commonChartOptions) ? 'bottom' : 'left',
             },
-        ];
+        };
     }
 
     protected computeSeriesStatistics(params: UpdateParams, computeStatsFn: (values: number[]) => any): any[] {

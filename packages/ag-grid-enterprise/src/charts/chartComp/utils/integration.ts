@@ -25,15 +25,18 @@ export interface AgChartActual extends AgChartInstance {
             toJson(): any;
         };
     }[];
-    axes?: {
-        type: AgCartesianAxisType | AgPolarAxisOptions['type'];
-        direction: 'x' | 'y';
-    }[];
+    axes?: Record<
+        string,
+        {
+            type: AgCartesianAxisType | AgPolarAxisOptions['type'];
+            direction: 'x' | 'y';
+        }
+    >;
     canvasElement: HTMLCanvasElement;
     getCanvasDataURL(type?: string): string;
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
 }
 
-type AgChartAxis = NonNullable<AgChartActual['axes']>[number];
+type AgChartAxis = NonNullable<AgChartActual['axes']>[string];
 export type AgChartAxisType = AgChartAxis['type'];

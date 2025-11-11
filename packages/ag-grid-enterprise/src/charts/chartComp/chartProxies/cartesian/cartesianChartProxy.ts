@@ -34,7 +34,7 @@ export abstract class CartesianChartProxy<
     protected abstract getAxes(
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions
-    ): AgCartesianAxisOptions[];
+    ): Record<string, AgCartesianAxisOptions>;
     protected abstract getSeries(params: UpdateParams): AgCartesianSeriesOptions[];
 
     protected getUpdateOptions(
@@ -51,16 +51,15 @@ export abstract class CartesianChartProxy<
         };
     }
 
-    protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
+    protected getData(params: UpdateParams, axes: Record<string, AgCartesianAxisOptions>): any[] {
         const supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
         return this.crossFiltering && supportsCrossFiltering
             ? this.getCrossFilterData(params)
             : this.getDataTransformedData(params, axes);
     }
 
-    private getDataTransformedData(params: UpdateParams, axes: AgCartesianAxisOptions[]) {
-        // assumed that the first axis is always the "category" axis
-        const xAxisType = axes[0].type;
+    private getDataTransformedData(params: UpdateParams, axes: Record<string, AgCartesianAxisOptions>) {
+        const xAxisType = axes.x.type;
         const { categories, data } = params;
         const [category] = categories;
         switch (xAxisType) {
