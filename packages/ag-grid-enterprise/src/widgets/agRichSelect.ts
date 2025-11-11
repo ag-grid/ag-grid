@@ -344,24 +344,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         const newState = this.getListStateBasedOnResults(valueList);
         listComponent.setLoadingState(newState);
-
-        if (listComponent.getCurrentList() === valueList) {
-            return;
+        if (listComponent?.getCurrentList() !== valueList) {
+            listComponent?.setCurrentList(valueList);
         }
-        listComponent.setCurrentList(valueList);
+        if (valueList && this.values !== valueList) {
+            this.setValues(valueList ?? []);
+        }
 
         if (!refresh) {
             return;
         }
         if (this.values) {
             listComponent.refresh(true);
-        } else {
-            this.setValues(valueList ?? []);
-            if (this.isPickerDisplayed) {
-                const hasRefreshed = listComponent.selectValue(this.value);
-                if (!hasRefreshed) {
-                    listComponent.refresh();
-                }
+        } else if (this.isPickerDisplayed) {
+            const hasRefreshed = listComponent.selectValue(this.value);
+            if (!hasRefreshed) {
+                listComponent.refresh();
             }
         }
         this.alignPickerToComponent();
