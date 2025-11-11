@@ -41,10 +41,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
+        this.eEditor.setValueList({ valueList, refresh: true });
         const isPromise = valueList && !Array.isArray(valueList);
         if (isPromise) {
-            this.eEditor.setValueList({ valueList: valueList, refresh: true });
-
             valueList.then((values) => {
                 const searchStringCallback = this.getSearchStringCallback(values);
                 if (searchStringCallback) {
@@ -132,9 +131,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 ret.onSearch = this.onSearchCallbackDebounced;
                 ret.allowNoResultsCopy = true;
             }
-            if (params.search) {
-                valueList = values({ ...params });
-            }
+            valueList = values({ ...params });
         } else {
             valueList = values ?? [];
         }
@@ -142,7 +139,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         if (Array.isArray(valueList)) {
             ret.valueList = valueList;
             ret.searchStringCreator = this.getSearchStringCallback(valueList);
-        } else if (valueList) {
+        } else {
             ret.isAsync = this.isAsync = true;
         }
 

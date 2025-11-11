@@ -51,11 +51,11 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public setLoadingState(state: State): void {
         switch (state) {
             case 0: // LOADING
-                this.toggleVisibility(false);
+                this.toggleVisibility();
                 this.showStateComp();
                 break;
             case 1: // READY_RESULTS
-                this.toggleVisibility(false);
+                this.toggleVisibility();
                 this.hideLoadingStateComp();
                 break;
             case 2: // READY_FOR_INPUT
@@ -63,7 +63,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
                 break;
             case 3: // NO_MATCHES
                 if (this.params.allowNoResultsCopy) {
-                    this.toggleVisibility(false);
+                    this.toggleVisibility();
                     this.showStateComp(this.noMatchesLabel);
                 }
                 break;
