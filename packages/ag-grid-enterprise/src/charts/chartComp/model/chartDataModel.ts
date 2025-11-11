@@ -14,7 +14,7 @@ import type {
     SortModelItem,
     SortOption,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, _isTreeData } from 'ag-grid-community';
+import { BeanStub, CellRangeType, _isTreeData, isColumnGroupAutoCol } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -45,6 +45,7 @@ export interface ChartModelParams {
     crossFilteringSort?: SortModelItem[] | boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
+    useGroupColumnAsCategory?: boolean;
 }
 
 export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -94,6 +95,7 @@ export class ChartDataModel extends BeanStub {
     private grouping = false;
 
     public seriesGroupType?: SeriesGroupType;
+    public useGroupColumnAsCategory: boolean = false;
 
     public constructor(params: ChartModelParams) {
         super();
@@ -116,6 +118,7 @@ export class ChartDataModel extends BeanStub {
             crossFiltering,
             crossFilteringSort,
             seriesGroupType,
+            useGroupColumnAsCategory,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -129,6 +132,7 @@ export class ChartDataModel extends BeanStub {
         this.crossFiltering = !!crossFiltering;
         this.crossFilteringSort = crossFilteringSort ?? true;
         this.seriesGroupType = seriesGroupType;
+        this.useGroupColumnAsCategory = !!useGroupColumnAsCategory;
     }
 
     public postConstruct(): void {
@@ -381,19 +385,19 @@ export class ChartDataModel extends BeanStub {
 
         const aggFuncDimension = this.suppliedCellRange.columns[0];
 
-        dimensionCols.forEach((column) => {
-            const isAutoGroupCol = column.getColId() === 'ag-Grid-AutoColumn';
+        // Determine whether grouping is active (row grouping or tree data)
+        const usingTreeData = _isTreeData(this.gos);
+        const rowGroupCols = usingTreeData ? null : this.chartColSvc.getRowGroupColumns();
+        const groupingActive = usingTreeData || (rowGroupCols && rowGroupCols.length > 0);
 
-            let selected = false;
-            if (this.crossFiltering && this.aggFunc) {
-                if (aggFuncDimension.getColId() === column.getColId()) {
-                    selected = true;
-                }
-            } else {
-                selected = isAutoGroupCol
-                    ? true
-                    : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
-            }
+        dimensionCols.forEach((column) => {
+            const autoGroup = isColumnGroupAutoCol(column);
+
+            const selected =
+                this.crossFiltering && this.aggFunc
+                    ? aggFuncDimension.getColId() === column.getColId()
+                    : (this.useGroupColumnAsCategory && groupingActive && autoGroup) ||
+                      ((!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column));
 
             this.dimensionColState.push({
                 column,

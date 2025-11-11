@@ -2,6 +2,7 @@ import type { Component, HighlightTooltipEventType, RichSelectParams } from 'ag-
 import {
     KeyCode,
     _createElement,
+    _createIconNoSpan,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
     _setAriaControlsAndLabel,
@@ -82,12 +83,17 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public override postConstruct(): void {
         super.postConstruct();
 
+        const loadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+
         this.loadingLabel = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
         this.noMatchesLabel = this.getLocaleTextFunc()('noMatches', 'No matches to show');
         this.eStateComp = _createElement({
             tag: 'div',
-            cls: 'ag-loading-text',
-            children: this.loadingLabel,
+            cls: 'ag-rich-select-loading',
+            children: [
+                { tag: 'span', cls: 'ag-loading-icon', children: [loadingIcon ? () => loadingIcon : undefined] },
+                { tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel },
+            ],
         });
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;

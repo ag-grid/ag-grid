@@ -315,6 +315,7 @@
 
     .ag-overlay-loading-center {
         @include ag.card();
+        display: flex;
     }
 
     .ag-skeleton-container {

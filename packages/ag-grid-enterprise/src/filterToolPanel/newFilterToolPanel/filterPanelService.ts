@@ -82,7 +82,7 @@ export class FilterPanelService
                 }
 
                 // Clear out existing state so that new state order is maintained
-                this.clearStates();
+                this.clear();
                 this.applyState();
                 this.updateFilterStates();
                 dispatchedStateUpdates = true;
@@ -390,13 +390,13 @@ export class FilterPanelService
     }
 
     public override destroy(): void {
-        this.clearStates();
+        this.clear();
         this.params = undefined;
         this.currState = undefined;
         super.destroy();
     }
 
-    private clearStates() {
+    public clear() {
         const { states, orderedStates } = this;
         states.forEach((state) => state.destroy?.());
         states.clear();

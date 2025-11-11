@@ -400,18 +400,16 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
     return typeof selection !== 'boolean' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
+function _getRawSuppressColumnSelection(gos: GridOptionsService): boolean {
+    const cellSelection = gos.get('cellSelection') ?? false;
+    return (typeof cellSelection === 'object' && cellSelection.suppressColumnSelection) ?? false;
+}
+
 export function _getSuppressColumnSelection(gos: GridOptionsService): boolean {
-    const cellSelection = gos.get('cellSelection');
     const multiSortKey = gos.get('multiSortKey');
 
-    if (typeof cellSelection != 'object') {
-        return false;
-    }
-
-    const suppressColumnSelection = cellSelection.suppressColumnSelection ?? false;
-
     // Automatically disabled when multiSortKey = ctrl
-    return multiSortKey === 'ctrl' || suppressColumnSelection;
+    return multiSortKey === 'ctrl' || _getRawSuppressColumnSelection(gos);
 }
 
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {

@@ -123,6 +123,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 chartModelParams.seriesChartTypes = params.seriesChartTypes;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 chartModelParams.seriesGroupType = params.seriesGroupType ?? this.model.seriesGroupType;
+                chartModelParams.useGroupColumnAsCategory =
+                    (params as UpdateRangeChartParams).useGroupColumnAsCategory ?? this.model.useGroupColumnAsCategory;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
@@ -271,6 +273,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             unlinkChart: this.model.unlinked,
             seriesChartTypes,
             seriesGroupType: this.model.seriesGroupType,
+            useGroupColumnAsCategory: this.model.useGroupColumnAsCategory,
         };
     }
 

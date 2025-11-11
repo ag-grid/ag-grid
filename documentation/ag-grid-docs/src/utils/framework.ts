@@ -1,5 +1,5 @@
-import type { Framework, FrameworkType, InternalFramework } from '@ag-grid-types';
-import { FRAMEWORK_DISPLAY_TEXT, FRAMEWORK_TYPES } from '@constants';
+import type { Framework, InternalFramework } from '@ag-grid-types';
+import { FRAMEWORK_DISPLAY_TEXT } from '@constants';
 
 export const getFrameworkDisplayText = (framework: Framework): string => {
     return FRAMEWORK_DISPLAY_TEXT[framework];
@@ -30,16 +30,6 @@ export const getFrameworkFromInternalFramework = (internalFramework: InternalFra
         default:
             return internalFramework;
     }
-};
-
-export const getInternalFrameworkFromFrameworkType = ({
-    framework,
-    frameworkType,
-}: {
-    framework: Framework;
-    frameworkType: FrameworkType;
-}): InternalFramework | undefined => {
-    return FRAMEWORK_TYPES[framework][frameworkType];
 };
 
 /**

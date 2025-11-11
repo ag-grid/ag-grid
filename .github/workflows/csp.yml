@@ -8,15 +8,6 @@ env:
 
 on:
     workflow_dispatch:
-        inputs:
-            clean_checkout:
-                description: 'Disable all caching'
-                type: 'choice'
-                required: true
-                default: 'false'
-                options:
-                    - 'true'
-                    - 'false'
     schedule:
         - cron: '30 1 * * *' # Run daily at 1:30am UTC
 
@@ -38,7 +29,7 @@ jobs:
               id: setup
               uses: ./.github/actions/setup-nx
               with:
-                cache_mode: ${{ github.event.inputs.clean_checkout == 'true' && 'off' || 'rw' }}
+                cache_mode: ro
 
             - name: CSP test
               id: cspTest

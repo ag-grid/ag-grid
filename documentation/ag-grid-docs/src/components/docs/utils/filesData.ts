@@ -128,40 +128,6 @@ export const getAllInternalFrameworkExamples = async ({
     return examples;
 };
 
-export const getInternalFrameworkExamples = async ({
-    pages,
-    internalFramework,
-}: {
-    pages: DocsPage[];
-    internalFramework: InternalFramework;
-}): Promise<InternalFrameworkExample[]> => {
-    const examplePromises = pages.map(async (page) => {
-        const pageName = page.id;
-        const docsExamplesPath = getExamplesPath({
-            pageName,
-        });
-        const examples = await getFolders(docsExamplesPath);
-
-        const exampleDirs = examples.map(async (exampleName) => {
-            const supportedFrameworks = await getSupportedFrameworks({ pageName, exampleName });
-
-            if (supportedFrameworks && !supportedFrameworks.has(internalFramework)) {
-                return undefined;
-            }
-
-            return {
-                internalFramework,
-                pageName,
-                exampleName,
-            };
-        });
-
-        return (await Promise.all(exampleDirs)).filter(Boolean) as InternalFrameworkExample[];
-    });
-    const examples = (await Promise.all(examplePromises)).flat();
-    return examples;
-};
-
 export const getPagesList = (pages: DocsPage[]) => {
     return pages.filter(ignoreUnderscoreFiles);
 };
