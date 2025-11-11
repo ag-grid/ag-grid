@@ -51,30 +51,32 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public setLoadingState(state: State): void {
         switch (state) {
             case 0: // LOADING
-                this.toggleVisibility();
+                this.toggleVisibility(true);
                 this.showStateComp();
                 break;
             case 1: // READY_RESULTS
-                this.toggleVisibility();
-                this.hideLoadingStateComp();
+                this.toggleVisibility(true);
+                this.hideStateComp();
                 break;
             case 2: // READY_FOR_INPUT
-                this.toggleVisibility(true);
+                this.toggleVisibility(false);
+                this.hideStateComp();
                 break;
             case 3: // NO_MATCHES
                 if (this.params.allowNoResultsCopy) {
-                    this.toggleVisibility();
+                    this.toggleVisibility(true);
                     this.showStateComp(this.noMatchesLabel);
                 }
                 break;
         }
     }
 
-    public toggleVisibility(forceHidden?: boolean) {
+    public toggleVisibility(forceVisible?: boolean) {
         const eListGui = this.getGui();
         const list = this.getCurrentList();
         const toggleValue = list ? list.length === 0 : false;
-        eListGui.classList.toggle('ag-hidden', forceHidden ?? toggleValue);
+        const forceHidden = forceVisible === undefined ? toggleValue : !forceVisible;
+        eListGui.classList.toggle('ag-hidden', forceHidden);
     }
 
     public override postConstruct(): void {
@@ -172,7 +174,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
     }
 
-    private hideLoadingStateComp(): void {
+    private hideStateComp(): void {
         const eStateComp = this.eStateComp;
 
         if (eStateComp?.offsetParent) {
@@ -408,7 +410,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private onClick(e: MouseEvent): void {
         const { multiSelect } = this.params;
 
-        if (!this.currentList) {
+        if (!this.currentList?.length) {
             return;
         }
 

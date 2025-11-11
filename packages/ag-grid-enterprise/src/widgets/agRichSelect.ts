@@ -343,7 +343,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.alignPickerToComponent();
     }
 
-    public setValueList(params: { valueList: TValue[] | Promise<TValue[]> | undefined; refresh?: boolean }): void {
+    public setValueList(params: {
+        valueList: TValue[] | Promise<TValue[] | undefined> | undefined;
+        refresh?: boolean;
+    }): void {
         const { valueList, refresh } = params;
 
         if (!valueList || Array.isArray(valueList)) {
@@ -356,7 +359,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         this.listComponent?.setLoadingState(0); // set to LOADING
-        valueList.then((values) => this.setValueListInternal({ valueList: values, refresh }));
+        valueList.then((values) => {
+            // ensure we show most recent search results, even if user clears the search field
+            // unless the last search was empty in which case we show initial value
+            this.setValues(values ?? (Array.isArray(this.value) ? this.value : [this.value]));
+            this.setValueListInternal({ valueList: values, refresh });
+        });
     }
 
     /**

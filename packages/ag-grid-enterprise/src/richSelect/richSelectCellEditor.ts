@@ -17,6 +17,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
     private readonly onSearchCallbackDebounced;
+    private currentSearchRequest: number = 0;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -152,6 +153,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     private readonly onSearchCallback = (searchString: string): void => {
+        const currentRequest = ++this.currentSearchRequest;
         this.eEditor.setValueList({ refresh: true, valueList: undefined }); // undefined removes any previous value list and also removes any label like 'No matches'
         const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
 
@@ -165,7 +167,15 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         }
         const valuesPromise = params.values(params);
         if (!Array.isArray(valuesPromise)) {
-            this.eEditor.setValueList({ valueList: valuesPromise, refresh: true });
+            this.eEditor.setValueList({
+                valueList: valuesPromise.then((results) => {
+                    // only set the results if this is the latest search request
+                    if (currentRequest === this.currentSearchRequest) {
+                        return results;
+                    }
+                }),
+                refresh: true,
+            });
         }
         // potentially allow sync values too
     };
