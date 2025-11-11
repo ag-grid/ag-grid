@@ -105,7 +105,7 @@ jobs:
           matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
-          echo "Test matrix determined to be: ${matrix}"
+          echo "Test matrix determined to be: ${matrix} (test_count=${count})"
           
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             e2e_count=10
@@ -117,7 +117,7 @@ jobs:
           e2e_matrix={"shard":[0]}
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
-          echo "e2e Test matrix determined to be: ${e2e_matrix}"
+          echo "e2e Test matrix determined to be: ${e2e_matrix} (e2e_test_count=${e2e_count})"
           
           # 3 is optimal atm for bundle tests
           bundle_count=3
@@ -125,7 +125,7 @@ jobs:
           bundle_matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
-          echo "bundle Test matrix determined to be: ${bundle_matrix}"
+          echo "bundle Test matrix determined to be: ${bundle_matrix} (bundle_test_count=${bundle_count})"
 
           pkg_matrix=$(node ./external/ag-shared/scripts/shard/calculate-pkg-shards.js)
           echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
