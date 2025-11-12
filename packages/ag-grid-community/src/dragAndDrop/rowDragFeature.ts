@@ -590,7 +590,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let addIndex: number | undefined;
         if (target) {
-            const leaf = target.data ? (target as RowNode) : _firstLeaf(target.childrenAfterGroup);
+            const leaf = target.data ? target : _firstLeaf(target.childrenAfterGroup);
             const sourceIndex = leaf !== undefined ? leaf.sourceRowIndex : -1;
             addIndex = sourceIndex + (position === 'above' ? 0 : 1);
         }
@@ -609,8 +609,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 !row ||
                 row.footer ||
                 (row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
-                (groupEditSvc?.wouldCycle(row, newParent) ?? wouldFormCycle(row, newParent)) || // Cannot move to a parent that would create a cycle
-                !getLeafRow(row) // No leaf to move, so nothing to do
+                groupEditSvc?.wouldCycle(row, newParent) || // Cannot move to a parent that would create a cycle
+                !(row.sourceRowIndex >= 0 ? row : _firstLeaf(row.childrenAfterGroup)) // No leaf to move, so nothing to do
             ) {
                 valid = false;
             }
@@ -625,8 +625,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private csrmMoveRows(rowsDrop: RowsDrop): boolean {
         const groupEditSvc = this.beans.groupEditSvc;
-        if (groupEditSvc?.shouldHandleManagedRowMove(rowsDrop)) {
-            return groupEditSvc.moveRowsWithGroupEdit(rowsDrop);
+        if (groupEditSvc?.isGroupingDrop(rowsDrop)) {
+            return groupEditSvc.groupingEditDrop(rowsDrop);
         }
         return this.csrmMoveRowsReorder(rowsDrop);
     }
@@ -640,8 +640,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 row.treeParent = newParent as RowNode;
                 changed = true;
             }
-
-            const leafRow = getLeafRow(row);
+            const leafRow = row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
             if (leafRow) {
                 leafs.add(leafRow);
             }
@@ -713,24 +712,6 @@ const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean
     }
     return true;
 };
-
-const wouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null | undefined): boolean => {
-    let current = newParent;
-    const rowId = row.id;
-    while (current) {
-        if (current === row) {
-            return true;
-        }
-        if (rowId != null && current.id === rowId) {
-            return true;
-        }
-        current = current.parent;
-    }
-    return false;
-};
-
-const getLeafRow = (row: IRowNode): RowNode | undefined =>
-    row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&

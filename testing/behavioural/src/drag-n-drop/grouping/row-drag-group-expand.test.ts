@@ -67,14 +67,13 @@ describe('row drag nudger group expansion', () => {
             getRowId: (params) => params.data.id,
         };
 
-        const api = gridsManager.createGrid('nudger-managed-expand', gridOptions);
+        const api = await gridsManager.createGridAndWait('nudger-managed-expand', gridOptions);
 
         api.forEachNode((node) => {
             if (node.group && node.key === 'A') {
-                node.setExpanded(true);
+                node.setExpanded(true, undefined, true);
             }
         });
-        await asyncSetTimeout(0);
 
         const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
         await initialRows.check(`
@@ -143,14 +142,13 @@ describe('row drag nudger group expansion', () => {
             getRowId: (params) => params.data.id,
         };
 
-        const api = gridsManager.createGrid('nudger-unmanaged-expand', gridOptions);
+        const api = await gridsManager.createGridAndWait('nudger-unmanaged-expand', gridOptions);
 
         api.forEachNode((node) => {
             if (node.group && node.key === 'A') {
-                node.setExpanded(true);
+                node.setExpanded(true, undefined, true);
             }
         });
-        await asyncSetTimeout(0);
 
         const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
         await initialRows.check(`

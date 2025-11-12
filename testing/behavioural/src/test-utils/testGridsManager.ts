@@ -150,7 +150,7 @@ export class TestGridsManager {
         // Wait for the first data rendered event to ensure the grid is fully initialized
         await waitForEvent('firstDataRendered', api);
 
-        return Promise.resolve(api);
+        return api;
     }
 
     public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {

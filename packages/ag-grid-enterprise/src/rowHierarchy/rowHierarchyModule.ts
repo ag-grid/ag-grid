@@ -8,6 +8,7 @@ import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ClientSideExpansionService } from './clientSideExpansionService';
 import { FlattenStage } from './flattenStage';
+import { GroupEditService } from './groupEditService';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
@@ -62,7 +63,7 @@ export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [GroupStage, FlattenStage, ClientSideExpansionService],
+    beans: [GroupStage, FlattenStage, ClientSideExpansionService, GroupEditService],
     dependsOn: [EnterpriseCoreModule],
 };
 

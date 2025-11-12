@@ -22,27 +22,33 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
     private pendingGroupRefreshRows: Set<RowNode> | null = null;
 
     public postConstruct(): void {
-        this.addManagedListeners(this.eventSvc, {
-            batchEditingStopped: () => this.flushPendingGroupRefreshRows(),
-            cellValueChanged: (event) => this.onCellValueChanged(event as CellValueChangedEvent),
-        });
+        if (_isClientSideRowModel(this.gos)) {
+            this.addManagedListeners(this.eventSvc, {
+                batchEditingStopped: () => this.flushGroupEdits(),
+                cellValueChanged: (event) => this.onCsrmCellValueChange(event as CellValueChangedEvent),
+            });
+        }
     }
 
     public wouldCycle(row: IRowNode, newParent: IRowNode | null | undefined): boolean {
         if (!newParent || row.parent === newParent) {
             return false;
         }
-        let parent: IRowNode | null | undefined = newParent;
-        while (parent) {
-            if (parent === row) {
+        let current: IRowNode | null | undefined = newParent;
+        const rowId = row.id;
+        while (current) {
+            if (current === row) {
                 return true;
             }
-            parent = parent.parent;
+            if (rowId != null && current.id === rowId) {
+                return true;
+            }
+            current = current.parent;
         }
         return false;
     }
 
-    public shouldHandleManagedRowMove<TData = any, TContext = any>(rowsDrop: _RowsDrop<TData, TContext>): boolean {
+    public isGroupingDrop(rowsDrop: _RowsDrop): boolean {
         if (!rowsDrop.rowDragManaged || !rowsDrop.sameGrid) {
             return false;
         }
@@ -52,7 +58,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return !!this.beans.rowGroupColsSvc?.columns?.length;
     }
 
-    public canSetParent<TData = any, TContext = any>(rowsDrop: _RowsDrop<TData, TContext>): boolean {
+    public canSetParent(rowsDrop: _RowsDrop): boolean {
         if (!rowsDrop.sameGrid) {
             return false;
         }
@@ -68,7 +74,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return !!this.beans.rowGroupColsSvc?.columns?.length;
     }
 
-    public moveRowsWithGroupEdit<TData = any, TContext = any>(rowsDrop: _RowsDrop<TData, TContext>): boolean {
+    public groupingEditDrop(rowsDrop: _RowsDrop): boolean {
         const groupColumns = this.beans.rowGroupColsSvc?.columns ?? [];
         if (!groupColumns.length) {
             return false;
@@ -78,7 +84,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         const target = (rowsDrop.target as RowNode | null | undefined) ?? null;
         const rootNode = rowsDrop.rootNode as RowNode | null;
         const parentForValues = (rowsDrop.newParent as RowNode | null) ?? target?.parent ?? rootNode;
-        const { values: groupValues, maxLevel } = this.buildGroupValuesFromParent(parentForValues, groupColumns);
+        const { groupValues, maxLevel } = buildGroupValuesFromParent(parentForValues, groupColumns);
 
         const focusSvc = this.beans.focusSvc;
         const cellPosition = focusSvc.getFocusedCell();
@@ -88,7 +94,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         let dataChanged = false;
 
         for (const row of rowsDrop.rows as RowNode[]) {
-            const leafRow = this.getLeafRow(row);
+            const leafRow = row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
             if (!leafRow) {
                 continue;
             }
@@ -99,8 +105,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         }
 
         const reorderPosition = position === 'inside' ? 'above' : position;
-        const reorderTarget =
-            position === 'inside' ? this.findFirstLeafForParent(parentForValues, leafs) ?? target : target;
+        const reorderTarget = position === 'inside' ? findFirstLeafForParent(parentForValues, leafs) ?? target : target;
         let orderChanged = false;
         if (leafs.size && reorderPosition !== 'none') {
             orderChanged = _reorderAllLeafs(
@@ -138,13 +143,12 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return true;
     }
 
-    private flushPendingGroupRefreshRows(): void {
-        if (!this.pendingGroupRefreshRows?.size) {
-            return;
+    private flushGroupEdits(): void {
+        const pending = this.pendingGroupRefreshRows;
+        if (pending?.size) {
+            this.pendingGroupRefreshRows = null;
+            this.refreshGroupingForRows(Array.from(pending));
         }
-        const rows = Array.from(this.pendingGroupRefreshRows);
-        this.pendingGroupRefreshRows = null;
-        this.refreshGroupingForRows(rows);
     }
 
     private refreshGroupingForRows(rows: RowNode[]): void {
@@ -152,17 +156,13 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
             return;
         }
 
-        const rowModel = this.beans.rowModel as IClientSideRowModel | undefined;
-        if (!rowModel?.refreshModel) {
-            return;
-        }
+        const rowModel = this.beans.rowModel as IClientSideRowModel;
 
         const changedRowNodes = new _ChangedRowNodes();
         changedRowNodes.reordered = true;
         for (const row of rows) {
             changedRowNodes.updates.add(row);
         }
-
         const rootNode = rowModel.rootNode as RowNode | null;
         rowModel.refreshModel({
             step: 'group',
@@ -173,37 +173,13 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         });
     }
 
-    private buildGroupValuesFromParent(
-        parent: IRowNode | null,
-        groupColumns: AgColumn[]
-    ): {
-        values: any[];
-        maxLevel: number;
-    } {
-        const values = new Array<any>(groupColumns.length);
-        let maxLevel = -1;
-        let current: IRowNode | null | undefined = parent;
-        while (current && current.level >= 0) {
-            const column: AgColumn | undefined = groupColumns[current.level];
-            if (column) {
-                const colId = column.getColId();
-                values[current.level] = current.groupData?.[colId] ?? current.key ?? undefined;
-                if (current.level > maxLevel) {
-                    maxLevel = current.level;
-                }
-            }
-            current = current.parent;
-        }
-        return { values, maxLevel };
-    }
-
     private updateRowGroupValues(
         row: RowNode,
         groupColumns: AgColumn[],
         groupValues: any[],
         maxLevel: number
     ): boolean {
-        const { valueSvc } = this.beans;
+        const { valueSvc, editSvc } = this.beans;
         if (maxLevel < 0) {
             return false;
         }
@@ -215,48 +191,19 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
             }
             const newValue = groupValues[level];
             const currentValue = valueSvc.getValue(column, row, false, 'api');
-            if (this.valuesAreEqual(currentValue, newValue)) {
+            if (currentValue === newValue || (currentValue == null && newValue == null)) {
                 continue;
             }
-            if (this.setRowGroupValue(row, column, newValue)) {
+            const result = editSvc?.setDataValue({ rowNode: row, column }, newValue, 'rowDrag');
+            const updated = result != null ? !!result : row.setDataValue(column, newValue, 'rowDrag');
+            if (updated) {
                 changed = true;
             }
         }
         return changed;
     }
 
-    private setRowGroupValue(row: RowNode, column: AgColumn, newValue: any): boolean {
-        const editSvc = this.beans.editSvc;
-        const result = editSvc?.setDataValue({ rowNode: row, column }, newValue, 'rowDrag');
-        if (result != null) {
-            return !!result;
-        }
-        return row.setDataValue(column, newValue, 'rowDrag');
-    }
-
-    private findFirstLeafForParent(parent: IRowNode | null, exclude: ReadonlySet<RowNode>): RowNode | null {
-        const children = parent?.childrenAfterGroup;
-        if (!children) {
-            return null;
-        }
-        for (const child of children) {
-            const leaf = this.getLeafRow(child);
-            if (leaf && !exclude.has(leaf)) {
-                return leaf;
-            }
-        }
-        return null;
-    }
-
-    private valuesAreEqual(a: any, b: any): boolean {
-        return a === b || (a == null && b == null);
-    }
-
-    private getLeafRow(row: IRowNode): RowNode | undefined {
-        return row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
-    }
-
-    private onCellValueChanged(event: CellValueChangedEvent): void {
+    private onCsrmCellValueChange(event: CellValueChangedEvent): void {
         const { column, node, source } = event;
         if (!column) {
             return;
@@ -290,3 +237,39 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         }
     }
 }
+
+const findFirstLeafForParent = (parent: IRowNode | null, exclude: ReadonlySet<RowNode>): RowNode | null => {
+    const children = parent?.childrenAfterGroup;
+    if (!children) {
+        return null;
+    }
+    for (const child of children) {
+        const leaf = child.data ? (child as RowNode) : _firstLeaf(child.childrenAfterGroup);
+        if (leaf && !exclude.has(leaf)) {
+            return leaf;
+        }
+    }
+    return null;
+};
+
+const buildGroupValuesFromParent = (
+    parent: IRowNode | null,
+    groupColumns: AgColumn[]
+): { groupValues: any[]; maxLevel: number } => {
+    const groupValues = new Array<any>(groupColumns.length);
+    let maxLevel = -1;
+    let current: IRowNode | null | undefined = parent;
+    while (current && current.level >= 0) {
+        const column: AgColumn | undefined = groupColumns[current.level];
+        if (column) {
+            const colId = column.getColId();
+            const level = current.level;
+            groupValues[level] = current.groupData?.[colId] ?? current.key ?? undefined;
+            if (level > maxLevel) {
+                maxLevel = level;
+            }
+        }
+        current = current.parent;
+    }
+    return { groupValues, maxLevel };
+};
