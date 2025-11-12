@@ -38,6 +38,7 @@ on:
 env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
+  NX_COMMAND_TYPE: ${{ github.event.inputs.nx_command }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
