@@ -37,6 +37,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private readonly selectedItems: Set<TValue> = new Set<TValue>();
     private loadingLabel: string;
     private noMatchesLabel: string;
+    private loadingState = StateReadyForInput;
+    private eStateCompLabel: HTMLElement;
+    private eLoadingIcon: Element | undefined;
 
     constructor(
         private readonly params: RichSelectParams,
@@ -50,69 +53,26 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.setComponentUpdater(() => {});
     }
 
-    public setLoadingState(state: AgRichSelectListState): void {
-        const loadingLabel = this.loadingLabel;
-        switch (state) {
-            case StateLoading:
-                this.toggleStateComp(loadingLabel);
-                break;
-            case StateReadyWithResults:
-                this.toggleStateComp();
-                break;
-            case StateNoResults:
-                if (this.params.allowNoResultsCopy) {
-                    this.toggleStateComp(this.noMatchesLabel);
-                }
-                break;
-            case StateReadyForInput:
-                this.toggleStateComp();
-                break;
-        }
-    }
-
-    public toggleStateComp(label?: string): void {
-        const eStateComp = this.eStateComp;
-        if (!eStateComp) {
-            return;
-        }
-        if (label && eStateComp.textContent !== label) {
-            eStateComp.textContent = label;
-        }
-
-        if (!label || this.isStateCompVisible()) {
-            eStateComp.remove();
-        } else {
-            this.appendChild(eStateComp);
-        }
-    }
-
-    public isStateCompVisible(): boolean {
-        return !!this.eStateComp?.offsetParent;
-    }
-
-    public toggleVisibility(forceVisible?: boolean) {
-        const eListGui = this.getGui();
-        const list = this.getCurrentList();
-        const toggleValue = list ? list.length === 0 : false;
-        const forceHidden = forceVisible === undefined ? toggleValue : !forceVisible;
-        eListGui.classList.toggle('ag-hidden', forceHidden);
-    }
-
     public override postConstruct(): void {
         super.postConstruct();
-
-        const loadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
-
-        this.loadingLabel = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
-        this.noMatchesLabel = this.getLocaleTextFunc()('noMatches', 'No matches to show');
+        const i18n = this.getLocaleTextFunc();
+        this.loadingLabel = i18n('loadingOoo', 'Loading...');
+        this.noMatchesLabel = i18n('noMatches', 'No matches to show');
+        this.eLoadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+        this.eStateCompLabel = _createElement({ tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel });
         this.eStateComp = _createElement({
             tag: 'div',
             cls: 'ag-rich-select-loading',
             children: [
-                { tag: 'span', cls: 'ag-loading-icon', children: [loadingIcon ? () => loadingIcon : undefined] },
-                { tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel },
+                {
+                    tag: 'span',
+                    cls: 'ag-loading-icon',
+                    children: [this.eLoadingIcon ? () => this.eLoadingIcon! : undefined],
+                },
+                { tag: 'span', cls: 'ag-loading-text', children: [() => this.eStateCompLabel] },
             ],
         });
+        this.appendChild(this.eStateComp);
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;
 
@@ -139,6 +99,42 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         _setAriaLabel(eListAriaEl, ariaLabel);
         _setAriaControlsAndLabel(this.richSelectWrapper, eListAriaEl);
+    }
+
+    public setIsLoading() {
+        this.setLoadingState(StateLoading);
+    }
+
+    private setLoadingState(state: AgRichSelectListState): void {
+        this.loadingState = state;
+        this.toggleStateComp();
+        this.toggleVisibility();
+    }
+
+    private toggleStateComp(): void {
+        const { eStateComp, eStateCompLabel, eLoadingIcon, loadingState, loadingLabel, noMatchesLabel, params } = this;
+        if (!eStateComp) {
+            return;
+        }
+        if (loadingState === StateLoading) {
+            eStateCompLabel.textContent = loadingLabel;
+            eLoadingIcon?.classList?.toggle('ag-hidden', false);
+            eStateComp?.classList?.toggle('ag-hidden', false);
+            return;
+        }
+        if (loadingState === StateNoResults && params.allowNoResultsCopy) {
+            eStateCompLabel.textContent = noMatchesLabel;
+            eLoadingIcon?.classList?.toggle('ag-hidden', true);
+            eStateComp?.classList?.toggle('ag-hidden', false);
+            return;
+        }
+        this.eStateComp?.classList?.toggle('ag-hidden', true);
+    }
+
+    public toggleVisibility(forceVisible?: boolean) {
+        const eListGui = this.getGui();
+        const forceHidden = forceVisible === undefined ? this.loadingState === StateReadyForInput : !forceVisible;
+        eListGui.classList.toggle('ag-hidden', forceHidden);
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
@@ -227,9 +223,9 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public setCurrentList(list: TValue[] | undefined): void {
-        list ||= [];
         const newState = getListStateBasedOnResults<TValue>(list);
         this.setLoadingState(newState);
+        list ||= [];
         this.currentList = list;
 
         this.setModel({
