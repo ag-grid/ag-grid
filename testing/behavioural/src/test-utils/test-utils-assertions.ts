@@ -56,6 +56,11 @@ export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridA
     const selectedCellRanges = api.getCellRanges()?.slice();
     const notFound: CellRangeSpec[] = [];
 
+    if (cellRanges.length === 0) {
+        expect(selectedCellRanges).toHaveLength(0);
+        return;
+    }
+
     for (const range of cellRanges) {
         const foundIdx =
             selectedCellRanges?.findIndex(

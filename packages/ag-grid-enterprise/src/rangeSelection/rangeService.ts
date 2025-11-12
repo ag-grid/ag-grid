@@ -1295,7 +1295,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
         } else if (clickedColumn.isColumn) {
             if (hasRanges && suppressMultiRanges) {
-                return;
+                this.removeAllCellRanges();
             }
             const foundRange = findRangeContainingCols(cellRanges, [clickedColumn], firstRow, lastRow);
 
@@ -1309,7 +1309,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             ctx.root = clickedColumn;
         } else {
             if (hasRanges && suppressMultiRanges) {
-                return;
+                this.removeAllCellRanges();
             }
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();
