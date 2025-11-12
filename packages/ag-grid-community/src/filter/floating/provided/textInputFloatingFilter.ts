@@ -4,8 +4,9 @@ import { _clearElement } from '../../../agStack/utils/dom';
 import { _debounce } from '../../../agStack/utils/function';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ElementParams } from '../../../utils/element';
+import type { ISimpleFilterModelType, ISimpleFilterParams } from '../../provided/iSimpleFilter';
 import type { NumberFilterModel } from '../../provided/number/iNumberFilter';
-import { _isUseApplyButton, getDebounceMs } from '../../provided/providedFilterUtils';
+import { _isUseApplyButton, getDebounceMs, getPlaceholderText } from '../../provided/providedFilterUtils';
 import type {
     ITextInputFloatingFilterParams,
     TextFilterModel,
@@ -60,24 +61,27 @@ export abstract class TextInputFloatingFilter<
 
     private setTextInputParams(params: TParams): void {
         const { inputSvc, defaultDebounceMs, readOnly } = this;
+        const { filterPlaceholder, column, browserAutoComplete, filterParams } = params;
 
-        this.params.parentFilterInstance((instance) => {
-            const parentPlaceholder = instance.getPlaceholderText('filterOoo', 0);
-            const { filterPlaceholder, column, browserAutoComplete, filterParams } = params;
+        const filterOptionKey = (this.lastType ?? this.optionsFactory.defaultOption!) as ISimpleFilterModelType;
+        const parentFilterPlaceholder = (params.filterParams as ISimpleFilterParams).filterPlaceholder;
+        const placeholder =
+            filterPlaceholder === true
+                ? getPlaceholderText(this, parentFilterPlaceholder, 'filterOoo', filterOptionKey)
+                : filterPlaceholder || undefined;
 
-            inputSvc.setParams({
-                ariaLabel: this.getAriaLabel(column as AgColumn),
-                autoComplete: browserAutoComplete ?? false,
-                placeholder: filterPlaceholder === true ? parentPlaceholder : filterPlaceholder || undefined,
-            });
-
-            this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
-
-            if (!readOnly) {
-                const debounceMs = getDebounceMs(filterParams as TextFilterParams, defaultDebounceMs);
-                inputSvc.setValueChangedListener(_debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs));
-            }
+        inputSvc.setParams({
+            ariaLabel: this.getAriaLabel(column as AgColumn),
+            autoComplete: browserAutoComplete ?? false,
+            placeholder,
         });
+
+        this.applyActive = _isUseApplyButton(filterParams as TextFilterParams);
+
+        if (!readOnly) {
+            const debounceMs = getDebounceMs(filterParams as TextFilterParams, defaultDebounceMs);
+            inputSvc.setValueChangedListener(_debounce(this, this.syncUpWithParentFilter.bind(this), debounceMs));
+        }
     }
 
     protected override updateParams(params: TParams): void {

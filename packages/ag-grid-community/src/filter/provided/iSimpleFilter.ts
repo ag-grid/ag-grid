@@ -1,5 +1,4 @@
 import type { IFilterParams } from '../../interfaces/iFilter';
-import type { FilterLocaleTextKey } from '../filterLocaleText';
 import type { IFloatingFilterParent } from '../floating/floatingFilter';
 import type { IProvidedFilter, IProvidedFilterParams, ProvidedFilterModel } from './iProvidedFilter';
 import type { OptionsFactory } from './optionsFactory';
@@ -20,7 +19,6 @@ export type JoinOperator = 'AND' | 'OR';
 
 export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
     readonly filterType: 'text' | 'number' | 'date';
-    getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string;
 }
 
 export interface IFilterPlaceholderFunctionParams {
