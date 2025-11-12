@@ -439,6 +439,12 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
       - name: Fetch Refs
         run: |
           git fetch origin --depth 1 latest
