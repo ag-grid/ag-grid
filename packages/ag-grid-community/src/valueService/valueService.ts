@@ -42,6 +42,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private cellExpressions: boolean;
+    private formulas: boolean;
     // Store locally for performance reasons and keep updated via property listener
     private isTreeData: boolean;
 
@@ -69,7 +70,8 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(gos);
-        this.cellExpressions = gos.get('enableCellExpressions');
+        const formulas = (this.formulas = gos.get('enableFormulas'));
+        this.cellExpressions = gos.get('enableCellExpressions') && !formulas;
         this.isTreeData = _isTreeData(gos);
         this.initialised = true;
 
@@ -247,10 +249,16 @@ export class ValueService extends BeanStub implements NamedBean {
             result = _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
-        // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && typeof result === 'string' && result.indexOf('=') === 0) {
-            const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
+        const isExpression = typeof result === 'string' && result.startsWith('=');
+
+        // the result could be an expression itself, if we are allowing cell values to be expressions or formulas
+        if (isExpression) {
+            if (this.formulas && !result.startsWith('=REF')) {
+                result = this.beans.formula?.getFormulaFromConvertedMap(result);
+            } else if (this.cellExpressions) {
+                const cellValueGetter = result.substring(1);
+                result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
+            }
         }
 
         return result;

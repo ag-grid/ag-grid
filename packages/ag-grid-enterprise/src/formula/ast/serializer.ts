@@ -76,25 +76,14 @@ function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
 }
 
 function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
-    const looksDigits = /^\d+$/.test(ref.id);
     if (ref.absolute) {
-        if (looksDigits) {
-            return ref.id;
-        }
         const idx = rowIndexFromId(beans, ref.id);
         if (idx != null) {
             return String(idx);
         }
         throw `Cannot produce absolute ROW index from id '${ref.id}'`;
-    } else {
-        if (looksDigits) {
-            const id = rowIdFromIndex(beans, Number(ref.id));
-            if (id) {
-                return id;
-            }
-        }
-        return ref.id;
     }
+    return ref.id;
 }
 
 function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {

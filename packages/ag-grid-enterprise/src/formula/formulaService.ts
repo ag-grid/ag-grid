@@ -98,6 +98,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Cache: row -> (column -> CellFormula) */
     private cachedResult: WeakMap<RowNode, WeakMap<AgColumn, CellFormula>> = new WeakMap();
 
+    private convertedFormulasMap: Map<string, string> = new Map();
+
     /** Map "A", "B", ..., "AA" -> actual AgColumn */
     private colRefMap: Map<string, AgColumn> = new Map();
 
@@ -118,7 +120,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             newColumnsLoaded: this.setupColRefMap.bind(this),
             columnMoved: this.setupColRefMap.bind(this),
             cellValueChanged: this.reset.bind(this),
-            rowDataUpdated: this.reset.bind(this),
+            rowDataUpdated: this.onRowDataUpdated.bind(this),
         });
     }
 
@@ -222,6 +224,22 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         return serializeFormula(this.beans, ast, /*useRefFormat*/ false);
     }
 
+    public getFormulaFromConvertedMap(formula: string): string {
+        let convertedFormula = this.convertedFormulasMap.get(formula);
+        if (convertedFormula !== undefined) {
+            return convertedFormula;
+        }
+
+        convertedFormula = this.normaliseFormula(formula, false) ?? undefined;
+
+        if (convertedFormula) {
+            this.convertedFormulasMap.set(formula, convertedFormula);
+            return convertedFormula;
+        }
+
+        return formula;
+    }
+
     private setupFunctions() {
         // eslint-disable-next-line no-restricted-properties
         this.supportedOperations = new Map(Object.entries(SUPPORTED_FUNCTIONS));
@@ -294,6 +312,11 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.cachedResult = new WeakMap(); // drops cached values & ASTs
         // if not CSRM, just refresh cells (no re-sort).
         this.beans.rowRenderer.refreshCells();
+    }
+
+    private onRowDataUpdated() {
+        this.convertedFormulasMap = new Map();
+        this.reset();
     }
 
     /**
