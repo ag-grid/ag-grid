@@ -1,6 +1,6 @@
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY } from '@ag-website-shared/constants';
+import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY, RECAPTCHA_URL } from '@ag-website-shared/constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
@@ -16,8 +16,6 @@ const { actionUrl, orgId, textAreaId, leadSource, formLocationId } = getIsProduc
 
 const isDev = getIsDev();
 const showCaptcha = !isDev;
-
-const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
 
 type FormValues = {
     first_name: string;
@@ -95,7 +93,13 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
 
     const onValidSubmit = () => {
         setIsDisabled(true);
-        formRef.current?.submit();
+        const captcha = (globalThis as any).grecaptcha;
+        captcha.ready(function () {
+            captcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then((token: string) => {
+                console.log('Captcha token', token);
+                formRef.current?.submit();
+            });
+        });
     };
 
     return (
