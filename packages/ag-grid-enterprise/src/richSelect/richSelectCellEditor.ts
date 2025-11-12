@@ -6,26 +6,19 @@ import type {
     RichCellEditorValuesCallbackParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _debounce, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
-const ON_SEARCH_CALLBACK_DEBOUNCE_DELAY = 300;
 export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> extends AgAbstractCellEditor {
     protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
     private isAsync: boolean = false;
-    private readonly onSearchCallbackDebounced;
     private currentSearchRequest: number = 0;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
-        this.onSearchCallbackDebounced = _debounce(
-            this,
-            this.onSearchCallback,
-            this.params?.searchDebounceDelay ?? ON_SEARCH_CALLBACK_DEBOUNCE_DELAY
-        );
     }
 
     public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
@@ -42,11 +35,13 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
+        if (this.isFullAsync()) {
+            richSelect.showPicker();
+        }
         this.eEditor.setValueList({ valueList, refresh: true });
         const isPromise = valueList && !Array.isArray(valueList);
         if (isPromise) {
             valueList.then((values) => {
-                richSelect.showPicker();
                 const searchStringCallback = this.getSearchStringCallback(values);
                 if (searchStringCallback) {
                     richSelect.setSearchStringCreator(searchStringCallback);
@@ -148,10 +143,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             const fullAsync = this.isFullAsync();
             if (fullAsync) {
                 params.search = formatValue?.(value);
-                ret.onSearch = this.onSearchCallbackDebounced;
+                ret.onSearch = this.onSearchCallback;
                 ret.allowNoResultsCopy = true;
-            }
-            if (!fullAsync) {
+            } else {
                 // we never call values() with empty search string, even if initial
                 valueList = values({ ...params });
             }
@@ -184,11 +178,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         if (!params.search) {
             // if search input is empty or has initial cell value, hide the picker
             // it is consistent with the requirement of not calling values() with empty search
-            richSelect.hidePicker();
             return;
         }
 
-        richSelect.showPicker();
         if (typeof params.values !== 'function') {
             // potentially allow sync values too
             return;
@@ -264,10 +256,11 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 }
             }
 
+            if (cellStartedEdit) {
+                richSelect.showPicker();
+            }
+
             if (!this.isAsync) {
-                if (cellStartedEdit) {
-                    richSelect.showPicker();
-                }
                 this.processEventKey(eventKey);
             }
         });

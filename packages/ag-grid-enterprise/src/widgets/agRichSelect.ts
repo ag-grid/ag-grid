@@ -44,8 +44,9 @@ import {
 import { AgPillContainer } from './AgPillContainer';
 import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
-import { AgRichSelectList, StateLoading as AgRichSelectListStateLoading } from './agRichSelectList';
+import { AgRichSelectList } from './agRichSelectList';
 
+const ON_SEARCH_CALLBACK_DEBOUNCE_DELAY = 300;
 type AgRichSelectEvent = AgRichSelectListEvent;
 
 const AgRichSelectElement: ElementParams = {
@@ -87,7 +88,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private userCompFactory: UserComponentFactory;
     private ariaAnnounce?: IAriaAnnouncementService;
     private registry: Registry;
-    private readonly onSearch?: (search?: string | undefined) => void;
+    private readonly onSearchCallbackDebounced;
 
     public wireBeans(beans: BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
@@ -99,7 +100,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private searchString = '';
     private listComponent: AgRichSelectList<TValue> | undefined;
     private pillContainer: AgPillContainer<TValue> | null;
-    protected values: TValue[];
+    protected values: TValue[] | undefined;
 
     private searchStringCreator: ((values: TValue[]) => string[]) | null = null;
     private readonly eInput: GridInputTextField = RefPlaceholder;
@@ -142,8 +143,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.setValueList({ valueList });
         }
 
-        this.onSearch = onSearch;
-
+        const { searchDebounceDelay = ON_SEARCH_CALLBACK_DEBOUNCE_DELAY } = this.config;
+        if (onSearch) {
+            this.onSearchCallbackDebounced = _debounce(this, onSearch, searchDebounceDelay);
+        }
         this.registerCSS(agRichSelectCSS);
     }
 
@@ -325,9 +328,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        if (this.values !== valueList) {
-            this.setValues(valueList ?? []);
-        }
+        this.setValues(valueList);
 
         if (!refresh) {
             return;
@@ -358,7 +359,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             return;
         }
 
-        this.listComponent?.setLoadingState(AgRichSelectListStateLoading);
+        this.listComponent?.setIsLoading();
+        // only show picker if it's not initial call
+        // this.showPicker();
         valueList.then((values) => {
             this.setValueListInternal({ valueList: values, refresh });
         });
@@ -367,13 +370,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     /**
      * This method updates the list of select options
      */
-    private setValues(values: TValue[]): void {
+    private setValues(values: TValue[] | undefined): void {
         this.values = values;
-        const { listComponent } = this;
-        if (listComponent && listComponent?.getCurrentList() !== values) {
-            listComponent.setCurrentList(values);
-        }
-        this.searchStrings = this.getSearchStringsFromValues(values);
+        // we need to update the list component even if the 'values' is undefined
+        this.listComponent?.setCurrentList(values);
+
+        this.searchStrings = this.getSearchStringsFromValues(values || []);
     }
 
     public override showPicker() {
@@ -385,7 +387,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         super.showPicker();
 
-        let idx = null;
         let valueToUse: TValue[] | TValue = value;
 
         // if value is null or undefined, we default to null and
@@ -395,7 +396,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         listComponent.selectValue(valueToUse);
-        idx = listComponent.getIndicesForValues(Array.isArray(valueToUse) ? valueToUse : [valueToUse])[0];
+        const idx = listComponent.getIndicesForValues(Array.isArray(valueToUse) ? valueToUse : [valueToUse])[0];
 
         if (idx != null) {
             this.tooltipFeature?.attemptToHideTooltip();
@@ -524,9 +525,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         if (!this.listComponent) {
             return;
         }
-        if (this.onSearch) {
+        if (this.onSearchCallbackDebounced) {
             // this can potentially update the searchStrings synchronously and asynchronously
-            this.onSearch(this.searchString);
+            this.onSearchCallbackDebounced(this.searchString);
             return;
         }
         const searchStrings = this.searchStrings;
@@ -540,7 +541,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
         const shouldFilter = !!(filterList && this.searchString !== '');
 
-        this.filterListModel(shouldFilter ? filteredValues : this.values);
+        this.filterListModel(shouldFilter ? filteredValues : this.values || []);
 
         if (!this.highlightEmptyValue()) {
             this.highlightListValue(suggestions, filteredValues, shouldFilter);
@@ -597,7 +598,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         const { searchType = 'fuzzy', filterList } = this.config;
-
+        const values = this.values || [];
         if (searchType === 'fuzzy') {
             const fuzzySearchResult = _fuzzySuggestions({
                 inputValue: searchValue,
@@ -609,7 +610,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             const indices = fuzzySearchResult.indices;
             if (filterList && indices.length) {
                 for (let i = 0; i < indices.length; i++) {
-                    filteredValues.push(this.values[indices[i]]);
+                    filteredValues.push(values[indices[i]]);
                 }
             }
         } else {
@@ -622,7 +623,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                         ? currentValue.startsWith(valueToMatch)
                         : currentValue.includes(valueToMatch);
                 if (filterList && isMatch) {
-                    filteredValues.push(this.values[idx]);
+                    filteredValues.push(values[idx]);
                 }
                 return isMatch;
             });
