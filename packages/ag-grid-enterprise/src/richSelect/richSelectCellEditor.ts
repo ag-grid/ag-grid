@@ -176,30 +176,38 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
     private readonly onSearchCallback = (searchString: string): void => {
         const currentRequest = ++this.currentSearchRequest;
-        this.eEditor.setValueList({ refresh: true, valueList: undefined }); // undefined removes any previous value list and also removes any label like 'No matches'
+        const richSelect = this.eEditor;
+        richSelect.setValueList({ refresh: true, valueList: undefined }); // undefined removes any previous value list and also removes any label like 'No matches'
         const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
 
         params.search = searchString;
         if (!params.search) {
+            // if search input is empty or has initial cell value, hide the picker
+            // it is consistent with the requirement of not calling values() with empty search
+            richSelect.hidePicker();
             return;
         }
+
+        richSelect.showPicker();
         if (typeof params.values !== 'function') {
             // potentially allow sync values too
             return;
         }
         const valuesPromise = params.values(params);
-        if (!Array.isArray(valuesPromise)) {
-            this.eEditor.setValueList({
-                valueList: valuesPromise.then((results) => {
-                    // only set the results if this is the latest search request
-                    if (currentRequest === this.currentSearchRequest) {
-                        return results;
-                    }
-                }),
-                refresh: true,
-            });
+        if (Array.isArray(valuesPromise)) {
+            // potentially allow sync values too
+            return;
         }
-        // potentially allow sync values too
+        richSelect.setValueList({
+            valueList: valuesPromise.then((results) => {
+                // only set the results if this is the latest search request
+                // this avoids out of order responses messing up the results
+                if (currentRequest === this.currentSearchRequest) {
+                    return results;
+                }
+            }),
+            refresh: true,
+        });
     };
 
     private getSearchStringCallback(values: TValue[]): ((values: TValue[]) => string[]) | undefined {

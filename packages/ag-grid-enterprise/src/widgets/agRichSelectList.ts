@@ -20,11 +20,11 @@ const ROW_COMPONENT_NAME = 'ag-rich-select-row';
 /**
  *  0: 'LOADING' | 1: 'READY_RESULTS' | 2: 'NO_MATCHES' | 3: 'READY_FOR_INPUT'
  */
-export type AgRichSelectListState = 0 | 1 | 2 | 3;
-export const AgRichSelectListStateLoading = 0;
-export const AgRichSelectListStateReadyWithResults = 1;
-export const AgRichSelectListStateNoResults = 2;
-export const AgRichSelectListStateReadyForInput = 3;
+type AgRichSelectListState = 0 | 1 | 2 | 3;
+export const StateLoading = 0;
+export const StateReadyWithResults = 1;
+export const StateNoResults = 2;
+export const StateReadyForInput = 3;
 
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
     Component<TEventType | AgRichSelectListEvent | HighlightTooltipEventType>,
@@ -53,18 +53,18 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public setLoadingState(state: AgRichSelectListState): void {
         const loadingLabel = this.loadingLabel;
         switch (state) {
-            case AgRichSelectListStateLoading:
+            case StateLoading:
                 this.toggleStateComp(loadingLabel);
                 break;
-            case AgRichSelectListStateReadyWithResults:
+            case StateReadyWithResults:
                 this.toggleStateComp();
                 break;
-            case AgRichSelectListStateNoResults:
+            case StateNoResults:
                 if (this.params.allowNoResultsCopy) {
                     this.toggleStateComp(this.noMatchesLabel);
                 }
                 break;
-            case AgRichSelectListStateReadyForInput:
+            case StateReadyForInput:
                 this.toggleStateComp();
                 break;
         }
@@ -228,7 +228,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public setCurrentList(list: TValue[] | undefined): void {
         list ||= [];
-
+        const newState = getListStateBasedOnResults<TValue>(list);
+        this.setLoadingState(newState);
         this.currentList = list;
 
         this.setModel({
@@ -431,4 +432,14 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         super.destroy();
         this.eStateComp = undefined;
     }
+}
+
+function getListStateBasedOnResults<TValue>(valueList: TValue[] | undefined): AgRichSelectListState {
+    if (!valueList) {
+        return StateReadyForInput;
+    }
+    if (valueList.length) {
+        return StateReadyWithResults;
+    }
+    return StateNoResults;
 }

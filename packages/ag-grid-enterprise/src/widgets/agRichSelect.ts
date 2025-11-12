@@ -43,14 +43,8 @@ import {
 
 import { AgPillContainer } from './AgPillContainer';
 import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
-import type { AgRichSelectListEvent, AgRichSelectListState } from './agRichSelectList';
-import {
-    AgRichSelectList,
-    AgRichSelectListStateLoading,
-    AgRichSelectListStateNoResults,
-    AgRichSelectListStateReadyForInput,
-    AgRichSelectListStateReadyWithResults,
-} from './agRichSelectList';
+import type { AgRichSelectListEvent } from './agRichSelectList';
+import { AgRichSelectList, StateLoading as AgRichSelectListStateLoading } from './agRichSelectList';
 
 type AgRichSelectEvent = AgRichSelectListEvent;
 
@@ -145,7 +139,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (valueList != null) {
-            this.setValues(valueList);
+            this.setValueList({ valueList });
         }
 
         this.onSearch = onSearch;
@@ -324,30 +318,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
-    private getListStateBasedOnResults(valueList: TValue[] | undefined): AgRichSelectListState {
-        if (!valueList) {
-            return AgRichSelectListStateReadyForInput;
-        }
-        if (valueList.length) {
-            return AgRichSelectListStateReadyWithResults;
-        } else {
-            return AgRichSelectListStateNoResults;
-        }
-    }
-
     private setValueListInternal(params: { valueList: TValue[] | undefined; refresh?: boolean }): void {
-        const { listComponent } = this;
+        const { listComponent, isPickerDisplayed, value } = this;
         const { valueList, refresh } = params;
         if (!listComponent) {
             return;
         }
 
-        const newState = this.getListStateBasedOnResults(valueList);
-        listComponent.setLoadingState(newState);
-        if (listComponent?.getCurrentList() !== valueList) {
-            listComponent?.setCurrentList(valueList);
-        }
-        if (valueList && this.values !== valueList) {
+        if (this.values !== valueList) {
             this.setValues(valueList ?? []);
         }
 
@@ -356,8 +334,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
         if (this.values) {
             listComponent.refresh(true);
-        } else if (this.isPickerDisplayed) {
-            const hasRefreshed = listComponent.selectValue(this.value);
+        } else if (isPickerDisplayed) {
+            const hasRefreshed = listComponent.selectValue(value);
             if (!hasRefreshed) {
                 listComponent.refresh();
             }
@@ -372,10 +350,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const { valueList, refresh } = params;
 
         if (!valueList || Array.isArray(valueList)) {
-            // if valueList is an array or null/undefined we can set it directly
-            // special case when we need to both clear the list and hide the status label
-            // this is useful when doing async search we want to clear the previous results
-            // and only show a placeholder with a CTA (e.g. start typing...)
+            // If valueList is an array, null or undefined, apply it synchronously.
+            // This lets us immediately clear the existing list and hide any status label.
+            // Useful for async searches where previous results must be removed so a
+            // placeholder/CTA (e.g. `Start typing...`) is shown until new results arrive.
             this.setValueListInternal({ valueList, refresh });
             return;
         }
@@ -391,6 +369,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
      */
     private setValues(values: TValue[]): void {
         this.values = values;
+        const { listComponent } = this;
+        if (listComponent && listComponent?.getCurrentList() !== values) {
+            listComponent.setCurrentList(values);
+        }
         this.searchStrings = this.getSearchStringsFromValues(values);
     }
 
