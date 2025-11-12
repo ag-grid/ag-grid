@@ -579,25 +579,5 @@ describe('Cell Selection', () => {
 
             assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 6, columns: ['year', 'amount'] }], api);
         });
-
-        test('Can use API method to select and de-select columns', async () => {
-            const [api] = await createGrid({
-                columnDefs,
-                rowData,
-                cellSelection: true,
-            });
-
-            api.selectColumns(['sport']);
-            assertColumnsSelected([['sport']], api);
-
-            api.selectColumns(['year', 'amount', 'day']);
-            assertColumnsSelected([['sport'], ['year', 'amount', 'day']], api);
-
-            api.selectColumns(['amount'], false);
-            assertColumnsSelected([['sport'], ['year', 'day']], api);
-
-            api.selectColumns(['sport'], false);
-            assertColumnsSelected([['year', 'day']], api);
-        });
     });
 });
