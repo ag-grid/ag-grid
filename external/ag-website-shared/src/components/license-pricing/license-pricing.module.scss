@@ -497,7 +497,6 @@
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
-        align-items: center;
         padding-top: $spacing-size-24;
         padding-bottom: $spacing-size-20;
         border-top: 1px solid var(--color-border-secondary);
@@ -506,9 +505,7 @@
 
 .salesFormCopy {
     flex: 1;
-    padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-8;
-    justify-content: space-between;
     display: flex;
     flex-direction: column;
 
