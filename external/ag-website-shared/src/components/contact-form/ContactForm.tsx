@@ -4,7 +4,7 @@ import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY, RECAPTCHA_URL } from '@ag-websit
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
@@ -15,7 +15,6 @@ const { actionUrl, orgId, textAreaId, leadSource, formLocationId } = getIsProduc
     : CONTACT_FORM_DATA.default;
 
 const isDev = getIsDev();
-const showCaptcha = !isDev;
 
 type FormValues = {
     first_name: string;
@@ -55,6 +54,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
     const [isDisabled, setIsDisabled] = useState(false);
+    const [captchaError, setCaptchaError] = useState(false);
 
     const {
         register,
@@ -84,23 +84,23 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             setReturnUrl(urlWithCurrentPath.toString());
         }
 
-        if (showCaptcha) {
-            loadRecaptchaScript().then(() => {
-                initCaptcha();
-            });
-        }
+        loadRecaptchaScript().then(() => {
+            initCaptcha();
+        });
     }, []);
 
-    const onValidSubmit = () => {
+    const onValidSubmit = useCallback(() => {
         setIsDisabled(true);
-        const captcha = (globalThis as any).grecaptcha;
-        captcha.ready(function () {
-            captcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then((token: string) => {
-                console.log('Captcha token', token);
-                formRef.current?.submit();
-            });
-        });
-    };
+        setCaptchaError(false);
+
+        const captchaPassed = (globalThis as any).grecaptcha.getResponse();
+        if (captchaPassed) {
+            formRef.current?.submit();
+        } else {
+            setCaptchaError(true);
+            setIsDisabled(false);
+        }
+    }, []);
 
     return (
         <form
@@ -192,7 +192,12 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
                 </div>
             </div>
 
-            {showCaptcha && <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />}
+            <div className={classnames('input-field', { 'input-error': captchaError })}>
+                <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />
+                <div className={styles.errorContainer}>
+                    {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
+                </div>
+            </div>
 
             <input
                 className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
