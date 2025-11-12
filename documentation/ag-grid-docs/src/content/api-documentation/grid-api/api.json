@@ -469,7 +469,7 @@
     },
     "batch-editing": {
         "meta": {
-            "displayName": "Batch Editing",
+            "displayName": "Editing: Batch",
             "page": {
                 "name": "Batch Editing",
                 "url": "./cell-editing-batch/"
@@ -520,7 +520,19 @@
                 "url": "./cell-editing-start-stop/#editing-api"
             }
         },
+        "isEditing": {
+            "more": {
+                "name": "Editing API",
+                "url": "./cell-editing-start-stop/#editing-api"
+            }
+        },
         "getEditingCells": {
+            "more": {
+                "name": "Editing API",
+                "url": "./cell-editing-start-stop/#editing-api"
+            }
+        },
+        "getEditRowValues": {
             "more": {
                 "name": "Editing API",
                 "url": "./cell-editing-start-stop/#editing-api"

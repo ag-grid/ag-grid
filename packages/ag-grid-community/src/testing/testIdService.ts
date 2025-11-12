@@ -407,13 +407,15 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             setTestId(fieldDisplay, agTestIdFor.filterInstancePickerDisplay(spec));
         });
 
-        const numberInput = filterRoot.querySelector('.ag-filter-body input[type="number"]');
+        const filterClass = spec.source === 'floating-filter' ? '.ag-floating-filter-body' : '.ag-filter-body';
+
+        const numberInput = filterRoot.querySelector(`${filterClass} input[type="number"]`);
         setTestId(numberInput, agTestIdFor.numberFilterInstanceInput(spec));
 
-        const textInput = filterRoot.querySelector('.ag-filter-body input[type="text"]');
+        const textInput = filterRoot.querySelector(`${filterClass} input[type="text"]`);
         setTestId(textInput, agTestIdFor.textFilterInstanceInput(spec));
 
-        const dateInput = filterRoot.querySelector('.ag-filter-body input[type="date"]');
+        const dateInput = filterRoot.querySelector(`${filterClass} input[type="date"]`);
         setTestId(dateInput, agTestIdFor.dateFilterInstanceInput(spec));
 
         const setMiniFilterInput = filterRoot.querySelector('.ag-mini-filter input[type="text"]');
