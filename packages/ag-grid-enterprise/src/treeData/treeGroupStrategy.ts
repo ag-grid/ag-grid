@@ -1,9 +1,9 @@
 import type {
     ChangedPath,
-    ChangedRowNodes,
     GridOptions,
     NestedDataGetter,
     StageExecuteParams,
+    _ChangedRowNodes,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
@@ -144,7 +144,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return treeChanged;
     }
 
-    private flagUpdatedNodes(changedRowNodes: ChangedRowNodes<TData>): boolean {
+    private flagUpdatedNodes(changedRowNodes: _ChangedRowNodes<TData>): boolean {
         const { adds, updates, removals } = changedRowNodes;
         let hasUpdates = removals.size > 0;
         if (adds.size > 0) {

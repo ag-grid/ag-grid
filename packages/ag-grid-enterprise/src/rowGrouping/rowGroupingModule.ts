@@ -15,6 +15,7 @@ import { GroupFilter, processGroupFilterParams } from './groupFilter/groupFilter
 import { GroupFilterHandler } from './groupFilter/groupFilterHandler';
 import { GroupFilterService } from './groupFilter/groupFilterService';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
+import { GroupEditService } from './groupEditService';
 import { GroupStrategy } from './groupStrategy/groupStrategy';
 import {
     addRowGroupColumns,
@@ -53,6 +54,7 @@ export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
 export const RowGroupingModule: _ModuleWithoutApi = {
     moduleName: 'RowGrouping',
     version: VERSION,
+    beans: [GroupEditService],
     dynamicBeans: { groupStrategy: GroupStrategy },
     rowModels: ['clientSide'],
     dependsOn: [SharedRowGroupingModule, AggregationModule, ClientSideRowModelHierarchyModule],

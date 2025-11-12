@@ -1,12 +1,12 @@
 import type {
     BeanName,
-    ChangedRowNodes,
     DetailGridInfo,
     IMasterDetailService,
     NamedBean,
     RefreshModelParams,
     RowCtrl,
     RowNodeDataChangedEvent,
+    _ChangedRowNodes,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -116,7 +116,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         }
     }
 
-    private setMasters(changedRowNodes: ChangedRowNodes | null | undefined): void {
+    private setMasters(changedRowNodes: _ChangedRowNodes | null | undefined): void {
         this.enabled = this.isEnabled();
         if (changedRowNodes) {
             for (const node of changedRowNodes.updates) {

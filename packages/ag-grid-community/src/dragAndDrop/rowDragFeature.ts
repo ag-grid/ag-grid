@@ -88,9 +88,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const { rowGroupColsSvc, filterManager, sortSvc } = this.beans;
-        const rowGroupCols = rowGroupColsSvc?.columns ?? [];
-        if (rowGroupCols.length) {
+        const { gos, rowGroupColsSvc, filterManager, sortSvc } = this.beans;
+        if (rowGroupColsSvc?.columns?.length && !gos.get('refreshAfterGroupEdit')) {
             return true;
         }
         const isFilterPresent = filterManager?.isAnyFilterPresent();
@@ -184,11 +183,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 
+        const groupEditSvc = this.beans.groupEditSvc;
         const canSetParent =
-            // We don't yet support drag and drop with grouping
-            !!this.beans.groupStage?.treeData &&
-            // We don't yet support moving tree rows from a different grid in a structured way
-            sameGrid;
+            groupEditSvc?.canSetManagedParent(rowsDrop) ??
+            (sameGrid &&
+                (!!this.beans.groupStage?.treeData ||
+                    (rowsDrop.rowDragManaged &&
+                        !!this.beans.rowGroupColsSvc?.columns?.length &&
+                        this.gos.get('refreshAfterGroupEdit'))));
 
         let newParent: IRowNode | null = null;
         if (target?.footer) {
@@ -222,6 +224,15 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const nudger = this.nudger;
+        const canStartGroup = (candidate: IRowNode | null | undefined) =>
+            !!nudger &&
+            !moving &&
+            !!candidate &&
+            candidate !== rootNode &&
+            !candidate.footer &&
+            !candidate.detail &&
+            (candidate.isExpandable?.() || !!candidate.childrenAfterSort?.length);
+
         nudger?.updateGroup(target, moving);
 
         if (canSetParent && !newParent && nudger) {
@@ -231,11 +242,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 if (nudger.groupThrottled) {
                     newParent = target;
                 }
-                if (!moving && (!newParent || (target && !target.expanded && !!target.childrenAfterSort?.length))) {
-                    nudger.startGroup(target);
-                }
             }
             newParent ??= target?.parent ?? rootNode;
+
+            if (
+                canStartGroup(target) &&
+                (!newParent || (target && !target.expanded && !!target.childrenAfterSort?.length))
+            ) {
+                nudger.startGroup(target);
+            }
+        } else if (canStartGroup(target)) {
+            nudger!.startGroup(target!);
         }
 
         let inside = false;
@@ -601,7 +618,15 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return filtered ?? rows; // If all rows are valid, return the original array
     }
 
-    private csrmMoveRows({ position, target, rows, newParent, rootNode }: RowsDrop): boolean {
+    private csrmMoveRows(rowsDrop: RowsDrop): boolean {
+        const groupEditSvc = this.beans.groupEditSvc;
+        if (groupEditSvc?.shouldHandleManagedRowMove(rowsDrop)) {
+            return groupEditSvc.moveRowsWithGroupEdit(rowsDrop);
+        }
+        return this.csrmMoveRowsReorder(rowsDrop);
+    }
+
+    private csrmMoveRowsReorder({ position, target, rows, newParent, rootNode }: RowsDrop): boolean {
         let changed = false;
 
         const leafs = new Set<RowNode>();

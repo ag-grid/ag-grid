@@ -241,6 +241,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressClickEdit',
     'rowDragEntireRow',
     'rowDragManaged',
+    'refreshAfterGroupEdit',
     'suppressRowDrag',
     'suppressMoveWhenRowDragging',
     'rowDragMultiRow',
