@@ -114,7 +114,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             <input
                 type="hidden"
                 name="captcha_settings"
-                value={`{"keyname":"agGridComV3","fallback":"true","orgId":"${orgId}","ts":""}`}
+                value={`{"keyname":"agGridComV2","fallback":"true","orgId":"${orgId}","ts":""}`}
             />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
