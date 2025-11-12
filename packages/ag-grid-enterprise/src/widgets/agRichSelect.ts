@@ -897,6 +897,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 break;
             default:
                 if (!allowTyping) {
+                    // this allows searching even without the input field, this is for historical reasons
                     this.buildSearchStringFromKeyboardEvent(e);
                 }
         }

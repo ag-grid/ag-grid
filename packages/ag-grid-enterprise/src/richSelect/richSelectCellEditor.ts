@@ -46,6 +46,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         const isPromise = valueList && !Array.isArray(valueList);
         if (isPromise) {
             valueList.then((values) => {
+                richSelect.showPicker();
                 const searchStringCallback = this.getSearchStringCallback(values);
                 if (searchStringCallback) {
                     richSelect.setSearchStringCreator(searchStringCallback);
@@ -255,11 +256,10 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 }
             }
 
-            if (cellStartedEdit) {
-                richSelect.showPicker();
-            }
-
             if (!this.isAsync) {
+                if (cellStartedEdit) {
+                    richSelect.showPicker();
+                }
                 this.processEventKey(eventKey);
             }
         });
