@@ -136,6 +136,16 @@ jobs:
           echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
 
+      - name: Perist build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-init-outputs
+          path: |
+            dist/
+            packages/*/dist/
+            external/*/dist/
+
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
@@ -210,6 +220,11 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -245,6 +260,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1 # shallow copy
+
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
 
       - name: Setup
         id: setup
@@ -323,6 +343,11 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
+
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -381,6 +406,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
+      - name: Restore Init Build Outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: e2e-init-outputs
 
       - name: Setup
         id: setup
@@ -534,7 +564,7 @@ jobs:
                     "Lint": "${{ needs.format_lint.outputs.lint }}",
                     "Format": "${{ needs.format_lint.outputs.format }}",
                     "Test": "${{ needs.test.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",            
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",
