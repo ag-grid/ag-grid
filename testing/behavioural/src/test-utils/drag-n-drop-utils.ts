@@ -5,6 +5,12 @@ import { mockGridLayout } from './polyfills/mockGridLayout';
 import { TestGridsManager } from './testGridsManager';
 import { asyncSetTimeout } from './utils';
 
+type FireMouseEventFn = (
+    element: Element | Document,
+    eventType: string,
+    options?: MouseEventInit & { dataTransfer?: DataTransfer }
+) => Promise<void>;
+
 export interface DragAndDropRowOptions {
     api: GridApi;
     source: Element | string | null | undefined;
@@ -12,6 +18,13 @@ export interface DragAndDropRowOptions {
     sourceYOffsetPercent?: number;
     targetYOffsetPercent?: number;
     cancel?: boolean;
+    beforeDrop?: (context: {
+        api: GridApi;
+        sourceElement: Element;
+        targetElement: Element;
+        dataTransfer: DataTransfer;
+        fireMouseEvent: FireMouseEventFn;
+    }) => Promise<void> | void;
 }
 
 export async function dragAndDropRow({
@@ -20,6 +33,7 @@ export async function dragAndDropRow({
     target,
     sourceYOffsetPercent = 0.5,
     targetYOffsetPercent = 0.5,
+    beforeDrop,
 }: DragAndDropRowOptions) {
     mockGridLayout.init();
     initDataTransferPolyfill();
@@ -96,11 +110,7 @@ export async function dragAndDropRow({
 
     const dataTransfer = new DataTransfer();
 
-    const fireMouseEvent = async (
-        element: Element | Document,
-        eventType: string,
-        options: MouseEventInit & { dataTransfer?: DataTransfer } = {}
-    ) => {
+    const fireMouseEvent: FireMouseEventFn = async (element, eventType, options = {}) => {
         const event = new MouseEvent(eventType, { bubbles: true, cancelable: true, ...options });
         element.dispatchEvent(event);
         await asyncSetTimeout(0);
@@ -137,6 +147,16 @@ export async function dragAndDropRow({
         await fireMouseEvent(source, 'dragleave', { dataTransfer, clientX: startX, clientY: startY });
         await fireMouseEvent(target, 'dragenter', { dataTransfer, clientX: endX, clientY: endY });
         await fireMouseEvent(target, 'dragover', { dataTransfer, clientX: endX, clientY: endY });
+
+        if (beforeDrop) {
+            await beforeDrop({
+                api,
+                sourceElement: source,
+                targetElement: target,
+                dataTransfer,
+                fireMouseEvent,
+            });
+        }
         await fireMouseEvent(dragHandle, 'drag', { dataTransfer, clientX: startX, clientY: startY });
 
         await fireMouseEvent(target, 'drop', { dataTransfer, clientX: endX, clientY: endY });

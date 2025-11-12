@@ -36,6 +36,9 @@ export interface GridRowsOptions<TData = any> {
 
     /** Forces treeData to be checked as true or false */
     treeData?: boolean;
+
+    /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
+    nodeDataProps?: string[];
 }
 
 export class GridRows<TData = any> {
