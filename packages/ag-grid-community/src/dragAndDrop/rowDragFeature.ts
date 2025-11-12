@@ -1,5 +1,6 @@
 import { _areEqual } from '../agStack/utils/array';
 import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
+import { _reorderAllLeafs } from '../clientSideRowModel/clientSideRowModelUtils';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
@@ -185,7 +186,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         const groupEditSvc = this.beans.groupEditSvc;
         const canSetParent =
-            groupEditSvc?.canSetManagedParent(rowsDrop) ??
+            groupEditSvc?.canSetParent(rowsDrop) ??
             (sameGrid &&
                 (!!this.beans.groupStage?.treeData ||
                     (rowsDrop.rowDragManaged &&
@@ -587,28 +588,32 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return false; // Nothing to add
         }
 
-        const addIndex = target ? getLeafSourceRowIndex(target) + (position === 'above' ? 0 : 1) : undefined;
+        let addIndex: number | undefined;
+        if (target) {
+            const leaf = target.data ? (target as RowNode) : _firstLeaf(target.childrenAfterGroup);
+            const sourceIndex = leaf !== undefined ? leaf.sourceRowIndex : -1;
+            addIndex = sourceIndex + (position === 'above' ? 0 : 1);
+        }
         clientSideRowModel.updateRowData({ add, addIndex });
 
         return true;
     }
 
     private filterRows({ newParent, rows }: RowsDrop): IRowNode[] {
+        const { rowModel, groupEditSvc } = this.beans;
         let filtered: IRowNode[] | undefined;
         for (let i = 0, len = rows.length; i < len; ++i) {
             let valid = true;
-
             const row = rows[i];
             if (
                 !row ||
                 row.footer ||
-                (row.rowTop === null && row !== this.beans.rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
-                (newParent && row.parent !== newParent && wouldFormCycle(row, newParent)) || // Cannot move to a parent that would create a cycle
+                (row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
+                (groupEditSvc?.wouldCycle(row, newParent) ?? wouldFormCycle(row, newParent)) || // Cannot move to a parent that would create a cycle
                 !getLeafRow(row) // No leaf to move, so nothing to do
             ) {
                 valid = false;
             }
-
             if (valid) {
                 filtered?.push(row);
             } else {
@@ -651,10 +656,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const cellPosition = focusSvc.getFocusedCell();
         const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
 
-        if (
-            leafs.size &&
-            this.reorderLeafChildren(leafs, ...this.getMoveRowsBounds(leafs, target, position === 'above'))
-        ) {
+        if (leafs.size && _reorderAllLeafs((rootNode as RowNode)._leafs, leafs, target, position === 'above')) {
             changed = true;
         }
 
@@ -681,90 +683,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         return true;
     }
-
-    /** For reorderLeafChildren, returns min index of the rows to move, the target index and the max index of the rows to move. */
-    private getMoveRowsBounds(leafs: Iterable<RowNode>, target: IRowNode | null | undefined, above: boolean) {
-        const totalRows = this.beans.rowModel.rootNode?._leafs?.length ?? 0;
-        let targetPositionIdx = target ? getLeafSourceRowIndex(target) : -1;
-        if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
-            targetPositionIdx = totalRows;
-        } else if (!above) {
-            ++targetPositionIdx;
-        }
-        let firstAffectedLeafIdx = targetPositionIdx;
-        let lastAffectedLeafIndex = Math.min(targetPositionIdx, totalRows - 1);
-        for (const row of leafs) {
-            const sourceRowIndex = row.sourceRowIndex;
-            if (sourceRowIndex < firstAffectedLeafIdx) {
-                firstAffectedLeafIdx = sourceRowIndex;
-            }
-            if (sourceRowIndex > lastAffectedLeafIndex) {
-                lastAffectedLeafIndex = sourceRowIndex;
-            }
-        }
-        return [firstAffectedLeafIdx, targetPositionIdx, lastAffectedLeafIndex] as const;
-    }
-
-    /** Reorders the children of the root node, so that the rows to move are in the correct order.
-     * @param leafs The valid set of rows to move, as returned by getValidRowsToMove
-     * @param firstAffectedLeafIdx The first index of the rows to move
-     * @param targetPositionIdx The target index, where the rows will be moved
-     * @param lastAffectedLeafIndex The last index of the rows to move
-     * @returns True if the order of the rows changed, false otherwise
-     */
-    private reorderLeafChildren(
-        leafs: ReadonlySet<RowNode>,
-        firstAffectedLeafIdx: number,
-        targetPositionIdx: number,
-        lastAffectedLeafIndex: number
-    ): boolean {
-        let orderChanged = false;
-
-        const allLeafs: RowNode[] | null | undefined = this.beans.rowModel.rootNode?._leafs;
-        if (!leafs.size || !allLeafs) {
-            return false;
-        }
-
-        // First partition. Filter from left to right, so the middle can be overwritten
-        let writeIdxLeft = firstAffectedLeafIdx;
-        for (let readIdx = firstAffectedLeafIdx; readIdx < targetPositionIdx; ++readIdx) {
-            const row = allLeafs[readIdx];
-            if (!leafs.has(row)) {
-                if (row.sourceRowIndex !== writeIdxLeft) {
-                    row.sourceRowIndex = writeIdxLeft;
-                    allLeafs[writeIdxLeft] = row;
-                    orderChanged = true;
-                }
-                ++writeIdxLeft;
-            }
-        }
-
-        // Third partition. Filter from right to left, so the middle can be overwritten
-        let writeIdxRight = lastAffectedLeafIndex;
-        for (let readIdx = lastAffectedLeafIndex; readIdx >= targetPositionIdx; --readIdx) {
-            const row = allLeafs[readIdx];
-            if (!leafs.has(row)) {
-                if (row.sourceRowIndex !== writeIdxRight) {
-                    row.sourceRowIndex = writeIdxRight;
-                    allLeafs[writeIdxRight] = row;
-                    orderChanged = true;
-                }
-                --writeIdxRight;
-            }
-        }
-
-        // Second partition. Overwrites the middle between the other two filtered partitions
-        for (const row of leafs) {
-            if (row.sourceRowIndex !== writeIdxLeft) {
-                row.sourceRowIndex = writeIdxLeft;
-                allLeafs[writeIdxLeft] = row;
-                orderChanged = true;
-            }
-            ++writeIdxLeft;
-        }
-
-        return orderChanged;
-    }
 }
 
 /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
@@ -787,17 +705,6 @@ const getPrevOrNext = (
     return undefined; // Out of bounds
 };
 
-const wouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null): boolean => {
-    let parent = newParent;
-    while (parent) {
-        if (parent === row) {
-            return true;
-        }
-        parent = parent.parent;
-    }
-    return false;
-};
-
 const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
     for (let i = 0, len = rows.length; i < len; ++i) {
         if (rows[i].parent !== newParent) {
@@ -807,9 +714,19 @@ const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean
     return true;
 };
 
-const getLeafSourceRowIndex = (row: IRowNode): number => {
-    const leaf = getLeafRow(row);
-    return leaf !== undefined ? leaf.sourceRowIndex : -1;
+const wouldFormCycle = <TData>(row: IRowNode<TData>, newParent: IRowNode<TData> | null | undefined): boolean => {
+    let current = newParent;
+    const rowId = row.id;
+    while (current) {
+        if (current === row) {
+            return true;
+        }
+        if (rowId != null && current.id === rowId) {
+            return true;
+        }
+        current = current.parent;
+    }
+    return false;
 };
 
 const getLeafRow = (row: IRowNode): RowNode | undefined =>

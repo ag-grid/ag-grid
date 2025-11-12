@@ -14,6 +14,7 @@ import {
     _firstLeaf,
     _getCellByPosition,
     _isClientSideRowModel,
+    _reorderAllLeafs,
 } from 'ag-grid-community';
 
 export class GroupEditService extends BeanStub implements IGroupEditService {
@@ -27,6 +28,20 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         });
     }
 
+    public wouldCycle(row: IRowNode, newParent: IRowNode | null | undefined): boolean {
+        if (!newParent || row.parent === newParent) {
+            return false;
+        }
+        let parent: IRowNode | null | undefined = newParent;
+        while (parent) {
+            if (parent === row) {
+                return true;
+            }
+            parent = parent.parent;
+        }
+        return false;
+    }
+
     public shouldHandleManagedRowMove<TData = any, TContext = any>(rowsDrop: _RowsDrop<TData, TContext>): boolean {
         if (!rowsDrop.rowDragManaged || !rowsDrop.sameGrid) {
             return false;
@@ -37,7 +52,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return !!this.beans.rowGroupColsSvc?.columns?.length;
     }
 
-    public canSetManagedParent<TData = any, TContext = any>(rowsDrop: _RowsDrop<TData, TContext>): boolean {
+    public canSetParent<TData = any, TContext = any>(rowsDrop: _RowsDrop<TData, TContext>): boolean {
         if (!rowsDrop.sameGrid) {
             return false;
         }
@@ -88,12 +103,12 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
             position === 'inside' ? this.findFirstLeafForParent(parentForValues, leafs) ?? target : target;
         let orderChanged = false;
         if (leafs.size && reorderPosition !== 'none') {
-            const [firstIdx, targetIdx, lastIdx] = this.getMoveRowsBounds(
+            orderChanged = _reorderAllLeafs(
+                (rootNode as RowNode)._leafs,
                 leafs,
                 reorderTarget,
                 reorderPosition === 'above'
             );
-            orderChanged = this.reorderLeafChildren(leafs, firstIdx, targetIdx, lastIdx);
         }
 
         if (!dataChanged && !orderChanged) {
@@ -268,93 +283,10 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
 
         const editSvc = this.beans.editSvc;
         if (editSvc?.isBatchEditing()) {
-            const pending = this.pendingGroupRefreshRows ?? (this.pendingGroupRefreshRows = new Set());
+            const pending = (this.pendingGroupRefreshRows ??= new Set());
             pending.add(node as RowNode);
         } else {
             this.refreshGroupingForRows([node as RowNode]);
         }
-    }
-
-    private getMoveRowsBounds(
-        leafs: Iterable<RowNode>,
-        target: RowNode | null | undefined,
-        above: boolean
-    ): readonly [number, number, number] {
-        const rootLeafs = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
-        const totalRows = rootLeafs?.length ?? 0;
-        let targetPositionIdx = target ? this.getLeafSourceRowIndex(target) : -1;
-        if (targetPositionIdx < 0 || targetPositionIdx >= totalRows) {
-            targetPositionIdx = totalRows;
-        } else if (!above) {
-            ++targetPositionIdx;
-        }
-        let firstAffectedLeafIdx = targetPositionIdx;
-        let lastAffectedLeafIndex = Math.min(targetPositionIdx, totalRows - 1);
-        for (const row of leafs) {
-            const sourceRowIndex = row.sourceRowIndex;
-            if (sourceRowIndex < firstAffectedLeafIdx) {
-                firstAffectedLeafIdx = sourceRowIndex;
-            }
-            if (sourceRowIndex > lastAffectedLeafIndex) {
-                lastAffectedLeafIndex = sourceRowIndex;
-            }
-        }
-        return [firstAffectedLeafIdx, targetPositionIdx, lastAffectedLeafIndex];
-    }
-
-    private reorderLeafChildren(
-        leafs: ReadonlySet<RowNode>,
-        firstAffectedLeafIdx: number,
-        targetPositionIdx: number,
-        lastAffectedLeafIndex: number
-    ): boolean {
-        let orderChanged = false;
-
-        const allLeafs: RowNode[] | null | undefined = (this.beans.rowModel as IClientSideRowModel).rootNode?._leafs;
-        if (!leafs.size || !allLeafs) {
-            return false;
-        }
-
-        let writeIdxLeft = firstAffectedLeafIdx;
-        for (let readIdx = firstAffectedLeafIdx; readIdx < targetPositionIdx; ++readIdx) {
-            const row = allLeafs[readIdx];
-            if (!leafs.has(row)) {
-                if (row.sourceRowIndex !== writeIdxLeft) {
-                    row.sourceRowIndex = writeIdxLeft;
-                    allLeafs[writeIdxLeft] = row;
-                    orderChanged = true;
-                }
-                ++writeIdxLeft;
-            }
-        }
-
-        let writeIdxRight = lastAffectedLeafIndex;
-        for (let readIdx = lastAffectedLeafIndex; readIdx >= targetPositionIdx; --readIdx) {
-            const row = allLeafs[readIdx];
-            if (!leafs.has(row)) {
-                if (row.sourceRowIndex !== writeIdxRight) {
-                    row.sourceRowIndex = writeIdxRight;
-                    allLeafs[writeIdxRight] = row;
-                    orderChanged = true;
-                }
-                --writeIdxRight;
-            }
-        }
-
-        for (const row of leafs) {
-            if (row.sourceRowIndex !== writeIdxLeft) {
-                row.sourceRowIndex = writeIdxLeft;
-                allLeafs[writeIdxLeft] = row;
-                orderChanged = true;
-            }
-            ++writeIdxLeft;
-        }
-
-        return orderChanged;
-    }
-
-    private getLeafSourceRowIndex(row: IRowNode): number {
-        const leaf = this.getLeafRow(row);
-        return leaf !== undefined ? leaf.sourceRowIndex : -1;
     }
 }
