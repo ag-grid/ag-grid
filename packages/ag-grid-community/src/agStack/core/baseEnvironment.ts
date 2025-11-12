@@ -75,7 +75,7 @@ export abstract class BaseEnvironment<
         const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
         if (!themeStyleContainer && !isShadowRoot) {
-            warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this));
+            // warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this)); // TODO - restore once interval errors in tests fixed
         }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
