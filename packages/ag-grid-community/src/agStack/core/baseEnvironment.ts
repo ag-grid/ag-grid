@@ -75,7 +75,7 @@ export abstract class BaseEnvironment<
         const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
         if (!themeStyleContainer && !isShadowRoot) {
-            // warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this)); // TODO - restore once interval errors in tests fixed
+            // put warnOnAttachToShadowRoot back here once interval errors in tests fixed
         }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
@@ -310,19 +310,3 @@ export interface BaseCssChangeKeys {
 }
 
 const NO_VALUE_SENTINEL = 15538;
-
-// const warnOnAttachToShadowRoot = (el: HTMLElement, errorCallback: () => void) => {
-//     // only retry for a minute, to prevent our tests (and potentially customer's
-//     // tests) from hanging if they try to use vi.runAllTimers() to run the interval
-//     // until it terminates
-//     let retries = 60;
-//     const interval = setInterval(() => {
-//         if (el.getRootNode() instanceof ShadowRoot) {
-//             errorCallback();
-//             clearInterval(interval);
-//         }
-//         if (_isInDOM(el) || --retries < 0) {
-//             clearInterval(interval);
-//         }
-//     }, 1000);
-// };
