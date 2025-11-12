@@ -321,14 +321,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.searchStringCreator = searchStringFn;
     }
 
-    private setValueListInternal(params: { valueList: TValue[] | undefined; refresh?: boolean }): void {
+    private setValueListInternal(params: {
+        valueList: TValue[] | undefined;
+        refresh?: boolean;
+        isInitial?: boolean;
+    }): void {
         const { listComponent, isPickerDisplayed, value } = this;
-        const { valueList, refresh } = params;
+        const { valueList, refresh, isInitial } = params;
         if (!listComponent) {
             return;
         }
 
-        this.setValues(valueList);
+        if (isInitial) {
+            this.setValues(valueList);
+        }
+        // we need to update the list component even if the 'values' is undefined
+        this.listComponent?.setCurrentList(valueList);
 
         if (!refresh) {
             return;
@@ -347,23 +355,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     public setValueList(params: {
         valueList: TValue[] | Promise<TValue[] | undefined> | undefined;
         refresh?: boolean;
+        isInitial?: boolean;
     }): void {
-        const { valueList, refresh } = params;
+        const { valueList } = params;
 
         if (!valueList || Array.isArray(valueList)) {
             // If valueList is an array, null or undefined, apply it synchronously.
             // This lets us immediately clear the existing list and hide any status label.
             // Useful for async searches where previous results must be removed so a
             // placeholder/CTA (e.g. `Start typing...`) is shown until new results arrive.
-            this.setValueListInternal({ valueList, refresh });
+            this.setValueListInternal(params as any);
             return;
         }
 
         this.listComponent?.setIsLoading();
-        // only show picker if it's not initial call
-        // this.showPicker();
         valueList.then((values) => {
-            this.setValueListInternal({ valueList: values, refresh });
+            this.setValueListInternal({ ...params, valueList: values });
         });
     }
 
@@ -372,9 +379,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
      */
     private setValues(values: TValue[] | undefined): void {
         this.values = values;
-        // we need to update the list component even if the 'values' is undefined
-        this.listComponent?.setCurrentList(values);
-
         this.searchStrings = this.getSearchStringsFromValues(values || []);
     }
 

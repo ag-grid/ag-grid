@@ -38,7 +38,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         if (this.isFullAsync()) {
             richSelect.showPicker();
         }
-        this.eEditor.setValueList({ valueList, refresh: true });
+        this.eEditor.setValueList({ valueList, refresh: true, isInitial: true });
         const isPromise = valueList && !Array.isArray(valueList);
         if (isPromise) {
             valueList.then((values) => {
