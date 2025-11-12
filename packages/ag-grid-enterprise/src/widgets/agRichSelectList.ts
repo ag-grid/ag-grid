@@ -17,14 +17,11 @@ export type AgRichSelectListEvent = 'fieldPickerValueSelected' | 'richSelectList
 const LIST_COMPONENT_NAME = 'ag-rich-select-list';
 const ROW_COMPONENT_NAME = 'ag-rich-select-row';
 
-/**
- *  0: 'LOADING' | 1: 'READY_RESULTS' | 2: 'NO_MATCHES' | 3: 'READY_FOR_INPUT'
- */
 type AgRichSelectListState = 0 | 1 | 2 | 3;
-export const StateLoading = 0;
-export const StateReadyWithResults = 1;
-export const StateNoResults = 2;
-export const StateReadyForInput = 3;
+const STATE_LOADING = 0;
+const STATE_READY_WITH_RESULTS = 1;
+const STATE_NO_RESULTS = 2;
+const STATE_READY_FOR_INPUT = 3;
 
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
     Component<TEventType | AgRichSelectListEvent | HighlightTooltipEventType>,
@@ -37,7 +34,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private readonly selectedItems: Set<TValue> = new Set<TValue>();
     private loadingLabel: string;
     private noMatchesLabel: string;
-    private loadingState = StateReadyForInput;
+    private loadingState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
 
@@ -102,7 +99,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public setIsLoading() {
-        this.setLoadingState(StateLoading);
+        this.setLoadingState(STATE_LOADING);
     }
 
     private setLoadingState(state: AgRichSelectListState): void {
@@ -116,13 +113,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         if (!eStateComp) {
             return;
         }
-        if (loadingState === StateLoading) {
+        if (loadingState === STATE_LOADING) {
             eStateCompLabel.textContent = loadingLabel;
             eLoadingIcon?.classList?.toggle('ag-hidden', false);
             eStateComp?.classList?.toggle('ag-hidden', false);
             return;
         }
-        if (loadingState === StateNoResults && params.allowNoResultsCopy) {
+        if (loadingState === STATE_NO_RESULTS && params.allowNoResultsCopy) {
             eStateCompLabel.textContent = noMatchesLabel;
             eLoadingIcon?.classList?.toggle('ag-hidden', true);
             eStateComp?.classList?.toggle('ag-hidden', false);
@@ -133,7 +130,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public toggleVisibility(forceVisible?: boolean) {
         const eListGui = this.getGui();
-        const forceHidden = forceVisible === undefined ? this.loadingState === StateReadyForInput : !forceVisible;
+        const forceHidden = forceVisible === undefined ? this.loadingState === STATE_READY_FOR_INPUT : !forceVisible;
         eListGui.classList.toggle('ag-hidden', forceHidden);
     }
 
@@ -432,10 +429,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
 function getListStateBasedOnResults<TValue>(valueList: TValue[] | undefined): AgRichSelectListState {
     if (!valueList) {
-        return StateReadyForInput;
+        return STATE_READY_FOR_INPUT;
     }
     if (valueList.length) {
-        return StateReadyWithResults;
+        return STATE_READY_WITH_RESULTS;
     }
-    return StateNoResults;
+    return STATE_NO_RESULTS;
 }
