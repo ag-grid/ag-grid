@@ -29,7 +29,7 @@ export class NumberFilter extends SimpleFilter<
         super('numberFilter', mapValuesFromNumberFilterModel, DEFAULT_NUMBER_FILTER_OPTIONS);
     }
 
-    protected override defaultDebounceMs: number = 500;
+    protected override defaultDebounceMs = 500;
 
     protected override setElementValue(
         element: GridInputTextField | GridInputNumberField,
@@ -141,9 +141,7 @@ export class NumberFilter extends SimpleFilter<
     protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
         this.forEachInput((element) => {
-            if (!element.getInputElement().validity.valid) {
-                invalidInputs = true;
-            }
+            invalidInputs ||= !element.getInputElement().validity.valid;
         });
         return invalidInputs;
     }
