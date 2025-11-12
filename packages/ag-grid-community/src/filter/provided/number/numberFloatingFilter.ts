@@ -29,8 +29,8 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         parentElement.appendChild(eNumberInput);
         parentElement.appendChild(eTextInput);
 
-        this.setupListeners(eNumberInput, (e: KeyboardEvent) => this.onValueChanged(e));
-        this.setupListeners(eTextInput, (e: KeyboardEvent) => this.onValueChanged(e));
+        this.setupListeners(eNumberInput, (e) => this.onValueChanged(e));
+        this.setupListeners(eTextInput, (e) => this.onValueChanged(e));
     }
 
     public setEditable(editable: boolean): void {
@@ -67,12 +67,28 @@ class FloatingFilterNumberInputService extends BeanStub implements FloatingFilte
         });
     }
 
-    public setParams(params: { ariaLabel: string; autoComplete?: boolean | string }): void {
-        this.setAriaLabel(params.ariaLabel);
+    public setParams({
+        ariaLabel,
+        autoComplete,
+        placeholder,
+    }: {
+        ariaLabel: string;
+        autoComplete?: boolean | string;
+        placeholder?: string;
+    }): void {
+        this.setAriaLabel(ariaLabel);
 
-        if (params.autoComplete !== undefined) {
-            this.setAutoComplete(params.autoComplete);
+        if (autoComplete !== undefined) {
+            this.setAutoComplete(autoComplete);
         }
+
+        this.setPlaceholder(this.eNumberInput, placeholder);
+        this.setPlaceholder(this.eTextInput, placeholder);
+    }
+
+    private setPlaceholder(input: GridInputTextField | GridInputNumberField, placeholder?: string): void {
+        input.toggleCss('ag-floating-filter-search-icon', !!placeholder);
+        input.setInputPlaceholder(placeholder);
     }
 
     private setAriaLabel(ariaLabel: string): void {

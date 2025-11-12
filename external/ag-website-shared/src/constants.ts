@@ -5,6 +5,8 @@ export const MIGRATION_DOCUMENTATION_NAV_DATA = {
     text: 'Documentation',
 };
 
+export const RECAPTCHA_SITE_KEY = '6LfvTQosAAAAABkPY-cWnx2mr29q8xWuQs-bMIu-';
+export const RECAPTCHA_URL = 'https://www.google.com/recaptcha/api.js';
 export const CONTACT_FORM_DATA = {
     default: {
         actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',
