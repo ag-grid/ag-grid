@@ -16,7 +16,12 @@ export class SortService extends BeanStub implements NamedBean {
 
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);
-        this.setSortForColumn(column, nextDirection, multiSort, source);
+        this.setSortForColumn(
+            column,
+            { direction: nextDirection, type: column.sortDef?.type ?? 'default' },
+            multiSort,
+            source
+        );
     }
 
     public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
@@ -339,13 +344,21 @@ export class SortService extends BeanStub implements NamedBean {
      * Update a column's sort state from a sort definition.
      * If `sortDef` is `undefined`, the call is a no-op (no change).
      */
-    public updateColSort(column: AgColumn, sortDef: SortDef | undefined, source: ColumnEventType): void {
+    public updateColSort(
+        column: AgColumn,
+        sortDef: SortDirection | SortDef | undefined,
+        source: ColumnEventType
+    ): void {
         if (sortDef === undefined) {
             return;
         }
 
-        if (_isSortDefValid(sortDef)) {
-            this.setColSort(column, sortDef, source);
+        const isSortDirection = sortDef === 'asc' || sortDef === 'desc' || sortDef === null;
+        const sortDefNorm = isSortDirection
+            ? ({ direction: sortDef, type: column.getSortDef()?.type ?? 'default' } as SortDef)
+            : (sortDef as SortDef);
+        if (_isSortDefValid(sortDefNorm)) {
+            this.setColSort(column, sortDefNorm, source);
         } else {
             this.setColSort(column, undefined, source);
         }

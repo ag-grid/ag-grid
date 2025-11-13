@@ -414,7 +414,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('sortAscending', 'Sort Ascending'),
                               icon: _createIconNoSpan('sortAscending', beans, null),
-                              action: () => sortSvc.setSortForColumn(column!, 'asc', false, source),
+                              action: () =>
+                                  sortSvc.setSortForColumn(
+                                      column!,
+                                      { type: column?.sortDef?.type ?? 'default', direction: 'asc' },
+                                      false,
+                                      source
+                                  ),
                           }
                         : null;
                 case 'sortDescending':
@@ -422,7 +428,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('sortDescending', 'Sort Descending'),
                               icon: _createIconNoSpan('sortDescending', beans, null),
-                              action: () => sortSvc.setSortForColumn(column!, 'desc', false, source),
+                              action: () =>
+                                  sortSvc.setSortForColumn(
+                                      column!,
+                                      { type: column?.sortDef?.type ?? 'default', direction: 'desc' },
+                                      false,
+                                      source
+                                  ),
                           }
                         : null;
                 case 'sortUnSort':
@@ -430,7 +442,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('sortUnSort', 'Clear Sort'),
                               icon: _createIconNoSpan('sortUnSort', beans, null),
-                              action: () => sortSvc.setSortForColumn(column!, null, false, source),
+                              action: () =>
+                                  sortSvc.setSortForColumn(
+                                      column!,
+                                      { type: column?.sortDef?.type ?? 'default', direction: null },
+                                      false,
+                                      source
+                                  ),
                           }
                         : null;
                 default: {
