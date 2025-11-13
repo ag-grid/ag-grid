@@ -115,6 +115,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         this.setupFunctions();
 
         this.addManagedListeners(this.beans.eventSvc, {
+            modelUpdated: this.reset.bind(this),
             newColumnsLoaded: this.setupColRefMap.bind(this),
             columnMoved: this.setupColRefMap.bind(this),
             cellValueChanged: this.reset.bind(this),
@@ -219,7 +220,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         shiftNode(ast);
 
         // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ false);
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ true);
     }
 
     private setupFunctions() {
