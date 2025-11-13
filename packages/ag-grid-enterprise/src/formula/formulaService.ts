@@ -119,10 +119,6 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             columnMoved: this.setupColRefMap.bind(this),
             cellValueChanged: this.reset.bind(this),
             rowDataUpdated: this.reset.bind(this),
-            modelUpdated: () => {
-                this;
-                debugger;
-            },
         });
     }
 
