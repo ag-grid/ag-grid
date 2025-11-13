@@ -15,16 +15,26 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
             enforce: 'pre',
             use: ['source-map-loader'],
         });
+
+        rules.push({
+            test: /\.tsx?$/,
+            loader: 'esbuild-loader',
+            exclude: /node_modules/,
+            options: {
+                tsconfig: join(__dirname, 'tsconfig.lib.json'),
+            },
+        });
+    } else {
+        rules.push({
+            test: /\.tsx?$/,
+            loader: require.resolve('ts-loader'),
+            exclude: /node_modules/,
+            options: {
+                configFile: join(__dirname, 'tsconfig.lib.json'),
+            },
+        });
     }
-    // ts loader for all configurations
-    rules.push({
-        test: /\.tsx?$/,
-        loader: require.resolve('ts-loader'),
-        exclude: /node_modules/,
-        options: {
-            configFile: join(__dirname, 'tsconfig.lib.json'),
-        },
-    });
+
     if (styles) {
         // styles if styles included..and post process css if minify is enabled
         rules.push({
@@ -65,6 +75,7 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
         mode: production ? 'production' : 'development',
         devtool: production ? false : 'inline-source-map',
         entry: join(__dirname, entry),
+        ignoreWarnings: [(warning) => true],
         output: {
             path: join(__dirname, 'dist'),
             filename,

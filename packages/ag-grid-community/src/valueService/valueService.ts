@@ -42,6 +42,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private cellExpressions: boolean;
+
     // Store locally for performance reasons and keep updated via property listener
     private isTreeData: boolean;
 
@@ -69,7 +70,7 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(gos);
-        this.cellExpressions = gos.get('enableCellExpressions');
+        this.cellExpressions = gos.get('enableCellExpressions') && !gos.get('enableFormulas');
         this.isTreeData = _isTreeData(gos);
         this.initialised = true;
 
@@ -248,7 +249,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && typeof result === 'string' && result.indexOf('=') === 0) {
+        if (this.cellExpressions && typeof result === 'string' && result.startsWith('=')) {
             const cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }

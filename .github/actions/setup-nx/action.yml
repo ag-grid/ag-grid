@@ -116,14 +116,14 @@ runs:
               node-version: '20'
 
         - name: yarn install
-          if: inputs.yarn_postinstall == 'true'
+          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
           shell: bash
           run: |
               (yarn check --integrity && yarn postinstall) || yarn install --ci
 
         - name: yarn install (skipping postinstall)
-          if: inputs.yarn_postinstall != 'true'
+          if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'true'
           id: yarn_install_fast
           shell: bash
           run: |
