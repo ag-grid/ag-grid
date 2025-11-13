@@ -3,10 +3,13 @@ import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder, _error, _removeFromParent } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSlider } from '../../../../../agStack/agSlider';
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { GridSlider } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type {
+    GridSlider,
+    GroupComponent,
+    GroupComponentParams,
+} from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPicker } from '../../../../widgets/colorPicker';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartSeriesType } from '../../../utils/seriesTypeMapper';
@@ -42,7 +45,7 @@ type ComposableComponent = Component & {
 };
 
 export class SeriesPanel extends Component {
-    private readonly seriesGroup: AgGroupComponent = RefPlaceholder;
+    private readonly seriesGroup: GroupComponent = RefPlaceholder;
 
     private chartTranslation: ChartTranslationService;
 
@@ -118,7 +121,7 @@ export class SeriesPanel extends Component {
             chartController,
             registerGroupComponent,
         } = this.options;
-        const seriesGroupParams: AgGroupComponentParams = {
+        const seriesGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
             title: this.translate('series'),

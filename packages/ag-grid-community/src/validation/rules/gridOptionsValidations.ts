@@ -552,12 +552,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['clientSide'],
             validate: (options) => {
                 const unsupported: (keyof GridOptions)[] = [
+                    'treeData', // no tree data
                     'pivotMode', // no row grouping
                     'masterDetail', // breaks row indices
                     'grandTotalRow', // no aggregations
-                    'quickFilterText', // no filtering
-                    'isExternalFilterPresent', // no filtering
-                    'doesExternalFilterPass', // no filtering
+                    'enableCellExpressions',
                 ];
                 const error = unsupported.find((key) => options[key]);
                 if (error) {
@@ -570,6 +569,19 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     return `${req} is required when enableFormulas is true.`;
                 }
 
+                return null;
+            },
+        },
+        multiSortKey: {
+            validate: (options) => {
+                const cellSelectionEnabled = options.cellSelection != null;
+                const suppressColumnSelection =
+                    (typeof options.cellSelection === 'object' && options.cellSelection.suppressColumnSelection) ??
+                    false;
+
+                if (options.multiSortKey === 'ctrl' && cellSelectionEnabled && !suppressColumnSelection) {
+                    return 'Cannot set `multiSortKey = "ctrl" without also setting `cellSelection.suppressColumnSelection = true`. Column selection disabled';
+                }
                 return null;
             },
         },

@@ -54,8 +54,8 @@ export class GridRowsDomValidator {
             this.validatedRows.add(row);
 
             const stringId = String(row.id);
-            const rowElement = gridRows.getRowHtmlElement(stringId);
-            if (!rowElement) {
+            const rowElements = gridRows.getRowHtmlElements(stringId);
+            if (!rowElements.length) {
                 if (row.id !== undefined) {
                     this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
                 }
@@ -79,7 +79,7 @@ export class GridRowsDomValidator {
                 }
                 ++rowElementsIdsInOrderIdx;
             }
-            this.checkRowDom(gridRows, row, rowElement);
+            this.checkRowDom(gridRows, row, rowElements);
 
             const detailGridRows = gridRows.getDetailGridRows(row);
             if (detailGridRows) {
@@ -97,28 +97,34 @@ export class GridRowsDomValidator {
         }
     }
 
-    checkRowDom(gridRows: GridRows<any>, row: RowNode<any>, rowElement: HTMLElement) {
+    checkRowDom(gridRows: GridRows<any>, row: RowNode<any>, rowElements: HTMLElement[]) {
         const rowErrors = gridRows.errors.get(row);
 
-        if (gridRows.options.checkSelectedNodes ?? true) {
-            if (row.isSelected()) {
-                if (!rowElement.classList.contains('ag-row-selected')) {
-                    rowErrors.add('HTML element should have ag-row-selected class, but has ' + rowElement.className);
+        for (const rowElement of rowElements) {
+            if (gridRows.options.checkSelectedNodes ?? true) {
+                if (row.isSelected()) {
+                    if (!rowElement.classList.contains('ag-row-selected')) {
+                        rowErrors.add(
+                            'HTML element should have ag-row-selected class, but has ' + rowElement.className
+                        );
+                    }
+                } else if (rowElement.classList.contains('ag-row-selected')) {
+                    rowErrors.add(
+                        'HTML element should NOT have ag-row-selected class, but has ' + rowElement.className
+                    );
                 }
-            } else if (rowElement.classList.contains('ag-row-selected')) {
-                rowErrors.add('HTML element should NOT have ag-row-selected class, but has ' + rowElement.className);
             }
         }
 
         if (!row.detail) {
-            this.checkRowDomCells(gridRows, row, rowElement, rowErrors);
+            this.checkRowDomCells(gridRows, row, rowElements, rowErrors);
         }
     }
 
     private checkRowDomCells(
         gridRows: GridRows<any>,
         row: RowNode<any>,
-        rowElement: HTMLElement,
+        rowElements: HTMLElement[],
         rowErrors: GridRowErrors<any>
     ) {
         // Check for cell values
@@ -127,7 +133,7 @@ export class GridRowsDomValidator {
             const column = columns[columnIndex];
 
             const columnId = column.getColId();
-            const cellElement = rowElement.querySelector(`[col-id="${CSS.escape(columnId)}"]`);
+            const cellElement = this.findCellElement(rowElements, columnId);
 
             if (!cellElement) {
                 if (column.isVisible() && !row.master && columnId !== 'ag-Grid-SelectionColumn') {
@@ -140,6 +146,17 @@ export class GridRowsDomValidator {
 
             this.checkRowDomCell(cellElement, gridRows, row, column, rowErrors);
         }
+    }
+
+    private findCellElement(rowElements: HTMLElement[], columnId: string): HTMLElement | null {
+        const selector = `[col-id="${CSS.escape(columnId)}"]`;
+        for (const rowElement of rowElements) {
+            const match = rowElement.querySelector(selector) as HTMLElement | null;
+            if (match) {
+                return match;
+            }
+        }
+        return null;
     }
 
     private checkRowDomCell(

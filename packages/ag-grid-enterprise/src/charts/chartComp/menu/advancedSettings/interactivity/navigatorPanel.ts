@@ -1,9 +1,9 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckboxSelector, Component } from 'ag-grid-community';
 
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
 import { AgSliderSelector } from '../../../../../agStack/agSlider';
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
@@ -19,7 +19,7 @@ export class NavigatorPanel extends Component {
     }
 
     public postConstruct() {
-        const navigatorGroupParams = this.chartMenuParamsFactory.addEnableParams<AgGroupComponentParams>(
+        const navigatorGroupParams = this.chartMenuParamsFactory.addEnableParams<GroupComponentParams>(
             'navigator.enabled',
             {
                 cssIdentifier: 'charts-advanced-settings-top-level',

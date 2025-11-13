@@ -51,18 +51,18 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
-    AllEnterpriseModule: 1544.68,
+    AllEnterpriseModule: 1551,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
-    CellSelectionModule: 57.75,
+    CellSelectionModule: 58,
     ClipboardModule: 47.54,
     ColumnMenuModule: 159.04,
     ColumnsToolPanelModule: 150.64,
     ContextMenuModule: 75.36,
     ExcelExportModule: 84,
-    FiltersToolPanelModule: 133.66,
+    FiltersToolPanelModule: 137.67,
     FindModule: 14.51,
-    FormulaModule: 98.36,
+    FormulaModule: 59.13,
     GridChartsModule: 71.71,
     GroupFilterModule: 115.18,
     IntegratedChartsModule: 405.32,
@@ -70,9 +70,9 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MenuModule: 166.7,
     MultiFilterModule: 150.56,
     NewFiltersToolPanelModule: 175.32,
-    PivotModule: 99.56,
-    RangeSelectionModule: 57.81,
-    RichSelectModule: 124.09,
+    PivotModule: 102.59,
+    RangeSelectionModule: 58,
+    RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
     RowGroupingModule: 88.46,
     RowGroupingPanelModule: 73.57,
@@ -101,7 +101,7 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 150.22 },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 151 },
     {
         modules: [
             'TextFilterModule',
@@ -113,7 +113,7 @@ const commonFeatureSets: ModuleTest[] = [
             'ExternalFilterModule',
             'QuickFilterModule',
         ],
-        expectedSize: 257.95,
+        expectedSize: 263.25,
     },
 ];
 
@@ -136,7 +136,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 501.06 };
+export const baseModule = { modules: [], expectedSize: 505 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

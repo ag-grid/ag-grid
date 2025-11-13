@@ -15,7 +15,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isServerSideRowModel, _isTreeData } from '../gridOptionsUtils';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -42,6 +42,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private cellExpressions: boolean;
+
     // Store locally for performance reasons and keep updated via property listener
     private isTreeData: boolean;
 
@@ -64,12 +65,13 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
-        this.executeValueGetter = this.valueCache
+        const { gos, valueCache } = this;
+        this.executeValueGetter = valueCache
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
-        this.isSsrm = _isServerSideRowModel(this.gos);
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
+        this.isSsrm = _isServerSideRowModel(gos);
+        this.cellExpressions = gos.get('enableCellExpressions') && !gos.get('enableFormulas');
+        this.isTreeData = _isTreeData(gos);
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -247,7 +249,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && typeof result === 'string' && result.indexOf('=') === 0) {
+        if (this.cellExpressions && typeof result === 'string' && result.startsWith('=')) {
             const cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }

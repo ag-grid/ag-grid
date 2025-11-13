@@ -7,25 +7,24 @@ import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
 
 export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'> {
-    public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
+    public getAxes(params: UpdateParams): Record<string, AgCartesianAxisOptions> {
         const fields = params ? params.fields : [];
         const fieldsMap = new Map(fields.map((f) => [f.colId, f]));
 
         const { primaryYKeys, secondaryYKeys } = this.getYKeys(fields, params.seriesChartTypes);
 
-        const axes: AgCartesianAxisOptions[] = [
-            {
+        const axes: Record<string, AgCartesianAxisOptions> = {
+            x: {
                 type: this.getXAxisType(params),
                 position: 'bottom',
             },
-        ];
+        };
 
         if (primaryYKeys.length > 0) {
-            axes.push({
+            axes.y = {
                 type: 'number',
-                keys: primaryYKeys,
                 position: 'left',
-            });
+            };
         }
 
         if (secondaryYKeys.length > 0) {
@@ -38,11 +37,10 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
 
                 const secondaryAxisOptions: AgCartesianAxisOptions = {
                     type: 'number',
-                    keys: [secondaryYKey],
                     position: 'right',
                 };
 
-                axes.push(secondaryAxisOptions);
+                axes[`y_${secondaryYKey}`] = secondaryAxisOptions;
             });
         }
 
@@ -59,11 +57,13 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
                 const chartType: ChartType = seriesChartType.chartType;
                 const grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
                 const groupedOpts = grouped ? { grouped: true } : {};
+                const yKeyAxis = seriesChartType.secondaryAxis ? `y_${field.colId}` : 'y';
                 return {
                     type: getSeriesType(chartType),
                     xKey: category.id,
                     yKey: field.colId,
                     yName: field.displayName,
+                    yKeyAxis,
                     stacked: ['stackedArea', 'stackedColumn'].includes(chartType),
                     ...groupedOpts,
                 };

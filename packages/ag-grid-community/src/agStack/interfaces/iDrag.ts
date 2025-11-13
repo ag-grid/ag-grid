@@ -21,13 +21,13 @@ export interface DragListenerParams {
     /** Dom element to add the drag handling to */
     eElement: Element;
     /** Callback for drag starting */
-    onDragStart: (mouseEvent: MouseEvent | Touch) => void;
+    onDragStart?: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for drag stopping */
-    onDragStop: (mouseEvent: MouseEvent | Touch) => void;
+    onDragStop?: (mouseEvent: MouseEvent | Touch) => void;
     /** Callback for drag cancel */
     onDragCancel?: () => void;
     /** Callback for mouse move while dragging */
-    onDragging: (mouseEvent: MouseEvent | Touch) => void;
+    onDragging?: (mouseEvent: MouseEvent | Touch) => void;
     /** Include touch events for this Drag Listener */
     includeTouch?: boolean;
     /** If `true`, it will stop the propagation of Touch Events */

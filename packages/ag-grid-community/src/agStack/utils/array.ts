@@ -1,7 +1,7 @@
 /** An array that is always empty and that cannot be modified */
 export const _EmptyArray = Object.freeze([]) as unknown as any[];
 
-export function _last<T>(arr: T[]): T;
+export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
     if (!arr?.length) {

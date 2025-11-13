@@ -1,8 +1,8 @@
 import type { AgComponentSelectorType, AgSelectParams, BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPickerSelector } from '../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
@@ -37,7 +37,7 @@ export class FontPanel extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    private readonly fontGroup: AgGroupComponent = RefPlaceholder;
+    private readonly fontGroup: GroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
     private readonly activeComps: Component[] = [];
@@ -57,7 +57,7 @@ export class FontPanel extends Component {
             chartMenuParamsFactory,
             keyMapper,
         } = this.params;
-        const fontGroupParams: AgGroupComponentParams = {
+        const fontGroupParams: GroupComponentParams = {
             cssIdentifier,
             direction: 'vertical',
             suppressOpenCloseIcons: true,

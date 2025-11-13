@@ -66,7 +66,7 @@ export class AutoScrollService {
         this.shouldSkipHorizontalScroll = params.shouldSkipHorizontalScroll || (() => false);
     }
 
-    public check(mouseEvent: MouseEvent, forceSkipVerticalScroll: boolean = false): void {
+    public check(mouseEvent: MouseEvent | Touch, forceSkipVerticalScroll: boolean = false): void {
         const skipVerticalScroll = forceSkipVerticalScroll || this.shouldSkipVerticalScroll();
 
         if (skipVerticalScroll && this.shouldSkipHorizontalScroll()) {

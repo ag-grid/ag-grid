@@ -12,6 +12,7 @@ import type { IconName } from '../../../utils/icon';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _mergeDeep } from '../../../utils/mergeDeep';
 import { Component } from '../../../widgets/component';
+import { HeaderCellMouseListenerFeature } from './headerCellMouseListenerFeature';
 
 function getHeaderCompElementParams(includeColumnRefIndicator: boolean, includeSortIndicator: boolean): ElementParams {
     const hiddenAttrs = { 'aria-hidden': 'true' };
@@ -84,6 +85,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     private innerHeaderComponent: IInnerHeaderComponent | undefined;
     private isLoadingInnerComponent: boolean = false;
 
+    private mouseListener?: HeaderCellMouseListenerFeature;
+
     public refresh(params: IHeaderParams): boolean {
         const oldParams = this.params;
         this.params = params;
@@ -132,6 +135,12 @@ export class HeaderComp extends Component implements IHeaderComp {
         const sortComp = sortSvc?.getSortIndicatorSelector();
         this.currentTemplate = this.workOutTemplate(params, !!sortComp);
         this.setTemplate(this.currentTemplate, sortComp ? [sortComp] : undefined);
+
+        if (this.eLabel) {
+            this.mouseListener ??= this.createManagedBean(
+                new HeaderCellMouseListenerFeature(params.column as AgColumn, this.eLabel)
+            );
+        }
 
         touchSvc?.setupForHeader(this);
 
@@ -285,7 +294,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        sortSvc.setupHeader(this, column as AgColumn, this.eLabel);
+        sortSvc.setupHeader(this, column as AgColumn);
     }
 
     private setupColumnRefIndicator(): void {
@@ -365,9 +374,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     public override destroy(): void {
         super.destroy();
 
-        if (this.innerHeaderComponent) {
-            this.destroyBean(this.innerHeaderComponent);
-            this.innerHeaderComponent = undefined;
-        }
+        this.innerHeaderComponent = this.destroyBean(this.innerHeaderComponent);
+        this.mouseListener = this.destroyBean(this.mouseListener);
     }
 }

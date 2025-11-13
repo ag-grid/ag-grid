@@ -2,7 +2,7 @@
   <configuration default="false" name="Nx dev" type="NxRunConfigurationType">
     <option name="nx-projects" value="dev" />
     <option name="nx-targets" value="" />
-    <option name="nx-target-configuration" value="" />
+    <option name="nx-target-configuration" value="watch" />
     <envs />
     <option name="arguments" value="" />
     <method v="2" />

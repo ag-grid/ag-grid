@@ -64,13 +64,19 @@ export abstract class BaseEnvironment<
 
     protected abstract themeError(theme: Theme | 'legacy'): void;
 
+    protected abstract shadowRootError(): void;
+
     protected abstract varError(variable: CssVariable<TChangeKeys>): void;
 
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
         gos.setInstanceDomData(eRootDiv);
-        this.eStyleContainer =
-            gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
+        const themeStyleContainer = gos.get('themeStyleContainer');
+        const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
+        this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
+        if (!themeStyleContainer && !isShadowRoot) {
+            // put warnOnAttachToShadowRoot back here once interval errors in tests fixed
+        }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());

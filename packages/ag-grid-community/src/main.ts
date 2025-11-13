@@ -239,6 +239,9 @@ export type {
     ColorSchemeValue,
     WithParamTypes,
 } from './agStack/theming/themeTypes';
+export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
+export { paramValueToCss as _paramValueToCss, getParamType as _getParamType } from './agStack/theming/themeTypeUtils';
+export { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
 
 // AG Stack (private)
 export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
@@ -252,6 +255,7 @@ export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext 
 export {
     BaseEnvironment as _BaseEnvironment,
     BaseCssChangeKeys as _BaseCssChangeKeys,
+    CssVariable as _CssVariable,
 } from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
 export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
@@ -301,6 +305,7 @@ export {
 export { StopPropagationCallbacks as _StopPropagationCallbacks } from './agStack/focus/agManagedFocusFeature';
 export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
 export { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
+export { AddPopupParams as _AddPopupParams, AddPopupResult as _AddPopupResult } from './agStack/interfaces/iPopup';
 
 // excel
 export {
@@ -670,6 +675,7 @@ export type { DateStringCellEditor } from './edit/cellEditors/dateStringCellEdit
 export {
     IRichCellEditorParams,
     RichCellEditorValuesCallback,
+    RichCellEditorValuesCallbackParams,
     RichCellEditorParams,
     IRichCellEditorRendererParams,
 } from './interfaces/iRichCellEditorParams';
@@ -937,6 +943,8 @@ export {
     _getGroupTotalRowCallback,
     _isGroupMultiAutoColumn,
     _isColumnsSortingCoupledToGroup,
+    _isTreeData,
+    _isMasterDetail,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
@@ -967,6 +975,7 @@ export {
     _getGridOption,
     _isSetFilterByDefault,
     _interpretAsRightClick,
+    _getSuppressColumnSelection,
 } from './gridOptionsUtils';
 export { IEventService } from './interfaces/iEventService';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
@@ -1131,6 +1140,7 @@ export {
 export type { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
+    AutoGroupColumnDef,
     GroupSelectionMode,
     SelectAllMode,
     SelectionColumnDef,

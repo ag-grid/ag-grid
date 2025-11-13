@@ -1,8 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -18,7 +18,7 @@ export class BackgroundPanel extends Component {
     }
 
     public postConstruct() {
-        const chartBackgroundGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>(
+        const chartBackgroundGroupParams = this.chartMenuUtils.addEnableParams<GroupComponentParams>(
             'background.visible',
             {
                 cssIdentifier: 'charts-format-sub-level',

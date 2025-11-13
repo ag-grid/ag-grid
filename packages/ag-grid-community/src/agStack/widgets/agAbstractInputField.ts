@@ -112,6 +112,10 @@ export abstract class AgAbstractInputField<
         return this.eInput;
     }
 
+    public getWrapperElement(): HTMLElement {
+        return this.eWrapper;
+    }
+
     public setInputWidth(width: number | 'flex'): this {
         _setElementWidth(this.eWrapper, width);
 

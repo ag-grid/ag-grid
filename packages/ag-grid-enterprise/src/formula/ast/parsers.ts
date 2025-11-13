@@ -1,3 +1,4 @@
+import { _getClientSideRowModel } from 'ag-grid-community';
 import type { BeanCollection } from 'ag-grid-community';
 
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
@@ -50,7 +51,7 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
 
         const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string): Cell => {
             const col = colAbs ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
-            const row = rowAbs ? rowStr : beans.rowModel?.getRow(Number(rowStr) - 1)?.id; // TODO handle NaN
+            const row = rowAbs ? rowStr : _getClientSideRowModel(beans)?.getFormulaRow(Number(rowStr) - 1)?.id; // TODO handle NaN
 
             if (col == null || row == null) {
                 throw new FormulaParseError(`Invalid cell reference: ${trimmed}`, 0, 0);

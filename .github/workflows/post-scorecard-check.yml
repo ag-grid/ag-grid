@@ -48,7 +48,7 @@ jobs:
               const { results, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
 
               fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
-              fs.writeFileSync("${{ env.SCORECARD_FILE }}", results);
+              fs.writeFileSync("${{ env.SCORECARD_FILE }}", JSON.stringify(results));
 
               // Exit with a numeric code to signal step success/failure to GitHub Actions
               process.exit(hasPassed ? 0 : 1);

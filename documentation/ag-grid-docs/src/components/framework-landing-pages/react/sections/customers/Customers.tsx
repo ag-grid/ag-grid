@@ -1,3 +1,4 @@
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import React from 'react';
@@ -10,7 +11,8 @@ const Customers: React.FC = () => {
             <div className={styles.quotesContainer}>
                 <Quotes data={quotesData} />
             </div>
-            <div className={styles.customerLogos}></div>
+
+            <CustomerLogos />
         </div>
     );
 };

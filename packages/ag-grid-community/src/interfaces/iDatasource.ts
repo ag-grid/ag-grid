@@ -1,3 +1,4 @@
+import type { AgGridCommon } from './iCommon';
 import type { SortModelItem } from './iSortModelItem';
 
 /** Datasource used by both PaginationController and InfiniteRowModel */
@@ -15,7 +16,7 @@ export interface IDatasource {
 }
 
 /** Params for the above IDatasource.getRows() */
-export interface IGetRowsParams {
+export interface IGetRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The first row index to get. */
     startRow: number;
 
@@ -33,7 +34,4 @@ export interface IGetRowsParams {
 
     /** If doing server side filtering, contains the filter model */
     filterModel: any;
-
-    /** The context as provided on `gridOptions.context` */
-    context: any;
 }

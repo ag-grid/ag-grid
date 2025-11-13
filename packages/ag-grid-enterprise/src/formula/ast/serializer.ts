@@ -1,3 +1,4 @@
+import { _getClientSideRowModel } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
 
 import { getDefBySymbol } from './operators';
@@ -36,13 +37,13 @@ export function colIdFromIndex(cols: AgColumn[], idx: number): string | null {
 
 export function rowIndexFromId(beans: BeanCollection, rowId: string): number | null {
     const row = beans.rowModel?.getRowNode?.(rowId);
-    if (row?.rowIndex != null) {
-        return row.rowIndex + 1; // convert 0-based to 1-based
+    if (row?.formulaRowIndex != null) {
+        return row.formulaRowIndex + 1; // convert 0-based to 1-based
     }
     return null;
 }
 export function rowIdFromIndex(beans: BeanCollection, idx: number): string | null {
-    return beans.rowModel?.getRow?.(idx - 1)?.id ?? null;
+    return _getClientSideRowModel(beans)?.getFormulaRow?.(idx - 1)?.id ?? null;
 }
 
 function quoteString(s: string): string {
@@ -75,25 +76,14 @@ function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
 }
 
 function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
-    const looksDigits = /^\d+$/.test(ref.id);
     if (ref.absolute) {
-        if (looksDigits) {
-            return ref.id;
-        }
         const idx = rowIndexFromId(beans, ref.id);
         if (idx != null) {
             return String(idx);
         }
         throw `Cannot produce absolute ROW index from id '${ref.id}'`;
-    } else {
-        if (looksDigits) {
-            const id = rowIdFromIndex(beans, Number(ref.id));
-            if (id) {
-                return id;
-            }
-        }
-        return ref.id;
     }
+    return ref.id;
 }
 
 function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {

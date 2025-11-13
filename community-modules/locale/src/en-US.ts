@@ -6,6 +6,7 @@ export const AG_GRID_LOCALE_EN = {
     searchOoo: 'Search...',
     blanks: '(Blanks)',
     noMatches: 'No matches',
+    typeToSearchOoo: 'Type to search...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -184,6 +185,10 @@ export const AG_GRID_LOCALE_EN = {
     pinLeft: 'Pin Left',
     pinRight: 'Pin Right',
     noPin: 'No Pin',
+    pinRow: 'Pin Row',
+    pinTop: 'Pin to Top',
+    pinBottom: 'Pin to Bottom',
+    unpinRow: 'Unpin Row',
     valueAggregation: 'Value Aggregation',
     noAggregation: 'None',
     autosizeThisColumn: 'Autosize This Column',

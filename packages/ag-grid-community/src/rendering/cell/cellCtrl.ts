@@ -159,8 +159,8 @@ export class CellCtrl extends BeanStub {
     private addFeatures(): void {
         const { beans } = this;
         this.positionFeature = new CellPositionFeature(this, beans);
-        this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this, beans);
-        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this, beans);
+        this.customStyleFeature = beans.cellStyles?.createCellCustomStyleFeature(this);
+        this.editStyleFeature = beans.editSvc?.createCellStyleFeature(this);
         this.mouseListener = new CellMouseListenerFeature(this, beans, this.column);
 
         this.keyboardListener = new CellKeyboardListenerFeature(this, beans, this.rowNode, this.rowCtrl);
@@ -171,11 +171,11 @@ export class CellCtrl extends BeanStub {
         const { rangeSvc } = beans;
         const cellSelectionEnabled = rangeSvc && _isCellSelectionEnabled(beans.gos);
         if (cellSelectionEnabled) {
-            this.rangeFeature = rangeSvc.createCellRangeFeature(beans, this);
+            this.rangeFeature = rangeSvc.createCellRangeFeature(this);
         }
 
         if (isRowNumberCol(this.column)) {
-            this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(beans, this);
+            this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
     }
 

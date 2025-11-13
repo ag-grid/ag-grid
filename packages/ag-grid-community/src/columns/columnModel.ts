@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public changeEventsDispatching = false;
 
     public postConstruct(): void {
-        this.pivotMode = this.gos.get('pivotMode');
+        this.pivotMode = this.gos.get('pivotMode') && !this.gos.get('enableFormulas');
 
         this.addManagedPropertyListeners(
             [
@@ -129,9 +129,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // so that any groupable date columns exist beforehand.
         this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
 
-        rowGroupColsSvc?.extractCols(source, oldCols);
-        pivotColsSvc?.extractCols(source, oldCols);
-        valueColsSvc?.extractCols(source, oldCols);
+        if (!this.gos.get('enableFormulas')) {
+            rowGroupColsSvc?.extractCols(source, oldCols);
+            pivotColsSvc?.extractCols(source, oldCols);
+            valueColsSvc?.extractCols(source, oldCols);
+        }
 
         this.ready = true;
 
@@ -533,6 +535,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
+        if (this.gos.get('enableFormulas')) {
+            this.pivotMode = false;
+            return;
+        }
+
         if (pivotMode === this.pivotMode) {
             return;
         }

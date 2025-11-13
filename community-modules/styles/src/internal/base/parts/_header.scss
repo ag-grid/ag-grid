@@ -128,7 +128,9 @@
         content: '';
         position: absolute;
         height: 100%;
-        width: 1px;
+        width: var(--ag-column-drag-indicator-width);
+        border-radius: calc(var(--ag-column-drag-indicator-width) / 2);
+        background-color: var(--ag-column-drag-indicator-color);
     }
 
     .ag-header-highlight-before::after {

@@ -1,5 +1,6 @@
 import type { IntegratedModule } from 'ag-charts-types';
 
+/** MAKE SURE TO UPDATE THE SCRIPT scripts/ci/substituteAgChartsTypesScene.sh WHEN CHANGING THIS FILE */
 type ChartTypes = IntegratedModule;
 
 export interface IAgChartsExports {

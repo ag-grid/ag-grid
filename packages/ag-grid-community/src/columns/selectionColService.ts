@@ -151,6 +151,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             },
             editable: false,
             suppressFillHandle: true,
+            suppressAutoSize: true,
             pinned: null,
             // overrides
             ...filteredSelColDef,

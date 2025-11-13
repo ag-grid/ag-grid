@@ -7,7 +7,7 @@ import type {
 } from 'ag-grid-community';
 import { AgSelect, Component } from 'ag-grid-community';
 
-import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { AgPillSelectChangeParams } from '../../../widgets/agPillSelect';
 import { AgPillSelect } from '../../../widgets/agPillSelect';
 import type { ChartController } from '../../chartController';
@@ -22,7 +22,7 @@ export abstract class DragDataPanel extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    protected groupComp: AgGroupComponent;
+    protected groupComp: GroupComponent;
     protected valuePillSelect?: AgPillSelect<ColState>;
     private valueSelect?: GridSelect<ColState>;
 

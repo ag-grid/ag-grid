@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([
 ]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150, suppressSizeToFit: true },
+    { field: 'athlete', width: 150, suppressAutoSize: true },
     {
         field: 'age',
         headerName: 'Age of Athlete',

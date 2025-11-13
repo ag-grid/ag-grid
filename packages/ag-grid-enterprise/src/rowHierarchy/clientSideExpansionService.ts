@@ -8,7 +8,7 @@ import type {
     RowGroupOpenedEvent,
     RowNode,
 } from 'ag-grid-community';
-import { _exists } from 'ag-grid-community';
+import { _exists, _isTreeData } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
 
@@ -60,7 +60,7 @@ export class ClientSideExpansionService
 
     public expandAll(expand: boolean): void {
         const { gos, rowModel, colModel, eventSvc } = this.beans;
-        const usingTreeData = gos.get('treeData');
+        const usingTreeData = _isTreeData(gos);
         const usingPivotMode = colModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {

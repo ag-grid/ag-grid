@@ -47,6 +47,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     flushAsyncTransactions(): void;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
+    getFormulaRow(index: number): RowNode;
 
     /**
      * @deprecated v33.1.0 - use `gridApi.onRowHeightChanged()` instead

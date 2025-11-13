@@ -877,7 +877,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressSizeToFit?: boolean;
     /**
-     * Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge.
+     * Set to `true` if you do not want this column to be auto-resizable during 'size to contents' operations.
      * @default false
      */
     suppressAutoSize?: boolean;
@@ -894,8 +894,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     suppressSpanHeaderHeight?: boolean;
 }
 
-/** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` field. */
-export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type'>;
+/** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` and `cellDataType` fields. */
+export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type' | 'cellDataType'>;
 
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {

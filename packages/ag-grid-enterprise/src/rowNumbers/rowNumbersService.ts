@@ -20,7 +20,6 @@ import {
     isRowNumberCol,
 } from 'ag-grid-community';
 import type {
-    BeanCollection,
     CellClassParams,
     CellCtrl,
     CellPosition,
@@ -180,15 +179,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
     }
 
-    public createRowNumbersRowResizerFeature(
-        beans: BeanCollection,
-        ctrl: CellCtrl
-    ): IRowNumbersRowResizeFeature | undefined {
+    public createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined {
         if (!_isRowNumbersResizerEnabled(this.gos)) {
             return undefined;
         }
 
-        return new RowNumbersRowResizeFeature(beans, ctrl);
+        return new RowNumbersRowResizeFeature(this.beans, ctrl);
     }
 
     private refreshSelectionIntegration(): void {
@@ -325,7 +321,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             minWidth: 60,
             width: 60,
             resizable: false,
-            valueGetter: this.valueGetter,
+            valueGetter: this.valueGetter.bind(this),
             contextMenuItems: this.isIntegratedWithSelection || !contextMenuSvc ? undefined : () => [],
             // overrides
             ...this.rowNumberOverrides,
@@ -352,14 +348,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private valueGetter(params: ValueGetterParams): string {
         const node = params.node as RowNode | null;
+        const enableFormulas = this.gos.get('enableFormulas');
 
         // Rows that are in the pinned container take the row numbers of their pinned sibling rows
-        if (node?.rowPinned && node.pinnedSibling) {
-            const { rowIndex } = node.pinnedSibling;
+        const pinnedSibling = node?.pinnedSibling;
+        if (node?.rowPinned && pinnedSibling) {
+            const rowIndex = enableFormulas ? pinnedSibling.formulaRowIndex : pinnedSibling.rowIndex;
             return `${rowIndex == null ? '-' : rowIndex + 1}`;
         }
 
-        return String((node?.rowIndex || 0) + 1);
+        return String(((enableFormulas ? node?.formulaRowIndex : node?.rowIndex) || 0) + 1);
     }
 
     private getHeaderClass(): string[] {
@@ -398,7 +396,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         const shouldHighlight = typeof cellSelection === 'object' && cellSelection.enableHeaderHighlight;
 
         for (const range of ranges) {
-            if (rangeSvc.isRowInRange(node.rowIndex!, node.rowPinned, range)) {
+            if (rangeSvc.isRowInRange({ rowIndex: node.rowIndex!, rowPinned: node.rowPinned }, range)) {
                 if (shouldHighlight) {
                     cssClasses.push('ag-row-number-range-highlight');
                 }

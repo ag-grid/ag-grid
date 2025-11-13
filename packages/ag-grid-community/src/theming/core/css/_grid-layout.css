@@ -211,8 +211,9 @@
     content: '';
     position: absolute;
     width: calc(100% - 1px);
-    height: 1px;
-    background-color: var(--ag-range-selection-border-color);
+    height: var(--ag-row-drag-indicator-width);
+    background-color: var(--ag-row-drag-indicator-color);
+    border-radius: calc(var(--ag-row-drag-indicator-width) / 2);
     left: 1px;
     pointer-events: none;
 }

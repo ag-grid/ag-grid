@@ -250,6 +250,10 @@ export class RowNode<TData = any>
     /** `true` when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
 
+    public softFiltered?: boolean;
+
+    public formulaRowIndex: number | null = null;
+
     private hovered: boolean = false;
 
     public __selected: boolean | undefined = false;

@@ -31,7 +31,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
 
-        this.eLoadingText.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading');
+        this.eLoadingText.textContent = this.getLocaleTextFunc()('loadingOoo', 'Loading...');
     }
 
     public refresh(_params: ILoadingCellRendererParams): boolean {

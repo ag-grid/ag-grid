@@ -1,5 +1,5 @@
 import { type AgGridFixtures, expect, test, waitForGridContent } from '@utils/grid/test-utils';
-import type { Locator } from 'playwright/test';
+import type { Locator, Page } from 'playwright/test';
 
 async function getWidth(locator: Locator): Promise<number | undefined> {
     return (await locator.boundingBox())?.width;
@@ -26,9 +26,17 @@ async function totalHeaderWidth(headers: Record<ColIds, Locator>): Promise<numbe
     return widths.reduce<number>((acc, w) => acc + (w ?? 0), 0);
 }
 
+// wait twice as long as animation so we know widths have settled
+async function waitForAnimation(page: Page): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await expect(page.locator('.ag-animate-autosize')).not.toBeVisible();
+}
+
 test.agExample(import.meta, () => {
     test.eachFramework('fitCellToContents', async ({ page, agIdFor }) => {
         await waitForGridContent(page);
+
+        await waitForAnimation(page);
         const headers = getHeaders(agIdFor);
         const headerRow = page.locator('.ag-header-row').filter({ has: headers.athlete });
         const baseHeaderWidths = await getHeaderWidths(headers);
@@ -36,9 +44,11 @@ test.agExample(import.meta, () => {
         expect(await getWidth(headerRow)).toEqual(await totalHeaderWidth(headers));
 
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
+
         const apiResizedHeaderWidths = await getHeaderWidths(headers);
-        // API call doesn't use defaultMaxWidth so we expect a larger column
-        expect(apiResizedHeaderWidths.athlete).toBeGreaterThan(baseHeaderWidths.athlete);
+        // Athlete column has suppressAutoSize: true so we expect the width to be unchanged
+        expect(apiResizedHeaderWidths.athlete).toBe(baseHeaderWidths.athlete);
         expect(apiResizedHeaderWidths.age).toBe(baseHeaderWidths.age);
         expect(apiResizedHeaderWidths.country).toBe(baseHeaderWidths.country);
         expect(apiResizedHeaderWidths.year).toBe(baseHeaderWidths.year);
@@ -48,6 +58,7 @@ test.agExample(import.meta, () => {
         // `skipHeaders only`
         await page.locator('#toggle-ignore-headers').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
 
         // when we skip headers, we expect all widths to be the same except for the age column, which is narrower now
         const headerSkippedWidths = await getHeaderWidths(headers);
@@ -63,6 +74,8 @@ test.agExample(import.meta, () => {
         await page.locator('#toggle-ignore-headers').click(); // off
         await page.locator('#toggle-scale-up').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
+
         const scaledUpHeaderWidths = await getHeaderWidths(headers);
 
         expect(scaledUpHeaderWidths.athlete).toBe(apiResizedHeaderWidths.athlete);
@@ -76,6 +89,8 @@ test.agExample(import.meta, () => {
         // `skipHeaders` and `scaleUpToFitGridWidth`
         await page.locator('#toggle-ignore-headers').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
+
         const headerSkippedAndScaledUpHeaderWidths = await getHeaderWidths(headers);
 
         expect(headerSkippedAndScaledUpHeaderWidths.athlete).toBe(apiResizedHeaderWidths.athlete);
@@ -94,6 +109,7 @@ test.agExample(import.meta, () => {
 
         await page.locator('#toggle-scale-up').click(); // on
         await page.locator('button.resize-button').click();
+        await waitForAnimation(page);
 
         expect(
             await getWidth(page.locator('.ag-header-row').filter({ has: agIdFor.headerCell('athlete') }))
@@ -125,6 +141,8 @@ test.agExample(import.meta, () => {
 
             await page.locator('#toggle-scale-up').click(); // on
             await page.locator('button.resize-button').click();
+            await waitForAnimation(page);
+
             const apiResizedHeaderWidths = await getHeaderWidths(headers);
 
             expect(apiResizedHeaderWidths.athlete).toBeGreaterThan(baseHeaderWidths.athlete);

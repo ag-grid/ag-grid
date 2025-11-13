@@ -7,9 +7,10 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
-import { FormulaModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    CellSelectionModule,
     ClientSideRowModelModule,
     TextEditorModule,
     TooltipModule,
@@ -22,7 +23,12 @@ let gridApi: GridApi<any>;
 const rowData = [
     { rid: '1', A: 1, B: 1, C: 1 },
     { rid: '2', A: 1, B: 1, C: 1 },
-    { rid: '3', A: 1, B: 1, C: '="Result of \'=CUSTOMSUM(A1:B3, C1:C2)\' is "&CUSTOMSUM(A1:B3, C1:C2)' },
+    {
+        rid: '3',
+        A: 1,
+        B: 1,
+        C: '="Result of \'=CUSTOMSUM(A1:B3, C1:C2)\' is "&CUSTOMSUM(REF(COLUMN("0"),ROW("1"),COLUMN("1"),ROW("3")),REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("2")))',
+    },
 ];
 
 const gridOptions: GridOptions<any> = {
@@ -33,6 +39,11 @@ const gridOptions: GridOptions<any> = {
     ],
     getRowId: (params) => String(params.data.rid),
     enableFormulas: true,
+    cellSelection: {
+        handle: {
+            mode: 'fill',
+        },
+    },
     defaultColDef: {
         headerName: '',
         editable: true,
