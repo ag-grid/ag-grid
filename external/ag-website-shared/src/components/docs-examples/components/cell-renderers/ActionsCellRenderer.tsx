@@ -1,7 +1,7 @@
 import styles from '../DocsExamples.module.scss';
 
 const getNxGenerateOneExample = ({ pageName, exampleName }: { pageName: string; exampleName: string }) => {
-    return `nx run generate-docs-example --page=${pageName} --example=${exampleName}`;
+    return `yarn nx run generate-docs-example --page=${pageName} --example=${exampleName}`;
 };
 
 export function ActionsCellRenderer({ data }) {
