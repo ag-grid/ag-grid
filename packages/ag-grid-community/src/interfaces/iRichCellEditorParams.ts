@@ -10,7 +10,6 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
-    isAsync?: boolean;
     onSearch?: (search?: string) => void;
     cellRenderer?: any;
     cellRendererParams?: any;

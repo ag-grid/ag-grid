@@ -157,7 +157,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             ret.valueList = valueList;
             ret.searchStringCreator = this.getSearchStringCallback(valueList);
         } else {
-            ret.isAsync = this.isAsync = true;
+            this.isAsync = true;
         }
 
         if (multiSelect && allowTyping) {
@@ -235,7 +235,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
+    // virtual row logic needs info about the gui state.
     public afterGuiAttached(): void {
         const { focusAfterAttached, params } = this;
 
