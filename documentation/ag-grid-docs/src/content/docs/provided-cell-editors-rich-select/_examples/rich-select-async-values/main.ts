@@ -42,7 +42,7 @@ const columnDefs: ColDef[] = [
         } as IRichCellEditorParams,
     },
     {
-        headerName: 'Server-Driven Filtering',
+        headerName: 'Server Side Filtering',
         field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         width: 300,

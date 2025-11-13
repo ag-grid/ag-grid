@@ -7,6 +7,7 @@ import {
     _setAriaActiveDescendant,
     _setAriaControlsAndLabel,
     _setAriaLabel,
+    _setDisplayed,
 } from 'ag-grid-community';
 
 import { RichSelectRow } from './agRichSelectRow';
@@ -115,23 +116,27 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         }
         if (loadingState === STATE_LOADING) {
             eStateCompLabel.textContent = loadingLabel;
-            eLoadingIcon?.classList?.toggle('ag-hidden', false);
-            eStateComp?.classList?.toggle('ag-hidden', false);
+            if (eLoadingIcon) {
+                _setDisplayed(eLoadingIcon, true);
+            }
+            _setDisplayed(eStateComp, true);
             return;
         }
         if (loadingState === STATE_NO_RESULTS && params.allowNoResultsCopy) {
             eStateCompLabel.textContent = noMatchesLabel;
-            eLoadingIcon?.classList?.toggle('ag-hidden', true);
-            eStateComp?.classList?.toggle('ag-hidden', false);
+            if (eLoadingIcon) {
+                _setDisplayed(eLoadingIcon, false);
+            }
+            _setDisplayed(eStateComp, true);
             return;
         }
-        this.eStateComp?.classList?.toggle('ag-hidden', true);
+        _setDisplayed(eStateComp, false);
     }
 
     public toggleVisibility(forceVisible?: boolean) {
         const eListGui = this.getGui();
-        const forceHidden = forceVisible === undefined ? this.loadingState === STATE_READY_FOR_INPUT : !forceVisible;
-        eListGui.classList.toggle('ag-hidden', forceHidden);
+        const visible = forceVisible !== undefined ? forceVisible : this.loadingState !== STATE_READY_FOR_INPUT;
+        _setDisplayed(eListGui, visible);
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {

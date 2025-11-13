@@ -22,7 +22,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     public initialiseEditor(_params: RichCellEditorParams<TData, TValue>): void {
-        const { cellStartedEdit, values } = this.params;
+        const { cellStartedEdit, values, eventKey } = this.params;
 
         if (_missing(values)) {
             _warn(180);
@@ -47,7 +47,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                     richSelect.setSearchStringCreator(searchStringCallback);
                 }
 
-                this.processEventKey(this.params.eventKey);
+                this.processEventKey(eventKey);
             });
         }
 
@@ -107,7 +107,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             multiSelect,
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
-        } = this.params;
+        } = params;
 
         const ret: RichSelectParams = {
             value,
@@ -135,12 +135,12 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         let valueList;
 
-        if (filterListAsync && !filterList) {
+        const fullAsync = this.isFullAsync();
+        if (filterListAsync && !fullAsync) {
             _warn(294);
         }
 
         if (typeof values === 'function') {
-            const fullAsync = this.isFullAsync();
             if (fullAsync) {
                 params.search = formatValue?.(value);
                 ret.onSearch = this.onSearchCallback;
