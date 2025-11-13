@@ -60,14 +60,6 @@ jobs:
     if: github.event.pull_request.draft == false
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
-      test_count: ${{ steps.matrix.outputs.test_count }}
-      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
-      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
-      test_angular_pkg_matrix: ${{ steps.matrix.outputs.angular_pkg_matrix }}
-      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
-      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
-      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
-      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
@@ -88,7 +80,38 @@ jobs:
         with:
           cache_mode: 'rw'
 
-      - name: calculate matrix
+  calc_matrix:
+    name: Calculate Github Matrix
+    needs: init
+    outputs:
+      test_count: ${{ steps.matrix.outputs.test_count }}
+      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+      test_angular_pkg_matrix: ${{ steps.matrix.outputs.angular_pkg_matrix }}
+      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
+      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
+      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
+      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: Calculate Matrix
         id: matrix
         run: |
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
@@ -133,10 +156,10 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: init
-    if: needs.init.outputs.test_count > 0
+    needs: calc_matrix
+    if: needs.calc_matrix.outputs.test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.init.outputs.test_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
@@ -189,10 +212,10 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     name: e2e Tests
-    needs: init
-    if: needs.init.outputs.e2e_test_count > 0
+    needs: calc_matrix
+    if: needs.calc_matrix.outputs.e2e_test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.init.outputs.e2e_test_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
@@ -225,10 +248,10 @@ jobs:
   bundle_size:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
-    needs: init
-    if: ${{ needs.init.result == 'success' && !inputs.skip_bundle_size }}
+    needs: calc_matrix
+    if: ${{ needs.calc_matrix.result == 'success' && !inputs.skip_bundle_size }}
     strategy:
-      matrix: ${{ fromJson(needs.init.outputs.bundle_test_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.bundle_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
@@ -367,10 +390,10 @@ jobs:
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
-    needs: init
+    needs: calc_matrix
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.init.outputs.test_pkg_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
     if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
@@ -396,7 +419,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ init, test, e2e, format_lint_build, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -451,6 +474,8 @@ jobs:
         run: |
           WORKFLOW_STATUS="success"
           if [[ "${{ needs.init.result }}" == "failure" ]] ; then
+            WORKFLOW_STATUS="failure"
+          elif [[ "${{ needs.calc_matrix.result }}" == "failure" ]] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
