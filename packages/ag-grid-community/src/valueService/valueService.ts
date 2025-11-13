@@ -70,7 +70,7 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(gos);
-        this.cellExpressions = gos.get('enableCellExpressions') && gos.get('enableFormulas');
+        this.cellExpressions = gos.get('enableCellExpressions') && !gos.get('enableFormulas');
         this.isTreeData = _isTreeData(gos);
         this.initialised = true;
 
