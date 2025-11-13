@@ -17,16 +17,16 @@ export class HistogramChartProxy extends CartesianChartProxy<'histogram'> {
         ];
     }
 
-    protected override getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
-        return [
-            {
+    protected override getAxes(_params: UpdateParams): Record<string, AgCartesianAxisOptions> {
+        return {
+            x: {
                 type: 'number',
                 position: 'bottom',
             },
-            {
+            y: {
                 type: 'number',
                 position: 'left',
             },
-        ];
+        };
     }
 }

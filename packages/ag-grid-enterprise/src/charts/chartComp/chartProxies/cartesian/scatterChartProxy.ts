@@ -11,17 +11,17 @@ interface SeriesDefinition {
 }
 
 export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'> {
-    protected override getAxes(_params: UpdateParams): AgCartesianAxisOptions[] {
-        return [
-            {
+    protected override getAxes(_params: UpdateParams): Record<string, AgCartesianAxisOptions> {
+        return {
+            x: {
                 type: 'number',
                 position: 'bottom',
             },
-            {
+            y: {
                 type: 'number',
                 position: 'left',
             },
-        ];
+        };
     }
 
     protected override getSeries(params: UpdateParams): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {

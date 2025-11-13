@@ -408,7 +408,7 @@ export class GridChartComp extends Component {
                       const targetChartType = updatedChartType;
                       const existingChartInstance = this.chartProxy.getChart();
                       const existingChartOptions = existingChartInstance?.getOptions();
-                      const existingAxes = existingChartInstance?.axes;
+                      const existingAxes = Object.values(existingChartInstance?.axes ?? {});
                       return this.chartOptionsService.getPersistedChartThemeOverrides(
                           existingChartOptions,
                           existingAxes,

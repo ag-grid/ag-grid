@@ -28,6 +28,7 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
+import { getPlaceholderText } from './providedFilterUtils';
 import {
     getDefaultJoinOperator,
     getNumberOfInputs,
@@ -596,33 +597,17 @@ export abstract class SimpleFilter<
         return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
-    private getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string {
-        let placeholder = this.translate(defaultPlaceholder);
-        if (typeof this.filterPlaceholder === 'function') {
-            const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
-            const filterOption = this.translate(filterOptionKey);
-            placeholder = this.filterPlaceholder({
-                filterOptionKey,
-                filterOption,
-                placeholder,
-            });
-        } else if (typeof this.filterPlaceholder === 'string') {
-            placeholder = this.filterPlaceholder;
-        }
-
-        return placeholder;
-    }
-
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
         const globalTranslate = this.getLocaleTextFunc();
+        const { filterPlaceholder, eTypes } = this;
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
                 return;
             }
 
-            const placeholder =
+            const placeholderKey =
                 index === 0 && numberOfInputs > 1 ? 'inRangeStart' : index === 0 ? 'filterOoo' : 'inRangeEnd';
             const ariaLabel =
                 index === 0 && numberOfInputs > 1
@@ -631,7 +616,10 @@ export abstract class SimpleFilter<
                       ? globalTranslate('ariaFilterValue', 'Filter Value')
                       : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            element.setInputPlaceholder(this.getPlaceholderText(placeholder, position));
+            const filterOptionKey = eTypes[position].getValue() as ISimpleFilterModelType;
+            const placeholderText = getPlaceholderText(this, filterPlaceholder, placeholderKey, filterOptionKey);
+
+            element.setInputPlaceholder(placeholderText);
             element.setInputAriaLabel(ariaLabel);
         });
     }

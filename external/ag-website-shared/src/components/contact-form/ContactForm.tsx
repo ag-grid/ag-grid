@@ -1,9 +1,10 @@
+import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONTACT_FORM_DATA } from '@ag-website-shared/constants';
+import { CONTACT_FORM_DATA, RECAPTCHA_SITE_KEY, RECAPTCHA_URL } from '@ag-website-shared/constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
 import type { FunctionComponent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
@@ -25,10 +26,35 @@ interface Props {
     formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page';
 }
 
+function loadRecaptchaScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if ((window as any).grecaptcha) {
+            return resolve();
+        }
+        const id = 'grecaptcha-script';
+        const existing = document.getElementById(id) as HTMLScriptElement | null;
+        if (existing) {
+            existing.addEventListener('load', () => resolve(), { once: true });
+            existing.addEventListener('error', reject, { once: true });
+            return;
+        }
+        const s = document.createElement('script');
+        s.id = id;
+        s.src = RECAPTCHA_URL;
+        s.async = true;
+        s.defer = true;
+        s.onload = () => resolve();
+        s.onerror = reject;
+        document.head.appendChild(s);
+    });
+}
+
 export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About page' }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const [isDebug, setIsDebug] = useState(isDev);
     const [returnUrl, setReturnUrl] = useState(RETURN_URLS.success);
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [captchaError, setCaptchaError] = useState(false);
 
     const {
         register,
@@ -57,11 +83,24 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             urlWithCurrentPath.search = new URLSearchParams({ fromPage }).toString();
             setReturnUrl(urlWithCurrentPath.toString());
         }
+
+        loadRecaptchaScript().then(() => {
+            initCaptcha();
+        });
     }, []);
 
-    const onValidSubmit = () => {
-        formRef.current?.submit();
-    };
+    const onValidSubmit = useCallback(() => {
+        setIsDisabled(true);
+        setCaptchaError(false);
+
+        const captchaPassed = (globalThis as any).grecaptcha.getResponse();
+        if (captchaPassed) {
+            formRef.current?.submit();
+        } else {
+            setCaptchaError(true);
+            setIsDisabled(false);
+        }
+    }, []);
 
     return (
         <form
@@ -72,6 +111,11 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             onSubmit={handleSubmit(onValidSubmit)}
             noValidate
         >
+            <input
+                type="hidden"
+                name="captcha_settings"
+                value={`{"keyname":"agGridComV3","fallback":"true","orgId":"${orgId}","ts":""}`}
+            />
             <input type="hidden" name="oid" value={orgId} />
             <input type="hidden" name="retURL" value={returnUrl} />
 
@@ -148,8 +192,15 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
                 </div>
             </div>
 
+            <div className={classnames('input-field', { 'input-error': captchaError })}>
+                <div className="g-recaptcha" data-sitekey={RECAPTCHA_SITE_KEY} />
+                <div className={styles.errorContainer}>
+                    {captchaError && <p className="error">Please click on the reCAPTCHA checkbox</p>}
+                </div>
+            </div>
+
             <input
-                className={classnames('button-primary', styles.submitButton)}
+                className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
                 type="submit"
                 value="Send us a message"
             />

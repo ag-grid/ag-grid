@@ -44,7 +44,7 @@ The next and previous cells can also be navigated using the API functions `api.t
 
 The grid has the following API methods for editing:
 
-{% apiDocumentation source="grid-api/api.json" section="editing" names=["startEditingCell", "stopEditing", "getEditingCells"] /%}
+{% apiDocumentation source="grid-api/api.json" section="editing" names=["startEditingCell", "stopEditing", "getEditingCells", "getEditRowValues", "isEditing"] /%}
 
 If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](./cell-editing-full-row/)) then the array contains all editing cells.
 
