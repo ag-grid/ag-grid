@@ -42,7 +42,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private cellExpressions: boolean;
-    private formulas: boolean;
+
     // Store locally for performance reasons and keep updated via property listener
     private isTreeData: boolean;
 
@@ -70,8 +70,7 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(gos);
-        const formulas = (this.formulas = gos.get('enableFormulas'));
-        this.cellExpressions = gos.get('enableCellExpressions') && !formulas;
+        this.cellExpressions = gos.get('enableCellExpressions') && gos.get('enableFormulas');
         this.isTreeData = _isTreeData(gos);
         this.initialised = true;
 
