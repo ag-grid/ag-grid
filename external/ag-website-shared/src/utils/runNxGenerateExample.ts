@@ -9,10 +9,10 @@ type GenerateKind = 'docs' | 'gallery';
 
 const getNxGenerateCommand = (kind: GenerateKind, { pageName, exampleName }: RunNxGenerateExampleParams) => {
     if (kind === 'docs') {
-        return `nx run all:generate-docs-example --page=${pageName} --example=${exampleName}`;
+        return `yarn nx run all:generate-docs-example --page=${pageName} --example=${exampleName}`;
     }
     // gallery
-    return `nx run all:generate-gallery-example --example=${exampleName}`;
+    return `yarn nx run all:generate-gallery-example --example=${exampleName}`;
 };
 
 const runNx = (command: string) => {

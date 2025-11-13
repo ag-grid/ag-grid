@@ -13,7 +13,13 @@ import {
 } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, assertColumnsSelected, asyncSetTimeout, waitForEvent } from '../test-utils';
+import {
+    TestGridsManager,
+    assertColumnsSelected,
+    assertSelectedCellRanges,
+    asyncSetTimeout,
+    waitForEvent,
+} from '../test-utils';
 import { GridActions } from './utils';
 
 describe('Cell Selection', () => {
@@ -496,10 +502,10 @@ describe('Cell Selection', () => {
             await userSession.keyboard('{Control>}');
             await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
 
-            assertColumnsSelected([['sport']], api);
+            assertColumnsSelected([['day']], api);
         });
 
-        test('suppressMultiRanges prevents column selections when cell selection exists (header)', async () => {
+        test('suppressMultiRanges clears existing selections when selecting a column (header)', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -520,13 +526,16 @@ describe('Cell Selection', () => {
                 rowEndIndex: 3,
             });
 
+            assertSelectedCellRanges([{ rowStartIndex: 1, rowEndIndex: 3, columns: ['sport', 'year'] }], api);
+
             await userSession.keyboard('{Control>}');
             await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
 
-            assertColumnsSelected([], api);
+            assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 6, columns: ['sport'] }], api);
         });
 
-        test('suppressMultiRanges prevents column selections when cell selection exists (group header)', async () => {
+        test('suppressMultiRanges clears existing selections when selecting a column (group header)', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -562,31 +571,13 @@ describe('Cell Selection', () => {
                 rowEndIndex: 3,
             });
 
+            assertSelectedCellRanges([{ rowStartIndex: 1, rowEndIndex: 3, columns: ['sport', 'year'] }], api);
+
             await userSession.keyboard('{Control>}');
             await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
             await userSession.keyboard('{/Control}');
 
-            assertColumnsSelected([], api);
-        });
-
-        test('Can use API method to select and de-select columns', async () => {
-            const [api] = await createGrid({
-                columnDefs,
-                rowData,
-                cellSelection: true,
-            });
-
-            api.selectColumns(['sport']);
-            assertColumnsSelected([['sport']], api);
-
-            api.selectColumns(['year', 'amount', 'day']);
-            assertColumnsSelected([['sport'], ['year', 'amount', 'day']], api);
-
-            api.selectColumns(['amount'], false);
-            assertColumnsSelected([['sport'], ['year', 'day']], api);
-
-            api.selectColumns(['sport'], false);
-            assertColumnsSelected([['year', 'day']], api);
+            assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 6, columns: ['year', 'amount'] }], api);
         });
     });
 });

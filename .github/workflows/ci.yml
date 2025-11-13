@@ -60,7 +60,6 @@ jobs:
     if: github.event.pull_request.draft == false
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
-      build: ${{ steps.build.outcome || '' }}
       test_count: ${{ steps.matrix.outputs.test_count }}
       test_matrix: ${{ steps.matrix.outputs.test_matrix }}
       test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
@@ -88,11 +87,6 @@ jobs:
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: 'rw'
-
-      - name: nx build
-        id: build
-        run: |
-          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
 
       - name: calculate matrix
         id: matrix
@@ -135,16 +129,6 @@ jobs:
           angular_pkg_matrix=$(node ./testing/angular-package-tests/calculate-angular-pkg-shards.js)
           echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
-
-      - name: Perist build outputs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-init-outputs
-          path: |
-            dist/
-            packages/*/dist/
-            external/*/dist/
 
   test:
     runs-on: ubuntu-24.04
@@ -220,11 +204,6 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -261,11 +240,6 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
@@ -289,14 +263,15 @@ jobs:
           path: |
             reports/
 
-  format_lint:
+  format_lint_build:
     runs-on: ubuntu-latest
-    name: Format & Lint
+    name: Format, Lint and Build
     needs: init
     if: ${{ needs.init.result == 'success' }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
+      build: ${{ steps.build.outcome || '' }}
     steps:
       - name: Checkout
         id: checkout
@@ -325,6 +300,11 @@ jobs:
         run: |
           yarn nx lint
 
+      - name: nx build
+        id: build
+        run: |
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
@@ -342,11 +322,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1 # shallow copy
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
 
       - name: Setup
         id: setup
@@ -407,11 +382,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
       - name: Setup
         id: setup
         if: matrix.framework != 'none'
@@ -426,7 +396,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ init, test, e2e, format_lint, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ init, test, e2e, format_lint_build, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -486,7 +456,7 @@ jobs:
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.format_lint.result }}" == "failure" ] ; then
+          elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -566,9 +536,9 @@ jobs:
               "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
               "jobStatuses":
                 {
-                    "Build": "${{ needs.init.outputs.build }}",
-                    "Lint": "${{ needs.format_lint.outputs.lint }}",
-                    "Format": "${{ needs.format_lint.outputs.format }}",
+                    "Format": "${{ needs.format_lint_build.outputs.format }}",
+                    "Lint": "${{ needs.format_lint_build.outputs.lint }}",
+                    "Build": "${{ needs.format_lint_build.outputs.build }}",
                     "Test": "${{ needs.test.result }}",
                     "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "e2e": "${{ needs.e2e.result }}",

@@ -12391,6 +12391,16 @@ es-to-primitive@^1.3.0:
     is-date-object "^1.0.5"
     is-symbol "^1.0.4"
 
+esbuild-loader@^4.4.0:
+  version "4.4.0"
+  resolved "http://52.50.158.57:4873/esbuild-loader/-/esbuild-loader-4.4.0.tgz#121a28e599f12379e1e4d61fbaa890f0abb07666"
+  integrity sha512-4J+hXTpTtEdzUNLoY8ReqDNJx2NoldfiljRCiKbeYUuZmVaiJeDqFgyAzz8uOopaekwRoCcqBFyEroGQLFVZ1g==
+  dependencies:
+    esbuild "^0.25.0"
+    get-tsconfig "^4.10.1"
+    loader-utils "^2.0.4"
+    webpack-sources "^1.4.3"
+
 esbuild-plugin-umd-wrapper@^2.0.0:
   version "2.0.3"
   resolved "http://52.50.158.57:4873/esbuild-plugin-umd-wrapper/-/esbuild-plugin-umd-wrapper-2.0.3.tgz#66fd8f34fe88c113c594a2498d5abb73d29f7459"
@@ -13820,7 +13830,7 @@ get-symbol-description@^1.1.0:
     es-errors "^1.3.0"
     get-intrinsic "^1.2.6"
 
-get-tsconfig@^4.7.3, get-tsconfig@^4.7.5:
+get-tsconfig@^4.10.1, get-tsconfig@^4.7.3, get-tsconfig@^4.7.5:
   version "4.13.0"
   resolved "http://52.50.158.57:4873/get-tsconfig/-/get-tsconfig-4.13.0.tgz#fcdd991e6d22ab9a600f00e91c318707a5d9a0d7"
   integrity sha512-1VKTZJCwBrvbd+Wn3AOgQP/2Av+TfTCOlE4AcRJE72W1ksZXbAx8PPBR9RzgTeSPzlPMHrbANMH3LbltH73wxQ==
@@ -16634,7 +16644,7 @@ loader-utils@3.3.1, loader-utils@^3.2.0:
   resolved "http://52.50.158.57:4873/loader-utils/-/loader-utils-3.3.1.tgz#735b9a19fd63648ca7adbd31c2327dfe281304e5"
   integrity sha512-FMJTLMXfCLMLfJxcX9PFqX5qD88Z5MRGaZCVzfuqeZSPsyiBzs+pahDQjbIWz2QIzPZz0NX9Zy4FX3lmK6YHIg==
 
-loader-utils@^2.0.0:
+loader-utils@^2.0.0, loader-utils@^2.0.4:
   version "2.0.4"
   resolved "http://52.50.158.57:4873/loader-utils/-/loader-utils-2.0.4.tgz#8b5cb38b5c34a9a018ee1fc0e6a066d1dfcc528c"
   integrity sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==
@@ -22328,6 +22338,11 @@ sorted-array-functions@^1.3.0:
   resolved "http://52.50.158.57:4873/sorted-array-functions/-/sorted-array-functions-1.3.0.tgz#8605695563294dffb2c9796d602bd8459f7a0dd5"
   integrity sha512-2sqgzeFlid6N4Z2fUQ1cvFmTOLRi/sEDzSQ0OKYchqgoPmQBVyM3959qYx3fpS6Esef80KjmpgPeEr028dP3OA==
 
+source-list-map@^2.0.0:
+  version "2.0.1"
+  resolved "http://52.50.158.57:4873/source-list-map/-/source-list-map-2.0.1.tgz#3993bd873bfc48479cca9ea3a547835c7c154b34"
+  integrity sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
+
 source-map-explorer@2.5.3:
   version "2.5.3"
   resolved "http://52.50.158.57:4873/source-map-explorer/-/source-map-explorer-2.5.3.tgz#33551b51e33b70f56d15e79083cdd4c43e583b69"
@@ -24786,6 +24801,14 @@ webpack-merge@^5.7.3:
     clone-deep "^4.0.1"
     flat "^5.0.2"
     wildcard "^2.0.0"
+
+webpack-sources@^1.4.3:
+  version "1.4.3"
+  resolved "http://52.50.158.57:4873/webpack-sources/-/webpack-sources-1.4.3.tgz#eedd8ec0b928fbf1cbfe994e22d2d890f330a933"
+  integrity sha512-lgTS3Xhv1lCOKo7SA5TjKXMjpSM4sBjNV5+q2bqesbSPs5FjGmU6jjtBSkX9b4qW87vDIsCIlUPOEhbZrMdjeQ==
+  dependencies:
+    source-list-map "^2.0.0"
+    source-map "~0.6.1"
 
 webpack-sources@^3.0.0, webpack-sources@^3.2.3:
   version "3.3.3"

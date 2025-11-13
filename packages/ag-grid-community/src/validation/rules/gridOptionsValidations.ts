@@ -557,6 +557,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     'pivotMode', // no row grouping
                     'masterDetail', // breaks row indices
                     'grandTotalRow', // no aggregations
+                    'enableCellExpressions',
                 ];
                 const error = unsupported.find((key) => options[key]);
                 if (error) {

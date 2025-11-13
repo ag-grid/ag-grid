@@ -124,6 +124,7 @@
     "ag-charts-community": "12.3.1-beta.20251112",
     "ag-charts-enterprise": "12.3.1-beta.20251112",
     "ts-loader": "^9.5.1",
+    "esbuild-loader": "^4.4.0",
     "style-loader": "^3.3.4",
     "css-loader": "^6.10.0",
     "postcss-loader": "^8.1.0",

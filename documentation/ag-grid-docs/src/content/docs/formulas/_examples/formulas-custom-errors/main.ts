@@ -24,7 +24,13 @@ const rowData = [
     { rid: '1', A: 1, B: 2, C: 3 },
     { rid: '2', A: 4, B: 5, C: 6 },
     { rid: '3', A: 7, B: 8, C: 9 },
-    { rid: '4', A: '=ERRORIFONE(A1:A3)', B: '=ERRORIFONE(B1:B3)', C: '=ERRORIFONE(C1:C3)', D: '=CONCAT(A4:C4)' },
+    {
+        rid: 4,
+        A: '=ERRORIFONE(REF(COLUMN("0"),ROW("1"),COLUMN("0"),ROW("3")))',
+        B: '=ERRORIFONE(REF(COLUMN("1"),ROW("1"),COLUMN("1"),ROW("3")))',
+        C: '=ERRORIFONE(REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("3")))',
+        D: '=CONCAT(REF(COLUMN("0"),ROW("4"),COLUMN("2"),ROW("4")))',
+    },
 ];
 
 const gridOptions: GridOptions<any> = {

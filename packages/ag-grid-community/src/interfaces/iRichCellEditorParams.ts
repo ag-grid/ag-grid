@@ -10,17 +10,17 @@ export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRender
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
-    allowTyping?: boolean;
+    onSearch?: (search?: string) => void;
     cellRenderer?: any;
     cellRendererParams?: any;
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
 
+    allowTyping?: boolean;
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
-
     multiSelect?: boolean;
     suppressDeselectAll?: boolean;
     suppressMultiSelectPillRenderer?: boolean;
@@ -30,10 +30,17 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
 
     valueFormatter?: (value: TValue[] | TValue) => string;
     searchStringCreator?: (values: TValue[]) => string[];
+    allowNoResultsCopy?: boolean;
+}
+
+export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any>
+    extends RichCellEditorParams<TData, TValue> {
+    /** The current search string entered by the user. Is always defined when async filtering is enabled. */
+    search?: string;
 }
 
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
-    (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
+    (params: RichCellEditorValuesCallbackParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
 
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {
@@ -56,6 +63,14 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      * @default false
      */
     filterList?: boolean;
+
+    /**
+     * Set to `true` to enable asynchronous filtering of values via the `values(params, searchValue)` callback.
+     * Requires `allowTyping=true`, `filterList=true` and the `values` callback returns a promise of filtered values.
+     * The debounce time can be configured via `searchDebounceDelay`.
+     * @default false
+     */
+    filterListAsync?: boolean;
     /**
      * The type of search algorithm that is used when searching for values.
      *  - `match` - Matches if the value starts with the text typed.
@@ -86,7 +101,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      */
     suppressMultiSelectPillRenderer?: boolean;
     /**
-     * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
+     * The value in `ms` for the search algorithm debounce delay
      * @default 300
      */
     searchDebounceDelay?: number;

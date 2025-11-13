@@ -22,9 +22,13 @@ function getRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
+function getValueFromServer(_params: ICellEditorParams, search?: string): Promise<string[]> {
+    search = search?.toLowerCase() ?? '';
     return new Promise((resolve) => {
-        setTimeout(() => resolve(languages), 1000);
+        setTimeout(() => {
+            console.log('Grid requested `' + search + '` from server.');
+            resolve(languages.filter((l) => l.toLowerCase().includes(search)));
+        }, 1000);
     });
 }
 
@@ -35,6 +39,18 @@ const columnDefs: ColDef[] = [
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: getValueFromServer,
+        } as IRichCellEditorParams,
+    },
+    {
+        headerName: 'Server Side Filtering',
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        width: 300,
+        cellEditorParams: {
+            allowTyping: true,
+            values: getValueFromServer,
+            filterList: true,
+            filterListAsync: true,
         } as IRichCellEditorParams,
     },
 ];
