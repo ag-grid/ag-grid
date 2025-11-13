@@ -31,7 +31,6 @@ export interface IFormulaService extends Bean {
     isFormula(value: unknown): value is `=${string}`;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;
-    getFormulaFromConvertedMap(formula: string): string;
     normaliseFormula(value: string, shorthand: boolean): string | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;

@@ -249,16 +249,10 @@ export class ValueService extends BeanStub implements NamedBean {
             result = _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
-        const isExpression = typeof result === 'string' && result.startsWith('=');
-
-        // the result could be an expression itself, if we are allowing cell values to be expressions or formulas
-        if (isExpression) {
-            if (this.formulas && !result.startsWith('=REF')) {
-                result = this.beans.formula?.getFormulaFromConvertedMap(result);
-            } else if (this.cellExpressions) {
-                const cellValueGetter = result.substring(1);
-                result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
-            }
+        // the result could be an expression itself, if we are allowing cell values to be expressions
+        if (this.cellExpressions && typeof result === 'string' && result.startsWith('=')) {
+            const cellValueGetter = result.substring(1);
+            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
 
         return result;
