@@ -1,10 +1,9 @@
 import { _areEqual } from '../agStack/utils/array';
 import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
-import { _reorderAllLeafs } from '../clientSideRowModel/clientSideRowModelUtils';
+import { _csrmFirstLeaf, _csrmReorderAllLeafs } from '../clientSideRowModel/clientSideRowModelUtils';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import { _firstLeaf } from '../entities/rowNodeUtils';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
@@ -590,9 +589,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let addIndex: number | undefined;
         if (target) {
-            const leaf = target.data ? target : _firstLeaf(target.childrenAfterGroup);
-            const sourceIndex = leaf !== undefined ? leaf.sourceRowIndex : -1;
-            addIndex = sourceIndex + (position === 'above' ? 0 : 1);
+            const leaf = csrmGetLeaf(target);
+            if (leaf) {
+                addIndex = leaf.sourceRowIndex + (position === 'above' ? 0 : 1);
+            }
         }
         clientSideRowModel.updateRowData({ add, addIndex });
 
@@ -609,8 +609,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 !row ||
                 row.footer ||
                 (row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
-                groupEditSvc?.wouldCycle(row, newParent) || // Cannot move to a parent that would create a cycle
-                !(row.sourceRowIndex >= 0 ? row : _firstLeaf(row.childrenAfterGroup)) // No leaf to move, so nothing to do
+                !csrmGetLeaf(row) || // No leaf to move, so nothing to do
+                groupEditSvc?.wouldCycle(row, newParent) // Cannot move to a parent that would create a cycle
             ) {
                 valid = false;
             }
@@ -640,7 +640,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 row.treeParent = newParent as RowNode;
                 changed = true;
             }
-            const leafRow = row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
+            const leafRow = csrmGetLeaf(row);
             if (leafRow) {
                 leafs.add(leafRow);
             }
@@ -655,7 +655,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const cellPosition = focusSvc.getFocusedCell();
         const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
 
-        if (leafs.size && _reorderAllLeafs((rootNode as RowNode)._leafs, leafs, target, position === 'above')) {
+        if (leafs.size && _csrmReorderAllLeafs((rootNode as RowNode)._leafs, leafs, target, position === 'above')) {
             changed = true;
         }
 
@@ -683,6 +683,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return true;
     }
 }
+
+const csrmGetLeaf = (row: IRowNode): RowNode | undefined => {
+    return row.sourceRowIndex >= 0 ? (row as RowNode) : _csrmFirstLeaf(row as RowNode);
+};
 
 /** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
 const getPrevOrNext = (

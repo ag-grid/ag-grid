@@ -11,25 +11,26 @@ import {
     BeanStub,
     ChangedPath,
     _ChangedRowNodes,
-    _firstLeaf,
+    _csrmFirstLeaf,
+    _csrmReorderAllLeafs,
     _getCellByPosition,
     _isClientSideRowModel,
-    _reorderAllLeafs,
 } from 'ag-grid-community';
 
 export class GroupEditService extends BeanStub implements IGroupEditService {
     public beanName = 'groupEditSvc' as const;
-    private pendingGroupRefreshRows: Set<RowNode> | null = null;
+    private pendingRefresh: _ChangedRowNodes | null = null;
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
             this.addManagedListeners(this.eventSvc, {
                 batchEditingStopped: () => this.flushGroupEdits(),
-                cellValueChanged: (event) => this.onCsrmCellValueChange(event as CellValueChangedEvent),
+                cellValueChanged: (event) => this.onCsrmCellChange(event as CellValueChangedEvent),
             });
         }
     }
 
+    /** Checks if setting `newParent` as the parent of `row` would create a cycle in the tree hierarchy */
     public wouldCycle(row: IRowNode, newParent: IRowNode | null | undefined): boolean {
         if (!newParent || row.parent === newParent) {
             return false;
@@ -48,6 +49,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return false;
     }
 
+    /** Checks if the drop operation described by `rowsDrop` is a grouping edit */
     public isGroupingDrop(rowsDrop: _RowsDrop): boolean {
         if (!rowsDrop.rowDragManaged || !rowsDrop.sameGrid) {
             return false;
@@ -58,6 +60,7 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return !!this.beans.rowGroupColsSvc?.columns?.length;
     }
 
+    /** Checks if the drop operation described by `rowsDrop` can set a new parent */
     public canSetParent(rowsDrop: _RowsDrop): boolean {
         if (!rowsDrop.sameGrid) {
             return false;
@@ -65,42 +68,38 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         if (this.beans.groupStage?.treeData) {
             return true;
         }
-        if (!rowsDrop.rowDragManaged) {
-            return false;
-        }
-        if (!this.gos.get('refreshAfterGroupEdit')) {
+        if (rowsDrop.rowDragManaged && !this.gos.get('refreshAfterGroupEdit')) {
             return false;
         }
         return !!this.beans.rowGroupColsSvc?.columns?.length;
     }
 
+    /** Performs the grouping edit described by `rowsDrop` */
     public groupingEditDrop(rowsDrop: _RowsDrop): boolean {
-        const groupColumns = this.beans.rowGroupColsSvc?.columns ?? [];
-        if (!groupColumns.length) {
-            return false;
-        }
+        const { beans } = this;
 
         const position = rowsDrop.position;
         const target = (rowsDrop.target as RowNode | null | undefined) ?? null;
-        const rootNode = rowsDrop.rootNode as RowNode | null;
+        const rootNode = rowsDrop.rootNode as RowNode;
         const parentForValues = (rowsDrop.newParent as RowNode | null) ?? target?.parent ?? rootNode;
-        const { groupValues, maxLevel } = buildGroupValuesFromParent(parentForValues, groupColumns);
 
-        const focusSvc = this.beans.focusSvc;
+        const focusSvc = beans.focusSvc;
         const cellPosition = focusSvc.getFocusedCell();
-        const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
+        const cellCtrl = cellPosition && _getCellByPosition(beans, cellPosition);
 
         const leafs = new Set<RowNode>();
-        let dataChanged = false;
+        const changedRowNodes = new _ChangedRowNodes();
+        const updates = changedRowNodes.updates;
 
-        for (const row of rowsDrop.rows as RowNode[]) {
-            const leafRow = row.data ? (row as RowNode) : _firstLeaf(row.childrenAfterGroup);
-            if (!leafRow) {
-                continue;
-            }
-            leafs.add(leafRow);
-            if (this.updateRowGroupValues(leafRow, groupColumns, groupValues, maxLevel)) {
-                dataChanged = true;
+        let newGroupValues: GroupValues | undefined;
+        for (const row of rowsDrop.rows) {
+            const leafRow = row.sourceRowIndex >= 0 ? (row as RowNode) : _csrmFirstLeaf(row);
+            if (leafRow) {
+                leafs.add(leafRow);
+                newGroupValues ??= this.newGroupValues(parentForValues);
+                if (this.setRowGroup(leafRow, newGroupValues)) {
+                    updates.add(leafRow);
+                }
             }
         }
 
@@ -108,31 +107,18 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         const reorderTarget = position === 'inside' ? findFirstLeafForParent(parentForValues, leafs) ?? target : target;
         let orderChanged = false;
         if (leafs.size && reorderPosition !== 'none') {
-            orderChanged = _reorderAllLeafs(
-                (rootNode as RowNode)._leafs,
-                leafs,
-                reorderTarget,
-                reorderPosition === 'above'
-            );
+            orderChanged = _csrmReorderAllLeafs(rootNode._leafs, leafs, reorderTarget, reorderPosition === 'above');
         }
 
-        if (!dataChanged && !orderChanged) {
+        if (!updates.size && !orderChanged) {
             return false;
         }
 
-        const rowModel = this.beans.rowModel as IClientSideRowModel;
-        const changedRowNodes = new _ChangedRowNodes();
         changedRowNodes.reordered = orderChanged;
         for (const leaf of leafs) {
             changedRowNodes.updates.add(leaf);
         }
-        rowModel.refreshModel({
-            step: 'group',
-            keepRenderedRows: true,
-            animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: rootNode ? new ChangedPath(false, rootNode) : undefined,
-            changedRowNodes,
-        });
+        this.csrmRefresh(changedRowNodes);
 
         if (cellCtrl) {
             cellCtrl.focusCell();
@@ -143,53 +129,63 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return true;
     }
 
+    /** Flushes any pending group edits for batch processing */
     private flushGroupEdits(): void {
-        const pending = this.pendingGroupRefreshRows;
-        if (pending?.size) {
-            this.pendingGroupRefreshRows = null;
-            this.refreshGroupingForRows(Array.from(pending));
+        const pending = this.pendingRefresh;
+        if (pending) {
+            this.pendingRefresh = null;
+            this.csrmRefresh(pending);
         }
     }
 
-    private refreshGroupingForRows(rows: RowNode[]): void {
-        if (!rows.length) {
-            return;
+    /** Refreshes the grouping for the provided rows */
+    private csrmRefresh(changedRowNodes: _ChangedRowNodes): void {
+        const clientSideRowModel = this.beans.rowModel as IClientSideRowModel;
+        const rootNode = clientSideRowModel.rootNode;
+        if (!rootNode) {
+            return; // Destroyed
         }
-
-        const rowModel = this.beans.rowModel as IClientSideRowModel;
-
-        const changedRowNodes = new _ChangedRowNodes();
-        changedRowNodes.reordered = true;
-        for (const row of rows) {
-            changedRowNodes.updates.add(row);
-        }
-        const rootNode = rowModel.rootNode as RowNode | null;
-        rowModel.refreshModel({
+        clientSideRowModel.refreshModel({
             step: 'group',
             keepRenderedRows: true,
             animate: !this.gos.get('suppressAnimationFrame'),
-            changedPath: rootNode ? new ChangedPath(false, rootNode) : undefined,
+            changedPath: new ChangedPath(false, rootNode),
             changedRowNodes,
         });
     }
 
-    private updateRowGroupValues(
-        row: RowNode,
-        groupColumns: AgColumn[],
-        groupValues: any[],
-        maxLevel: number
-    ): boolean {
-        const { valueSvc, editSvc } = this.beans;
+    private newGroupValues(parent: IRowNode | null): GroupValues {
+        const columns = this.beans.rowGroupColsSvc?.columns ?? [];
+        const values = new Array<any>(columns.length);
+        let maxLevel = -1;
+        let current: IRowNode | null | undefined = parent;
+        while (current && current.level >= 0) {
+            const column: AgColumn | undefined = columns[current.level];
+            if (column) {
+                const colId = column.getColId();
+                const level = current.level;
+                values[level] = current.groupData?.[colId] ?? current.key ?? undefined;
+                if (level > maxLevel) {
+                    maxLevel = level;
+                }
+            }
+            current = current.parent;
+        }
+        return { values, columns, maxLevel };
+    }
+
+    private setRowGroup(row: RowNode, { values, columns, maxLevel }: GroupValues): boolean {
         if (maxLevel < 0) {
             return false;
         }
+        const { valueSvc, editSvc } = this.beans;
         let changed = false;
-        for (let level = 0; level < groupColumns.length; ++level) {
-            const column = groupColumns[level];
+        for (let level = 0; level < columns.length; ++level) {
+            const column = columns[level];
             if (!column || level > maxLevel) {
                 continue;
             }
-            const newValue = groupValues[level];
+            const newValue = values[level];
             const currentValue = valueSvc.getValue(column, row, false, 'api');
             if (currentValue === newValue || (currentValue == null && newValue == null)) {
                 continue;
@@ -203,24 +199,17 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         return changed;
     }
 
-    private onCsrmCellValueChange(event: CellValueChangedEvent): void {
+    private onCsrmCellChange(event: CellValueChangedEvent): void {
         const { column, node, source } = event;
-        if (!column) {
-            return;
-        }
         if (!this.gos.get('refreshAfterGroupEdit')) {
             return;
         }
 
         if (source === 'rowDrag') {
-            return;
+            return; // Row drag changes are handled separately in groupingEditDrop
         }
 
-        if (!column.isRowGroupActive?.()) {
-            return;
-        }
-
-        if (!_isClientSideRowModel(this.gos)) {
+        if (!column?.isRowGroupActive()) {
             return;
         }
 
@@ -230,46 +219,46 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
 
         const editSvc = this.beans.editSvc;
         if (editSvc?.isBatchEditing()) {
-            const pending = (this.pendingGroupRefreshRows ??= new Set());
-            pending.add(node as RowNode);
+            let pending = this.pendingRefresh;
+            if (!pending) {
+                pending = newEditChangedRowNodes();
+                this.pendingRefresh = pending;
+            }
+            pending.updates.add(node as RowNode);
         } else {
-            this.refreshGroupingForRows([node as RowNode]);
+            const changedRowNodes = newEditChangedRowNodes();
+            changedRowNodes.updates.add(node as RowNode);
+            this.csrmRefresh(changedRowNodes);
         }
     }
 }
+
+const newEditChangedRowNodes = (): _ChangedRowNodes => {
+    const result = new _ChangedRowNodes();
+    result.reordered = true; // Force grouping to follow _leafs order
+    return result;
+};
 
 const findFirstLeafForParent = (parent: IRowNode | null, exclude: ReadonlySet<RowNode>): RowNode | null => {
     const children = parent?.childrenAfterGroup;
     if (!children) {
         return null;
     }
-    for (const child of children) {
-        const leaf = child.data ? (child as RowNode) : _firstLeaf(child.childrenAfterGroup);
-        if (leaf && !exclude.has(leaf)) {
-            return leaf;
+    for (let i = 0, len = children.length; i < len; ++i) {
+        const child = children[i] as RowNode;
+        if (child.sourceRowIndex >= 0 && !exclude.has(child)) {
+            return child;
+        }
+        const found = findFirstLeafForParent(child, exclude);
+        if (found !== null) {
+            return found;
         }
     }
     return null;
 };
 
-const buildGroupValuesFromParent = (
-    parent: IRowNode | null,
-    groupColumns: AgColumn[]
-): { groupValues: any[]; maxLevel: number } => {
-    const groupValues = new Array<any>(groupColumns.length);
-    let maxLevel = -1;
-    let current: IRowNode | null | undefined = parent;
-    while (current && current.level >= 0) {
-        const column: AgColumn | undefined = groupColumns[current.level];
-        if (column) {
-            const colId = column.getColId();
-            const level = current.level;
-            groupValues[level] = current.groupData?.[colId] ?? current.key ?? undefined;
-            if (level > maxLevel) {
-                maxLevel = level;
-            }
-        }
-        current = current.parent;
-    }
-    return { groupValues, maxLevel };
-};
+interface GroupValues {
+    maxLevel: number;
+    columns: AgColumn[];
+    values: any[];
+}

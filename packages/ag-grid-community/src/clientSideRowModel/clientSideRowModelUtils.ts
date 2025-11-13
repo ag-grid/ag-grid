@@ -1,6 +1,16 @@
 import type { RowNode } from '../entities/rowNode';
-import { _firstLeaf } from '../entities/rowNodeUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
+
+export const _csrmFirstLeaf = (node: IRowNode): RowNode | undefined => {
+    let childrenAfterGroup = node.childrenAfterGroup;
+    while (childrenAfterGroup?.length) {
+        const child = childrenAfterGroup[0];
+        if (child.sourceRowIndex >= 0) {
+            return child as RowNode;
+        }
+        childrenAfterGroup = child.childrenAfterGroup;
+    }
+};
 
 /** Reorders the children of the root node, so that the rows to move are in the correct order.
  * @param allLeafs The list of all leaf rows of the root node
@@ -10,7 +20,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
  * @param lastAffectedLeafIndex The last index of the rows to move
  * @returns True if the order of the rows changed, false otherwise
  */
-export const _reorderAllLeafs = (
+export const _csrmReorderAllLeafs = (
     allLeafs: RowNode[] | null | undefined,
     leafsToMove: ReadonlySet<RowNode>,
     target: IRowNode | null | undefined,
@@ -26,7 +36,7 @@ export const _reorderAllLeafs = (
     if (target) {
         targetPositionIdx = target.sourceRowIndex;
         if (targetPositionIdx < 0) {
-            target = _firstLeaf(target.childrenAfterGroup);
+            target = _csrmFirstLeaf(target as RowNode);
             if (target) {
                 targetPositionIdx = target.sourceRowIndex;
             }

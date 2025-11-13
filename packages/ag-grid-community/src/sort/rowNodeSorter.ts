@@ -1,10 +1,10 @@
 import { _defaultComparator } from '../agStack/utils/generic';
+import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import { _firstLeaf } from '../entities/rowNodeUtils';
-import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
+import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
 
 export interface SortedRowNode {
@@ -19,11 +19,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
+    private firstLeaf: (row: RowNode) => RowNode | undefined;
 
     public postConstruct(): void {
         const { gos } = this;
         this.isAccentedSort = gos.get('accentedSort');
         this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
+        this.firstLeaf = _isClientSideRowModel(gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
         this.addManagedPropertyListener(
             'accentedSort',
@@ -133,7 +135,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
         if (isGroupRows) {
-            const leafChild = node.data ? node : _firstLeaf(node.childrenAfterGroup);
+            const leafChild = this.firstLeaf(node);
             return leafChild && valueSvc.getValue(column, leafChild, false);
         }
 
@@ -144,3 +146,17 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         return node.groupData?.[displayCol.getId()];
     }
 }
+
+const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
+    if (row.data) {
+        return row;
+    }
+    let childrenAfterGroup = row.childrenAfterGroup;
+    while (childrenAfterGroup?.length) {
+        const node = childrenAfterGroup[0];
+        if (node.data) {
+            return node;
+        }
+        childrenAfterGroup = node.childrenAfterGroup;
+    }
+};

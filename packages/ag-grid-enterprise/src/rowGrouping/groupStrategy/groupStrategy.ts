@@ -6,7 +6,7 @@ import type {
     StageExecuteParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _areEqual, _firstLeaf, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _areEqual, _csrmFirstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
@@ -383,7 +383,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: _firstLeaf(rowNode.childrenAfterGroup),
+                    leafNode: _csrmFirstLeaf(rowNode),
                 };
                 this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);

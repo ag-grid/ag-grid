@@ -390,7 +390,7 @@ export {
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
 } from './entities/rowNode';
-export { _createGlobalRowEvent, _createRowNodeSibling, _firstLeaf } from './entities/rowNodeUtils';
+export { _createGlobalRowEvent, _createRowNodeSibling } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -784,7 +784,7 @@ export {
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
-export { _reorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
+export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 

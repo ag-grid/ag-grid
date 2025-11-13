@@ -51,6 +51,7 @@ describe('cell editing with refreshAfterGroupEdit', () => {
 
         await asyncSetTimeout(2);
 
+        // Note - we are following _leafs order after the refresh
         expect(snapshot()).toEqual(['GROUP:A', 'ROW:1', 'GROUP:B', 'ROW:2', 'ROW:3']);
 
         expect(api.getRowNode('2')?.parent?.key).toBe('B');

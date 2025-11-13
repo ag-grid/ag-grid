@@ -3,7 +3,6 @@ import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
-import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
 export function _createGlobalRowEvent<T extends AgEventType>(
@@ -58,14 +57,4 @@ export const _createRowNodeSibling = (rowNode: RowNode, beans: BeanCollection): 
     sibling.oldRowTop = null;
 
     return sibling;
-};
-
-export const _firstLeaf = (childrenAfterGroup: ReadonlyArray<IRowNode> | null | undefined): RowNode | undefined => {
-    while (childrenAfterGroup?.length) {
-        const node = childrenAfterGroup[0];
-        if (node.data) {
-            return node as RowNode;
-        }
-        childrenAfterGroup = node.childrenAfterGroup;
-    }
 };
