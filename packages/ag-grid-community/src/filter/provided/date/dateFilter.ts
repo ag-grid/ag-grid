@@ -83,7 +83,18 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    createDateCompWrapper(element: HTMLElement): DateCompWrapper {
+    private validateInputs(position: number, fromTo: 'from' | 'to'): void {
+        const isFrom = fromTo === 'from';
+        const from = this.dateConditionFromComps[position];
+        const to = this.dateConditionToComps[position];
+
+        const fromDate = from.getDate();
+        const toDate = to.getDate();
+
+        (isFrom ? from : to).setCustomValidity(getValidityMessage(fromDate, toDate, isFrom));
+    }
+
+    private createDateCompWrapper(element: HTMLElement, position: number, fromTo: 'from' | 'to'): DateCompWrapper {
         const {
             beans: { userCompFactory, context, gos },
             params,
@@ -93,7 +104,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             userCompFactory,
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
-                onDateChanged: () => this.onUiChanged(),
+                onDateChanged: () => {
+                    this.validateInputs(position, fromTo);
+                    this.onUiChanged();
+                },
                 filterParams: params as any,
                 location: 'filter',
             }),
@@ -128,12 +142,12 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         eCondition: HTMLElement,
         eConditionPanels: HTMLElement[],
         dateConditionComps: DateCompWrapper[],
-        fromTo: string
+        fromTo: 'from' | 'to'
     ): void {
         const eConditionPanel = _createElement({ tag: 'div', cls: `ag-filter-${fromTo} ag-filter-date-${fromTo}` });
         eConditionPanels.push(eConditionPanel);
         eCondition.appendChild(eConditionPanel);
-        dateConditionComps.push(this.createDateCompWrapper(eConditionPanel));
+        dateConditionComps.push(this.createDateCompWrapper(eConditionPanel, eConditionPanels.length - 1, fromTo));
     }
 
     protected removeEValues(startPosition: number, deleteCount?: number): void {
@@ -259,4 +273,12 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
         return super.translate(key);
     }
+}
+
+function getValidityMessage(fromDate: Date | null, toDate: Date | null, isFrom: boolean): string {
+    const isInvalid = fromDate != null && toDate != null && fromDate > toDate;
+    if (!isInvalid) {
+        return '';
+    }
+    return `Please select a date that is ${isFrom ? 'after' : 'before'} ${isFrom ? toDate : fromDate}`;
 }
