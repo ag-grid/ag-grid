@@ -137,7 +137,7 @@ export class SortService extends BeanStub implements NamedBean {
         return clearedColumns;
     }
 
-    private getNextSortDirection(column: AgColumn): SortDirection {
+    private getNextSortDirection(column: AgColumn, step = 1): SortDirection {
         const sortingOrder: SortDirection[] | null | undefined =
             column.getColDef().sortingOrder ?? this.gos.get('sortingOrder') ?? DEFAULT_SORTING_ORDER;
 
@@ -145,7 +145,7 @@ export class SortService extends BeanStub implements NamedBean {
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
 
-        return notInArray || lastItemInArray ? sortingOrder[0] : sortingOrder[currentIndex + 1];
+        return notInArray || lastItemInArray ? sortingOrder[0] : sortingOrder[currentIndex + step];
     }
 
     /**
@@ -346,23 +346,29 @@ export class SortService extends BeanStub implements NamedBean {
      */
     public updateColSort(
         column: AgColumn,
-        sortDef: SortDirection | SortDef | undefined,
+        sortDefOrDirection: SortDirection | SortDef | undefined,
         source: ColumnEventType
     ): void {
-        if (sortDef === undefined) {
+        if (sortDefOrDirection === undefined) {
             return;
         }
 
-        const isSortDirection = sortDef === 'asc' || sortDef === 'desc' || sortDef === null;
+        const isSortDirection =
+            sortDefOrDirection === 'asc' || sortDefOrDirection === 'desc' || sortDefOrDirection === null;
         const sortDefNorm = isSortDirection
-            ? ({ direction: sortDef, type: column.getSortDef()?.type ?? 'default' } as SortDef)
-            : (sortDef as SortDef);
+            ? ({ direction: sortDefOrDirection, type: column.getSortDef()?.type ?? 'default' } as SortDef)
+            : (sortDefOrDirection as SortDef);
         this.setColSort(column, _isSortDefValid(sortDefNorm) ? sortDefNorm : undefined, source);
     }
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
         if (!_areSortDefsEqual(column.sortDef, sort)) {
-            column.sortDef = sort;
+            column.sortDef = _isSortDefValid(sort)
+                ? sort
+                : {
+                      type: column.sortDef?.type ?? 'default',
+                      direction: column.getSort() ?? this.getNextSortDirection(column, 0),
+                  };
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');
@@ -386,7 +392,7 @@ export function _isSortDefValid(sortDef: SortDef | undefined): boolean {
     return (
         !!sortDef &&
         (sortDef.type === 'default' || sortDef.type === 'absolute') &&
-        (sortDef.direction === 'asc' || sortDef.direction === 'desc')
+        (sortDef.direction === 'asc' || sortDef.direction === 'desc' || sortDef.direction === null)
     );
 }
 
