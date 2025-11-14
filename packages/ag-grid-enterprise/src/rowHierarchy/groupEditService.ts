@@ -92,13 +92,39 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         const updates = changedRowNodes.updates;
 
         let newGroupValues: GroupValues | undefined;
-        for (const row of rowsDrop.rows) {
-            const leafRow = row.sourceRowIndex >= 0 ? (row as RowNode) : _csrmFirstLeaf(row);
-            if (leafRow) {
-                leafs.add(leafRow);
-                newGroupValues ??= this.newGroupValues(parentForValues);
-                if (this.setRowGroup(leafRow, newGroupValues)) {
-                    updates.add(leafRow);
+        const processLeaf = (leafRow: RowNode): void => {
+            if (leafs.has(leafRow)) {
+                return;
+            }
+            leafs.add(leafRow);
+            newGroupValues ??= this.newGroupValues(parentForValues);
+            if (this.setRowGroup(leafRow, newGroupValues)) {
+                updates.add(leafRow);
+            }
+        };
+
+        const visitGroupedChildren = (groupNode: RowNode): void => {
+            const children = groupNode.childrenAfterGroup;
+            if (!children?.length) {
+                return;
+            }
+            for (let i = 0; i < children.length; ++i) {
+                const child = children[i] as RowNode;
+                if (child.sourceRowIndex >= 0) {
+                    processLeaf(child);
+                } else {
+                    visitGroupedChildren(child);
+                }
+            }
+        };
+
+        for (const row of rowsDrop.rows as RowNode[]) {
+            if (row.group) {
+                visitGroupedChildren(row);
+            } else {
+                const firstLeaf = row.sourceRowIndex >= 0 ? row : _csrmFirstLeaf(row);
+                if (firstLeaf) {
+                    processLeaf(firstLeaf);
                 }
             }
         }
@@ -190,8 +216,13 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
             if (currentValue === newValue || (currentValue == null && newValue == null)) {
                 continue;
             }
-            const result = editSvc?.setDataValue({ rowNode: row, column }, newValue, 'rowDrag');
-            const updated = result != null ? !!result : row.setDataValue(column, newValue, 'rowDrag');
+            let valueToSet = newValue;
+            const parsedValue = valueSvc.parseValue(column, row, newValue, currentValue);
+            if (parsedValue !== undefined) {
+                valueToSet = parsedValue;
+            }
+            const result = editSvc?.setDataValue({ rowNode: row, column }, valueToSet, 'rowDrag');
+            const updated = result != null ? !!result : row.setDataValue(column, valueToSet, 'rowDrag');
             if (updated) {
                 changed = true;
             }
