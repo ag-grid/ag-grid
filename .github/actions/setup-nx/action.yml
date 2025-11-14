@@ -86,6 +86,21 @@ runs:
               key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
               restore-keys: node_modules-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
 
+        - name: Persist node modules
+          if: inputs.cache_mode == 'rw'
+          uses: actions/upload-artifact@v4
+          with:
+            name: node_modules
+            include-hidden-files: true
+            path: |
+              node_modules/
+              packages/*/node_modules/
+              plugins/*/node_modules/
+              community-modules/*/node_modules/
+              testing/*/node_modules/
+              documentation/*/node_modules/
+              external/*/node_modules/
+
         - name: Cache Nx
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
           uses: actions/cache@v4
