@@ -357,11 +357,7 @@ export class SortService extends BeanStub implements NamedBean {
         const sortDefNorm = isSortDirection
             ? ({ direction: sortDef, type: column.getSortDef()?.type ?? 'default' } as SortDef)
             : (sortDef as SortDef);
-        if (_isSortDefValid(sortDefNorm)) {
-            this.setColSort(column, sortDefNorm, source);
-        } else {
-            this.setColSort(column, undefined, source);
-        }
+        this.setColSort(column, _isSortDefValid(sortDefNorm) ? sortDefNorm : undefined, source);
     }
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {

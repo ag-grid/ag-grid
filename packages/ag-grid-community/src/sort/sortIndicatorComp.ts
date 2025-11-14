@@ -118,15 +118,16 @@ export class SortIndicatorComp extends Component {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
         const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
+        const isAbsoluteSort = column.getSortDef()?.type === 'absolute';
+        const isAscending = sortDirection === 'asc';
+        const isDescending = sortDirection === 'desc';
 
         if (eSortAsc) {
-            const isAscending = sortDirection === 'asc';
-            _setDisplayed(eSortAsc, isAscending, { skipAriaHidden: true });
+            _setDisplayed(eSortAsc, isAscending && !isAbsoluteSort, { skipAriaHidden: true });
         }
 
         if (eSortDesc) {
-            const isDescending = sortDirection === 'desc';
-            _setDisplayed(eSortDesc, isDescending, { skipAriaHidden: true });
+            _setDisplayed(eSortDesc, isDescending && !isAbsoluteSort, { skipAriaHidden: true });
         }
 
         if (eSortNone) {
@@ -136,13 +137,11 @@ export class SortIndicatorComp extends Component {
         }
 
         if (eSortAbsoluteAsc) {
-            const isAbsoluteAscending = sortDirection === 'asc' && column.getSortDef()?.type === 'absolute';
-            _setDisplayed(eSortAbsoluteAsc, isAbsoluteAscending, { skipAriaHidden: true });
+            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort, { skipAriaHidden: true });
         }
 
         if (eSortAbsoluteDesc) {
-            const isAbsoluteDescending = sortDirection === 'desc' && column.getSortDef()?.type === 'absolute';
-            _setDisplayed(eSortAbsoluteDesc, isAbsoluteDescending, { skipAriaHidden: true });
+            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort, { skipAriaHidden: true });
         }
     }
 
