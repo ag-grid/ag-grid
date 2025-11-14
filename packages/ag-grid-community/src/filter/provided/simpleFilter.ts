@@ -714,6 +714,10 @@ export abstract class SimpleFilter<
             return false;
         }
 
+        if (this.hasInvalidInputs()) {
+            return false;
+        }
+
         return true;
     }
 
