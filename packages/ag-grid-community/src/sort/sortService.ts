@@ -388,7 +388,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 }
 
-export function _isSortDefValid(sortDef: SortDef | undefined): boolean {
+function _isSortDefValid(sortDef: SortDef | undefined): boolean {
     return (
         !!sortDef &&
         (sortDef.type === 'default' || sortDef.type === 'absolute') &&
@@ -396,7 +396,7 @@ export function _isSortDefValid(sortDef: SortDef | undefined): boolean {
     );
 }
 
-export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
+function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
     if (sortDef1 === sortDef2) {
         return true;
     }
