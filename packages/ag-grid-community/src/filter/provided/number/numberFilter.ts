@@ -44,40 +44,30 @@ export class NumberFilter extends SimpleFilter<
 
     protected createEValue(): HTMLElement {
         const allowedCharPattern = getAllowedCharPattern(this.params);
+        const parser = this.params.numberParser;
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
         const from = this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         const to = this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
 
-        const getNormalisedValue = (input: GridInputTextField | GridInputNumberField): number | null =>
-            processNumberFilterValue(this.stringToFloat(input.getValue()));
-
         from.addEventListener('fieldValueChanged', () => {
-            const fromValue = getNormalisedValue(from);
+            const fromValue = getNormalisedValue(parser, from);
             if ('setMin' in to) {
                 to.setMin(fromValue ?? undefined);
             } else {
-                const toValue = getNormalisedValue(to);
-                if (fromValue != null && toValue != null && fromValue > toValue) {
-                    from.setCustomValidity(`Please select a value that is no more than ${toValue}`);
-                } else if (toValue == null) {
-                    from.setCustomValidity('');
-                }
+                const toValue = getNormalisedValue(parser, to);
+                from.setCustomValidity(getValidityMessage(fromValue, toValue, true));
             }
         });
 
         to.addEventListener('fieldValueChanged', () => {
-            const toValue = getNormalisedValue(to);
+            const toValue = getNormalisedValue(parser, to);
             if ('setMax' in from) {
                 from.setMax(toValue ?? undefined);
             } else {
-                const fromValue = getNormalisedValue(from);
-                if (fromValue != null && toValue != null && fromValue > toValue) {
-                    to.setCustomValidity(`Please select a value that is no less than ${fromValue}`);
-                } else if (toValue == null) {
-                    to.setCustomValidity('');
-                }
+                const fromValue = getNormalisedValue(parser, from);
+                to.setCustomValidity(getValidityMessage(fromValue, toValue, false));
             }
         });
 
@@ -112,7 +102,7 @@ export class NumberFilter extends SimpleFilter<
         const result: Tuple<number> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                result.push(processNumberFilterValue(this.stringToFloat(element.getValue())));
+                result.push(processNumberFilterValue(stringToFloat(this.params.numberParser, element.getValue())));
             }
         });
 
@@ -123,25 +113,6 @@ export class NumberFilter extends SimpleFilter<
         return (
             aSimple.filter === bSimple.filter && aSimple.filterTo === bSimple.filterTo && aSimple.type === bSimple.type
         );
-    }
-
-    private stringToFloat(value?: string | number | null): number | null {
-        if (typeof value === 'number') {
-            return value;
-        }
-
-        let filterText = _makeNull(value);
-
-        if (filterText != null && filterText.trim() === '') {
-            filterText = null;
-        }
-
-        const numberParser = this.params.numberParser;
-        if (numberParser) {
-            return numberParser(filterText);
-        }
-
-        return filterText == null || filterText.trim() === '-' ? null : Number.parseFloat(filterText);
     }
 
     protected createCondition(position: number): NumberFilterModel {
@@ -181,4 +152,40 @@ export class NumberFilter extends SimpleFilter<
     protected override canApply(_model: NumberFilterModel | ICombinedSimpleModel<NumberFilterModel> | null): boolean {
         return !this.hasInvalidInputs();
     }
+}
+
+function stringToFloat(
+    numberParser: INumberFilterParams['numberParser'],
+    value?: string | number | null
+): number | null {
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    let filterText = _makeNull(value);
+
+    if (filterText != null && filterText.trim() === '') {
+        filterText = null;
+    }
+
+    if (numberParser) {
+        return numberParser(filterText);
+    }
+
+    return filterText == null || filterText.trim() === '-' ? null : Number.parseFloat(filterText);
+}
+
+function getNormalisedValue(
+    numberParser: INumberFilterParams['numberParser'],
+    input: GridInputTextField | GridInputNumberField
+): number | null {
+    return processNumberFilterValue(stringToFloat(numberParser, input.getValue()));
+}
+
+function getValidityMessage(fromValue: number | null, toValue: number | null, isFrom: boolean): string {
+    const isInvalid = fromValue != null && toValue != null && fromValue > toValue;
+    if (!isInvalid) {
+        return '';
+    }
+    return `Please select a value that is no ${isFrom ? 'more' : 'less'} than ${isFrom ? toValue : fromValue}`;
 }
