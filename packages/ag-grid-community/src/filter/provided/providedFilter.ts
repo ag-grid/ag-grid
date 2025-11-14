@@ -259,6 +259,11 @@ export abstract class ProvidedFilter<
             });
         }
 
+        // Don't apply an invalid model
+        if (!state.valid) {
+            return;
+        }
+
         apply ??= this.applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
             this.doApplyModel({ afterFloatingFilter, afterDataChange: false });

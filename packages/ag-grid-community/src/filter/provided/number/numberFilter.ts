@@ -177,4 +177,8 @@ export class NumberFilter extends SimpleFilter<
         });
         return invalidInputs;
     }
+
+    protected override canApply(_model: NumberFilterModel | ICombinedSimpleModel<NumberFilterModel> | null): boolean {
+        return !this.hasInvalidInputs();
+    }
 }
