@@ -86,20 +86,22 @@ runs:
               key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
               restore-keys: node_modules-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
 
-        - name: Persist node modules
-          if: inputs.cache_mode == 'rw'
-          uses: actions/upload-artifact@v4
-          with:
-            name: node_modules
-            include-hidden-files: true
-            path: |
-              node_modules/
-              packages/*/node_modules/
-              plugins/*/node_modules/
-              community-modules/*/node_modules/
-              testing/*/node_modules/
-              documentation/*/node_modules/
-              external/*/node_modules/
+        # - name: Persist node modules
+        #   if: inputs.cache_mode == 'rw'
+        #   uses: actions/upload-artifact@v4
+        #   with:
+        #     name: node_modules
+        #     include-hidden-files: true
+        #     path: |
+        #       node_modules/
+        #       packages/*/node_modules/
+        #       plugins/*/node_modules/
+        #       community-modules/*/node_modules/
+        #       testing/*/node_modules/
+        #       documentation/*/node_modules/
+        #       external/*/node_modules/
+
+
 
         - name: Cache Nx
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
@@ -130,6 +132,15 @@ runs:
           with:
               node-version: '20'
 
+        - name: Persist pre cache yarn integrity file
+          if: inputs.cache_mode == 'rw'
+          uses: actions/upload-artifact@v4
+          with:
+            name: pre-yarn-integrity
+            include-hidden-files: true
+            path: |
+              node_modules/.yarn-integrity
+
         - name: yarn install
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
@@ -143,3 +154,18 @@ runs:
           shell: bash
           run: |
               yarn check --integrity || yarn install --ci
+
+        - name: post integrity check
+          if: inputs.cache_mode == 'rw'
+          shell: bash
+          run: |
+              yarn check --integrity
+
+        - name: Persist post cache yarn integrity file
+          if: inputs.cache_mode == 'rw'
+          uses: actions/upload-artifact@v4
+          with:
+            name: post-yarn-integrity
+            include-hidden-files: true
+            path: |
+              node_modules/.yarn-integrity
