@@ -51,25 +51,20 @@ export class NumberFilter extends SimpleFilter<
         const from = this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         const to = this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
 
-        from.addEventListener('fieldValueChanged', () => {
-            const fromValue = getNormalisedValue(parser, from);
-            if ('setMin' in to) {
-                to.setMin(fromValue ?? undefined);
-            } else {
-                const toValue = getNormalisedValue(parser, to);
-                from.setCustomValidity(getValidityMessage(fromValue, toValue, true));
-            }
-        });
-
-        to.addEventListener('fieldValueChanged', () => {
-            const toValue = getNormalisedValue(parser, to);
-            if ('setMax' in from) {
-                from.setMax(toValue ?? undefined);
-            } else {
+        const getFieldChangedListener =
+            (
+                from: GridInputTextField | GridInputNumberField,
+                to: GridInputTextField | GridInputNumberField,
+                isFrom: boolean
+            ) =>
+            () => {
                 const fromValue = getNormalisedValue(parser, from);
-                to.setCustomValidity(getValidityMessage(fromValue, toValue, false));
-            }
-        });
+                const toValue = getNormalisedValue(parser, to);
+                (isFrom ? from : to).setCustomValidity(getValidityMessage(fromValue, toValue, isFrom));
+            };
+
+        from.addEventListener('fieldValueChanged', getFieldChangedListener(from, to, true));
+        to.addEventListener('fieldValueChanged', getFieldChangedListener(from, to, false));
 
         return eCondition;
     }
