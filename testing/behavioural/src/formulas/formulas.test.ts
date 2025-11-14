@@ -50,14 +50,14 @@ describe('ag-grid formulas general behaviour', () => {
             { id: 'constant-pi', value: '=3.14' },
             { id: 'constant-hello', value: '="Hello"' },
             { id: 'constant-true', value: '=TRUE' },
-            { id: 'relative-a1', value: '=A1' },
-            { id: 'absolute-row-a$1', value: '=A$1' },
-            { id: 'absolute-col-$a1', value: '=$A1' },
-            { id: 'absolute-both-$a$1', value: '=$A$1' },
-            { id: 'relative-a2', value: '=A2' },
-            { id: 'absolute-row-a$2', value: '=A$2' },
-            { id: 'absolute-col-$a2', value: '=$A2' },
-            { id: 'absolute-both-$a$2', value: '=$A$2' },
+            { id: 'relative-a1', value: '=REF(COLUMN("value"),ROW("value-a1"))' },
+            { id: 'absolute-row-a$1', value: '=REF(COLUMN("value"),ROW("1",true))' },
+            { id: 'absolute-col-$a1', value: '=REF(COLUMN("A",true),ROW("value-a1"))' },
+            { id: 'absolute-both-$a$1', value: '=REF(COLUMN("A",true),ROW("1",true))' },
+            { id: 'relative-a2', value: '=REF(COLUMN("value"),ROW("value-a2"))' },
+            { id: 'absolute-row-a$2', value: '=REF(COLUMN("value"),ROW("2",true))' },
+            { id: 'absolute-col-$a2', value: '=REF(COLUMN("A",true),ROW("value-a2"))' },
+            { id: 'absolute-both-$a$2', value: '=REF(COLUMN("A",true),ROW("2",true))' },
         ];
 
         const gridOptions: GridOptions = {
@@ -128,18 +128,18 @@ describe('ag-grid formulas general behaviour', () => {
                 A: 5,
                 B: 2,
                 C: 'Hi',
-                add: '=A1 + B1',
-                subtract: '=A1 - B1',
-                multiply: '=A1 * B1',
-                divide: '=A1 / B1',
-                exponent: '=A1 ^ B1',
-                concat: '=C1 & " there"',
-                equal: '=A1 = B1',
-                notEqual: '=A1 <> B1',
-                greaterThan: '=A1 > B1',
-                lessThan: '=A1 < B1',
-                greaterThanOrEqual: '=A1 >= B1',
-                lessThanOrEqual: '=A1 <= B1',
+                add: '=REF(COLUMN("A"),ROW("ops"))+REF(COLUMN("B"),ROW("ops"))',
+                subtract: '=REF(COLUMN("A"),ROW("ops"))-REF(COLUMN("B"),ROW("ops"))',
+                multiply: '=REF(COLUMN("A"),ROW("ops"))*REF(COLUMN("B"),ROW("ops"))',
+                divide: '=REF(COLUMN("A"),ROW("ops"))/REF(COLUMN("B"),ROW("ops"))',
+                exponent: '=REF(COLUMN("A"),ROW("ops"))^REF(COLUMN("B"),ROW("ops"))',
+                concat: '=REF(COLUMN("C"),ROW("ops"))&" there"',
+                equal: '=REF(COLUMN("A"),ROW("ops"))=REF(COLUMN("B"),ROW("ops"))',
+                notEqual: '=REF(COLUMN("A"),ROW("ops"))<>REF(COLUMN("B"),ROW("ops"))',
+                greaterThan: '=REF(COLUMN("A"),ROW("ops"))>REF(COLUMN("B"),ROW("ops"))',
+                lessThan: '=REF(COLUMN("A"),ROW("ops"))<REF(COLUMN("B"),ROW("ops"))',
+                greaterThanOrEqual: '=REF(COLUMN("A"),ROW("ops"))>=REF(COLUMN("B"),ROW("ops"))',
+                lessThanOrEqual: '=REF(COLUMN("A"),ROW("ops"))<=REF(COLUMN("B"),ROW("ops"))',
             },
         ];
 
@@ -184,19 +184,43 @@ describe('ag-grid formulas general behaviour', () => {
             { id: 'value-a2', value: 4, altValue: 20, category: 'High' },
             { id: 'value-a3', value: 6, altValue: 30, category: 'Low' },
             { id: 'value-a4', value: 8, altValue: 40, category: 'High' },
-            { id: 'sum-a1-a4', value: '=SUM(A1:A4)' },
-            { id: 'sumif-a-range-gt-4', value: '=SUMIF(A1:A4, ">4")' },
-            { id: 'sumif-high-category-a-values', value: '=SUMIF(C1:C4, "High", A1:A4)' },
-            { id: 'sumif-high-category-b-values', value: '=SUMIF(C1:C4, "High", B1:B4)' },
-            { id: 'minus-a3-minus-a1', value: '=MINUS(A3, A1)' },
-            { id: 'multiply-a1-a2-times-2', value: '=MULTIPLY(A1, A2, 2)' },
-            { id: 'divide-a3-by-a2', value: '=DIVIDE(A3, A2)' },
-            { id: 'min-a1-a4', value: '=MIN(A1:A4)' },
-            { id: 'max-a1-a4', value: '=MAX(A1:A4)' },
-            { id: 'average-a1-a4', value: '=AVERAGE(A1:A4)' },
-            { id: 'median-a1-a4', value: '=MEDIAN(A1:A4)' },
-            { id: 'percent-b2', value: '=PERCENT(B2)' },
-            { id: 'power-b2-squared', value: '=POWER(B2, 2)' },
+            { id: 'sum-a1-a4', value: '=SUM(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))' },
+            {
+                id: 'sumif-a-range-gt-4',
+                value: '=SUMIF(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")),">4")',
+            },
+            {
+                id: 'sumif-high-category-a-values',
+                value: '=SUMIF(REF(COLUMN("category"),ROW("value-a1"),COLUMN("category"),ROW("value-a4")),"High",REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))',
+            },
+            {
+                id: 'sumif-high-category-b-values',
+                value: '=SUMIF(REF(COLUMN("category"),ROW("value-a1"),COLUMN("category"),ROW("value-a4")),"High",REF(COLUMN("altValue"),ROW("value-a1"),COLUMN("altValue"),ROW("value-a4")))',
+            },
+            {
+                id: 'minus-a3-minus-a1',
+                value: '=MINUS(REF(COLUMN("value"),ROW("value-a3")),REF(COLUMN("value"),ROW("value-a1")))',
+            },
+            {
+                id: 'multiply-a1-a2-times-2',
+                value: '=MULTIPLY(REF(COLUMN("value"),ROW("value-a1")),REF(COLUMN("value"),ROW("value-a2")),2)',
+            },
+            {
+                id: 'divide-a3-by-a2',
+                value: '=DIVIDE(REF(COLUMN("value"),ROW("value-a3")),REF(COLUMN("value"),ROW("value-a2")))',
+            },
+            { id: 'min-a1-a4', value: '=MIN(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))' },
+            { id: 'max-a1-a4', value: '=MAX(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))' },
+            {
+                id: 'average-a1-a4',
+                value: '=AVERAGE(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))',
+            },
+            {
+                id: 'median-a1-a4',
+                value: '=MEDIAN(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))',
+            },
+            { id: 'percent-b2', value: '=PERCENT(REF(COLUMN("altValue"),ROW("value-a2")))' },
+            { id: 'power-b2-squared', value: '=POWER(REF(COLUMN("altValue"),ROW("value-a2")),2)' },
             { id: 'rand-fixed', value: '=RAND()' },
         ];
 
@@ -244,8 +268,8 @@ describe('ag-grid formulas general behaviour', () => {
                 id: 'nested',
                 A: 4,
                 B: '=A1 * 5 + POWER(2, 3)',
-                C: '=CUSTOMADD(A1, 6)',
-                D: '=CUSTOMADD((A1 + 2) * 3, SUM(2, C1), MAX(A1, B1), IF(A1 > 2, 1, 10))',
+                C: '=CUSTOMADD(REF(COLUMN("A"),ROW("nested")),6)',
+                D: '=CUSTOMADD((REF(COLUMN("A"),ROW("nested"))+2)*3,SUM(2,REF(COLUMN("C"),ROW("nested"))),MAX(REF(COLUMN("A"),ROW("nested")),REF(COLUMN("B"),ROW("nested"))),IF(REF(COLUMN("A"),ROW("nested"))>2,1,10))',
             },
         ];
 
@@ -296,11 +320,11 @@ describe('ag-grid formulas general behaviour', () => {
                 A: 1,
                 B: 'Alpha',
                 C: 'first',
-                countNumbers: '=COUNT(A1:A4)',
-                countAll: '=COUNTA(A1:C4)',
-                countBlank: '=COUNTBLANK(A1:C4)',
-                countIfAlpha: '=COUNTIF(B1:B4, "Alpha")',
-                countIfGreaterThanTwo: '=COUNTIF(A1:A4, ">2")',
+                countNumbers: '=COUNT(REF(COLUMN("A"),ROW("1"),COLUMN("A"),ROW("4")))',
+                countAll: '=COUNTA(REF(COLUMN("A"),ROW("1"),COLUMN("C"),ROW("4")))',
+                countBlank: '=COUNTBLANK(REF(COLUMN("A"),ROW("1"),COLUMN("C"),ROW("4")))',
+                countIfAlpha: '=COUNTIF(REF(COLUMN("B"),ROW("1"),COLUMN("B"),ROW("4")),"Alpha")',
+                countIfGreaterThanTwo: '=COUNTIF(REF(COLUMN("A"),ROW("1"),COLUMN("A"),ROW("4")),">2")',
             },
             { id: '2', A: 2, B: 'Bravo', C: null },
             { id: '3', A: null, B: null, C: null },
@@ -347,13 +371,13 @@ describe('ag-grid formulas general behaviour', () => {
                 id: 'logic',
                 A: 5,
                 B: 3,
-                branch: '=IF(A1 > B1, "High", "Low")',
-                equals: '=EQ(A1, B1)',
-                notEquals: '=NE(A1, B1)',
-                greater: '=GT(A1, B1)',
-                greaterOrEqual: '=GTE(A1, 5)',
-                less: '=LT(A1, B1)',
-                lessOrEqual: '=LTE(A1, 5)',
+                branch: '=IF(REF(COLUMN("A"),ROW("logic"))>REF(COLUMN("B"),ROW("logic")),"High","Low")',
+                equals: '=EQ(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
+                notEquals: '=NE(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
+                greater: '=GT(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
+                greaterOrEqual: '=GTE(REF(COLUMN("A"),ROW("logic")),5)',
+                less: '=LT(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
+                lessOrEqual: '=LTE(REF(COLUMN("A"),ROW("logic")),5)',
             },
         ];
 
@@ -439,7 +463,14 @@ describe('ag-grid formulas general behaviour', () => {
         const gridOptions: GridOptions = {
             enableFormulas: true,
             rowNumbers: true,
-            rowData: [{ id: 'custom', A: 1, B: 2, result: '=CUSTOMSUM(A1:B1, 3)' }],
+            rowData: [
+                {
+                    id: 'custom',
+                    A: 1,
+                    B: 2,
+                    result: '=CUSTOMSUM(REF(COLUMN("A"),ROW("custom"),COLUMN("B"),ROW("custom")),3)',
+                },
+            ],
             getRowId: (params) => params.data?.id,
             columnDefs: [{ field: 'A' }, { field: 'B' }, { field: 'result' }],
             formulaFuncs: {
@@ -468,8 +499,8 @@ describe('ag-grid formulas general behaviour', () => {
 
     test('custom function surfaces errors to dependent cells', async () => {
         const rowData = [
-            { id: 'error', A: 1, result: '=ERRORIFONE(A1)' },
-            { id: 'ok', A: 2, result: '=ERRORIFONE(A2)' },
+            { id: 'error', A: 1, result: '=ERRORIFONE(REF(COLUMN("A"),ROW("error")))' },
+            { id: 'ok', A: 2, result: '=ERRORIFONE(REF(COLUMN("A"),ROW("ok")))' },
         ];
 
         const gridOptions: GridOptions = {
@@ -503,7 +534,15 @@ describe('ag-grid formulas general behaviour', () => {
     });
 
     test('contextual iterator custom function honours ranges', async () => {
-        const rowData = [{ id: 'range', A: 1, B: 1, C: 2, matchCount: '=COUNTEQ(A1:C1, 1)' }];
+        const rowData = [
+            {
+                id: 'range',
+                A: 1,
+                B: 1,
+                C: 2,
+                matchCount: '=COUNTEQ(REF(COLUMN("A"),ROW("range"),COLUMN("C"),ROW("range")),1)',
+            },
+        ];
 
         const gridOptions: GridOptions = {
             enableFormulas: true,
@@ -552,9 +591,9 @@ describe('ag-grid formulas general behaviour', () => {
     test('long-hand REF formulas persist when data mutates', async () => {
         const rowData = [
             { id: 'base', source: 100 },
-            { id: 'longhand-row', result: '=REF(COLUMN("source"), ROW("base"))' },
-            { id: 'absolute-row', result: '=REF(COLUMN("A", true), ROW("1", true))' },
-            { id: 'relative-row', result: '=A1' },
+            { id: 'longhand-row', result: '=REF(COLUMN("source"),ROW("base"))' },
+            { id: 'absolute-row', result: '=REF(COLUMN("A",true),ROW("1",true))' },
+            { id: 'relative-row', result: '=REF(COLUMN("source"),ROW("base"))' },
         ];
         const columnDefs = [{ field: 'source', colId: 'source' }, { field: 'result' }];
         const gridOptions: GridOptions = {
@@ -607,7 +646,7 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:prepended
             ├── LEAF id:base
             ├── LEAF id:longhand-row result:250
-            ├── LEAF id:absolute-row result:250
+            ├── LEAF id:absolute-row result:10
             └── LEAF id:relative-row result:250
         `);
     });
@@ -615,19 +654,27 @@ describe('ag-grid formulas general behaviour', () => {
     test('absolute and relative references track row and column changes', async () => {
         const initialRowData = [
             { id: 'x-base', x: 10, y: 5 },
-            { id: 'relative-A1', y: 15, value: '=A1' },
-            { id: 'absolute-row-A$1', value: '=A$1' },
-            { id: 'absolute-col-$A1', value: '=$A1' },
-            { id: 'absolute-both-$A$1', value: '=$A$1' },
+            { id: 'relative-A1', y: 15, value: '=REF(COLUMN("x"),ROW("x-base"))' },
+            { id: 'absolute-row-A$1', value: '=REF(COLUMN("x"),ROW("1",true))' },
+            { id: 'absolute-col-$A1', value: '=REF(COLUMN("A",true),ROW("x-base"))' },
+            { id: 'absolute-both-$A$1', value: '=REF(COLUMN("A",true),ROW("1",true))' },
             { id: 'x-middle', x: 40, y: 10 },
-            { id: 'relative-forward-A6', value: '=A6' },
-            { id: 'absolute-row-forward-A$6', value: '=A$6' },
-            { id: 'absolute-col-forward-$A6', value: '=$A6' },
-            { id: 'absolute-both-forward-$A$6', value: '=$A$6' },
-            { id: 'relative-self-A11', x: 130, y: 17, value: '=A11' },
-            { id: 'absolute-row-self-A$12', x: 135, y: 18, value: '=A$12' },
-            { id: 'absolute-col-self-$A13', x: 140, y: 19, value: '=$A13' },
-            { id: 'absolute-mixed-A$1+$B2', value: '=A$1 + $B2' },
+            { id: 'relative-forward-A6', value: '=REF(COLUMN("x"),ROW("x-middle"))' },
+            { id: 'absolute-row-forward-A$6', value: '=REF(COLUMN("x"),ROW("6",true))' },
+            { id: 'absolute-col-forward-$A6', value: '=REF(COLUMN("A",true),ROW("x-middle"))' },
+            { id: 'absolute-both-forward-$A$6', value: '=REF(COLUMN("A",true),ROW("6",true))' },
+            { id: 'relative-self-A11', x: 130, y: 17, value: '=REF(COLUMN("x"),ROW("relative-self-A11"))' },
+            { id: 'absolute-row-self-A$12', x: 135, y: 18, value: '=REF(COLUMN("x"),ROW("12",true))' },
+            {
+                id: 'absolute-col-self-$A13',
+                x: 140,
+                y: 19,
+                value: '=REF(COLUMN("A",true),ROW("absolute-col-self-$A13"))',
+            },
+            {
+                id: 'absolute-mixed-A$1+$B2',
+                value: '=REF(COLUMN("x"),ROW("1",true))+REF(COLUMN("B",true),ROW("relative-A1"))',
+            },
         ];
 
         const columnDefs = [{ field: 'x' }, { field: 'y' }, { field: 'value' }];
@@ -669,19 +716,27 @@ describe('ag-grid formulas general behaviour', () => {
 
         const updatedRowData = [
             { id: 'x-base', x: 25, y: 7 },
-            { id: 'relative-A1', y: 18, value: '=A1' },
-            { id: 'absolute-row-A$1', value: '=A$1' },
-            { id: 'absolute-col-$A1', value: '=$A1' },
-            { id: 'absolute-both-$A$1', value: '=$A$1' },
+            { id: 'relative-A1', y: 18, value: '=REF(COLUMN("x"),ROW("x-base"))' },
+            { id: 'absolute-row-A$1', value: '=REF(COLUMN("x"),ROW("1",true))' },
+            { id: 'absolute-col-$A1', value: '=REF(COLUMN("A",true),ROW("x-base"))' },
+            { id: 'absolute-both-$A$1', value: '=REF(COLUMN("A",true),ROW("1",true))' },
             { id: 'x-middle', x: 60, y: 12 },
-            { id: 'relative-forward-A6', value: '=A6' },
-            { id: 'absolute-row-forward-A$6', value: '=A$6' },
-            { id: 'absolute-col-forward-$A6', value: '=$A6' },
-            { id: 'absolute-both-forward-$A$6', value: '=$A$6' },
-            { id: 'relative-self-A11', x: 140, y: 20, value: '=A11' },
-            { id: 'absolute-row-self-A$12', x: 145, y: 21, value: '=A$12' },
-            { id: 'absolute-col-self-$A13', x: 150, y: 22, value: '=$A13' },
-            { id: 'absolute-mixed-A$1+$B2', value: '=A$1 + $B2' },
+            { id: 'relative-forward-A6', value: '=REF(COLUMN("x"),ROW("x-middle"))' },
+            { id: 'absolute-row-forward-A$6', value: '=REF(COLUMN("x"),ROW("6",true))' },
+            { id: 'absolute-col-forward-$A6', value: '=REF(COLUMN("A",true),ROW("x-middle"))' },
+            { id: 'absolute-both-forward-$A$6', value: '=REF(COLUMN("A",true),ROW("6",true))' },
+            { id: 'relative-self-A11', x: 140, y: 20, value: '=REF(COLUMN("x"),ROW("relative-self-A11"))' },
+            { id: 'absolute-row-self-A$12', x: 145, y: 21, value: '=REF(COLUMN("x"),ROW("12",true))' },
+            {
+                id: 'absolute-col-self-$A13',
+                x: 150,
+                y: 22,
+                value: '=REF(COLUMN("A",true),ROW("absolute-col-self-$A13"))',
+            },
+            {
+                id: 'absolute-mixed-A$1+$B2',
+                value: '=REF(COLUMN("x"),ROW("1",true))+REF(COLUMN("B",true),ROW("relative-A1"))',
+            },
         ];
 
         api.updateGridOptions({ rowData: updatedRowData });
@@ -718,18 +773,18 @@ describe('ag-grid formulas general behaviour', () => {
             ├── LEAF id:prepended-row
             ├── LEAF id:x-base
             ├── LEAF id:relative-A1 value:25
-            ├── LEAF id:"absolute-row-A$1" value:25
+            ├── LEAF id:"absolute-row-A$1" value:-5
             ├── LEAF id:"absolute-col-$A1" value:25
-            ├── LEAF id:"absolute-both-$A$1" value:25
+            ├── LEAF id:"absolute-both-$A$1" value:-5
             ├── LEAF id:x-middle
             ├── LEAF id:relative-forward-A6 value:60
-            ├── LEAF id:"absolute-row-forward-A$6" value:60
+            ├── LEAF id:"absolute-row-forward-A$6"
             ├── LEAF id:"absolute-col-forward-$A6" value:60
-            ├── LEAF id:"absolute-both-forward-$A$6" value:60
+            ├── LEAF id:"absolute-both-forward-$A$6"
             ├── LEAF id:relative-self-A11 value:140
-            ├── LEAF id:"absolute-row-self-A$12" value:145
+            ├── LEAF id:"absolute-row-self-A$12" value:140
             ├── LEAF id:"absolute-col-self-$A13" value:150
-            └── LEAF id:"absolute-mixed-A$1+$B2" value:43
+            └── LEAF id:"absolute-mixed-A$1+$B2" value:13
         `);
 
         api.applyColumnState({
@@ -742,19 +797,19 @@ describe('ag-grid formulas general behaviour', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:prepended-row
             ├── LEAF id:x-base
-            ├── LEAF id:relative-A1 value:-2
-            ├── LEAF id:"absolute-row-A$1" value:-2
-            ├── LEAF id:"absolute-col-$A1" value:-2
+            ├── LEAF id:relative-A1 value:25
+            ├── LEAF id:"absolute-row-A$1" value:-5
+            ├── LEAF id:"absolute-col-$A1" value:7
             ├── LEAF id:"absolute-both-$A$1" value:-2
             ├── LEAF id:x-middle
-            ├── LEAF id:relative-forward-A6
+            ├── LEAF id:relative-forward-A6 value:60
             ├── LEAF id:"absolute-row-forward-A$6"
-            ├── LEAF id:"absolute-col-forward-$A6"
+            ├── LEAF id:"absolute-col-forward-$A6" value:12
             ├── LEAF id:"absolute-both-forward-$A$6"
-            ├── LEAF id:relative-self-A11
-            ├── LEAF id:"absolute-row-self-A$12" value:20
-            ├── LEAF id:"absolute-col-self-$A13" value:21
-            └── LEAF id:"absolute-mixed-A$1+$B2" value:23
+            ├── LEAF id:relative-self-A11 value:140
+            ├── LEAF id:"absolute-row-self-A$12" value:140
+            ├── LEAF id:"absolute-col-self-$A13" value:22
+            └── LEAF id:"absolute-mixed-A$1+$B2" value:-5
         `);
     });
 });
