@@ -12,7 +12,7 @@ import {
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
-import { _createAgElement, _observeResize } from '../utils/dom';
+import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 let paramsId = 0;
@@ -72,10 +72,11 @@ export abstract class BaseEnvironment<
         const { gos, eRootDiv } = this;
         gos.setInstanceDomData(eRootDiv);
         const themeStyleContainer = gos.get('themeStyleContainer');
-        const isShadowRoot = eRootDiv.getRootNode() instanceof ShadowRoot;
+        const hasShadowRootGlobal = typeof ShadowRoot !== 'undefined';
+        const isShadowRoot = hasShadowRootGlobal && eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
-        if (!themeStyleContainer && !isShadowRoot) {
-            // put warnOnAttachToShadowRoot back here once interval errors in tests fixed
+        if (!themeStyleContainer && !isShadowRoot && hasShadowRootGlobal) {
+            warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this), this.addDestroyFunc.bind(this));
         }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
@@ -310,3 +311,24 @@ export interface BaseCssChangeKeys {
 }
 
 const NO_VALUE_SENTINEL = 15538;
+
+const warnOnAttachToShadowRoot = (
+    el: HTMLElement,
+    errorCallback: () => void,
+    onDestroy: (handler: () => void) => void
+) => {
+    // only retry for a minute, to prevent our tests (and potentially customer's
+    // tests) from hanging if they try to use vi.runAllTimers() to run the interval
+    // until it terminates
+    let retries = 60;
+    const interval = setInterval(() => {
+        if (typeof ShadowRoot !== 'undefined' && el.getRootNode() instanceof ShadowRoot) {
+            errorCallback();
+            clearInterval(interval);
+        }
+        if (_isInDOM(el) || --retries < 0) {
+            clearInterval(interval);
+        }
+    }, 1000);
+    onDestroy(() => clearInterval(interval));
+};
