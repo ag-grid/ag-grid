@@ -261,8 +261,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             ) {
                 nudger.startGroup(target);
             }
-        } else if (canStartGroup(target)) {
-            nudger!.startGroup(target!);
+        } else if (target && nudger && canStartGroup(target)) {
+            nudger.startGroup(target);
         }
 
         let inside = false;
