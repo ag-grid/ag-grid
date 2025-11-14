@@ -47,8 +47,26 @@ export class NumberFilter extends SimpleFilter<
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
-        this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
-        this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
+        const from = this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
+        const to = this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
+
+        const getNormalisedValue = (input: GridInputTextField | GridInputNumberField): number | null => {
+            return processNumberFilterValue(this.stringToFloat(input.getValue()));
+        };
+
+        from.addEventListener('fieldValueChanged', () => {
+            const fromValue = getNormalisedValue(from);
+            if ('setMin' in to) {
+                to.setMin(fromValue ?? undefined);
+            }
+        });
+
+        to.addEventListener('fieldValueChanged', () => {
+            const toValue = getNormalisedValue(to);
+            if ('setMax' in from) {
+                from.setMax(toValue ?? undefined);
+            }
+        });
 
         return eCondition;
     }
@@ -58,7 +76,7 @@ export class NumberFilter extends SimpleFilter<
         eValues: (GridInputTextField | GridInputNumberField)[],
         fromTo: string,
         allowedCharPattern: string | null
-    ): void {
+    ): GridInputTextField | GridInputNumberField {
         const eValue = this.createManagedBean<GridInputTextField | GridInputNumberField>(
             allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField()
         );
@@ -66,6 +84,7 @@ export class NumberFilter extends SimpleFilter<
         eValue.addCss('ag-filter-filter');
         eValues.push(eValue);
         eCondition.appendChild(eValue.getGui());
+        return eValue;
     }
 
     protected removeEValues(startPosition: number, deleteCount?: number): void {
