@@ -144,7 +144,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowClassRules: 'RowStyle',
     rowData: 'ClientSideRowModel',
     rowDragManaged: 'RowDrag',
-    refreshAfterGroupEdit: 'RowDrag',
+    refreshAfterGroupEdit: 'SharedRowGrouping',
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
     rowSelection: 'SharedRowSelection',
