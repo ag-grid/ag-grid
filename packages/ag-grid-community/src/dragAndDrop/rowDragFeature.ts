@@ -253,9 +253,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                     newParent = target;
                 }
             }
-            if (!newParent) {
-                newParent = target?.parent ?? rootNode;
-            }
+            newParent ??= target?.parent ?? rootNode;
 
             if (
                 canStartGroup(target) &&
