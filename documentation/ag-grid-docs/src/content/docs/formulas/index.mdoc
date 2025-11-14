@@ -56,7 +56,7 @@ After the 26th column, the columns continue with two letters (e.g. AA, AB, AC, e
 Column letters are assigned for every column in the grid, including columns that are hidden or not displayed due to column groups being collapsed.
 {% /note %}
 
-Formulas can reference other cells using their column letter and row number. Columns are labeled alphabetically (A, B, C, ..., Z, AA, AB, etc.), and rows are numbered starting from 1.
+Formulas can reference other cells using their column letter and row number. Columns are labelled alphabetically (A, B, C, ..., Z, AA, AB, etc.), and rows are numbered starting from 1.
 
 Examples of cell references:
 - `=A1` refers to the cell in column A, row 1.
@@ -70,8 +70,8 @@ To instead always refer to the same position, use absolute references by prefixi
 
 When saving cell references, the grid converts these into a long hand format using column and row IDs to ensure that changes in the source data allow the grid to continue to refer to the correct cells when the data changes without
 the grid being open.
-For example, if the column with ID `athlete` is in column A, and the row with ID `a` is in row 1, then the formula `=A1` becomes `=REF(COL('athlete'), ROW('a'))`.
-When this is a static reference, for example $A$1, the long hand format uses A and 1 in place of IDs, but adds a true to indicate the value is absolute (e.g `=$A$1` becomes `=REF(COL('a', true), ROW('1', true))`).
+For example, if the column with ID `athlete` is in column A, and the row with ID `a` is in row 1, then the formula `=A1` becomes `=REF(COLUMN('athlete'), ROW('a'))`.
+When this is a static reference, for example $A$1, the long hand format uses A and 1 in place of IDs, but adds a true to indicate the value is absolute (e.g `=$A$1` becomes `=REF(COLUMN('a', true), ROW('1', true))`).
 
 This long hand format can be used directly in your data source or application via a valueGetter, and will be converted to the short hand format when the user opens a cell editor.
 

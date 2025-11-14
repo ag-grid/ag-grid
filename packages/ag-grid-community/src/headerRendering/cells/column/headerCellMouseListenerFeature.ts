@@ -33,7 +33,7 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
 
         if (allowColumnSelection) {
             rangeSvc?.handleColumnSelection(this.column, event);
-        } else {
+        } else if (this.column.isSortable()) {
             // sometimes when moving a column via dragging, this was also firing a clicked event.
             // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
             // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
