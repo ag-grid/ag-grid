@@ -1,16 +1,14 @@
-import { ClientSideRowModelModule, RowDragModule, RowSelectionModule, UndoRedoEditModule } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
-
-const defaultModules = [
+import {
     ClientSideRowModelModule,
     RowDragModule,
     RowSelectionModule,
-    RowGroupingModule,
+    TextEditorModule,
     UndoRedoEditModule,
-];
+} from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
+
+import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
 
 // plunkers:
 //  - two levels drag and drop https://plnkr.co/edit/OvNeKY2q0UIi1fyr?open=main.js
@@ -19,7 +17,15 @@ describe.each([false, true])(
     'managed row drag with refreshAfterGroupEdit (suppressMoveWhenRowDragging=%s)',
     (suppressMoveWhenRowDragging) => {
         const gridsManager = new TestGridsManager({
-            modules: defaultModules,
+            modules: [
+                ClientSideRowModelModule,
+                RowDragModule,
+                RowSelectionModule,
+                RowGroupingModule,
+                UndoRedoEditModule,
+                BatchEditModule,
+                TextEditorModule,
+            ],
         });
 
         beforeEach(() => {
