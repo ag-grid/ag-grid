@@ -41,7 +41,6 @@ import {
     _isGetRowHeightFunction,
     _isMasterDetail,
     _isRowSelection,
-    _isTreeData,
     _setDomData,
 } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -950,18 +949,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const aboveOn = highlighted === 'above';
         const insideOn = highlighted === 'inside';
         const belowOn = highlighted === 'below';
-        const treeData = _isTreeData(this.gos);
-        const indented = treeData && (belowOn || aboveOn);
-        const uiLevel = this.rowNode.uiLevel.toString();
+        const highlightActive = highlighted !== 'none';
+        const dropEdge = aboveOn || belowOn;
+        const uiLevel = this.rowNode.uiLevel;
+        const shouldIndent = dropEdge && uiLevel > 0;
+        const highlightLevel = shouldIndent ? uiLevel.toString() : '0';
 
         for (const gui of this.allRowGuis) {
             const rowComp = gui.rowComp;
             rowComp.toggleCss('ag-row-highlight-above', aboveOn);
             rowComp.toggleCss('ag-row-highlight-inside', insideOn);
             rowComp.toggleCss('ag-row-highlight-below', belowOn);
-            rowComp.toggleCss('ag-row-highlight-indent', indented);
-            if (indented) {
-                gui.element.style.setProperty('--ag-row-highlight-level', uiLevel);
+            rowComp.toggleCss('ag-row-highlight-indent', shouldIndent);
+            if (highlightActive) {
+                gui.element.style.setProperty('--ag-row-highlight-level', highlightLevel);
             } else {
                 gui.element.style.removeProperty('--ag-row-highlight-level');
             }

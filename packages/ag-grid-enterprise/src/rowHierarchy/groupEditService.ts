@@ -30,25 +30,6 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         }
     }
 
-    /** Checks if setting `newParent` as the parent of `row` would create a cycle in the tree hierarchy */
-    public wouldCycle(row: IRowNode, newParent: IRowNode | null | undefined): boolean {
-        if (!newParent || row.parent === newParent) {
-            return false;
-        }
-        let current: IRowNode | null | undefined = newParent;
-        const rowId = row.id;
-        while (current) {
-            if (current === row) {
-                return true;
-            }
-            if (rowId != null && current.id === rowId) {
-                return true;
-            }
-            current = current.parent;
-        }
-        return false;
-    }
-
     /** Checks if the drop operation described by `rowsDrop` is a grouping edit */
     public isGroupingDrop(rowsDrop: _RowsDrop): boolean {
         if (!rowsDrop.rowDragManaged || !rowsDrop.sameGrid) {
@@ -72,6 +53,43 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
             return false;
         }
         return !!this.beans.rowGroupColsSvc?.columns?.length;
+    }
+
+    public canDropRow(rowNode: IRowNode, rowsDrop: _RowsDrop): boolean {
+        if (this.beans.groupStage?.treeData) {
+            return !wouldCycle(rowNode, rowsDrop.newParent);
+        }
+
+        const { position, target, newParent, rootNode } = rowsDrop;
+        const currentParent = rowNode.parent!;
+
+        if (rowNode.group && (isAncestorOrSelf(rowNode, target) || isAncestorOrSelf(rowNode, newParent))) {
+            return false;
+        }
+
+        if (position !== 'inside') {
+            if (newParent && newParent !== currentParent) {
+                return newParent !== rootNode || currentParent === rootNode;
+            }
+
+            const comparisonParent = newParent ?? target?.parent ?? rootNode;
+            if (comparisonParent !== currentParent) {
+                return false;
+            }
+
+            const sourceLevel = rowNode.group ? rowNode.level : currentParent.level ?? -1;
+            const targetLevel = target
+                ? target.group
+                    ? target.level
+                    : target.parent?.level ?? -1
+                : comparisonParent?.level ?? -1;
+
+            if (sourceLevel >= 0 && targetLevel >= 0 && targetLevel !== sourceLevel) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /** Performs the grouping edit described by `rowsDrop` */
@@ -293,3 +311,36 @@ interface GroupValues {
     columns: AgColumn[];
     values: any[];
 }
+
+const isAncestorOrSelf = (candidate: IRowNode | null | undefined, node: IRowNode | null | undefined): boolean => {
+    if (!candidate || !node) {
+        return false;
+    }
+    let current: IRowNode | null | undefined = node;
+    while (current) {
+        if (current === candidate) {
+            return true;
+        }
+        current = current.parent;
+    }
+    return false;
+};
+
+/** Checks if setting `newParent` as the parent of `row` would create a cycle in the tree hierarchy */
+const wouldCycle = (row: IRowNode, newParent: IRowNode | null | undefined): boolean => {
+    if (!newParent || row.parent === newParent) {
+        return false;
+    }
+    let current: IRowNode | null | undefined = newParent;
+    const rowId = row.id;
+    while (current) {
+        if (current === row) {
+            return true;
+        }
+        if (rowId != null && current.id === rowId) {
+            return true;
+        }
+        current = current.parent;
+    }
+    return false;
+};

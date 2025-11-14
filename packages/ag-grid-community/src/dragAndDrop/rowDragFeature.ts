@@ -15,7 +15,15 @@ import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 import { RowDragFeatureNudger } from './rowDragFeatureNudger';
-import type { RowDraggingEvent, RowDropZoneEvents, RowDropZoneParams, RowsDrop } from './rowDragTypes';
+import type {
+    RowDraggingEvent,
+    RowDropTargetPosition,
+    RowDropZoneEvents,
+    RowDropZoneParams,
+    RowsDrop,
+} from './rowDragTypes';
+
+const POINTER_INSIDE_THRESHOLD = 0.25;
 
 /** We actually have a different interface if we are passing params out of the grid and
  * directly into another grid. These internal params just work directly off the DraggingEvent.
@@ -223,6 +231,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
+        rowsDrop.pointerPos = computePointerPos(target, rowsDrop.y);
+
         const nudger = this.nudger;
         const canStartGroup = (candidate: IRowNode | null | undefined) =>
             !!nudger &&
@@ -238,7 +248,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (canSetParent && !newParent && nudger) {
             if (!target || (yDelta >= 0.5 && target.rowIndex === beans.pageBounds.getLastRow())) {
                 newParent = rootNode; // Dragging outside of the rows, move to last row at the root level
-            } else if (rowsDrop.moved && this.targetShouldBeParent(target, yDelta, rows)) {
+            } else if (rowsDrop.moved && this.targetShouldBeParent(target, rowsDrop.pointerPos, rows)) {
                 if (nudger.groupThrottled) {
                     newParent = target;
                 }
@@ -329,6 +339,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             y,
             overNode: overNode,
             overIndex: overNode?.rowIndex ?? -1,
+            pointerPos: 'none',
             position: 'none',
             source,
             target: overNode ?? null,
@@ -402,16 +413,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
     }
 
-    private targetShouldBeParent(target: IRowNode, yDelta: number, rows: IRowNode[]): boolean {
+    private targetShouldBeParent(target: IRowNode, pointerPosition: RowDropTargetPosition, rows: IRowNode[]): boolean {
         const targetRowIndex = target.rowIndex!;
 
-        const INSIDE_THRESHOLD = 0.25;
-
-        if (yDelta < -0.5 + INSIDE_THRESHOLD) {
-            return false; // Definitely above
+        if (pointerPosition === 'none' || pointerPosition === 'above') {
+            return false;
         }
-        if (yDelta < 0.5 - INSIDE_THRESHOLD) {
-            return true; // Definitely inside
+        if (pointerPosition === 'inside') {
+            return true;
         }
 
         let nextRow: RowNode | undefined;
@@ -599,8 +608,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return true;
     }
 
-    private filterRows({ newParent, rows }: RowsDrop): IRowNode[] {
+    private filterRows(rowsDrop: RowsDrop): IRowNode[] {
         const { rowModel, groupEditSvc } = this.beans;
+        const { rows } = rowsDrop;
         let filtered: IRowNode[] | undefined;
         for (let i = 0, len = rows.length; i < len; ++i) {
             let valid = true;
@@ -609,9 +619,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 !row ||
                 row.footer ||
                 (row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
-                !csrmGetLeaf(row) || // No leaf to move, so nothing to do
-                groupEditSvc?.wouldCycle(row, newParent) // Cannot move to a parent that would create a cycle
+                !csrmGetLeaf(row) // No leaf to move, so nothing to do
             ) {
+                valid = false;
+            }
+            if (valid && groupEditSvc && !groupEditSvc.canDropRow(row, rowsDrop)) {
                 valid = false;
             }
             if (valid) {
@@ -767,4 +779,21 @@ const deltaDraggingTarget = (rowModel: IRowModel, rowsDrop: RowsDrop): RowNode |
         current = candidate;
     } while (count > 0);
     return bestTarget;
+};
+
+const computePointerPos = (overNode: IRowNode | null | undefined, pointerY: number): RowDropTargetPosition => {
+    const rowTop = overNode?.rowTop;
+    const rowHeight = overNode?.rowHeight ?? 0;
+    if (rowTop == null || !rowHeight || rowHeight <= 0) {
+        return 'none';
+    }
+    const offset = pointerY - rowTop;
+    const thresholdPx = rowHeight * POINTER_INSIDE_THRESHOLD;
+    if (offset <= thresholdPx) {
+        return 'above';
+    }
+    if (offset >= rowHeight - thresholdPx) {
+        return 'below';
+    }
+    return 'inside';
 };
