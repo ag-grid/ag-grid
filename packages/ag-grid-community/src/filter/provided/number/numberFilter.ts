@@ -50,14 +50,20 @@ export class NumberFilter extends SimpleFilter<
         const from = this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
         const to = this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
 
-        const getNormalisedValue = (input: GridInputTextField | GridInputNumberField): number | null => {
-            return processNumberFilterValue(this.stringToFloat(input.getValue()));
-        };
+        const getNormalisedValue = (input: GridInputTextField | GridInputNumberField): number | null =>
+            processNumberFilterValue(this.stringToFloat(input.getValue()));
 
         from.addEventListener('fieldValueChanged', () => {
             const fromValue = getNormalisedValue(from);
             if ('setMin' in to) {
                 to.setMin(fromValue ?? undefined);
+            } else {
+                const toValue = getNormalisedValue(to);
+                if (fromValue != null && toValue != null && fromValue > toValue) {
+                    from.setCustomValidity(`Please select a value that is no more than ${toValue}`);
+                } else if (toValue == null) {
+                    from.setCustomValidity('');
+                }
             }
         });
 
@@ -65,6 +71,13 @@ export class NumberFilter extends SimpleFilter<
             const toValue = getNormalisedValue(to);
             if ('setMax' in from) {
                 from.setMax(toValue ?? undefined);
+            } else {
+                const fromValue = getNormalisedValue(from);
+                if (fromValue != null && toValue != null && fromValue > toValue) {
+                    to.setCustomValidity(`Please select a value that is no less than ${fromValue}`);
+                } else if (toValue == null) {
+                    to.setCustomValidity('');
+                }
             }
         });
 

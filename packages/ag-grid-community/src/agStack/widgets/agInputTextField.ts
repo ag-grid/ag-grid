@@ -63,6 +63,10 @@ export class AgInputTextField<
         this.setValue(value, true);
     }
 
+    public setCustomValidity(message: string): void {
+        this.eInput.setCustomValidity(message);
+    }
+
     private preventDisallowedCharacters(): void {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
