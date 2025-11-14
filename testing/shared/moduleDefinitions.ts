@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 222.75,
-    AllEnterpriseModule: 1551,
+    AllEnterpriseModule: 1559.73,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
     CellSelectionModule: 58,
@@ -66,7 +66,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GridChartsModule: 71.71,
     IntegratedChartsModule: 400,
     GroupFilterModule: 115.18,
-    MasterDetailModule: 85.8,
+    MasterDetailModule: 91.56,
     MenuModule: 165,
     MultiFilterModule: 150.24,
     NewFiltersToolPanelModule: 175.32,
@@ -74,7 +74,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RangeSelectionModule: 58,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
-    RowGroupingModule: 88.46,
+    RowGroupingModule: 92.93,
     RowGroupingPanelModule: 73.57,
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,
@@ -82,7 +82,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,
-    TreeDataModule: 83.97,
+    TreeDataModule: 89.72,
     ViewportRowModelModule: 29.19,
 };
 
