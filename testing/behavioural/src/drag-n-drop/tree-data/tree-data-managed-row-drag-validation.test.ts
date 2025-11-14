@@ -6,8 +6,8 @@ import type { DragAndDropRowOptions, GridRowsOptions } from '../../test-utils';
 import {
     GridRows,
     TestGridsManager,
-    asyncSetTimeout,
     assertDropIndicatorVisible,
+    asyncSetTimeout,
     dragAndDropRow as baseDragAndDropRow,
 } from '../../test-utils';
 
