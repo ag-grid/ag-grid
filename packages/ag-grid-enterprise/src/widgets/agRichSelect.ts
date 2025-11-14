@@ -140,7 +140,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (valueList != null) {
-            this.setValueList({ valueList });
+            this.setValueList({ valueList, isInitial: true });
         }
 
         const { searchDebounceDelay = ON_SEARCH_CALLBACK_DEBOUNCE_DELAY } = this.config;
@@ -328,13 +328,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }): void {
         const { listComponent, isPickerDisplayed, value } = this;
         const { valueList, refresh, isInitial } = params;
+        if (isInitial) {
+            this.setValues(valueList);
+        }
         if (!listComponent) {
             return;
         }
 
-        if (isInitial) {
-            this.setValues(valueList);
-        }
         // we need to update the list component even if the 'values' is undefined
         this.listComponent?.setCurrentList(valueList);
 
