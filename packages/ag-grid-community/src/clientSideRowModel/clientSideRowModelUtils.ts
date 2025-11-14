@@ -35,11 +35,9 @@ export const _csrmReorderAllLeafs = (
     let targetPositionIdx = -1;
     if (target) {
         targetPositionIdx = target.sourceRowIndex;
-        if (targetPositionIdx < 0) {
-            target = _csrmFirstLeaf(target as RowNode);
-            if (target) {
-                targetPositionIdx = target.sourceRowIndex;
-            }
+        target = targetPositionIdx < 0 ? _csrmFirstLeaf(target) : null;
+        if (target) {
+            targetPositionIdx = target.sourceRowIndex;
         }
     }
 
@@ -64,28 +62,30 @@ export const _csrmReorderAllLeafs = (
     let writeIdxLeft = firstAffectedLeafIdx;
     for (let readIdx = firstAffectedLeafIdx; readIdx < targetPositionIdx; ++readIdx) {
         const row = allLeafs[readIdx];
-        if (!leafsToMove.has(row)) {
-            if (row.sourceRowIndex !== writeIdxLeft) {
-                row.sourceRowIndex = writeIdxLeft;
-                allLeafs[writeIdxLeft] = row;
-                orderChanged = true;
-            }
-            ++writeIdxLeft;
+        if (leafsToMove.has(row)) {
+            continue;
         }
+        if (row.sourceRowIndex !== writeIdxLeft) {
+            row.sourceRowIndex = writeIdxLeft;
+            allLeafs[writeIdxLeft] = row;
+            orderChanged = true;
+        }
+        ++writeIdxLeft;
     }
 
     // Third partition. Filter from right to left, so the middle can be overwritten
     let writeIdxRight = lastAffectedLeafIndex;
     for (let readIdx = lastAffectedLeafIndex; readIdx >= targetPositionIdx; --readIdx) {
         const row = allLeafs[readIdx];
-        if (!leafsToMove.has(row)) {
-            if (row.sourceRowIndex !== writeIdxRight) {
-                row.sourceRowIndex = writeIdxRight;
-                allLeafs[writeIdxRight] = row;
-                orderChanged = true;
-            }
-            --writeIdxRight;
+        if (leafsToMove.has(row)) {
+            continue;
         }
+        if (row.sourceRowIndex !== writeIdxRight) {
+            row.sourceRowIndex = writeIdxRight;
+            allLeafs[writeIdxRight] = row;
+            orderChanged = true;
+        }
+        --writeIdxRight;
     }
 
     // Second partition. Overwrites the middle between the other two filtered partitions
