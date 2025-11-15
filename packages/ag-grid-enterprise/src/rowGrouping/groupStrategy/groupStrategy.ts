@@ -423,7 +423,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let showGroupColsChanged = false;
         const showGroupCols = this.prevShowGroupCols;
-        const showCols = this.beans.showRowGroupCols!.getShowRowGroupCols();
+        const showCols = this.beans.showRowGroupCols!.showRowGroupCols;
         if (!showGroupCols || groupColumnsChanged(showGroupCols, showCols)) {
             showGroupColsChanged = !!showGroupCols;
             this.prevShowGroupCols = makeGroupColumns(showCols);
@@ -531,7 +531,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         groupNode.groupData = {};
-        const groupDisplayCols = showRowGroupCols!.getShowRowGroupCols();
+        const groupDisplayCols = showRowGroupCols!.showRowGroupCols;
         for (const col of groupDisplayCols) {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so

@@ -283,7 +283,10 @@ export interface NewColumnsLoadedEvent<TData = any, TContext = any>
 }
 
 export interface GridColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {
+    /** True if the set of row group columns has changed. */
+    setOfRowGroupColumnsChanged: boolean;
+}
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {

@@ -240,7 +240,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         // set group value for full width rows.
         rowNode.groupValue = rowNode.key;
 
-        const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
+        const groupDisplayCols = this.showRowGroupCols?.showRowGroupCols ?? [];
         const usingTreeData = _isTreeData(this.gos);
         for (const col of groupDisplayCols) {
             if (rowNode.groupData == null) {

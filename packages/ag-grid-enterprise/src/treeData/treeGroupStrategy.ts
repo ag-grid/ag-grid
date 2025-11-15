@@ -424,7 +424,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     private setGroupData(row: RowNode, key: string): void {
         const groupData: Record<string, string> = {};
-        const groupDisplayCols = this.beans.showRowGroupCols?.getShowRowGroupCols();
+        const groupDisplayCols = this.beans.showRowGroupCols?.showRowGroupCols;
         row.groupData = groupData;
         if (groupDisplayCols) {
             for (const col of groupDisplayCols) {
@@ -816,7 +816,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private checkGroupColsUpdated(afterColumnsChanged: boolean | undefined): void {
         this.groupColsChanged = false;
         if (afterColumnsChanged || !this.groupColsIds) {
-            const cols = this.beans.showRowGroupCols?.getShowRowGroupCols() ?? _EmptyArray;
+            const cols = this.beans.showRowGroupCols?.showRowGroupCols ?? _EmptyArray;
             let groupColsIds = '';
             for (let i = 0, len = cols.length; i < len; ++i) {
                 groupColsIds += cols[i].getId() + PATH_KEY_SEPARATOR;

@@ -1,9 +1,10 @@
 import type { AgColumn } from '../entities/agColumn';
 
 export interface IShowRowGroupColsService {
-    refresh(): void;
+    readonly showRowGroupCols: AgColumn[];
 
-    getShowRowGroupCols(): AgColumn[];
+    /** Refreshes showRowGroupCols, returns true if the set of columns has changed */
+    refresh(): boolean;
 
     getShowRowGroupCol(id: string): AgColumn | undefined;
 
