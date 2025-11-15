@@ -203,7 +203,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         this.positionLockedCols(cols);
-        const rowGroupColumnsChanged = !!showRowGroupCols?.refresh();
+        const setOfRowGroupColumnsChanged = !!showRowGroupCols?.refresh();
         quickFilter?.refreshCols();
 
         this.setColSpanActive();
@@ -216,10 +216,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
         visibleCols.clear();
         colViewport.clear();
 
-        if (rowGroupColumnsChanged || !_areEqual(prevColTree, this.cols!.tree)) {
+        if (setOfRowGroupColumnsChanged || !_areEqual(prevColTree, this.cols!.tree)) {
             eventSvc.dispatchEvent({
                 type: 'gridColumnsChanged',
-                setOfRowGroupColumnsChanged: rowGroupColumnsChanged,
+                setOfRowGroupColumnsChanged,
             });
         }
     }
