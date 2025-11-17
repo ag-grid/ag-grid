@@ -68,10 +68,10 @@ export class NumberFilter extends SimpleFilter<
                 (isFrom ? from : to).setCustomValidity(validityMessage);
             };
 
-        this.addManagedListeners(from, {
+        from.addManagedListeners(from, {
             fieldValueChanged: getFieldChangedListener(from, to, true),
         });
-        this.addManagedListeners(to, {
+        to.addManagedListeners(to, {
             fieldValueChanged: getFieldChangedListener(from, to, false),
         });
 
