@@ -114,7 +114,7 @@ runs:
           uses: actions/setup-node@v6
           with:
               node-version: '20'
-              cache: 'yarn'
+              cache: ${{ inputs.cache_mode == 'rw' && 'yarn' || '' }}
 
         - name: yarn install
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'
