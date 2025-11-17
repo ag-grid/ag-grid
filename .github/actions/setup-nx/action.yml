@@ -201,3 +201,18 @@ runs:
                   documentation/*/node_modules/
                   external/*/node_modules/
               key: node_modules-2-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
+
+        - name: Persist node_modules
+          if: inputs.cache_mode == 'rw'
+          uses: actions/upload-artifact@v4
+          with:
+            name: node_modules
+            include-hidden-files: true
+            path: |
+              node_modules/
+              packages/*/node_modules/
+              plugins/*/node_modules/
+              community-modules/*/node_modules/
+              testing/*/node_modules/
+              documentation/*/node_modules/
+              external/*/node_modules/    
