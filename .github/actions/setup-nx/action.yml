@@ -203,3 +203,18 @@ runs:
               echo "Pre exists? $( [ -f .yarn-integrity.pre ] && echo yes || echo no )"
               echo "Post exists? $( [ -f node_modules/.yarn-integrity ] && echo yes || echo no )"
             fi
+
+        - name: Save Cache Again After Verification Failure
+          if: inputs.cache_mode == 'rw' && steps.yarn_integrity.outputs.ok != 'true'
+          id: cache_again_rw
+          uses: actions/cache/save@v4
+          with:
+              path: |
+                  node_modules/
+                  packages/*/node_modules/
+                  plugins/*/node_modules/
+                  community-modules/*/node_modules/
+                  testing/*/node_modules/
+                  documentation/*/node_modules/
+                  external/*/node_modules/
+              key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
