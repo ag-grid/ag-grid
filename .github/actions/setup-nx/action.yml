@@ -116,6 +116,15 @@ runs:
               node-version: '20'
               cache: ${{ inputs.cache_mode == 'rw' && 'yarn' || '' }}
 
+        - name: Persist pre cache yarn integrity file
+          if: inputs.cache_mode == 'rw'
+          uses: actions/upload-artifact@v4
+          with:
+            name: pre-yarn-integrity
+            include-hidden-files: true
+            path: |
+              node_modules/.yarn-integrity
+
         - name: yarn install
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
@@ -129,3 +138,12 @@ runs:
           shell: bash
           run: |
               yarn check --integrity || yarn install --prefer-offline --ci
+
+        - name: Persist post cache yarn integrity file
+          if: inputs.cache_mode == 'rw'
+          uses: actions/upload-artifact@v4
+          with:
+            name: post-yarn-integrity
+            include-hidden-files: true
+            path: |
+              node_modules/.yarn-integrity
