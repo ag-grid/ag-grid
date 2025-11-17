@@ -2,7 +2,11 @@ import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 
-export interface IOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+export type AgGridOverlayType = 'agLoadingOverlay' | 'agNoRowsOverlay';
+
+export interface IOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    defaultOverlay: AgGridOverlayType;
+}
 
 export interface IOverlay<
     TData = any,
@@ -33,4 +37,14 @@ export abstract class OverlayComponent<
     }
 
     public abstract init(): void;
+}
+
+export interface OverlaySelectorFunc<TData = any, TContext = any> {
+    (params: IOverlayParams<TData, TContext>): OverlaySelectorResult | undefined;
+}
+export interface OverlaySelectorResult {
+    /** Equivalent of setting `gridOptions.overlayComponent` */
+    component?: any;
+    /** Equivalent of setting `gridOptions.overlayComponentParams` */
+    params?: any;
 }

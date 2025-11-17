@@ -63,6 +63,7 @@ import type {
     MenuItemDef,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
+    OverlaySelectorFunc,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     PostSortRowsParams,
@@ -852,6 +853,10 @@ export interface Props<TData> {
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
+    suppressOverlays?: string[],
+    overlayComponent?: any,
+    overlayComponentParams?: any,
+    overlayComponentSelector?: OverlaySelectorFunc<TData>,
     /** Display a specific overlay.
          * Accepts:
          * - A component class/function.
@@ -2079,6 +2084,10 @@ export function getProps() {
         noRowsOverlayComponent: undefined,
         noRowsOverlayComponentParams: undefined,
         suppressNoRowsOverlay: undefined,
+        suppressOverlays: undefined,
+        overlayComponent: undefined,
+        overlayComponentParams: undefined,
+        overlayComponentSelector: undefined,
         activeOverlay: undefined,
         activeOverlayParams: undefined,
         pagination: undefined,

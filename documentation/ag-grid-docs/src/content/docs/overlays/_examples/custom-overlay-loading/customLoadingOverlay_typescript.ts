@@ -9,7 +9,7 @@ export class CustomLoadingOverlay implements ILoadingOverlayComp {
     init(params: CustomLoadingOverlayParams) {
         this.eGui = document.createElement('div');
         const overlay = document.createElement('div');
-        overlay.className = 'ag-overlay-loading-center';
+        overlay.className = 'overlay-loading-center';
         overlay.setAttribute('role', 'presentation');
 
         const spinner = document.createElement('div');

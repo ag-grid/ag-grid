@@ -148,6 +148,7 @@ import type {
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     NewColumnsLoadedEvent,
+    OverlaySelectorFunc,
     PaginationChangedEvent,
     PaginationNumberFormatterParams,
     PasteEndEvent,
@@ -1032,6 +1033,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
+    @Input() public suppressOverlays: string[] | undefined = undefined;
+    @Input() public overlayComponent: any = undefined;
+    @Input() public overlayComponentParams: any = undefined;
+    @Input() public overlayComponentSelector: OverlaySelectorFunc<TData> | undefined = undefined;
     /** Display a specific overlay.
      * Accepts:
      * - A component class/function.
