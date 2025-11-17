@@ -80,7 +80,7 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
         // if grand total row footer, heading shown in first group column
         if (node.level === -1) {
-            return this.beans.showRowGroupCols?.showRowGroupCols[0] === col;
+            return this.beans.showRowGroupCols?.getShowRowGroupCols()[0] === col;
         }
 
         // otherwise, show in relevant group column
