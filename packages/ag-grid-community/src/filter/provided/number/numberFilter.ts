@@ -63,8 +63,12 @@ export class NumberFilter extends SimpleFilter<
                 (isFrom ? from : to).setCustomValidity(getValidityMessage(fromValue, toValue, isFrom));
             };
 
-        from.addEventListener('fieldValueChanged', getFieldChangedListener(from, to, true));
-        to.addEventListener('fieldValueChanged', getFieldChangedListener(from, to, false));
+        this.addManagedListeners(from, {
+            fieldValueChanged: getFieldChangedListener(from, to, true),
+        });
+        this.addManagedListeners(to, {
+            fieldValueChanged: getFieldChangedListener(from, to, false),
+        });
 
         return eCondition;
     }
