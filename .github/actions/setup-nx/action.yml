@@ -69,8 +69,8 @@ runs:
               testing/*/node_modules/
               documentation/*/node_modules/
               external/*/node_modules/
-            key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
-            restore-keys: node_modules-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
+            key: node_modules-2-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
+            restore-keys: node_modules-2-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
 
         - name: Cache Nx
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
@@ -200,4 +200,4 @@ runs:
                   testing/*/node_modules/
                   documentation/*/node_modules/
                   external/*/node_modules/
-              key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
+              key: node_modules-2-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
