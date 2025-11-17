@@ -478,6 +478,35 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['sport', 'amount', 'day']], api);
         });
 
+        test('suppressColumnSelection prevents column selection with mouse', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    suppressColumnSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([], api);
+        });
+
         test('suppressMultiRanges prevents multiple column selections', async () => {
             const userSession = userEvent.setup();
 
