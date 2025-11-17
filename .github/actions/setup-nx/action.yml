@@ -128,6 +128,17 @@ runs:
             path: |
               node_modules/.yarn-integrity
 
+        - name: Snapshot yarn integrity (pre-install)
+          if: inputs.cache_mode == 'rw'
+          shell: bash
+          run: |
+            if [ -f node_modules/.yarn-integrity ]; then
+              cp -f node_modules/.yarn-integrity .yarn-integrity.pre
+              echo "Saved pre-install integrity to .yarn-integrity.pre"
+            else
+              echo "No existing node_modules/.yarn-integrity found (cold install expected)"
+            fi
+
         - name: Check yarn integrity
           if: inputs.cache_mode == 'rw'
           id: yarn_integrity
@@ -174,3 +185,21 @@ runs:
             include-hidden-files: true
             path: |
               node_modules/.yarn-integrity
+
+        - name: Verify yarn integrity (post-install) and diff
+          if: inputs.cache_mode == 'rw' && steps.yarn_integrity.outputs.ok != 'true'
+          shell: bash
+          run: |
+            echo "::warning::yarn integrity check failed pre-install"
+            if [ -f .yarn-integrity.pre ] && [ -f node_modules/.yarn-integrity ]; then
+              echo "Diff between pre and post .yarn-integrity:"
+              if command -v git >/dev/null 2>&1; then
+                git --no-pager diff --no-index --color-words -- .yarn-integrity.pre node_modules/.yarn-integrity || true
+              else
+                diff -u .yarn-integrity.pre node_modules/.yarn-integrity || true
+              fi
+            else
+              echo "Pre or post integrity file missing; cannot diff."
+              echo "Pre exists? $( [ -f .yarn-integrity.pre ] && echo yes || echo no )"
+              echo "Post exists? $( [ -f node_modules/.yarn-integrity ] && echo yes || echo no )"
+            fi
