@@ -138,9 +138,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         initialPivot: UNSUPPORTED_WITH_FORMULAS('initialPivot'),
         initialPivotIndex: UNSUPPORTED_WITH_FORMULAS('initialPivotIndex'),
 
-        // row drag
-        rowDrag: UNSUPPORTED_WITH_FORMULAS('rowDrag'),
-
         autoHeight: {
             supportedRowModels: ['clientSide', 'serverSide'],
             validate: (_colDef, { paginationAutoPageSize }) => {

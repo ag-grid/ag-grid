@@ -56,8 +56,6 @@ export interface IRangeService {
     createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
     handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
-    selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined;
-    deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined;
 }
 
 export enum CellRangeType {

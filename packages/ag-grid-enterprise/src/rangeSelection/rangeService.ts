@@ -38,6 +38,7 @@ import {
     _getRowBelow,
     _getRowCtrlForEventTarget,
     _getRowNode,
+    _getSuppressColumnSelection,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
     _isDomLayout,
@@ -1264,6 +1265,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
      */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void {
         const { gos, beans, columnRangeSelectionCtx: ctx, cellRanges } = this;
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        if (suppressColumnSelection) {
+            return;
+        }
+
         const suppressMultiRanges = _getSuppressMultiRanges(gos);
         const hasRanges = cellRanges.length > 0;
 
@@ -1295,7 +1301,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
         } else if (clickedColumn.isColumn) {
             if (hasRanges && suppressMultiRanges) {
-                return;
+                this.removeAllCellRanges();
             }
             const foundRange = findRangeContainingCols(cellRanges, [clickedColumn], firstRow, lastRow);
 
@@ -1309,7 +1315,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             ctx.root = clickedColumn;
         } else {
             if (hasRanges && suppressMultiRanges) {
-                return;
+                this.removeAllCellRanges();
             }
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();
@@ -1329,7 +1335,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    public deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
+    private deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
         for (const range of this.cellRanges) {
             if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
                 _removeFromArray(range.columns, column);
@@ -1345,7 +1351,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dispatchChangedEvent(true, true);
     }
 
-    public selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
+    private selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
         return this.addCellRange({
             columns: columns,
             columnStart: columns[0],

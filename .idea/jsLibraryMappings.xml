@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$" libraries="{Node.js Core}" />
+    <file url="file://$PROJECT_DIR$/packages/ag-grid-angular/dist" libraries="{Node.js Core}" />
     <excludedPredefinedLibrary name="HTML" />
     <excludedPredefinedLibrary name="ag-grid/community-modules/locale/node_modules" />
     <excludedPredefinedLibrary name="ag-grid/community-modules/styles/node_modules" />

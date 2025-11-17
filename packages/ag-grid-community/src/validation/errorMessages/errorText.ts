@@ -722,6 +722,8 @@ export const AG_GRID_ERRORS = {
     293: () =>
         `The grid was initialised detached from the DOM and was then inserted into a Shadow Root. Theme styles are probably broken. Pass the themeStyleContainer grid option to let the grid know where in the document to insert theme CSS.` as const,
     294: () =>
+        `When using the \`agRichSelectCellEditor\` setting \`filterListAsync = true\` requires \`filterList = true\`, \`allowTyping = true\` and the \`values()\` callback must return a Promise of filtered values.` as const,
+    295: () =>
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
 };
 

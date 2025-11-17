@@ -7,6 +7,7 @@ import {
     _setAriaActiveDescendant,
     _setAriaControlsAndLabel,
     _setAriaLabel,
+    _setDisplayed,
 } from 'ag-grid-community';
 
 import { RichSelectRow } from './agRichSelectRow';
@@ -17,15 +18,26 @@ export type AgRichSelectListEvent = 'fieldPickerValueSelected' | 'richSelectList
 const LIST_COMPONENT_NAME = 'ag-rich-select-list';
 const ROW_COMPONENT_NAME = 'ag-rich-select-row';
 
+type AgRichSelectListState = 0 | 1 | 2 | 3;
+const STATE_LOADING = 0;
+const STATE_READY_WITH_RESULTS = 1;
+const STATE_NO_RESULTS = 2;
+const STATE_READY_FOR_INPUT = 3;
+
 export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectListEvent> extends VirtualList<
     Component<TEventType | AgRichSelectListEvent | HighlightTooltipEventType>,
     TValue,
     TEventType | AgRichSelectListEvent
 > {
-    private eLoading: HTMLElement | undefined;
+    private eStateComp: HTMLElement | undefined;
     private lastRowHovered: number = -1;
     private currentList: TValue[] | undefined;
     private readonly selectedItems: Set<TValue> = new Set<TValue>();
+    private loadingLabel: string;
+    private noMatchesLabel: string;
+    private loadingState = STATE_READY_FOR_INPUT;
+    private eStateCompLabel: HTMLElement;
+    private eLoadingIcon: Element | undefined;
 
     constructor(
         private readonly params: RichSelectParams,
@@ -41,17 +53,24 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public override postConstruct(): void {
         super.postConstruct();
-
-        const loadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
-
-        this.eLoading = _createElement({
+        const i18n = this.getLocaleTextFunc();
+        this.loadingLabel = i18n('loadingOoo', 'Loading...');
+        this.noMatchesLabel = i18n('noMatches', 'No matches to show');
+        this.eLoadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+        this.eStateCompLabel = _createElement({ tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel });
+        this.eStateComp = _createElement({
             tag: 'div',
             cls: 'ag-rich-select-loading',
             children: [
-                { tag: 'span', cls: 'ag-loading-icon', children: [loadingIcon ? () => loadingIcon : undefined] },
-                { tag: 'span', cls: 'ag-loading-text', children: this.getLocaleTextFunc()('loadingOoo', 'Loading...') },
+                {
+                    tag: 'span',
+                    cls: 'ag-loading-icon',
+                    children: [this.eLoadingIcon ? () => this.eLoadingIcon! : undefined],
+                },
+                { tag: 'span', cls: 'ag-loading-text', children: [() => this.eStateCompLabel] },
             ],
         });
+        this.appendChild(this.eStateComp);
 
         const { cellRowHeight, pickerAriaLabelKey, pickerAriaLabelValue } = this.params;
 
@@ -78,6 +97,46 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         _setAriaLabel(eListAriaEl, ariaLabel);
         _setAriaControlsAndLabel(this.richSelectWrapper, eListAriaEl);
+    }
+
+    public setIsLoading() {
+        this.setLoadingState(STATE_LOADING);
+    }
+
+    private setLoadingState(state: AgRichSelectListState): void {
+        this.loadingState = state;
+        this.toggleStateComp();
+        this.toggleVisibility();
+    }
+
+    private toggleStateComp(): void {
+        const { eStateComp, eStateCompLabel, eLoadingIcon, loadingState, loadingLabel, noMatchesLabel, params } = this;
+        if (!eStateComp) {
+            return;
+        }
+        if (loadingState === STATE_LOADING) {
+            eStateCompLabel.textContent = loadingLabel;
+            if (eLoadingIcon) {
+                _setDisplayed(eLoadingIcon, true);
+            }
+            _setDisplayed(eStateComp, true);
+            return;
+        }
+        if (loadingState === STATE_NO_RESULTS && params.allowNoResultsCopy) {
+            eStateCompLabel.textContent = noMatchesLabel;
+            if (eLoadingIcon) {
+                _setDisplayed(eLoadingIcon, false);
+            }
+            _setDisplayed(eStateComp, true);
+            return;
+        }
+        _setDisplayed(eStateComp, false);
+    }
+
+    public toggleVisibility(forceVisible?: boolean) {
+        const eListGui = this.getGui();
+        const visible = forceVisible !== undefined ? forceVisible : this.loadingState !== STATE_READY_FOR_INPUT;
+        _setDisplayed(eListGui, visible);
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
@@ -123,18 +182,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public selectValue(value?: TValue[] | TValue): boolean {
-        if (!this.currentList) {
-            if (this.eLoading) {
-                this.appendChild(this.eLoading);
-            }
-            return false;
-        }
-
-        if (this.eLoading?.offsetParent) {
-            this.eLoading?.remove();
-        }
-
-        if (value == null) {
+        if (!this.currentList || value == null) {
             return false;
         }
 
@@ -176,7 +224,10 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         return this.currentList;
     }
 
-    public setCurrentList(list: TValue[]): void {
+    public setCurrentList(list: TValue[] | undefined): void {
+        const newState = getListStateBasedOnResults<TValue>(list);
+        this.setLoadingState(newState);
+        list ||= [];
         this.currentList = list;
 
         this.setModel({
@@ -352,7 +403,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private onClick(e: MouseEvent): void {
         const { multiSelect } = this.params;
 
-        if (!this.currentList) {
+        if (!this.currentList?.length) {
             return;
         }
 
@@ -377,6 +428,16 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     public override destroy(): void {
         super.destroy();
-        this.eLoading = undefined;
+        this.eStateComp = undefined;
     }
+}
+
+function getListStateBasedOnResults<TValue>(valueList: TValue[] | undefined): AgRichSelectListState {
+    if (!valueList) {
+        return STATE_READY_FOR_INPUT;
+    }
+    if (valueList.length) {
+        return STATE_READY_WITH_RESULTS;
+    }
+    return STATE_NO_RESULTS;
 }
