@@ -13,20 +13,15 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private readonly context: Context;
-    private readonly eParent: HTMLElement;
 
     constructor(
-        context: Context,
+        private readonly context: Context,
         userCompFactory: UserComponentFactory,
         colDef: ColDef,
         dateComponentParams: IDateParams,
-        eParent: HTMLElement,
+        private readonly eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
     ) {
-        this.context = context;
-        this.eParent = eParent;
-
         const compDetails = _getDateCompDetails(userCompFactory, colDef, dateComponentParams);
 
         compDetails?.newAgStackInstance().then((dateComp) => {
