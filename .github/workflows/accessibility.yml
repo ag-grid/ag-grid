@@ -26,7 +26,7 @@ env:
   NX_BRANCH: ${{ github.ref }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
-  YARN_REGISTRY: "http://52.50.158.57:4873"
+  YARN_REGISTRY: "https://registry.ag-grid.com"
   CI: true
   REPORTS_PATH: ./reports
   CTRF_FILE: ./reports/ctrf.json
