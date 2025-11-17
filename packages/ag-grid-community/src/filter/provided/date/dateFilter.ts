@@ -90,8 +90,9 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
         const fromDate = from.getDate();
         const toDate = to.getDate();
-
-        (isFrom ? from : to).setCustomValidity(getValidityMessage(fromDate, toDate, isFrom));
+        const localeKey = getValidityMessageKey(fromDate, toDate, isFrom);
+        const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
+        (isFrom ? from : to).setCustomValidity(message);
     }
 
     private createDateCompWrapper(element: HTMLElement, position: number, fromTo: 'from' | 'to'): DateCompWrapper {
@@ -264,21 +265,25 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return result;
     }
 
-    protected override translate(key: FilterLocaleTextKey): string {
+    protected override translate(key: FilterLocaleTextKey, variableValues?: string[]): string {
+        let normalisedKey = key;
         if (key === 'lessThan') {
-            return super.translate('before');
+            normalisedKey = 'before';
+        } else if (key === 'greaterThan') {
+            normalisedKey = 'after';
         }
-        if (key === 'greaterThan') {
-            return super.translate('after');
-        }
-        return super.translate(key);
+        return super.translate(normalisedKey, variableValues);
     }
 }
 
-function getValidityMessage(fromDate: Date | null, toDate: Date | null, isFrom: boolean): string {
+function getValidityMessageKey(
+    fromDate: Date | null,
+    toDate: Date | null,
+    isFrom: boolean
+): FilterLocaleTextKey | null {
     const isInvalid = fromDate != null && toDate != null && fromDate > toDate;
     if (!isInvalid) {
-        return '';
+        return null;
     }
-    return `Please select a date that is ${isFrom ? 'after' : 'before'} ${isFrom ? toDate : fromDate}`;
+    return isFrom ? 'tooEarly' : 'tooLate';
 }

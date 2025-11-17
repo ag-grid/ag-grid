@@ -25,9 +25,11 @@ export const AG_GRID_LOCALE_EN = {
     inRangeStart: 'From',
     inRangeEnd: 'To',
 
-    // In-Range Number Filter Validation
+    // In-Range Number & Date Filter Validation
     tooBig: 'Please select a value that is no more than ${variable}',
     tooSmall: 'Please select a value that is no less than ${variable}',
+    tooEarly: 'Please select a date that is no earlier than ${variable}',
+    tooLate: 'Please select a date that is no later than ${variable}',
 
     // Text Filter
     contains: 'Contains',

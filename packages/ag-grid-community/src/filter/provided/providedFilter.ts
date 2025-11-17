@@ -320,8 +320,8 @@ export abstract class ProvidedFilter<
         super.destroy();
     }
 
-    protected translate(key: FilterLocaleTextKey): string {
-        return translateForFilter(this, key);
+    protected translate(key: FilterLocaleTextKey, variableValues?: string[]): string {
+        return translateForFilter(this, key, variableValues);
     }
 
     // override to control positionable feature

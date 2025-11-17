@@ -4,7 +4,6 @@ import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
-import { translateForFilter } from '../../filterLocaleText';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
@@ -62,9 +61,9 @@ export class NumberFilter extends SimpleFilter<
             () => {
                 const fromValue = getNormalisedValue(parser, from);
                 const toValue = getNormalisedValue(parser, to);
-                const filterLocaleKey = getValidityMessage(fromValue, toValue, isFrom);
-                const validityMessage = filterLocaleKey
-                    ? translateForFilter(this, filterLocaleKey, [String(isFrom ? toValue : fromValue)])
+                const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+                const validityMessage = localeKey
+                    ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)])
                     : '';
                 (isFrom ? from : to).setCustomValidity(validityMessage);
             };
@@ -187,7 +186,7 @@ function getNormalisedValue(
     return processNumberFilterValue(stringToFloat(numberParser, input.getValue()));
 }
 
-function getValidityMessage(
+function getValidityMessageKey(
     fromValue: number | null,
     toValue: number | null,
     isFrom: boolean
