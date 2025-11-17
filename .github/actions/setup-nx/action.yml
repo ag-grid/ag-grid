@@ -24,6 +24,9 @@ outputs:
   type:
     description: 'Type of job execution detected'
     value: ${{ steps.nx_config.outputs.type }}
+  yarn_integrity_ok:
+    description: 'Whether yarn check --integrity succeeded (true/false)'
+    value: ${{ steps.yarn_integrity.outputs.ok }}
 
 runs:
     using: 'composite'
@@ -125,19 +128,43 @@ runs:
             path: |
               node_modules/.yarn-integrity
 
+        - name: Check yarn integrity
+          if: inputs.cache_mode == 'rw'
+          id: yarn_integrity
+          shell: bash
+          run: |
+            set +e
+            yarn check --integrity
+            status=$?
+            if [ "$status" -eq 0 ]; then
+              echo "ok=true" >> $GITHUB_OUTPUT
+            else
+              echo "ok=false" >> $GITHUB_OUTPUT
+            fi
+            # Do not fail the job here; downstream steps will decide what to do
+            exit 0
+
         - name: yarn install
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall == 'true'
           id: yarn_install_slow
           shell: bash
           run: |
-              (yarn check --integrity && yarn postinstall) || yarn install --prefer-offline --ci
+              if [[ "${{ steps.yarn_integrity.outputs.ok }}" == "true" ]]; then
+                yarn postinstall
+              else
+                yarn install --prefer-offline --ci
+              fi
 
         - name: yarn install (skipping postinstall)
           if: inputs.cache_mode == 'rw' && inputs.yarn_postinstall != 'true'
           id: yarn_install_fast
           shell: bash
           run: |
-              yarn check --integrity || yarn install --prefer-offline --ci
+              if [[ "${{ steps.yarn_integrity.outputs.ok }}" != "true" ]]; then
+                yarn install --prefer-offline --ci
+              else
+                echo "node_modules integrity OK; skipping install"
+              fi
 
         - name: Persist post cache yarn integrity file
           if: inputs.cache_mode == 'rw'
