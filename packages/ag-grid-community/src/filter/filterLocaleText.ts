@@ -50,6 +50,8 @@ const FILTER_LOCALE_TEXT = {
     filterSummaryInRange: 'between',
     filterSummaryInRangeValues: (variableValues: string[]) => `(${variableValues[0]}, ${variableValues[1]})`,
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
+    tooBig: (variableValues: string[]) => `Please select a value that is no more than ${variableValues[0]}`,
+    tooSmall: (variableValues: string[]) => `Please select a value that is no less than ${variableValues[0]}`,
 };
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;

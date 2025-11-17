@@ -4,6 +4,8 @@ import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
+import { translateForFilter } from '../../filterLocaleText';
+import type { FilterLocaleTextKey } from '../../filterLocaleText';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
@@ -60,7 +62,11 @@ export class NumberFilter extends SimpleFilter<
             () => {
                 const fromValue = getNormalisedValue(parser, from);
                 const toValue = getNormalisedValue(parser, to);
-                (isFrom ? from : to).setCustomValidity(getValidityMessage(fromValue, toValue, isFrom));
+                const filterLocaleKey = getValidityMessage(fromValue, toValue, isFrom);
+                const validityMessage = filterLocaleKey
+                    ? translateForFilter(this, filterLocaleKey, [String(isFrom ? toValue : fromValue)])
+                    : '';
+                (isFrom ? from : to).setCustomValidity(validityMessage);
             };
 
         this.addManagedListeners(from, {
@@ -181,10 +187,14 @@ function getNormalisedValue(
     return processNumberFilterValue(stringToFloat(numberParser, input.getValue()));
 }
 
-function getValidityMessage(fromValue: number | null, toValue: number | null, isFrom: boolean): string {
+function getValidityMessage(
+    fromValue: number | null,
+    toValue: number | null,
+    isFrom: boolean
+): FilterLocaleTextKey | null {
     const isInvalid = fromValue != null && toValue != null && fromValue > toValue;
     if (!isInvalid) {
-        return '';
+        return null;
     }
-    return `Please select a value that is no ${isFrom ? 'more' : 'less'} than ${isFrom ? toValue : fromValue}`;
+    return isFrom ? 'tooBig' : 'tooSmall';
 }
