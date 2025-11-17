@@ -58,8 +58,7 @@ runs:
               fi
 
         - name: Restore node_modules
-          if: inputs.cache_mode == 'ro'
-          id: cache_ro
+          id: restore_node_modules
           uses: actions/cache/restore@v4
           with:
             path: |
@@ -72,22 +71,6 @@ runs:
               external/*/node_modules/
             key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
             restore-keys: node_modules-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
-
-        - name: Cache node_modules
-          if: inputs.cache_mode == 'rw'
-          id: cache_rw
-          uses: actions/cache@v4
-          with:
-              path: |
-                  node_modules/
-                  packages/*/node_modules/
-                  plugins/*/node_modules/
-                  community-modules/*/node_modules/
-                  testing/*/node_modules/
-                  documentation/*/node_modules/
-                  external/*/node_modules/
-              key: node_modules-${{ runner.os }}-${{hashFiles('yarn.lock','patches/*.patch', 'packages/*/package.json', 'plugins/*/package.json', 'community-modules/*/package.json', 'documentation/*/package.json', 'testing/*/package.json', 'external/*/package.json')}}
-              restore-keys: node_modules-${{ runner.os }}- # Take any latest cache if failed to find it for current yarn.lock
 
         - name: Cache Nx
           if: inputs.cache_mode == 'rw' && inputs.nx_restore != 'false'
@@ -204,8 +187,8 @@ runs:
               echo "Post exists? $( [ -f node_modules/.yarn-integrity ] && echo yes || echo no )"
             fi
 
-        - name: Save Cache Again After Verification Failure
-          if: inputs.cache_mode == 'rw' && steps.yarn_integrity.outputs.ok != 'true'
+        - name: Save Cache
+          if: (inputs.cache_mode == 'rw' || steps.restore_node_modules.outputs.cache-hit != 'true') && steps.yarn_integrity.outputs.ok != 'true'
           id: cache_again_rw
           uses: actions/cache/save@v4
           with:
