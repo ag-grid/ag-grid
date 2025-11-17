@@ -444,6 +444,7 @@ jobs:
 
       - name: Merge JUnit Report XMLs
         run: |
+          YARN_REGISTRY=
           yarn global add junit-report-merger
           reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
           mkdir -p reports/
