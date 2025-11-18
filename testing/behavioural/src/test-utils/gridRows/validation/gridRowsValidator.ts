@@ -252,10 +252,6 @@ export class GridRowsValidator {
             this.validatePivotLeafRow(state, row);
         }
 
-        if (!gridRows.treeData && row.group && row.level >= 0) {
-            this.validateGroupData(state, row);
-        }
-
         if (row.detail && gridRows.isRowDisplayed(row)) {
             const detailGridInfo = row.detailGridInfo;
             if (!detailGridInfo) {
@@ -268,49 +264,6 @@ export class GridRowsValidator {
             this.validate(detailGrid);
         }
     }
-
-    private validateGroupData(state: ValidationState, row: RowNode): void {
-        const { gridRows } = state;
-        const rowErrors = this.errors.get(row);
-        const rowGroupColumns = gridRows.api.getRowGroupColumns();
-        if (row.level >= rowGroupColumns.length) {
-            return;
-        }
-
-        const column = rowGroupColumns[row.level];
-        if (!column) {
-            return;
-        }
-
-        const key = column.getColDef().field ?? column.getColId();
-        if (key == null) {
-            return;
-        }
-
-        if (!row.groupData) {
-            rowErrors.add('group row is missing groupData');
-            return;
-        }
-
-        if (row.key !== undefined && row.key !== null) {
-            const rowGroupColumnId = column.getColId();
-            rowErrors.expectValueEqual(`groupData.${rowGroupColumnId}`, row.groupData[rowGroupColumnId], row.key);
-
-            const showRowGroupColumns = state.showRowGroupColumns;
-            for (let i = 0, len = showRowGroupColumns.length; i < len; ++i) {
-                const showColumn = showRowGroupColumns[i];
-                if (!showColumn.isRowGroupDisplayed(rowGroupColumnId)) {
-                    continue;
-                }
-                rowErrors.expectValueEqual(
-                    `groupData.${showColumn.getColId()}`,
-                    row.groupData[showColumn.getColId()],
-                    row.key
-                );
-            }
-        }
-    }
-
     private collectShowRowGroupColumns(api: GridRows['api']): AgColumn[] {
         const columns = api.getColumns() ?? [];
         const displayedColumns = api.getAllDisplayedColumns?.() ?? [];

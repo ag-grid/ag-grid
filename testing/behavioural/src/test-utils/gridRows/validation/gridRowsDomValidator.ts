@@ -183,7 +183,9 @@ export class GridRowsDomValidator {
         if (isGroupCol) {
             let childCountText = '';
             const suppressCount = this.isGroupCountSuppressed(gridRows, column, true);
-            const childCount = suppressCount ? 0 : row.allChildrenCount;
+            const rowId = row.id != null ? String(row.id) : '';
+            const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
+            const childCount = suppressCount || isFooterRow ? 0 : row.allChildrenCount;
             if (childCount) {
                 childCountText = `(${childCount})`;
             }
@@ -222,7 +224,7 @@ export class GridRowsDomValidator {
 
             if (expectedGroupText !== undefined && !shouldIgnoreMismatch && textContent !== expectedGroupText) {
                 rowErrors.add(
-                    `2HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedGroupText)}, got ${JSON.stringify(textContent)}`
+                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedGroupText)}, got ${JSON.stringify(textContent)}`
                 );
             }
             return;
@@ -251,8 +253,10 @@ export class GridRowsDomValidator {
         }
 
         const suppressCount = this.isGroupCountSuppressed(gridRows, column, false);
+        const rowId = row.id != null ? String(row.id) : '';
+        const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
         let childCountText = '';
-        if (!suppressCount) {
+        if (!suppressCount && !isFooterRow) {
             const childCount = row.allChildrenCount;
             if (childCount) {
                 childCountText = `(${childCount})`;

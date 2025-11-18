@@ -473,52 +473,27 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     private setGroupData(groupNode: RowNode, rowGroupCol: AgColumn | null, leafNode: RowNode | null | undefined): void {
         const { valueSvc, showRowGroupCols } = this.beans;
-
-        let resolvedValue: any = undefined;
         if (rowGroupCol && leafNode) {
             // for full width rows; preserve the value type
-            resolvedValue = valueSvc.getValue(rowGroupCol, leafNode);
+            groupNode.groupValue = valueSvc.getValue(rowGroupCol, leafNode);
         }
 
-        if (resolvedValue === undefined && groupNode.key !== undefined) {
-            resolvedValue = groupNode.key;
+        const groupData: Record<string, any> = {};
+        groupNode.groupData = groupData;
+
+        if (!rowGroupCol) {
+            return;
         }
 
-        if (resolvedValue !== undefined) {
-            groupNode.groupValue = resolvedValue;
-        }
-
-        groupNode.groupData = {};
-
-        const groupColumn = groupNode.rowGroupColumn;
-        if (groupColumn) {
-            const groupColumnId = groupColumn.getColId();
-            const valueForRowGroup = leafNode ? resolvedValue ?? valueSvc.getValue(groupColumn, leafNode) : resolvedValue;
-            if (valueForRowGroup !== undefined) {
-                groupNode.groupData[groupColumnId] = valueForRowGroup;
-                resolvedValue = valueForRowGroup;
-            }
-        }
-
+        const rowGroupColId = rowGroupCol.getId();
         const groupDisplayCols = showRowGroupCols!.columns;
         for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
             const col = groupDisplayCols[i];
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-
-            const groupColumnForDisplay = groupNode.rowGroupColumn;
-            const isRowGroupDisplayed = groupColumnForDisplay !== null && col.isRowGroupDisplayed(groupColumnForDisplay.getId());
-            if (!isRowGroupDisplayed) {
-                continue;
-            }
-
-            let valueForDisplay = resolvedValue;
-            if (valueForDisplay === undefined && groupColumnForDisplay && leafNode) {
-                valueForDisplay = valueSvc.getValue(groupColumnForDisplay, leafNode);
-            }
-
-            if (valueForDisplay !== undefined) {
-                groupNode.groupData[col.getColId()] = valueForDisplay;
+            if (col.isRowGroupDisplayed(rowGroupColId)) {
+                // if maintain group value type, get the value from any leaf node.
+                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
             }
         }
     }
