@@ -433,10 +433,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 return;
             }
             const getModel = () => wrapper?.model ?? null;
-            _updateFilterModel(
+            _updateFilterModel({
                 action,
-                wrapper.filterParams as FilterWrapperParams | undefined,
-                () => {
+                filterParams: wrapper.filterParams as FilterWrapperParams | undefined,
+                getFilterUi: () => {
                     const promise = AgPromise.resolve(wrapper.filter as any);
                     return {
                         created: true,
@@ -447,11 +447,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     };
                 },
                 getModel,
-                () => wrapper?.state ?? { model: getModel() },
-                (state) => updateState(wrapper, state),
-                (newModel) => wrapper.filterParams?.onModelChange(newModel, additionalEventAttributes),
-                wrapper.handler?.processModelToApply?.bind(wrapper.handler)
-            );
+                getState: () => wrapper?.state ?? { model: getModel() },
+                updateState: (state) => updateState(wrapper, state),
+                updateModel: (newModel) => wrapper.filterParams?.onModelChange(newModel, additionalEventAttributes),
+                processModelToApply: wrapper.handler?.processModelToApply?.bind(wrapper.handler),
+            });
         };
         displayParams.onAction = (action, additionalEventAttributes, event) => {
             updateModel(column, action, additionalEventAttributes);

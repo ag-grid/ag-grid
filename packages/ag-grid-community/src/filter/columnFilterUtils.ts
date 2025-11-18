@@ -150,19 +150,22 @@ export function getAndRefreshFilterUi(
     }
 }
 
-export function _updateFilterModel(
-    action: FilterAction,
-    filterParams: FilterWrapperParams | undefined,
-    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-    getModel: () => any,
-    getState: () => FilterDisplayState | undefined,
-    updateState: (state: FilterDisplayState) => void,
-    updateModel: (model: any) => void,
-    processModelToApply?: (model: any) => any
-): void {
+export function _updateFilterModel(params: {
+    action: FilterAction;
+    filterParams?: FilterWrapperParams;
+    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
+    getModel: () => any;
+    getState: () => FilterDisplayState | undefined;
+    updateState: (state: FilterDisplayState) => void;
+    updateModel: (model: any) => void;
+    processModelToApply?: (model: any) => any;
+}): void {
     let state: FilterDisplayState;
     let shouldUpdateModel = false;
     let model: any;
+
+    const { action, filterParams, getFilterUi, getModel, getState, updateState, updateModel, processModelToApply } =
+        params;
 
     switch (action) {
         case 'apply': {
