@@ -1,7 +1,6 @@
-import { _getClientSideRowModel } from 'ag-grid-community';
+import { _getClientSideRowModel, _isExpressionString } from 'ag-grid-community';
 import type { BeanCollection } from 'ag-grid-community';
 
-import { isFormula } from '../functions/utils';
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
@@ -470,7 +469,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
  * parseFormula(beans, '=1+2') // => operation("+", [1,2])
  */
 export const parseFormula = (beans: BeanCollection, formula: string): FormulaNode => {
-    if (!isFormula(formula)) {
+    if (!_isExpressionString(formula)) {
         throw new FormulaParseError('Formulas must begin with =', 0, 1);
     }
     const body = formula.slice(1).trim();
