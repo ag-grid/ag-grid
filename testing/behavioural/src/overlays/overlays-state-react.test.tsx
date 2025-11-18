@@ -46,10 +46,19 @@ describe('ag-grid overlays state (react)', () => {
         rerender(<AgGridReact columnDefs={columnDefs} rowData={[]} />);
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
+    });
 
-        rerender(<AgGridReact columnDefs={columnDefs} rowData={[]} suppressNoRowsOverlay />);
-        expect(hasLoadingOverlay()).toBe(false);
+
+    test('react render suppress no-rows via suppressNoRowsOverlay', () => {
+        render(<AgGridReact columnDefs={columnDefs} rowData={[]} suppressNoRowsOverlay />);
         expect(hasNoRowsOverlay()).toBe(false);
+
+    });
+
+    test('react render suppress no-rows via suppressOverlays', () => {
+        render(<AgGridReact columnDefs={columnDefs} rowData={[]} suppressOverlays={['agNoRowsOverlay']} />);
+        expect(hasNoRowsOverlay()).toBe(false);
+
     });
 
     test('react custom no rows overlay via overlayNoRowsTemplate', () => {

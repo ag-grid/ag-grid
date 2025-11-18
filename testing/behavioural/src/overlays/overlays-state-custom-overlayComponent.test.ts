@@ -35,7 +35,9 @@ describe('ag-grid overlayComponent', () => {
     afterEach(() => {
         gridsManager.reset();
         expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+        expect(hasNoRowsOverlay()).toBeFalsy();
         expect(hasLoadingOverlayWrapper()).toBeFalsy();
+        expect(hasLoadingOverlay()).toBeFalsy();
         expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
@@ -328,7 +330,7 @@ describe('ag-grid overlayComponent', () => {
         expect(capturedParams['my-custom-no-rows-key']).toBeDefined();
     });
 
-    test('overlayComponentSelector takes priority over  loadingOverlayComponent ', () => {
+    test('overlayComponentSelector takes priority over loadingOverlayComponent ', () => {
         const capturedParams: Record<string, any> = {};
 
         const api = gridsManager.createGrid('myGrid', {
@@ -352,7 +354,7 @@ describe('ag-grid overlayComponent', () => {
 
             // point the overlay options at the string keys
             loadingOverlayComponent: 'customLoaderKey1',
-            // noRowsOverlayComponent: 'customNoRowsKey1',
+            noRowsOverlayComponent: 'customNoRowsKey1',
             // start with loading to test loading overlay resolution
             loading: true,
             rowData: [],
@@ -366,14 +368,11 @@ describe('ag-grid overlayComponent', () => {
         api.setGridOption('rowData', []);
         api.setGridOption('loading', false);
 
-        expect(hasNoRowsOverlay()).toBeTruthy();
-
-        expect(document.querySelector('.my-custom-no-rows-key-2')).toBeTruthy();
         expect(document.querySelector('.my-custom-no-rows-key-1')).toBeTruthy();
         expect(capturedParams['my-custom-no-rows-key-1']).toBeDefined();
     });
 
-    test('suppressOverlays: [agLoadingOverlay] disables loading overlay even when forced', () => {
+    test('suppressOverlays: [agLoadingOverlay] does not disables loading overlay forced via activeOverlay', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             suppressOverlays: ['agLoadingOverlay'],
@@ -388,11 +387,12 @@ describe('ag-grid overlayComponent', () => {
 
         api.setGridOption('loading', false);
         api.setGridOption('activeOverlay', 'agLoadingOverlay');
-        expect(hasLoadingOverlay()).toBeFalsy();
-        expect(hasLoadingOverlayWrapper()).toBeFalsy();
+        expect(hasLoadingOverlay()).toBeTruthy();
+        expect(hasLoadingOverlayWrapper()).toBeTruthy();
     });
 
-    test('suppressOverlays: [agNoRowsOverlay] disables no-rows overlay even when forced', () => {
+    test('suppressOverlays: [agNoRowsOverlay] disables no-rows overlay unless forced via activeOverlay', () => {
+        expect(document.querySelector('.my-custom-no-rows-overlay1')).toBeFalsy();
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData: [],
@@ -407,8 +407,8 @@ describe('ag-grid overlayComponent', () => {
         expect(hasNoRowsOverlayWrapper()).toBeFalsy();
 
         api.setGridOption('activeOverlay', 'agNoRowsOverlay');
-        expect(hasNoRowsOverlay()).toBeFalsy();
-        expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+        expect(hasNoRowsOverlayWrapper()).toBeTruthy();
+        expect(hasNoRowsOverlay()).toBeTruthy();
     });
 });
 
@@ -428,6 +428,9 @@ const makeOverlayComp = (paramsMap: Record<string, any>, className: string) => {
         }
         public refresh(p?: any) {
             paramsMap[className] = p;
+        }
+        public destroy() {
+            this.e.remove();
         }
     };
 };
