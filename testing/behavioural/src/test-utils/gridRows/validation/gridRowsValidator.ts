@@ -1,5 +1,5 @@
 import { RowNode } from 'ag-grid-community';
-import type { IRowNode } from 'ag-grid-community';
+import type { AgColumn, IRowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
@@ -25,6 +25,7 @@ interface ValidationState {
     pivotMode: boolean;
     groupHideOpenParents: boolean;
     groupHideParentOfSingleChild: string | boolean;
+    showRowGroupColumns: AgColumn[];
 }
 
 export class GridRowsValidator {
@@ -41,6 +42,7 @@ export class GridRowsValidator {
             pivotMode: !!api.getGridOption('pivotMode'),
             groupHideOpenParents: !!api.getGridOption('groupHideOpenParents'),
             groupHideParentOfSingleChild: api.getGridOption('groupHideParentOfSingleChild') ?? false,
+            showRowGroupColumns: this.collectShowRowGroupColumns(api),
         };
 
         if (gridRows.rootRowNodes.length > 1) {
@@ -250,6 +252,10 @@ export class GridRowsValidator {
             this.validatePivotLeafRow(state, row);
         }
 
+        if (!gridRows.treeData && row.group && row.level >= 0) {
+            this.validateGroupData(state, row);
+        }
+
         if (row.detail && gridRows.isRowDisplayed(row)) {
             const detailGridInfo = row.detailGridInfo;
             if (!detailGridInfo) {
@@ -261,6 +267,67 @@ export class GridRowsValidator {
         if (detailGrid) {
             this.validate(detailGrid);
         }
+    }
+
+    private validateGroupData(state: ValidationState, row: RowNode): void {
+        const { gridRows } = state;
+        const rowErrors = this.errors.get(row);
+        const rowGroupColumns = gridRows.api.getRowGroupColumns();
+        if (row.level >= rowGroupColumns.length) {
+            return;
+        }
+
+        const column = rowGroupColumns[row.level];
+        if (!column) {
+            return;
+        }
+
+        const key = column.getColDef().field ?? column.getColId();
+        if (key == null) {
+            return;
+        }
+
+        if (!row.groupData) {
+            rowErrors.add('group row is missing groupData');
+            return;
+        }
+
+        if (row.key !== undefined && row.key !== null) {
+            const rowGroupColumnId = column.getColId();
+            rowErrors.expectValueEqual(`groupData.${rowGroupColumnId}`, row.groupData[rowGroupColumnId], row.key);
+
+            const showRowGroupColumns = state.showRowGroupColumns;
+            for (let i = 0, len = showRowGroupColumns.length; i < len; ++i) {
+                const showColumn = showRowGroupColumns[i];
+                if (!showColumn.isRowGroupDisplayed(rowGroupColumnId)) {
+                    continue;
+                }
+                rowErrors.expectValueEqual(
+                    `groupData.${showColumn.getColId()}`,
+                    row.groupData[showColumn.getColId()],
+                    row.key
+                );
+            }
+        }
+    }
+
+    private collectShowRowGroupColumns(api: GridRows['api']): AgColumn[] {
+        const columns = api.getColumns() ?? [];
+        const displayedColumns = api.getAllDisplayedColumns?.() ?? [];
+        const displayedSet = new Set(displayedColumns as AgColumn[]);
+        const showRowGroupColumns: AgColumn[] = [];
+        for (let i = 0; i < columns.length; ++i) {
+            const column = columns[i] as AgColumn;
+            if (!displayedSet.has(column)) {
+                continue;
+            }
+            const showRowGroup = column.getColDef().showRowGroup;
+            if (showRowGroup === undefined || showRowGroup === null || showRowGroup === false) {
+                continue;
+            }
+            showRowGroupColumns.push(column);
+        }
+        return showRowGroupColumns;
     }
 
     private validateSiblingArrays(row: RowNode<any>) {

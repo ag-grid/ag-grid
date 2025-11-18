@@ -168,19 +168,19 @@ export class GridRowsDomValidator {
     ) {
         const columnId = column.getColId();
         const textContent = cellElement.textContent?.trim() ?? '';
+        const cellRenderer = column.getColDef()?.cellRenderer;
 
         if (!textContent && columnId === 'ag-Grid-AutoColumn') {
             return; // Skip empty auto column as it might not have text content
         }
 
-        let cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
-        if (cellValue === null) {
-            cellValue = '';
-        }
-        cellValue = String(cellValue).trim();
+        const api = gridRows.api;
+        const cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
 
         const isAutoGroupCol = columnId === 'ag-Grid-AutoColumn' || columnId.startsWith('ag-Grid-AutoColumn-');
-        if (isAutoGroupCol) {
+        const isGroupCol = (!cellRenderer && isAutoGroupCol) || cellRenderer === 'agGroupCellRenderer';
+        if (isGroupCol) {
             let childCountText = '';
             const suppressCount = this.isGroupCountSuppressed(gridRows, column, true);
             const childCount = suppressCount ? 0 : row.allChildrenCount;
@@ -188,13 +188,19 @@ export class GridRowsDomValidator {
                 childCountText = `(${childCount})`;
             }
 
-            const expectedText = cellValue ? `${cellValue} ${childCountText}`.trim() : childCountText;
-
             if (textContent === childCountText) {
                 return;
             }
+
+            if (cellValue === null && textContent === '') {
+                return;
+            }
+
+            let expectedText = stringCellValue ? `${stringCellValue} ${childCountText}` : childCountText;
+            expectedText = expectedText.trim();
+
             if (textContent !== expectedText) {
-                const groupHideOpenParents = !!gridRows.api.getGridOption('groupHideOpenParents');
+                const groupHideOpenParents = !!api.getGridOption('groupHideOpenParents');
                 if (groupHideOpenParents && expectedText.endsWith(textContent)) {
                     return;
                 }
@@ -208,7 +214,7 @@ export class GridRowsDomValidator {
         const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
         const colDef = column.getColDef();
         if (hasGroupRendererDom || !!colDef.showRowGroup) {
-            const expectedGroupText = this.getExpectedGroupCellText(gridRows, row, column, cellValue);
+            const expectedGroupText = this.getExpectedGroupCellText(gridRows, row, column, stringCellValue);
             const shouldIgnoreMismatch =
                 expectedGroupText !== undefined &&
                 gridRows.api.getGridOption('groupHideOpenParents') &&
@@ -216,13 +222,13 @@ export class GridRowsDomValidator {
 
             if (expectedGroupText !== undefined && !shouldIgnoreMismatch && textContent !== expectedGroupText) {
                 rowErrors.add(
-                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedGroupText)}, got ${JSON.stringify(textContent)}`
+                    `2HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedGroupText)}, got ${JSON.stringify(textContent)}`
                 );
             }
             return;
         }
 
-        if (textContent !== cellValue) {
+        if (textContent !== stringCellValue) {
             rowErrors.add(
                 `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(textContent)}`
             );
@@ -233,10 +239,9 @@ export class GridRowsDomValidator {
         gridRows: GridRows<any>,
         row: RowNode<any>,
         column: Column<any>,
-        rawValue: string
+        valueText: string
     ): string | undefined {
         const colDef = column.getColDef();
-        let valueText = rawValue?.trim?.() ?? '';
 
         if (!valueText && colDef.showRowGroup) {
             const groupKey = typeof colDef.showRowGroup === 'string' ? colDef.showRowGroup : column.getColId();

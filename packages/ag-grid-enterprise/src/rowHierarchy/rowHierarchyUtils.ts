@@ -18,6 +18,8 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
 
     onPropChange?(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void;
 
+    onShowRowGroupColsSetChanged(): void;
+
     execute(params: StageExecuteParams<TData>): boolean | undefined | void;
 }
 

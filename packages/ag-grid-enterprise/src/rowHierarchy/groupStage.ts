@@ -39,6 +39,9 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
             this.hasTreeData = true;
             this.treeData = _isTreeData(gos);
         }
+        this.addManagedEventListeners({
+            showRowGroupColsSetChanged: () => this.strategy?.onShowRowGroupColsSetChanged(),
+        });
     }
 
     public override destroy(): void {

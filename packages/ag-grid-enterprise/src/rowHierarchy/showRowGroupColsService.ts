@@ -4,21 +4,29 @@ import type { AgColumn, IShowRowGroupColsService, NamedBean } from 'ag-grid-comm
 export class ShowRowGroupColsService extends BeanStub implements NamedBean, IShowRowGroupColsService {
     beanName = 'showRowGroupCols' as const;
 
-    public readonly showRowGroupCols: AgColumn[] = [];
-    private showRowGroupColsMap: Map<string, AgColumn> | null = null;
+    public readonly columns: AgColumn[] = [];
+    private readonly colsSet = new Set<AgColumn>();
+    private readonly colsMap = new Map<string, AgColumn>();
 
     public override destroy(): void {
         super.destroy();
-        this.showRowGroupColsMap = null;
-        this.showRowGroupCols.length = 0;
+        this.columns.length = 0;
+        this.colsSet.clear();
+        this.colsMap.clear();
     }
 
-    public refresh(): boolean {
+    public refresh(): void {
         const { colModel, rowGroupColsSvc } = this.beans;
 
-        const newMop = new Map<string, AgColumn>();
-        const showRowGroupCols = this.showRowGroupCols;
+        const showRowGroupCols = this.columns;
+
+        const showRowGroupColsSet = this.colsSet;
+        const showRowGroupColsMap = this.colsMap;
+        showRowGroupColsMap.clear();
+
+        const oldShowRowGroupColsLLen = showRowGroupCols.length;
         let showRowGroupColsCount = 0;
+        let showRowGroupColsSetChanged = false;
 
         const cols = colModel.getCols();
         for (let colIdx = 0, colsLen = cols.length; colIdx < colsLen; ++colIdx) {
@@ -27,32 +35,36 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
             const showRowGroup = colDef.showRowGroup;
 
             if (typeof showRowGroup === 'string') {
-                newMop.set(showRowGroup, col);
+                showRowGroupColsMap.set(showRowGroup, col);
             } else if (showRowGroup === true) {
                 const groupColumns = rowGroupColsSvc?.columns;
                 if (groupColumns) {
                     for (let grpColIdx = 0, grpColsLen = groupColumns.length; grpColIdx < grpColsLen; ++grpColIdx) {
-                        newMop.set(groupColumns[grpColIdx].getId(), col);
+                        showRowGroupColsMap.set(groupColumns[grpColIdx].getId(), col);
                     }
                 }
             } else {
                 continue; // skipping this column
             }
 
-            showRowGroupCols[showRowGroupColsCount++] = col; // add to the list
-        }
-        showRowGroupCols.length = showRowGroupColsCount; // trim array size
-
-        if (!mapsEquals((this.showRowGroupColsMap ??= new Map()), newMop)) {
-            this.showRowGroupColsMap = newMop;
-            return true;
+            showRowGroupColsSetChanged ||=
+                showRowGroupColsCount >= oldShowRowGroupColsLLen || !showRowGroupColsSet.has(col);
+            showRowGroupCols[showRowGroupColsCount++] = col;
         }
 
-        return false;
+        showRowGroupColsSetChanged ||= showRowGroupColsCount !== oldShowRowGroupColsLLen;
+        if (showRowGroupColsSetChanged) {
+            showRowGroupCols.length = showRowGroupColsCount; // trim array size
+            showRowGroupColsSet.clear();
+            for (let j = 0; j < showRowGroupColsCount; ++j) {
+                showRowGroupColsSet.add(showRowGroupCols[j]);
+            }
+            this.eventSvc.dispatchEvent({ type: 'showRowGroupColsSetChanged' });
+        }
     }
 
     public getShowRowGroupCol(id: string): AgColumn | undefined {
-        return this.showRowGroupColsMap?.get(id);
+        return this.colsMap.get(id);
     }
 
     public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
@@ -75,19 +87,3 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
         return showRowGroup === true || (showRowGroup != null && showRowGroup === colId);
     }
 }
-
-/** Checks if two maps are equal */
-const mapsEquals = <K, V>(a: ReadonlyMap<K, V>, b: ReadonlyMap<K, V>): boolean => {
-    if (a === b) {
-        return true;
-    }
-    if (a.size !== b.size) {
-        return false;
-    }
-    for (const key of a.keys()) {
-        if (b.get(key) !== a.get(key)) {
-            return false;
-        }
-    }
-    return true;
-};

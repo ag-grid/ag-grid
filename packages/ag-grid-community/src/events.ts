@@ -189,6 +189,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
+        showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
     }
 >;
 
@@ -283,10 +284,7 @@ export interface NewColumnsLoadedEvent<TData = any, TContext = any>
 }
 
 export interface GridColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {
-    /** True if the set of row group columns has changed. */
-    setOfRowGroupColumnsChanged: boolean;
-}
+    extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {

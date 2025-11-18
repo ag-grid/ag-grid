@@ -50,11 +50,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public nestedDataGetter: NestedDataGetter<TData> | null = null;
     private parentIdGetter: ParentIdGetter<TData> = null;
 
-    private groupColsIds: string = '';
-    private groupColsChanged: boolean = true;
     private fillerNodesById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
     private fullReload: boolean = false;
+    private showRowGroupColsChanged: boolean = false;
 
     public postConstruct(): void {
         this.onPropChange(null);
@@ -81,7 +80,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     public override destroy(): void {
         this.nodesToUnselect = null;
-        this.groupColsIds = '';
         this.reset();
         super.destroy();
     }
@@ -101,8 +99,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             this.reset();
         }
 
-        const { changedRowNodes, changedPath, afterColumnsChanged } = params;
-        this.checkGroupColsUpdated(afterColumnsChanged);
+        const { changedRowNodes, changedPath } = params;
 
         const rootNode = params.rowNode;
 
@@ -279,9 +276,9 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     private preprocessRows(rootNode: RowNode<TData>): number {
         const allLeafs = rootNode._leafs!;
         const allLeafsLen = allLeafs.length;
-        const groupColsChanged = this.groupColsChanged;
         let preprocessedCount = 0;
         let treeChanged = false;
+        const showRowGroupColsChanged = this.showRowGroupColsChanged;
         for (let i = 0; i < allLeafsLen; ++i) {
             let current = allLeafs[i];
             while (true) {
@@ -302,8 +299,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
                 parent.treeNodeFlags = parentFlags;
 
-                if (!current.groupData || groupColsChanged) {
-                    current.treeNodeFlags |= FLAG_CHANGED;
+                if (!current.groupData || showRowGroupColsChanged) {
                     this.setGroupData(current, current.key!);
                 }
 
@@ -314,6 +310,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 current = parent;
             }
         }
+        this.showRowGroupColsChanged = false;
         return preprocessedCount | (treeChanged ? FLAG_CHILDREN_CHANGED : 0);
     }
 
@@ -424,7 +421,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     private setGroupData(row: RowNode, key: string): void {
         const groupData: Record<string, string> = {};
-        const groupDisplayCols = this.beans.showRowGroupCols?.showRowGroupCols;
+        const groupDisplayCols = this.beans.showRowGroupCols?.columns;
         row.groupData = groupData;
         if (groupDisplayCols) {
             for (const col of groupDisplayCols) {
@@ -813,17 +810,28 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private checkGroupColsUpdated(afterColumnsChanged: boolean | undefined): void {
-        this.groupColsChanged = false;
-        if (afterColumnsChanged || !this.groupColsIds) {
-            const cols = this.beans.showRowGroupCols?.showRowGroupCols ?? _EmptyArray;
-            let groupColsIds = '';
-            for (let i = 0, len = cols.length; i < len; ++i) {
-                groupColsIds += cols[i].getId() + PATH_KEY_SEPARATOR;
+    public onShowRowGroupColsSetChanged(): void {
+        if (this.beans.colModel.changeEventsDispatching) {
+            this.showRowGroupColsChanged = true;
+            return;
+        }
+        this.showRowGroupColsChanged = false;
+        const allLeafs = this.beans.rowModel.rootNode!._leafs;
+        if (!allLeafs) {
+            return;
+        }
+
+        for (let i = 0, len = allLeafs.length; i < len; ++i) {
+            const rowNode = allLeafs[i];
+            if (rowNode.group) {
+                this.setGroupData(rowNode, rowNode.key!);
             }
-            if (this.groupColsIds !== groupColsIds) {
-                this.groupColsIds = groupColsIds;
-                this.groupColsChanged = true;
+        }
+
+        const fillers = this.fillerNodesById;
+        if (fillers) {
+            for (const rowNode of fillers.values()) {
+                this.setGroupData(rowNode, rowNode.key!);
             }
         }
     }
