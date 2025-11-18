@@ -5,6 +5,7 @@ import type {
     FilterDisplayState,
     FilterHandler,
     FilterHandlerBaseParams,
+    FilterWrapperParams,
     IDoesFilterPassParams,
     IFilter,
     IFilterComp,
@@ -434,6 +435,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             const getModel = () => wrapper?.model ?? null;
             _updateFilterModel(
                 action,
+                wrapper.filterParams as FilterWrapperParams | undefined,
                 () => {
                     const promise = AgPromise.resolve(wrapper.filter as any);
                     return {

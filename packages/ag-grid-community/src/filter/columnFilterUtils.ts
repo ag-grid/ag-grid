@@ -11,6 +11,7 @@ import type {
     FilterHandlerBaseParams,
     FilterHandlerParams,
     FilterModel,
+    FilterWrapperParams,
     IFilterComp,
     IFilterParams,
 } from '../interfaces/iFilter';
@@ -151,6 +152,7 @@ export function getAndRefreshFilterUi(
 
 export function _updateFilterModel(
     action: FilterAction,
+    filterParams: FilterWrapperParams | undefined,
     getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
     getModel: () => any,
     getState: () => FilterDisplayState | undefined,
@@ -182,6 +184,11 @@ export function _updateFilterModel(
                 // wipe other UI state
                 model: null,
             };
+            if (!filterParams?.buttons?.includes('apply')) {
+                // if no apply button, equivalent to reset
+                shouldUpdateModel = true;
+                model = null;
+            }
             break;
         }
         case 'reset': {

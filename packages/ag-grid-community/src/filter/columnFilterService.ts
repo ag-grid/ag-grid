@@ -1714,6 +1714,7 @@ export class ColumnFilterService
             filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
         _updateFilterModel(
             action,
+            filterWrapper?.filterUi?.filterParams as FilterWrapperParams | undefined,
             getFilterUi,
             () => _getFilterModel(this.model, colId),
             () => this.state.get(colId),
@@ -1732,6 +1733,7 @@ export class ColumnFilterService
             if (column) {
                 _updateFilterModel(
                     action,
+                    filter.filterUi?.filterParams as FilterWrapperParams | undefined,
                     () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
                     () => _getFilterModel(this.model, colId),
                     () => this.state.get(colId),
