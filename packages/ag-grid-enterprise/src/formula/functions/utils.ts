@@ -22,10 +22,6 @@ export function take<T>(values: Iterable<T>, name: string, n: number): T[] {
     return out;
 }
 
-export function isFormula(value: unknown): value is `=${string}` {
-    return typeof value === 'string' && value.startsWith('=') && value.length > 1;
-}
-
 export function iterableWithoutBlanks<T>(values: Iterable<T>): Iterable<T> {
     return {
         *[Symbol.iterator]() {

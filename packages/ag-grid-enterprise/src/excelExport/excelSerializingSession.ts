@@ -18,7 +18,14 @@ import type {
     RowNode,
     RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { BaseGridSerializingSession, _addGridCommonParams, _last, _mergeDeep, _warn } from 'ag-grid-community';
+import {
+    BaseGridSerializingSession,
+    _addGridCommonParams,
+    _isExpressionString,
+    _last,
+    _mergeDeep,
+    _warn,
+} from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { addXlsxBodyImageToMap, createXlsxExcel, getXlsxStringPosition } from './excelXlsxFactory';
@@ -624,7 +631,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return false;
         }
         const strValue = String(value);
-        return this.config.autoConvertFormulas && strValue.startsWith('=') && strValue.length > 1;
+        return this.config.autoConvertFormulas && _isExpressionString(strValue);
     }
 
     private isNumerical(value: any): boolean {

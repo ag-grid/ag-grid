@@ -6,7 +6,7 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _isExpressionString } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
@@ -15,7 +15,6 @@ import { FormulaError } from './ast/utils';
 import type { Addr } from './functions/resolver';
 import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
-import { isFormula } from './functions/utils';
 
 /**
  * Cell Formula Cache
@@ -303,7 +302,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Is a value a formula string (starts with '=')
      **/
     public isFormula(value: unknown): value is `=${string}` {
-        return this.formulasEnabled && isFormula(value);
+        return this.formulasEnabled && _isExpressionString(value);
     }
 
     /**

@@ -174,7 +174,7 @@ export {
     _defaultComparator,
 } from './agStack/utils/generic';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
-export { _escapeString, _toString } from './agStack/utils/string';
+export { _escapeString, _toString, _isExpressionString } from './agStack/utils/string';
 export {
     _getActiveDomElement,
     _getRootNode,
