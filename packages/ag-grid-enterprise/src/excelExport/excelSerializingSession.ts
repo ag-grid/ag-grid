@@ -623,7 +623,8 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (value == null) {
             return false;
         }
-        return this.config.autoConvertFormulas && value.toString().startsWith('=');
+        const strValue = String(value);
+        return this.config.autoConvertFormulas && strValue.startsWith('=') && strValue.length > 1;
     }
 
     private isNumerical(value: any): boolean {

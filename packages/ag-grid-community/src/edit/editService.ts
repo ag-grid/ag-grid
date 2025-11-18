@@ -388,13 +388,20 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.bulkRefresh();
 
+        const { rowRenderer, formula } = this.beans;
+
         if (willCancel) {
             // if we cancelled the edit, we need to refresh the rows to remove the pending value and editing styles
-            this.beans.rowRenderer.refreshRows({ rowNodes: Array.from(edits.keys()) });
+            rowRenderer.refreshRows({ rowNodes: Array.from(edits.keys()) });
         }
 
         if (this.isBatchEditing()) {
-            this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
+            if (formula) {
+                formula.refreshFormulas(true);
+            } else {
+                rowRenderer.refreshRows({ suppressFlash: true, force: true });
+            }
+
             if (res && willStop) {
                 this.dispatchBatchEvent('batchEditingStopped', edits);
             }

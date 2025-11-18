@@ -249,7 +249,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && typeof result === 'string' && result.startsWith('=')) {
+        if (this.cellExpressions && typeof result === 'string' && result.startsWith('=') && result.length > 1) {
             const cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }
