@@ -42,6 +42,9 @@ export interface GridRowsOptions<TData = any> {
 
     /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
     nodeDataProps?: string[];
+
+    /** If set to false, the formatter gets disabled when printing the rows. Default is true. */
+    useFormatter?: boolean;
 }
 
 export class GridRows<TData = any> {

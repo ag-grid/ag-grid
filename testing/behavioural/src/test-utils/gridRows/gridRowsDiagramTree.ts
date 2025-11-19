@@ -315,10 +315,23 @@ export class GridRowsDiagramTree {
                 if (row === rootRowNode && isRowNumberCol(columnId)) {
                     continue;
                 }
-                const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });
+
+                const value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false });
+                let formattedValue = value;
+                if (gridRows.options.useFormatter ?? true) {
+                    formattedValue = gridRows.api.getCellValue({
+                        rowNode: row,
+                        colKey: column,
+                        useFormatter: true,
+                    });
+                    if (formattedValue === String(value)) {
+                        formattedValue = value;
+                    }
+                }
+
                 const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
-                if (value !== undefined) {
-                    result += ' ' + diagramColumnId + ':' + JSON.stringify(value);
+                if (value !== undefined || formattedValue) {
+                    result += ' ' + diagramColumnId + ':' + JSON.stringify(formattedValue || value);
                 } else if (!omitUndefined && row.data != null) {
                     result += ' ' + diagramColumnId + ':undefined';
                 }

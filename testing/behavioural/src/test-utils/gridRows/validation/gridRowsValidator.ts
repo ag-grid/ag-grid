@@ -294,6 +294,9 @@ export class GridRowsValidator {
         if (sibling.sibling !== row) {
             this.errors.get(row).add('Sibling does not reference back to the original row');
         }
+        if (sibling.key !== row.key) {
+            this.errors.get(row).add('Sibling key is different');
+        }
         if (sibling.parent !== row.parent) {
             this.errors.get(row).add('Sibling parent is different');
         }

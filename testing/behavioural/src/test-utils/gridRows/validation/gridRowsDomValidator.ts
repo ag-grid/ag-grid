@@ -168,7 +168,12 @@ export class GridRowsDomValidator {
     ) {
         const columnId = column.getColId();
         const textContent = cellElement.textContent?.trim() ?? '';
-        const cellRenderer = column.getColDef()?.cellRenderer;
+        const colDef = column.getColDef();
+        const cellRenderer = colDef?.cellRenderer;
+
+        if (this.validateCheckboxCell(cellElement, row, column, rowErrors, gridRows)) {
+            return;
+        }
 
         if (!textContent && columnId === 'ag-Grid-AutoColumn') {
             return; // Skip empty auto column as it might not have text content
@@ -214,7 +219,6 @@ export class GridRowsDomValidator {
         }
 
         const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
-        const colDef = column.getColDef();
         if (hasGroupRendererDom || !!colDef.showRowGroup) {
             const expectedGroupText = this.getExpectedGroupCellText(gridRows, row, column, stringCellValue);
             const shouldIgnoreMismatch =
@@ -285,5 +289,58 @@ export class GridRowsDomValidator {
         }
 
         return false;
+    }
+
+    private validateCheckboxCell(
+        cellElement: Element,
+        row: RowNode<any>,
+        column: Column<any>,
+        rowErrors: GridRowErrors<any>,
+        gridRows: GridRows<any>
+    ): boolean {
+        const columnId = column.getColId();
+        if (columnId === 'ag-Grid-SelectionColumn') {
+            return false;
+        }
+
+        const colDef = column.getColDef();
+        const usesCheckboxRenderer = colDef?.cellRenderer === 'agCheckboxCellRenderer';
+        const checkboxElement = cellElement.querySelector(
+            '.ag-checkbox-input-wrapper,[aria-checked],[role="checkbox"],.ag-checkbox'
+        );
+        if (!usesCheckboxRenderer && !checkboxElement) {
+            return false;
+        }
+
+        const cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column });
+
+        if (!checkboxElement) {
+            return true;
+        }
+
+        let expectedAria: string | null = null;
+        if (cellValue === true) {
+            expectedAria = 'true';
+        } else if (cellValue === false) {
+            expectedAria = 'false';
+        } else if (cellValue == null) {
+            expectedAria = 'mixed';
+        }
+
+        if (expectedAria === null) {
+            return true;
+        }
+
+        const ariaSource = checkboxElement?.hasAttribute('aria-checked')
+            ? checkboxElement
+            : checkboxElement?.querySelector('[aria-checked]');
+        const ariaChecked = ariaSource?.getAttribute('aria-checked') ?? '';
+        if (ariaChecked !== expectedAria) {
+            rowErrors.add(
+                `HTML checkbox state mismatch for column id:"${columnId}", expected aria-checked=${expectedAria}, got ${ariaChecked}`
+            );
+        }
+
+        return true;
     }
 }

@@ -1029,6 +1029,12 @@ export interface Props<TData> {
          * @agModule `RowDragModule`
          */
     rowDragManaged?: boolean,
+    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
+         * managed dragging only reorders rows inside their existing group.
+         * @default false
+         * @agModule `RowDragModule`
+         */
+    refreshAfterGroupEdit?: boolean,
     /** Used if rowDragManaged is enabled and treeData is enabled,
          * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
          * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
@@ -2090,6 +2096,7 @@ export function getProps() {
         suppressMaxRenderedRowRestriction: undefined,
         suppressRowVirtualisation: undefined,
         rowDragManaged: undefined,
+        refreshAfterGroupEdit: undefined,
         rowDragInsertDelay: undefined,
         suppressRowDrag: undefined,
         suppressMoveWhenRowDragging: undefined,
