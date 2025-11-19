@@ -138,14 +138,12 @@ In this example, the column `rankingChange` uses the following sort definition:
 
 const gridOptions = {
     defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-        unSortIcon: true,
+        // ... other default colDef properties
+        unSortIcon: true, // to show no-sort direction icon when applicable
     },
 
     columnDefs: [
-        { field: 'athlete' },
-        { field: 'year' },
+        // ... other columns 
         { field: 'rankingChange', sortable: true, sortDef: { type: 'absolute' } },
     ],
 };
