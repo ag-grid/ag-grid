@@ -10,7 +10,7 @@ import { _getHeaderCompDetails } from '../../../components/framework/userCompUti
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _getSuppressColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -619,9 +619,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshAriaCellSelection(): void {
         let description: string | null = null;
         const { gos, column, beans } = this;
-        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const enableColumnSelection = _getEnableColumnSelection(gos);
 
-        if (!suppressColumnSelection) {
+        if (enableColumnSelection) {
             const translate = this.getLocaleTextFunc();
             const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(

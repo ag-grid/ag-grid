@@ -2958,10 +2958,10 @@ export interface CellSelectionOptions<TData = any> {
      */
     enableHeaderHighlight?: boolean;
     /**
-     * If `true`, prevents selection of a column of cells when CTRL+clicking the column header.
+     * If `true`, allows selection of a column of cells when clicking the column header.
      * @default false
      */
-    suppressColumnSelection?: boolean;
+    enableColumnSelection?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */

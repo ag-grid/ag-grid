@@ -8,7 +8,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
-import { _addGridCommonParams, _getSuppressColumnSelection } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _getActiveDomElement } from '../../../main';
@@ -268,7 +268,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             contextmenu: contextMenuListener,
         });
 
-        comp.toggleCss('ag-header-group-cell-selectable', !_getSuppressColumnSelection(gos));
+        comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(gos));
         const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(this.column, eHeaderCompWrapper);
         if (mouseListener) {
             this.createManagedBean(mouseListener);
@@ -400,9 +400,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private refreshAnnouncement(): void {
         let description: string | undefined;
         const { gos, column, beans } = this;
-        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const enableColumnSelection = _getEnableColumnSelection(gos);
 
-        if (!suppressColumnSelection) {
+        if (enableColumnSelection) {
             const translate = this.getLocaleTextFunc();
             const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(

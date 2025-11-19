@@ -16,10 +16,6 @@ export class HeaderGroupCellMouseListenerFeature extends BeanStub {
     }
 
     private onClick(event: MouseEvent): void {
-        const { rangeSvc } = this.beans;
-
-        if (event.ctrlKey || event.metaKey) {
-            rangeSvc?.handleColumnSelection(this.column, event);
-        }
+        this.beans.rangeSvc?.handleColumnSelection(this.column, event);
     }
 }

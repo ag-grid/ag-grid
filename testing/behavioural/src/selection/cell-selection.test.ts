@@ -122,7 +122,9 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -150,7 +152,7 @@ describe('Cell Selection', () => {
                 columnDefs,
                 rowData: rowData.concat(rowData),
                 cellSelection: {
-                    suppressColumnSelection: false,
+                    enableColumnSelection: true,
                 },
                 pagination: true,
                 paginationPageSize: 5,
@@ -180,7 +182,9 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -205,7 +209,7 @@ describe('Cell Selection', () => {
                 columnDefs,
                 rowData,
                 cellSelection: {
-                    suppressColumnSelection: false,
+                    enableColumnSelection: true,
                 },
             });
 
@@ -240,7 +244,9 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
                 enableRowPinning: true,
                 isRowPinned: (node) => {
                     if (node.data?.year < 2010) {
@@ -270,7 +276,9 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
                 enableRowPinning: true,
                 isRowPinned: (node) => {
                     if (node.data?.year < 2010) {
@@ -348,7 +356,9 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -391,7 +401,9 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -433,7 +445,9 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -458,7 +472,9 @@ describe('Cell Selection', () => {
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: true,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -478,15 +494,13 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['sport', 'amount', 'day']], api);
         });
 
-        test('suppressColumnSelection prevents column selection with mouse', async () => {
+        test('Disabling column selection prevents column selection with mouse', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
                 columnDefs,
                 rowData,
-                cellSelection: {
-                    suppressColumnSelection: true,
-                },
+                cellSelection: true,
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
@@ -514,6 +528,7 @@ describe('Cell Selection', () => {
                 columnDefs,
                 rowData,
                 cellSelection: {
+                    enableColumnSelection: true,
                     suppressMultiRanges: true,
                 },
             });
@@ -541,6 +556,7 @@ describe('Cell Selection', () => {
                 columnDefs,
                 rowData,
                 cellSelection: {
+                    enableColumnSelection: true,
                     suppressMultiRanges: true,
                 },
             });
@@ -587,7 +603,7 @@ describe('Cell Selection', () => {
                     },
                 ],
                 rowData,
-                cellSelection: { suppressMultiRanges: true },
+                cellSelection: { enableColumnSelection: true, suppressMultiRanges: true },
             });
 
             const gridDiv = getGridElement(api)! as HTMLElement;
