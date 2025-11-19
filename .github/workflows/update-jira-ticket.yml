@@ -158,19 +158,15 @@ jobs:
                         content.push(paragraph([
                             txt(`[This issue was `),
                             link('transitioned', `https://github.com/${owner}/${repo}/pull/${pull_number}`),
-                            txt(` from '${from}' to '${to}' column by `),
-                            link('CI workflow', runUrl),
-                            txt('.]')
+                            txt(` from '${from}' to '${to}' column.]`)
                         ]));
                         await transitionJiraIssue(issue, nextTransition.id);
                         ghCommentBody ||= `Transitioned JIRA ticket(s):\n`;
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
                     } else {
                         content.push(paragraph([
-                            txt(`[Triggered from `),
-                            link(`PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
-                            txt(' by '),
-                            link('CI workflow', runUrl),
+                            txt(`[This issue was `),
+                            link(`mentioned by PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
                             txt('.]')
                         ]));
                     }
