@@ -446,7 +446,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const id = row.id!;
             if (row.key !== id) {
                 row.key = id;
-                setGroupData(row, null);
+                row.groupData = null;
+                const sibling = row.sibling;
+                if (sibling) {
+                    sibling.key = id;
+                    sibling.groupData = null;
+                }
             }
         }
     }
@@ -482,7 +487,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 const id = row.id!;
                 if (row.key !== id) {
                     row.key = id;
-                    setGroupData(row, null);
+                    row.groupData = null;
+                    const sibling = row.sibling;
+                    if (sibling) {
+                        sibling.key = id;
+                        sibling.groupData = null;
+                    }
                 }
             } else {
                 row.treeParent ??= rootNode;
@@ -498,7 +508,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const id = row.id!;
             if (row.key !== id) {
                 row.key = id;
-                setGroupData(row, null);
+                row.groupData = null;
+                const sibling = row.sibling;
+                if (sibling) {
+                    sibling.key = id;
+                    sibling.groupData = null;
+                }
             }
         }
     }
@@ -534,12 +549,14 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const key = path[pathLen - 1];
             if (node.key !== key) {
                 node.key = key;
-                if (node.groupData) {
-                    setGroupData(node, null);
-
-                    // trigger any data change events or group will not update with the new key
-                    node.setData(node.data!);
+                node.groupData = null;
+                const sibling = node.sibling;
+                if (sibling) {
+                    sibling.key = key;
+                    sibling.groupData = null;
                 }
+                // trigger any data change events or group will not update with the new key
+                node.setData(node.data!);
             }
             const pathKey = path.join(PATH_KEY_SEPARATOR);
             paths.set(node, pathKey); // Cache the path key for faster access
