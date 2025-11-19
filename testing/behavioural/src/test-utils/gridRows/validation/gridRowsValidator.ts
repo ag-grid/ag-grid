@@ -205,7 +205,7 @@ export class GridRowsValidator {
             );
         }
 
-        this.validateSiblingArrays(row);
+        this.validateSibling(row);
 
         if (csrm) {
             const childrenAfterGroupSet = this.validateChildren(state, row, 'childrenAfterGroup', null);
@@ -283,23 +283,52 @@ export class GridRowsValidator {
         return showRowGroupColumns;
     }
 
-    private validateSiblingArrays(row: RowNode<any>) {
-        if (row.sibling) {
-            if (row.sibling.childrenAfterGroup !== row.childrenAfterGroup) {
-                this.errors.get(row).add('Sibling childrenAfterGroup is different');
-            }
-            if (row.sibling.childrenAfterFilter !== row.childrenAfterFilter) {
-                this.errors.get(row).add('Sibling childrenAfterFilter is different');
-            }
-            if (row.sibling.childrenAfterAggFilter !== row.childrenAfterAggFilter) {
-                this.errors.get(row).add('Sibling childrenAfterAggFilter is different');
-            }
-            if (row.sibling.childrenAfterSort !== row.childrenAfterSort) {
-                this.errors.get(row).add('Sibling childrenAfterSort is different');
-            }
-            if (row.sibling.allLeafChildren !== row.allLeafChildren) {
-                this.errors.get(row).add('Sibling allLeafChildren is different');
-            }
+    private validateSibling(row: RowNode<any>) {
+        const sibling = row.sibling;
+        if (!sibling) {
+            return;
+        }
+        if (sibling === row) {
+            this.errors.get(row).add('Row references itself as a sibling');
+        }
+        if (sibling.sibling !== row) {
+            this.errors.get(row).add('Sibling does not reference back to the original row');
+        }
+        if (sibling.parent !== row.parent) {
+            this.errors.get(row).add('Sibling parent is different');
+        }
+        if (sibling.level !== row.level) {
+            this.errors.get(row).add('Sibling level is different');
+        }
+        if (sibling.detail) {
+            this.errors.get(row).add('Sibling is a detail row');
+        }
+        if (row.footer === sibling.footer) {
+            this.errors.get(row).add('Sibling footer state should be opposite');
+        }
+        if (row.footer && (!row.id || !row.id.startsWith('rowGroupFooter_'))) {
+            this.errors.get(row).add('Footer row must have id starting with "rowGroupFooter_"');
+        }
+        if (sibling.footer && (!sibling.id || !sibling.id.startsWith('rowGroupFooter_'))) {
+            this.errors.get(row).add('Sibling footer row must have id starting with "rowGroupFooter_"');
+        }
+        if (sibling.groupData !== row.groupData) {
+            this.errors.get(row).add('Sibling groupData is different');
+        }
+        if (sibling.childrenAfterGroup !== row.childrenAfterGroup) {
+            this.errors.get(row).add('Sibling childrenAfterGroup is different');
+        }
+        if (sibling.childrenAfterFilter !== row.childrenAfterFilter) {
+            this.errors.get(row).add('Sibling childrenAfterFilter is different');
+        }
+        if (sibling.childrenAfterAggFilter !== row.childrenAfterAggFilter) {
+            this.errors.get(row).add('Sibling childrenAfterAggFilter is different');
+        }
+        if (sibling.childrenAfterSort !== row.childrenAfterSort) {
+            this.errors.get(row).add('Sibling childrenAfterSort is different');
+        }
+        if (sibling.allLeafChildren !== row.allLeafChildren) {
+            this.errors.get(row).add('Sibling allLeafChildren is different');
         }
     }
 

@@ -661,7 +661,7 @@ describe('ag-grid grouping simple data', () => {
             columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'x' }, { field: 'z' }],
             animateRows: false,
             groupDefaultExpanded: -1,
-            autoGroupColumnDef: { headerName: 'Group', colId: 'zzz' },
+            autoGroupColumnDef: { headerName: 'Group' },
             rowData,
             getRowId: (params) => params.data.id,
         });
@@ -689,7 +689,7 @@ describe('ag-grid grouping simple data', () => {
         `);
 
         api.updateGridOptions({
-            autoGroupColumnDef: { headerName: 'Group', field: 'group', colId: 'xxx' },
+            autoGroupColumnDef: { headerName: 'Group', field: 'group' },
         });
 
         await gridRows.check(`
@@ -708,7 +708,7 @@ describe('ag-grid grouping simple data', () => {
         `);
 
         api.updateGridOptions({
-            autoGroupColumnDef: { headerName: 'Group', field: 'z', colId: 'yyy' },
+            autoGroupColumnDef: { headerName: 'Group', field: 'z' },
         });
 
         await gridRows.check(`
