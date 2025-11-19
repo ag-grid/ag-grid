@@ -132,9 +132,7 @@ describe('Cell Selection', () => {
             const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
             const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport']], api);
 
@@ -145,7 +143,46 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['sport'], ['year']], api);
         });
 
-        test('CTRL-clicking a column header only selects cells on the current page', async () => {
+        test('clicking selects column and clears all other ranges', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs,
+                rowData,
+                cellSelection: {
+                    enableColumnSelection: true,
+                },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
+
+            const yearCol = api.getColumn('year')!;
+            const amountCol = api.getColumn('amount')!;
+
+            api.addCellRange({
+                columns: [yearCol, amountCol],
+                columnStart: yearCol,
+                columnEnd: amountCol,
+                rowStartIndex: 2,
+                rowStartPinned: null,
+                rowEndIndex: 4,
+                rowEndPinned: null,
+            });
+
+            await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['sport']], api);
+            expect(api.getCellRanges()).toHaveLength(1);
+
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['year']], api);
+        });
+
+        test('clicking a column header only selects cells on the current page', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -163,9 +200,7 @@ describe('Cell Selection', () => {
             const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
             const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport']], api);
 
@@ -176,7 +211,7 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['sport'], ['year']], api);
         });
 
-        test('CTRL-SHIFT-clicking a column selects all columns in the range', async () => {
+        test('SHIFT-clicking a column selects all columns in the range, CTRL-SHIFT-click is additive', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -190,16 +225,31 @@ describe('Cell Selection', () => {
             const gridDiv = getGridElement(api)! as HTMLElement;
 
             const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
             const amountHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('amount'));
+            const dayHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(amountHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Shift}{/Control}');
+            await userSession.keyboard('{/Shift}');
 
             assertColumnsSelected([['sport', 'year', 'amount']], api);
+
+            await userSession.click(dayHeaderCell.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['day']], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['day'], ['year']], api);
+
+            await userSession.keyboard('{Shift>}');
+            await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
+
+            assertColumnsSelected([['day'], ['sport', 'year']], api);
         });
 
         test('Select range of columns, deselect middle of range, CTRL-SHIFT-click outside of range', async () => {
@@ -220,13 +270,13 @@ describe('Cell Selection', () => {
             const amountHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('amount'));
             const dayHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(amountHeaderCell.querySelector('.ag-header-cell-label')!);
             await userSession.keyboard('{/Shift}');
 
+            await userSession.keyboard('{Control>}');
             await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
 
             assertColumnsSelected([['sport', 'amount']], api);
@@ -238,7 +288,7 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['year', 'amount', 'day']], api);
         });
 
-        test('CTRL-click column header selects cells in pinned rows as well', async () => {
+        test('click column header selects cells in pinned rows as well', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -263,9 +313,7 @@ describe('Cell Selection', () => {
 
             const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['sport']], api);
         });
@@ -333,7 +381,7 @@ describe('Cell Selection', () => {
             expect(ranges2[0].columns[0]).toBe(yearCol);
         });
 
-        test('CTRL-click group column selects all child columns', async () => {
+        test('click group column selects all child columns, CTRL-click deselects child columns', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -365,9 +413,7 @@ describe('Cell Selection', () => {
 
             const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('0_0'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
-            await userSession.keyboard('{/Control}');
 
             assertColumnsSelected([['year', 'amount']], api);
 
@@ -411,9 +457,7 @@ describe('Cell Selection', () => {
             const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('0_0'));
             const yearHeader = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
-            await userSession.keyboard('{/Control}');
 
             await userSession.keyboard('{Control>}');
             await userSession.click(yearHeader.querySelector('.ag-header-cell-label')!);
@@ -422,7 +466,7 @@ describe('Cell Selection', () => {
             assertColumnsSelected([['amount']], api);
         });
 
-        test('CTRL-SHIFT-click group column and partial selections', async () => {
+        test('SHIFT-click group column and partial selections', async () => {
             const userSession = userEvent.setup();
 
             const [api] = await createGrid({
@@ -455,13 +499,11 @@ describe('Cell Selection', () => {
             const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
             const yearHeader = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(yearHeader.querySelector('.ag-header-cell-label')!);
-
-            await userSession.keyboard('{/Shift}{/Control}');
+            await userSession.keyboard('{/Shift}');
 
             assertColumnsSelected([['sport', 'year']], api);
         });
@@ -482,14 +524,13 @@ describe('Cell Selection', () => {
             const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
             const dayHeader = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
 
             api.applyColumnState({ state: [{ colId: 'year', hide: true }] });
 
             await userSession.keyboard('{Shift>}');
             await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Shift}{/Control}');
+            await userSession.keyboard('{/Shift}');
 
             assertColumnsSelected([['sport', 'amount', 'day']], api);
         });
@@ -508,16 +549,10 @@ describe('Cell Selection', () => {
             const sportHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
             const yearHeaderCell = getByTestId(gridDiv, agTestIdFor.headerCell('year'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Control}');
-
             assertColumnsSelected([], api);
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(yearHeaderCell.querySelector('.ag-header-cell-label')!);
-            await userSession.keyboard('{/Control}');
-
             assertColumnsSelected([], api);
         });
 
@@ -538,7 +573,6 @@ describe('Cell Selection', () => {
             const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
             const dayHeader = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
 
-            await userSession.keyboard('{Control>}');
             await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
 
             assertColumnsSelected([['sport']], api);
