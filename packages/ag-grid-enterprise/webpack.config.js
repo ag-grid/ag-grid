@@ -15,6 +15,11 @@ module.exports = ({ production = false, minify = false, styles = true, entry = '
             enforce: 'pre',
             use: ['source-map-loader'],
         });
+        rules.push({
+            test: /\.esm.mjs$/,
+            enforce: 'pre',
+            use: ['source-map-loader'],
+        });
 
         rules.push({
             test: /\.tsx?$/,

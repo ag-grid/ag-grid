@@ -78,7 +78,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RowGroupingPanelModule: 73.57,
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,
-    SetFilterModule: 152.16,
+    SetFilterModule: 157.44,
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,
@@ -101,7 +101,7 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 151 },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 155.55 },
     {
         modules: [
             'TextFilterModule',

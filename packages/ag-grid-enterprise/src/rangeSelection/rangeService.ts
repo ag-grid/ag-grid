@@ -38,6 +38,7 @@ import {
     _getRowBelow,
     _getRowCtrlForEventTarget,
     _getRowNode,
+    _getSuppressColumnSelection,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
     _isDomLayout,
@@ -1264,6 +1265,11 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
      */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void {
         const { gos, beans, columnRangeSelectionCtx: ctx, cellRanges } = this;
+        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        if (suppressColumnSelection) {
+            return;
+        }
+
         const suppressMultiRanges = _getSuppressMultiRanges(gos);
         const hasRanges = cellRanges.length > 0;
 

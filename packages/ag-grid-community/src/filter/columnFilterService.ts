@@ -1712,17 +1712,18 @@ export class ColumnFilterService
         const filterWrapper = this.cachedFilter(column);
         const getFilterUi = () =>
             filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
-        _updateFilterModel(
+        _updateFilterModel({
             action,
+            filterParams: filterWrapper?.filterUi?.filterParams as FilterWrapperParams | undefined,
             getFilterUi,
-            () => _getFilterModel(this.model, colId),
-            () => this.state.get(colId),
-            (state) => this.updateState(column, state),
-            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
-            filterWrapper?.isHandler
+            getModel: () => _getFilterModel(this.model, colId),
+            getState: () => this.state.get(colId),
+            updateState: (state) => this.updateState(column, state),
+            updateModel: (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
+            processModelToApply: filterWrapper?.isHandler
                 ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
-                : undefined
-        );
+                : undefined,
+        });
     }
 
     public updateAllModels(action: FilterAction, additionalEventAttributes?: any): void {
@@ -1730,13 +1731,14 @@ export class ColumnFilterService
         this.allColumnFilters.forEach((filter, colId) => {
             const column = this.beans.colModel.getColDefCol(colId);
             if (column) {
-                _updateFilterModel(
+                _updateFilterModel({
                     action,
-                    () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-                    () => _getFilterModel(this.model, colId),
-                    () => this.state.get(colId),
-                    (state) => this.updateState(column, state),
-                    (model) => {
+                    filterParams: filter.filterUi?.filterParams as FilterWrapperParams | undefined,
+                    getFilterUi: () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+                    getModel: () => _getFilterModel(this.model, colId),
+                    getState: () => this.state.get(colId),
+                    updateState: (state) => this.updateState(column, state),
+                    updateModel: (model) => {
                         this.updateStoredModel(colId, model);
                         this.dispatchLocalEvent<FilterActionEvent>({
                             type: 'filterAction',
@@ -1745,8 +1747,10 @@ export class ColumnFilterService
                         });
                         promises.push(this.refreshHandlerAndUi(column, model, 'ui'));
                     },
-                    filter?.isHandler ? filter.handler.processModelToApply?.bind(filter.handler) : undefined
-                );
+                    processModelToApply: filter?.isHandler
+                        ? filter.handler.processModelToApply?.bind(filter.handler)
+                        : undefined,
+                });
             }
         });
         if (promises.length) {

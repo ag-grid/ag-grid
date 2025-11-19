@@ -53,7 +53,7 @@ jobs:
                 } = require('./scripts/ci/_utils.mjs');
                 
                 const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
-                const regex = /fix(es)? \[?((AG|RTI)-\d{3,})/gi;
+                const regex = /(fix(es)?)? \[?((AG|RTI)-\d{3,})/gi;
                 const paragraph = content => ({"type": "paragraph",
                     "content": Array.isArray(content) ? content : [content]});
                 const txt = (text) => ({text, type: 'text'});
@@ -86,14 +86,14 @@ jobs:
                 };
                 const pull_number = process.env.PR_ID;
                 const runUrl = process.env.JOB_URL || '#';
-                const issue_keys = [];
+                const issue_keys = {}; 
                 const knownQaColumns = new Set(['QA', 'REVIEWED']);
                 const readOnlyTransitions = new Set(['DONE', 'PENDING RC', 'POST RELEASE', 'READY TO VERIFY', 'ARCHIVE', 'TESTS PASSED', ...knownQaColumns]);
                 if (!pull_number && !process.env.DEBUG_JIRA_TICKET) {
                     throw new Error('Must provide a PR ID or a JIRA ticket.');
                 }
                 if (process.env.DEBUG_JIRA_TICKET) {
-                    issue_keys.push(process.env.DEBUG_JIRA_TICKET);
+                    issue_keys[process.env.DEBUG_JIRA_TICKET] = 'move';
                 }
                 const pr = pull_number ? (await github.rest.pulls.get({owner, repo, pull_number})).data : {};
                 const is_merged = !!pr.merged_at;
@@ -107,26 +107,20 @@ jobs:
                 }
                 const matches = pr.body?.match(regex);
                 if (matches) {
-                    issue_keys.push(...matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()));
+                    const isMove = !!pr.body.match(/fix(es)? \[?((AG|RTI)-\d{3,})/gi);
+                    matches.map(m => m.match(/(AG|RTI)-\d{3,}/i)[0].toUpperCase()).forEach(ticket => issue_keys[ticket] = isMove ? 'move' : 'mention');
                 }
-                if (!issue_keys.length) {
+                if (!Object.keys(issue_keys).length) {
                     throw new Error('No JIRA ticket found in PR body.');
                 }
                 let ghCommentBody = '';
-                await Promise.all([...new Set(issue_keys)].map(async (issue_key) => {
-                    // Move the JIRA ticket to 'the next column' if the PR is merged
-                    const availableTransitions = await getJiraTransitions(issue_key);
-                    if (!availableTransitions || availableTransitions.length === 0) {
-                        console.warn(`No available transitions found for JIRA ticket ${issue_key}.`);
-                        return;
-                    }
-                    const nextTransition = availableTransitions.find(tr => knownQaColumns.has(tr.name.toUpperCase()));
+                await Promise.all(Object.entries(issue_keys).map(async ([issue_key, moveOrMention]) => {
                     const issue = await getJiraIssue(issue_key);
                     if (!issue) {
                         console.warn(`JIRA ticket ${issue_key} not found.`);
                         return;
                     }
-                    const isTransitioning = !readOnlyTransitions.has(issue.fields.status.name.toUpperCase());
+                    const isTransitioning = moveOrMention === 'move' && !readOnlyTransitions.has(issue.fields.status.name.toUpperCase());
                     
                     // blocks section
                     const content = [];
@@ -152,13 +146,20 @@ jobs:
                         }
                     }
                     if (isTransitioning) {
+                        // Move the JIRA ticket to 'the next column' if the PR is merged
+                        const availableTransitions = await getJiraTransitions(issue_key);
+                        if (!availableTransitions || availableTransitions.length === 0) {
+                            console.warn(`No available transitions found for JIRA ticket ${issue_key}.`);
+                            return;
+                        }
+                        const nextTransition = availableTransitions.find(tr => knownQaColumns.has(tr.name.toUpperCase()));
                         const from = issue.fields.status.name;
                         const to = nextTransition.name;
                         content.push(paragraph([
                             txt(`[This issue was `),
                             link('transitioned', `https://github.com/${owner}/${repo}/pull/${pull_number}`),
                             txt(` from '${from}' to '${to}' column by `),
-                            link('the AG Grid CI workflow', runUrl),
+                            link('CI workflow', runUrl),
                             txt('.]')
                         ]));
                         await transitionJiraIssue(issue, nextTransition.id);
@@ -166,10 +167,10 @@ jobs:
                         ghCommentBody += `- [${issue_key}](https://ag-grid.atlassian.net/browse/${issue_key}) to ${to}\n`
                     } else {
                         content.push(paragraph([
-                            txt(`[Triggered from `),
-                            link(`PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
+                            txt(`[This issue was `),
+                            link(`mentioned in PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
                             txt(' by '),
-                            link('the AG Grid CI workflow', runUrl),
+                            link('CI workflow', runUrl),
                             txt('.]')
                         ]));
                     }

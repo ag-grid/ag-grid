@@ -13,25 +13,18 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private readonly context: Context;
-    private readonly eParent: HTMLElement;
 
     constructor(
-        context: Context,
+        private readonly context: Context,
         userCompFactory: UserComponentFactory,
         colDef: ColDef,
         dateComponentParams: IDateParams,
-        eParent: HTMLElement,
+        private readonly eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
     ) {
-        this.context = context;
-        this.eParent = eParent;
-
         const compDetails = _getDateCompDetails(userCompFactory, colDef, dateComponentParams);
-        if (!compDetails) {
-            return;
-        }
-        compDetails.newAgStackInstance().then((dateComp) => {
+
+        compDetails?.newAgStackInstance().then((dateComp) => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);
@@ -105,5 +98,13 @@ export class DateCompWrapper {
 
     public updateParams(params: IDateParams): void {
         this.dateComp?.refresh?.(params);
+    }
+
+    public setCustomValidity(message: string): void {
+        const eInput = this.dateComp?.getGui().querySelector('.ag-input-field-input');
+
+        if (eInput && 'setCustomValidity' in eInput) {
+            (eInput as HTMLInputElement).setCustomValidity(message);
+        }
     }
 }
