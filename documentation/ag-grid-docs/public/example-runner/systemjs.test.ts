@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from 'fs';
-import { join } from 'path;';
+import { join } from 'path';
 import { vi } from 'vitest';
 
 vi.stubGlobal('appLocation', {});
