@@ -324,7 +324,6 @@ export type ResolvableModuleName = Extract<
     | 'SkeletonCellRenderer'
     | 'CheckboxCellRenderer'
     | 'SharedTreeData'
-    | 'GroupEdit'
 >;
 
 /** These are the types that we can display validations for */
