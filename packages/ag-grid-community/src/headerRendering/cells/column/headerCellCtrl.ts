@@ -259,9 +259,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
+        // When column selection is enabled, we require users to use the ALT modifier
+        // to access sorting functionality.
+        const sortFromClick = _getEnableColumnSelection(this.gos) ? e.altKey : true;
 
         if (e.key === KeyCode.SPACE) {
-            if (e.ctrlKey || e.metaKey) {
+            if (!sortFromClick) {
                 this.beans.rangeSvc?.handleColumnSelection(this.column, e);
             } else {
                 this.selectAllFeature?.onSpaceKeyDown(e);

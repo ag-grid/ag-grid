@@ -383,17 +383,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             return;
         }
 
-        const column = this.column;
-        if (e.key === KeyCode.ENTER && this.expandable) {
+        const { column, expandable, gos, beans } = this;
+        if (e.key === KeyCode.ENTER && expandable) {
             const newExpandedValue = !column.isExpanded();
 
-            this.beans.colGroupSvc!.setColumnGroupOpened(
+            beans.colGroupSvc!.setColumnGroupOpened(
                 column.getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );
-        } else if (e.key === KeyCode.SPACE && (e.ctrlKey || e.metaKey)) {
-            this.beans.rangeSvc?.handleColumnSelection(column, e);
+        } else if (e.key === KeyCode.SPACE && _getEnableColumnSelection(gos)) {
+            beans.rangeSvc?.handleColumnSelection(column, e);
         }
     }
 
