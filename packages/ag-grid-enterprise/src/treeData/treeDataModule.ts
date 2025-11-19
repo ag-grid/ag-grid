@@ -17,7 +17,7 @@ import { TreeGroupStrategy } from './treeGroupStrategy';
 export const SharedTreeDataModule: _ModuleWithoutApi = {
     moduleName: 'SharedTreeData',
     version: VERSION,
-    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, StickyRowModule, GroupEditModule],
+    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, StickyRowModule],
 };
 
 /**
@@ -29,5 +29,5 @@ export const TreeDataModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { treeGroupStrategy: TreeGroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule],
+    dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule, GroupEditModule],
 };
