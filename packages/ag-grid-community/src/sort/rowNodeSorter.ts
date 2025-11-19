@@ -147,6 +147,14 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 }
 
+/**
+ * _csrmFirstLeaf gets the first lead child of the row node for CSRM,
+ * it uses sourceRowIndex to identify if the row comes from row data or transaction or not.
+ * Groups and filler nodes have negative sourceRowIndex.
+ *
+ * For SSRM and other view model however we don't have any other way to identify
+ * if the row comes from data or not, so we simply check if data exists on the node.
+ */
 const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
     if (row.data) {
         return row;

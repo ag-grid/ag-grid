@@ -192,13 +192,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 
         const groupEditSvc = this.beans.groupEditSvc;
-        const canSetParent =
-            groupEditSvc?.canSetParent(rowsDrop) ??
-            (sameGrid &&
-                (!!this.beans.groupStage?.treeData ||
-                    (rowsDrop.rowDragManaged &&
-                        !!this.beans.rowGroupColsSvc?.columns?.length &&
-                        this.gos.get('refreshAfterGroupEdit'))));
+        const canSetParent = sameGrid && !!groupEditSvc?.canSetParent(rowsDrop);
 
         let newParent: IRowNode | null = null;
         if (target?.footer) {
@@ -234,18 +228,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         rowsDrop.pointerPos = computePointerPos(target, rowsDrop.y);
 
         const nudger = this.nudger;
-        const canStartGroup = (candidate: IRowNode | null | undefined) =>
-            !!nudger &&
-            !moving &&
-            !!candidate &&
-            candidate !== rootNode &&
-            !candidate.footer &&
-            !candidate.detail &&
-            (candidate.isExpandable?.() || !!candidate.childrenAfterSort?.length);
-
         nudger?.updateGroup(target, moving);
 
-        if (canSetParent && !newParent && nudger) {
+        if (canSetParent && !newParent && nudger && groupEditSvc) {
             if (!target || (yDelta >= 0.5 && target.rowIndex === beans.pageBounds.getLastRow())) {
                 newParent = rootNode; // Dragging outside of the rows, move to last row at the root level
             } else if (rowsDrop.moved && this.targetShouldBeParent(target, rowsDrop.pointerPos, rows)) {
@@ -256,12 +241,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             newParent ??= target?.parent ?? rootNode;
 
             if (
-                canStartGroup(target) &&
+                !moving &&
+                groupEditSvc.canDropStartGroup(target) &&
                 (!newParent || (target && !target.expanded && !!target.childrenAfterSort?.length))
             ) {
                 nudger.startGroup(target);
             }
-        } else if (target && nudger && canStartGroup(target)) {
+        } else if (target && nudger && !moving && groupEditSvc?.canDropStartGroup(target)) {
             nudger.startGroup(target);
         }
 

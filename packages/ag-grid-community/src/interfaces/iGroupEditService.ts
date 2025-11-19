@@ -6,4 +6,5 @@ export interface IGroupEditService {
     isGroupingDrop(rowsDrop: RowsDrop): boolean;
     groupingEditDrop(rowsDrop: RowsDrop): boolean;
     canDropRow(row: IRowNode, rowsDrop: RowsDrop): boolean;
+    canDropStartGroup(target: IRowNode | null | undefined): boolean;
 }

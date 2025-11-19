@@ -15,6 +15,7 @@ import {
     _csrmReorderAllLeafs,
     _getCellByPosition,
     _isClientSideRowModel,
+    _warn,
 } from 'ag-grid-community';
 
 export class GroupEditService extends BeanStub implements IGroupEditService {
@@ -23,11 +24,40 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
+            let groupManagedWarnTimer = 0;
+
+            // Debounced warning, to avoid false positives
+            const groupManagedWarn = () => {
+                if (groupManagedWarnTimer || !this.isGroupManagedWarn()) {
+                    return;
+                }
+                groupManagedWarnTimer = window.setTimeout(() => {
+                    if (!this.isGroupManagedWarn()) {
+                        groupManagedWarnTimer = 0; // reset timer
+                        return;
+                    }
+                    _warn(295); // rowDragManaged and grouping needs refreshAfterGroupEdit
+                }, 1);
+            };
+
             this.addManagedListeners(this.eventSvc, {
+                gridReady: groupManagedWarn,
+                columnRowGroupChanged: groupManagedWarn,
+                cellValueChanged: (event) => this.onCsrmCellChange(event),
                 batchEditingStopped: () => this.flushGroupEdits(),
-                cellValueChanged: (event) => this.onCsrmCellChange(event as CellValueChangedEvent),
             });
+
+            this.addManagedPropertyListeners(['rowDragManaged', 'refreshAfterGroupEdit'], groupManagedWarn);
         }
+    }
+
+    private isGroupManagedWarn(): boolean {
+        const gos = this.gos;
+        return (
+            gos.get('rowDragManaged') &&
+            !gos.get('refreshAfterGroupEdit') &&
+            !!this.beans.rowGroupColsSvc?.columns?.length
+        );
     }
 
     /** Checks if the drop operation described by `rowsDrop` is a grouping edit */
@@ -171,6 +201,16 @@ export class GroupEditService extends BeanStub implements IGroupEditService {
         }
 
         return true;
+    }
+
+    public canDropStartGroup(candidate: IRowNode | null | undefined) {
+        return (
+            !!candidate &&
+            candidate.level >= 0 &&
+            !candidate.footer &&
+            !candidate.detail &&
+            (candidate.isExpandable?.() || !!candidate.childrenAfterSort?.length)
+        );
     }
 
     /** Flushes any pending group edits for batch processing */

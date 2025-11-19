@@ -1,5 +1,5 @@
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
-import { AllCommunityModule, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, _doOnce, createGrid } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
@@ -74,6 +74,7 @@ export class TestGridsManager {
      */
     public reset(): void {
         this.destroyAllGrids();
+        _doOnce._set.clear(); // Clear warnings and doOnce calls
     }
 
     public createGrid<TData = any>(
