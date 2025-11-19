@@ -190,11 +190,9 @@ columnDefs: [
 
 ## Async Values
 
-The `agRichSelectCellEditor` supports asynchronous loading of dropdown values, enabling efficient handling of large datasets and server-side filtering. This feature is ideal for applications requiring dynamic, real-time filtering without loading all data upfront.
+List values can be provided asynchronously to the editor as shown below:
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
-
-Values can be provided as a `Promise<TValue[]>` returned from the `values` function. The editor automatically handles promise resolution and updates the dropdown list accordingly.
 
 For example:
 
@@ -221,7 +219,9 @@ columnDefs: [
 
 ### Server-Side Filtering
 
-For advanced filtering scenarios, combine async `values` callback, `allowTyping`, `filterList`, and `filterListAsync` to enable server-side filtering.
+For advanced filtering scenarios, combine async `values` callback, `allowTyping`, `filterList`, and `filterListAsync` to enable server-side filtering. This is shown in the example below:
+
+{% gridExampleRunner title="Rich Select Server-Side Filtering" name="rich-select-full-async-values" /%}
 
 When `filterListAsync` is `true`, the cell editor:
 
