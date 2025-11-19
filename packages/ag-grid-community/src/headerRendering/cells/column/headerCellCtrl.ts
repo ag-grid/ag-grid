@@ -14,6 +14,7 @@ import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled }
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
+import { isColumnSelectionCol } from '../../../main';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
@@ -259,15 +260,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
-        // When column selection is enabled, we require users to use the ALT modifier
-        // to access sorting functionality.
-        const sortFromClick = _getEnableColumnSelection(this.gos) ? e.altKey : true;
 
         if (e.key === KeyCode.SPACE) {
-            if (!sortFromClick) {
-                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
-            } else {
+            // We special case the selection column to resolve the conflict between row and cell selection
+            // because there is not really a conceivable reason to select the cells in the selection column
+            if (isColumnSelectionCol(this.column)) {
                 this.selectAllFeature?.onSpaceKeyDown(e);
+            } else {
+                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
             }
         } else if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
