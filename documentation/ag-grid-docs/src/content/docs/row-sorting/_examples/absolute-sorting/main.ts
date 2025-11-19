@@ -9,7 +9,7 @@ ModuleRegistry.registerModules([
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 150 },
     { field: 'year', maxWidth: 90 },
-    { field: 'ranking_change', sortable: true, sortDef: { direction: null, type: 'absolute' } },
+    { field: 'rankingChange', sortable: true, sortDef: { direction: null, type: 'absolute' } },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             gridApi!.setGridOption(
                 'rowData',
                 data.map((item) => {
-                    return { ...item, ranking_change: Math.floor(Math.random() * 201) - 100 };
+                    return { ...item, rankingChange: Math.floor(Math.random() * 201) - 100 };
                 })
             )
         );
