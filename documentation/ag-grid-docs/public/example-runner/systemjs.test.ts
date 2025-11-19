@@ -1,7 +1,6 @@
+import { existsSync, readdirSync } from 'fs';
+import { join } from 'path;';
 import { vi } from 'vitest';
-
-const fs = require('fs');
-const path = require('path');
 
 vi.stubGlobal('appLocation', {});
 vi.stubGlobal('startFile', {});
@@ -16,16 +15,16 @@ vi.stubGlobal('window', {
 });
 
 const systemjsFiles = [];
-const entries = fs.readdirSync(__dirname, { withFileTypes: true });
+const entries = readdirSync(__dirname, { withFileTypes: true });
 entries.forEach((entry) => {
     if (entry.isDirectory()) {
-        const dir = path.join(__dirname, entry.name);
+        const dir = join(__dirname, entry.name);
 
-        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        const entries = readdirSync(dir, { withFileTypes: true });
         const files = entries
             .filter((file) => file.isFile())
             .filter((file) => file.name.includes('systemjs.config.'))
-            .map((file) => path.join(dir, file.name));
+            .map((file) => join(dir, file.name));
         systemjsFiles.push(...files);
     }
 });
@@ -58,7 +57,7 @@ describe('Test cases for SystemJs Mappings', () => {
                         mainFile = `./dist/${key}/${mainFile}`;
                     }
                     expect(
-                        fs.existsSync(path.join(__dirname, `../../../../node_modules/${key}/${mainFile}`)),
+                        existsSync(join(__dirname, `../../../../node_modules/${key}/${mainFile}`)),
                         key
                     ).toBeTruthy();
                 });
