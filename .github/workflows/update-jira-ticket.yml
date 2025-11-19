@@ -158,7 +158,9 @@ jobs:
                         content.push(paragraph([
                             txt(`[This issue was `),
                             link('transitioned', `https://github.com/${owner}/${repo}/pull/${pull_number}`),
-                            txt(` from '${from}' to '${to}' column.]`)
+                            txt(` from '${from}' to '${to}' column by `),
+                            link('CI workflow', runUrl),
+                            txt('.]')
                         ]));
                         await transitionJiraIssue(issue, nextTransition.id);
                         ghCommentBody ||= `Transitioned JIRA ticket(s):\n`;
@@ -166,7 +168,9 @@ jobs:
                     } else {
                         content.push(paragraph([
                             txt(`[This issue was `),
-                            link(`mentioned by PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
+                            link(`mentioned in PR #${pull_number}`, `https://github.com/${owner}/${repo}/pull/${pull_number}`),
+                            txt(' by '),
+                            link('CI workflow', runUrl),
                             txt('.]')
                         ]));
                     }
