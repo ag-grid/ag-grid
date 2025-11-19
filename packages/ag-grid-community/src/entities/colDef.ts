@@ -217,6 +217,14 @@ export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = [
                 | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
 
+type SortComparatorFn = <TData, TValue>(
+    valueA: TValue | null | undefined,
+    valueB: TValue | null | undefined,
+    nodeA: IRowNode<TData>,
+    nodeB: IRowNode<TData>,
+    isDescending: boolean
+) => number;
+
 /** Configuration options for columns in AG Grid. */
 export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue>, IFilterDef {
     // *** Columns *** //
@@ -796,9 +804,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialSortIndex?: number;
     /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
-    sortingOrder?: SortDirection[];
+    sortingOrder?: (SortDirection | SortDef)[];
     /**
-     * Override the default sorting order by providing a custom sort comparator.
+     * Override the default sorting order by providing a custom sort comparator, or a map of comparators for different `SortType`s.
      *
      * - `valueA`, `valueB` are the values to compare.
      * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.
@@ -809,13 +817,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?: (
-        valueA: TValue | null | undefined,
-        valueB: TValue | null | undefined,
-        nodeA: IRowNode<TData>,
-        nodeB: IRowNode<TData>,
-        isDescending: boolean
-    ) => number;
+    comparator?: SortComparatorFn | Partial<Record<NonNullable<SortType>, SortComparatorFn>>;
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
