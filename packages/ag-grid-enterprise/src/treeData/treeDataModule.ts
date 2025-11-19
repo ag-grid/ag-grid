@@ -5,6 +5,7 @@ import { AggregationModule, SharedAggregationModule } from '../aggregation/aggre
 import {
     ClientSideRowModelHierarchyModule,
     GroupColumnModule,
+    GroupEditModule,
     StickyRowModule,
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
@@ -16,7 +17,7 @@ import { TreeGroupStrategy } from './treeGroupStrategy';
 export const SharedTreeDataModule: _ModuleWithoutApi = {
     moduleName: 'SharedTreeData',
     version: VERSION,
-    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, StickyRowModule],
+    dependsOn: [EnterpriseCoreModule, SharedAggregationModule, GroupColumnModule, StickyRowModule, GroupEditModule],
 };
 
 /**

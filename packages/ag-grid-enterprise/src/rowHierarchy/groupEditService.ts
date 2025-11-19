@@ -22,10 +22,11 @@ import {
 
 export class GroupEditService extends BeanStub implements _IGroupEditService {
     public beanName = 'groupEditSvc' as const;
-    private pendingRefresh: _ChangedRowNodes | null = null;
-    private groupTarget: IRowNode | null = null;
-    private groupTimer: number | null = null;
-    private groupThrottled = false;
+
+    private pendingEditRefresh: _ChangedRowNodes | null = null;
+    private dropGroupTarget: IRowNode | null = null;
+    private dropGroupTimer: number | null = null;
+    private dropGroupThrottled = false;
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
@@ -57,7 +58,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
     }
 
     public override destroy(): void {
-        this.resetGroupingState();
+        this.resetDrag();
         super.destroy();
     }
 
@@ -142,7 +143,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         const fromNudge = moving;
         const canStartGroup = target ? this.canDropStartGroup(target) : false;
 
-        this.updateGroupingTarget(canStartGroup ? target : null, fromNudge);
+        this.updateDropTarget(canStartGroup ? target : null, fromNudge);
 
         const lastRowIndex = this.beans.pageBounds?.getLastRow?.() ?? rowModel.getRowCount() - 1;
         if (canSetParent) {
@@ -151,8 +152,8 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             } else if (
                 rowsDrop.moved &&
                 target &&
-                this.groupThrottled &&
-                this.shouldTargetBeParent(target, rowsDrop.pointerPos, rowsDrop.rows)
+                this.dropGroupThrottled &&
+                this.shouldDropTargetBeParent(target, rowsDrop.pointerPos, rowsDrop.rows)
             ) {
                 newParent = target;
             }
@@ -167,10 +168,10 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
                 canStartGroup &&
                 (!newParent || (!target.expanded && !!target.childrenAfterSort?.length))
             ) {
-                this.startGroupDelay(target);
+                this.startDropGroupDelay(target);
             }
         } else if (!fromNudge && target && canStartGroup) {
-            this.startGroupDelay(target);
+            this.startDropGroupDelay(target);
         }
 
         if (newParent) {
@@ -199,13 +200,9 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         rowsDrop.inside = inside;
     }
 
-    public resetRowDrag(): void {
-        this.resetGroupingState();
-    }
-
-    private updateGroupingTarget(target: IRowNode | null, canExpand: boolean): void {
-        if (this.groupTarget && this.groupTarget !== target) {
-            this.resetGroupingState();
+    private updateDropTarget(target: IRowNode | null, canExpand: boolean): void {
+        if (this.dropGroupTarget && this.dropGroupTarget !== target) {
+            this.resetDrag();
         }
 
         if (!target) {
@@ -214,7 +211,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
         if (
             canExpand &&
-            this.groupThrottled &&
+            this.dropGroupThrottled &&
             !target.expanded &&
             target.childrenAfterSort?.length &&
             target.isExpandable?.()
@@ -223,40 +220,40 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
 
         if (target.expanded && target.childrenAfterSort?.length) {
-            this.groupThrottled = true;
-            this.groupTarget = target;
+            this.dropGroupThrottled = true;
+            this.dropGroupTarget = target;
         }
     }
 
-    private startGroupDelay(target: IRowNode): void {
-        if (this.groupTarget && this.groupTarget !== target) {
-            this.resetGroupingState();
+    private startDropGroupDelay(target: IRowNode): void {
+        if (this.dropGroupTarget && this.dropGroupTarget !== target) {
+            this.resetDrag();
         }
 
-        this.groupTarget = target;
+        this.dropGroupTarget = target;
 
-        if (this.groupTimer !== null) {
+        if (this.dropGroupTimer !== null) {
             return;
         }
 
         const delay = this.gos.get('rowDragInsertDelay');
-        this.groupTimer = window.setTimeout(() => {
-            this.groupTimer = null;
-            this.groupThrottled = true;
+        this.dropGroupTimer = window.setTimeout(() => {
+            this.dropGroupTimer = null;
+            this.dropGroupThrottled = true;
             this.beans.dragAndDrop?.nudge();
         }, delay);
     }
 
-    private resetGroupingState(): void {
-        if (this.groupTimer !== null) {
-            window.clearTimeout(this.groupTimer);
-            this.groupTimer = null;
+    public resetDrag(): void {
+        if (this.dropGroupTimer !== null) {
+            window.clearTimeout(this.dropGroupTimer);
+            this.dropGroupTimer = null;
         }
-        this.groupTarget = null;
-        this.groupThrottled = false;
+        this.dropGroupTarget = null;
+        this.dropGroupThrottled = false;
     }
 
-    private shouldTargetBeParent(
+    private shouldDropTargetBeParent(
         target: IRowNode | null,
         pointerPosition: RowDropTargetPosition,
         rows: IRowNode[]
@@ -289,7 +286,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
     }
 
     /** Performs the grouping edit described by `rowsDrop` */
-    public groupingEditDrop(rowsDrop: _RowsDrop): boolean {
+    public dropGroupEdit(rowsDrop: _RowsDrop): boolean {
         const { beans } = this;
 
         const position = rowsDrop.position;
@@ -381,9 +378,9 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
     /** Flushes any pending group edits for batch processing */
     private flushGroupEdits(): void {
-        const pending = this.pendingRefresh;
+        const pending = this.pendingEditRefresh;
         if (pending) {
-            this.pendingRefresh = null;
+            this.pendingEditRefresh = null;
             this.csrmRefresh(pending);
         }
     }
@@ -474,10 +471,10 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
 
         const editSvc = this.beans.editSvc;
         if (editSvc?.isBatchEditing()) {
-            let pending = this.pendingRefresh;
+            let pending = this.pendingEditRefresh;
             if (!pending) {
                 pending = newEditChangedRowNodes();
-                this.pendingRefresh = pending;
+                this.pendingEditRefresh = pending;
             }
             pending.updates.add(node as RowNode);
         } else {

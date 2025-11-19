@@ -52,6 +52,16 @@ interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
     fromGrid?: boolean;
 }
 
+type RowsDropCustomResult = {
+    rows?: IRowNode[] | null;
+    newParent?: IRowNode | null;
+    target?: IRowNode | null;
+    position?: RowDropTargetPosition;
+    allowed?: boolean;
+    changed?: boolean;
+    highlight?: boolean;
+};
+
 export class RowDragFeature extends BeanStub implements DropTarget {
     private lastDraggingEvent: RowDraggingEvent | null = null;
     private autoScroll: AutoScrollService | null = null;
@@ -322,62 +332,118 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const { source, target, yDelta, inside, moved, rowDragManaged, suppressMoveWhenRowDragging } = rowsDrop;
 
         rowsDrop.moved &&= source !== target;
-        const aboveOrBelow: 'above' | 'below' = yDelta < 0 ? 'above' : 'below';
-        rowsDrop.position = moved ? (inside ? 'inside' : aboveOrBelow) : 'none';
+
+        const { position, fallbackPosition } = this.computeDropPosition(moved, inside, yDelta);
+        rowsDrop.position = position;
 
         if (!canSetParent) {
             rowsDrop.newParent = null;
         }
-        if (suppressMoveWhenRowDragging && !rowsDrop.moved) {
-            rowsDrop.allowed = false;
-        }
+
+        this.enforceSuppressMoveWhenRowDragging(rowsDrop, suppressMoveWhenRowDragging, 'initial');
+
         const isRowValidDropPosition = (!rowDragManaged || rowsDrop.allowed) && this.gos.get('isRowValidDropPosition');
         if (isRowValidDropPosition) {
-            if (canSetParent && rowsDrop.newParent && rowsHaveSameParent(rowsDrop.rows, rowsDrop.newParent)) {
-                rowsDrop.newParent = null; // No need to set parent if all rows have the same parent
-            }
-            const canDropResult = isRowValidDropPosition(rowsDrop);
-            if (!canDropResult) {
-                rowsDrop.allowed = false; // No rows to drop
-            } else if (typeof canDropResult === 'object') {
-                // Custom result, override the default values
-                if (canDropResult.rows !== undefined) {
-                    rowsDrop.rows = canDropResult.rows ?? [];
-                }
-                if (canSetParent && canDropResult.newParent !== undefined) {
-                    rowsDrop.newParent = canDropResult.newParent;
-                }
-                if (canDropResult.target !== undefined) {
-                    rowsDrop.target = canDropResult.target;
-                }
-                if (canDropResult.position) {
-                    rowsDrop.position = canDropResult.position;
-                }
-                if (canDropResult.allowed !== undefined) {
-                    rowsDrop.allowed = canDropResult.allowed;
-                } else if (!rowDragManaged) {
-                    rowsDrop.allowed = true; // If not managed, we always allow the drop if it was not explicitly disallowed
-                }
-                const draggingEvent = rowsDrop.draggingEvent;
-                if (canDropResult.changed && draggingEvent) {
-                    draggingEvent.changed = true;
-                }
-                if (!dropping && canDropResult.highlight !== undefined) {
-                    rowsDrop.highlight = canDropResult.highlight;
-                }
-            }
+            this.applyDropValidator(rowsDrop, canSetParent, dropping, rowDragManaged, isRowValidDropPosition);
         }
+
         if (rowDragManaged) {
             rowsDrop.rows = this.filterRows(rowsDrop);
         }
-        if (canSetParent && rowsDrop.newParent && rowsHaveSameParent(rowsDrop.rows, rowsDrop.newParent)) {
-            rowsDrop.newParent = null; // No need to set parent if all rows have the same parent
+
+        this.clearNewParentIfSameParent(rowsDrop, canSetParent);
+        this.enforceSuppressMoveWhenRowDragging(rowsDrop, suppressMoveWhenRowDragging, 'final');
+        this.ensureInsidePositionHasParent(rowsDrop, fallbackPosition);
+    }
+
+    private computeDropPosition(
+        moved: boolean,
+        inside: boolean,
+        yDelta: number
+    ): {
+        position: RowDropTargetPosition;
+        fallbackPosition: 'above' | 'below';
+    } {
+        const fallbackPosition: 'above' | 'below' = yDelta < 0 ? 'above' : 'below';
+        if (!moved) {
+            return { position: 'none', fallbackPosition };
         }
-        if (suppressMoveWhenRowDragging && (!rowsDrop.rows.length || rowsDrop.position === 'none')) {
+        return { position: inside ? 'inside' : fallbackPosition, fallbackPosition };
+    }
+
+    private enforceSuppressMoveWhenRowDragging(
+        rowsDrop: RowsDrop,
+        suppress: boolean,
+        stage: 'initial' | 'final'
+    ): void {
+        if (!suppress) {
+            return;
+        }
+        if (stage === 'initial') {
+            if (!rowsDrop.moved) {
+                rowsDrop.allowed = false;
+            }
+            return;
+        }
+        if (!rowsDrop.rows.length || rowsDrop.position === 'none') {
             rowsDrop.allowed = false;
         }
-        if ((!rowsDrop.allowed || !rowsDrop.newParent) && rowsDrop.position === 'inside') {
-            rowsDrop.position = aboveOrBelow; // Remove 'inside' if no new parent
+    }
+
+    private applyDropValidator(
+        rowsDrop: RowsDrop,
+        canSetParent: boolean,
+        dropping: boolean,
+        rowDragManaged: boolean,
+        validator: (params: RowsDrop) => boolean | RowsDropCustomResult | null
+    ): void {
+        this.clearNewParentIfSameParent(rowsDrop, canSetParent);
+        const result = validator(rowsDrop);
+        if (!result) {
+            rowsDrop.allowed = false;
+            return;
+        }
+        if (typeof result !== 'object') {
+            return;
+        }
+        if (result.rows !== undefined) {
+            rowsDrop.rows = result.rows ?? [];
+        }
+        if (canSetParent && result.newParent !== undefined) {
+            rowsDrop.newParent = result.newParent;
+        }
+        if (result.target !== undefined) {
+            rowsDrop.target = result.target;
+        }
+        if (result.position) {
+            rowsDrop.position = result.position;
+        }
+        if (result.allowed !== undefined) {
+            rowsDrop.allowed = result.allowed;
+        } else if (!rowDragManaged) {
+            rowsDrop.allowed = true;
+        }
+        const draggingEvent = rowsDrop.draggingEvent;
+        if (result.changed && draggingEvent) {
+            draggingEvent.changed = true;
+        }
+        if (!dropping && result.highlight !== undefined) {
+            rowsDrop.highlight = result.highlight;
+        }
+    }
+
+    private clearNewParentIfSameParent(rowsDrop: RowsDrop, canSetParent: boolean): void {
+        if (!canSetParent || !rowsDrop.newParent) {
+            return;
+        }
+        if (rowsHaveSameParent(rowsDrop.rows, rowsDrop.newParent)) {
+            rowsDrop.newParent = null;
+        }
+    }
+
+    private ensureInsidePositionHasParent(rowsDrop: RowsDrop, fallbackPosition: 'above' | 'below'): void {
+        if (rowsDrop.position === 'inside' && (!rowsDrop.allowed || !rowsDrop.newParent)) {
+            rowsDrop.position = fallbackPosition;
         }
     }
 
@@ -510,7 +576,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private stopDragging(draggingEvent: RowDraggingEvent): void {
         this.clearAutoScroll();
-        this.beans.groupEditSvc?.resetRowDrag();
+        this.beans.groupEditSvc?.resetDrag();
         this.beans.rowDropHighlightSvc?.fromDrag(null);
         setRowNodesDragging(draggingEvent.dragItem.rowNodes, false);
     }
@@ -584,7 +650,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private csrmMoveRows(rowsDrop: RowsDrop): boolean {
         const groupEditSvc = this.beans.groupEditSvc;
         if (groupEditSvc?.isGroupingDrop(rowsDrop)) {
-            return groupEditSvc.groupingEditDrop(rowsDrop);
+            return groupEditSvc.dropGroupEdit(rowsDrop);
         }
         return this.csrmMoveRowsReorder(rowsDrop);
     }

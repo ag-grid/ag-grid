@@ -63,7 +63,7 @@ export const ClientSideRowModelHierarchyModule: _ModuleWithoutApi = {
     moduleName: 'ClientSideRowModelHierarchy',
     version: VERSION,
     rowModels: ['clientSide'],
-    beans: [GroupStage, FlattenStage, ClientSideExpansionService, GroupEditService],
+    beans: [GroupStage, FlattenStage, ClientSideExpansionService],
     dependsOn: [EnterpriseCoreModule],
 };
 
@@ -74,4 +74,14 @@ export const StickyRowModule: _ModuleWithoutApi = {
     moduleName: 'StickyRow',
     version: VERSION,
     beans: [StickyRowService],
+};
+
+/**
+ * @internal
+ */
+export const GroupEditModule: _ModuleWithoutApi = {
+    moduleName: 'GroupEdit',
+    version: VERSION,
+    beans: [GroupEditService],
+    dependsOn: [EnterpriseCoreModule, ClientSideRowModelHierarchyModule],
 };

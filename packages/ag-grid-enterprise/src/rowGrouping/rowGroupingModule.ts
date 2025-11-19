@@ -7,6 +7,7 @@ import { GroupHierarchyModule } from '../groupHierarchy/groupHierarchyModule';
 import {
     ClientSideRowModelHierarchyModule,
     GroupColumnModule,
+    GroupEditModule,
     StickyRowModule,
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
@@ -43,6 +44,7 @@ export const SharedRowGroupingModule: _ModuleWithApi<_RowGroupingGridApi> = {
         GroupColumnModule,
         StickyRowModule,
         GroupHierarchyModule,
+        GroupEditModule,
     ],
 };
 
