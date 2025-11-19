@@ -1,9 +1,11 @@
+import { AutoScrollService } from '../agStack/rendering/autoScrollService';
 import { _areEqual } from '../agStack/utils/array';
 import { ChangedRowNodes } from '../clientSideRowModel/changedRowNodes';
 import { _csrmFirstLeaf, _csrmReorderAllLeafs } from '../clientSideRowModel/clientSideRowModelUtils';
 import { BeanStub } from '../context/beanStub';
 import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
+import { _prevOrNextDisplayedRow } from '../entities/rowNodeUtils';
 import type { RowDragEvent, RowDragEventType } from '../events';
 import { _getNormalisedMousePosition } from '../gridBodyComp/mouseEventUtils';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
@@ -14,7 +16,6 @@ import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import type { DragAndDropIcon, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
-import { RowDragFeatureNudger } from './rowDragFeatureNudger';
 import type {
     RowDraggingEvent,
     RowDropTargetPosition,
@@ -53,7 +54,10 @@ interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
 
 export class RowDragFeature extends BeanStub implements DropTarget {
     private lastDraggingEvent: RowDraggingEvent | null = null;
-    private nudger: RowDragFeatureNudger | null = null;
+    private autoScroll: AutoScrollService | null = null;
+    private autoScrollChanged = false;
+    private autoScrollChanging = false;
+    private autoScrollOldV: number | null = null;
 
     constructor(private eContainer: HTMLElement | null) {
         super();
@@ -63,14 +67,38 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const beans = this.beans;
 
         beans.ctrlsSvc.whenReady(this, (p) => {
-            this.nudger = new RowDragFeatureNudger(beans, p.gridBodyCtrl);
+            const getScrollY = () => p.gridBodyCtrl.scrollFeature.getVScrollPosition().top;
+            const autoScroll = new AutoScrollService({
+                scrollContainer: p.gridBodyCtrl.eBodyViewport,
+                scrollAxis: 'y',
+                getVerticalPosition: getScrollY,
+                setVerticalPosition: (position: number) =>
+                    p.gridBodyCtrl.scrollFeature.setVerticalScrollPosition(position),
+                onScrollCallback: () => {
+                    const newVScroll = getScrollY();
+                    if (this.autoScrollOldV !== newVScroll) {
+                        this.autoScrollOldV = newVScroll;
+                        this.autoScrollChanging = true;
+                        return;
+                    }
+                    const changed = this.autoScrollChanging;
+                    this.autoScrollChanged = changed;
+                    this.autoScrollChanging = false;
+                    if (changed) {
+                        beans.dragAndDrop?.nudge();
+                        this.autoScrollChanged = false;
+                    }
+                },
+            });
+            this.autoScroll = autoScroll;
+            this.clearAutoScroll();
         });
     }
 
     public override destroy(): void {
         super.destroy();
-        this.nudger?.clear();
-        this.nudger = null;
+        this.clearAutoScroll();
+        this.autoScroll = null;
         this.lastDraggingEvent = null;
         this.eContainer = null;
     }
@@ -153,6 +181,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         this.dispatchGridEvent('rowDragMove', draggingEvent);
 
+        const autoScroll = this.autoScroll;
         if (
             rowsDrop?.rowDragManaged &&
             rowsDrop.moved &&
@@ -160,12 +189,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rowsDrop.sameGrid &&
             !rowsDrop.suppressMoveWhenRowDragging &&
             // Avoid flickering by only dropping while auto-scrolling is not happening
-            ((!fromNudge && !this.nudger?.autoScroll.scrolling) || this.nudger?.scrollChanged)
+            ((!fromNudge && !autoScroll?.scrolling) || this.autoScrollChanged)
         ) {
             this.dropRows(rowsDrop); // Drop the rows while dragging
         }
-
-        this.nudger?.autoScroll.check(draggingEvent.event);
+        autoScroll?.check(draggingEvent.event);
     }
 
     private isFromThisGrid(draggingEvent: RowDraggingEvent) {
@@ -187,7 +215,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return null;
         }
 
-        let { sameGrid, rootNode, source, target, rows } = rowsDrop;
+        let { sameGrid, rootNode, source, target } = rowsDrop;
 
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 
@@ -197,7 +225,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let newParent: IRowNode | null = null;
         if (target?.footer) {
             // Footer row. Get the real parent, that is the sibling of the footer
-            const found = getPrevOrNext(rowModel, -1, target) ?? getPrevOrNext(rowModel, 1, target);
+            const found = _prevOrNextDisplayedRow(rowModel, -1, target) ?? _prevOrNextDisplayedRow(rowModel, 1, target);
             newParent = target.sibling ?? rootNode;
             target = found ?? null;
         }
@@ -225,62 +253,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        rowsDrop.pointerPos = computePointerPos(target, rowsDrop.y);
-
-        const nudger = this.nudger;
-        nudger?.updateGroup(target, moving);
-
-        if (canSetParent && !newParent && nudger && groupEditSvc) {
-            if (!target || (yDelta >= 0.5 && target.rowIndex === beans.pageBounds.getLastRow())) {
-                newParent = rootNode; // Dragging outside of the rows, move to last row at the root level
-            } else if (rowsDrop.moved && this.targetShouldBeParent(target, rowsDrop.pointerPos, rows)) {
-                if (nudger.groupThrottled) {
-                    newParent = target;
-                }
-            }
-            newParent ??= target?.parent ?? rootNode;
-
-            if (
-                !moving &&
-                groupEditSvc.canDropStartGroup(target) &&
-                (!newParent || (target && !target.expanded && !!target.childrenAfterSort?.length))
-            ) {
-                nudger.startGroup(target);
-            }
-        } else if (target && nudger && !moving && groupEditSvc?.canDropStartGroup(target)) {
-            nudger.startGroup(target);
-        }
-
-        let inside = false;
-        if (newParent) {
-            if (newParent === target && newParent !== rootNode) {
-                const firstRow = newParent.expanded ? getPrevOrNext(rowModel, 1, target) : null;
-                if (firstRow?.parent === newParent) {
-                    target = firstRow; // Instead of showing "inside" style, we can show "above" by using first child as target
-                    yDelta = -0.5;
-                } else {
-                    inside = true; // Dragging as child
-                }
-            }
-
-            if (target && !inside) {
-                // Set target to the first group that is not the root node or the new parent
-                let current: IRowNode | null = target;
-                while (current && current !== rootNode && current !== newParent) {
-                    target = current;
-                    current = current.parent;
-                }
-            }
-        }
-
         rowsDrop.target = target;
         rowsDrop.newParent = newParent;
-        rowsDrop.moved &&= source !== target;
+        rowsDrop.pointerPos = computePointerPos(target, rowsDrop.y);
+        rowsDrop.yDelta = yDelta;
 
-        const aboveOrBelow: 'above' | 'below' = yDelta < 0 ? 'above' : 'below';
-        rowsDrop.position = rowsDrop.moved ? (inside ? 'inside' : aboveOrBelow) : 'none';
+        groupEditSvc?.fixRowsDrop(rowsDrop, canSetParent, moving, yDelta);
 
-        this.validateRowsDrop(rowsDrop, canSetParent, aboveOrBelow, dropping);
+        this.validateRowsDrop(rowsDrop, canSetParent, dropping);
 
         draggingEvent.changed ||= rowsDropChanged(lastDraggingEvent?.dropTarget, rowsDrop);
 
@@ -333,16 +313,18 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rows,
             allowed,
             highlight: !dropping && rowDragManaged && suppressMoveWhenRowDragging && (withinGrid || !sameGrid),
+            yDelta: 0,
+            inside: false,
         };
     }
 
-    private validateRowsDrop(
-        rowsDrop: RowsDrop,
-        canSetParent: boolean,
-        aboveOrBelow: 'above' | 'below',
-        dropping: boolean
-    ): void {
-        const { rowDragManaged, suppressMoveWhenRowDragging } = rowsDrop;
+    private validateRowsDrop(rowsDrop: RowsDrop, canSetParent: boolean, dropping: boolean): void {
+        const { source, target, yDelta, inside, moved, rowDragManaged, suppressMoveWhenRowDragging } = rowsDrop;
+
+        rowsDrop.moved &&= source !== target;
+        const aboveOrBelow: 'above' | 'below' = yDelta < 0 ? 'above' : 'below';
+        rowsDrop.position = moved ? (inside ? 'inside' : aboveOrBelow) : 'none';
+
         if (!canSetParent) {
             rowsDrop.newParent = null;
         }
@@ -397,36 +379,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if ((!rowsDrop.allowed || !rowsDrop.newParent) && rowsDrop.position === 'inside') {
             rowsDrop.position = aboveOrBelow; // Remove 'inside' if no new parent
         }
-    }
-
-    private targetShouldBeParent(target: IRowNode, pointerPosition: RowDropTargetPosition, rows: IRowNode[]): boolean {
-        const targetRowIndex = target.rowIndex!;
-
-        if (pointerPosition === 'none' || pointerPosition === 'above') {
-            return false;
-        }
-        if (pointerPosition === 'inside') {
-            return true;
-        }
-
-        let nextRow: RowNode | undefined;
-        let nextRowIndex = targetRowIndex + 1;
-        const rowModel = this.beans.rowModel;
-        do {
-            nextRow = rowModel.getRow(nextRowIndex++);
-        } while (nextRow?.footer);
-
-        const childrenAfterGroup = target.childrenAfterGroup;
-        if (nextRow && nextRow.parent === target && childrenAfterGroup?.length) {
-            const rowsSet = new Set(rows);
-            for (const child of childrenAfterGroup) {
-                if (child.rowIndex !== null && !rowsSet.has(child)) {
-                    return true; // The group has children, so we can move inside
-                }
-            }
-        }
-
-        return false;
     }
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
@@ -544,7 +496,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (
             rowsDrop?.allowed &&
             rowsDrop.rowDragManaged &&
-            (rowsDrop.suppressMoveWhenRowDragging || !rowsDrop.sameGrid || this.nudger?.autoScroll.scrolling)
+            (rowsDrop.suppressMoveWhenRowDragging || !rowsDrop.sameGrid || this.autoScroll?.scrolling)
         ) {
             this.dropRows(rowsDrop); // Drop the rows after dragging
         }
@@ -557,9 +509,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private stopDragging(draggingEvent: RowDraggingEvent): void {
-        this.nudger?.clear();
+        this.clearAutoScroll();
+        this.beans.groupEditSvc?.resetRowDrag();
         this.beans.rowDropHighlightSvc?.fromDrag(null);
         setRowNodesDragging(draggingEvent.dragItem.rowNodes, false);
+    }
+
+    private clearAutoScroll(): void {
+        this.autoScroll?.ensureCleared();
+        this.autoScrollChanged = false;
+        this.autoScrollChanging = false;
+        this.autoScrollOldV = null;
     }
 
     /** Drag and drop. Returns false if at least a row was moved, otherwise true */
@@ -686,26 +646,6 @@ const csrmGetLeaf = (row: IRowNode): RowNode | undefined => {
     return row.sourceRowIndex >= 0 ? (row as RowNode) : _csrmFirstLeaf(row as RowNode);
 };
 
-/** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
-const getPrevOrNext = (
-    rowModel: IRowModel,
-    direction: -1 | 1,
-    initial: IRowNode | null | undefined
-): RowNode | undefined => {
-    if (initial) {
-        const rowCount = rowModel.getRowCount();
-        let rowIndex = initial.rowIndex! + direction;
-        while (rowIndex >= 0 && rowIndex < rowCount) {
-            const row: RowNode | undefined = rowModel.getRow(rowIndex);
-            if (!row || (!row.footer && !row.detail)) {
-                return row;
-            }
-            rowIndex += direction;
-        }
-    }
-    return undefined; // Out of bounds
-};
-
 const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
     for (let i = 0, len = rows.length; i < len; ++i) {
         if (rows[i].parent !== newParent) {
@@ -754,7 +694,7 @@ const deltaDraggingTarget = (rowModel: IRowModel, rowsDrop: RowsDrop): RowNode |
     count = rowsDrop.suppressMoveWhenRowDragging ? Math.abs(count) : 1;
     const rowsSet = new Set(rowsDrop.rows);
     do {
-        const candidate = getPrevOrNext(rowModel, increment, current);
+        const candidate = _prevOrNextDisplayedRow(rowModel, increment, current);
         if (!candidate) {
             break;
         }

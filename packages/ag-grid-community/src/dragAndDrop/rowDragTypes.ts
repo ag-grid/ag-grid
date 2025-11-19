@@ -142,6 +142,9 @@ export interface RowsDrop<TData = any, TContext = any>
     draggingEvent: RowDraggingEvent<TData, TContext> | null;
     /** True if the drop target can be highlighted while moving, matching the `position` value. */
     highlight: boolean;
+
+    yDelta: number;
+    inside: boolean;
 }
 
 // This is the external-facing version of `RowsDrop`

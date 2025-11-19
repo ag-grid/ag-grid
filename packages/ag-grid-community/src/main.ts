@@ -390,7 +390,7 @@ export {
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
 } from './entities/rowNode';
-export { _createGlobalRowEvent, _createRowNodeSibling } from './entities/rowNodeUtils';
+export { _createGlobalRowEvent, _createRowNodeSibling, _prevOrNextDisplayedRow } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -551,7 +551,7 @@ export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilt
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
-export type { IGroupEditService } from './interfaces/iGroupEditService';
+export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 
 export {
     AdvancedFilterModel,
