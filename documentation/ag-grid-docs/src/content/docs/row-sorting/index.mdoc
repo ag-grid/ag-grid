@@ -132,6 +132,27 @@ The example below shows how to use a sort definition to allow sorting by absolut
 
 {% gridExampleRunner title="Absolute Value Sorting" name="absolute-sorting" /%}
 
+In this example, the column `rankingChange` uses the following sort definition:
+
+```{% frameworkTransform=true %}
+
+const gridOptions = {
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        unSortIcon: true,
+    },
+
+    columnDefs: [
+        { field: 'athlete' },
+        { field: 'year' },
+        { field: 'rankingChange', sortable: true, sortDef: { type: 'absolute' } },
+    ],
+};
+```
+
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sortDef"] /%}
+
 ## Sorting API
 
 {% note %}
