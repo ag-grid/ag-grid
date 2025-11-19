@@ -31,7 +31,7 @@ export class RowNode<TData = any>
     public id: string | undefined;
 
     /** If using row grouping, contains the group values for this group. */
-    public groupData: { [key: string]: any | null } | null;
+    public groupData: { [key: string]: any | null } | null = null;
     /** When using group rows, contains the value without casting to string */
     public groupValue: any;
 

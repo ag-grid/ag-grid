@@ -185,6 +185,7 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
         rootSibling.childrenAfterFilter = rootNode.childrenAfterFilter;
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
+        rootSibling.groupData = null;
     }
     for (let i = 0, allLeafsLen = allLeafs.length ?? 0; i < allLeafsLen; ++i) {
         const row = allLeafs[i];
@@ -214,7 +215,5 @@ const resetChildRowGrouping = <TData>(row: RowNode<TData>): void => {
     row.childrenAfterSort = null;
     row.childrenMapped = null;
     row.level = 0;
-    if (row.groupData) {
-        row.groupData = null;
-    }
+    row.groupData = null;
 };

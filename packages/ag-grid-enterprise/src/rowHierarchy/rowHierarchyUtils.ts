@@ -77,3 +77,11 @@ export const _getRowDefaultExpanded = (
     };
     return isGroupOpenByDefault(params) == true;
 };
+
+export const setGroupData = (rowNode: RowNode, groupData: { [key: string]: any } | null): void => {
+    rowNode.groupData = groupData;
+    const sibling = rowNode.sibling;
+    if (sibling) {
+        sibling.groupData = groupData;
+    }
+};

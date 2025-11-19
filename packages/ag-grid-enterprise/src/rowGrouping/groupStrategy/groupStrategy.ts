@@ -9,7 +9,7 @@ import type {
 import { BeanStub, RowNode, _areEqual, _firstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
+import { _getRowDefaultExpanded, setGroupData } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
@@ -433,7 +433,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
-        this.setGroupData(groupNode, groupInfo.rowGroupColumn, groupInfo.leafNode);
+        this.updateGroupData(groupNode, groupInfo.rowGroupColumn, groupInfo.leafNode);
 
         groupNode.key = groupInfo.key;
         groupNode.id = this.createGroupId(groupNode, parent);
@@ -471,7 +471,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return 'row-group' + (parts || '-null');
     }
 
-    private setGroupData(groupNode: RowNode, rowGroupCol: AgColumn | null, leafNode: RowNode | null | undefined): void {
+    private updateGroupData(
+        groupNode: RowNode,
+        rowGroupCol: AgColumn | null,
+        leafNode: RowNode | null | undefined
+    ): void {
         const { valueSvc, showRowGroupCols } = this.beans;
         if (rowGroupCol && leafNode) {
             // for full width rows; preserve the value type
@@ -479,7 +483,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         const groupData: Record<string, any> = {};
-        groupNode.groupData = groupData;
+        setGroupData(groupNode, groupData);
 
         if (!rowGroupCol) {
             return;
@@ -545,7 +549,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             for (let i = 0, len = rowNodes.length; i < len; ++i) {
                 const rowNode = rowNodes[i];
                 if (rowNode.group) {
-                    this.setGroupData(rowNode, rowNode.rowGroupColumn, _firstLeaf(rowNode.childrenAfterGroup));
+                    this.updateGroupData(rowNode, rowNode.rowGroupColumn, _firstLeaf(rowNode.childrenAfterGroup));
                     recurse(rowNode.childrenAfterGroup);
                 }
             }
