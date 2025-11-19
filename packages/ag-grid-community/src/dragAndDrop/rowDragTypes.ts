@@ -114,6 +114,8 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     overNode: IRowNode<TData> | undefined;
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
+    /** The pointer position relative to the current over node */
+    pointerPos: RowDropTargetPosition;
     /** The position of the rows relative to the target row */
     position: RowDropTargetPosition;
     /** The source row node that was dragged, if any */
@@ -140,6 +142,9 @@ export interface RowsDrop<TData = any, TContext = any>
     draggingEvent: RowDraggingEvent<TData, TContext> | null;
     /** True if the drop target can be highlighted while moving, matching the `position` value. */
     highlight: boolean;
+
+    yDelta: number;
+    inside: boolean;
 }
 
 // This is the external-facing version of `RowsDrop`

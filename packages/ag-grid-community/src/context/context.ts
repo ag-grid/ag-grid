@@ -64,6 +64,7 @@ import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IGroupEditService } from '../interfaces/iGroupEditService';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
@@ -334,6 +335,7 @@ interface CoreBeanCollection
     renderStatus?: IRenderStatusService;
     rowDropHighlightSvc?: RowDropHighlightService;
     rowDragSvc?: RowDragService;
+    groupEditSvc?: IGroupEditService;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     cellFlashSvc?: CellFlashService;

@@ -371,6 +371,7 @@ export type {
     RowDropZoneEvents,
     DragSource,
     DraggingEvent,
+    RowsDrop as _RowsDrop,
     RowsDropParams,
 } from './dragAndDrop/rowDragTypes';
 export type { RowDragService } from './dragAndDrop/rowDragService';
@@ -389,7 +390,7 @@ export {
     ROW_ID_PREFIX_TOP_PINNED as _ROW_ID_PREFIX_TOP_PINNED,
     ROW_ID_PREFIX_BOTTOM_PINNED as _ROW_ID_PREFIX_BOTTOM_PINNED,
 } from './entities/rowNode';
-export { _createGlobalRowEvent, _createRowNodeSibling, _firstLeaf } from './entities/rowNodeUtils';
+export { _createGlobalRowEvent, _createRowNodeSibling, _prevOrNextDisplayedRow } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -549,7 +550,8 @@ export {
 export type { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 
-export { IGroupFilterService } from './interfaces/iGroupFilterService';
+export type { IGroupFilterService } from './interfaces/iGroupFilterService';
+export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 
 export {
     AdvancedFilterModel,
@@ -783,7 +785,8 @@ export {
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
-export type { ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
+export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
+export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';

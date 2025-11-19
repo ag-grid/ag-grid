@@ -5,6 +5,7 @@ import { AggregationModule, SharedAggregationModule } from '../aggregation/aggre
 import {
     ClientSideRowModelHierarchyModule,
     GroupColumnModule,
+    GroupEditModule,
     StickyRowModule,
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
@@ -28,5 +29,5 @@ export const TreeDataModule: _ModuleWithoutApi = {
     version: VERSION,
     dynamicBeans: { treeGroupStrategy: TreeGroupStrategy },
     rowModels: ['clientSide'],
-    dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule],
+    dependsOn: [SharedTreeDataModule, AggregationModule, ClientSideRowModelHierarchyModule, GroupEditModule],
 };

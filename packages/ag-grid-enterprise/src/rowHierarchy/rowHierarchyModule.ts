@@ -8,6 +8,7 @@ import { VERSION } from '../version';
 import { AutoColService } from './autoColService';
 import { ClientSideExpansionService } from './clientSideExpansionService';
 import { FlattenStage } from './flattenStage';
+import { GroupEditService } from './groupEditService';
 import { GroupStage } from './groupStage';
 import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
@@ -73,4 +74,14 @@ export const StickyRowModule: _ModuleWithoutApi = {
     moduleName: 'StickyRow',
     version: VERSION,
     beans: [StickyRowService],
+};
+
+/**
+ * @internal
+ */
+export const GroupEditModule: _ModuleWithoutApi = {
+    moduleName: 'GroupEdit',
+    version: VERSION,
+    beans: [GroupEditService],
+    dependsOn: [EnterpriseCoreModule, ClientSideRowModelHierarchyModule],
 };

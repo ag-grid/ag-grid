@@ -5,6 +5,12 @@ import { mockGridLayout } from './polyfills/mockGridLayout';
 import { TestGridsManager } from './testGridsManager';
 import { asyncSetTimeout } from './utils';
 
+type FireMouseEventFn = (
+    element: Element | Document,
+    eventType: string,
+    options?: MouseEventInit & { dataTransfer?: DataTransfer }
+) => Promise<void>;
+
 export interface DragAndDropRowOptions {
     api: GridApi;
     source: Element | string | null | undefined;
@@ -12,6 +18,13 @@ export interface DragAndDropRowOptions {
     sourceYOffsetPercent?: number;
     targetYOffsetPercent?: number;
     cancel?: boolean;
+    beforeDrop?: (context: {
+        api: GridApi;
+        sourceElement: Element;
+        targetElement: Element;
+        dataTransfer: DataTransfer;
+        fireMouseEvent: FireMouseEventFn;
+    }) => Promise<void> | void;
 }
 
 export async function dragAndDropRow({
@@ -20,6 +33,7 @@ export async function dragAndDropRow({
     target,
     sourceYOffsetPercent = 0.5,
     targetYOffsetPercent = 0.5,
+    beforeDrop,
 }: DragAndDropRowOptions) {
     mockGridLayout.init();
     initDataTransferPolyfill();
@@ -96,11 +110,7 @@ export async function dragAndDropRow({
 
     const dataTransfer = new DataTransfer();
 
-    const fireMouseEvent = async (
-        element: Element | Document,
-        eventType: string,
-        options: MouseEventInit & { dataTransfer?: DataTransfer } = {}
-    ) => {
+    const fireMouseEvent: FireMouseEventFn = async (element, eventType, options = {}) => {
         const event = new MouseEvent(eventType, { bubbles: true, cancelable: true, ...options });
         element.dispatchEvent(event);
         await asyncSetTimeout(0);
@@ -137,6 +147,20 @@ export async function dragAndDropRow({
         await fireMouseEvent(source, 'dragleave', { dataTransfer, clientX: startX, clientY: startY });
         await fireMouseEvent(target, 'dragenter', { dataTransfer, clientX: endX, clientY: endY });
         await fireMouseEvent(target, 'dragover', { dataTransfer, clientX: endX, clientY: endY });
+
+        if (api.getGridOption('rowDragManaged') && api.getGridOption('suppressMoveWhenRowDragging')) {
+            assertDropIndicatorVisible(api);
+        }
+
+        if (beforeDrop) {
+            await beforeDrop({
+                api,
+                sourceElement: source,
+                targetElement: target,
+                dataTransfer,
+                fireMouseEvent,
+            });
+        }
         await fireMouseEvent(dragHandle, 'drag', { dataTransfer, clientX: startX, clientY: startY });
 
         await fireMouseEvent(target, 'drop', { dataTransfer, clientX: endX, clientY: endY });
@@ -181,4 +205,74 @@ export async function dragAndDropRow({
 
 function linearInterpolation(start: number, end: number, amount: number) {
     return start + (end - start) * amount;
+}
+
+const DROP_INDICATOR_POSITIONS = ['above', 'inside', 'below'] as const;
+
+export function assertDropIndicatorVisible(api: GridApi): void {
+    const { row, dropIndicatorPosition } = api.getRowDropPositionIndicator();
+
+    const gridElement = TestGridsManager.getHTMLElement(api);
+    expect(!!gridElement).toBeTruthy();
+
+    if (!gridElement) {
+        return;
+    }
+
+    const highlightElement = DROP_INDICATOR_POSITIONS.map((position) =>
+        gridElement.querySelector<HTMLElement>(`.ag-row-highlight-${position}`)
+    ).find((element): element is HTMLElement => !!element);
+
+    if (dropIndicatorPosition === 'none') {
+        expect(!!row).toBeFalsy();
+        expect(highlightElement).toBeUndefined();
+        expect(gridElement.querySelector('.ag-row-highlight-indent')).toBeNull();
+        return;
+    }
+
+    expect(!!row).toBeTruthy();
+
+    if (!row) {
+        return;
+    }
+
+    const expectedRowId = row.id ?? undefined;
+    expect(expectedRowId).toBeTruthy();
+
+    const rowElement = expectedRowId
+        ? gridElement.querySelector<HTMLElement>(`.ag-row[row-id="${expectedRowId}"]`)
+        : null;
+
+    expect(rowElement).toBeTruthy();
+
+    if (!rowElement) {
+        return;
+    }
+
+    const elementWithHighlight = highlightElement ?? rowElement;
+    expect(elementWithHighlight).toBeTruthy();
+
+    if (!elementWithHighlight) {
+        return;
+    }
+
+    const activeClasses = DROP_INDICATOR_POSITIONS.filter((position) =>
+        elementWithHighlight.classList.contains(`ag-row-highlight-${position}`)
+    );
+
+    expect(activeClasses).toHaveLength(1);
+    expect(activeClasses.includes(dropIndicatorPosition)).toBe(true);
+
+    const dropEdge = dropIndicatorPosition === 'above' || dropIndicatorPosition === 'below';
+    const isTreeData = api.isModuleRegistered('TreeDataModule') && !!api.getGridOption('treeData');
+    const hasGrouping = api.isModuleRegistered('RowGroupingModule') && api.getRowGroupColumns().length > 0;
+    const shouldIndent = dropEdge && row.uiLevel > 0 && (isTreeData || hasGrouping);
+
+    const hasIndentClass = elementWithHighlight.classList.contains('ag-row-highlight-indent');
+    expect(hasIndentClass).toBe(shouldIndent);
+
+    const actualLevel = elementWithHighlight.style.getPropertyValue('--ag-row-highlight-level');
+    const normalizedLevel = actualLevel === '' ? '0' : actualLevel;
+    const expectedLevel = shouldIndent ? String(row.uiLevel) : '0';
+    expect(normalizedLevel).toBe(expectedLevel);
 }

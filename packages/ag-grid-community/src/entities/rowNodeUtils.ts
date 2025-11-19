@@ -3,6 +3,7 @@ import type { AgEventType } from '../eventTypes';
 import type { RowEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
+import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { RowNode } from './rowNode';
 
@@ -60,12 +61,27 @@ export const _createRowNodeSibling = (rowNode: RowNode, beans: BeanCollection): 
     return sibling;
 };
 
-export const _firstLeaf = (childrenAfterGroup: ReadonlyArray<IRowNode> | null | undefined): RowNode | undefined => {
-    while (childrenAfterGroup?.length) {
-        const node = childrenAfterGroup[0];
-        if (node.data) {
-            return node as RowNode;
-        }
-        childrenAfterGroup = node.childrenAfterGroup;
+/** When dragging multiple rows, we want the user to be able to drag to the prev or next in the group if dragging on one of the selected rows. */
+export const _prevOrNextDisplayedRow = (
+    rowModel: IRowModel,
+    direction: -1 | 1,
+    initial: IRowNode | null | undefined
+): RowNode | undefined => {
+    if (!initial) {
+        return undefined;
     }
+    let rowIndex = initial.rowIndex;
+    if (rowIndex == null) {
+        return undefined; // Row index unknown
+    }
+    rowIndex += direction;
+    const rowCount = rowModel.getRowCount();
+    while (rowIndex >= 0 && rowIndex < rowCount) {
+        const row = rowModel.getRow(rowIndex);
+        if (!row || (!row.footer && !row.detail)) {
+            return row;
+        }
+        rowIndex += direction;
+    }
+    return undefined; // Out of bounds
 };

@@ -325,6 +325,15 @@ export class GridRowsDiagramTree {
             }
         }
 
+        const dataProps = gridRows.options.nodeDataProps;
+        if (dataProps?.length) {
+            for (const prop of dataProps) {
+                const dataValue = (row.data as any)?.[prop];
+                const serialised = JSON.stringify(dataValue ?? '');
+                result += ` data.${prop}:${serialised}`;
+            }
+        }
+
         return result + ' ';
     }
 

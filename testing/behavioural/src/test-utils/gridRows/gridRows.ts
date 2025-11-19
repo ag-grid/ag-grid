@@ -39,6 +39,9 @@ export interface GridRowsOptions<TData = any> {
 
     /** Forces treeData to be checked as true or false */
     treeData?: boolean;
+
+    /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
+    nodeDataProps?: string[];
 }
 
 export class GridRows<TData = any> {
@@ -164,7 +167,16 @@ export class GridRows<TData = any> {
         return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
     }
 
-    public getRowHtmlElements(id: string | { readonly id: string | null } | null | undefined): HTMLElement[] {
+    public getRowHtmlElement(
+        id: string | { readonly id: string | null | undefined } | null | undefined
+    ): HTMLElement | null {
+        const elements = this.getRowHtmlElements(id);
+        return elements.length > 0 ? elements[0] : null;
+    }
+
+    public getRowHtmlElements(
+        id: string | { readonly id: string | null | undefined } | null | undefined
+    ): HTMLElement[] {
         if (typeof id === 'object') {
             id = id?.id ?? null;
             if (id === null) {
@@ -180,7 +192,18 @@ export class GridRows<TData = any> {
                 if (rowId !== null) {
                     const existing = map.get(rowId);
                     if (existing) {
-                        existing.push(rowElement);
+                        const index = existing.indexOf(rowElement);
+                        const isMainRowElement = rowElement.closest('.ag-center-cols-container') !== null;
+                        if (index >= 0) {
+                            if (isMainRowElement && index > 0) {
+                                existing.splice(index, 1);
+                                existing.unshift(rowElement);
+                            }
+                        } else if (isMainRowElement) {
+                            existing.unshift(rowElement);
+                        } else {
+                            existing.push(rowElement);
+                        }
                     } else {
                         const rowElementArray = [rowElement];
                         map.set(rowId, rowElementArray);
