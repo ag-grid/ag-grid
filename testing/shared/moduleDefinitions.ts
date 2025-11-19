@@ -74,7 +74,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RangeSelectionModule: 58,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
-    RowGroupingModule: 92.93,
+    RowGroupingModule: 95.74,
     RowGroupingPanelModule: 73.57,
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,
@@ -82,7 +82,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,
-    TreeDataModule: 89.72,
+    TreeDataModule: 92.54,
     ViewportRowModelModule: 29.19,
 };
 
