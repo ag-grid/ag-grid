@@ -1,4 +1,5 @@
 import { _exists, _missing } from '../agStack/utils/generic';
+import { _isExpressionString } from '../agStack/utils/string';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
@@ -249,7 +250,7 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && typeof result === 'string' && result.startsWith('=')) {
+        if (this.cellExpressions && _isExpressionString(result)) {
             const cellValueGetter = result.substring(1);
             result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
         }

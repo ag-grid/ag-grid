@@ -63,6 +63,10 @@ export class AgInputTextField<
         this.setValue(value, true);
     }
 
+    public setCustomValidity(message: string): void {
+        this.eInput.setCustomValidity(message);
+    }
+
     private preventDisallowedCharacters(): void {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
@@ -81,7 +85,7 @@ export class AgInputTextField<
             paste: (e: ClipboardEvent) => {
                 const text = e.clipboardData?.getData('text');
 
-                if (text?.split('').some((c: string) => !pattern.test(c))) {
+                if (text?.split('').some((c) => !pattern.test(c))) {
                     e.preventDefault();
                 }
             },

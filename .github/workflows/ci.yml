@@ -43,7 +43,7 @@ env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
-  YARN_REGISTRY: "http://52.50.158.57:4873"
+  YARN_REGISTRY: "https://registry.ag-grid.com"
   CI: true
 
 concurrency:
@@ -444,6 +444,7 @@ jobs:
 
       - name: Merge JUnit Report XMLs
         run: |
+          YARN_REGISTRY=
           yarn global add junit-report-merger
           reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
           mkdir -p reports/

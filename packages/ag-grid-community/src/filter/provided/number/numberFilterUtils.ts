@@ -4,9 +4,7 @@ import { getNumberOfInputs } from '../simpleFilterUtils';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
 
 export function getAllowedCharPattern(filterParams?: INumberFilterParams): string | null {
-    const { allowedCharPattern } = filterParams ?? {};
-
-    return allowedCharPattern ?? null;
+    return filterParams?.allowedCharPattern ?? null;
 }
 
 export function processNumberFilterValue(value?: number | null): number | null {
