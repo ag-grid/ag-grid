@@ -136,6 +136,28 @@
         }
       }
     },
+    "test:e2e": {
+      "command": "npx vitest",
+      "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
+      "dependsOn": ["^pack"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "vitest.e2e.config.ts",
+        "watch": false
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../../reports/ag-grid-website.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        },
+        "update": {
+          "update": true
+        }
+      }
+    },
     "test:interactive:setup:chromium": {
       "executor": "nx:run-commands",
       "options": {
@@ -262,6 +284,6 @@
       }
     }
   },
-  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise"],
+  "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "ag-grid-angular"],
   "tags": ["website"]
 }

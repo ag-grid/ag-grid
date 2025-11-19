@@ -10,7 +10,7 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'node',
-        include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+        include: ['public/example-runner/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
         exclude: [
             'src/content/**/*', // examples tested via playwright
         ],
