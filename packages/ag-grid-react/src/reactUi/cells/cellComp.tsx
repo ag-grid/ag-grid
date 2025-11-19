@@ -63,6 +63,7 @@ const CellComp = ({
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
+    const editorRequestedRef = useRef<boolean>(false);
 
     const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
@@ -88,6 +89,7 @@ const CellComp = ({
     const setCellEditorRef = useCallback(
         (cellEditor: ICellEditor | undefined) => {
             cellEditorRef.current = cellEditor;
+            editorRequestedRef.current = false;
             if (cellEditor) {
                 const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
                 setTimeout(() => {
@@ -269,6 +271,8 @@ const CellComp = ({
             setIncludeDndSource: (include) => setIncludeDndSource(include),
 
             getCellEditor: () => cellEditorRef.current ?? null,
+            // hasCellEditor: () => !!cellEditorRef.current,
+            hasCellEditor: () => !!cellEditorRef.current || editorRequestedRef.current,
             getCellRenderer: () => cellRendererRef.current ?? jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ?? eCellWrapper.current ?? eGui.current,
 
@@ -324,6 +328,8 @@ const CellComp = ({
                         popupPosition,
                         compProxy,
                     });
+
+                    editorRequestedRef.current = true;
                     if (!popup) {
                         setRenderDetails(undefined);
                     }
@@ -337,6 +343,7 @@ const CellComp = ({
                     // Due to the use of React the cellEditorRef is cleared asynchronously after rendering is forced via setEditDetails(undefined)
                     // We also need to clear the cellEditorRef here to cover the case that we are using a proxy
                     cellEditorRef.current = undefined;
+                    editorRequestedRef.current = false;
                     setEditDetails(undefined);
                 }
             },

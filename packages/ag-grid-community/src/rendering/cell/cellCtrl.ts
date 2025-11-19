@@ -69,6 +69,7 @@ export interface ICellComp {
     setIncludeDndSource(include: boolean): void;
 
     getCellEditor(): ICellEditor | null;
+    hasCellEditor(): boolean;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 

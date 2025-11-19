@@ -256,7 +256,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 }
             }
 
-            if (cellStartedEdit) {
+            if (this.gos.get('editType') !== 'fullRow' || cellStartedEdit) {
                 richSelect.showPicker();
             }
 
