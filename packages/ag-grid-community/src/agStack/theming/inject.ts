@@ -84,7 +84,7 @@ export const _unregisterInstanceUsingThemingAPI = (environment: IEnvironment) =>
     injectionState.grids.delete(environment);
     if (injectionState.grids.size === 0) {
         injectionState.map = new WeakMap();
-        for (const style of document.head.querySelectorAll('style[data-ag-global-css]')) {
+        for (const style of document.querySelectorAll('style[data-ag-global-css]')) {
             style.remove();
         }
     }
