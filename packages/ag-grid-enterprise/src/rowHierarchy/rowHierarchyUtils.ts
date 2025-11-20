@@ -21,6 +21,9 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
     onShowRowGroupColsSetChanged(): void;
 
     execute(params: StageExecuteParams<TData>): boolean | undefined | void;
+
+    /** Used to lazily compute and store groupData for a row node */
+    newGroupData(node: RowNode<TData>): Record<string, any> | null;
 }
 
 /**
@@ -76,12 +79,4 @@ export const _getRowDefaultExpanded = (
         rowGroupColumn: rowNode.rowGroupColumn!,
     };
     return isGroupOpenByDefault(params) == true;
-};
-
-export const setGroupData = (rowNode: RowNode, groupData: { [key: string]: any } | null): void => {
-    rowNode.groupData = groupData;
-    const sibling = rowNode.sibling;
-    if (sibling) {
-        sibling.groupData = groupData;
-    }
 };

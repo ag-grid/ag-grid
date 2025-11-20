@@ -9,7 +9,7 @@ import type {
 import { BeanStub, RowNode, _areEqual, _csrmFirstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded, setGroupData } from '../../rowHierarchy/rowHierarchyUtils';
+import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
@@ -54,6 +54,50 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             }
         });
         return res;
+    }
+
+    public newGroupData(node: RowNode): Record<string, any> | null {
+        if (!node.group) {
+            return null;
+        }
+
+        const rowGroupCol = node.rowGroupColumn;
+        const leafNode = _csrmFirstLeaf(node);
+        const { valueSvc, showRowGroupCols } = this.beans;
+
+        if (rowGroupCol && leafNode) {
+            // for full width rows; preserve the value type
+            node.groupValue = valueSvc.getValue(rowGroupCol, leafNode);
+        }
+
+        const groupData: Record<string, any> = {};
+        node._groupData = groupData;
+
+        let groupValue: any;
+        if (rowGroupCol) {
+            const rowGroupColId = rowGroupCol.getId();
+            const groupDisplayCols = showRowGroupCols!.columns;
+            for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
+                const col = groupDisplayCols[i];
+                // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
+                // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
+                if (col.isRowGroupDisplayed(rowGroupColId)) {
+                    // if maintain group value type, get the value from any leaf node.
+                    groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
+                }
+            }
+            if (leafNode) {
+                groupValue = this.beans.valueSvc.getValue(rowGroupCol, leafNode);
+            }
+        }
+
+        const sibling = node.sibling;
+        node.groupValue = groupValue;
+        if (sibling) {
+            sibling.groupValue = groupValue;
+        }
+
+        return groupData;
     }
 
     public execute(params: StageExecuteParams): void {
@@ -433,10 +477,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const groupNode: RowNode = new RowNode(this.beans);
 
         groupNode.group = true;
+        groupNode.parent = parent;
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
-
-        this.updateGroupData(groupNode, groupInfo.rowGroupColumn, groupInfo.leafNode);
 
         groupNode.key = groupInfo.key;
         groupNode.id = this.createGroupId(groupNode, parent);
@@ -444,17 +487,21 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupNode.level = level;
         groupNode.leafGroup = level === details.groupCols.length - 1;
 
+        groupNode.rowGroupIndex = level;
+        groupNode.childrenAfterGroup = [];
+        groupNode.childrenMapped = {};
+
+        const leafNode = groupInfo.leafNode;
+        const rowGroupColumn = groupInfo.rowGroupColumn;
+        if (rowGroupColumn && leafNode) {
+            // preserve the value type for full width rows and ensure groupValue is available before lazy loading
+            groupNode.groupValue = this.beans.valueSvc.getValue(rowGroupColumn, leafNode);
+        }
+
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
-
-        groupNode.rowGroupIndex = level;
-
-        groupNode.childrenAfterGroup = [];
-        groupNode.childrenMapped = {};
         groupNode.updateHasChildren();
-
-        groupNode.parent = parent;
 
         this.setExpandedInitialValue(details, groupNode);
 
@@ -472,37 +519,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             parent = node.parent;
         }
         return 'row-group' + (parts || '-null');
-    }
-
-    private updateGroupData(
-        groupNode: RowNode,
-        rowGroupCol: AgColumn | null,
-        leafNode: RowNode | null | undefined
-    ): void {
-        const { valueSvc, showRowGroupCols } = this.beans;
-        if (rowGroupCol && leafNode) {
-            // for full width rows; preserve the value type
-            groupNode.groupValue = valueSvc.getValue(rowGroupCol, leafNode);
-        }
-
-        const groupData: Record<string, any> = {};
-        setGroupData(groupNode, groupData);
-
-        if (!rowGroupCol) {
-            return;
-        }
-
-        const rowGroupColId = rowGroupCol.getId();
-        const groupDisplayCols = showRowGroupCols!.columns;
-        for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
-            const col = groupDisplayCols[i];
-            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            if (col.isRowGroupDisplayed(rowGroupColId)) {
-                // if maintain group value type, get the value from any leaf node.
-                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
-            }
-        }
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
@@ -552,7 +568,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             for (let i = 0, len = rowNodes.length; i < len; ++i) {
                 const rowNode = rowNodes[i];
                 if (rowNode.group) {
-                    this.updateGroupData(rowNode, rowNode.rowGroupColumn, _csrmFirstLeaf(rowNode));
+                    rowNode._groupData = undefined;
                     recurse(rowNode.childrenAfterGroup);
                 }
             }

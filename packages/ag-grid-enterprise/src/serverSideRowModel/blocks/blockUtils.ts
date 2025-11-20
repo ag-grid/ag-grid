@@ -20,7 +20,6 @@ import {
 } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../aggregation/footerUtils';
-import { setGroupData } from '../../rowHierarchy/rowHierarchyUtils';
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
@@ -239,18 +238,22 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         // set group value for full width rows.
-        rowNode.groupValue = rowNode.key;
+        const key = rowNode.key!;
+        rowNode.groupValue = key;
+        if (rowNode.sibling) {
+            rowNode.sibling.groupValue = key;
+        }
 
         const groupDisplayCols = this.showRowGroupCols?.columns ?? [];
         const usingTreeData = _isTreeData(this.gos);
         for (const col of groupDisplayCols) {
-            let groupData = rowNode.groupData;
+            let groupData = rowNode._groupData;
             if (!groupData) {
                 groupData = {};
-                setGroupData(rowNode, groupData);
+                rowNode._groupData = groupData;
             }
             if (usingTreeData) {
-                groupData[col.getColId()] = rowNode.key;
+                groupData[col.getColId()] = key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
                 const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
                 groupData[col.getColId()] = groupValue;

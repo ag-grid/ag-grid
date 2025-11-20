@@ -45,6 +45,7 @@ describe('ag-grid grouping display types and footers', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn', 'athlete', 'sport', 'gold'],
+            checkDom: false,
         };
 
         await new GridRows(api, 'group rows display', gridRowsOptions).check(`

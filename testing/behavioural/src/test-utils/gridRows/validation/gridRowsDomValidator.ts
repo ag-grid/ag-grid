@@ -136,7 +136,20 @@ export class GridRowsDomValidator {
             const cellElement = this.findCellElement(rowElements, columnId);
 
             if (!cellElement) {
-                if (column.isVisible() && !row.master && columnId !== 'ag-Grid-SelectionColumn') {
+                const handledMissing = this.handleMissingCell(
+                    gridRows,
+                    row,
+                    columnId,
+                    column,
+                    rowElements,
+                    rowErrors
+                );
+                if (
+                    !handledMissing &&
+                    column.isVisible() &&
+                    !row.master &&
+                    columnId !== 'ag-Grid-SelectionColumn'
+                ) {
                     if (!column.getId().startsWith('pivot_')) {
                         rowErrors.add(`Missing cell element for column id:"${columnId}"`);
                     }
@@ -157,6 +170,88 @@ export class GridRowsDomValidator {
             }
         }
         return null;
+    }
+
+    private handleMissingCell(
+        gridRows: GridRows<any>,
+        row: RowNode<any>,
+        columnId: string,
+        column: Column<any>,
+        rowElements: HTMLElement[],
+        rowErrors: GridRowErrors<any>
+    ): boolean {
+        if (!row.group || row.footer) {
+            return false;
+        }
+
+        const groupDisplayType = gridRows.api.getGridOption('groupDisplayType');
+        if (groupDisplayType !== 'groupRows') {
+            return false;
+        }
+
+        const isAutoGroupCol = columnId === 'ag-Grid-AutoColumn' || columnId.startsWith('ag-Grid-AutoColumn-');
+        if (isAutoGroupCol) {
+            return false;
+        }
+
+        if (column.getColDef().showRowGroup) {
+            return false;
+        }
+
+        const autoGroupCell = this.findAutoGroupCell(rowElements);
+        if (!autoGroupCell) {
+            rowErrors.add('Auto group cell element not found for group row.');
+            return true;
+        }
+
+        const value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const expectedText = value == null ? '' : this.normaliseText(String(value));
+        if (!expectedText) {
+            return true; // nothing to validate
+        }
+
+        const autoGroupText = this.normaliseText(autoGroupCell.textContent ?? '');
+        if (!autoGroupText.includes(expectedText)) {
+            rowErrors.add(
+                `Group row cell for column id:"${columnId}" expected to include ${JSON.stringify(expectedText)},` +
+                    ` but auto group cell contains ${JSON.stringify(autoGroupText)}`
+            );
+        }
+
+        return true;
+    }
+
+    private findAutoGroupCell(rowElements: HTMLElement[]): HTMLElement | null {
+        const selectors = [
+            '[col-id^="ag-Grid-AutoColumn"]',
+            '.ag-cell-wrapper.ag-row-group',
+            '.ag-row-group [data-ref="eValue"]',
+            '.ag-group-value'
+        ];
+
+        for (const rowElement of rowElements) {
+            for (const selector of selectors) {
+                const match = rowElement.querySelector(selector);
+                if (!match) {
+                    continue;
+                }
+
+                if (selector === '.ag-row-group [data-ref="eValue"]' || selector === '.ag-group-value') {
+                    const groupWrapper = match.closest('.ag-row-group');
+                    if (groupWrapper) {
+                        return groupWrapper as HTMLElement;
+                    }
+                }
+
+                return match as HTMLElement;
+            }
+        }
+
+        return null;
+    }
+
+    private normaliseText(text: string): string {
+        return text.replace(/\s+/g, ' ').trim();
     }
 
     private checkRowDomCell(

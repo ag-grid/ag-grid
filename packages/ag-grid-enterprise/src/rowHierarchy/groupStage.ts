@@ -107,6 +107,13 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         return node.footer ? loadFooterLeafs(node) : loadRealLeafs(node);
     }
 
+    public loadGroupData(node: RowNode<any>): Record<string, any> | null {
+        const strategy = this.getStrategy();
+        const result = strategy?.newGroupData(node) ?? null;
+        node._groupData = result;
+        return result;
+    }
+
     private getStrategy(): IRowGroupingStrategy<TData> | null {
         let strategy = this.strategy;
         if (strategy !== undefined && this.isAlive()) {
@@ -178,14 +185,14 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
     rootNode.treeNodeFlags = 0;
     rootNode.childrenAfterGroup = allLeafs;
     rootNode.childrenMapped = null;
-    rootNode.groupData = null;
+    rootNode._groupData = undefined;
     if (rootSibling) {
         rootSibling.childrenAfterGroup = rootNode.childrenAfterGroup;
         rootSibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
         rootSibling.childrenAfterFilter = rootNode.childrenAfterFilter;
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
-        rootSibling.groupData = null;
+        rootSibling._groupData = undefined;
     }
     for (let i = 0, allLeafsLen = allLeafs.length ?? 0; i < allLeafsLen; ++i) {
         const row = allLeafs[i];
@@ -215,5 +222,5 @@ const resetChildRowGrouping = <TData>(row: RowNode<TData>): void => {
     row.childrenAfterSort = null;
     row.childrenMapped = null;
     row.level = 0;
-    row.groupData = null;
+    row._groupData = undefined;
 };

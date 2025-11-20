@@ -9,7 +9,7 @@ import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded, setGroupData } from '../rowHierarchy/rowHierarchyUtils';
+import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 import { fieldGetter } from './fieldAccess';
 
 // The approach used here avoids complex incremental updates by using linear passes and a final traversal.
@@ -92,6 +92,21 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     public getNode(id: string): RowNode<TData> | undefined {
         return this.fillerNodesById?.get(id);
+    }
+
+    public newGroupData(node: RowNode<TData>): Record<string, any> | null {
+        const key = node.key;
+        if (key == null) {
+            return null;
+        }
+        const groupData: Record<string, any> = {};
+        const groupDisplayCols = this.beans.showRowGroupCols?.columns;
+        if (groupDisplayCols) {
+            for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
+                groupData[groupDisplayCols[i].getColId()] = key;
+            }
+        }
+        return groupData;
     }
 
     public execute(params: StageExecuteParams<TData>): boolean {
@@ -299,8 +314,8 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
                 parent.treeNodeFlags = parentFlags;
 
-                if (showRowGroupColsChanged || !current.groupData) {
-                    this.updateGroupData(current);
+                if (showRowGroupColsChanged) {
+                    current._groupData = undefined;
                 }
 
                 if (parent.data || (parent.treeNodeFlags & FLAG_MARKED_FILLER) === 0 || parent.treeParent === null) {
@@ -419,18 +434,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
     }
 
-    private updateGroupData(row: RowNode): void {
-        const groupData: Record<string, string> = {};
-        setGroupData(row, groupData);
-        const groupDisplayCols = this.beans.showRowGroupCols?.columns;
-        if (groupDisplayCols) {
-            const key = row.key!;
-            for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
-                groupData[groupDisplayCols[i].getColId()] = key;
-            }
-        }
-    }
-
     /** Load the tree structure for nested groups, aka children property */
     private loadNested({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
         if (!fullReload && changedRowNodes) {
@@ -531,8 +534,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const key = path[pathLen - 1];
             if (node.key !== key) {
                 updateNodeKey(node, key);
-                // trigger any data change events or group will not update with the new key
-                node.setData(node.data!);
             }
             const pathKey = path.join(PATH_KEY_SEPARATOR);
             paths.set(node, pathKey); // Cache the path key for faster access
@@ -798,11 +799,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         row.treeNodeFlags = 0;
         row.childrenAfterGroup = _EmptyArray;
         row._leafs = undefined;
-        row.groupData = null;
+        row._groupData = null;
         const sibling = row.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = _EmptyArray;
-            sibling.groupData = null;
         }
         row.updateHasChildren();
         if (row.rowIndex !== null) {
@@ -822,13 +822,13 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
 
         for (let i = 0, len = allLeafs.length; i < len; ++i) {
-            this.updateGroupData(allLeafs[i]);
+            allLeafs[i]._groupData = undefined;
         }
 
         const fillers = this.fillerNodesById;
         if (fillers) {
             for (const rowNode of fillers.values()) {
-                this.updateGroupData(rowNode);
+                rowNode._groupData = undefined;
             }
         }
     }
@@ -857,11 +857,16 @@ const maybeExpandFromRemovedParent = <TData>(parent: RowNode<TData>, oldParent: 
 };
 
 const updateNodeKey = (node: RowNode, key: string): void => {
+    const hadData = node._groupData !== undefined;
     node.key = key;
-    node.groupData = null;
+    node.groupValue = key;
     const sibling = node.sibling;
     if (sibling) {
         sibling.key = key;
-        sibling.groupData = null;
+    }
+    if (hadData) {
+        node._groupData = undefined;
+        // trigger any data change events or group will not update with the new key
+        node.setData(node.data!);
     }
 };

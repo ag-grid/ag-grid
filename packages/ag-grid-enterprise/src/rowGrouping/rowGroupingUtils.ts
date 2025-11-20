@@ -1,7 +1,5 @@
 import type { AgColumn, BeanCollection, ColumnModel, RowNode } from 'ag-grid-community';
 
-import { setGroupData } from '../rowHierarchy/rowHierarchyUtils';
-
 export function setRowNodeGroupValue(
     rowNode: RowNode,
     colModel: ColumnModel,
@@ -10,10 +8,10 @@ export function setRowNodeGroupValue(
 ): void {
     const column = colModel.getCol(colKey)!;
 
-    let groupData = rowNode.groupData;
+    let groupData = rowNode._groupData;
     if (!groupData) {
         groupData = {};
-        setGroupData(rowNode, groupData);
+        rowNode._groupData = groupData;
     }
 
     const columnId = column.getColId();
