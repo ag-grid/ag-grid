@@ -8,7 +8,7 @@
     "glob": "8.0.3",
     "typescript": "~5.4.5",
     "cheerio": "^1.0.0",
-    "sucrase": "^3.32.0",
+    "sucrase": "^3.35.1",
     "json5": "2.2.3",
     "@nx/devkit": "17.2.6",
     "@swc/helpers": "0.5.3",
