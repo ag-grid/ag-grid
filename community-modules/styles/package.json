@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/styles",
-  "version": "34.3.1-beta.20251117.1622",
+  "version": "34.3.1-beta.20251120.1030",
   "description": "AG Grid Styles and Themes",
   "main": "_index.scss",
   "files": [
