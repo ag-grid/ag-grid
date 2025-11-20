@@ -85,6 +85,7 @@ type InternalModuleName =
     | 'FilterCore'
     | 'FilterValue'
     | 'FindCore'
+    | 'GroupEdit'
     | 'GroupCellRenderer'
     | 'GroupColumn'
     | 'GroupHierarchy'

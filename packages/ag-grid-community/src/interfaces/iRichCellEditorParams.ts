@@ -65,9 +65,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     filterList?: boolean;
 
     /**
-     * Set to `true` to enable asynchronous filtering of values via the `values(params, searchValue)` callback.
-     * Requires `allowTyping=true`, `filterList=true` and the `values` callback returns a promise of filtered values.
-     * The debounce time can be configured via `searchDebounceDelay`.
+     *
+     * Set to `true` to enable asynchronous filtering of values via the `values` callback.
+     * (only relevant when `allowTyping=true`, `filterList=true` and the `values` callback returns a promise of filtered values).
      * @default false
      */
     filterListAsync?: boolean;

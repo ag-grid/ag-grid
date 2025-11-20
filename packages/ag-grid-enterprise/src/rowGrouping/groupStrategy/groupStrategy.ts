@@ -1,12 +1,12 @@
 import type {
     AgColumn,
     ChangedPath,
-    ChangedRowNodes,
     GridOptions,
     IRowNode,
     StageExecuteParams,
+    _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _areEqual, _firstLeaf, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _areEqual, _csrmFirstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
@@ -140,7 +140,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return details;
     }
 
-    private handleDeltaUpdate(details: GroupingDetails, { removals, updates, adds, reordered }: ChangedRowNodes): void {
+    private handleDeltaUpdate(
+        details: GroupingDetails,
+        { removals, updates, adds, reordered }: _ChangedRowNodes
+    ): void {
         const parentsWithRemovals = new Set<RowNode | null>();
         const changedPath = details.changedPath;
 
@@ -380,7 +383,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn,
-                    leafNode: _firstLeaf(rowNode.childrenAfterGroup),
+                    leafNode: _csrmFirstLeaf(rowNode),
                 };
                 this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);

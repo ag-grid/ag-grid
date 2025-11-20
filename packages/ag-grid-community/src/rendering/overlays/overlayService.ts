@@ -163,7 +163,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             return;
         }
         if (gos.get('activeOverlay')) {
-            _warn(295);
+            _warn(296);
             return;
         }
         this.doHideOverlay();

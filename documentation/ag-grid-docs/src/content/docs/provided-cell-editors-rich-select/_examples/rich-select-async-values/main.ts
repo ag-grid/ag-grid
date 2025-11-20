@@ -1,4 +1,10 @@
-import type { ColDef, GridApi, GridOptions, ICellEditorParams, IRichCellEditorParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    IRichCellEditorParams,
+    RichCellEditorValuesCallbackParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -22,13 +28,9 @@ function getRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getValueFromServer(_params: ICellEditorParams, search?: string): Promise<string[]> {
-    search = search?.toLowerCase() ?? '';
+function getValueFromServer(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
     return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log('Grid requested `' + search + '` from server.');
-            resolve(languages.filter((l) => l.toLowerCase().includes(search)));
-        }, 1000);
+        setTimeout(() => resolve(languages), 1000);
     });
 }
 
@@ -39,18 +41,6 @@ const columnDefs: ColDef[] = [
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: getValueFromServer,
-        } as IRichCellEditorParams,
-    },
-    {
-        headerName: 'Server Side Filtering',
-        field: 'language',
-        cellEditor: 'agRichSelectCellEditor',
-        width: 300,
-        cellEditorParams: {
-            allowTyping: true,
-            values: getValueFromServer,
-            filterList: true,
-            filterListAsync: true,
         } as IRichCellEditorParams,
     },
 ];

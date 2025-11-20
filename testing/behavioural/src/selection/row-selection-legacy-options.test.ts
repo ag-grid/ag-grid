@@ -24,6 +24,7 @@ describe('Row Selection Legacy Grid Options', () => {
 
     function createGrid(gridOptions: GridOptions): [GridApi, GridActions] {
         const api = gridMgr.createGrid('myGrid', gridOptions);
+        consoleWarnSpy.mockClear();
         const actions = new GridActions(api, '#myGrid');
         return [api, actions];
     }

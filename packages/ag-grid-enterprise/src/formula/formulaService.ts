@@ -6,7 +6,7 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _isExpressionString } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
@@ -15,9 +15,6 @@ import { FormulaError } from './ast/utils';
 import type { Addr } from './functions/resolver';
 import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
-
-// plunker: https://plnkr.co/edit/8idB7tTubExLB58S?open=main.js
-// plunker2: https://plnkr.co/edit/VsIBH0GJb3iyq45c?open=main.js
 
 /**
  * Cell Formula Cache
@@ -114,12 +111,15 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         this.setupFunctions();
 
+        const refreshFormulas = () => this.refreshFormulas(true);
+        const resetColMap = () => this.setupColRefMap();
+
         this.addManagedListeners(this.beans.eventSvc, {
-            modelUpdated: this.reset.bind(this),
-            newColumnsLoaded: this.setupColRefMap.bind(this),
-            columnMoved: this.setupColRefMap.bind(this),
-            cellValueChanged: this.reset.bind(this),
-            rowDataUpdated: this.reset.bind(this),
+            modelUpdated: refreshFormulas,
+            cellValueChanged: refreshFormulas,
+            rowDataUpdated: refreshFormulas,
+            newColumnsLoaded: resetColMap,
+            columnMoved: resetColMap,
         });
     }
 
@@ -266,7 +266,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         this.colRefMap = map;
 
-        this.reset();
+        this.refreshFormulas(true);
     }
 
     /** Lookup a column by A1-style reference label, e.g. "A", "AB". */
@@ -285,7 +285,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /** Clear all cached results and re-render cells. */
-    private reset() {
+    public refreshFormulas(refreshCells: boolean) {
         /**
          * This needs optimised
          * Consider debouncing on high frequency cell value updates
@@ -293,15 +293,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
          */
 
         this.cachedResult = new WeakMap(); // drops cached values & ASTs
-        // if not CSRM, just refresh cells (no re-sort).
-        this.beans.rowRenderer.refreshCells();
+        if (refreshCells) {
+            this.beans.rowRenderer.refreshCells({ suppressFlash: true, force: true });
+        }
     }
 
     /**
      * Is a value a formula string (starts with '=')
      **/
     public isFormula(value: unknown): value is `=${string}` {
-        return this.formulasEnabled && typeof value === 'string' && value.startsWith('=');
+        return this.formulasEnabled && _isExpressionString(value);
     }
 
     /**

@@ -1,21 +1,18 @@
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _requestAnimationFrame } from './dom';
 
-const doOnceFlags: { [key: string]: boolean } = {};
+const doOnceSet = new Set<string>();
 
-/**
- * If the key was passed before, then doesn't execute the func
- * @param {Function} func
- * @param {string} key
- */
-export function _doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) {
-        return;
+/** If the key was passed before, then doesn't execute the func */
+export const _doOnce = (func: () => void, key: string) => {
+    if (!doOnceSet.has(key)) {
+        doOnceSet.add(key);
+        func();
     }
+};
 
-    func();
-    doOnceFlags[key] = true;
-}
+/** Expose the internal set for testing purposes */
+_doOnce._set = doOnceSet;
 
 type BatchedCalls = {
     pending: boolean;
