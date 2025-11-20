@@ -1,4 +1,4 @@
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, IRowNode } from 'ag-grid-community';
 
 import { asyncSetTimeout } from './utils';
 
@@ -8,7 +8,7 @@ export function countLoadingRows(api: GridApi): number {
     }
     let loadingRows = 0;
     api.forEachNode?.((node) => {
-        if (node.id === undefined && !node.data) {
+        if (node.stub) {
             ++loadingRows;
         }
     }, false);
@@ -23,14 +23,25 @@ export async function waitForNoLoadingRows(api: GridApi) {
 }
 
 export async function ssrmExpandAndLoadAll(api: GridApi) {
+    const visited = new Set<IRowNode | string | undefined>();
     function expandAllGroupsFromNodes() {
         if (api.isDestroyed?.()) {
             return false;
         }
         let result = false;
         api.forEachNode?.((node) => {
+            if (api.isDestroyed?.() || node.stub) {
+                return;
+            }
+            if (visited.has(node) || visited.has(node.id)) {
+                return;
+            }
+            visited.add(node);
+            if (node.id != null) {
+                visited.add(node.id);
+            }
             if ((node.group || node.master || node.isExpandable()) && !node.expanded) {
-                node.setExpanded(true);
+                node.setExpanded(true, undefined, true);
                 result = true;
             }
         }, false);
@@ -43,7 +54,8 @@ export async function ssrmExpandAndLoadAll(api: GridApi) {
             continue;
         }
 
-        if (countLoadingRows(api) > 0) {
+        const loading = countLoadingRows(api);
+        if (loading > 0) {
             await asyncSetTimeout(1);
             continue;
         }

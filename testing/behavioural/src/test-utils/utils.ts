@@ -91,23 +91,27 @@ export const printDataSnapshot = (data: any, pretty = false) => {
     );
 };
 
-export function unindentText(text: TemplateStringsArray | string | string[], ...values: unknown[]): string {
-    const textIsArray = Array.isArray(text);
+export function unindentText(
+    text: TemplateStringsArray | string | string[] | null | undefined,
+    ...values: unknown[]
+): string {
     let lines: string[];
-    if (textIsArray && 'raw' in text) {
-        const template = text as TemplateStringsArray;
-        let combined = '';
-        for (let i = 0; i < template.length; i++) {
-            combined += template[i];
-            if (i < values.length) {
-                combined += String(values[i]);
+    if (Array.isArray(text)) {
+        if ('raw' in text) {
+            const template = text as TemplateStringsArray;
+            let combined = '';
+            for (let i = 0; i < template.length; i++) {
+                combined += template[i];
+                if (i < values.length) {
+                    combined += String(values[i]);
+                }
             }
+            lines = combined.split('\n');
+        } else {
+            lines = text;
         }
-        lines = combined.split('\n');
-    } else if (textIsArray) {
-        lines = (text as string[]).slice();
     } else {
-        lines = (text as string).split('\n');
+        lines = String(text).split('\n');
     }
     lines = lines.filter((line) => line.trim().length > 0).map((line) => line.trimEnd());
     const minIndent = Math.min(...lines.map((line) => line.match(/^\s*/)?.[0].length ?? 0));

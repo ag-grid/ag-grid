@@ -84,11 +84,11 @@ describe('ag-grid grouping edge cases', () => {
 
         await new GridRows(api, 'groupHideParentOfSingleChild=true', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-department-Engineering
-            · ├── LEAF id:1 name:"Alice"
-            · ├── LEAF id:2 name:"Bob"
-            · ├── LEAF id:3 name:"Charlie"
-            · └── LEAF id:4 name:"Diana"
+            ├─┬ filler id:row-group-department-Engineering
+            │ ├── LEAF id:1 name:"Alice"
+            │ └── LEAF id:2 name:"Bob"
+            ├── LEAF id:3 name:"Charlie"
+            └── LEAF id:4 name:"Diana"
         `);
     });
 

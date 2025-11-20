@@ -445,13 +445,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             const row = allLeafs[i];
             const id = row.id!;
             if (row.key !== id) {
-                row.key = id;
-                row.groupData = null;
-                const sibling = row.sibling;
-                if (sibling) {
-                    sibling.key = id;
-                    sibling.groupData = null;
-                }
+                updateNodeKey(row, id);
             }
         }
     }
@@ -486,13 +480,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 row.treeParent = newParent ?? rootNode;
                 const id = row.id!;
                 if (row.key !== id) {
-                    row.key = id;
-                    row.groupData = null;
-                    const sibling = row.sibling;
-                    if (sibling) {
-                        sibling.key = id;
-                        sibling.groupData = null;
-                    }
+                    updateNodeKey(row, id);
                 }
             } else {
                 row.treeParent ??= rootNode;
@@ -507,13 +495,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             row.treeParent = rootNode; // Display all rows as children of the root node
             const id = row.id!;
             if (row.key !== id) {
-                row.key = id;
-                row.groupData = null;
-                const sibling = row.sibling;
-                if (sibling) {
-                    sibling.key = id;
-                    sibling.groupData = null;
-                }
+                updateNodeKey(row, id);
             }
         }
     }
@@ -548,13 +530,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
             const key = path[pathLen - 1];
             if (node.key !== key) {
-                node.key = key;
-                node.groupData = null;
-                const sibling = node.sibling;
-                if (sibling) {
-                    sibling.key = key;
-                    sibling.groupData = null;
-                }
+                updateNodeKey(node, key);
                 // trigger any data change events or group will not update with the new key
                 node.setData(node.data!);
             }
@@ -878,4 +854,14 @@ const maybeExpandFromRemovedParent = <TData>(parent: RowNode<TData>, oldParent: 
         return true;
     }
     return false;
+};
+
+const updateNodeKey = (node: RowNode, key: string): void => {
+    node.key = key;
+    node.groupData = null;
+    const sibling = node.sibling;
+    if (sibling) {
+        sibling.key = key;
+        sibling.groupData = null;
+    }
 };

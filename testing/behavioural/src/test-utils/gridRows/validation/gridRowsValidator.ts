@@ -22,9 +22,11 @@ interface RowAllLeafs {
 interface ValidationState {
     gridRows: GridRows;
     csrm: boolean;
+    ssrm: boolean;
     pivotMode: boolean;
     groupHideOpenParents: boolean;
     groupHideParentOfSingleChild: string | boolean;
+    groupAllowUnbalanced: boolean;
     showRowGroupColumns: AgColumn[];
 }
 
@@ -36,12 +38,18 @@ export class GridRowsValidator {
 
     public validate(gridRows: GridRows): this {
         const api = gridRows.api;
+        const rowModelType = api.getGridOption('rowModelType');
+        const csrm = rowModelType === 'clientSide';
+        const ssrm = rowModelType === 'serverSide';
+
         const state: ValidationState = {
             gridRows,
-            csrm: api.getGridOption('rowModelType') === 'clientSide',
+            csrm,
+            ssrm,
             pivotMode: !!api.getGridOption('pivotMode'),
             groupHideOpenParents: !!api.getGridOption('groupHideOpenParents'),
             groupHideParentOfSingleChild: api.getGridOption('groupHideParentOfSingleChild') ?? false,
+            groupAllowUnbalanced: !!api.getGridOption('groupAllowUnbalanced'),
             showRowGroupColumns: this.collectShowRowGroupColumns(api),
         };
 
@@ -225,7 +233,7 @@ export class GridRowsValidator {
             this.validateChildren(state, row, 'allLeafChildren', null);
         }
 
-        if (row.level >= 0) {
+        if (row.level >= 0 && state.csrm) {
             rowErrors.expectValueEqual(
                 'group',
                 row.group,
@@ -450,6 +458,10 @@ export class GridRowsValidator {
     }
 
     private computeUiLevel(state: ValidationState, row: RowNode): number {
+        if (state.ssrm) {
+            return this.computeSsrmUiLevel(state, row);
+        }
+
         let level = -1;
         let parent = row.parent;
         while (parent) {
@@ -491,6 +503,57 @@ export class GridRowsValidator {
             return 0;
         }
         return level;
+    }
+
+    private computeSsrmUiLevel(state: ValidationState, row: RowNode): number {
+        if (row.level == null || row.level < 0) {
+            return 0;
+        }
+
+        if (row.detail && row.parent) {
+            return this.computeSsrmUiLevel(state, row.parent);
+        }
+
+        let expected = row.level + (row.footer ? 1 : 0);
+        expected -= this.countUnbalancedAncestors(state, row);
+
+        if (expected < 0) {
+            expected = 0;
+        }
+
+        return expected;
+    }
+
+    private countUnbalancedAncestors(state: ValidationState, row: RowNode): number {
+        if (!state.groupAllowUnbalanced) {
+            return 0;
+        }
+
+        let count = 0;
+        let current: RowNode | null | undefined = row;
+        const visited = new Set<RowNode>();
+
+        while (current && current.parent) {
+            current = current.parent;
+            if (!current || visited.has(current)) {
+                break;
+            }
+            visited.add(current);
+
+            if (current.level == null || current.level < 0) {
+                break;
+            }
+
+            if (current.footer) {
+                continue;
+            }
+
+            if (current.group && current.key === '') {
+                ++count;
+            }
+        }
+
+        return count;
     }
 
     private verifyLeafs(gridRows: GridRows, row: RowNode): RowAllLeafs {
@@ -650,6 +713,10 @@ export class GridRowsValidator {
     }
 
     private validateLeafGroup(state: ValidationState, row: RowNode): void {
+        if (!state.csrm) {
+            return;
+        }
+
         const rowErrors = this.errors.get(row);
 
         // Leaf groups should have aggregation data in pivot mode

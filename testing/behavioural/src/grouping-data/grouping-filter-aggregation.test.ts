@@ -1,12 +1,12 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, unindentText } from '../test-utils';
 
 describe('ag-grid grouping filter aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, CsvExportModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -162,6 +162,29 @@ describe('ag-grid grouping filter aggregation', () => {
                 └─┬ LEAF_GROUP id:row-group-country-Portugal gold:6
                 · └── LEAF id:10 year:2021 sport:"Soccer" gold:6
             `);
+
+            const csv = unindentText(api.getDataAsCsv({ suppressQuotes: true }));
+            expect(csv).toEqual(unindentText`
+                Country,Year,Sport,sum(Gold)
+                Total ,,,36
+                 -> Ireland,,,6
+                ,2020,Sailing,1
+                ,2020,Soccer,2
+                ,2021,Football,3
+                 -> Italy,,,9
+                ,2020,Soccer,4
+                ,2021,Football,5
+                 -> France,,,3
+                ,2020,Tennis,1
+                ,2021,Soccer,2
+                 -> Spain,,,7
+                ,2020,Basketball,3
+                ,2021,Soccer,4
+                 -> Germany,,,5
+                ,2021,Football,5
+                 -> Portugal,,,6
+                ,2021,Soccer,6
+            `);
         }
     );
 
@@ -227,6 +250,18 @@ describe('ag-grid grouping filter aggregation', () => {
             └─┬ LEAF_GROUP id:row-group-country-France gold:1
             · └── LEAF id:4 athlete:"Jean Dupont" sport:"Tennis" gold:1
         `);
+
+        const csv = unindentText(api.getDataAsCsv({ suppressQuotes: true }));
+        expect(csv).toEqual(unindentText`
+            Country,Athlete,Sport,sum(Gold)
+             -> Ireland,,,3
+            ,John Smith,Sailing,1
+            ,Jane Doe,Soccer,2
+             -> Italy,,,3
+            ,Mario Rossi,Soccer,3
+             -> France,,,1
+            ,Jean Dupont,Tennis,1
+        `);
     });
 
     test('grouping with external filter', async () => {
@@ -280,6 +315,18 @@ describe('ag-grid grouping filter aggregation', () => {
             │ └── LEAF id:3 athlete:"Mario Rossi" sport:"Soccer" gold:3 active:true
             └─┬ LEAF_GROUP id:row-group-country-France gold:1
             · └── LEAF id:4 athlete:"Jean Dupont" sport:"Tennis" gold:1 active:false
+        `);
+
+        const csv = unindentText(api.getDataAsCsv({ suppressQuotes: true }));
+        expect(csv).toEqual(unindentText`
+            Country,Athlete,Sport,sum(Gold),Active
+             -> Ireland,,,3,
+            ,John Smith,Sailing,1,true
+            ,Jane Doe,Soccer,2,false
+             -> Italy,,,3,
+            ,Mario Rossi,Soccer,3,true
+             -> France,,,1,
+            ,Jean Dupont,Tennis,1,false
         `);
     });
 });
