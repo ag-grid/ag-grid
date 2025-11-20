@@ -12,4 +12,14 @@ ignore:
               reason: Only used for calculating module size and is dev only
               expires: 2025-12-08T12:00:00.000Z
               created: 2025-06-06T14:47:25.226Z
+
+    SNYK-JS-GLOB-14040952:
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > @npmcli/package-json@6.2.0 > glob@10.4.5':
+              reason: Glob is only used for development and we control what files are passed in
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-11-20T10:29:00.007Z
+        - '@angular/cli@19.2.19 > pacote@20.0.0 > @npmcli/run-script@9.1.0 > node-gyp@11.5.0 > make-fetch-happen@14.0.3 > cacache@19.0.1 > glob@10.4.5':
+              reason: Glob is only used for development and we control what files are passed in
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-11-20T10:29:00.007Z
 patch: {}
