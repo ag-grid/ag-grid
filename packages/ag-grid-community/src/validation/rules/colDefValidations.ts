@@ -1,6 +1,6 @@
 import type { UserComponentName } from '../../context/context';
+import { _getSortDefFromInput } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type {
     Deprecations,
@@ -222,11 +222,16 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                    const invalidItems = sortingOrder.filter((a) => !_getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                        return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: ${invalidItems.map(
+                            (item) =>
+                                typeof item === 'string' || item == null
+                                    ? toStringWithNullUndefined(item)
+                                    : JSON.stringify(item)
+                        )}]`;
                     }
-                } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
                     return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
                 }
                 return null;

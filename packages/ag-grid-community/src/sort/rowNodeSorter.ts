@@ -3,6 +3,7 @@ import { _defaultComparator } from '../agStack/utils/generic';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import type { SortComparatorFn } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _firstLeaf } from '../entities/rowNodeUtils';
 import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
@@ -68,7 +69,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 //otherwise do our own comparison
                 const opts = { accentedCompare: this.isAccentedSort } as DefaultComparatorOptions;
                 if (sortOption.type === 'absolute') {
-                    opts.transform = absoluteValueTransformer;
+                    opts.transform = _absoluteValueTransformer;
                 }
                 comparatorResult = _defaultComparator(valueA, valueB, opts);
             }
@@ -85,24 +86,32 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getComparator(
-        sortOption: SortOption,
-        rowNode: RowNode
-    ): ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
-        const column = sortOption.column;
+    /**
+     * if user defines a comparator as a function then use that.
+     * if user defines a dictionary of comparators, then use the one matching the sort type.
+     * if no comparator provided, or no matching comparator found in dictionary, then return undefined.
+     *
+     * grid checks later if undefined is returned here and falls back to a default comparator corresponding to sort type on the coldef.
+     * @private
+     */
+    private getComparator(sortOption: SortOption, rowNode: RowNode): SortComparatorFn | undefined {
+        const colDef = sortOption.column.getColDef();
 
         // comparator on col get preference over everything else
-        const comparatorOnCol = column.getColDef().comparator;
+        const comparatorOnCol = colDef.comparator;
         if (comparatorOnCol != null) {
+            if (typeof comparatorOnCol === 'object') {
+                return comparatorOnCol[sortOption.type || 'default'];
+            }
             return comparatorOnCol;
         }
 
-        if (!column.getColDef().showRowGroup) {
+        if (!colDef.showRowGroup) {
             return;
         }
 
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-        const groupLeafField = !rowNode.group && column.getColDef().field;
+        const groupLeafField = !rowNode.group && colDef.field;
         if (!groupLeafField) {
             return;
         }
@@ -111,8 +120,15 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         if (!primaryColumn) {
             return;
         }
-
-        return primaryColumn.getColDef().comparator;
+        // comparator on col get preference over everything else
+        const comparatorOnPrimaryCol = primaryColumn.getColDef().comparator;
+        if (comparatorOnPrimaryCol == null) {
+            return;
+        }
+        if (typeof comparatorOnPrimaryCol === 'object') {
+            return comparatorOnPrimaryCol[sortOption.type || 'default'];
+        }
+        return comparatorOnPrimaryCol;
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
@@ -150,7 +166,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 }
 
-function absoluteValueTransformer(value: any): number | null {
+function _absoluteValueTransformer(value: any): number | null {
     if (value == null) {
         return null;
     }

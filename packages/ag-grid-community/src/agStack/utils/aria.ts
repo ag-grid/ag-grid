@@ -1,6 +1,7 @@
-import type { SortDirection } from '../../entities/colDef';
+import type { DisplaySortDef } from '../../entities/colDef';
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 
+/** Per https://www.w3.org/TR/wai-aria/#aria-sort](https://www.w3.org/TR/wai-aria/#aria-sort:~:text=integer-,aria%2Dsort%20property,-Indicates%20if%20items */
 export type AriaSortState = 'ascending' | 'descending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
@@ -32,20 +33,18 @@ export function _setAriaRole(element: Element, role?: string | null) {
     }
 }
 
-export function _getAriaSortState(sortDirection: SortDirection | 'mixed'): AriaSortState {
-    let sort: AriaSortState;
+export function _getAriaSortState(directionOrDef: DisplaySortDef | null): AriaSortState {
+    const direction = directionOrDef?.direction;
 
-    if (sortDirection === 'asc') {
-        sort = 'ascending';
-    } else if (sortDirection === 'desc') {
-        sort = 'descending';
-    } else if (sortDirection === 'mixed') {
-        sort = 'other';
-    } else {
-        sort = 'none';
+    if (direction === 'asc') {
+        return 'ascending';
+    } else if (direction === 'desc') {
+        return 'descending';
+    } else if (direction === 'mixed') {
+        return 'other';
     }
 
-    return sort;
+    return 'none';
 }
 
 // ARIA ATTRIBUTE GETTERS

@@ -217,7 +217,7 @@ export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = [
                 | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
 
-type SortComparatorFn = <TData, TValue>(
+export type SortComparatorFn = <TData, TValue>(
     valueA: TValue | null | undefined,
     valueB: TValue | null | undefined,
     nodeA: IRowNode<TData>,
@@ -1206,6 +1206,13 @@ export type SortDef = {
     type: SortType;
     direction: SortDirection;
 };
+
+export type DisplaySortDef =
+    | SortDef
+    | {
+          direction: 'mixed';
+          type: SortType;
+      };
 
 export type GroupHierarchyParts =
     | 'year'

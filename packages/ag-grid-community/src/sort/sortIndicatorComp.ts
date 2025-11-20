@@ -117,10 +117,10 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
-        const isAbsoluteSort = column.getSortDef()?.type === 'absolute';
-        const isAscending = sortDirection === 'asc';
-        const isDescending = sortDirection === 'desc';
+        const sortDirection = beans.sortSvc!._getDisplaySortForColumn(column);
+        const isAbsoluteSort = sortDirection?.type === 'absolute';
+        const isAscending = sortDirection?.direction === 'asc';
+        const isDescending = sortDirection?.direction === 'desc';
 
         if (eSortAsc) {
             _setDisplayed(eSortAsc, isAscending && !isAbsoluteSort, { skipAriaHidden: true });
@@ -132,7 +132,7 @@ export class SortIndicatorComp extends Component {
 
         if (eSortNone) {
             const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.get('unSortIcon');
-            const isNone = sortDirection === null || sortDirection === undefined;
+            const isNone = sortDirection?.direction == null;
             _setDisplayed(eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
 
@@ -165,7 +165,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         const { eSortMixed, beans, column } = this;
         if (eSortMixed) {
-            const isMixedSort = beans.sortSvc!.getDisplaySortForColumn(column) === 'mixed';
+            const isMixedSort = beans.sortSvc!._getDisplaySortForColumn(column)?.direction === 'mixed';
             _setDisplayed(eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }

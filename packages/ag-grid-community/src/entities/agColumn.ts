@@ -34,6 +34,7 @@ import type {
     RowSpanParams,
     SortDef,
     SortDirection,
+    SortType,
 } from './colDef';
 
 const COL_DEF_DEFAULTS: Partial<ColDef> = {
@@ -80,7 +81,6 @@ export class AgColumn<TValue = any>
     private left: number | null;
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
-    public sort: SortDirection | undefined;
     public sortDef: SortDef | undefined;
     public sortIndex: number | null | undefined;
     public moving = false;
@@ -426,8 +426,16 @@ export class AgColumn<TValue = any>
         return this.moving;
     }
 
+    get sort(): SortDirection | undefined {
+        return this.sortDef?.direction;
+    }
+
+    set sort(value: SortDirection | undefined) {
+        this.sortDef = _getSortDefFromInput(value);
+    }
+
     public getSort(): SortDirection | undefined {
-        return this.sortDef?.direction ?? this.sort;
+        return this.sort;
     }
 
     public getSortDef(): SortDef | undefined {
@@ -740,4 +748,48 @@ export class AgColumn<TValue = any>
             key,
         } as AgEvent<'columnStateUpdated'>);
     }
+}
+
+export function _getSortDefFromInput(input: unknown, colDef?: ColDef): SortDef | undefined {
+    if (_isSortDefValid(input)) {
+        return input;
+    }
+    const sortDef = { direction: input, type: _normalizeSortType(colDef) } as SortDef;
+    if (_isSortDefValid(sortDef)) {
+        return sortDef;
+    }
+    return undefined;
+}
+
+export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {
+    const isDefined = !!maybeSortDef;
+    if (!isDefined) {
+        return false;
+    }
+    const isObject = typeof maybeSortDef === 'object';
+    if (!isObject) {
+        return false;
+    }
+    const sortDef = maybeSortDef as { type?: unknown; direction?: unknown };
+    const isTypeValid = !sortDef.type || sortDef.type === 'default' || sortDef.type === 'absolute';
+    if (!isTypeValid) {
+        return false;
+    }
+    const isDirectionValid =
+        !sortDef.direction || sortDef.direction === 'asc' || sortDef.direction === 'desc' || sortDef.direction;
+    return !!isDirectionValid;
+}
+
+export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
+    if (sortDef1 === sortDef2) {
+        return true;
+    }
+    if (!sortDef1 || !sortDef2) {
+        return false;
+    }
+    return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
+}
+
+export function _normalizeSortType(colDefLike?: { sortDef?: { type?: SortType } }): SortType {
+    return colDefLike?.sortDef?.type || 'default';
 }
