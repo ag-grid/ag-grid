@@ -847,11 +847,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         position: Required<EditPosition>,
         params: BatchPrepDetails
     ): BatchPrepDetails | undefined {
-        const {
-            beans: { formula },
-            model,
-            valueSvc,
-        } = this;
+        const { model } = this;
         if (!this.batch) {
             return;
         }
@@ -862,7 +858,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        const { rowNode, column } = position;
+        const { rowNode } = position;
         const { compDetails, valueToDisplay } = params;
 
         if (compDetails) {
@@ -871,15 +867,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return { compDetails };
         }
 
-        const editRow = model.getEditRow(position.rowNode, CHECK_SIBLING);
-
-        if (valueToDisplay !== undefined && editRow?.has(column)) {
-            const newValue = valueSvc.getValue(column as AgColumn, rowNode);
-            if (formula?.isFormula(newValue)) {
-                return { valueToDisplay };
-            }
-            return { valueToDisplay: newValue };
-        }
+        return valueToDisplay;
     }
 
     public cleanupEditors() {
