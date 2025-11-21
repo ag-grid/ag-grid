@@ -259,6 +259,13 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private getOverlayDef(): OverlayDef | null {
         const gos = this.gos;
+
+        // Active overlay should take priority over loading=true
+        const activeOverlayDef = getOverlayDef(gos.get('activeOverlay'));
+        if (activeOverlayDef) {
+            return activeOverlayDef;
+        }
+
         const loading = gos.get('loading');
 
         const loadingDefined = loading !== undefined;
@@ -280,10 +287,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.showInitialOverlay = false;
         }
 
-        const activeOverlayDef = getOverlayDef(this.gos.get('activeOverlay'));
-        if (activeOverlayDef) {
-            return activeOverlayDef;
-        }
+        // activeOverlay already checked above
 
         if (this.clientSide && !this.isDisabled(NoRowsOverlayDef) && this.beans.rowModel.isEmpty()) {
             return NoRowsOverlayDef;
