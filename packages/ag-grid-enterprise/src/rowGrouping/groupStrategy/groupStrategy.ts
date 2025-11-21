@@ -60,7 +60,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const groupData: Record<string, any> = {};
         node._groupData = groupData;
 
-        let groupValue: any;
         if (!rowGroupCol) {
             return groupData;
         }
@@ -77,11 +76,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
             }
         }
-        if (leafNode) {
-            groupValue = this.beans.valueSvc.getValue(rowGroupCol, leafNode);
-        }
-
-        node.groupValue = groupValue;
 
         return groupData;
     }
@@ -493,10 +487,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupsById.set(groupNode.id, groupNode);
 
         const leafNode = groupInfo.leafNode;
-        if (rowGroupColumn && leafNode) {
-            // preserve the value type for full width rows and ensure groupValue is available before lazy loading
-            groupNode.groupValue = this.beans.valueSvc.getValue(rowGroupColumn, leafNode);
-        }
+        groupNode.groupValue = rowGroupColumn && leafNode && this.beans.valueSvc.getValue(rowGroupColumn, leafNode);
 
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
@@ -548,15 +539,19 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     public onShowRowGroupColsSetChanged(): void {
+        const { rowModel, valueSvc } = this.beans;
         for (const groupNode of this.nonLeafsById.values()) {
-            groupNode._groupData = this.newGroupData(groupNode);
+            groupNode._groupData = undefined;
+            const rowGroupColumn = groupNode.rowGroupColumn;
+            const leafNode = rowGroupColumn && _csrmFirstLeaf(groupNode);
+            groupNode.groupValue = leafNode && valueSvc.getValue(rowGroupColumn, leafNode);
         }
 
-        const allLeafs = this.beans.rowModel.rootNode?._leafs;
+        const allLeafs = rowModel.rootNode?._leafs;
         if (allLeafs) {
             for (let i = 0, len = allLeafs.length; i < len; ++i) {
                 const leafNode = allLeafs[i];
-                leafNode.parent!._groupData = this.newGroupData(leafNode.parent!);
+                leafNode.parent!._groupData = undefined;
             }
         }
     }
