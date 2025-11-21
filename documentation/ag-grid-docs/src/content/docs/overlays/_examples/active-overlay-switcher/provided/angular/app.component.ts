@@ -28,18 +28,16 @@ interface Athlete {
 }
 
 interface OverlayState {
-    activeOverlay: 'agLoadingOverlay' | 'agNoRowsOverlay' | 'statusOverlay' | undefined;
+    activeOverlay: any;
     activeOverlayParams: StatusOverlayParams | undefined;
 }
 
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular, FormsModule, StatusOverlayComponent],
+    imports: [AgGridAngular, FormsModule],
     template: `<div class="example-wrapper">
         <div class="button-row">
-            <label class="toggle loading-toggle"><input type="checkbox" [(ngModel)]="loadingToggle" /> Loading</label>
-            <button type="button" (click)="showNoRowsOverlay()">Show no-rows overlay</button>
             <button type="button" (click)="showCustomOverlay()">Show custom overlay</button>
             <button type="button" (click)="clearOverlay()">Hide overlay</button>
         </div>
@@ -51,7 +49,6 @@ interface OverlayState {
                 [defaultColDef]="defaultColDef"
                 [rowData]="rowData"
                 [components]="components"
-                [loading]="loading()"
                 [activeOverlay]="overlayState().activeOverlay"
                 [activeOverlayParams]="overlayState().activeOverlayParams"
             />
@@ -74,29 +71,16 @@ export class AppComponent {
         { athlete: 'Natalie Coughlin', country: 'United States' },
     ];
 
-    public readonly components = { statusOverlay: StatusOverlayComponent };
-
+    private statusOverlayCounter = 1;
     public readonly overlayState = signal<OverlayState>({
-        activeOverlay: undefined,
-        activeOverlayParams: undefined,
+        activeOverlay: StatusOverlayComponent,
+        activeOverlayParams: { myCounter: this.statusOverlayCounter },
     });
-
-    public readonly loadingToggle = model<boolean>(false);
-    public readonly loading = computed<boolean | undefined>(() => (this.loadingToggle() ? true : undefined));
-
-    private statusOverlayCounter = 0;
-
-    public showNoRowsOverlay(): void {
-        this.overlayState.set({
-            activeOverlay: 'agNoRowsOverlay',
-            activeOverlayParams: undefined,
-        });
-    }
 
     public showCustomOverlay(): void {
         this.statusOverlayCounter += 1;
         this.overlayState.set({
-            activeOverlay: 'statusOverlay',
+            activeOverlay: StatusOverlayComponent,
             activeOverlayParams: { myCounter: this.statusOverlayCounter },
         });
     }

@@ -53,10 +53,6 @@ const VueExample = defineComponent({
     template: `
         <div class="example-wrapper">
             <div class="button-row">
-                <label class="toggle loading-toggle">
-                    <input type="checkbox" :checked="loading === true" @change="onLoadingToggle" /> Loading
-                </label>
-                <button type="button" @click="showNoRowsOverlay">Show no-rows overlay</button>
                 <button type="button" @click="showCustomOverlay">Show custom overlay</button>
                 <button type="button" @click="clearOverlay">Hide overlay</button>
             </div>
@@ -66,27 +62,18 @@ const VueExample = defineComponent({
                 :defaultColDef="defaultColDef"
                 :rowData="rowData"
                 :components="components"
-                :loading="loading"
                 :activeOverlay="overlayState.activeOverlay"
                 :activeOverlayParams="overlayState.activeOverlayParams"
             />
         </div>
     `,
     setup() {
+        const statusOverlayCounter = ref(1);
         const overlayState = ref<OverlayState>({
-            activeOverlay: undefined,
-            activeOverlayParams: undefined,
+            activeOverlay: 'statusOverlay',
+            activeOverlayParams: { myCounter: statusOverlayCounter.value },
         });
-        const statusOverlayCounter = ref(0);
-        const loading = ref<boolean | undefined>(undefined);
         const components = { statusOverlay: StatusOverlay };
-
-        const showNoRowsOverlay = () => {
-            overlayState.value = {
-                activeOverlay: 'agNoRowsOverlay',
-                activeOverlayParams: undefined,
-            };
-        };
 
         const showCustomOverlay = () => {
             statusOverlayCounter.value += 1;
@@ -103,20 +90,12 @@ const VueExample = defineComponent({
             };
         };
 
-        const onLoadingToggle = (event: Event) => {
-            const checked = (event.target as HTMLInputElement).checked;
-            loading.value = checked ? true : undefined;
-        };
-
         return {
             columnDefs,
             defaultColDef,
             rowData,
             components,
             overlayState,
-            loading,
-            onLoadingToggle,
-            showNoRowsOverlay,
             showCustomOverlay,
             clearOverlay,
         };

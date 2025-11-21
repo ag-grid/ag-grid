@@ -43,40 +43,22 @@ const defaultColDef: ColDef = {
 };
 
 const GridExample: React.FC = () => {
-    const components = useMemo(() => ({ statusOverlay: StatusOverlay }), []);
-    const [activeOverlay, setActiveOverlay] = useState<string | undefined>();
-    const [overlayParams, setOverlayParams] = useState<StatusOverlayParams | undefined>();
-    const [statusOverlayCounter, setStatusOverlayCounter] = useState(0);
-    const [loading, setLoading] = useState<boolean | undefined>(undefined);
-
-    const setNoRowsOverlay = () => {
-        setActiveOverlay('agNoRowsOverlay');
-        setOverlayParams(undefined);
-    };
+    const [activeOverlay, setActiveOverlay] = useState<any>(() => StatusOverlay);
+    const [overlayParams, setOverlayParams] = useState<StatusOverlayParams>({ myCounter: 1 });
 
     const setCustomOverlay = () => {
-        const newCounter = statusOverlayCounter + 1;
-        setStatusOverlayCounter(newCounter);
-        setActiveOverlay('statusOverlay');
-        setOverlayParams({ myCounter: newCounter });
+        setActiveOverlay(() => StatusOverlay);
+        setOverlayParams(prev => ({ myCounter: prev.myCounter + 1 }));
     };
 
     const clearOverlay = () => {
         setActiveOverlay(undefined);
-        setOverlayParams(undefined);
     };
 
-    const onLoadingToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setLoading(event.target.checked ? true : undefined);
-    };
 
     return (
         <div className="example-wrapper">
             <div className="button-row">
-                <label className="toggle loading-toggle">
-                    <input type="checkbox" checked={loading === true} onChange={onLoadingToggle} /> Loading
-                </label>
-                <button onClick={setNoRowsOverlay}>Show no-rows overlay</button>
                 <button onClick={setCustomOverlay}>Show custom overlay</button>
                 <button onClick={clearOverlay}>Hide active overlay</button>
             </div>
@@ -86,8 +68,6 @@ const GridExample: React.FC = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    components={components}
-                    loading={loading}
                     activeOverlay={activeOverlay}
                     activeOverlayParams={overlayParams}
                 />
