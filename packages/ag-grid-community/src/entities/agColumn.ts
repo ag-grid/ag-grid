@@ -709,15 +709,19 @@ export class AgColumn<TValue = any>
     }
 
     public isAllowPivot(): boolean {
-        return this.colDef.enablePivot === true && !this.gos.get('enableFormulas');
+        return this.colDef.enablePivot === true;
     }
 
     public isAllowValue(): boolean {
-        return this.colDef.enableValue === true && !this.gos.get('enableFormulas');
+        return this.colDef.enableValue === true;
     }
 
     public isAllowRowGroup(): boolean {
-        return this.colDef.enableRowGroup === true && !this.gos.get('enableFormulas');
+        return this.colDef.enableRowGroup === true;
+    }
+
+    public isAllowFormula(): boolean {
+        return this.colDef.allowFormula === true;
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {

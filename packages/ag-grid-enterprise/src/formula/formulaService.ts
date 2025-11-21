@@ -5,6 +5,7 @@ import type {
     IFormulaService,
     NamedBean,
     RowNode,
+    _ColumnCollections,
 } from 'ag-grid-community';
 import { BeanStub, _isExpressionString } from 'ag-grid-community';
 
@@ -101,18 +102,28 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
 
-    private formulasEnabled = false;
+    public active = false;
+
+    public setFormulasActive(cols: _ColumnCollections): void {
+        const active = cols.list.some((col) => col.isAllowFormula());
+        if (active !== this.active) {
+            this.active = active;
+        }
+    }
 
     public postConstruct(): void {
-        this.formulasEnabled = this.gos.get('enableFormulas') === true;
-        if (!this.formulasEnabled) {
-            return;
-        }
-
         this.setupFunctions();
 
-        const refreshFormulas = () => this.refreshFormulas(true);
-        const resetColMap = () => this.setupColRefMap();
+        const refreshFormulas = () => {
+            if (this.active) {
+                this.refreshFormulas(true);
+            }
+        };
+        const resetColMap = () => {
+            if (this.active) {
+                this.setupColRefMap();
+            }
+        };
 
         this.addManagedListeners(this.beans.eventSvc, {
             modelUpdated: refreshFormulas,
@@ -237,6 +248,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private setupColRefMap() {
+        if (!this.active) {
+            this.colRefMap = new Map();
+            return;
+        }
         const alphabet = 'abcdefghijklmnopqrstuvwxyz';
         const base = alphabet.length;
         const list = this.beans.colModel.getCols();
@@ -302,7 +317,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      * Is a value a formula string (starts with '=')
      **/
     public isFormula(value: unknown): value is `=${string}` {
-        return this.formulasEnabled && _isExpressionString(value);
+        return this.active && _isExpressionString(value);
     }
 
     /**

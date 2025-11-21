@@ -353,12 +353,7 @@ export function _addColumnDefaultAndTypes(
     const defaultColDef = gos.get('defaultColDef');
     _mergeDeep(res, defaultColDef, false, true);
 
-    let def = colDef;
-    if (beans.gos.get('enableFormulas')) {
-        def = { ...def, cellDataType: false };
-    }
-
-    const columnType = updateColDefAndGetColumnType(beans, res, def, colId);
+    const columnType = updateColDefAndGetColumnType(beans, res, colDef, colId);
 
     if (columnType) {
         assignColumnTypes(beans, columnType, res);

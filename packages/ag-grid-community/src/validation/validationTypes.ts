@@ -34,7 +34,7 @@ export type Validations<T extends object> = {
 };
 
 // Rules object, if present, module is required.
-export interface OptionsValidation<T extends object> {
+interface OptionsValidation<T extends object> {
     supportedRowModels?: RowModelType[];
     dependencies?: RequiredOptions<T>;
     validate?: (options: T, gridOptions: GridOptions, beans: BeanCollection) => string | null;

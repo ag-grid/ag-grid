@@ -16,7 +16,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _addGridCommonParams, _isServerSideRowModel, _isTreeData } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -71,8 +71,8 @@ export class ValueService extends BeanStub implements NamedBean {
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(gos);
-        this.cellExpressions = gos.get('enableCellExpressions') && !gos.get('enableFormulas');
-        this.isTreeData = _isTreeData(gos);
+        this.cellExpressions = gos.get('enableCellExpressions') && !this.beans.formula?.active;
+        this.isTreeData = gos.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -151,7 +151,7 @@ export class ValueService extends BeanStub implements NamedBean {
         let value = this.getValue(column, node, ignoreAggData, source);
 
         const { formula } = this.beans;
-        if (formula?.isFormula(value)) {
+        if (column.isAllowFormula() && formula?.isFormula(value)) {
             value = formula.resolveValue(column, node as RowNode);
         }
 
@@ -260,6 +260,11 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
         const colDef = column.getColDef();
+
+        // we do not allow parsing of formulas
+        if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
+            return newValue;
+        }
 
         const valueParser = colDef.valueParser;
 

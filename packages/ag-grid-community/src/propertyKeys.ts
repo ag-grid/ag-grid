@@ -226,7 +226,6 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'copyHeadersToClipboard',
     'copyGroupHeadersToClipboard',
     'pivotMode',
-    'enableFormulas',
     'suppressAggFuncInHeader',
     'suppressColumnVirtualisation',
     'alwaysAggregateAtRootLevel',

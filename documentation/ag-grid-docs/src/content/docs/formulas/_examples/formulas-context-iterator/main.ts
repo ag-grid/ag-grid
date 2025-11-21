@@ -35,7 +35,7 @@ const gridOptions: GridOptions<any> = {
     columnDefs: [
         { field: 'A', colId: '0', width: 150 },
         { field: 'B', colId: '1', width: 150 },
-        { field: 'C', colId: '2', flex: 1 },
+        { field: 'C', colId: '2', flex: 1, allowFormula: true },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
@@ -43,7 +43,6 @@ const gridOptions: GridOptions<any> = {
             mode: 'fill',
         },
     },
-    enableFormulas: true,
     defaultColDef: {
         headerName: '',
         editable: true,

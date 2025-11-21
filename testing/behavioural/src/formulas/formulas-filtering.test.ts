@@ -37,9 +37,11 @@ describe('ag-grid formulas filtering', () => {
 
     test('TC1 Simple formula result filtering', async () => {
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData: basicRowData.map((data, i) => ({ ...data, B: '=A' + (i + 1) + '*2' })),
             columnDefs: [{ field: 'A' }, { field: 'B', filter: 'agNumberColumnFilter' }, { field: 'name' }],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data.id,
         };
 
@@ -96,7 +98,6 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowNumbers: true,
             rowData: athleteData,
             columnDefs: [
@@ -108,6 +109,7 @@ describe('ag-grid formulas filtering', () => {
             ],
             getRowId: (params) => params.data?.id,
             defaultColDef: {
+                allowFormula: true,
                 editable: true,
                 filter: true,
             },
@@ -146,9 +148,11 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData: formulaRowData,
             columnDefs: [{ field: 'A', filter: 'agNumberColumnFilter' }, { field: 'B' }],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data.id,
         };
 
@@ -197,7 +201,6 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowNumbers: true,
             rowData: athleteData,
             columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter', cellDataType: 'text', editable: true }],
@@ -209,6 +212,7 @@ describe('ag-grid formulas filtering', () => {
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
+                allowFormula: true,
                 filter: 'agTextColumnFilter',
                 suppressHeaderMenuButton: true,
                 suppressHeaderContextMenu: true,
@@ -281,9 +285,11 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData: circularRowData,
             columnDefs: [{ field: 'A' }, { field: 'B', filter: 'agNumberColumnFilter' }],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data.id,
         };
 
@@ -351,9 +357,11 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData: personData,
             columnDefs: [{ field: 'athlete', filter: 'agSetColumnFilter' }, { field: 'country' }, { field: 'sport' }],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data?.id,
         };
 
@@ -435,7 +443,6 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowNumbers: true,
             rowData: athleteData,
             columnDefs: [
@@ -443,6 +450,9 @@ describe('ag-grid formulas filtering', () => {
                 { field: 'country', minWidth: 120 },
                 { field: 'sport', minWidth: 120 },
             ],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data?.id,
         };
 
@@ -511,9 +521,11 @@ describe('ag-grid formulas filtering', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData: rangeRowData,
             columnDefs: [{ field: 'A', filter: 'agNumberColumnFilter' }, { field: 'B' }],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data.id,
         };
 
@@ -683,7 +695,6 @@ describe('ag-grid formulas filtering', () => {
         }
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowNumbers: true,
             components: {
                 personFilter: PersonFilter,
@@ -692,6 +703,7 @@ describe('ag-grid formulas filtering', () => {
                 editable: true,
                 flex: 1,
                 minWidth: 100,
+                allowFormula: true,
             },
             columnDefs: [
                 {

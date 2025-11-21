@@ -937,11 +937,6 @@ export interface Props<TData> {
          * @agModule `FormulaModule`
          */
     formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } },
-    /** Enable or disable the processing of cell formulas
-         * @initial
-         * @agModule `FormulaModule`
-         */
-    enableFormulas?: boolean,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -2078,7 +2073,6 @@ export function getProps() {
         functionsReadOnly: undefined,
         aggFuncs: undefined,
         formulaFuncs: undefined,
-        enableFormulas: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,
         aggregateOnlyChangedColumns: undefined,

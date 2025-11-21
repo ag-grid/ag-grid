@@ -61,7 +61,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -144,7 +146,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -225,7 +229,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -274,7 +280,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -332,7 +340,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -382,7 +392,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -417,7 +429,9 @@ describe('ag-grid formulas general behaviour', () => {
 
         try {
             const gridOptions: GridOptions = {
-                enableFormulas: true,
+                defaultColDef: {
+                    allowFormula: true,
+                },
                 rowNumbers: true,
                 rowData: [{ id: 'dates', today: '=TODAY()', now: '=NOW()' }],
                 getRowId: (params) => params.data?.id,
@@ -461,7 +475,9 @@ describe('ag-grid formulas general behaviour', () => {
 
     test('custom iterator formula aggregates values', async () => {
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData: [
                 {
@@ -504,7 +520,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -545,7 +563,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -597,7 +617,9 @@ describe('ag-grid formulas general behaviour', () => {
         ];
         const columnDefs = [{ field: 'source', colId: 'source' }, { field: 'result' }];
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             getRowId: (params) => params.data?.id,
@@ -680,7 +702,9 @@ describe('ag-grid formulas general behaviour', () => {
         const columnDefs = [{ field: 'x' }, { field: 'y' }, { field: 'value' }];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData: initialRowData,
             getRowId: (params) => params.data?.id,

@@ -123,8 +123,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
         } else {
-            const isFormulas = this.beans.gos.get('enableFormulas');
-            return getHeaderCompElementParams(isFormulas, isSorting);
+            return getHeaderCompElementParams(!!this.beans.formula?.active, isSorting);
         }
     }
 

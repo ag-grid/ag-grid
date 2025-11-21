@@ -15,6 +15,7 @@ import type {
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
+import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -84,7 +85,7 @@ export function _setupEditors(
                     UNEDITED;
 
                 editModelSvc?.setEdit(cellPosition, {
-                    pendingValue: getNormalisedFormula(beans, newValue, false),
+                    pendingValue: getNormalisedFormula(beans, newValue, false, cellColumn),
                     sourceValue: oldValue,
                     state: 'editing',
                 });
@@ -131,6 +132,7 @@ export function _setupEditor(
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
+    const isAllowFormula = position.column.isAllowFormula();
 
     const previousEdit = beans.editModelSvc?.getEdit(position);
 
@@ -141,7 +143,7 @@ export function _setupEditor(
     }
 
     beans.editModelSvc?.setEdit(position, {
-        editorValue: getNormalisedFormula(beans, newValue, true),
+        editorValue: getNormalisedFormula(beans, newValue, true, position.column),
         state: 'editing',
     });
 
@@ -152,7 +154,11 @@ export function _setupEditor(
     }
 
     const colDef = position.column.getColDef();
-    const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
+    const compDetails = _getCellEditorDetails(
+        beans.userCompFactory,
+        isAllowFormula ? { ...colDef, cellEditor: 'agTextCellEditor' } : colDef,
+        editorParams
+    );
 
     // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
     const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
@@ -242,7 +248,7 @@ function _createEditorParams(
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;
-    if (beans.formula?.isFormula(paramsValue)) {
+    if (column.isAllowFormula() && beans.formula?.isFormula(paramsValue)) {
         // normalise to shorthand for editing
         paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
     }
@@ -367,14 +373,14 @@ export function _syncFromEditor(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false) : UNEDITED,
+            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
         });
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: valueSameAsSource ? getNormalisedFormula(beans, edit.sourceValue, true) : editorValue,
+        editorValue: valueSameAsSource ? getNormalisedFormula(beans, edit.sourceValue, true, column) : editorValue,
     });
 
     if (params?.persist) {
@@ -386,9 +392,9 @@ export function _syncFromEditor(
  * Converts formula to shorthand or longhand depending on context
  * @param forEditing if true, converts to shorthand (A1), if false converts to longhand (REF(COL(id),ROW(id))) for storage
  */
-function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean): any {
+function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean, column: Column): any {
     const { formula } = beans;
-    if (formula?.isFormula(value)) {
+    if (column.isAllowFormula() && formula?.isFormula(value)) {
         return formula?.normaliseFormula(value, forEditing) ?? value;
     }
     return value;
@@ -401,7 +407,7 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
 
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
-        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false),
+        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false, position.column),
     });
 }
 
