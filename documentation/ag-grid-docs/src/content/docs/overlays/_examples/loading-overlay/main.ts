@@ -18,18 +18,6 @@ const gridOptions: GridOptions<IAthlete> = {
     columnDefs: [{ field: 'athlete' }, { field: 'country' }],
 };
 
-function setLoading(value: boolean) {
-    gridApi!.setGridOption('loading', value);
-}
-
-function onBtnClearRowData() {
-    gridApi!.setGridOption('rowData', []);
-}
-
-function onBtnSetRowData() {
-    gridApi!.setGridOption('rowData', [{ athlete: 'Michael Phelps', country: 'US' }]);
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

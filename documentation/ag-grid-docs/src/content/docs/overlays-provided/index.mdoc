@@ -11,7 +11,7 @@ The grid provides the following built-in overlays that will be shown automatical
 - Loading overlay - shown when data is loading
 - No rows overlay - shown when there are no rows to display
 - No matching filter overlay - shown when no rows match the current filter
-- Excel export overlay - shown when data is being exported to Excel
+- Export overlay - shown when data is being exported to Excel
 
 ### Loading
 
@@ -31,17 +31,17 @@ When `rowData` is set to an empty array `[]`, the grid automatically displays th
 
 {% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
 
-### No Matching Filter
+### No Matching Filter Rows
 
 When a filter is applied and no rows match the filter criteria, the grid automatically displays the no-matching-filter overlay.
 
 {% gridExampleRunner title="No Matching Filter Overlay" name="no-matching-filter-overlay"  exampleHeight=350 /%}
 
-### Excel Export
+### Export
 
-When exporting data to Excel, the grid automatically displays the excel-export overlay until the export is complete.
+When exporting data to CSV or Excel, the grid automatically displays the export overlay until the export is complete.
 
-{% gridExampleRunner title="Excel Export Overlay" name="excel-export-overlay"  exampleHeight=350 /%}
+{% gridExampleRunner title="Export Overlay" name="excel-export-overlay"  exampleHeight=350 /%}
 
 ## Suppress Grid Overlays
 Each grid overlay can be suppressed via the `suppressOverlays` grid option. This option accepts an array of overlay types to suppress.

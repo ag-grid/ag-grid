@@ -3,22 +3,24 @@ title: "Overlays"
 ---
 
 Overlays are used for displaying messages over the top of the grid.
-There are a number of provided overlays triggered by grid state and support for custom overlays controlled by the application.
+The grid automatically displays one of the provided overlays based on the current state of the grid. Custom overlays can be shown on demand by the application.
+
+The following example shows the grid provided loading overlay when `loading=true`.
+
+{% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=260 /%}
 
 ## Grid Provided Overlays
 
-The grid provides the following built-in overlays that will be shown automatically based on grid state unless disabled:
-- Loading overlay - shown when data is loading
-- No rows overlay - shown when there are no rows to display
-- No matching filter overlay - shown when no rows match the current filter
-- Excel export overlay - shown when data is being exported to Excel
+The grid provides the following overlays that will be shown automatically based on grid state (unless disabled):
+- [Loading](./overlays-provided/#loading) - shown when data is loading
+- [No Rows](./overlays-provided/#no-rows) - shown when there are no rows to display
+- [No Matching Filter Rows](./overlays-provided/#no-matching-filter-rows) - shown when no rows match the current filter
+- [Export](./overlays-provided/#export) - shown when data is being exported to CSV or Excel
 
-{% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
+For details about the provided overlays and how to customise them see: [Provided Overlays](./overlays-provided). 
 
 ## Custom Overlays
 
-Applications can provide their own custom overlays and control when they are displayed. This enables full control over the content and timing of overlays shown in the grid.
+Applications can provide their own custom overlays and control when they are displayed. This enables full control over the content and timing of overlays shown over the grid.
 
-This is configured via the `activeOverlay` and `activeOverlayParams` grid options.
-
-{% gridExampleRunner title="Active Overlay Switcher" name="active-overlay-switcher" exampleHeight=350 /%}
+For details about custom overlays see: [Custom Overlays](./overlays-custom).
