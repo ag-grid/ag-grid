@@ -41,57 +41,47 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
     private prevGroupCols: GroupColumn[] | null = null;
-    private readonly groupsById = new Map<string, RowNode>();
+    public readonly nonLeafsById = new Map<string, RowNode>();
 
     public override destroy(): void {
         super.destroy();
-        this.groupsById.clear();
-    }
-
-    public getNode(id: string): RowNode | undefined {
-        return this.groupsById.get(id);
+        this.nonLeafsById.clear();
     }
 
     public newGroupData(node: RowNode): Record<string, any> | null {
         if (!node.group) {
+            node._groupData = null;
             return null;
         }
 
         const rowGroupCol = node.rowGroupColumn;
-        const leafNode = _csrmFirstLeaf(node);
         const { valueSvc, showRowGroupCols } = this.beans;
-
-        if (rowGroupCol && leafNode) {
-            // for full width rows; preserve the value type
-            node.groupValue = valueSvc.getValue(rowGroupCol, leafNode);
-        }
 
         const groupData: Record<string, any> = {};
         node._groupData = groupData;
 
         let groupValue: any;
-        if (rowGroupCol) {
-            const rowGroupColId = rowGroupCol.getId();
-            const groupDisplayCols = showRowGroupCols!.columns;
-            for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
-                const col = groupDisplayCols[i];
-                // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-                // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-                if (col.isRowGroupDisplayed(rowGroupColId)) {
-                    // if maintain group value type, get the value from any leaf node.
-                    groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
-                }
-            }
-            if (leafNode) {
-                groupValue = this.beans.valueSvc.getValue(rowGroupCol, leafNode);
-            }
+        if (!rowGroupCol) {
+            return groupData;
         }
 
-        const sibling = node.sibling;
-        node.groupValue = groupValue;
-        if (sibling) {
-            sibling.groupValue = groupValue;
+        const leafNode = _csrmFirstLeaf(node);
+        const rowGroupColId = rowGroupCol.getId();
+        const groupDisplayCols = showRowGroupCols!.columns;
+        for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
+            const col = groupDisplayCols[i];
+            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
+            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
+            if (col.isRowGroupDisplayed(rowGroupColId)) {
+                // if maintain group value type, get the value from any leaf node.
+                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
+            }
         }
+        if (leafNode) {
+            groupValue = this.beans.valueSvc.getValue(rowGroupCol, leafNode);
+        }
+
+        node.groupValue = groupValue;
 
         return groupData;
     }
@@ -321,14 +311,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const selectionSvc = this.beans.selectionSvc;
         let nodesToUnselect: RowNode[] | undefined;
         const possibleEmptyGroups = Array.from(parents);
-        const groupsById = this.groupsById;
+        const groupsById = this.nonLeafsById;
         do {
             parents.clear();
             for (let idx = 0; idx < possibleEmptyGroups.length; ++idx) {
                 let pointer = possibleEmptyGroups[idx];
                 while (pointer) {
                     const parent: RowNode | null = pointer.parent;
-                    if (removals.has(pointer) || !groupsById.delete(pointer.id!)) {
+                    if (removals.has(pointer)) {
                         possibleEmptyGroups[idx] = parent;
                         pointer = parent;
                         continue;
@@ -350,6 +340,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         nodesToUnselect.push(pointer);
                     }
                     possibleEmptyGroups[idx] = parent;
+                    groupsById.delete(pointer.id!);
                     pointer = parent;
                 }
             }
@@ -413,7 +404,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.beans.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
         const rootNode: RowNode = details.rootNode;
-        this.groupsById.clear();
+        this.nonLeafsById.clear();
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = details.groupCols.length === 0;
@@ -472,16 +463,24 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
-        const id = this.createGroupId(groupNode, parent);
+        const { rowGroupColumn, key, field } = groupInfo;
+        const id =
+            (parent.level >= 0 ? parent.id! + '-' : 'row-group-') +
+            (rowGroupColumn ? rowGroupColumn.getColId() + '-' + key : null);
 
-        const groupNode: RowNode = new RowNode(this.beans);
+        const groupsById = this.nonLeafsById;
+        let groupNode = groupsById.get(id);
+        if (groupNode !== undefined) {
+            return groupNode; // already exists
+        }
 
+        groupNode = new RowNode(this.beans);
         groupNode.group = true;
         groupNode.parent = parent;
-        groupNode.field = groupInfo.field;
-        groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
+        groupNode.field = field;
+        groupNode.rowGroupColumn = rowGroupColumn;
 
-        groupNode.key = groupInfo.key;
+        groupNode.key = key;
         groupNode.id = id;
 
         groupNode.level = level;
@@ -491,11 +490,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
 
+        groupsById.set(groupNode.id, groupNode);
+
         const leafNode = groupInfo.leafNode;
-        const rowGroupColumn = groupInfo.rowGroupColumn;
-
-        this.groupsById.set(groupNode.id, groupNode);
-
         if (rowGroupColumn && leafNode) {
             // preserve the value type for full width rows and ensure groupValue is available before lazy loading
             groupNode.groupValue = this.beans.valueSvc.getValue(rowGroupColumn, leafNode);
@@ -509,19 +506,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.setExpandedInitialValue(details, groupNode);
 
         return groupNode;
-    }
-
-    private createGroupId(node: RowNode, parent: RowNode | null): string {
-        let parts = '';
-        let rowGroupColumn = node.rowGroupColumn;
-        while (parent && rowGroupColumn) {
-            const key = node.key;
-            parts = '-' + rowGroupColumn.getColId() + '-' + key + parts;
-            node = parent;
-            rowGroupColumn = node.rowGroupColumn;
-            parent = node.parent;
-        }
-        return 'row-group' + (parts || '-null');
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: AgColumn | null): string {
@@ -564,20 +548,17 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     public onShowRowGroupColsSetChanged(): void {
-        const recurse = (rowNodes: RowNode[] | null) => {
-            if (!rowNodes) {
-                return;
-            }
-            for (let i = 0, len = rowNodes.length; i < len; ++i) {
-                const rowNode = rowNodes[i];
-                if (rowNode.group) {
-                    rowNode._groupData = undefined;
-                    recurse(rowNode.childrenAfterGroup);
-                }
-            }
-        };
+        for (const groupNode of this.nonLeafsById.values()) {
+            groupNode._groupData = this.newGroupData(groupNode);
+        }
 
-        recurse(this.beans.rowModel.rootNode?.childrenAfterGroup as RowNode[] | null);
+        const allLeafs = this.beans.rowModel.rootNode?._leafs;
+        if (allLeafs) {
+            for (let i = 0, len = allLeafs.length; i < len; ++i) {
+                const leafNode = allLeafs[i];
+                leafNode.parent!._groupData = this.newGroupData(leafNode.parent!);
+            }
+        }
     }
 }
 

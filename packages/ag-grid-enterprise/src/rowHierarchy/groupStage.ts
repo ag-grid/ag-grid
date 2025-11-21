@@ -49,8 +49,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         super.destroy();
     }
 
-    public getNode(id: string): RowNode<TData> | undefined {
-        return this.strategy?.getNode(id);
+    public getNonLeaf(id: string): RowNode<TData> | undefined {
+        return this.strategy?.nonLeafsById?.get(id);
     }
 
     public getNestedDataGetter(): NestedDataGetter<TData> | null | undefined {

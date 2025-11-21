@@ -50,7 +50,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public nestedDataGetter: NestedDataGetter<TData> | null = null;
     private parentIdGetter: ParentIdGetter<TData> = null;
 
-    private fillerNodesById: Map<string, RowNode<TData>> | null = null;
+    public nonLeafsById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
     private fullReload: boolean = false;
     private showRowGroupColsChanged: boolean = false;
@@ -90,8 +90,8 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         this.fullReload = true;
     }
 
-    public getNode(id: string): RowNode<TData> | undefined {
-        return this.fillerNodesById?.get(id);
+    public getNonLeaf(id: string): RowNode<TData> | undefined {
+        return this.nonLeafsById?.get(id);
     }
 
     public newGroupData(node: RowNode<TData>): Record<string, any> | null {
@@ -232,7 +232,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private destroyFillerRows(): void {
-        const fillerNodesById = this.fillerNodesById;
+        const fillerNodesById = this.nonLeafsById;
         if (fillerNodesById) {
             for (const node of fillerNodesById.values()) {
                 if (node.treeParent === null || (node.treeNodeFlags & MASK_CHILDREN_LEN) === 0) {
@@ -241,7 +241,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
             }
             if (fillerNodesById.size === 0) {
-                this.fillerNodesById = null;
+                this.nonLeafsById = null;
             }
         }
     }
@@ -254,7 +254,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             this.initRowChildrenSize(allLeafs[i]);
         }
 
-        const fillerNodesById = this.fillerNodesById;
+        const fillerNodesById = this.nonLeafsById;
         if (fillerNodesById !== null) {
             for (const filler of fillerNodesById.values()) {
                 this.initRowChildrenSize(filler);
@@ -730,7 +730,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     private getOrCreateFiller(key: string, id: string): RowNode<TData> {
-        const fillerNodesById = (this.fillerNodesById ??= new Map());
+        const fillerNodesById = (this.nonLeafsById ??= new Map());
         let node = fillerNodesById.get(id);
         if (node === undefined) {
             node = new RowNode<TData>(this.beans);
@@ -825,7 +825,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             allLeafs[i]._groupData = undefined;
         }
 
-        const fillers = this.fillerNodesById;
+        const fillers = this.nonLeafsById;
         if (fillers) {
             for (const rowNode of fillers.values()) {
                 rowNode._groupData = undefined;

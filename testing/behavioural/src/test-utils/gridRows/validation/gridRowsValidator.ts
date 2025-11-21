@@ -242,7 +242,13 @@ export class GridRowsValidator {
             );
         }
 
-        if (csrm) {
+        if (csrm && !row.footer && row.level >= 0 && row.group && row.sourceRowIndex < 0) {
+            const apiNode = state.gridRows.api.getRowNode(row.id!);
+            if (apiNode !== row) {
+                rowErrors.add(
+                    `api.getRowNode(${JSON.stringify(row.id)}) should return this group row, but got ${rowIdAndIndexToString(apiNode ?? undefined)}`
+                );
+            }
             this.verifyLeafs(gridRows, row);
         }
 
