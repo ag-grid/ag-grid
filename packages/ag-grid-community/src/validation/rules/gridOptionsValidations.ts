@@ -548,30 +548,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
-        enableFormulas: {
-            supportedRowModels: ['clientSide'],
-            validate: (options) => {
-                const unsupported: (keyof GridOptions)[] = [
-                    'treeData', // no tree data
-                    'pivotMode', // no row grouping
-                    'masterDetail', // breaks row indices
-                    'grandTotalRow', // no aggregations
-                    'enableCellExpressions',
-                ];
-                const error = unsupported.find((key) => options[key]);
-                if (error) {
-                    return `${error} is not supported with enableFormulas.`;
-                }
-
-                const required: (keyof GridOptions)[] = ['getRowId'];
-                const req = required.find((key) => !options[key]);
-                if (req) {
-                    return `${req} is required when enableFormulas is true.`;
-                }
-
-                return null;
-            },
-        },
     };
     const validations: Validations<GridOptions> = {};
     for (const key of _BOOLEAN_GRID_OPTIONS) {
