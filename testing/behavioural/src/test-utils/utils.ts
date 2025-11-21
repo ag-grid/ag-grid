@@ -91,22 +91,11 @@ export const printDataSnapshot = (data: any, pretty = false) => {
     );
 };
 
-export function unindentText(
-    text: TemplateStringsArray | string | string[] | null | undefined,
-    ...values: unknown[]
-): string {
+export function unindentText(text: TemplateStringsArray | string | string[] | null | undefined): string {
     let lines: string[];
     if (Array.isArray(text)) {
         if ('raw' in text) {
-            const template = text as TemplateStringsArray;
-            let combined = '';
-            for (let i = 0; i < template.length; i++) {
-                combined += template[i];
-                if (i < values.length) {
-                    combined += String(values[i]);
-                }
-            }
-            lines = combined.split('\n');
+            lines = String(text).split('\n');
         } else {
             lines = text;
         }
