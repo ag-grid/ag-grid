@@ -4,6 +4,7 @@ import type {
     DefaultMenuItem,
     IAggFuncService,
     IColsService,
+    IconName,
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
@@ -437,6 +438,38 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                                   ),
                           }
                         : null;
+                case 'sortAbsoluteAscending': {
+                    if (!sortSvc) {
+                        return null;
+                    }
+                    return {
+                        name: localeTextFunc('sortAbsoluteAscending', 'Sort Absolute Ascending'),
+                        icon: _createIconNoSpan('sortAbsoluteAscending', beans, null),
+                        action: () =>
+                            sortSvc.setSortForColumn(
+                                column!,
+                                { type: column?.sortDef?.type ?? 'default', direction: 'asc' },
+                                false,
+                                source
+                            ),
+                    };
+                }
+                case 'sortAbsoluteDescending': {
+                    if (!sortSvc) {
+                        return null;
+                    }
+                    return {
+                        name: localeTextFunc('sortAbsoluteDescending', 'Sort Absolute Descending'),
+                        icon: _createIconNoSpan('sortAbsoluteDescending', beans, null),
+                        action: () =>
+                            sortSvc.setSortForColumn(
+                                column!,
+                                { type: column?.sortDef?.type ?? 'default', direction: 'desc' },
+                                false,
+                                source
+                            ),
+                    };
+                }
                 case 'sortUnSort':
                     return sortSvc
                         ? {

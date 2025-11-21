@@ -752,9 +752,9 @@ export class AgColumn<TValue = any>
 
 export function _getSortDefFromInput(input: unknown, colDef?: ColDef): SortDef | undefined {
     if (_isSortDefValid(input)) {
-        return input;
+        return { direction: input.direction ?? null, type: _normalizeSortType({ sortDef: input }) };
     }
-    const sortDef = { direction: input, type: _normalizeSortType(colDef) } as SortDef;
+    const sortDef = { direction: input ?? null, type: _normalizeSortType(colDef) };
     if (_isSortDefValid(sortDef)) {
         return sortDef;
     }
@@ -790,6 +790,6 @@ export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortD
     return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
 }
 
-export function _normalizeSortType(colDefLike?: { sortDef?: { type?: SortType } }): SortType {
+export function _normalizeSortType(colDefLike?: { sortDef?: { type?: SortType } }): NonNullable<SortType> {
     return colDefLike?.sortDef?.type || 'default';
 }

@@ -329,9 +329,9 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         if (sortDef !== undefined) {
-            column.sortDef = sortDef;
+            column.sortDef = _getSortDefFromInput(sortDef);
         } else if (initialSortDef !== undefined) {
-            column.sortDef = initialSortDef;
+            column.sortDef = _getSortDefFromInput(initialSortDef);
         }
 
         if (sortIndex !== undefined) {
