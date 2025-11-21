@@ -70,9 +70,10 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
     return gos.get('maintainColumnOrder');
 }
 
-export function _isRowNumbers(gos: GridOptionsService): boolean {
+export function _isRowNumbers(beans: BeanCollection) {
+    const { gos, formula } = beans;
     const rowNumbers = gos.get('rowNumbers');
-    return !!rowNumbers || (gos.get('enableFormulas') && rowNumbers !== false);
+    return rowNumbers || (!!formula?.active && rowNumbers !== false);
 }
 
 export function _getRowHeightForNode(
@@ -110,7 +111,7 @@ export function _getRowHeightForNode(
         }
     }
 
-    if (rowNode.detail && _isMasterDetail(gos)) {
+    if (rowNode.detail && gos.get('masterDetail')) {
         return getMasterDetailRowHeight(gos);
     }
 
@@ -191,17 +192,9 @@ export function _isGroupRowsSticky(gos: GridOptionsService): boolean {
     return !(gos.get('paginateChildRows') || gos.get('groupHideOpenParents') || _isDomLayout(gos, 'print'));
 }
 
-export function _isTreeData(gos: GridOptionsService): boolean {
-    return !!gos.get('treeData') && !gos.get('enableFormulas');
-}
-
-export function _isMasterDetail(gos: GridOptionsService): boolean {
-    return !!gos.get('masterDetail') && !gos.get('enableFormulas');
-}
-
 export function _isColumnsSortingCoupledToGroup(gos: GridOptionsService): boolean {
     const autoGroupColumnDef = gos.get('autoGroupColumnDef');
-    return !autoGroupColumnDef?.comparator && !_isTreeData(gos);
+    return !autoGroupColumnDef?.comparator && !gos.get('treeData');
 }
 
 export function _getGroupAggFiltering(

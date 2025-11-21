@@ -140,10 +140,6 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
     }
 
     private setColValueActive(column: AgColumn, value: boolean, source: ColumnEventType): void {
-        if (this.gos.get('enableFormulas')) {
-            value = false;
-        }
-
         if (column.aggregationActive !== value) {
             column.aggregationActive = value;
             column.dispatchColEvent('columnValueChanged', source);

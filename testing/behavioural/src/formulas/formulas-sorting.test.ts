@@ -45,7 +45,6 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: false,
             rowNumbers: true,
             rowData,
             columnDefs: [
@@ -111,12 +110,14 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData,
             columnDefs: [
                 { field: 'A', sortable: true },
                 { field: 'B', sortable: true },
             ],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data?.id,
         };
 
@@ -157,12 +158,14 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
             rowData,
             columnDefs: [
                 { field: 'A', sortable: true },
                 { field: 'B', sortable: true },
             ],
+            defaultColDef: {
+                allowFormula: true,
+            },
             getRowId: (params) => params.data?.id,
         };
 
@@ -200,7 +203,9 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowData,
             columnDefs: [{ field: 'A', sortable: true }, { field: 'B' }, { field: 'C', sortable: true }],
             getRowId: (params) => params.data?.id,
@@ -243,7 +248,9 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowData,
             columnDefs: [
                 { field: 'A', sortable: true },
@@ -291,7 +298,9 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowData,
             columnDefs: [
                 { field: 'A', filter: 'agNumberColumnFilter', sortable: true },
@@ -359,7 +368,9 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowData,
             columnDefs: [
                 { field: 'A', colId: 'A', sortable: true },
@@ -433,7 +444,9 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowNumbers: true,
             rowData,
             columnDefs: [
@@ -563,7 +576,9 @@ describe('ag-grid formulas sorting', () => {
         ];
 
         const gridOptions: GridOptions = {
-            enableFormulas: true,
+            defaultColDef: {
+                allowFormula: true,
+            },
             rowData,
             columnDefs: [
                 { field: 'A', sortable: true },

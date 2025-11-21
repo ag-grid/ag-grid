@@ -1147,11 +1147,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public formulaFuncs: { [key: string]: { func: (params: FormulaFunctionParams) => any } } | undefined =
         undefined;
-    /** Enable or disable the processing of cell formulas
-     * @initial
-     * @agModule `FormulaModule`
-     */
-    @Input({ transform: booleanAttribute }) public enableFormulas: boolean | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`

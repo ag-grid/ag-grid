@@ -5,21 +5,23 @@ Formula strings can be provided to cells in the grid, allowing for dynamic calcu
 
 ## Enabling Formulas
 
-To enable formulas, set the `gridOption` property `enableFormulas` to `true`, and ensure that your rows have [Row IDs](./row-ids/#row-ids).
+To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids).
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    enableFormulas: true,
+    columnDefs: [
+        { field: 'product' },
+        { field: 'price' },
+        { field: 'quantity' },
+        { field: 'subtotal', allowFormula: true },
+        { field: 'tax', allowFormula: true },
+        { field: 'total', allowFormula: true },
+    ],
     getRowId: (params) => String(params.data.rid),
-    cellSelection: {
-        handle: {
-            mode: 'fill',
-        }
-    },
 }
 ```
 
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=450 /%}
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=300 /%}
 
 When using formulas, the following features are enabled by default, and cannot be disabled:
 - [Row Numbers](./row-numbers/)
@@ -29,7 +31,6 @@ Certain features do not work in conjunction with formulas:
 - [Tree Data](./tree-data/) and [Row Grouping](./grouping/)
 - [Pivoting](./pivoting/) and [Aggregation](./aggregation/)
 - [Master Detail](./master-detail/)
-- [Cell Data Types](./cell-data-types/) including [Inferring Data Types](./cell-data-types/#inferring-data-types)
 - [Server-Side Row Model](./server-side-model/), [Infinite Row Model](./infinite-scrolling/), and [Viewport Row Model](./viewport/)
 
 ## Formula Syntax
@@ -186,7 +187,12 @@ which provides all of the values from the ranges and constants in one simple ite
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    enableFormulas: true,
+    columnDefs: [
+        { field: 'sales' },
+        // make all rows draggable
+        { field: 'calculated', allowFormula: true }
+
+    ],
     formulaFuncs: {
         CUSTOMSUM: {
             func: (params) => {
@@ -219,7 +225,12 @@ Errors will also propagate to any other cells that reference these cells in thei
 The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    enableFormulas: true,
+    columnDefs: [
+        { field: 'sales' },
+        // make all rows draggable
+        { field: 'calculated', allowFormula: true }
+
+    ],
     formulaFuncs: {
         ERRORIFONE: {
             func: (params) => {
@@ -253,7 +264,12 @@ The following snippet demonstrates providing a custom function `COUNTEQ` which c
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    enableFormulas: true,
+    columnDefs: [
+        { field: 'sales' },
+        // make all rows draggable
+        { field: 'calculated', allowFormula: true }
+
+    ],
     formulaFuncs: {
         COUNTEQ: {
             func: (params) => {

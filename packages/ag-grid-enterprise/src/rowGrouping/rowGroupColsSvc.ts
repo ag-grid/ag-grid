@@ -108,10 +108,6 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
     }
 
     private setColRowGroupActive(column: AgColumn, rowGroup: boolean, source: ColumnEventType): void {
-        if (this.gos.get('enableFormulas')) {
-            rowGroup = false;
-        }
-
         if (column.rowGroupActive !== rowGroup) {
             column.rowGroupActive = rowGroup;
 
