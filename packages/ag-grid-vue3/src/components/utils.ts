@@ -819,57 +819,73 @@ export interface Props<TData> {
     loading?: boolean,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
          *
-         *     **Prefer using `loadingOverlayComponent` instead.**
+         *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
          */
     overlayLoadingTemplate?: string,
     /** Provide a custom loading overlay component.
-         * To disable the loading overlay, set `loadingOverlayComponent=false`.
+         *
+         *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
          */
     loadingOverlayComponent?: any,
     /** Customise the parameters provided to the loading overlay component.
+         *
+         *     **Prefer using `overlayComponentParams` instead.**
          */
     loadingOverlayComponentParams?: any,
     /** Disables the 'loading' overlay.
-         * @deprecated v32 - Deprecated. Use `loading=false` instead.
+         * @deprecated v32 - Deprecated. Use `suppressOverlays=['agLoadingOverlay']` or `loading=false` instead.
          * @default false
          * @initial
          */
     suppressLoadingOverlay?: boolean,
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
          *
-         *     **Prefer using `noRowsOverlayComponent` instead.**
+         *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
          */
     overlayNoRowsTemplate?: string,
     /** Provide a custom no-rows overlay component.
-         * To disable the no-rows overlay, set `noRowsOverlayComponent=false`.
+         *
+         *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
          */
     noRowsOverlayComponent?: any,
     /** Customise the parameters provided to the no-rows overlay component.
+         *
+         *     *     **Prefer using `overlayComponentParams` instead.**
          */
     noRowsOverlayComponentParams?: any,
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
-         *     **Prefer setting `noRowsOverlayComponent=false` instead, that permanently disable the no-rows overlay.**
+         *
+         *     **Prefer `suppressOverlays=['agNoRowsOverlay']`instead.**
+         *
          * @default false
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
+    /** List of provided overlay names to suppress.
+         */
     suppressOverlays?: string[],
+    /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
+         * @initial
+         */
     overlayComponent?: any,
+    /** Customise the parameters provided to the `overlayComponent`.
+         */
     overlayComponentParams?: any,
+    /** Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.
+         * @initial
+         */
     overlayComponentSelector?: OverlaySelectorFunc<TData>,
-    /** Display a specific overlay.
+    /** Display a custom overlay on demand.
          * Accepts:
          * - A component class/function.
          * - A string key from `components` map.
-         * - `'agNoRowsOverlay'` to show the no rows overlay.
          * - `null`/`undefined` to clear it.
-         * - `false` to disable automatic overlays.
          *
-         * Note that when `loading=true`, the loading overlay takes precedence.
+         * If set takes precedence over grid provided overlays.
          * @default undefined
          */
     activeOverlay?: any,
-    /** Custom parameters supplied to the active overlay component alongside the standard `IOverlayParams`.
+    /** Custom parameters supplied to the `activeOverlay` component alongside the standard `IOverlayParams`.
          */
     activeOverlayParams?: any,
     /** Set whether pagination is enabled.

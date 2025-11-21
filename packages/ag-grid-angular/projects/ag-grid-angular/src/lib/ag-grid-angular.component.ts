@@ -999,57 +999,73 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
-     *     **Prefer using `loadingOverlayComponent` instead.**
+     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
-     * To disable the loading overlay, set `loadingOverlayComponent=false`.
+     *
+     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
      */
     @Input() public loadingOverlayComponent: any = undefined;
     /** Customise the parameters provided to the loading overlay component.
+     *
+     *     **Prefer using `overlayComponentParams` instead.**
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
-     * @deprecated v32 - Deprecated. Use `loading=false` instead.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['agLoadingOverlay']` or `loading=false` instead.
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      *
-     *     **Prefer using `noRowsOverlayComponent` instead.**
+     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no-rows overlay component.
-     * To disable the no-rows overlay, set `noRowsOverlayComponent=false`.
+     *
+     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
      */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** Customise the parameters provided to the no-rows overlay component.
+     *
+     *     *     **Prefer using `overlayComponentParams` instead.**
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
-     *     **Prefer setting `noRowsOverlayComponent=false` instead, that permanently disable the no-rows overlay.**
+     *
+     *     **Prefer `suppressOverlays=['agNoRowsOverlay']`instead.**
+     *
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
+    /** List of provided overlay names to suppress.
+     */
     @Input() public suppressOverlays: string[] | undefined = undefined;
+    /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
+     * @initial
+     */
     @Input() public overlayComponent: any = undefined;
+    /** Customise the parameters provided to the `overlayComponent`.
+     */
     @Input() public overlayComponentParams: any = undefined;
+    /** Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.
+     * @initial
+     */
     @Input() public overlayComponentSelector: OverlaySelectorFunc<TData> | undefined = undefined;
-    /** Display a specific overlay.
+    /** Display a custom overlay on demand.
      * Accepts:
      * - A component class/function.
      * - A string key from `components` map.
-     * - `'agNoRowsOverlay'` to show the no rows overlay.
      * - `null`/`undefined` to clear it.
-     * - `false` to disable automatic overlays.
      *
-     * Note that when `loading=true`, the loading overlay takes precedence.
+     * If set takes precedence over grid provided overlays.
      * @default undefined
      */
     @Input() public activeOverlay: any = undefined;
-    /** Custom parameters supplied to the active overlay component alongside the standard `IOverlayParams`.
+    /** Custom parameters supplied to the `activeOverlay` component alongside the standard `IOverlayParams`.
      */
     @Input() public activeOverlayParams: any = undefined;
     /** Set whether pagination is enabled.
