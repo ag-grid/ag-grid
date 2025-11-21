@@ -8,6 +8,7 @@ import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { SortOption } from '../interfaces/iSortOption';
+import { _warn } from '../main';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
@@ -133,7 +134,7 @@ export class SortService extends BeanStub implements NamedBean {
         return clearedColumns;
     }
 
-    private getNextSortDirection(column: AgColumn, step = 1): SortDef {
+    private getNextSortDirection(column: AgColumn, steps = 1, cycle = 0): SortDef {
         const colDef = column.getColDef();
         const sortingOrder = (
             column.getColDef().sortingOrder ??
@@ -143,11 +144,26 @@ export class SortService extends BeanStub implements NamedBean {
 
         const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
-        const notInArray = currentIndex < 0;
-        const lastItemInArray = currentIndex == sortingOrder.length - 1;
 
-        const next = notInArray || lastItemInArray ? sortingOrder[0] : sortingOrder[currentIndex + step];
-        return _getSortDefFromInput(next, colDef)!;
+        let nextIndex = Math.max(0, currentIndex);
+        for (let i = 0; i < steps; i++) {
+            nextIndex += 1;
+            if (nextIndex >= sortingOrder.length) {
+                nextIndex = 0;
+            }
+        }
+
+        const next = sortingOrder[nextIndex];
+        // this would return undefined for custom sort types. these are not supported yet.
+        const nextSortDef = _getSortDefFromInput(next, colDef);
+        if (nextSortDef) {
+            return nextSortDef;
+        }
+        _warn(295);
+        if (cycle < 2) {
+            return this.getNextSortDirection(column, steps + 1, ++cycle);
+        }
+        return _getSortDefFromInput(DEFAULT_SORTING_ORDER[0])!;
     }
 
     /**
