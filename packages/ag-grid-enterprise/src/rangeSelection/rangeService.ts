@@ -1202,13 +1202,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const firstIndex = Math.min(fromIndex, toIndex);
         const lastIndex = firstIndex === fromIndex ? toIndex : fromIndex;
-        const columns: AgColumn[] = [];
 
-        for (let i = firstIndex; i <= lastIndex; i++) {
-            columns.push(allColumns[i]);
-        }
-
-        return this.getColumnsFromModel(columns);
+        return this.getColumnsFromModel(allColumns.slice(firstIndex, lastIndex + 1));
     }
 
     private focusCellOnNewColumn(currentRange: CellRange, column: AgColumn): void {
