@@ -726,7 +726,7 @@ export const AG_GRID_ERRORS = {
     295: () =>
         `'rowDragManaged' requires 'refreshAfterGroupEdit' to be true when row grouping columns are enabled.` as const,
     296: ({ blockedService }: { blockedService: string }) =>
-        `The Formulas feature does not work with ${blockedService}. Formulas has been turned off.`,
+        `colDef.allowFormula is not supported with ${blockedService}. Formulas has been turned off.`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

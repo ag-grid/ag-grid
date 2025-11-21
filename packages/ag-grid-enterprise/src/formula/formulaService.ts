@@ -114,18 +114,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
-        if (this.gos.get('masterDetail')) {
-            _warn(296, { blockedService: 'Master Detail' });
-            return false;
-        }
-
-        if (this.gos.get('treeData')) {
-            _warn(296, { blockedService: 'Tree Data' });
-            return false;
-        }
-
-        if (this.gos.get('enableCellExpressions')) {
-            _warn(296, { blockedService: 'Cell Expressions' });
+        if (this.gos.get('masterDetail') || this.gos.get('treeData') || this.gos.get('enableCellExpressions')) {
             return false;
         }
 
