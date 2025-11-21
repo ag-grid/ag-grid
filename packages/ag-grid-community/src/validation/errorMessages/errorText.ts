@@ -725,6 +725,8 @@ export const AG_GRID_ERRORS = {
         `When using the \`agRichSelectCellEditor\` setting \`filterListAsync = true\` requires \`filterList = true\`, \`allowTyping = true\` and the \`values()\` callback must return a Promise of filtered values.` as const,
     295: () =>
         `'rowDragManaged' requires 'refreshAfterGroupEdit' to be true when row grouping columns are enabled.` as const,
+    296: ({ blockedService }: { blockedService: string }) =>
+        `The Formulas feature does not work with ${blockedService}. Formulas has been turned off.`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
