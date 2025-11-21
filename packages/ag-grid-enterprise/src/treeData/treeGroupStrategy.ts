@@ -53,7 +53,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public nonLeafsById: Map<string, RowNode<TData>> | null = null;
     private nodesToUnselect: RowNode<TData>[] | null = null;
     private fullReload: boolean = false;
-    private showRowGroupColsChanged: boolean = false;
 
     public postConstruct(): void {
         this.onPropChange(null);
@@ -293,7 +292,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         const allLeafsLen = allLeafs.length;
         let preprocessedCount = 0;
         let treeChanged = false;
-        const showRowGroupColsChanged = this.showRowGroupColsChanged;
         for (let i = 0; i < allLeafsLen; ++i) {
             let current = allLeafs[i];
             while (true) {
@@ -314,10 +312,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 }
                 parent.treeNodeFlags = parentFlags;
 
-                if (showRowGroupColsChanged) {
-                    current._groupData = undefined;
-                }
-
                 if (parent.data || (parent.treeNodeFlags & FLAG_MARKED_FILLER) === 0 || parent.treeParent === null) {
                     break; // Continue up only if parent is a non-processed filler
                 }
@@ -325,7 +319,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
                 current = parent;
             }
         }
-        this.showRowGroupColsChanged = false;
         return preprocessedCount | (treeChanged ? FLAG_CHILDREN_CHANGED : 0);
     }
 
@@ -811,11 +804,6 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     public onShowRowGroupColsSetChanged(): void {
-        if (this.beans.colModel.changeEventsDispatching) {
-            this.showRowGroupColsChanged = true;
-            return;
-        }
-        this.showRowGroupColsChanged = false;
         const allLeafs = this.beans.rowModel.rootNode!._leafs;
         if (!allLeafs) {
             return;
