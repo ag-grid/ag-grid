@@ -21,7 +21,9 @@ export function _areCellsEqual(cellA: CellPosition, cellB: CellPosition): boolea
     return colsMatch && floatingMatch && indexMatch;
 }
 
-// tests if this row selection is before the other row selection
+/**
+ * True if `rowA` appears before `rowB`
+ */
 export function _isRowBefore(rowA: RowPosition, rowB: RowPosition): boolean {
     switch (rowA.rowPinned) {
         case 'top':

@@ -383,6 +383,82 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return endIndex - startIndex + 1;
     }
 
+    public handleRowNumberClick(cell: CellPosition, isCtrl: boolean): void {
+        const { gos, beans, cellRanges } = this;
+        const isRowNumbersEnabled = _isRowNumbers(gos);
+        if (!isRowNumbersEnabled) {
+            return;
+        }
+
+        this.setSelectionMode(isRowNumberCol(cell.column));
+        const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
+        if (!columns) {
+            return;
+        }
+
+        const containingRange = findRangeContainingCols(cellRanges, columns, cell, cell);
+
+        if (isCtrl && containingRange) {
+            // remove row, split existing
+
+            const rowAbove = _getRowAbove(beans, cell);
+            const rowBelow = _getRowBelow(beans, cell);
+            const startRow = containingRange.startRow;
+
+            // if !startRow -> range is from first row
+            //   if cell is first row -> increment start row in range
+            //   else -> truncate cell range at row above cell, add new cell range from row below to endRow
+            // else if startRow == cell -> increment startRow
+            // else -> truncate cell range at row above cell, add new cell range from row below to endRow
+
+            if (!startRow) {
+                // then `containingRange` starts from first row
+                if (!rowAbove) {
+                    // cell is in first row, so we increment the start row of the range
+                    if (rowBelow) {
+                        containingRange.startRow = rowBelow;
+                    } else {
+                        // no rowBelow means cell is first row and last row simultaneously
+                        // i.e. only one row, so we clear the cell range
+                        _removeFromArray(cellRanges, containingRange);
+                    }
+                } else {
+                    // otherwise, truncate cell range at row above cell...
+                    const prevEndRow = containingRange.endRow;
+                    containingRange.endRow = rowAbove;
+
+                    // and add new cell range from row below cell to endRow
+                    if (rowBelow) {
+                        cellRanges.push({
+                            ...containingRange,
+                            startRow: rowBelow,
+                            endRow: prevEndRow,
+                        });
+                    }
+                }
+            } else {
+                // otherwise, truncate cell range at row above cell...
+                const prevEndRow = containingRange.endRow;
+                if (rowAbove) {
+                    containingRange.endRow = rowAbove;
+                } else {
+                    _removeFromArray(cellRanges, containingRange);
+                }
+
+                // and add new cell range from row below cell to endRow
+                if (rowBelow) {
+                    cellRanges.push({
+                        ...containingRange,
+                        startRow: rowBelow,
+                        endRow: prevEndRow,
+                    });
+                }
+            }
+        } else {
+            this.setRangeToCell(cell, isCtrl);
+        }
+    }
+
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
         const { gos, beans } = this;
         if (!_isCellSelectionEnabled(gos)) {

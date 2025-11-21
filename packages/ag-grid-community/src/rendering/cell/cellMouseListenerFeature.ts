@@ -246,7 +246,8 @@ export class CellMouseListenerFeature extends BeanStub {
                 rangeSvc.extendLatestRangeToCell(cellPosition);
             } else if (!hasRightClickedOnRowNumber) {
                 const isMultiKey = ctrlKey || metaKey;
-                rangeSvc.setRangeToCell(cellPosition, isMultiKey);
+                rangeSvc.handleRowNumberClick(cellPosition, isMultiKey);
+                // rangeSvc.setRangeToCell(cellPosition, isMultiKey);
             }
         }
 
