@@ -185,10 +185,6 @@ export class CellMouseListenerFeature extends BeanStub {
         const isRowNumberColumn = isRowNumberCol(column);
 
         if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
-            if (rangeSvc) {
-                mouseEvent.preventDefault();
-            }
-            mouseEvent.stopImmediatePropagation();
             return;
         }
 

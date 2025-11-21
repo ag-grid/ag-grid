@@ -129,13 +129,19 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
+        // If click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
         if (
             !this.isIntegratedWithSelection ||
             (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
         ) {
+            if (this.beans.rangeSvc) {
+                mouseEvent.preventDefault();
+            }
+            mouseEvent.stopImmediatePropagation();
             return false;
         }
 
+        // If we're not extending the range, focus the first cell
         if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
