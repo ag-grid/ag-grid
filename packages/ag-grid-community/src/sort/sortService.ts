@@ -141,7 +141,7 @@ export class SortService extends BeanStub implements NamedBean {
             DEFAULT_SORTING_ORDER
         ).map((objOrDirection: unknown) => _getSortDefFromInput(objOrDirection, colDef));
 
-        const currentSortDef = column.getSortDef()!;
+        const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
@@ -332,6 +332,8 @@ export class SortService extends BeanStub implements NamedBean {
             column.sortDef = _getSortDefFromInput(sortDef);
         } else if (initialSortDef !== undefined) {
             column.sortDef = _getSortDefFromInput(initialSortDef);
+        } else {
+            column.sortDef = _getSortDefFromInput(sortDef);
         }
 
         if (sortIndex !== undefined) {
@@ -361,7 +363,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
         if (!_areSortDefsEqual(column.sortDef, sort)) {
-            column.sortDef = _getSortDefFromInput(sort, column.getColDef()) || this.getNextSortDirection(column, 0);
+            column.sortDef = _getSortDefFromInput(sort, column.getColDef()) || column.getSortDef();
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');
