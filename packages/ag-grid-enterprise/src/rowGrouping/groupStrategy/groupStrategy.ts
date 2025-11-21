@@ -41,19 +41,15 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
     private prevGroupCols: GroupColumn[] | null = null;
+    private readonly groupsById = new Map<string, RowNode>();
+
+    public override destroy(): void {
+        super.destroy();
+        this.groupsById.clear();
+    }
 
     public getNode(id: string): RowNode | undefined {
-        // only one users complained about getRowNode not working for groups, after years of
-        // this working for normal rows. so have done quick implementation. if users complain
-        // about performance, then GroupStrategy should store / manage created groups in a map,
-        // which is a chunk of work.
-        let res: RowNode | undefined = undefined;
-        this.beans.rowModel.forEachNode((node) => {
-            if (node.id === id) {
-                res = node;
-            }
-        });
-        return res;
+        return this.groupsById.get(id);
     }
 
     public newGroupData(node: RowNode): Record<string, any> | null {
@@ -325,13 +321,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         const selectionSvc = this.beans.selectionSvc;
         let nodesToUnselect: RowNode[] | undefined;
         const possibleEmptyGroups = Array.from(parents);
+        const groupsById = this.groupsById;
         do {
             parents.clear();
             for (let idx = 0; idx < possibleEmptyGroups.length; ++idx) {
                 let pointer = possibleEmptyGroups[idx];
                 while (pointer) {
                     const parent: RowNode | null = pointer.parent;
-                    if (removals.has(pointer)) {
+                    if (removals.has(pointer) || !groupsById.delete(pointer.id!)) {
                         possibleEmptyGroups[idx] = parent;
                         pointer = parent;
                         continue;
@@ -416,6 +413,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.beans.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
         const rootNode: RowNode = details.rootNode;
+        this.groupsById.clear();
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         rootNode.leafGroup = details.groupCols.length === 0;
@@ -474,6 +472,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
+        const id = this.createGroupId(groupNode, parent);
+
         const groupNode: RowNode = new RowNode(this.beans);
 
         groupNode.group = true;
@@ -482,7 +482,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
         groupNode.key = groupInfo.key;
-        groupNode.id = this.createGroupId(groupNode, parent);
+        groupNode.id = id;
 
         groupNode.level = level;
         groupNode.leafGroup = level === details.groupCols.length - 1;
@@ -493,6 +493,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const leafNode = groupInfo.leafNode;
         const rowGroupColumn = groupInfo.rowGroupColumn;
+
+        this.groupsById.set(groupNode.id, groupNode);
+
         if (rowGroupColumn && leafNode) {
             // preserve the value type for full width rows and ensure groupValue is available before lazy loading
             groupNode.groupValue = this.beans.valueSvc.getValue(rowGroupColumn, leafNode);
