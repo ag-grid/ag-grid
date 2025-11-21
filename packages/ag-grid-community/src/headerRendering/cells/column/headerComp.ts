@@ -118,13 +118,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
+        const { formula } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
-        } else {
-            return getHeaderCompElementParams(!!this.beans.formula?.active, isSorting);
         }
+        return getHeaderCompElementParams(!!formula?.active, isSorting);
     }
 
     public init(params: IHeaderParams): void {
@@ -297,13 +297,28 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupColumnRefIndicator(): void {
-        const { eColRef, params } = this;
+        const {
+            eColRef,
+            beans: { editModelSvc },
+            params,
+        } = this;
         if (!eColRef) {
             return;
         }
         this.currentRef = (params.column as AgColumn).formulaRef;
         eColRef.textContent = this.currentRef;
-        _setDisplayed(eColRef, !!this.currentRef);
+        _setDisplayed(eColRef, false);
+        this.addManagedEventListeners({
+            cellEditingStarted: () => {
+                const editPositions = editModelSvc?.getEditPositions();
+                const shouldDisplay =
+                    !!this.currentRef && !!editPositions?.some((position) => position.column.isAllowFormula());
+                _setDisplayed(eColRef, shouldDisplay);
+            },
+            cellEditingStopped: () => {
+                _setDisplayed(eColRef, false);
+            },
+        });
     }
 
     private setupFilterIcon(): void {
