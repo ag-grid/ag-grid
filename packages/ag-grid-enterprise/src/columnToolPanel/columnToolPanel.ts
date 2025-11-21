@@ -74,10 +74,9 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const { childDestroyFuncs, colToolPanelFactory, gos } = this;
 
         const hasPivotModule = gos.isModuleRegistered('SharedPivot');
-        const isFormulas = gos.get('enableFormulas');
         const hasRowGroupingModule = hasPivotModule || gos.isModuleRegistered('SharedRowGrouping');
 
-        if (!mergedParams.suppressPivotMode && !isFormulas && colToolPanelFactory && hasPivotModule) {
+        if (!mergedParams.suppressPivotMode && colToolPanelFactory && hasPivotModule) {
             this.pivotModePanel = colToolPanelFactory.createPivotModePanel(this, childDestroyFuncs);
         }
 
@@ -91,15 +90,15 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.appendChild(primaryColsPanel);
 
         if (colToolPanelFactory) {
-            if (!mergedParams.suppressRowGroups && !isFormulas && hasRowGroupingModule) {
+            if (!mergedParams.suppressRowGroups && hasRowGroupingModule) {
                 this.rowGroupDropZonePanel = colToolPanelFactory.createRowGroupPanel(this, childDestroyFuncs);
             }
 
-            if (!mergedParams.suppressValues && !isFormulas && hasRowGroupingModule) {
+            if (!mergedParams.suppressValues && hasRowGroupingModule) {
                 this.valuesDropZonePanel = colToolPanelFactory.createValuesPanel(this, childDestroyFuncs);
             }
 
-            if (!mergedParams.suppressPivots && !isFormulas && hasPivotModule) {
+            if (!mergedParams.suppressPivots && hasPivotModule) {
                 this.pivotDropZonePanel = colToolPanelFactory.createPivotPanel(this, childDestroyFuncs);
             }
 

@@ -20,7 +20,6 @@ import {
     _debounce,
     _isClientSideRowModel,
     _isFullWidthGroupRow,
-    _isMasterDetail,
     _jsonEquals,
     _missing,
     _toString,
@@ -338,7 +337,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const oldActiveMatch = maintainActive ? this.activeMatch : undefined;
         this.activeMatch = undefined;
 
-        const checkMasterDetail = _isMasterDetail(gos) && findOptions?.searchDetail && masterDetailSvc;
+        const checkMasterDetail = gos.get('masterDetail') && findOptions?.searchDetail && masterDetailSvc;
 
         if (_missing(findSearchValue)) {
             // nothing to match, clear down results

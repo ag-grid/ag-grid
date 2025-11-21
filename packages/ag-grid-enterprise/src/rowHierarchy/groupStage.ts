@@ -8,7 +8,7 @@ import type {
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub, _isTreeData } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 
@@ -37,7 +37,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         const gos = this.gos;
         if (gos.isModuleRegistered('TreeData')) {
             this.hasTreeData = true;
-            this.treeData = _isTreeData(gos);
+            this.treeData = gos.get('treeData');
         }
     }
 
@@ -58,7 +58,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         const gos = this.gos;
         const oldNestedDataGetter = this.strategy?.nestedDataGetter;
         if (changedProps.has('treeData')) {
-            const value = _isTreeData(gos) && this.hasTreeData;
+            const value = gos.get('treeData') && this.hasTreeData;
             if (this.treeData !== value) {
                 this.treeData = value;
                 this.needReset = true;

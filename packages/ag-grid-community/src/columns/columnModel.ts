@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public changeEventsDispatching = false;
 
     public postConstruct(): void {
-        this.pivotMode = this.gos.get('pivotMode') && !this.gos.get('enableFormulas');
+        this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
             [
@@ -129,11 +129,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // so that any groupable date columns exist beforehand.
         this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
 
-        if (!this.gos.get('enableFormulas')) {
-            rowGroupColsSvc?.extractCols(source, oldCols);
-            pivotColsSvc?.extractCols(source, oldCols);
-            valueColsSvc?.extractCols(source, oldCols);
-        }
+        rowGroupColsSvc?.extractCols(source, oldCols);
+        pivotColsSvc?.extractCols(source, oldCols);
+        valueColsSvc?.extractCols(source, oldCols);
 
         this.ready = true;
 
@@ -191,9 +189,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             visibleCols,
             colViewport,
             eventSvc,
+            formula,
         } = this.beans;
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
+        // we need to initialise the formula service before
+        // attempting to create the column services as currently
+        // the rowNumbers will automatically activate with formulas
+        formula?.setFormulasActive(cols);
 
         this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
@@ -279,14 +282,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on and possibly the selection/row numbers column
+        const { beans, showingPivotResult, cols } = this;
 
-        const { valueColsSvc, selectionColSvc, gos } = this.beans;
-        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
+        const { valueColsSvc, selectionColSvc } = beans;
+        const showAutoGroupAndValuesOnly = this.isPivotMode() && !showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
-        const showRowNumbers = _isRowNumbers(gos);
+        const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
 
-        const res = this.cols.list.filter((col) => {
+        const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
@@ -535,11 +539,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
-        if (this.gos.get('enableFormulas')) {
-            this.pivotMode = false;
-            return;
-        }
-
         if (pivotMode === this.pivotMode) {
             return;
         }

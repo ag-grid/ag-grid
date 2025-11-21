@@ -253,6 +253,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default true
      */
     cellDataType?: boolean | string;
+    /**
+     * Allow formulas to be entered and evaluated in this column.
+     * @default false
+     * @agModule `FormulaModule`
+     */
+    allowFormula?: boolean;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */

@@ -123,7 +123,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const { valueSvc, formula } = this.beans;
         const value = valueSvc.getValue(column, node, false);
-        if (formula?.isFormula(value)) {
+        if (column.isAllowFormula() && formula?.isFormula(value)) {
             return formula.resolveValue(column, node);
         }
         return value;

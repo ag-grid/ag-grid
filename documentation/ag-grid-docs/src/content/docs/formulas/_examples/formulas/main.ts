@@ -134,17 +134,16 @@ const rowData = [
 const gridOptions: GridOptions<any> = {
     columnDefs: [
         { field: 'A', colId: '0' },
-        { field: 'B', colId: '1' },
-        { field: 'C', colId: '2' },
-        { field: 'D', colId: '3' },
-        { field: 'E', colId: '4' },
-        { field: 'F', colId: '5' },
-        { field: 'G', colId: '6' },
-        { field: 'H', colId: '7' },
-        { field: 'I', colId: '8' },
+        { field: 'B', colId: '1', allowFormula: true },
+        { field: 'C', colId: '2', allowFormula: true },
+        { field: 'D', colId: '3', allowFormula: true },
+        { field: 'E', colId: '4', allowFormula: true },
+        { field: 'F', colId: '5', allowFormula: true },
+        { field: 'G', colId: '6', allowFormula: true },
+        { field: 'H', colId: '7', allowFormula: true },
+        { field: 'I', colId: '8', allowFormula: true },
     ],
     getRowId: (params) => String(params.data.rid),
-    enableFormulas: true,
     cellSelection: {
         handle: {
             mode: 'fill',

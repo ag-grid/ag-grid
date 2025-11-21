@@ -384,12 +384,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        const { gos } = this;
+        const { gos, beans } = this;
         if (!_isCellSelectionEnabled(gos)) {
             return;
         }
 
-        const isRowNumbersEnabled = _isRowNumbers(gos);
+        const isRowNumbersEnabled = _isRowNumbers(beans);
         if (isRowNumbersEnabled) {
             const allColumnsRange = isRowNumberCol(cell.column);
             this.setSelectionMode(allColumnsRange);
@@ -401,7 +401,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRangeSelections = _getSuppressMultiRanges(this.gos);
+        const suppressMultiRangeSelections = _getSuppressMultiRanges(gos);
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
@@ -1155,10 +1155,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private getColumnsFromModel(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
-        const { gos, visibleCols } = this;
-        const isRowHeaderActive = _isRowNumbers(gos);
+        const { visibleCols, beans, selectionMode } = this;
+        const isRowHeaderActive = _isRowNumbers(beans);
 
-        if (!cols || this.selectionMode === SelectionMode.ALL_COLUMNS) {
+        if (!cols || selectionMode === SelectionMode.ALL_COLUMNS) {
             cols = visibleCols.allCols;
         }
 

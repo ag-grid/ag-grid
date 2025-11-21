@@ -7,7 +7,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { BatchEditingStartedEvent, BatchEditingStoppedEvent, CellFocusedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams, _isClientSideRowModel, _isTreeData } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
@@ -608,7 +608,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { gos, beans } = this;
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
-            if (_isTreeData(gos)) {
+            if (gos.get('treeData')) {
                 // tree - allow editing of groups with data by default.
                 // Allow editing filler nodes (node without data) only if enableGroupEdit is true.
                 if (!rowNode.data && !gos.get('enableGroupEdit')) {
@@ -928,9 +928,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStarted' });
         }
 
-        const isFormula = formula?.isFormula(editValue);
+        const isFormula = formula?.isFormula(editValue) ?? false;
 
         ranges.forEach((range: CellRange) => {
+            const hasFormulaColumnsInRange = range.columns.some((col) => col?.isAllowFormula());
             rangeSvc?.forEachRowInRange(range, (position) => {
                 const rowNode = _getRowNode(beans, position);
                 if (rowNode === undefined) {
@@ -943,6 +944,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (!column) {
                         continue;
                     }
+
+                    const isFormulaForColumn = !!isFormula && column.isAllowFormula();
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
                         const sourceValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
@@ -969,14 +972,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             },
                         });
                     }
-                    if (isFormula) {
+                    if (isFormulaForColumn) {
                         valueForColumn = formula?.updateFormulaByOffset(valueForColumn, 'right');
                     }
                 }
                 if (editRow.size > 0) {
                     edits.set(rowNode, editRow);
                 }
-                if (isFormula) {
+                if (isFormula && hasFormulaColumnsInRange) {
                     editValue = formula?.updateFormulaByOffset(editValue, 'down');
                 }
             });

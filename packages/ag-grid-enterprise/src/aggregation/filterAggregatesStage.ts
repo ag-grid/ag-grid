@@ -8,7 +8,7 @@ import type {
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub, _getGroupAggFiltering, _isTreeData } from 'ag-grid-community';
+import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'filterAggStage' as const;
@@ -121,7 +121,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
             return;
         }
 
-        if (_isTreeData(this.gos)) {
+        if (this.gos.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

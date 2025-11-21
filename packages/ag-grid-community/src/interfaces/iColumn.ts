@@ -263,6 +263,9 @@ export interface Column<TValue = any>
     /** Returns `true` if this column can be used as a row group column. */
     isAllowRowGroup(): boolean;
 
+    /** Returns `true` if formulas are permitted for this column. */
+    isAllowFormula(): boolean;
+
     /** isColumn is always `true`. Used to distinguish between columns and column groups.  */
     isColumn: true;
 }

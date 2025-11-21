@@ -15,7 +15,6 @@ import {
     _canSkipShowingRowGroup,
     _isClientSideRowModel,
     _isServerSideRowModel,
-    _isTreeData,
 } from '../gridOptionsUtils';
 import type {
     ExportParams,
@@ -363,7 +362,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             return colModel.getColsForKeys(columnKeys).filter(filterSpecialColumns);
         }
 
-        const isTreeData = _isTreeData(gos);
+        const isTreeData = gos.get('treeData');
 
         let columnsToExport: AgColumn[] = [];
 

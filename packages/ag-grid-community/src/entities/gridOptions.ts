@@ -1109,12 +1109,7 @@ export interface GridOptions<TData = any> {
      * @agModule `FormulaModule`
      */
     formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } };
-    /**
-     * Enable or disable the processing of cell formulas
-     * @initial
-     * @agModule `FormulaModule`
-     */
-    enableFormulas?: boolean;
+
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false

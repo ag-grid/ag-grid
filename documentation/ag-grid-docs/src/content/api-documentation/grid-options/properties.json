@@ -1068,8 +1068,6 @@
         "suppressStickyTotalRow": {},
         "alwaysAggregateAtRootLevel": {},
         "getGroupRowAgg": {},
-
-        "enableFormulas": {},
         "formulaFuncs": {}
     },
     "rowPivoting": {

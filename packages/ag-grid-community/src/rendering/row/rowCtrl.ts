@@ -39,7 +39,6 @@ import {
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
-    _isMasterDetail,
     _isRowSelection,
     _setDomData,
 } from '../../gridOptionsUtils';
@@ -455,7 +454,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const isStub =
             rowNode.stub && !gos.get('suppressServerSideFullWidthLoadingRow') && !gos.get('groupHideOpenParents');
         const isFullWidthCell = this.isNodeFullWidthCell();
-        const isDetailCell = _isMasterDetail(gos) && rowNode.detail;
+        const isDetailCell = gos.get('masterDetail') && rowNode.detail;
         const pivotMode = colModel.isPivotMode();
         const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, pivotMode);
 
