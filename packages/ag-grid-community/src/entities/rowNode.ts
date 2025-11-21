@@ -52,7 +52,7 @@ export class RowNode<TData = any>
         return this.beans.groupStage?.loadGroupData(this) ?? null;
     }
 
-    private set groupData(value: Record<string, any> | null) {
+    public set groupData(value: Record<string, any> | null) {
         this._groupData = value;
     }
 
