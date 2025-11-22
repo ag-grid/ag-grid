@@ -1,8 +1,21 @@
 import type { ColDef, GetRowIdParams, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, TextEditorModule, createGrid } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    NumberEditorModule,
+    TextEditorModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, FormulaModule, TextEditorModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    FormulaModule,
+    NumberEditorModule,
+    TextEditorModule,
+    ValidationModule,
+]);
 
 let gridApi: GridApi<any>;
 

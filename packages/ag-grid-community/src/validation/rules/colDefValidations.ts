@@ -115,22 +115,6 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         allowFormula: {
             supportedRowModels: ['clientSide'],
-            validate: (_colDef, { treeData, enableCellExpressions, masterDetail }) => {
-                const getError = (blockedService: string) =>
-                    `colDef.allowFormula is not supported with ${blockedService}. Formulas has been turned off.`;
-                if (treeData) {
-                    return getError('treeData');
-                }
-
-                if (enableCellExpressions) {
-                    return getError('enableCellExpressions');
-                }
-
-                if (masterDetail) {
-                    return getError('masterDetail');
-                }
-                return null;
-            },
         },
         cellRendererParams: {
             validate: (colDef) => {
