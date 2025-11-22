@@ -199,7 +199,7 @@ export function criteriaToPredicate(criteria: unknown): (cell: unknown) => boole
     return REGEX_COMPARE_VALUES.bind(null, symbol ?? '=', regexp);
 }
 
-export const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef) => {
+const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef) => {
     if (!ref || delta === 0 || ref.absolute) {
         return;
     }
@@ -224,7 +224,7 @@ export const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef)
     }
 };
 
-export const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef) => {
+const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef) => {
     if (!ref || rowDelta === 0 || ref.absolute) {
         return;
     }
