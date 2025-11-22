@@ -398,6 +398,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const containingRange = findRangeContainingCols(cellRanges, columns, cell, cell);
 
+        // TODO: Test with filtered rows!!!
         if (isCtrl && containingRange) {
             // remove row, split existing
 
@@ -411,17 +412,34 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             // else if startRow == cell -> increment startRow
             // else -> truncate cell range at row above cell, add new cell range from row below to endRow
 
+            const incrementStartRow = (): boolean => {
+                if (rowBelow) {
+                    // if !endRow -> cell range goes to bottom
+                    // rowBelow exists -> cellPos not at bottom
+                    // if rowBelow == last row -> set startRow to rowBelow
+                    // else -> set startRow to rowBelow
+                    if (containingRange.endRow ? _isRowBefore(rowBelow, containingRange.endRow) : true) {
+                        containingRange.startRow = rowBelow;
+                    } else {
+                        _removeFromArray(cellRanges, containingRange);
+                        return true;
+                    }
+                } else {
+                    // no rowBelow means cell is first row and last row simultaneously
+                    // i.e. only one row, so we clear the cell range
+                    _removeFromArray(cellRanges, containingRange);
+                    return true;
+                }
+
+                return false;
+            };
+
+            let removed = false;
             if (!startRow) {
                 // then `containingRange` starts from first row
                 if (!rowAbove) {
                     // cell is in first row, so we increment the start row of the range
-                    if (rowBelow) {
-                        containingRange.startRow = rowBelow;
-                    } else {
-                        // no rowBelow means cell is first row and last row simultaneously
-                        // i.e. only one row, so we clear the cell range
-                        _removeFromArray(cellRanges, containingRange);
-                    }
+                    incrementStartRow();
                 } else {
                     // otherwise, truncate cell range at row above cell...
                     const prevEndRow = containingRange.endRow;
@@ -440,13 +458,18 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 // otherwise, truncate cell range at row above cell...
                 const prevEndRow = containingRange.endRow;
                 if (rowAbove) {
-                    containingRange.endRow = rowAbove;
+                    if (_isRowBefore(startRow, rowAbove)) {
+                        containingRange.endRow = rowAbove;
+                    } else {
+                        removed = incrementStartRow();
+                    }
                 } else {
                     _removeFromArray(cellRanges, containingRange);
+                    removed = true;
                 }
 
                 // and add new cell range from row below cell to endRow
-                if (rowBelow) {
+                if (!removed && rowBelow) {
                     cellRanges.push({
                         ...containingRange,
                         startRow: rowBelow,
@@ -454,6 +477,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     });
                 }
             }
+
+            this.dispatchChangedEvent(true, true);
         } else {
             this.setRangeToCell(cell, isCtrl);
         }
