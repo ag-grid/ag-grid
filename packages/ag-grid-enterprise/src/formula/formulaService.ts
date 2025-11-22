@@ -7,7 +7,7 @@ import type {
     RowNode,
     _ColumnCollections,
 } from 'ag-grid-community';
-import { BeanStub, _isExpressionString, _warn } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
@@ -110,6 +110,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         if (active !== this.active) {
             this.active = active;
+            this.refreshFormulas(true);
         }
     }
 
@@ -159,6 +160,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
                 this.setupColRefMap();
             }
         };
+
+        // there is no need to check for treeData here because the columnModel
+        // already calls `refreshAll` when treeData is updated
+        this.addManagedPropertyListeners(['masterDetail', 'enableCellExpressions'], (e) => {
+            const { colModel } = this.beans;
+            const formulaColumnsPresent = colModel.cols?.list.some((col) => col.isAllowFormula());
+            if (formulaColumnsPresent) {
+                this.beans.colModel.refreshAll(_convertColumnEventSourceType(e.source));
+            }
+        });
 
         this.addManagedListeners(this.beans.eventSvc, {
             modelUpdated: refreshFormulas,
