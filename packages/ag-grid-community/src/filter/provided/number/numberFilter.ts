@@ -183,7 +183,7 @@ function getNormalisedValue(
     numberParser: INumberFilterParams['numberParser'],
     input: GridInputTextField | GridInputNumberField
 ): number | null {
-    return processNumberFilterValue(stringToFloat(numberParser, input.getValue()));
+    return processNumberFilterValue(stringToFloat(numberParser, input.getValue(true)));
 }
 
 function getValidityMessageKey(
