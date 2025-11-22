@@ -13,6 +13,7 @@ import type {
     ExcelWorksheet,
     ExcelWorksheetConfigParams,
     GridSerializingParams,
+    IFormulaService,
     RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
@@ -46,6 +47,7 @@ interface ExcelMixedStyle {
 }
 
 export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, GridSerializingParams {
+    formulaSvc?: IFormulaService;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (params: StyleLinkerInterface) => string[];
     frozenRowCount?: number;
@@ -55,6 +57,7 @@ export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, 
 export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow[]> {
     private readonly config: ExcelGridSerializingParams & ExcelExportParams;
     private readonly stylesByIds: { [key: string]: ExcelStyle };
+    private readonly formulaSvc?: IFormulaService;
 
     private mixedStyles: { [key: string]: ExcelMixedStyle } = {};
     private mixedStyleCounter: number = 0;
@@ -71,7 +74,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
+        this.formulaSvc = config.formulaSvc;
         this.config = Object.assign({}, config);
+
         this.stylesByIds = {};
         for (const style of this.config.baseExcelStyles) {
             this.stylesByIds[style.id] = style;
@@ -402,9 +407,12 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     )
                 );
             } else {
-                currentCells.push(
-                    this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted)
-                );
+                let isFormula = false;
+                if (column.isAllowFormula() && this.formulaSvc?.isFormula(valueForCell)) {
+                    isFormula = true;
+                }
+                const cellType = isFormula ? 'f' : this.getDataTypeForValue(valueForCell);
+                currentCells.push(this.createCell(excelStyleId, cellType, valueForCell, valueFormatted));
             }
         };
     }

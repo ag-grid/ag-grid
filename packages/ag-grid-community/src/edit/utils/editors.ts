@@ -80,7 +80,7 @@ export function _setupEditors(
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition, false) ??
-                    valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
+                    valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode })?.value ??
                     oldValue ??
                     UNEDITED;
 
@@ -244,7 +244,9 @@ function _createEditorParams(
             : cellDataValue;
 
     const value =
-        initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
+        initialNewValue === UNEDITED
+            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode })?.value
+            : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;

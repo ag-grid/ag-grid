@@ -92,7 +92,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined).value,
+                            value: this.valueSvc.getValueForDisplay({ column, node }).value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
@@ -118,12 +118,12 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             let concatenatedGroupValue: string = '';
             let pointer: RowNode | null = node;
             while (pointer && pointer.level !== -1) {
-                const { value, valueFormatted } = valueService.getValueForDisplay(
-                    isFullWidthGroup ? undefined : column, // full width group doesn't have a column
-                    pointer,
-                    true,
-                    true
-                );
+                const { value, valueFormatted } = valueService.getValueForDisplay({
+                    column: isFullWidthGroup ? undefined : column, // full width group doesn't have a column
+                    node: pointer,
+                    includeValueFormatted: true,
+                    exporting: true,
+                });
                 concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
                 pointer = pointer.parent;
             }
@@ -134,7 +134,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
+        const { value, valueFormatted } = valueService.getValueForDisplay({
+            column,
+            node,
+            includeValueFormatted: true,
+            exporting: true,
+            useRawFormula: true,
+        });
         return {
             value: value ?? '',
             valueFormatted,

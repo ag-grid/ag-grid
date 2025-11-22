@@ -14,7 +14,7 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
     if (_missing(column)) {
         return null;
     }
-    const result = beans.valueSvc.getValueForDisplay(column, rowNode, useFormatter);
+    const result = beans.valueSvc.getValueForDisplay({ column, node: rowNode, includeValueFormatted: useFormatter });
     if (useFormatter) {
         return result.valueFormatted ?? _toString(result.value);
     }
