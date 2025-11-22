@@ -973,14 +973,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                         });
                     }
                     if (isFormulaForColumn) {
-                        valueForColumn = formula?.updateFormulaByOffset(valueForColumn, 'right');
+                        valueForColumn = formula?.updateFormulaByOffset({ value: valueForColumn, columnDelta: 1 });
                     }
                 }
                 if (editRow.size > 0) {
                     edits.set(rowNode, editRow);
                 }
                 if (isFormula && hasFormulaColumnsInRange) {
-                    editValue = formula?.updateFormulaByOffset(editValue, 'down');
+                    editValue = formula?.updateFormulaByOffset({ value: editValue, rowDelta: 1 });
                 }
             });
 

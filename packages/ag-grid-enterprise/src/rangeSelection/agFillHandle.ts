@@ -353,7 +353,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 currentValue = valueSvc.getValue(col, rowNode);
                 initialValues.push(currentValue);
                 initialNonAggregatedValues.push(valueSvc.getValue(col, rowNode, true));
-                initialFormattedValues.push(valueSvc.formatValue(col, rowNode, currentValue));
+                initialFormattedValues.push(valueSvc.getValueForDisplay({ column: col, node: rowNode }).valueFormatted);
                 withinInitialRange = updateInitialSet();
             } else {
                 const { value, fromUserFunction, sourceCol, sourceRowNode } = this.processValues({
@@ -375,7 +375,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
                         if (sourceCol) {
                             const sourceColDef = sourceCol.getColDef();
                             if (sourceColDef.useValueFormatterForExport !== false && sourceColDef.valueFormatter) {
-                                const formattedValue = valueSvc.formatValue(sourceCol, sourceRowNode!, currentValue);
+                                const formattedValue = valueSvc.getValueForDisplay({
+                                    column: sourceCol,
+                                    node: sourceRowNode!,
+                                }).valueFormatted;
 
                                 if (formattedValue != null) {
                                     currentValue = formattedValue;
@@ -500,9 +503,16 @@ export class AgFillHandle extends AbstractSelectionHandle {
             // Compute the cyclic source for this target cell (fallback when not using a formula)
             const { value: cyclicValue, column: sourceCol, rowNode: sourceRowNode } = values[idx % values.length];
 
-            const processedValue = formula?.isFormula(valueForFunctions)
-                ? formula.updateFormulaByOffset(valueForFunctions, direction)
-                : cyclicValue;
+            let processedValue: any;
+
+            if (formula?.isFormula(valueForFunctions)) {
+                // Compute the row and column delta based on drag direction
+                const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
+                const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
+                processedValue = formula.updateFormulaByOffset({ value: valueForFunctions, rowDelta, columnDelta });
+            } else {
+                processedValue = cyclicValue;
+            }
 
             return { value: processedValue, fromUserFunction: false, sourceCol, sourceRowNode };
         }

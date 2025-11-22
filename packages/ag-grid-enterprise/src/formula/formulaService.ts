@@ -10,12 +10,13 @@ import type {
 import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
-import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
-import type { Cell, CellRef, FormulaNode } from './ast/utils';
+import { serializeFormula } from './ast/serializer';
+import type { FormulaNode } from './ast/utils';
 import { FormulaError } from './ast/utils';
 import type { Addr } from './functions/resolver';
 import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
+import { shiftNode } from './functions/utils';
 
 /**
  * Cell Formula Cache
@@ -180,101 +181,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         });
     }
 
-    public updateFormulaByOffset(value: string, direction: 'up' | 'down' | 'left' | 'right'): string {
-        const beans = this.beans;
-        const cols = beans.visibleCols.allCols;
+    public updateFormulaByOffset(params: { value: string; rowDelta?: number; columnDelta?: number }): string {
+        const { value, rowDelta = 0, columnDelta = 0 } = params;
         const ast = parseFormula(this.beans, value);
-
-        // Compute the row and column delta based on drag direction
-        const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
-        const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
-
-        // Shift a row reference by dRow, only if it is relative
-        const shiftRowRef = (ref?: CellRef) => {
-            if (!ref || rowDelta === 0 || ref.absolute) {
-                return;
-            }
-
-            const idx1 = rowIndexFromId(beans, ref.id); // 1-based
-            if (idx1 == null) {
-                return;
-            }
-
-            const next1 = idx1 + rowDelta;
-            if (next1 < 1) {
-                return;
-            }
-
-            const nextId = rowIdFromIndex(this.beans, next1);
-            if (nextId) {
-                ref.id = nextId;
-            }
-        };
-
-        // Shift a column reference by dCol, only if it is relative
-        const shiftColRef = (ref?: CellRef) => {
-            if (!ref || columnDelta === 0 || ref.absolute) {
-                return;
-            }
-
-            const i0 = colIndexFromId(beans.colModel, cols, ref.id); // 0-based
-            if (i0 == null) {
-                return;
-            }
-
-            const j0 = i0 + columnDelta;
-            if (j0 < 0) {
-                return;
-            }
-
-            const nextId = colIdFromIndex(cols, j0);
-            if (nextId) {
-                ref.id = nextId;
-            }
-        };
-
-        // Type guard to check if an operand value is a cell reference or range
-        const isCellOperand = (
-            value: string | number | boolean | Cell
-        ): value is { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef } => {
-            return (
-                !!value &&
-                typeof value === 'object' &&
-                value !== null &&
-                'row' in (value as any) &&
-                'column' in (value as any)
-            );
-        };
-
-        // Traverse the AST and apply shifts to any cell references
-        const shiftNode = (node: FormulaNode): void => {
-            if (node.type === 'operand') {
-                const { value } = node;
-                if (!isCellOperand(value)) {
-                    return;
-                }
-
-                const { row, column, endRow, endColumn } = value;
-
-                // Shift the primary row and column
-                shiftRowRef(row);
-                shiftColRef(column);
-
-                // Shift the range end, if present
-                shiftRowRef(endRow);
-                shiftColRef(endColumn);
-
-                return;
-            }
-
-            if (node.type === 'operation') {
-                for (const child of node.operands) {
-                    shiftNode(child);
-                }
-            }
-        };
-
-        shiftNode(ast);
+        shiftNode(this.beans, ast, rowDelta, columnDelta);
 
         // Serialize back to a formula string (REF format)
         return serializeFormula(this.beans, ast, /*useRefFormat*/ true);

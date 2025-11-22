@@ -72,7 +72,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         currentColumnIndex: number,
         accumulatedRowIndex: number,
         type: string,
-        node: RowNode
+        node: RowNode,
+        useRawFormula: boolean
     ): { value: any; valueFormatted?: string | null } {
         const isFullWidthGroup =
             currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
@@ -139,7 +140,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             node,
             includeValueFormatted: true,
             exporting: true,
-            useRawFormula: true,
+            useRawFormula,
         });
         return {
             value: value ?? '',
