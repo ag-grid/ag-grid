@@ -1,3 +1,4 @@
+import { _setAriaInvalid } from '../../../agStack/utils/aria';
 import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
@@ -105,6 +106,7 @@ export class DateCompWrapper {
 
         if (eInput && 'setCustomValidity' in eInput) {
             (eInput as HTMLInputElement).setCustomValidity(message);
+            _setAriaInvalid(eInput, message.length > 0);
         }
     }
 }
