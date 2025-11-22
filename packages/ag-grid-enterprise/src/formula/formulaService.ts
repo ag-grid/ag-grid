@@ -181,13 +181,18 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         });
     }
 
-    public updateFormulaByOffset(params: { value: string; rowDelta?: number; columnDelta?: number }): string {
-        const { value, rowDelta = 0, columnDelta = 0 } = params;
+    public updateFormulaByOffset(params: {
+        value: string;
+        rowDelta?: number;
+        columnDelta?: number;
+        useRefFormat?: boolean;
+    }): string {
+        const { value, rowDelta = 0, columnDelta = 0, useRefFormat = true } = params;
         const ast = parseFormula(this.beans, value);
         shiftNode(this.beans, ast, rowDelta, columnDelta);
 
         // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ true);
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat);
     }
 
     private setupFunctions() {

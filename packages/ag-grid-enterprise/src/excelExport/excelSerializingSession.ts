@@ -408,12 +408,21 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     )
                 );
             } else {
-                let isFormula = false;
-                if (column.isAllowFormula() && this.formulaSvc?.isFormula(valueForCell)) {
-                    isFormula = true;
-                }
-                const cellType = isFormula ? 'f' : this.getDataTypeForValue(valueForCell);
-                currentCells.push(this.createCell(excelStyleId, cellType, valueForCell, valueFormatted));
+                const isFormula = column.isAllowFormula() && this.formulaSvc?.isFormula(valueForCell);
+                const cell = this.createCell(
+                    excelStyleId,
+                    isFormula ? 'f' : this.getDataTypeForValue(valueForCell),
+                    isFormula
+                        ? this.formulaSvc?.updateFormulaByOffset({
+                              value: valueForCell,
+                              rowDelta: rowIndex - (node.formulaRowIndex! + 1),
+                              useRefFormat: false,
+                          })
+                        : valueForCell,
+                    valueFormatted
+                );
+
+                currentCells.push(cell);
             }
         };
     }
