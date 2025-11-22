@@ -54,11 +54,11 @@ export function _isSameRow(rowA: RowPosition | undefined, rowB: RowPosition | un
         return true;
     }
     // if only one missing
-    if ((rowA && !rowB) || (!rowA && rowB)) {
+    if (!rowA || !rowB) {
         return false;
     }
     // otherwise compare (use == to compare rowPinned because it can be null or undefined)
-    return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;
+    return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned == rowB.rowPinned;
 }
 
 export function _getFirstRow(beans: BeanCollection): RowPosition | null {
