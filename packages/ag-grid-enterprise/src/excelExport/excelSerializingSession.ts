@@ -370,14 +370,14 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 }
             }
 
-            const { value: valueForCell, valueFormatted } = this.extractRowCellValue(
+            const { value: valueForCell, valueFormatted } = this.extractRowCellValue({
                 column,
-                index,
-                rowIndex,
-                'excel',
                 node,
-                true
-            );
+                currentColumnIndex: index,
+                accumulatedRowIndex: rowIndex,
+                type: 'excel',
+                useRawFormula: true,
+            });
             const styleIds: string[] = this.config.styleLinker({
                 rowType: 'BODY',
                 rowIndex,

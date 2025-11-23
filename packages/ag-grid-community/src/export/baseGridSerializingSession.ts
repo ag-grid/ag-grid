@@ -67,14 +67,15 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return value ?? '';
     }
 
-    public extractRowCellValue(
-        column: AgColumn,
-        currentColumnIndex: number,
-        accumulatedRowIndex: number,
-        type: string,
-        node: RowNode,
-        useRawFormula: boolean
-    ): { value: any; valueFormatted?: string | null } {
+    public extractRowCellValue(params: {
+        column: AgColumn;
+        node: RowNode;
+        currentColumnIndex: number;
+        accumulatedRowIndex: number;
+        type: string;
+        useRawFormula: boolean;
+    }): { value: any; valueFormatted?: string | null } {
+        const { column, node, currentColumnIndex, accumulatedRowIndex, type, useRawFormula } = params;
         const isFullWidthGroup =
             currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         if (
