@@ -130,8 +130,8 @@ function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): st
     const startRef = a(cell.column.absolute, col1) + a(cell.row.absolute, row1);
 
     if (cell.endColumn && cell.endRow) {
-        const col2 = columnLabelForA1(beans, cell.endColumn);
-        const row2 = rowIndexForA1(beans, cell.endRow);
+        const col2 = unsafe ? cell.endColumn.id : columnLabelForA1(beans, cell.endColumn);
+        const row2 = unsafe ? cell.endRow.id : rowIndexForA1(beans, cell.endRow);
         return `${startRef}:${a(cell.endColumn.absolute, col2)}${a(cell.endRow.absolute, row2)}`;
     }
     return startRef;

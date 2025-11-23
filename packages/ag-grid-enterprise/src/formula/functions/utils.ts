@@ -230,7 +230,11 @@ const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef, uns
     }
 
     if (unsafe) {
-        ref.id = String(Number(ref.id) + rowDelta);
+        const numericId = Number(ref.id);
+        if (!Number.isFinite(numericId)) {
+            return;
+        }
+        ref.id = String(numericId + rowDelta);
         return;
     }
 
@@ -279,7 +283,7 @@ export const shiftNode = (
         shiftColRef(beans, columnDelta, column);
 
         // Shift the range end, if present
-        shiftRowRef(beans, rowDelta, endRow);
+        shiftRowRef(beans, rowDelta, endRow, unsafe);
         shiftColRef(beans, columnDelta, endColumn);
 
         return;
