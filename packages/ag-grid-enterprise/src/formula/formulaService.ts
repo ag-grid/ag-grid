@@ -188,11 +188,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         useRefFormat?: boolean;
     }): string {
         const { value, rowDelta = 0, columnDelta = 0, useRefFormat = true } = params;
-        const ast = parseFormula(this.beans, value);
-        shiftNode(this.beans, ast, rowDelta, columnDelta);
+        const unsafe = !useRefFormat;
+        const ast = parseFormula(this.beans, value, unsafe);
+        shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
 
         // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat);
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
     }
 
     private setupFunctions() {
@@ -288,7 +289,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     public normaliseFormula(value: string, shorthand: boolean = false): string | null {
         try {
             const parsedAST = parseFormula(this.beans, value);
-            const serialized = serializeFormula(this.beans, parsedAST, !shorthand);
+            const serialized = serializeFormula(this.beans, parsedAST, !shorthand, false);
             return serialized;
         } catch {
             return null;

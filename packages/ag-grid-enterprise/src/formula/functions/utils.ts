@@ -224,8 +224,13 @@ const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef) => {
     }
 };
 
-const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef) => {
+const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef, unsafe?: boolean) => {
     if (!ref || rowDelta === 0 || ref.absolute) {
+        return;
+    }
+
+    if (unsafe) {
+        ref.id = String(Number(ref.id) + rowDelta);
         return;
     }
 
@@ -254,7 +259,13 @@ const isCellOperand = (
 };
 
 // Traverse the AST and apply shifts to any cell references
-export const shiftNode = (beans: BeanCollection, node: FormulaNode, rowDelta: number, columnDelta: number): void => {
+export const shiftNode = (
+    beans: BeanCollection,
+    node: FormulaNode,
+    rowDelta: number,
+    columnDelta: number,
+    unsafe: boolean
+): void => {
     if (node.type === 'operand') {
         const { value } = node;
         if (!isCellOperand(value)) {
@@ -264,7 +275,7 @@ export const shiftNode = (beans: BeanCollection, node: FormulaNode, rowDelta: nu
         const { row, column, endRow, endColumn } = value;
 
         // Shift the primary row and column
-        shiftRowRef(beans, rowDelta, row);
+        shiftRowRef(beans, rowDelta, row, unsafe);
         shiftColRef(beans, columnDelta, column);
 
         // Shift the range end, if present
@@ -276,7 +287,7 @@ export const shiftNode = (beans: BeanCollection, node: FormulaNode, rowDelta: nu
 
     if (node.type === 'operation') {
         for (const child of node.operands) {
-            shiftNode(beans, child, rowDelta, columnDelta);
+            shiftNode(beans, child, rowDelta, columnDelta, unsafe);
         }
     }
 };
