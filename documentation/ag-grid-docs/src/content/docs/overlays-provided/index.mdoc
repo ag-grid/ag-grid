@@ -7,8 +7,6 @@ Overlays are used to displaying messages over the top of the grid. The grid auto
 The grid provides the following overlays:
 - [Loading](#loading) - shown when data is loading
 - [No Rows](#no-rows) - shown when there are no rows to display
-- [No Matching Filter Rows](#no-matching-filter-rows) - shown when no rows match the current filter
-- [Export](#export) - shown when data is being exported to CSV or Excel
 
 ## Loading
 
@@ -29,19 +27,6 @@ The example below shows the loading overlay when the `loading` property is set t
 When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay.
 
 {% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=300 /%}
-
-## No Matching Filter Rows
-
-When a filter is applied and no rows match the filter criteria, the grid automatically displays the no matching filter overlay.
-
-{% gridExampleRunner title="No Matching Filter Overlay" name="no-matching-filter-overlay"  exampleHeight=350 /%}
-
-## Export
-
-When exporting data to CSV or Excel, the grid automatically displays the export overlay until the export is complete.
-
-{% gridExampleRunner title="Export Overlay" name="excel-export-overlay"  exampleHeight=350 /%}
-
 
 ## Customisation
 
