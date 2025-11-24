@@ -208,6 +208,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         }
 
         const colDefValidProps: (keyof RowNumbersOptions)[] = [
+            'cellRenderer',
             'contextMenuItems',
             'context',
             'onCellClicked',
