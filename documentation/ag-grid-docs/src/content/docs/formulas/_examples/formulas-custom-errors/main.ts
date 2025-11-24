@@ -2,7 +2,6 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
@@ -13,7 +12,6 @@ import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([
     CellSelectionModule,
     ClientSideRowModelModule,
-    NumberEditorModule,
     FormulaModule,
     TextEditorModule,
     TooltipModule,
@@ -49,7 +47,7 @@ const gridOptions: GridOptions<any> = {
         },
     },
     defaultColDef: {
-        cellDataType: 'string',
+        cellDataType: 'text',
         allowFormula: true,
         editable: true,
         flex: 1,
