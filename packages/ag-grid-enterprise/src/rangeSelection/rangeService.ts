@@ -40,6 +40,7 @@ import {
     _getRowCtrlForEventTarget,
     _getRowNode,
     _getSuppressMultiRanges,
+    _interpretAsRightClick,
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
@@ -383,14 +384,26 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return endIndex - startIndex + 1;
     }
 
-    public handleRowNumberClick(cell: CellPosition, isCtrl: boolean): void {
+    public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
-        const isRowNumbersEnabled = _isRowNumbers(beans);
-        if (!isRowNumbersEnabled) {
+
+        const isRowNumber = isRowNumberCol(cell.column);
+        if (isRowNumber) {
+            event.preventDefault();
+        }
+
+        if (event.shiftKey) {
+            return this.extendLatestRangeToCell(cell);
+        }
+
+        const hasRightClickedOnRowNumber = isRowNumber && _interpretAsRightClick(beans, event);
+        if (hasRightClickedOnRowNumber) {
             return;
         }
 
-        this.setSelectionMode(isRowNumberCol(cell.column));
+        const isMultiKey = event.ctrlKey || event.metaKey;
+
+        this.setSelectionMode(isRowNumber);
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
         if (!columns) {
             return;
@@ -402,8 +415,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             endRow: cell,
         });
 
-        // TODO: Test with filtered rows!!!
-        if (isCtrl && containingRange) {
+        if (isRowNumber && isMultiKey && containingRange) {
             const firstRow = _getFirstRow(beans);
             const lastRow = _getLastRow(beans);
             const startRow = this.getRangeStartRow(containingRange);
@@ -436,7 +448,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             this.dispatchChangedEvent(true, true);
         } else {
-            this.setRangeToCell(cell, isCtrl);
+            this.setRangeToCell(cell, isMultiKey);
         }
     }
 
