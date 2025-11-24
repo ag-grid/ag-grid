@@ -865,13 +865,13 @@
             "displayName": "Overlays",
             "page": {
                 "name": "Overlays",
-                "url": "./overlays/"
+                "url": "./overlays-overview/"
             }
         },
         "loading": {
             "more": {
                 "name": "Loading Overlay",
-                "url": "./overlays/#loading-overlay"
+                "url": "./overlays-provided/#loading-overlay"
             }
         },
         "overlayComponent": {
@@ -901,13 +901,13 @@
         "activeOverlay": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays/"
+                "url": "./overlays-custom/"
             }
         },
         "activeOverlayParams": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays/"
+                "url": "./overlays-custom/"
             }
         }
     },

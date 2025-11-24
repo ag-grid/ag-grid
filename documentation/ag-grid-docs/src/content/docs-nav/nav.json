@@ -1429,7 +1429,7 @@
                         {
                             "type": "item",
                             "title": "Overlays",
-                            "path": "overlays",
+                            "path": "overlays-overview",
                             "children": [
                                 {
                                     "type": "item",
