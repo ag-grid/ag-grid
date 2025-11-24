@@ -346,8 +346,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         const params = includeActiveOverlayParams
             ? gos.get('activeOverlayParams')
             : {
-                  ...((legacyParamsKey && gos.get(legacyParamsKey)) || null),
                   ...gos.get('overlayComponentParams'),
+                  ...((legacyParamsKey && gos.get(legacyParamsKey)) || null),
                   defaultOverlay,
               };
 
