@@ -1,12 +1,12 @@
 import type { DefaultComparatorOptions } from '../agStack/utils/generic';
 import { _defaultComparator } from '../agStack/utils/generic';
+import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { SortComparatorFn } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { _firstLeaf } from '../entities/rowNodeUtils';
-import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
+import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
 
 export interface SortedRowNode {
@@ -21,11 +21,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
+    private firstLeaf: (row: RowNode) => RowNode | undefined;
 
     public postConstruct(): void {
         const { gos } = this;
         this.isAccentedSort = gos.get('accentedSort');
         this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
+        this.firstLeaf = _isClientSideRowModel(gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
         this.addManagedPropertyListener(
             'accentedSort',
@@ -142,7 +144,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const { valueSvc, formula } = this.beans;
         const value = valueSvc.getValue(column, node, false);
-        if (formula?.isFormula(value)) {
+        if (column.isAllowFormula() && formula?.isFormula(value)) {
             return formula.resolveValue(column, node);
         }
         return value;
@@ -154,7 +156,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
         if (isGroupRows) {
-            const leafChild = node.data ? node : _firstLeaf(node.childrenAfterGroup);
+            const leafChild = this.firstLeaf(node);
             return leafChild && valueSvc.getValue(column, leafChild, false);
         }
 
@@ -165,6 +167,28 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         return node.groupData?.[displayCol.getId()];
     }
 }
+
+/**
+ * _csrmFirstLeaf gets the first lead child of the row node for CSRM,
+ * it uses sourceRowIndex to identify if the row comes from row data or transaction or not.
+ * Groups and filler nodes have negative sourceRowIndex.
+ *
+ * For SSRM and other view model however we don't have any other way to identify
+ * if the row comes from data or not, so we simply check if data exists on the node.
+ */
+const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
+    if (row.data) {
+        return row;
+    }
+    let childrenAfterGroup = row.childrenAfterGroup;
+    while (childrenAfterGroup?.length) {
+        const node = childrenAfterGroup[0];
+        if (node.data) {
+            return node;
+        }
+        childrenAfterGroup = node.childrenAfterGroup;
+    }
+};
 
 function _absoluteValueTransformer(value: any): number | null {
     if (value == null) {

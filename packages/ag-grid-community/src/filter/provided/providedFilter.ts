@@ -259,6 +259,11 @@ export abstract class ProvidedFilter<
             });
         }
 
+        // Don't apply an invalid model
+        if (!state.valid) {
+            return;
+        }
+
         apply ??= this.applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
             this.doApplyModel({ afterFloatingFilter, afterDataChange: false });
@@ -315,8 +320,8 @@ export abstract class ProvidedFilter<
         super.destroy();
     }
 
-    protected translate(key: FilterLocaleTextKey): string {
-        return translateForFilter(this, key);
+    protected translate(key: FilterLocaleTextKey, variableValues?: string[]): string {
+        return translateForFilter(this, key, variableValues);
     }
 
     // override to control positionable feature

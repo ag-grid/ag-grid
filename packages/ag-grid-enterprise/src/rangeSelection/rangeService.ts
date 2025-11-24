@@ -32,6 +32,7 @@ import {
     _exists,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
+    _getEnableColumnSelection,
     _getFirstRow,
     _getLastRow,
     _getRowAbove,
@@ -383,12 +384,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
-        const { gos } = this;
+        const { gos, beans } = this;
         if (!_isCellSelectionEnabled(gos)) {
             return;
         }
 
-        const isRowNumbersEnabled = _isRowNumbers(gos);
+        const isRowNumbersEnabled = _isRowNumbers(beans);
         if (isRowNumbersEnabled) {
             const allColumnsRange = isRowNumberCol(cell.column);
             this.setSelectionMode(allColumnsRange);
@@ -400,7 +401,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const suppressMultiRangeSelections = _getSuppressMultiRanges(this.gos);
+        const suppressMultiRangeSelections = _getSuppressMultiRanges(gos);
 
         // if not appending, then clear previous range selections
         if (suppressMultiRangeSelections || !appendRange || _missing(this.cellRanges)) {
@@ -1154,10 +1155,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private getColumnsFromModel(cols?: (string | AgColumn)[]): AgColumn[] | undefined {
-        const { gos, visibleCols } = this;
-        const isRowHeaderActive = _isRowNumbers(gos);
+        const { visibleCols, beans, selectionMode } = this;
+        const isRowHeaderActive = _isRowNumbers(beans);
 
-        if (!cols || this.selectionMode === SelectionMode.ALL_COLUMNS) {
+        if (!cols || selectionMode === SelectionMode.ALL_COLUMNS) {
             cols = visibleCols.allCols;
         }
 
@@ -1264,8 +1265,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
      */
     public handleColumnSelection(clickedColumn: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void {
         const { gos, beans, columnRangeSelectionCtx: ctx, cellRanges } = this;
+        const enableColumnSelection = _getEnableColumnSelection(gos);
+        if (!enableColumnSelection) {
+            return;
+        }
+
         const suppressMultiRanges = _getSuppressMultiRanges(gos);
         const hasRanges = cellRanges.length > 0;
+        const isMeta = event.ctrlKey || event.metaKey;
 
         const firstRow = _getFirstRow(beans);
         const lastRow = _getLastRow(beans);
@@ -1294,8 +1301,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             this.updateRangeRowBoundary({ cellRange: range, boundary: 'end', cellPosition: { column, ...lastRow } });
         } else if (clickedColumn.isColumn) {
-            if (hasRanges && suppressMultiRanges) {
-                this.removeAllCellRanges();
+            if (hasRanges && (suppressMultiRanges || !isMeta)) {
+                this.removeAllCellRanges(true);
             }
             const foundRange = findRangeContainingCols(cellRanges, [clickedColumn], firstRow, lastRow);
 
@@ -1308,8 +1315,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             }
             ctx.root = clickedColumn;
         } else {
-            if (hasRanges && suppressMultiRanges) {
-                this.removeAllCellRanges();
+            if (hasRanges && (suppressMultiRanges || !isMeta)) {
+                this.removeAllCellRanges(true);
             }
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();

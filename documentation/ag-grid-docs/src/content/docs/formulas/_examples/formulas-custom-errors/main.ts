@@ -41,7 +41,6 @@ const gridOptions: GridOptions<any> = {
         { field: 'D', colId: '3', headerName: 'Concat' },
     ],
     getRowId: (params) => String(params.data.rid),
-    enableFormulas: true,
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -49,6 +48,7 @@ const gridOptions: GridOptions<any> = {
     },
     defaultColDef: {
         headerName: '',
+        allowFormula: true,
         editable: true,
         flex: 1,
     },

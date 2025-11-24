@@ -99,6 +99,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMaxRenderedRowRestriction: false,
     suppressRowVirtualisation: false,
     rowDragManaged: false,
+    refreshAfterGroupEdit: false,
     rowDragInsertDelay: 500,
     suppressRowDrag: false,
     suppressMoveWhenRowDragging: false,
@@ -176,7 +177,6 @@ export const GRID_OPTION_DEFAULTS = {
     reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
     enableFilterHandlers: false,
-    enableFormulas: false,
 } as const;
 /**
  * Used simply to type check the default grid options.

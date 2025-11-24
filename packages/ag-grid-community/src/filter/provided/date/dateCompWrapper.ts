@@ -1,3 +1,4 @@
+import { _setAriaInvalid } from '../../../agStack/utils/aria';
 import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
@@ -13,25 +14,19 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private readonly context: Context;
-    private readonly eParent: HTMLElement;
+    private validityTimeout: number | undefined = undefined;
 
     constructor(
-        context: Context,
+        private readonly context: Context,
         userCompFactory: UserComponentFactory,
         colDef: ColDef,
         dateComponentParams: IDateParams,
-        eParent: HTMLElement,
+        private readonly eParent: HTMLElement,
         onReady?: (comp: DateCompWrapper) => void
     ) {
-        this.context = context;
-        this.eParent = eParent;
-
         const compDetails = _getDateCompDetails(userCompFactory, colDef, dateComponentParams);
-        if (!compDetails) {
-            return;
-        }
-        compDetails.newAgStackInstance().then((dateComp) => {
+
+        compDetails?.newAgStackInstance().then((dateComp) => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);
@@ -63,6 +58,10 @@ export class DateCompWrapper {
     public destroy(): void {
         this.alive = false;
         this.dateComp = this.context.destroyBean(this.dateComp);
+        if (this.validityTimeout) {
+            clearTimeout(this.validityTimeout);
+            this.validityTimeout = undefined;
+        }
     }
 
     public getDate(): Date | null {
@@ -105,5 +104,25 @@ export class DateCompWrapper {
 
     public updateParams(params: IDateParams): void {
         this.dateComp?.refresh?.(params);
+    }
+
+    public setCustomValidity(message: string): void {
+        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>('.ag-input-field-input');
+
+        if (eInput && 'setCustomValidity' in eInput) {
+            const isInvalid = message.length > 0;
+            eInput.setCustomValidity(message);
+            // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
+            // so we need to call `reportValidity`. However, we also need this to be delayed, otherwise it will
+            // interfere with user inputs
+            if (isInvalid) {
+                if (this.validityTimeout) {
+                    clearTimeout(this.validityTimeout);
+                }
+                this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
+            }
+
+            _setAriaInvalid(eInput, isInvalid);
+        }
     }
 }

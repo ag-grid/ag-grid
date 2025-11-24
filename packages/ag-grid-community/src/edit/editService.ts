@@ -7,7 +7,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { BatchEditingStartedEvent, BatchEditingStoppedEvent, CellFocusedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams, _isClientSideRowModel, _isTreeData } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditingCellPosition, ICellEditorParams, ICellEditorValidationError } from '../interfaces/iCellEditor';
@@ -143,7 +143,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    isBatchEditing(): boolean {
+    public isBatchEditing(): boolean {
         return this.batch;
     }
 
@@ -303,7 +303,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const willStop =
             (!cancel &&
-                (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch))) ||
+                (!!this.shouldStopEditing(position, event, treatAsSource) ||
+                    ((this.committing || source === 'paste') && !this.batch))) ||
             (forceStop ?? false);
         const willCancel =
             (cancel && !!this.shouldCancelEditing(position, event, treatAsSource)) || (forceCancel ?? false);
@@ -388,13 +389,20 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         this.bulkRefresh();
 
+        const { rowRenderer, formula } = this.beans;
+
         if (willCancel) {
             // if we cancelled the edit, we need to refresh the rows to remove the pending value and editing styles
-            this.beans.rowRenderer.refreshRows({ rowNodes: Array.from(edits.keys()) });
+            rowRenderer.refreshRows({ rowNodes: Array.from(edits.keys()) });
         }
 
         if (this.isBatchEditing()) {
-            this.beans.rowRenderer.refreshRows({ suppressFlash: true, force: true });
+            if (formula) {
+                formula.refreshFormulas(true);
+            } else {
+                rowRenderer.refreshRows({ suppressFlash: true, force: true });
+            }
+
             if (res && willStop) {
                 this.dispatchBatchEvent('batchEditingStopped', edits);
             }
@@ -474,8 +482,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = true;
         }
-        this.commitNextEdit();
+        this.committing = true;
         const success = rowNode.setDataValue(column, newValue, translatedSource);
+        this.committing = false;
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
@@ -601,7 +610,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const { gos, beans } = this;
         if (rowNode.group) {
             // This is a group - it could be a tree group or a grouping group...
-            if (_isTreeData(gos)) {
+            if (gos.get('treeData')) {
                 // tree - allow editing of groups with data by default.
                 // Allow editing filler nodes (node without data) only if enableGroupEdit is true.
                 if (!rowNode.data && !gos.get('enableGroupEdit')) {
@@ -770,10 +779,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return new PopupEditorWrapper(params);
     }
 
-    public commitNextEdit(): void {
-        this.committing = true;
-    }
-
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         try {
             if ((!this.isEditing() || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
@@ -788,6 +793,16 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
                 // editApi or undoRedoApi apply change without involving the editor
                 _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+
+                if (this.batch) {
+                    this.cleanupEditors();
+
+                    _purgeUnchangedEdits(beans);
+
+                    // force refresh of all row cells as custom renderers may depend on multiple cell values
+                    this.bulkRefresh();
+                    return true;
+                }
 
                 // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
                 return this.setNodeDataValue(position.rowNode, position.column, newValue, true, eventSource);
@@ -840,11 +855,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         position: Required<EditPosition>,
         params: BatchPrepDetails
     ): BatchPrepDetails | undefined {
-        const {
-            beans: { formula },
-            model,
-            valueSvc,
-        } = this;
+        const { model } = this;
         if (!this.batch) {
             return;
         }
@@ -855,7 +866,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return;
         }
 
-        const { rowNode, column } = position;
+        const { rowNode } = position;
         const { compDetails, valueToDisplay } = params;
 
         if (compDetails) {
@@ -864,15 +875,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return { compDetails };
         }
 
-        const editRow = model.getEditRow(position.rowNode, CHECK_SIBLING);
-
-        if (valueToDisplay !== undefined && editRow?.has(column)) {
-            const newValue = valueSvc.getValue(column as AgColumn, rowNode);
-            if (formula?.isFormula(newValue)) {
-                return { valueToDisplay };
-            }
-            return { valueToDisplay: newValue };
-        }
+        return valueToDisplay;
     }
 
     public cleanupEditors() {
@@ -933,9 +936,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStarted' });
         }
 
-        const isFormula = formula?.isFormula(editValue);
+        const isFormula = formula?.isFormula(editValue) ?? false;
 
         ranges.forEach((range: CellRange) => {
+            const hasFormulaColumnsInRange = range.columns.some((col) => col?.isAllowFormula());
             rangeSvc?.forEachRowInRange(range, (position) => {
                 const rowNode = _getRowNode(beans, position);
                 if (rowNode === undefined) {
@@ -948,6 +952,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                     if (!column) {
                         continue;
                     }
+
+                    const isFormulaForColumn = !!isFormula && column.isAllowFormula();
 
                     if (this.isCellEditable({ rowNode, column }, 'api')) {
                         const sourceValue = valueSvc.getValue(column as AgColumn, rowNode, true, 'api');
@@ -974,15 +980,15 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                             },
                         });
                     }
-                    if (isFormula) {
-                        valueForColumn = formula?.updateFormulaByOffset(valueForColumn, 'right');
+                    if (isFormulaForColumn) {
+                        valueForColumn = formula?.updateFormulaByOffset({ value: valueForColumn, columnDelta: 1 });
                     }
                 }
                 if (editRow.size > 0) {
                     edits.set(rowNode, editRow);
                 }
-                if (isFormula) {
-                    editValue = formula?.updateFormulaByOffset(editValue, 'down');
+                if (isFormula && hasFormulaColumnsInRange) {
+                    editValue = formula?.updateFormulaByOffset({ value: editValue, rowDelta: 1 });
                 }
             });
 
@@ -998,8 +1004,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return;
             }
 
-            this.commitNextEdit();
+            this.committing = true;
             this.stopEditing(undefined, { source: 'bulk' });
+            this.committing = false;
 
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
         });

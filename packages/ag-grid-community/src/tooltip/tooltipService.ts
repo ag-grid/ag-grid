@@ -262,7 +262,7 @@ export class TooltipService extends BeanStub implements NamedBean {
         const { beans } = this;
         const { context, formula } = beans;
 
-        if (!formula || !beans.gos.get('enableFormulas')) {
+        if (!this.beans.formula?.active || !cellCtrl.column.isAllowFormula()) {
             return;
         }
 

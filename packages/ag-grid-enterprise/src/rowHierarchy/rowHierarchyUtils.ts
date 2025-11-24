@@ -13,12 +13,17 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
     /** Getter for grid option treeDataChildrenField, only not null for tree nested data. */
     readonly nestedDataGetter?: NestedDataGetter<TData> | null;
 
-    /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
-    getNode(id: string): RowNode<TData> | undefined;
+    /** Map of group nodes (for grouping) or filler nodes (for treeData) by their id. Used by ClientSideRowModel. */
+    readonly nonLeafsById: ReadonlyMap<string, RowNode<TData>> | null;
 
     onPropChange?(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void;
 
+    onShowRowGroupColsSetChanged(): void;
+
     execute(params: StageExecuteParams<TData>): boolean | undefined | void;
+
+    /** Used to lazily compute and store groupData for a row node */
+    loadGroupData(node: RowNode<TData>): Record<string, any> | null;
 }
 
 /**

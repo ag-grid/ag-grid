@@ -58,23 +58,30 @@ The following example demonstrates single range cell selection:
 {% gridExampleRunner title="Cell Range Selection Suppress Multi" name="range-selection-suppress-multi" /%}
 
 ## Selecting Cells via Column Headers
-Users can select all visible cells in a column by holding {% kbd "^ Ctrl" /%} and then either clicking a column header, or pressing {% kbd "␣ Space" /%} while a column header is focussed.
-Cells that have been selected in this manner may be de-selected by reapeating this action.
-Users can extend the range of a column selection by holding {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} and then either clicking on another column header, or pressing {% kbd "␣ Space" /%} while a column header is focussed.
 
-This is illustrated in the example below.
+{% note %}
+When column selection is enabled, [Row Sorting](./row-sorting) requires holding down the {% kbd "Alt" /%} key in addition to the normal interaction (i.e. clicking or pressing {% kbd "↵ Enter" /%}).
+{% /note %}
 
-{% gridExampleRunner title="Cell Selection via Column Headers" name="column-header-cell-selection" /%}
+Users can select all visible cells in a column by setting `cellSelection.enableColumnSelection` to `true` and then either clicking a column header, or pressing {% kbd "␣ Space" /%} while a column header is focussed.
 
-As demonstrated in the above example, this functionality can be disabled by setting the `cellSelection.suppressColumnSelection` option to `true`.
+Normally, when selecting a column, all other ranges are cleared. If you wish to keep existing selections, hold {% kbd "^ Ctrl" /%} and then select a column header.
+
+Cells that have been selected via column selection may be de-selected by holding {% kbd "^ Ctrl" /%} and then clicking the column header or pressing {% kbd "␣ Space" /%} while a column header is focussed.
+
+Users can extend the range of a column selection by holding {% kbd "⇧ Shift" /%} and then either clicking on another column header, or pressing {% kbd "␣ Space" /%} while a column header is focussed.
+
+This is illustrated in the example below, which uses the following configuration:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     cellSelection: {
-        suppressColumnSelection: true,
+        enableColumnSelection: true,
     }
 }
 ```
+
+{% gridExampleRunner title="Cell Selection via Column Headers" name="column-header-cell-selection" /%}
 
 ## Ranges with Pinned Columns and Rows
 

@@ -6,7 +6,6 @@ import {
     _getSortDefFromInput,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
-    _isTreeData,
     _normalizeSortDirection,
     _normalizeSortType,
 } from 'ag-grid-community';
@@ -119,7 +118,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const rowGroupCount = rowGroupColsSvc?.columns.length ?? 0;
         const doingGrouping = rowGroupCount > 0;
         const grandTotalRow = _getGrandTotalRow(gos);
-        const treeData = _isTreeData(gos);
+        const treeData = gos.get('treeData');
 
         const isPrimary = column.isPrimary();
 

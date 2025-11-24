@@ -5,19 +5,18 @@ import type {
     IFormulaService,
     NamedBean,
     RowNode,
+    _ColumnCollections,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
-import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId, serializeFormula } from './ast/serializer';
-import type { Cell, CellRef, FormulaNode } from './ast/utils';
+import { serializeFormula } from './ast/serializer';
+import type { FormulaNode } from './ast/utils';
 import { FormulaError } from './ast/utils';
 import type { Addr } from './functions/resolver';
 import { evalAst, unresolvedDeps } from './functions/resolver';
 import SUPPORTED_FUNCTIONS from './functions/supportedFuncs';
-
-// plunker: https://plnkr.co/edit/8idB7tTubExLB58S?open=main.js
-// plunker2: https://plnkr.co/edit/VsIBH0GJb3iyq45c?open=main.js
+import { shiftNode } from './functions/utils';
 
 /**
  * Cell Formula Cache
@@ -104,122 +103,97 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Built-in operations (extendable via gridOptions.formulaFuncs). */
     private supportedOperations: Map<string, (params: FormulaFunctionParams) => unknown>;
 
-    private formulasEnabled = false;
+    public active = false;
 
-    public postConstruct(): void {
-        this.formulasEnabled = this.gos.get('enableFormulas') === true;
-        if (!this.formulasEnabled) {
-            return;
+    public setFormulasActive(cols: _ColumnCollections): void {
+        const formulaColumnsPresent = cols.list.some((col) => col.isAllowFormula());
+        const active = formulaColumnsPresent && this.checkForIncompatibleServices(cols);
+
+        if (active !== this.active) {
+            this.active = active;
+            this.refreshFormulas(true);
+        }
+    }
+
+    private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
+        if (this.gos.get('masterDetail')) {
+            _warn(296, { blockedService: 'Master Detail' });
+            return false;
         }
 
-        this.setupFunctions();
+        if (this.gos.get('treeData')) {
+            _warn(296, { blockedService: 'Tree Data' });
+            return false;
+        }
 
-        this.addManagedListeners(this.beans.eventSvc, {
-            newColumnsLoaded: this.setupColRefMap.bind(this),
-            columnMoved: this.setupColRefMap.bind(this),
-            cellValueChanged: this.reset.bind(this),
-            rowDataUpdated: this.reset.bind(this),
+        if (this.gos.get('enableCellExpressions')) {
+            _warn(296, { blockedService: 'Cell Expressions' });
+            return false;
+        }
+
+        return cols.list.every((col) => {
+            if (col.isAllowPivot() || col.isPivotActive()) {
+                _warn(296, { blockedService: 'Column Pivoting' });
+                return false;
+            }
+            if (col.isAllowRowGroup() || col.isRowGroupActive()) {
+                _warn(296, { blockedService: 'Row Groups' });
+                return false;
+            }
+            if (col.isAllowValue() || col.isValueActive() || col.getAggFunc()) {
+                _warn(296, { blockedService: 'Value Aggregation' });
+                return false;
+            }
+            return true;
         });
     }
 
-    public updateFormulaByOffset(value: string, direction: 'up' | 'down' | 'left' | 'right'): string {
-        const beans = this.beans;
-        const cols = beans.visibleCols.allCols;
-        const ast = parseFormula(this.beans, value);
+    public postConstruct(): void {
+        this.setupFunctions();
 
-        // Compute the row and column delta based on drag direction
-        const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
-        const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
-
-        // Shift a row reference by dRow, only if it is relative
-        const shiftRowRef = (ref?: CellRef) => {
-            if (!ref || rowDelta === 0 || ref.absolute) {
-                return;
+        const refreshFormulas = () => {
+            if (this.active) {
+                this.refreshFormulas(true);
             }
-
-            const idx1 = rowIndexFromId(beans, ref.id); // 1-based
-            if (idx1 == null) {
-                return;
-            }
-
-            const next1 = idx1 + rowDelta;
-            if (next1 < 1) {
-                return;
-            }
-
-            const nextId = rowIdFromIndex(this.beans, next1);
-            if (nextId) {
-                ref.id = nextId;
+        };
+        const resetColMap = () => {
+            if (this.active) {
+                this.setupColRefMap();
             }
         };
 
-        // Shift a column reference by dCol, only if it is relative
-        const shiftColRef = (ref?: CellRef) => {
-            if (!ref || columnDelta === 0 || ref.absolute) {
-                return;
+        // there is no need to check for treeData here because the columnModel
+        // already calls `refreshAll` when treeData is updated
+        this.addManagedPropertyListeners(['masterDetail', 'enableCellExpressions'], (e) => {
+            const { colModel } = this.beans;
+            const formulaColumnsPresent = colModel.cols?.list.some((col) => col.isAllowFormula());
+            if (formulaColumnsPresent) {
+                this.beans.colModel.refreshAll(_convertColumnEventSourceType(e.source));
             }
+        });
 
-            const i0 = colIndexFromId(beans.colModel, cols, ref.id); // 0-based
-            if (i0 == null) {
-                return;
-            }
+        this.addManagedListeners(this.beans.eventSvc, {
+            modelUpdated: refreshFormulas,
+            cellValueChanged: refreshFormulas,
+            rowDataUpdated: refreshFormulas,
+            newColumnsLoaded: resetColMap,
+            columnMoved: resetColMap,
+        });
+    }
 
-            const j0 = i0 + columnDelta;
-            if (j0 < 0) {
-                return;
-            }
-
-            const nextId = colIdFromIndex(cols, j0);
-            if (nextId) {
-                ref.id = nextId;
-            }
-        };
-
-        // Type guard to check if an operand value is a cell reference or range
-        const isCellOperand = (
-            value: string | number | boolean | Cell
-        ): value is { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef } => {
-            return (
-                !!value &&
-                typeof value === 'object' &&
-                value !== null &&
-                'row' in (value as any) &&
-                'column' in (value as any)
-            );
-        };
-
-        // Traverse the AST and apply shifts to any cell references
-        const shiftNode = (node: FormulaNode): void => {
-            if (node.type === 'operand') {
-                const { value } = node;
-                if (!isCellOperand(value)) {
-                    return;
-                }
-
-                const { row, column, endRow, endColumn } = value;
-
-                // Shift the primary row and column
-                shiftRowRef(row);
-                shiftColRef(column);
-
-                // Shift the range end, if present
-                shiftRowRef(endRow);
-                shiftColRef(endColumn);
-
-                return;
-            }
-
-            if (node.type === 'operation') {
-                for (const child of node.operands) {
-                    shiftNode(child);
-                }
-            }
-        };
-
-        shiftNode(ast);
+    public updateFormulaByOffset(params: {
+        value: string;
+        rowDelta?: number;
+        columnDelta?: number;
+        useRefFormat?: boolean;
+    }): string {
+        const { value, rowDelta = 0, columnDelta = 0, useRefFormat = true } = params;
+        const unsafe = !useRefFormat;
+        const ast = parseFormula(this.beans, value, unsafe);
+        shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
 
         // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ false);
+        return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
     }
 
     private setupFunctions() {
@@ -236,6 +210,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     private setupColRefMap() {
+        if (!this.active) {
+            this.colRefMap = new Map();
+            return;
+        }
         const alphabet = 'abcdefghijklmnopqrstuvwxyz';
         const base = alphabet.length;
         const list = this.beans.colModel.getCols();
@@ -265,7 +243,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
         this.colRefMap = map;
 
-        this.reset();
+        this.refreshFormulas(true);
     }
 
     /** Lookup a column by A1-style reference label, e.g. "A", "AB". */
@@ -284,7 +262,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     }
 
     /** Clear all cached results and re-render cells. */
-    private reset() {
+    public refreshFormulas(refreshCells: boolean) {
         /**
          * This needs optimised
          * Consider debouncing on high frequency cell value updates
@@ -292,15 +270,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
          */
 
         this.cachedResult = new WeakMap(); // drops cached values & ASTs
-        // if not CSRM, just refresh cells (no re-sort).
-        this.beans.rowRenderer.refreshCells();
+        if (refreshCells) {
+            this.beans.rowRenderer.refreshCells({ suppressFlash: true, force: true });
+        }
     }
 
     /**
      * Is a value a formula string (starts with '=')
      **/
     public isFormula(value: unknown): value is `=${string}` {
-        return this.formulasEnabled && typeof value === 'string' && value.startsWith('=');
+        return this.active && _isExpressionString(value);
     }
 
     /**
@@ -310,7 +289,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     public normaliseFormula(value: string, shorthand: boolean = false): string | null {
         try {
             const parsedAST = parseFormula(this.beans, value);
-            const serialized = serializeFormula(this.beans, parsedAST, !shorthand);
+            const serialized = serializeFormula(this.beans, parsedAST, !shorthand, false);
             return serialized;
         } catch {
             return null;

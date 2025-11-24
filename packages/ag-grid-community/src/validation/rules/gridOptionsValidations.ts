@@ -144,6 +144,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowClassRules: 'RowStyle',
     rowData: 'ClientSideRowModel',
     rowDragManaged: 'RowDrag',
+    refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
     rowSelection: 'SharedRowSelection',
@@ -155,7 +156,6 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
-    enableFormulas: 'Formula',
 };
 
 /**
@@ -549,43 +549,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
-                }
-                return null;
-            },
-        },
-        enableFormulas: {
-            supportedRowModels: ['clientSide'],
-            validate: (options) => {
-                const unsupported: (keyof GridOptions)[] = [
-                    'treeData', // no tree data
-                    'pivotMode', // no row grouping
-                    'masterDetail', // breaks row indices
-                    'grandTotalRow', // no aggregations
-                    'enableCellExpressions',
-                ];
-                const error = unsupported.find((key) => options[key]);
-                if (error) {
-                    return `${error} is not supported with enableFormulas.`;
-                }
-
-                const required: (keyof GridOptions)[] = ['getRowId'];
-                const req = required.find((key) => !options[key]);
-                if (req) {
-                    return `${req} is required when enableFormulas is true.`;
-                }
-
-                return null;
-            },
-        },
-        multiSortKey: {
-            validate: (options) => {
-                const cellSelectionEnabled = options.cellSelection != null;
-                const suppressColumnSelection =
-                    (typeof options.cellSelection === 'object' && options.cellSelection.suppressColumnSelection) ??
-                    false;
-
-                if (options.multiSortKey === 'ctrl' && cellSelectionEnabled && !suppressColumnSelection) {
-                    return 'Cannot set `multiSortKey = "ctrl" without also setting `cellSelection.suppressColumnSelection = true`. Column selection disabled';
                 }
                 return null;
             },

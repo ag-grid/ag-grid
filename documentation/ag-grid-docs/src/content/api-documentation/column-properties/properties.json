@@ -647,5 +647,15 @@
                 "url": "./find/#using-find-with-cell-components"
             }
         }
+    },
+    "formulas": {
+        "meta": {
+            "displayName": "Columns: Formulas",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
+        "allowFormula": {}
     }
 }

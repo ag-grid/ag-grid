@@ -11,10 +11,11 @@ import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _getSortDefFromInput } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDef, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _getSuppressColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
+import { isColumnSelectionCol } from '../../../main';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
@@ -262,10 +263,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            if (e.ctrlKey || e.metaKey) {
-                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
-            } else {
+            // We special case the selection column to resolve the conflict between row and cell selection
+            // because there is not really a conceivable reason to select the cells in the selection column
+            if (isColumnSelectionCol(this.column)) {
                 this.selectAllFeature?.onSpaceKeyDown(e);
+            } else {
+                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
             }
         } else if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
@@ -620,9 +623,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshAriaCellSelection(): void {
         let description: string | null = null;
         const { gos, column, beans } = this;
-        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const enableColumnSelection = _getEnableColumnSelection(gos);
 
-        if (!suppressColumnSelection) {
+        if (enableColumnSelection) {
             const translate = this.getLocaleTextFunc();
             const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(

@@ -20,7 +20,6 @@ import {
     _debounce,
     _isClientSideRowModel,
     _isFullWidthGroupRow,
-    _isMasterDetail,
     _jsonEquals,
     _missing,
     _toString,
@@ -338,7 +337,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
         const oldActiveMatch = maintainActive ? this.activeMatch : undefined;
         this.activeMatch = undefined;
 
-        const checkMasterDetail = _isMasterDetail(gos) && findOptions?.searchDetail && masterDetailSvc;
+        const checkMasterDetail = gos.get('masterDetail') && findOptions?.searchDetail && masterDetailSvc;
 
         if (_missing(findSearchValue)) {
             // nothing to match, clear down results
@@ -438,7 +437,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 let valueToFind: string | null;
                 const getFindText = (groupRowRendererParams as FindGroupRowRendererParams)?.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay(undefined, node).value;
+                    const value = valueSvc.getValueForDisplay({ node }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -447,13 +446,19 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             column: null,
                             colDef: null,
                             getValueFormatted: () => {
-                                const { valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                                const { valueFormatted } = valueSvc.getValueForDisplay({
+                                    node,
+                                    includeValueFormatted: true,
+                                });
                                 return valueFormatted;
                             },
                         })
                     );
                 } else {
-                    const { value, valueFormatted } = valueSvc.getValueForDisplay(undefined, node, true);
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay({
+                        node,
+                        includeValueFormatted: true,
+                    });
                     valueToFind = valueFormatted ?? value;
                 }
 
@@ -488,7 +493,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 const colDef = column.colDef;
                 const getFindText = colDef.getFindText;
                 if (getFindText) {
-                    const value = valueSvc.getValueForDisplay(column, node).value;
+                    const value = valueSvc.getValueForDisplay({ column, node }).value;
                     valueToFind = getFindText(
                         _addGridCommonParams(gos, {
                             value,
@@ -497,13 +502,21 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                             column,
                             colDef,
                             getValueFormatted: () => {
-                                const { valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                                const { valueFormatted } = valueSvc.getValueForDisplay({
+                                    column,
+                                    node,
+                                    includeValueFormatted: true,
+                                });
                                 return valueFormatted;
                             },
                         })
                     );
                 } else {
-                    const { value, valueFormatted } = valueSvc.getValueForDisplay(column, node, true);
+                    const { value, valueFormatted } = valueSvc.getValueForDisplay({
+                        column,
+                        node,
+                        includeValueFormatted: true,
+                    });
                     valueToFind = valueFormatted ?? value;
                 }
 

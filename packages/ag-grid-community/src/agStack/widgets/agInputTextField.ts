@@ -3,6 +3,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaInvalid } from '../utils/aria';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
@@ -63,6 +64,11 @@ export class AgInputTextField<
         this.setValue(value, true);
     }
 
+    public setCustomValidity(message: string): void {
+        this.eInput.setCustomValidity(message);
+        _setAriaInvalid(this.eInput, message.length > 0);
+    }
+
     private preventDisallowedCharacters(): void {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
@@ -81,7 +87,7 @@ export class AgInputTextField<
             paste: (e: ClipboardEvent) => {
                 const text = e.clipboardData?.getData('text');
 
-                if (text?.split('').some((c: string) => !pattern.test(c))) {
+                if (text?.split('').some((c) => !pattern.test(c))) {
                     e.preventDefault();
                 }
             },

@@ -18,7 +18,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     ColumnHoverModule: 1.58,
     CsvExportModule: 11.3,
     CustomEditorModule: 65.66,
-    CustomFilterModule: 72,
+    CustomFilterModule: 74.17,
     DateEditorModule: 71.96,
     DateFilterModule: 130,
     DragAndDropModule: 1,
@@ -37,7 +37,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
-    RowDragModule: 20.71,
+    RowDragModule: 18.85,
     RowSelectionModule: 34.59,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
@@ -51,11 +51,11 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
-    AllEnterpriseModule: 1556,
+    AllEnterpriseModule: 1564,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
     CellSelectionModule: 58,
-    ClipboardModule: 47.54,
+    ClipboardModule: 49,
     ColumnMenuModule: 159.04,
     ColumnsToolPanelModule: 150.64,
     ContextMenuModule: 75.36,
@@ -66,23 +66,23 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     GridChartsModule: 71.71,
     GroupFilterModule: 115.18,
     IntegratedChartsModule: 405.32,
-    MasterDetailModule: 85.8,
+    MasterDetailModule: 87.16,
     MenuModule: 166.7,
     MultiFilterModule: 150.56,
     NewFiltersToolPanelModule: 175.32,
-    PivotModule: 102.59,
+    PivotModule: 109,
     RangeSelectionModule: 58,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
-    RowGroupingModule: 88.46,
+    RowGroupingModule: 95.74,
     RowGroupingPanelModule: 73.57,
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,
-    SetFilterModule: 152.16,
+    SetFilterModule: 157.44,
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,
-    TreeDataModule: 83.97,
+    TreeDataModule: 92.54,
     ViewportRowModelModule: 29.19,
 };
 
@@ -101,7 +101,7 @@ const allEnterpriseModules: ModuleTest[] = Object.entries(AllEnterpriseModules).
 }));
 
 const commonFeatureSets: ModuleTest[] = [
-    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 151 },
+    { modules: ['ClientSideRowModelModule', 'TextFilterModule'], expectedSize: 155.55 },
     {
         modules: [
             'TextFilterModule',

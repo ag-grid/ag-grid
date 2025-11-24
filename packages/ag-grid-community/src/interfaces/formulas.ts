@@ -1,3 +1,4 @@
+import type { ColumnCollections } from '../columns/columnModel';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
@@ -28,12 +29,20 @@ export type FormulaFunctionParams = {
 };
 
 export interface IFormulaService extends Bean {
+    active: boolean;
     isFormula(value: unknown): value is `=${string}`;
+    setFormulasActive(cols: ColumnCollections): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;
     normaliseFormula(value: string, shorthand: boolean): string | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;
-    updateFormulaByOffset(value: string, direction: 'up' | 'down' | 'left' | 'right'): string;
+    updateFormulaByOffset(params: {
+        value: string;
+        rowDelta?: number;
+        columnDelta?: number;
+        useRefFormat?: boolean;
+    }): string;
+    refreshFormulas(refreshRows: boolean): void;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
 }

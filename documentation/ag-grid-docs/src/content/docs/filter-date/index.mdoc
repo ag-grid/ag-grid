@@ -197,6 +197,13 @@ The default option for the Date Filter is `equals`.
 
 When providing filter options, the default filter option (or the first option if no default set) must be an option that displays an input or the `empty` filter option (as a filter option with no inputs would mean the filter is active by default).
 
+## Range Input Validation and Error States
+
+When using the `inRange` filter type, the grid performs input validation to ensure the bounds of the range produce a valid filter; that is, where the start date is earlier than the end date.
+
+Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid date.
+Screen readers that respond to the `aria-invalid` attribute or the `ValidityState` of the input will detect the input as invalid.
+
 ## Filter Values
 
 By default, the values supplied to the Date Filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition. This is similar to using a [Value Getter](./value-getters), but is specific to the filter.

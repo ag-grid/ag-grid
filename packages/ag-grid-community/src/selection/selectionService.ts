@@ -11,7 +11,6 @@ import {
     _isClientSideRowModel,
     _isMultiRowSelection,
     _isRowSelection,
-    _isTreeData,
     _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -152,7 +151,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
-            const skipThisNode = this.groupSelectsFiltered && node.group && !_isTreeData(gos);
+            const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
 
             if (!skipThisNode) {
                 const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);

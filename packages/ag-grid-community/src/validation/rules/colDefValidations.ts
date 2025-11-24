@@ -7,13 +7,7 @@ import {
 } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
-import type {
-    Deprecations,
-    ModuleValidation,
-    OptionsValidation,
-    OptionsValidator,
-    Validations,
-} from '../validationTypes';
+import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
 
 function quote(s: string): string {
@@ -45,6 +39,7 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
 });
 
 export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
+    allowFormula: 'Formula',
     aggFunc: 'SharedAggregation',
     autoHeight: 'RowAutoHeight',
     cellClass: 'CellStyle',
@@ -112,40 +107,8 @@ export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGro
     groupHierarchy: 'SharedRowGrouping',
 };
 
-const UNSUPPORTED_WITH_FORMULAS: (property: keyof ColDef) => OptionsValidation<ColDef> = (property) => ({
-    validate: (colDef, gridOptions) => {
-        if (colDef[property] != null && gridOptions.enableFormulas) {
-            return `${property} is not supported with gridOptions.enableFormulas`;
-        }
-        return null;
-    },
-});
-
 const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = () => {
     const validations: Validations<ColDef | ColGroupDef> = {
-        // row grouping
-        enableRowGroup: UNSUPPORTED_WITH_FORMULAS('enableRowGroup'),
-        rowGroup: UNSUPPORTED_WITH_FORMULAS('rowGroup'),
-        rowGroupIndex: UNSUPPORTED_WITH_FORMULAS('rowGroupIndex'),
-        initialRowGroup: UNSUPPORTED_WITH_FORMULAS('initialRowGroup'),
-        initialRowGroupIndex: UNSUPPORTED_WITH_FORMULAS('initialRowGroupIndex'),
-
-        // aggregation
-        enableValue: UNSUPPORTED_WITH_FORMULAS('enableValue'),
-        aggFunc: UNSUPPORTED_WITH_FORMULAS('aggFunc'),
-        initialAggFunc: UNSUPPORTED_WITH_FORMULAS('initialAggFunc'),
-        defaultAggFunc: UNSUPPORTED_WITH_FORMULAS('defaultAggFunc'),
-
-        // pivot
-        enablePivot: UNSUPPORTED_WITH_FORMULAS('enablePivot'),
-        pivot: UNSUPPORTED_WITH_FORMULAS('pivot'),
-        pivotIndex: UNSUPPORTED_WITH_FORMULAS('pivotIndex'),
-        initialPivot: UNSUPPORTED_WITH_FORMULAS('initialPivot'),
-        initialPivotIndex: UNSUPPORTED_WITH_FORMULAS('initialPivotIndex'),
-
-        // row drag
-        rowDrag: UNSUPPORTED_WITH_FORMULAS('rowDrag'),
-
         autoHeight: {
             supportedRowModels: ['clientSide', 'serverSide'],
             validate: (_colDef, { paginationAutoPageSize }) => {
@@ -154,6 +117,9 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 }
                 return null;
             },
+        },
+        allowFormula: {
+            supportedRowModels: ['clientSide'],
         },
         cellRendererParams: {
             validate: (colDef) => {
@@ -508,6 +474,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     getFindText: undefined,
     rowGroupingHierarchy: undefined,
     groupHierarchy: undefined,
+    allowFormula: undefined,
 };
 const ALL_PROPERTIES: () => ColOrGroupKey[] = () => Object.keys(colDefPropertyMap) as ColOrGroupKey[];
 

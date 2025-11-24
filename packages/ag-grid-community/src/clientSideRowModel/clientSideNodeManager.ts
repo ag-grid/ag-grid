@@ -1,7 +1,7 @@
 import { BeanStub } from '../context/beanStub';
 import type { GetRowIdFunc } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
-import { _getRowIdCallback, _isTreeData } from '../gridOptionsUtils';
+import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
@@ -374,7 +374,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
         addIndex = Math.ceil(addIndex);
         const gos = this.gos;
-        if (addIndex > 0 && _isTreeData(gos) && gos.get('getDataPath')) {
+        if (addIndex > 0 && gos.get('treeData') && gos.get('getDataPath')) {
             addIndex = adjustAddIndexForDataPath(allLeafs, addIndex); // AG-6231 workaround
         }
         return addIndex;

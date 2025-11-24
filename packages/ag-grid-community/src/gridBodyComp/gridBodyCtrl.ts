@@ -7,7 +7,7 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowResizeEndedEvent, RowResizeStartedEvent } from '../events';
 import type { FilterManager } from '../filter/filterManager';
-import { _isAnimateRows, _isDomLayout, _isTreeData } from '../gridOptionsUtils';
+import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
@@ -185,7 +185,7 @@ export class GridBodyCtrl extends BeanStub {
     private setGridRootRole(): void {
         const { rowGroupColsSvc, colModel, gos } = this;
 
-        let isTreeGrid = _isTreeData(gos);
+        let isTreeGrid = gos.get('treeData');
 
         if (!isTreeGrid) {
             const isPivotActive = colModel.isPivotMode();

@@ -14,7 +14,7 @@ import type {
     SortModelItem,
     SortOption,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, _isTreeData, isColumnGroupAutoCol } from 'ag-grid-community';
+import { BeanStub, CellRangeType, isColumnGroupAutoCol } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -228,7 +228,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public isGrouping(): boolean {
-        const usingTreeData = _isTreeData(this.gos);
+        const usingTreeData = this.gos.get('treeData');
         const groupedCols = usingTreeData ? null : this.chartColSvc.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 
@@ -386,7 +386,7 @@ export class ChartDataModel extends BeanStub {
         const aggFuncDimension = this.suppliedCellRange.columns[0];
 
         // Determine whether grouping is active (row grouping or tree data)
-        const usingTreeData = _isTreeData(this.gos);
+        const usingTreeData = this.gos.get('treeData');
         const rowGroupCols = usingTreeData ? null : this.chartColSvc.getRowGroupColumns();
         const groupingActive = usingTreeData || (rowGroupCols && rowGroupCols.length > 0);
 

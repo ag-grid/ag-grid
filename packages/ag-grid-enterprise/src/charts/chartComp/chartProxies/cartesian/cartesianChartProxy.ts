@@ -166,9 +166,10 @@ export abstract class CartesianChartProxy<
             s.marker = {
                 itemStyler: (p) => {
                     const value = p.datum[category.id];
+                    const highlighted = p.highlightState === 'highlighted-item';
                     return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(value) ? 8 : 0,
+                        fill: highlighted ? 'yellow' : p.fill,
+                        size: highlighted ? 14 : this.crossFilteringPointSelected(value) ? 8 : 0,
                     };
                 },
             };

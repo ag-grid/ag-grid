@@ -1,6 +1,6 @@
 import { _isComponent } from '../../agStack/interfaces/agComponent';
 import { _areEqual } from '../../agStack/utils/array';
-import { _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
+import { _addOrRemoveAttribute, _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
 import { AgPromise } from '../../agStack/utils/promise';
 import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
 import type { ListOption } from '../../agStack/widgets/agList';
@@ -132,14 +132,9 @@ export abstract class SimpleFilter<
 
         this.createFilterListOptions();
 
-        const eGui = this.getGui();
-        if (this.isReadOnly()) {
-            // only do this when read only (so no other focusable elements), otherwise the tab order breaks
-            // as the tabbed layout managed focus feature will focus the body when it shouldn't
-            eGui.setAttribute('tabindex', '-1');
-        } else {
-            eGui.removeAttribute('tabindex');
-        }
+        // only set tabindex when read only (so no other focusable elements), otherwise the tab order breaks
+        // as the tabbed layout managed focus feature will focus the body when it shouldn't
+        _addOrRemoveAttribute(this.getGui(), 'tabindex', this.isReadOnly() ? '-1' : null);
     }
 
     // floating filter calls this when user applies filter from floating filter
@@ -711,6 +706,10 @@ export abstract class SimpleFilter<
         }
 
         if (this.getValues(position).some((v) => v == null)) {
+            return false;
+        }
+
+        if (this.hasInvalidInputs()) {
             return false;
         }
 

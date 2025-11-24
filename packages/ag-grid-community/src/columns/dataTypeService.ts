@@ -461,6 +461,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!dataTypeMatcher) {
             return true;
         }
+
+        // skip type checking for formulas
+        if (column.getColDef().allowFormula && this.beans.formula?.isFormula(value)) {
+            return true;
+        }
         return dataTypeMatcher(value);
     }
 

@@ -160,7 +160,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const { stickyRowSvc, gos, showRowGroupCols } = this.beans;
         if (showRowGroupCols) {
             this.addManagedPropertyListener('showOpenedGroup', () => {
-                const columns = showRowGroupCols.getShowRowGroupCols();
+                const columns = showRowGroupCols.columns;
                 if (columns.length) {
                     this.refreshCells({ columns, force: true });
                 }
