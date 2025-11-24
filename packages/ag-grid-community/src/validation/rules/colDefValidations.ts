@@ -1,5 +1,10 @@
 import type { UserComponentName } from '../../context/context';
-import { _isSortDefValid } from '../../entities/agColumn';
+import {
+    _getSortDefFromInput,
+    _isSortDefValid,
+    _isSortDirectionValid,
+    _isSortTypeValid,
+} from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type {
@@ -222,7 +227,12 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !_isSortDefValid(a, false));
+                    const invalidItems = sortingOrder.filter((a) => {
+                        if (_isSortDefValid(a)) {
+                            return !_isSortDirectionValid(a.direction, false) || !_isSortTypeValid(a.type, false);
+                        }
+                        return !_isSortDirectionValid(a);
+                    });
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems
                             .map((item) =>
