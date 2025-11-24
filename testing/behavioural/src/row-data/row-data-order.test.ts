@@ -292,7 +292,7 @@ describe('ag-grid rows-ordering', () => {
         `);
     });
 
-    test.only('suppressMaintainUnsortedOrder and deletion (with id)', async () => {
+    test('suppressMaintainUnsortedOrder and deletion (with id)', async () => {
         const rowData1 = cachedJSONObjects.array([
             { id: '1', make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
             { id: '2', make: 'Ford', model: 'F-Series', price: 33850, electric: false },
@@ -341,6 +341,18 @@ describe('ag-grid rows-ordering', () => {
             ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
             ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
             └── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+        `);
+
+        api.setGridOption('rowData', rowData1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            ├── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+            └── LEAF id:2 make:"Ford" model:"F-Series" price:33850 electric:false
         `);
     });
 
