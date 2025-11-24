@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { AgColumn, _normalizeSortType } from '../entities/agColumn';
-import { _areSortDefsEqual, _getSortDefFromInput } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
+import { _areSortDefsEqual, _getSortDefFromInput, _isSortDefValid, _normalizeSortType } from '../entities/agColumn';
 import type { DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
@@ -310,7 +310,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     public setupHeader(comp: Component, column: AgColumn): void {
         const onSortingChanged = () => {
-            const { type, direction } = column.getSortDef();
+            const { type, direction } = _getSortDefFromInput(column.getSortDef());
             comp.toggleCss('ag-header-cell-sorted-asc', direction === 'asc');
             comp.toggleCss('ag-header-cell-sorted-desc', direction === 'desc');
             comp.toggleCss('ag-header-cell-sorted-abs-asc', type === 'absolute' && direction === 'asc');
@@ -321,7 +321,7 @@ export class SortService extends BeanStub implements NamedBean {
                 const sourceColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(
-                    (sourceCol) => direction == sourceCol.getSortDef().direction
+                    (sourceCol) => direction == sourceCol.getSortDef()?.direction
                 );
                 const isMultiSorting = !sortDirectionsMatch;
 
@@ -345,10 +345,10 @@ export class SortService extends BeanStub implements NamedBean {
             column.sort = initialSort;
         }
 
-        if ('sortDef' in column.colDef) {
-            column.sortDef = _getSortDefFromInput(sortDef);
-        } else if ('initialSortDef' in column.colDef) {
-            column.sortDef = _getSortDefFromInput(initialSortDef);
+        if (_isSortDefValid(sortDef)) {
+            column.sortDef = sortDef;
+        } else if (_isSortDefValid(initialSortDef)) {
+            column.sortDef = initialSortDef;
         } else {
             column.sortDef = _getSortDefFromInput();
         }

@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import { _normalizeSortDirection } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { IColsService } from '../interfaces/iColsService';
@@ -163,7 +164,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         colDefCloned.hide = col.isVisible() ? undefined : true;
         colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
 
-        // colDefCloned.sort = col.getSort() ? col.getSort() : null; // soft deprecation, colDef.sort is a setter which relies on sortDef
+        colDefCloned.sort = _normalizeSortDirection(col.getSortDef()?.direction);
         colDefCloned.sortDef = col.getSortDef();
         colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
 

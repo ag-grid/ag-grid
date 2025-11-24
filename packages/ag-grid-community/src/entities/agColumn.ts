@@ -81,7 +81,7 @@ export class AgColumn<TValue = any>
     private left: number | null;
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
-    public sortDef: SortDef | undefined;
+    private _sortDef: SortDef | undefined;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -426,12 +426,12 @@ export class AgColumn<TValue = any>
         return this.moving;
     }
 
-    get sort(): SortDirection | undefined {
-        return this.sortDef?.direction;
+    get sort(): SortDirection {
+        return this.getSortDef()?.direction || _normalizeSortDirection(this.getSortDef()?.direction);
     }
 
     set sort(value: SortDirection | undefined) {
-        this.sortDef = _getSortDefFromInput(value);
+        this._sortDef = _getSortDefFromInput(value);
     }
 
     public getSort(): SortDirection | undefined {
@@ -439,8 +439,16 @@ export class AgColumn<TValue = any>
         return this.sort;
     }
 
-    public getSortDef(): SortDef {
-        return this.sortDef || (this.sortDef = _getSortDefFromInput());
+    public get sortDef(): SortDef {
+        return _getSortDefFromInput(this._sortDef);
+    }
+
+    set sortDef(value: SortDef | undefined) {
+        this._sortDef = value;
+    }
+
+    public getSortDef(): SortDef | undefined {
+        return this._sortDef;
     }
 
     public isSortable(): boolean {
@@ -787,18 +795,13 @@ export function _isSortTypeValid(maybeSortType: unknown, allowNullish = true): m
     );
 }
 
-export function _isSortDefValid(maybeSortDef: unknown, allowNullish = true): maybeSortDef is SortDef {
-    if (!maybeSortDef) {
-        return allowNullish;
-    }
-    if (typeof maybeSortDef !== 'object') {
+export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {
+    if (!maybeSortDef || typeof maybeSortDef !== 'object') {
         return false;
     }
+
     const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
-    return (
-        _isSortTypeValid(maybeSortDefT.type, allowNullish) &&
-        _isSortDirectionValid(maybeSortDefT.direction, allowNullish)
-    );
+    return _isSortTypeValid(maybeSortDefT.type) && _isSortDirectionValid(maybeSortDefT.direction);
 }
 
 export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
