@@ -486,7 +486,10 @@ const updateRootLeafsKeepOrder = <TData>(
     { removals, adds }: ChangedRowNodes<TData>
 ): void => {
     const allLeafsLen = allLeafs.length;
-    allLeafs.length = processedNodes.size; // Resize array to new size
+    const newAllLeafsLen = processedNodes.size;
+    if (newAllLeafsLen > allLeafsLen) {
+        allLeafs.length = newAllLeafsLen; // Grow array if needed
+    }
     let writeIdx = 0;
     for (let readIdx = 0; readIdx < allLeafsLen; ++readIdx) {
         const node = allLeafs[readIdx];
