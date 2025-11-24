@@ -1598,14 +1598,16 @@ export interface Props<TData> {
          */
     styleNonce?: string,
     /** An element to insert style elements into when injecting styles into the
-         * grid. If undefined, styles will be added to the document head for grids
+         * grid. Styles are inserted at the start of the element.
+         *
+         * If undefined, styles will be added to the document head for grids
          * rendered in the main document fragment, or to the grid wrapper element
          * for other grids (e.g. those rendered in a shadow DOM or detached from the
          * document).
          *
          * @initial
          */
-    themeStyleContainer?: HTMLElement,
+    themeStyleContainer?: HTMLElement | (() => HTMLElement | void),
     /** For customising the context menu.
          * @agModule `ContextMenuModule`
          */

@@ -28,6 +28,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: 'columns',
     animateRows: false,
     themeCssLayer: 'grid',
+    // themeStyleContainer can be an element or a function that returns an
+    // element, which is useful if your grid options are created before the
+    // body is available
+    themeStyleContainer: () => document.body,
 };
 
 // setup the grid after the page has finished loading
