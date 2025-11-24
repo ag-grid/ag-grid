@@ -433,7 +433,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     true
                 );
 
-                this.beans.editSvc?.commitNextEdit();
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
                 changedPath?.addParentNode(rowNode.parent, [column]);
 
@@ -582,7 +581,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             true
                         );
 
-                        this.beans.editSvc?.commitNextEdit();
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
                         if (changedPath) {
@@ -714,7 +712,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             true
         );
 
-        this.beans.editSvc?.commitNextEdit();
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
 
         const { rowIndex, rowPinned } = rowNode;

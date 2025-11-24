@@ -143,7 +143,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         });
     }
 
-    isBatchEditing(): boolean {
+    public isBatchEditing(): boolean {
         return this.batch;
     }
 
@@ -303,7 +303,8 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const willStop =
             (!cancel &&
-                (!!this.shouldStopEditing(position, event, treatAsSource) || (this.committing && !this.batch))) ||
+                (!!this.shouldStopEditing(position, event, treatAsSource) ||
+                    ((this.committing || source === 'paste') && !this.batch))) ||
             (forceStop ?? false);
         const willCancel =
             (cancel && !!this.shouldCancelEditing(position, event, treatAsSource)) || (forceCancel ?? false);
@@ -481,8 +482,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = true;
         }
-        this.commitNextEdit();
+        this.committing = true;
         const success = rowNode.setDataValue(column, newValue, translatedSource);
+        this.committing = false;
         if (cellCtrl) {
             cellCtrl.suppressRefreshCell = false;
         }
@@ -777,10 +779,6 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         return new PopupEditorWrapper(params);
     }
 
-    public commitNextEdit(): void {
-        this.committing = true;
-    }
-
     public setDataValue(position: Required<EditPosition>, newValue: any, eventSource?: string): boolean | undefined {
         try {
             if ((!this.isEditing() || this.committing) && !SET_DATA_SOURCE_AS_API.has(eventSource)) {
@@ -795,6 +793,16 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
                 // editApi or undoRedoApi apply change without involving the editor
                 _syncFromEditor(beans, position, newValue, eventSource, undefined, { persist: true });
+
+                if (this.batch) {
+                    this.cleanupEditors();
+
+                    _purgeUnchangedEdits(beans);
+
+                    // force refresh of all row cells as custom renderers may depend on multiple cell values
+                    this.bulkRefresh();
+                    return true;
+                }
 
                 // a truthy return here indicates the operation succeeded, and if invoked from rowNode.setDataValue, will not result in a cell value change event
                 return this.setNodeDataValue(position.rowNode, position.column, newValue, true, eventSource);
@@ -996,8 +1004,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 return;
             }
 
-            this.commitNextEdit();
+            this.committing = true;
             this.stopEditing(undefined, { source: 'bulk' });
+            this.committing = false;
 
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
         });

@@ -374,6 +374,7 @@ export function _syncFromEditor(
         edit = editModelSvc.setEdit(position, {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
             pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
+            state: 'changed',
         });
     }
 
