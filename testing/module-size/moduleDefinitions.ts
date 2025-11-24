@@ -70,7 +70,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MenuModule: 166.7,
     MultiFilterModule: 150.56,
     NewFiltersToolPanelModule: 175.32,
-    PivotModule: 106.98,
+    PivotModule: 109,
     RangeSelectionModule: 58,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
