@@ -14,13 +14,9 @@ interface IAthlete {
 let gridApi: GridApi<IAthlete>;
 
 const gridOptions: GridOptions<IAthlete> = {
-    loading: true,
+    rowData: [],
     columnDefs: [{ field: 'athlete' }, { field: 'country' }],
 };
-
-function setLoading(value: boolean) {
-    gridApi!.setGridOption('loading', value);
-}
 
 function onBtnClearRowData() {
     gridApi!.setGridOption('rowData', []);

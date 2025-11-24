@@ -32,9 +32,7 @@ When `rowData` is set to an empty array `[]`, the grid automatically displays th
 
 The provided overlays can be customised to change their content and appearance while still being triggered automatically by the grid. This is done via one of the following grid options: `overlayComponent`, `overlayComponentSelector` or via the `components` map.
 
-{% note %}
-Previously, the loading and no-rows overlays were customised via: `loadingOverlayComponent` / `loadingOverlayComponentParams` and `noRowsOverlayComponent` / `noRowsOverlayComponentParams`. These properties remain supported, for backwards compatibility, but are no longer recommended for use. See the [Documentation archive](/documentation-archive) for previous documentation.
-{% /note %}
+
 
 ### Overlay Component
 
@@ -123,6 +121,11 @@ Any valid Vue component can be a loading overlay component, however it is also p
 This example demonstrates how to provide a custom loading overlay component customised via parameters.
 
 {% gridExampleRunner title="Custom Overlay Components" name="custom-overlay-loading" /%}
+
+### Legacy Customisation
+
+Previously, the loading and no-rows overlays were customised via: `loadingOverlayComponent` and `noRowsOverlayComponent`. This approach is now superseded by the `overlayComponent` but the properties remain for backwards compatibility and documentation is available [here](./overlays).
+
 
 ## Suppress Overlays
 
