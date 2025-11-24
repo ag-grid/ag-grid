@@ -544,6 +544,7 @@ describe('ag-grid grouping with transactions', () => {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
             checkDom: true,
+            useFormatter: false,
         };
 
         await new GridRows(api, 'unbalanced groups with missing values', gridRowsOptions).check(`

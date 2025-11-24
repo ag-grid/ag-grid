@@ -51,7 +51,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getGroupDisplayColumns(): AgColumn[] {
-        return this.beans.showRowGroupCols?.getShowRowGroupCols() ?? [];
+        return this.beans.showRowGroupCols?.columns ?? [];
     }
 
     public isPivotMode(): boolean {

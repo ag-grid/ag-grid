@@ -108,7 +108,7 @@ export class GridRowsDiagramTree {
             const groupHideOpenParents = gridRows.api.getGridOption('groupHideOpenParents') ?? false;
             const hasHiddenParentOptions = groupHideOpenParents || !!groupHideParentOfSingleChild;
 
-            this.buildHierarchy(gridRows, diagramRoot, gridRows.displayedRows, groupHideParentOfSingleChild);
+            this.buildHierarchy(gridRows, diagramRoot, gridRows.displayedRows);
 
             if ((gridRows.options.printHiddenRows ?? true) && !hasHiddenParentOptions) {
                 const displayedRowsSet = new Set(gridRows.displayedRows);
@@ -121,16 +121,26 @@ export class GridRowsDiagramTree {
         return diagramRoot;
     }
 
-    private buildHierarchy(
-        gridRows: GridRows,
-        root: GridRowsDiagramNode,
-        displayedRows: RowNode[],
-        groupHideParentOfSingleChild: boolean | 'leafGroupsOnly'
-    ) {
+    private buildHierarchy(gridRows: GridRows, root: GridRowsDiagramNode, displayedRows: RowNode[]) {
         const hasMasterDetail = gridRows.api.getGridOption('masterDetail') ?? false;
+        const displayedRowsSet = new Set(displayedRows);
 
-        const parentStack: GridRowsDiagramNode[] = [root];
-        let survivingGroupNode: GridRowsDiagramNode | null = null;
+        const findDisplayedAncestor = (start: RowNode | null): GridRowsDiagramNode | null => {
+            let current: RowNode | null = start;
+            while (current) {
+                if (current === gridRows.rootRowNode) {
+                    return this.getDiagramNode(gridRows, current);
+                }
+                if (displayedRowsSet.has(current)) {
+                    const diagramParent = this.getDiagramNode(gridRows, current);
+                    if (diagramParent) {
+                        return diagramParent;
+                    }
+                }
+                current = current.parent;
+            }
+            return null;
+        };
 
         for (const row of displayedRows) {
             let diagramNode = this.diagramNodes.get(row);
@@ -143,23 +153,23 @@ export class GridRowsDiagramTree {
 
             if (hasMasterDetail && row.detail && row.parent) {
                 parentNode = this.getDiagramNode(gridRows, row.parent) || root;
-            } else if (groupHideParentOfSingleChild === true) {
-                if (row.group && !survivingGroupNode) {
-                    survivingGroupNode = diagramNode;
-                    parentNode = root;
-                } else {
-                    parentNode = row.group ? root : survivingGroupNode || root;
-                }
             } else {
-                const uiLevel = row.uiLevel ?? 0;
+                let diagramParent: GridRowsDiagramNode | null = null;
 
-                parentStack.length = Math.min(parentStack.length, uiLevel + 1);
-                while (parentStack.length <= uiLevel) {
-                    parentStack.push(diagramNode);
+                if (row.footer) {
+                    diagramParent = findDisplayedAncestor(row.sibling ?? null);
                 }
 
-                parentNode = parentStack[uiLevel];
-                parentStack[uiLevel + 1] = diagramNode;
+                if (!diagramParent) {
+                    diagramParent = findDisplayedAncestor(row.parent ?? null);
+                }
+
+                parentNode = diagramParent ?? root;
+            }
+
+            if (diagramNode.parent && diagramNode.parent !== parentNode) {
+                diagramNode.parent.children.delete(row);
+                diagramNode.parent = null;
             }
 
             if (!diagramNode.parent) {
@@ -315,10 +325,23 @@ export class GridRowsDiagramTree {
                 if (row === rootRowNode && isRowNumberCol(columnId)) {
                     continue;
                 }
-                const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });
+
+                const value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false });
+                let formattedValue = value;
+                if (gridRows.options.useFormatter ?? true) {
+                    formattedValue = gridRows.api.getCellValue({
+                        rowNode: row,
+                        colKey: column,
+                        useFormatter: true,
+                    });
+                    if (formattedValue === String(value)) {
+                        formattedValue = value;
+                    }
+                }
+
                 const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
-                if (value !== undefined) {
-                    result += ' ' + diagramColumnId + ':' + JSON.stringify(value);
+                if (value !== undefined || formattedValue) {
+                    result += ' ' + diagramColumnId + ':' + JSON.stringify(formattedValue || value);
                 } else if (!omitUndefined && row.data != null) {
                     result += ' ' + diagramColumnId + ':undefined';
                 }

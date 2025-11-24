@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
@@ -930,6 +930,107 @@ describe('ag-grid grouping with pivot', () => {
         }
     });
 
+    test('showRowGroup columns remain populated when pivot toggles', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    headerName: 'Country Group',
+                    colId: 'countryGroupCol',
+                    showRowGroup: 'country',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                {
+                    headerName: 'Athlete Group',
+                    colId: 'athleteGroupCol',
+                    showRowGroup: 'athlete',
+                    cellRenderer: 'agGroupCellRenderer',
+                },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'athlete', rowGroup: true, hide: true },
+                { field: 'year', pivot: true, hide: true },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            defaultColDef: {
+                flex: 1,
+                minWidth: 120,
+                sortable: true,
+                resizable: true,
+            },
+            groupDisplayType: 'custom',
+            groupDefaultExpanded: -1,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        api.setGridOption('rowData', [
+            { id: '1', country: 'USA', athlete: 'Michael', year: 2008, gold: 8 },
+            { id: '2', country: 'USA', athlete: 'Ryan', year: 2012, gold: 2 },
+            { id: '3', country: 'United Kingdom', athlete: 'Chris', year: 2008, gold: 3 },
+            { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
+        ]);
+
+        const gridRowsOptions: GridRowsOptions = {
+            columns: true,
+            printHiddenRows: true,
+            checkDom: true,
+            ignoreUndefinedCells: true,
+        };
+
+        await asyncSetTimeout(25);
+
+        const beforePivotRows = new GridRows(api, 'custom group columns before pivot', gridRowsOptions);
+        await beforePivotRows.check(`
+            ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+            ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+            │ ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+            │ │ └── LEAF id:1 country:"USA" athlete:"Michael" year:2008 gold:8
+            │ └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+            │ · └── LEAF id:2 country:"USA" athlete:"Ryan" year:2012 gold:2
+            └─┬ filler id:"row-group-country-United Kingdom" countryGroupCol:"United Kingdom" athleteGroupCol:null gold:5
+            · ├─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Chris" athleteGroupCol:"Chris" gold:3
+            · │ └── LEAF id:3 country:"United Kingdom" athlete:"Chris" year:2008 gold:3
+            · └─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Mo" athleteGroupCol:"Mo" gold:2
+            · · └── LEAF id:4 country:"United Kingdom" athlete:"Mo" year:2012 gold:2
+        `);
+
+        api.setGridOption('pivotMode', true);
+        await asyncSetTimeout(25);
+
+        const pivotRows = new GridRows(api, 'custom group columns with pivot enabled', gridRowsOptions);
+        await pivotRows.check(`
+            ROOT id:ROOT_NODE_ID pivot_year_2008_gold:11 pivot_year_2012_gold:4
+            ├─┬ filler id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2008_gold:8 pivot_year_2012_gold:2
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Michael ag-Grid-AutoColumn:"Michael" pivot_year_2008_gold:8 pivot_year_2012_gold:null
+            │ │ └── LEAF hidden id:1
+            │ └─┬ LEAF_GROUP collapsed id:row-group-country-USA-athlete-Ryan ag-Grid-AutoColumn:"Ryan" pivot_year_2008_gold:null pivot_year_2012_gold:2
+            │ · └── LEAF hidden id:2
+            └─┬ filler id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" pivot_year_2008_gold:3 pivot_year_2012_gold:2
+            · ├─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Chris" ag-Grid-AutoColumn:"Chris" pivot_year_2008_gold:3 pivot_year_2012_gold:null
+            · │ └── LEAF hidden id:3
+            · └─┬ LEAF_GROUP collapsed id:"row-group-country-United Kingdom-athlete-Mo" ag-Grid-AutoColumn:"Mo" pivot_year_2008_gold:null pivot_year_2012_gold:2
+            · · └── LEAF hidden id:4
+        `);
+
+        api.setGridOption('pivotMode', false);
+        await asyncSetTimeout(25);
+
+        const afterPivotRows = new GridRows(api, 'custom group columns after pivot disabled', gridRowsOptions);
+        await afterPivotRows.check(`
+            ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
+            ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
+            │ ├─┬ LEAF_GROUP id:row-group-country-USA-athlete-Michael athleteGroupCol:"Michael" gold:8
+            │ │ └── LEAF id:1 country:"USA" athlete:"Michael" year:2008 gold:8
+            │ └─┬ LEAF_GROUP id:row-group-country-USA-athlete-Ryan athleteGroupCol:"Ryan" gold:2
+            │ · └── LEAF id:2 country:"USA" athlete:"Ryan" year:2012 gold:2
+            └─┬ filler id:"row-group-country-United Kingdom" countryGroupCol:"United Kingdom" athleteGroupCol:null gold:5
+            · ├─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Chris" athleteGroupCol:"Chris" gold:3
+            · │ └── LEAF id:3 country:"United Kingdom" athlete:"Chris" year:2008 gold:3
+            · └─┬ LEAF_GROUP id:"row-group-country-United Kingdom-athlete-Mo" athleteGroupCol:"Mo" gold:2
+            · · └── LEAF id:4 country:"United Kingdom" athlete:"Mo" year:2012 gold:2
+        `);
+    });
+
     test('pivot mode API usage', async () => {
         const gridOptions: GridOptions = {
             columnDefs: [
@@ -998,5 +1099,115 @@ describe('ag-grid grouping with pivot', () => {
         const newPivotColumns = api.getPivotColumns();
         expect(newPivotColumns.length).toBe(1);
         expect(newPivotColumns[0].getColId()).toBe('year');
+    });
+
+    test('aggregation value gets hidden on an expanded group if it has a group total row', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'year', pivot: true },
+                { field: 'country', rowGroup: true, hide: true, minWidth: 150 },
+                { field: 'sport', rowGroup: true, hide: true, minWidth: 150 },
+                { field: 'gold', aggFunc: 'sum' },
+            ],
+            groupTotalRow: 'bottom',
+            rowData: [
+                {
+                    athlete: 'A',
+                    age: 17,
+                    country: 'Russia',
+                    year: 2012,
+                    date: '12/08/2012',
+                    sport: 'Gymnastics',
+                    gold: 1,
+                    silver: 1,
+                    bronze: 2,
+                    total: 4,
+                },
+                {
+                    athlete: 'B',
+                    age: 26,
+                    country: 'Russia',
+                    year: 2000,
+                    date: '01/10/2000',
+                    sport: 'Diving',
+                    gold: 1,
+                    silver: 1,
+                    bronze: 2,
+                    total: 4,
+                },
+                {
+                    athlete: 'C',
+                    age: 30,
+                    country: 'Netherlands',
+                    year: 2000,
+                    date: '01/10/2000',
+                    sport: 'Cycling',
+                    gold: 3,
+                    silver: 1,
+                    bronze: 0,
+                    total: 4,
+                },
+            ],
+        });
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+            columns: true,
+        };
+
+        await new GridRows(api, 'initial - only country level expanded', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" gold:2
+            │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
+            │ · └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
+            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+        `);
+
+        api.getRowNode('row-group-country-Russia')!.setExpanded(true, undefined, true);
+        await new GridRows(api, 'expand Russia', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
+            │ │ └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            │ └─ footer id:rowGroupFooter_row-group-country-Russia ag-Grid-AutoColumn:"Total Russia" gold:2
+            └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
+            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+        `);
+
+        api.getRowNode('row-group-country-Russia')!.setExpanded(false, undefined, true);
+
+        await new GridRows(api, 'collapse Russia', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" gold:2
+            │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
+            │ · └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
+            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+        `);
+
+        api.getRowNode('row-group-country-Russia')!.setExpanded(true, undefined, true);
+
+        await new GridRows(api, 'expand Russia async', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
+            │ │ └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            │ └─ footer id:rowGroupFooter_row-group-country-Russia ag-Grid-AutoColumn:"Total Russia" gold:2
+            └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
+            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+        `);
     });
 });

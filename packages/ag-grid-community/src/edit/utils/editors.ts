@@ -373,10 +373,15 @@ export function _syncFromEditor(
 
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
-        edit = editModelSvc.setEdit(position, {
+        const editValue: Partial<EditValue> = {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
             pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
-        });
+        };
+
+        if (params?.persist) {
+            editValue.state = 'changed';
+        }
+        edit = editModelSvc.setEdit(position, editValue);
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.

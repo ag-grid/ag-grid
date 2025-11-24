@@ -168,52 +168,179 @@ export class GridRowsDomValidator {
     ) {
         const columnId = column.getColId();
         const textContent = cellElement.textContent?.trim() ?? '';
+        const colDef = column.getColDef();
+        const cellRenderer = colDef?.cellRenderer;
+
+        if (this.validateCheckboxCell(cellElement, row, column, rowErrors, gridRows)) {
+            return;
+        }
 
         if (!textContent && columnId === 'ag-Grid-AutoColumn') {
             return; // Skip empty auto column as it might not have text content
         }
 
-        let cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
-        if (cellValue === null) {
-            cellValue = '';
-        }
-        cellValue = String(cellValue).trim();
+        const api = gridRows.api;
+        const cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
 
-        // Handle all auto group columns (main and field-specific) for groupHideOpenParents
         const isAutoGroupCol = columnId === 'ag-Grid-AutoColumn' || columnId.startsWith('ag-Grid-AutoColumn-');
-        if (isAutoGroupCol) {
+        const isGroupCol = (!cellRenderer && isAutoGroupCol) || cellRenderer === 'agGroupCellRenderer';
+        if (isGroupCol) {
             let childCountText = '';
-            // Prefer column's own suppressCount, fallback to global autoGroupColumnDef
-            let suppressCount = column.getColDef()?.cellRenderer?.suppressCount;
-            if (suppressCount === undefined) {
-                suppressCount = gridRows.api.getGridOption('autoGroupColumnDef')?.cellRenderer?.suppressCount;
-            }
-            const childCount = suppressCount ? 0 : row.allChildrenCount;
+            const suppressCount = this.isGroupCountSuppressed(gridRows, column, true);
+            const rowId = row.id != null ? String(row.id) : '';
+            const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
+            const childCount = suppressCount || isFooterRow ? 0 : row.allChildrenCount;
             if (childCount) {
-                childCountText += `(${childCount})`;
-            }
-            if (textContent === childCountText) {
-                cellValue = childCountText; // Is fine, it contains just the child count
-            } else {
-                cellValue = cellValue ? `${cellValue} ${childCountText}` : childCountText;
+                childCountText = `(${childCount})`;
             }
 
-            if (textContent !== cellValue) {
-                // Handle groupHideOpenParents: relax check if enabled
-                const groupHideOpenParents = !!gridRows.api.getGridOption('groupHideOpenParents');
-                if (groupHideOpenParents) {
-                    // Accept if textContent is a suffix of cellValue, or just skip the check.
-                    if (cellValue.endsWith(textContent)) {
-                        return;
-                    }
-                }
+            if (textContent === childCountText) {
+                return;
             }
+
+            if (cellValue === null && textContent === '') {
+                return;
+            }
+
+            let expectedText = stringCellValue ? `${stringCellValue} ${childCountText}` : childCountText;
+            expectedText = expectedText.trim();
+
+            if (textContent !== expectedText) {
+                const groupHideOpenParents = !!api.getGridOption('groupHideOpenParents');
+                if (groupHideOpenParents && expectedText.endsWith(textContent)) {
+                    return;
+                }
+                rowErrors.add(
+                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedText)}, got ${JSON.stringify(textContent)}`
+                );
+            }
+            return;
         }
 
-        if (textContent !== cellValue) {
+        const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
+        if (hasGroupRendererDom || !!colDef.showRowGroup) {
+            const expectedGroupText = this.getExpectedGroupCellText(gridRows, row, column, stringCellValue);
+            const shouldIgnoreMismatch =
+                expectedGroupText !== undefined &&
+                gridRows.api.getGridOption('groupHideOpenParents') &&
+                expectedGroupText.endsWith(textContent);
+
+            if (expectedGroupText !== undefined && !shouldIgnoreMismatch && textContent !== expectedGroupText) {
+                rowErrors.add(
+                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedGroupText)}, got ${JSON.stringify(textContent)}`
+                );
+            }
+            return;
+        }
+
+        if (textContent !== stringCellValue) {
             rowErrors.add(
                 `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(textContent)}`
             );
         }
+    }
+
+    private getExpectedGroupCellText(
+        gridRows: GridRows<any>,
+        row: RowNode<any>,
+        column: Column<any>,
+        valueText: string
+    ): string | undefined {
+        const colDef = column.getColDef();
+
+        if (!valueText && colDef.showRowGroup) {
+            const groupKey = typeof colDef.showRowGroup === 'string' ? colDef.showRowGroup : column.getColId();
+            const groupDataValue = row.groupData?.[groupKey];
+            const fallback = row.key ?? '';
+            valueText = String(groupDataValue ?? fallback ?? '').trim();
+        }
+
+        const suppressCount = this.isGroupCountSuppressed(gridRows, column, false);
+        const rowId = row.id != null ? String(row.id) : '';
+        const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
+        let childCountText = '';
+        if (!suppressCount && !isFooterRow) {
+            const childCount = row.allChildrenCount;
+            if (childCount) {
+                childCountText = `(${childCount})`;
+            }
+        }
+
+        if (valueText) {
+            return childCountText ? `${valueText} ${childCountText}` : valueText;
+        }
+
+        return childCountText;
+    }
+
+    private isGroupCountSuppressed(gridRows: GridRows<any>, column: Column<any>, isAutoGroupCol: boolean): boolean {
+        const colDef = column.getColDef();
+        const params = colDef.cellRendererParams as any;
+        if (params && typeof params === 'object' && 'suppressCount' in params) {
+            return !!params.suppressCount;
+        }
+
+        if (isAutoGroupCol) {
+            const autoGroupParams = gridRows.api.getGridOption('autoGroupColumnDef')?.cellRendererParams as any;
+            if (autoGroupParams && typeof autoGroupParams === 'object' && 'suppressCount' in autoGroupParams) {
+                return !!autoGroupParams.suppressCount;
+            }
+        }
+
+        return false;
+    }
+
+    private validateCheckboxCell(
+        cellElement: Element,
+        row: RowNode<any>,
+        column: Column<any>,
+        rowErrors: GridRowErrors<any>,
+        gridRows: GridRows<any>
+    ): boolean {
+        const columnId = column.getColId();
+        if (columnId === 'ag-Grid-SelectionColumn') {
+            return false;
+        }
+
+        const colDef = column.getColDef();
+        const usesCheckboxRenderer = colDef?.cellRenderer === 'agCheckboxCellRenderer';
+        const checkboxElement = cellElement.querySelector(
+            '.ag-checkbox-input-wrapper,[aria-checked],[role="checkbox"],.ag-checkbox'
+        );
+        if (!usesCheckboxRenderer && !checkboxElement) {
+            return false;
+        }
+
+        const cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column });
+
+        if (!checkboxElement) {
+            return true;
+        }
+
+        let expectedAria: string | null = null;
+        if (cellValue === true) {
+            expectedAria = 'true';
+        } else if (cellValue === false) {
+            expectedAria = 'false';
+        } else if (cellValue == null) {
+            expectedAria = 'mixed';
+        }
+
+        if (expectedAria === null) {
+            return true;
+        }
+
+        const ariaSource = checkboxElement?.hasAttribute('aria-checked')
+            ? checkboxElement
+            : checkboxElement?.querySelector('[aria-checked]');
+        const ariaChecked = ariaSource?.getAttribute('aria-checked') ?? '';
+        if (ariaChecked !== expectedAria) {
+            rowErrors.add(
+                `HTML checkbox state mismatch for column id:"${columnId}", expected aria-checked=${expectedAria}, got ${ariaChecked}`
+            );
+        }
+
+        return true;
     }
 }

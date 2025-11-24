@@ -188,10 +188,6 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // pull these out to make code below easier to read
-        const colDef = column.getColDef();
-        const field = colDef.field;
-        const colId = column.getColId();
-        const data = rowNode.data;
 
         if (this.hasEditSvc && source === 'ui') {
             const editSvc = this.editSvc!;
@@ -205,8 +201,7 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result: any;
-
+        const colDef = column.getColDef();
         // when using multiple columns, the group column should have no value higher than its level
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
@@ -217,12 +212,50 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        // don't retrieve group values from field or valueGetter for multiple auto cols
-        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
+        let result = this.resolveValue(column, rowNode, ignoreAggData);
+
+        // the result could be an expression itself, if we are allowing cell values to be expressions
+        if (this.cellExpressions && _isExpressionString(result)) {
+            const cellValueGetter = result.substring(1);
+            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
+        }
+
+        return result;
+    }
+
+    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
+        const colDef = column.getColDef();
+        const colId = column.getColId();
+
+        const isTreeData = this.isTreeData;
 
         // if there is a value getter, this gets precedence over a field
-        const groupDataExists = rowNode.groupData && colId in rowNode.groupData;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+        if (isTreeData && aggDataExists) {
+            return rowNode.aggData[colId];
+        }
+
+        const data = rowNode.data;
+        const field = colDef.field;
+        if (isTreeData && colDef.valueGetter) {
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        }
+        if (isTreeData && field && data) {
+            return _getValueUsingField(data, field, column.isFieldContainsDots());
+        }
+
+        const groupData = rowNode.groupData;
+        const groupDataExists = groupData && colId in groupData;
+        if (groupDataExists) {
+            return rowNode.groupData![colId];
+        }
+        if (aggDataExists) {
+            return rowNode.aggData[colId];
+        }
+
+        // don't retrieve group values from field or valueGetter for multiple auto cols
+        const rowGroupColId = colDef.showRowGroup;
+        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
         const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
@@ -230,41 +263,27 @@ export class ValueService extends BeanStub implements NamedBean {
             this.isSsrm &&
             rowNode.footer &&
             rowNode.field &&
-            (colDef.showRowGroup === true || colDef.showRowGroup === rowNode.field);
+            (rowGroupColId === true || rowGroupColId === rowNode.field);
 
-        if (this.isTreeData && aggDataExists) {
-            result = rowNode.aggData[colId];
-        } else if (this.isTreeData && colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.isTreeData && field && data) {
-            result = _getValueUsingField(data, field, column.isFieldContainsDots());
-        } else if (groupDataExists) {
-            result = rowNode.groupData![colId];
-        } else if (aggDataExists) {
-            result = rowNode.aggData[colId];
-        } else if (colDef.valueGetter && !ignoreSsrmAggData) {
+        if (colDef.valueGetter && !ignoreSsrmAggData) {
             if (!allowUserValuesForCell) {
-                return result;
+                return undefined;
             }
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (ssrmFooterGroupCol) {
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        }
+        if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
-            result = _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
-        } else if (field && data && !ignoreSsrmAggData) {
+            return _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
+        }
+        if (field && data && !ignoreSsrmAggData) {
             if (!allowUserValuesForCell) {
-                return result;
+                return undefined;
             }
-            result = _getValueUsingField(data, field, column.isFieldContainsDots());
+            return _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
-        // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && _isExpressionString(result)) {
-            const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
-        }
-
-        return result;
+        return undefined;
     }
 
     public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {

@@ -39,6 +39,9 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
             this.hasTreeData = true;
             this.treeData = gos.get('treeData');
         }
+        this.addManagedEventListeners({
+            showRowGroupColsSetChanged: () => this.strategy?.onShowRowGroupColsSetChanged(),
+        });
     }
 
     public override destroy(): void {
@@ -46,8 +49,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         super.destroy();
     }
 
-    public getNode(id: string): RowNode<TData> | undefined {
-        return this.strategy?.getNode(id);
+    public getNonLeaf(id: string): RowNode<TData> | undefined {
+        return this.strategy?.nonLeafsById?.get(id);
     }
 
     public getNestedDataGetter(): NestedDataGetter<TData> | null | undefined {
@@ -102,6 +105,15 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
 
     public loadLeafs(node: RowNode): RowNode[] | null {
         return node.footer ? loadFooterLeafs(node) : loadRealLeafs(node);
+    }
+
+    public loadGroupData(node: RowNode<any>): Record<string, any> | null {
+        const strategy = this.getStrategy();
+        if (strategy) {
+            return strategy.loadGroupData(node);
+        }
+        node._groupData = null;
+        return null;
     }
 
     private getStrategy(): IRowGroupingStrategy<TData> | null {
@@ -175,13 +187,14 @@ const resetGrouping = <TData>(rootNode: RowNode<TData>, canResetTreeNode: boolea
     rootNode.treeNodeFlags = 0;
     rootNode.childrenAfterGroup = allLeafs;
     rootNode.childrenMapped = null;
-    rootNode.groupData = null;
+    rootNode._groupData = undefined;
     if (rootSibling) {
         rootSibling.childrenAfterGroup = rootNode.childrenAfterGroup;
         rootSibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
         rootSibling.childrenAfterFilter = rootNode.childrenAfterFilter;
         rootSibling.childrenAfterSort = rootNode.childrenAfterSort;
         rootSibling.childrenMapped = null;
+        rootSibling._groupData = undefined;
     }
     for (let i = 0, allLeafsLen = allLeafs.length ?? 0; i < allLeafsLen; ++i) {
         const row = allLeafs[i];
@@ -211,7 +224,5 @@ const resetChildRowGrouping = <TData>(row: RowNode<TData>): void => {
     row.childrenAfterSort = null;
     row.childrenMapped = null;
     row.level = 0;
-    if (row.groupData) {
-        row.groupData = null;
-    }
+    row._groupData = undefined;
 };

@@ -132,7 +132,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
         // child cell
         if (hasAnyFirstChildChanged && gos.get('groupHideOpenParents')) {
-            const columns = showRowGroupCols?.getShowRowGroupCols();
+            const columns = showRowGroupCols?.columns;
             if (columns?.length) {
                 rowRenderer.refreshCells({ columns, force: true });
             }

@@ -2,7 +2,7 @@ import { _debounce } from '../agStack/utils/function';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
-import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
+import { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, StylesChangedEvent } from '../events';
 import { _getGroupSelectsDescendants, _getRowHeightForNode, _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type {
@@ -77,12 +77,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.addManagedEventListeners({
             newColumnsLoaded: refreshEverythingAfterColsChangedFunc,
-            columnRowGroupChanged: refreshEverythingFunc,
+            columnRowGroupChanged: refreshEverythingAfterColsChangedFunc,
             columnValueChanged: this.onValueChanged.bind(this),
             columnPivotChanged: this.refreshModel.bind(this, { step: 'pivot' }),
+            columnPivotModeChanged: refreshEverythingFunc,
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
-            columnPivotModeChanged: refreshEverythingFunc,
             stylesChanged: this.onGridStylesChanges.bind(this),
             gridReady: this.onGridReady.bind(this),
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
@@ -884,9 +884,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (typeof found === 'object') {
             return found; // we check for typeof object to avoid returning things from Object.prototype
         }
-        // although id is typed a string, this could be called by the user, and they could have passed a number
-        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) === 0;
-        return idIsGroup ? this.beans.groupStage?.getNode(id) : undefined;
+        return this.beans.groupStage?.getNonLeaf(id);
     }
 
     public batchUpdateRowData(

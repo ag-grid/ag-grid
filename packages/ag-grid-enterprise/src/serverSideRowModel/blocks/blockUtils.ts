@@ -236,19 +236,28 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         // set group value for full width rows.
-        rowNode.groupValue = rowNode.key;
+        const key = rowNode.key!;
+        rowNode.groupValue = key;
+        if (rowNode.sibling) {
+            rowNode.sibling.groupValue = key;
+        }
 
-        const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
+        const groupDisplayCols = this.showRowGroupCols?.columns;
+        if (!groupDisplayCols) {
+            return;
+        }
         const usingTreeData = this.gos.get('treeData');
         for (const col of groupDisplayCols) {
-            if (rowNode.groupData == null) {
-                rowNode.groupData = {};
+            let groupData = rowNode._groupData;
+            if (!groupData) {
+                groupData = {};
+                rowNode._groupData = groupData;
             }
             if (usingTreeData) {
-                rowNode.groupData[col.getColId()] = rowNode.key;
+                groupData[col.getColId()] = key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
                 const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
-                rowNode.groupData[col.getColId()] = groupValue;
+                groupData[col.getColId()] = groupValue;
             }
         }
     }

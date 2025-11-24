@@ -77,6 +77,7 @@ describe('ag-grid formulas general behaviour', () => {
         let gridRows = new GridRows(api, 'initial constants', {
             ...defaultGridRowsOptions,
             ignoreUndefinedCells: true,
+            useFormatter: false,
             columns: ['value'],
         });
         await gridRows.check(`
@@ -104,6 +105,7 @@ describe('ag-grid formulas general behaviour', () => {
             ...defaultGridRowsOptions,
             ignoreUndefinedCells: true,
             columns: ['value'],
+            useFormatter: false,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID

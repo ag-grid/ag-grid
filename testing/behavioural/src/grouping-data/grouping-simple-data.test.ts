@@ -145,7 +145,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: undefined,
+                groupData: null,
                 id: '0',
                 key: null,
                 lastChild: false,
@@ -173,7 +173,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: false,
                 footer: undefined,
                 group: false,
-                groupData: undefined,
+                groupData: null,
                 id: '1',
                 key: null,
                 lastChild: true,
@@ -229,7 +229,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: undefined,
+                groupData: null,
                 id: '2',
                 key: null,
                 lastChild: true,
@@ -313,7 +313,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: undefined,
+                groupData: null,
                 id: '3',
                 key: null,
                 lastChild: true,
@@ -369,7 +369,7 @@ describe('ag-grid grouping simple data', () => {
                 firstChild: true,
                 footer: undefined,
                 group: false,
-                groupData: undefined,
+                groupData: null,
                 id: '4',
                 key: null,
                 lastChild: true,
@@ -608,7 +608,7 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             checkDom: true,
-            columns: ['value'],
+            columns: true,
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -639,9 +639,9 @@ describe('ag-grid grouping simple data', () => {
 
         await new GridRows(api, 'data', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 value:1
-            ├── LEAF id:2 value:2
-            └── LEAF id:3 value:3
+            ├── LEAF id:1 value:1 value_1:1
+            ├── LEAF id:2 value:2 value_1:2
+            └── LEAF id:3 value:3 value_1:3
         `);
     });
 
@@ -661,38 +661,38 @@ describe('ag-grid grouping simple data', () => {
             columnDefs: [{ field: 'group', rowGroup: true, hide: true }, { field: 'x' }, { field: 'z' }],
             animateRows: false,
             groupDefaultExpanded: -1,
-            autoGroupColumnDef: { headerName: 'Group', colId: 'zzz' },
+            autoGroupColumnDef: { headerName: 'Group' },
             rowData,
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions = {
+        const gridRowsOptions: GridRowsOptions = {
             columns: true,
             checkDom: true,
+            useFormatter: true,
+            ignoreUndefinedCells: true,
         };
 
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
-
-        await gridRows.check(`
+        await new GridRows(api, 'x1', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
-            │ ├── LEAF id:A ag-Grid-AutoColumn:undefined group:"Group1" x:"a" z:1
-            │ └── LEAF id:B ag-Grid-AutoColumn:undefined group:"Group1" x:"a-b" z:2
+            │ ├── LEAF id:A group:"Group1" x:"a" z:1
+            │ └── LEAF id:B group:"Group1" x:"a-b" z:2
             ├─┬ LEAF_GROUP id:row-group-group-Group2 ag-Grid-AutoColumn:"Group2"
-            │ ├── LEAF id:C ag-Grid-AutoColumn:undefined group:"Group2" x:"c" z:3
-            │ └── LEAF id:D ag-Grid-AutoColumn:undefined group:"Group2" x:"c-d" z:4
+            │ ├── LEAF id:C group:"Group2" x:"c" z:3
+            │ └── LEAF id:D group:"Group2" x:"c-d" z:4
             └─┬ LEAF_GROUP id:row-group-group-Group3 ag-Grid-AutoColumn:"Group3"
-            · ├── LEAF id:E ag-Grid-AutoColumn:undefined group:"Group3" x:"e" z:5
-            · ├── LEAF id:F ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f" z:6
-            · ├── LEAF id:G ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f-g" z:7
-            · └── LEAF id:H ag-Grid-AutoColumn:undefined group:"Group3" x:"e-f-g-h" z:8
+            · ├── LEAF id:E group:"Group3" x:"e" z:5
+            · ├── LEAF id:F group:"Group3" x:"e-f" z:6
+            · ├── LEAF id:G group:"Group3" x:"e-f-g" z:7
+            · └── LEAF id:H group:"Group3" x:"e-f-g-h" z:8
         `);
 
         api.updateGridOptions({
-            autoGroupColumnDef: { headerName: 'Group', field: 'group', colId: 'xxx' },
+            autoGroupColumnDef: { headerName: 'Group', field: 'group' },
         });
 
-        await gridRows.check(`
+        await new GridRows(api, 'x2', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
             │ ├── LEAF id:A ag-Grid-AutoColumn:"Group1" group:"Group1" x:"a" z:1
@@ -707,11 +707,9 @@ describe('ag-grid grouping simple data', () => {
             · └── LEAF id:H ag-Grid-AutoColumn:"Group3" group:"Group3" x:"e-f-g-h" z:8
         `);
 
-        api.updateGridOptions({
-            autoGroupColumnDef: { headerName: 'Group', field: 'z', colId: 'yyy' },
-        });
+        api.setGridOption('autoGroupColumnDef', { headerName: 'Group', field: 'z' });
 
-        await gridRows.check(`
+        await new GridRows(api, 'x3', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-Group1 ag-Grid-AutoColumn:"Group1"
             │ ├── LEAF id:A ag-Grid-AutoColumn:1 group:"Group1" x:"a" z:1
@@ -724,6 +722,51 @@ describe('ag-grid grouping simple data', () => {
             · ├── LEAF id:F ag-Grid-AutoColumn:6 group:"Group3" x:"e-f" z:6
             · ├── LEAF id:G ag-Grid-AutoColumn:7 group:"Group3" x:"e-f-g" z:7
             · └── LEAF id:H ag-Grid-AutoColumn:8 group:"Group3" x:"e-f-g-h" z:8
+        `);
+    });
+
+    test('blank group rows and footers display blank labels', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', rowGroup: true, hide: true },
+                { field: 'athlete' },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            groupDefaultExpanded: -1,
+            groupTotalRow: 'bottom',
+            rowData: [
+                { id: '0', country: '', year: '2000', athlete: 'No Country 1' },
+                { id: '1', country: '', year: '2001', athlete: 'No Country 2' },
+                { id: '2', country: 'Ireland', year: '2000', athlete: 'Ada Lovelace' },
+            ],
+        };
+
+        const gridRowsOptions: GridRowsOptions = {
+            columns: true,
+            checkDom: true,
+            useFormatter: true,
+            ignoreUndefinedCells: true,
+        };
+
+        const api = gridsManager.createGrid('blank-groups', gridOptions);
+        const gridRows = new GridRows(api, 'blank groups', gridRowsOptions);
+
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
+            │ │ ├── LEAF id:2 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            │ │ └─ footer id:rowGroupFooter_row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"Total 2000"
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Total Ireland"
+            └─┬ filler id:row-group-country- ag-Grid-AutoColumn:"(Blanks)"
+            · ├─┬ LEAF_GROUP id:row-group-country--year-2000 ag-Grid-AutoColumn:"2000"
+            · │ ├── LEAF id:0 country:"" year:"2000" athlete:"No Country 1"
+            · │ └─ footer id:rowGroupFooter_row-group-country--year-2000 ag-Grid-AutoColumn:"Total 2000"
+            · ├─┬ LEAF_GROUP id:row-group-country--year-2001 ag-Grid-AutoColumn:"2001"
+            · │ ├── LEAF id:1 country:"" year:"2001" athlete:"No Country 2"
+            · │ └─ footer id:rowGroupFooter_row-group-country--year-2001 ag-Grid-AutoColumn:"Total 2001"
+            · └─ footer id:rowGroupFooter_row-group-country- ag-Grid-AutoColumn:"Total (Blanks)"
         `);
     });
 

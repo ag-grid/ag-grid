@@ -130,6 +130,7 @@ function init(): boolean {
         return false;
     }
     initialized = true;
+    innerTextPolyfill();
 
     const DOMRectInspect = class DOMRect {
         constructor(
@@ -198,4 +199,16 @@ function getPaginationOffset(el: HTMLElement): number {
     }
 
     return isFinite(minIndex) ? minIndex : 0;
+}
+
+export function innerTextPolyfill() {
+    // for snapshots, the grid uses innerText which is not supported by JSDOM; so we need to polyfill it
+    // with innerText instead
+    if (!('innerText' in Element.prototype)) {
+        Object.defineProperty(Element.prototype, 'innerText', {
+            set(value) {
+                this.textContent = value;
+            },
+        });
+    }
 }
