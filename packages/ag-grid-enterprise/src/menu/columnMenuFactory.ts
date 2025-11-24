@@ -132,19 +132,30 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             const sortDef = column.getSortDef();
             const currentDirection = _normalizeSortDirection(sortDef?.direction);
             const currentType = _normalizeSortType(sortDef?.type);
-            const sortingOrderByType = new Set(
-                colDef.sortingOrder?.map((sortDef) => _getSortDefFromInput(sortDef).type) || ['default']
-            );
-            if ((currentDirection !== 'asc' || currentType !== 'default') && sortingOrderByType.has('default')) {
+
+            let allowDesc;
+            let allowAsc;
+            let allowDefault;
+            let allowAbsolute;
+
+            colDef.sortingOrder?.forEach((maybeSortDef) => {
+                const { direction, type } = _getSortDefFromInput(maybeSortDef);
+                allowDesc ||= direction === 'desc';
+                allowAsc ||= direction === 'asc';
+                allowDefault ||= type === 'default';
+                allowAbsolute ||= type === 'absolute';
+            });
+
+            if (allowAsc && allowDefault && (currentDirection !== 'asc' || currentType !== 'default')) {
                 result.push('sortAscending');
             }
-            if ((currentDirection !== 'desc' || currentType !== 'default') && sortingOrderByType.has('default')) {
+            if (allowDesc && allowDefault && (currentDirection !== 'desc' || currentType !== 'default')) {
                 result.push('sortDescending');
             }
-            if ((currentDirection !== 'asc' || currentType !== 'absolute') && sortingOrderByType.has('absolute')) {
+            if (allowAsc && allowAbsolute && (currentDirection !== 'asc' || currentType !== 'absolute')) {
                 result.push('sortAbsoluteAscending');
             }
-            if ((currentDirection !== 'desc' || currentType !== 'absolute') && sortingOrderByType.has('absolute')) {
+            if (allowDesc && allowAbsolute && (currentDirection !== 'desc' || currentType !== 'absolute')) {
                 result.push('sortAbsoluteDescending');
             }
             if (currentDirection) {

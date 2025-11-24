@@ -418,7 +418,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () =>
                                   sortSvc.setSortForColumn(
                                       column!,
-                                      { type: column?.sortDef?.type ?? 'default', direction: 'asc' },
+                                      { type: 'default', direction: 'asc' },
                                       false,
                                       source
                                   ),
@@ -432,7 +432,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               action: () =>
                                   sortSvc.setSortForColumn(
                                       column!,
-                                      { type: column?.sortDef?.type ?? 'default', direction: 'desc' },
+                                      { type: 'default', direction: 'desc' },
                                       false,
                                       source
                                   ),
@@ -446,12 +446,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('sortAbsoluteAscending', 'Sort Absolute Ascending'),
                         icon: _createIconNoSpan('sortAbsoluteAscending', beans, null),
                         action: () =>
-                            sortSvc.setSortForColumn(
-                                column!,
-                                { type: column?.sortDef?.type ?? 'default', direction: 'asc' },
-                                false,
-                                source
-                            ),
+                            sortSvc.setSortForColumn(column!, { type: 'absolute', direction: 'asc' }, false, source),
                     };
                 }
                 case 'sortAbsoluteDescending': {
@@ -462,12 +457,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('sortAbsoluteDescending', 'Sort Absolute Descending'),
                         icon: _createIconNoSpan('sortAbsoluteDescending', beans, null),
                         action: () =>
-                            sortSvc.setSortForColumn(
-                                column!,
-                                { type: column?.sortDef?.type ?? 'default', direction: 'desc' },
-                                false,
-                                source
-                            ),
+                            sortSvc.setSortForColumn(column!, { type: 'absolute', direction: 'desc' }, false, source),
                     };
                 }
                 case 'sortUnSort':

@@ -8,7 +8,6 @@ import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { SortOption } from '../interfaces/iSortOption';
-import { _warn } from '../main';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
@@ -134,36 +133,25 @@ export class SortService extends BeanStub implements NamedBean {
         return clearedColumns;
     }
 
-    private getNextSortDirection(column: AgColumn, steps = 1, cycle = 0): SortDef {
-        const colDef = column.getColDef();
+    private getNextSortDirection(column: AgColumn): SortDef {
         const sortingOrder = (
             column.getColDef().sortingOrder ??
             this.gos.get('sortingOrder') ??
             DEFAULT_SORTING_ORDER
-        ).map((objOrDirection: unknown) => _getSortDefFromInput(objOrDirection, colDef));
+        ).map((objOrDirection: unknown) => _getSortDefFromInput(objOrDirection));
+
+        if (!sortingOrder.find((e) => e.direction === null && e.type === 'default')) {
+            sortingOrder.push({ direction: null, type: 'default' });
+        }
 
         const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
 
-        let nextIndex = Math.max(0, currentIndex);
-        for (let i = 0; i < steps; i++) {
-            nextIndex += 1;
-            if (nextIndex >= sortingOrder.length) {
-                nextIndex = 0;
-            }
+        let nextIndex = Math.max(0, currentIndex) + 1;
+        if (nextIndex >= sortingOrder.length) {
+            nextIndex = 0;
         }
-
-        const next = sortingOrder[nextIndex];
-        // this would return undefined for custom sort types. these are not supported yet.
-        const nextSortDef = _getSortDefFromInput(next, colDef);
-        if (nextSortDef) {
-            return nextSortDef;
-        }
-        _warn(295);
-        if (cycle < 2) {
-            return this.getNextSortDirection(column, steps + 1, ++cycle);
-        }
-        return _getSortDefFromInput(DEFAULT_SORTING_ORDER[0])!;
+        return _getSortDefFromInput(sortingOrder[nextIndex]);
     }
 
     /**
@@ -375,12 +363,12 @@ export class SortService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.setColSort(column, _getSortDefFromInput(sortDefOrDirection, column.getColDef()), source);
+        this.setColSort(column, _getSortDefFromInput(sortDefOrDirection), source);
     }
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
         if (!_areSortDefsEqual(column.sortDef, sort)) {
-            column.sortDef = _getSortDefFromInput(sort, column.getColDef());
+            column.sortDef = _getSortDefFromInput(sort);
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');

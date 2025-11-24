@@ -769,7 +769,7 @@ export class AgColumn<TValue = any>
  *    the direction from the provided colDef's sortDef (or null if not available).
  * If no input is provided or input is none of the above, a default SortDef is returned, which is { type: 'default', direction: null }.
  */
-export function _getSortDefFromInput(input?: unknown, colDef?: ColDef): SortDef {
+export function _getSortDefFromInput(input?: unknown): SortDef {
     let direction: unknown;
     let type: unknown;
     if (_isSortDefValid(input)) {
@@ -777,16 +777,16 @@ export function _getSortDefFromInput(input?: unknown, colDef?: ColDef): SortDef 
         type = input.type;
     } else if (_isSortDirectionValid(input)) {
         direction = input;
-        type = colDef?.sortDef?.type;
+        type = undefined;
     } else {
-        direction = colDef?.sortDef?.direction;
+        direction = undefined;
         type = input;
     }
     return { direction: _normalizeSortDirection(direction), type: _normalizeSortType(type) };
 }
 
 export function _isSortDirectionValid(maybeSortDir: unknown, allowNullish = true): maybeSortDir is SortDirection {
-    return maybeSortDir === 'asc' || maybeSortDir === 'desc' || (allowNullish ? maybeSortDir == null : false);
+    return maybeSortDir === 'asc' || maybeSortDir === 'desc' || (allowNullish ? maybeSortDir === null : false);
 }
 
 export function _isSortTypeValid(maybeSortType: unknown, allowNullish = true): maybeSortType is SortType {
@@ -813,9 +813,9 @@ export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortD
 }
 
 export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
-    return _isSortDirectionValid(sortDirectionLike) ? sortDirectionLike || null : null;
+    return _isSortDirectionValid(sortDirectionLike, false) ? sortDirectionLike : null;
 }
 
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
-    return _isSortTypeValid(sortTypeLike) ? sortTypeLike || 'default' : 'default';
+    return _isSortTypeValid(sortTypeLike, false) ? sortTypeLike : 'default';
 }
