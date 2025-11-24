@@ -386,7 +386,6 @@ export {
     _getSortDefFromInput,
     _isSortDirectionValid,
     _isSortTypeValid,
-    _isSortDefValid,
     _areSortDefsEqual,
     _normalizeSortDirection,
     _normalizeSortType,
