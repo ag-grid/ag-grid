@@ -23,7 +23,7 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
     execute(params: StageExecuteParams<TData>): boolean | undefined | void;
 
     /** Used to lazily compute and store groupData for a row node */
-    newGroupData(node: RowNode<TData>): Record<string, any> | null;
+    loadGroupData(node: RowNode<TData>): Record<string, any> | null;
 }
 
 /**

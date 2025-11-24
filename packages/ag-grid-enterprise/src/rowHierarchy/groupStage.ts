@@ -109,9 +109,11 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
 
     public loadGroupData(node: RowNode<any>): Record<string, any> | null {
         const strategy = this.getStrategy();
-        const result = strategy?.newGroupData(node) ?? null;
-        node._groupData = result;
-        return result;
+        if (strategy) {
+            return strategy.loadGroupData(node);
+        }
+        node._groupData = null;
+        return null;
     }
 
     private getStrategy(): IRowGroupingStrategy<TData> | null {

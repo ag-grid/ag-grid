@@ -27,10 +27,7 @@ interface GroupingDetails {
     changedPath: ChangedPath;
     rootNode: RowNode;
     groupCols: GroupColumn[];
-    groupColsChanged: boolean;
     groupAllowUnbalanced: boolean;
-    isGroupOpenByDefault: GridOptions['isGroupOpenByDefault'];
-    initialGroupOrderComparator: GridOptions['initialGroupOrderComparator'];
 }
 
 export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
@@ -48,7 +45,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.nonLeafsById.clear();
     }
 
-    public newGroupData(node: RowNode): Record<string, any> | null {
+    public loadGroupData(node: RowNode): Record<string, any> | null {
         if (!node.group) {
             node._groupData = null;
             return null;
@@ -83,16 +80,18 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     public execute(params: StageExecuteParams): void {
         const details = this.createGroupingDetails(params);
 
-        const changedRowNodes = params.changedRowNodes;
-        if (changedRowNodes) {
-            this.handleDeltaUpdate(details, changedRowNodes);
-        } else {
-            this.shotgunResetEverything(details);
+        if (details) {
+            const changedRowNodes = params.changedRowNodes;
+            if (changedRowNodes) {
+                this.handleDeltaUpdate(details, changedRowNodes);
+            } else {
+                this.shotgunResetEverything(details);
+            }
         }
 
         const changedPath = params.changedPath!;
         this.positionLeafsAndGroups(changedPath);
-        this.orderGroups(details);
+        this.orderGroups(params.rowNode);
 
         this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
@@ -136,31 +135,27 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }, false);
     }
 
-    private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
+    private createGroupingDetails(params: StageExecuteParams): GroupingDetails | null {
         const { rowNode, changedPath } = params;
 
-        let groupColsChanged = false;
         const { rowGroupColsSvc, colModel, gos } = this.beans;
         const cols = rowGroupColsSvc?.columns;
         let groupCols = this.prevGroupCols;
-        if (!groupCols || (params.afterColumnsChanged && groupColumnsChanged(groupCols, cols))) {
-            groupColsChanged = !!groupCols;
+        if (!groupCols || params.afterColumnsChanged) {
+            if (groupCols && !groupColumnsChanged(groupCols, cols)) {
+                return null; // no change to grouping
+            }
             this.prevGroupCols = groupCols = makeGroupColumns(cols);
         }
 
-        const details: GroupingDetails = {
+        return {
             groupCols,
             rootNode: rowNode,
             pivotMode: colModel.isPivotMode(),
-            groupColsChanged,
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
             groupAllowUnbalanced: gos.get('groupAllowUnbalanced'),
-            isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault'),
-            initialGroupOrderComparator: gos.getCallback('initialGroupOrderComparator'),
         };
-
-        return details;
     }
 
     private handleDeltaUpdate(
@@ -222,8 +217,9 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         );
     }
 
-    private orderGroups(details: GroupingDetails): void {
-        const initialGroupOrderComparator = details.initialGroupOrderComparator;
+    private orderGroups(rootNode: RowNode): void {
+        const initialGroupOrderComparator: GridOptions['initialGroupOrderComparator'] =
+            this.gos.getCallback('initialGroupOrderComparator');
         if (!initialGroupOrderComparator) {
             return;
         }
@@ -245,7 +241,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 recursiveSort(childrenAfterGroup[i]);
             }
         };
-        recursiveSort(details.rootNode);
+        recursiveSort(rootNode);
     }
 
     private getExistingPathForNode(node: RowNode): string[] {
@@ -484,7 +480,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
 
-        groupsById.set(groupNode.id, groupNode);
+        groupsById.set(id, groupNode);
 
         const leafNode = groupInfo.leafNode;
         groupNode.groupValue = rowGroupColumn && leafNode && this.beans.valueSvc.getValue(rowGroupColumn, leafNode);
