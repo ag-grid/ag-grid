@@ -396,8 +396,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return this.extendLatestRangeToCell(cell);
         }
 
-        const hasRightClickedOnRowNumber = isRowNumber && _interpretAsRightClick(beans, event);
-        if (hasRightClickedOnRowNumber) {
+        if (isRowNumber && _interpretAsRightClick(beans, event)) {
             return;
         }
 
@@ -416,46 +415,50 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
 
         if (isRowNumber && isMultiKey && containingRange) {
-            // CTRL-click row number that has a containing range means we are de-selecting
-            const firstRow = _getFirstRow(beans);
-            const lastRow = _getLastRow(beans);
-            const startRow = this.getRangeStartRow(containingRange);
-            const endRow = this.getRangeEndRow(containingRange);
-
-            if (!startRow && _isSameRow(firstRow!, cell)) {
-                // we've clicked the first row, so the top edge of the range should be moved down
-                replaceEdgeRow(containingRange, _getRowBelow(beans, firstRow!), 'top');
-            } else if (!endRow && _isSameRow(lastRow!, cell)) {
-                // we've clicked the last row, so the bottom edge of the range should be moved up
-                replaceEdgeRow(containingRange, _getRowAbove(beans, lastRow!), 'bottom');
-            } else if (_isSameRow(startRow, endRow)) {
-                // there's only one row in the range, so we remove the range entirely
-                _removeFromArray(this.cellRanges, containingRange);
-            } else if (_isSameRow(startRow, cell)) {
-                // we've clicked the top row of the range, so the top edge of the range should be moved down
-                replaceEdgeRow(containingRange, _getRowBelow(beans, cell), 'top');
-            } else if (_isSameRow(endRow, cell)) {
-                // we've clicked the bottom row of the range, so the bottom edge of the range should be moved up
-                replaceEdgeRow(containingRange, _getRowAbove(beans, cell), 'bottom');
-            } else {
-                const rowAbove = _getRowAbove(beans, cell);
-                const rowBelow = _getRowBelow(beans, cell);
-
-                // have to set both because start row could come after end row
-                containingRange.startRow = startRow;
-                containingRange.endRow = rowAbove ?? undefined;
-
-                this.cellRanges.push({
-                    ...containingRange,
-                    startRow: rowBelow ?? undefined,
-                    endRow,
-                });
-            }
-
-            this.dispatchChangedEvent(true, true);
+            this.toggleRowNumberRangeSelection(cell, containingRange);
         } else {
             this.setRangeToCell(cell, isMultiKey);
         }
+    }
+
+    private toggleRowNumberRangeSelection(cell: CellPosition, containingRange: CellRange): void {
+        const { beans, cellRanges } = this;
+        const firstRow = _getFirstRow(beans);
+        const lastRow = _getLastRow(beans);
+        const startRow = this.getRangeStartRow(containingRange);
+        const endRow = this.getRangeEndRow(containingRange);
+
+        if (!startRow && _isSameRow(firstRow!, cell)) {
+            // we've clicked the first row, so the top edge of the range should be moved down
+            replaceEdgeRow(containingRange, _getRowBelow(beans, firstRow!), 'top');
+        } else if (!endRow && _isSameRow(lastRow!, cell)) {
+            // we've clicked the last row, so the bottom edge of the range should be moved up
+            replaceEdgeRow(containingRange, _getRowAbove(beans, lastRow!), 'bottom');
+        } else if (_isSameRow(startRow, endRow)) {
+            // there's only one row in the range, so we remove the range entirely
+            _removeFromArray(cellRanges, containingRange);
+        } else if (_isSameRow(startRow, cell)) {
+            // we've clicked the top row of the range, so the top edge of the range should be moved down
+            replaceEdgeRow(containingRange, _getRowBelow(beans, cell), 'top');
+        } else if (_isSameRow(endRow, cell)) {
+            // we've clicked the bottom row of the range, so the bottom edge of the range should be moved up
+            replaceEdgeRow(containingRange, _getRowAbove(beans, cell), 'bottom');
+        } else {
+            const rowAbove = _getRowAbove(beans, cell);
+            const rowBelow = _getRowBelow(beans, cell);
+
+            // have to set both because start row could come after end row
+            containingRange.startRow = startRow;
+            containingRange.endRow = rowAbove ?? undefined;
+
+            cellRanges.push({
+                ...containingRange,
+                startRow: rowBelow ?? undefined,
+                endRow,
+            });
+        }
+
+        this.dispatchChangedEvent(true, true);
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
