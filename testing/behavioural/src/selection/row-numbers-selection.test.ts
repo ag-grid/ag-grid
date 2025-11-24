@@ -26,6 +26,11 @@ describe('Row Numbers Cell Selection', () => {
         return [api, actions];
     }
 
+    // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
+    function click(element: HTMLElement, options?: MouseEventInit): void {
+        element.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ...options }));
+    }
+
     beforeAll(() => {
         setupAgTestIds();
     });
@@ -69,11 +74,10 @@ describe('Row Numbers Cell Selection', () => {
         const row2 = getByTestId(gridDiv, agTestIdFor.rowNumber('1'));
         const columns = api.getColumns()!.map((c) => c.getColId());
 
-        // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        click(row1);
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
-        row2.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        click(row2);
         assertSelectedCellRanges([{ rowEndIndex: 1, rowStartIndex: 1, columns }], api);
     });
 
@@ -91,11 +95,10 @@ describe('Row Numbers Cell Selection', () => {
         const row2 = getByTestId(gridDiv, agTestIdFor.rowNumber('1'));
         const columns = api.getColumns()!.map((c) => c.getColId());
 
-        // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        click(row1);
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
-        row2.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ctrlKey: true }));
+        click(row2, { ctrlKey: true });
         assertSelectedCellRanges(
             [
                 { rowEndIndex: 0, rowStartIndex: 0, columns },
@@ -118,11 +121,10 @@ describe('Row Numbers Cell Selection', () => {
         const row1 = getByTestId(gridDiv, agTestIdFor.rowNumber('0'));
         const columns = api.getColumns()!.map((c) => c.getColId());
 
-        // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        click(row1);
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ctrlKey: true }));
+        click(row1, { ctrlKey: true });
         assertSelectedCellRanges([], api);
     });
 
@@ -141,12 +143,11 @@ describe('Row Numbers Cell Selection', () => {
         const row3 = getByTestId(gridDiv, agTestIdFor.rowNumber('2'));
         const columns = api.getColumns()!.map((c) => c.getColId());
 
-        // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
-        row3.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, shiftKey: true }));
+        click(row1);
+        click(row3, { shiftKey: true });
         assertSelectedCellRanges([{ rowEndIndex: 2, rowStartIndex: 0, columns }], api);
 
-        row2.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ctrlKey: true }));
+        click(row2, { ctrlKey: true });
         assertSelectedCellRanges(
             [
                 { rowEndIndex: 0, rowStartIndex: 0, columns },
@@ -155,7 +156,7 @@ describe('Row Numbers Cell Selection', () => {
             api
         );
 
-        row2.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ctrlKey: true }));
+        click(row2, { ctrlKey: true });
         assertSelectedCellRanges(
             [
                 { rowEndIndex: 0, rowStartIndex: 0, columns },
@@ -180,11 +181,10 @@ describe('Row Numbers Cell Selection', () => {
         const row4 = getByTestId(gridDiv, agTestIdFor.rowNumber('3'));
         const columns = api.getColumns()!.map((c) => c.getColId());
 
-        // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        click(row1);
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
-        row4.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, shiftKey: true }));
+        click(row4, { shiftKey: true });
         assertSelectedCellRanges([{ rowEndIndex: 3, rowStartIndex: 0, columns }], api);
     });
 
@@ -203,14 +203,13 @@ describe('Row Numbers Cell Selection', () => {
         const row4 = getByTestId(gridDiv, agTestIdFor.rowNumber('3'));
         const columns = api.getColumns()!.map((c) => c.getColId());
 
-        // Have to use touch instead of click because the grid only attaches touchstart in JSDOM
-        row1.dispatchEvent(new MouseEvent('touchstart', { bubbles: true }));
+        click(row1);
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
-        row2.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ctrlKey: true }));
+        click(row2, { ctrlKey: true });
         assertSelectedCellRanges([{ rowEndIndex: 0, rowStartIndex: 0, columns }], api);
 
-        row4.dispatchEvent(new MouseEvent('touchstart', { bubbles: true, ctrlKey: true, shiftKey: true }));
+        click(row4, { ctrlKey: true, shiftKey: true });
         assertSelectedCellRanges(
             [
                 { rowEndIndex: 0, rowStartIndex: 0, columns },
@@ -218,5 +217,30 @@ describe('Row Numbers Cell Selection', () => {
             ],
             api
         );
+    });
+
+    test('CTRL-click to deselect when range created bottom-up', async () => {
+        const [api] = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: true,
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+
+        const row1 = getByTestId(gridDiv, agTestIdFor.rowNumber('0'));
+        const row4 = getByTestId(gridDiv, agTestIdFor.rowNumber('3'));
+        const columns = api.getColumns()!.map((c) => c.getColId());
+
+        click(row4);
+        click(row1, { shiftKey: true });
+        assertSelectedCellRanges([{ rowStartIndex: 3, rowEndIndex: 0, columns }], api);
+
+        click(row1, { ctrlKey: true });
+        assertSelectedCellRanges([{ rowStartIndex: 3, rowEndIndex: 1, columns }], api);
+
+        click(row4, { ctrlKey: true });
+        assertSelectedCellRanges([{ rowStartIndex: 2, rowEndIndex: 1, columns }], api);
     });
 });

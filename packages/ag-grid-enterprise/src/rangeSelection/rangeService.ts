@@ -416,21 +416,27 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
 
         if (isRowNumber && isMultiKey && containingRange) {
+            // CTRL-click row number that has a containing range means we are de-selecting
             const firstRow = _getFirstRow(beans);
             const lastRow = _getLastRow(beans);
             const startRow = this.getRangeStartRow(containingRange);
             const endRow = this.getRangeEndRow(containingRange);
 
             if (!startRow && _isSameRow(firstRow!, cell)) {
-                replaceEdgeRow(containingRange, _getRowBelow(beans, firstRow!), 'startRow', 'endRow');
+                // we've clicked the first row, so the top edge of the range should be moved down
+                replaceEdgeRow(containingRange, _getRowBelow(beans, firstRow!), 'top');
             } else if (!endRow && _isSameRow(lastRow!, cell)) {
-                replaceEdgeRow(containingRange, _getRowBelow(beans, firstRow!), 'endRow', 'startRow');
+                // we've clicked the last row, so the bottom edge of the range should be moved up
+                replaceEdgeRow(containingRange, _getRowAbove(beans, lastRow!), 'bottom');
             } else if (_isSameRow(startRow, endRow)) {
+                // there's only one row in the range, so we remove the range entirely
                 _removeFromArray(this.cellRanges, containingRange);
             } else if (_isSameRow(startRow, cell)) {
-                containingRange.startRow = _getRowBelow(beans, cell) ?? undefined;
+                // we've clicked the top row of the range, so the top edge of the range should be moved down
+                replaceEdgeRow(containingRange, _getRowBelow(beans, cell), 'top');
             } else if (_isSameRow(endRow, cell)) {
-                containingRange.endRow = _getRowAbove(beans, cell) ?? undefined;
+                // we've clicked the bottom row of the range, so the bottom edge of the range should be moved up
+                replaceEdgeRow(containingRange, _getRowAbove(beans, cell), 'bottom');
             } else {
                 const rowAbove = _getRowAbove(beans, cell);
                 const rowBelow = _getRowBelow(beans, cell);
@@ -1500,12 +1506,12 @@ function isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
     return isLastColumn && isLastRow;
 }
 
-function replaceEdgeRow(
-    range: CellRange,
-    row: RowPosition | null,
-    fieldA: 'startRow' | 'endRow',
-    fieldB: 'startRow' | 'endRow'
-) {
-    const key = !range.startRow || !range.endRow || _isRowBefore(range[fieldA]!, range[fieldB]!) ? fieldA : fieldB;
+function replaceEdgeRow(range: CellRange, row: RowPosition | null, topOrBottom: 'top' | 'bottom') {
+    let key: 'startRow' | 'endRow';
+    if (topOrBottom === 'top') {
+        key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'startRow' : 'endRow';
+    } else {
+        key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'endRow' : 'startRow';
+    }
     range[key] = row ?? undefined;
 }
