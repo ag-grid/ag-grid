@@ -58,6 +58,10 @@ export class DateCompWrapper {
     public destroy(): void {
         this.alive = false;
         this.dateComp = this.context.destroyBean(this.dateComp);
+        if (this.validityTimeout) {
+            clearTimeout(this.validityTimeout);
+            this.validityTimeout = undefined;
+        }
     }
 
     public getDate(): Date | null {
@@ -115,7 +119,7 @@ export class DateCompWrapper {
                 if (this.validityTimeout) {
                     clearTimeout(this.validityTimeout);
                 }
-                this.validityTimeout = setTimeout(() => eInput.reportValidity(), 1000);
+                this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
             }
 
             _setAriaInvalid(eInput, isInvalid);
