@@ -750,18 +750,18 @@ export {
 
 // overlays
 export {
+    ILoadingOverlayParams,
+    INoRowsOverlayParams,
     IOverlay,
     IOverlayParams,
     IOverlayComp,
+    LoadingOverlayUserParams,
+    NoRowsOverlayUserParams,
     OverlaySelectorFunc,
     OverlaySelectorResult,
 } from './rendering/overlays/overlayComponent';
-export {
-    ILoadingOverlayComp,
-    ILoadingOverlayParams,
-    ILoadingOverlay,
-} from './rendering/overlays/loadingOverlayComponent';
-export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
+export { ILoadingOverlayComp, ILoadingOverlay } from './rendering/overlays/loadingOverlayComponent';
+export { INoRowsOverlayComp, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
 export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features

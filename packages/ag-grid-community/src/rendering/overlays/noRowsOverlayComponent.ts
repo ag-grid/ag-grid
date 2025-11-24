@@ -1,9 +1,7 @@
 import { _makeNull } from '../../agStack/utils/generic';
 import type { ElementParams } from '../../utils/element';
-import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
+import type { INoRowsOverlayParams, IOverlay, IOverlayComp } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
-
-export interface INoRowsOverlayParams<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
 
 export interface INoRowsOverlay<TData = any, TContext = any> extends IOverlay<TData, TContext, INoRowsOverlayParams> {}
 
@@ -15,17 +13,18 @@ export class NoRowsOverlayComponent
     extends OverlayComponent<any, any, INoRowsOverlayParams>
     implements INoRowsOverlayComp<any, any>
 {
-    public init(): void {
-        const customTemplate = _makeNull(this.gos.get('overlayNoRowsTemplate')?.trim());
+    public init(params: INoRowsOverlayParams): void {
+        const { beans, gos } = this;
+        const customTemplate = _makeNull(gos.get('overlayNoRowsTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? NoRowsOverlayElement);
 
         if (!customTemplate) {
-            const localeTextFunc = this.getLocaleTextFunc();
-            const noRowsText = localeTextFunc('noRowsToShow', 'No Rows To Show');
+            const noRowsText =
+                params.agNoRowsOverlayText ?? this.getLocaleTextFunc()('noRowsToShow', 'No Rows To Show');
             this.getGui().textContent = noRowsText;
 
-            this.beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
+            beans.ariaAnnounce.announceValue(noRowsText, 'overlay');
         }
     }
 }

@@ -2,10 +2,8 @@ import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _makeNull } from '../../agStack/utils/generic';
 import type { ElementParams } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
-import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
+import type { ILoadingOverlayParams, IOverlay, IOverlayComp } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
-
-export interface ILoadingOverlayParams<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
 
 export interface ILoadingOverlay<TData = any, TContext = any>
     extends IOverlay<TData, TContext, ILoadingOverlayParams> {}
@@ -28,20 +26,20 @@ export class LoadingOverlayComponent
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
-    public init(): void {
-        const customTemplate = _makeNull(this.gos.get('overlayLoadingTemplate')?.trim());
+    public init(params: ILoadingOverlayParams): void {
+        const { beans, gos } = this;
+        const customTemplate = _makeNull(gos.get('overlayLoadingTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? LoadingOverlayElement);
 
         if (!customTemplate) {
-            const eLoadingIcon = _createIconNoSpan('overlayLoading', this.beans, null);
+            const eLoadingIcon = _createIconNoSpan('overlayLoading', beans, null);
             if (eLoadingIcon) {
                 this.eLoadingIcon.appendChild(eLoadingIcon);
             }
-            const localeTextFunc = this.getLocaleTextFunc();
-            const loadingText = localeTextFunc('loadingOoo', 'Loading...');
+            const loadingText = params.agLoadingOverlayText ?? this.getLocaleTextFunc()('loadingOoo', 'Loading...');
             this.eLoadingText.textContent = loadingText;
-            this.beans.ariaAnnounce.announceValue(loadingText, 'overlay');
+            beans.ariaAnnounce.announceValue(loadingText, 'overlay');
         }
     }
 }

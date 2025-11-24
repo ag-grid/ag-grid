@@ -4,9 +4,41 @@ import { Component } from '../../widgets/component';
 
 export type AgGridOverlayType = 'agLoadingOverlay' | 'agNoRowsOverlay';
 
-export interface IOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    defaultOverlay: AgGridOverlayType;
+export interface LoadingOverlayUserParams {
+    /**
+     * Custom text for the provided `agLoadingOverlay`.
+     */
+    agLoadingOverlayText?: string;
 }
+
+export interface ILoadingOverlayParams<TData = any, TContext = any>
+    extends LoadingOverlayUserParams,
+        AgGridCommon<TData, TContext> {
+    /**
+     * The default overlay the grid would show in the given state.
+     */
+    defaultOverlay: 'agLoadingOverlay';
+}
+
+export interface NoRowsOverlayUserParams {
+    /**
+     * Custom text for the `agNowRowsOverlay`.
+     */
+    agNoRowsOverlayText?: string;
+}
+
+export interface INoRowsOverlayParams<TData = any, TContext = any>
+    extends NoRowsOverlayUserParams,
+        AgGridCommon<TData, TContext> {
+    /**
+     * The default overlay the grid would show in the given state.
+     */
+    defaultOverlay: 'agNoRowsOverlay';
+}
+
+export type IOverlayParams<TData = any, TContext = any> =
+    | ILoadingOverlayParams<TData, TContext>
+    | INoRowsOverlayParams<TData, TContext>;
 
 export interface IOverlay<
     TData = any,
@@ -36,7 +68,7 @@ export abstract class OverlayComponent<
         super();
     }
 
-    public abstract init(): void;
+    public abstract init(params: IOverlayParams): void;
 }
 
 export interface OverlaySelectorFunc<TData = any, TContext = any> {
