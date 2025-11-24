@@ -10,7 +10,7 @@ import { _getHeaderCompDetails } from '../../../components/framework/userCompUti
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import { _getSortDefFromInput } from '../../../entities/agColumn';
-import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
+import type { HeaderClassParams, SortDef, SortDirection } from '../../../entities/colDef';
 import { _addGridCommonParams, _getSuppressColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
@@ -220,7 +220,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             progressSort: (multiSort?: boolean) => {
                 sortSvc?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
-            setSort: (sort: SortDirection, multiSort?: boolean) => {
+            setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => {
                 sortSvc?.setSortForColumn(
                     this.column,
                     _getSortDefFromInput(sort, this.column.colDef)!,
