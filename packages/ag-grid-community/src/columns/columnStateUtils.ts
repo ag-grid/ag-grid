@@ -2,7 +2,7 @@ import { _areEqual, _removeFromArray } from '../agStack/utils/array';
 import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
+import { AgColumn, _getSortDefFromInput } from '../entities/agColumn';
 import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -113,7 +113,7 @@ export function _applyColumnState(
             beans,
             column,
             getValue('hide').value1,
-            getValue('sort').value1,
+            _getSortDefFromInput({ type: getValue('sortType').value1, direction: getValue('sort').value1 }),
             getValue('sortIndex').value1,
             getValue('pinned').value1,
             flex,
@@ -427,7 +427,9 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
-            cs.sort != c.getSort() || cs.sortType != c.getSortDef()?.type || cs.sortIndex != c.getSortIndex();
+            cs.sort != c.getSortDef()?.direction ||
+            cs.sortType != c.getSortDef()?.type ||
+            cs.sortIndex != c.getSortIndex();
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {
             sortSvc?.dispatchSortChangedEvents(source, changedColumns);
@@ -456,7 +458,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        const sort = column.getSort() != null ? column.getSort() : null;
+        const sort = column.getSortDef()?.direction;
         const sortType = column.getSortDef()?.type;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 

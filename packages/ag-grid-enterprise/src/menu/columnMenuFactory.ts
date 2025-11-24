@@ -1,5 +1,4 @@
 import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
-import { _normalizeSortType } from 'ag-grid-community';
 import {
     BeanStub,
     _addGridCommonParams,
@@ -8,6 +7,8 @@ import {
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
     _isTreeData,
+    _normalizeSortDirection,
+    _normalizeSortType,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
@@ -128,24 +129,25 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             !isPrimary || (aggFuncSvc && column.isAllowValue() && (doingGrouping || grandTotalRow || treeData));
 
         if (sortSvc && !isLegacyMenuEnabled && column.isSortable()) {
-            const direction = column.getSortDef()?.direction;
-            const currentType = _normalizeSortType(column);
+            const sortDef = column.getSortDef();
+            const currentDirection = _normalizeSortDirection(sortDef?.direction);
+            const currentType = _normalizeSortType(sortDef?.type);
             const sortingOrderByType = new Set(
-                colDef.sortingOrder?.map((sortDef) => _getSortDefFromInput(sortDef)?.type ?? 'default') || ['default']
+                colDef.sortingOrder?.map((sortDef) => _getSortDefFromInput(sortDef).type) || ['default']
             );
-            if ((direction !== 'asc' || currentType !== 'default') && sortingOrderByType.has('default')) {
+            if ((currentDirection !== 'asc' || currentType !== 'default') && sortingOrderByType.has('default')) {
                 result.push('sortAscending');
             }
-            if ((direction !== 'desc' || currentType !== 'default') && sortingOrderByType.has('default')) {
+            if ((currentDirection !== 'desc' || currentType !== 'default') && sortingOrderByType.has('default')) {
                 result.push('sortDescending');
             }
-            if ((direction !== 'asc' || currentType !== 'absolute') && sortingOrderByType.has('absolute')) {
+            if ((currentDirection !== 'asc' || currentType !== 'absolute') && sortingOrderByType.has('absolute')) {
                 result.push('sortAbsoluteAscending');
             }
-            if ((direction !== 'desc' || currentType !== 'absolute') && sortingOrderByType.has('absolute')) {
+            if ((currentDirection !== 'desc' || currentType !== 'absolute') && sortingOrderByType.has('absolute')) {
                 result.push('sortAbsoluteDescending');
             }
-            if (direction) {
+            if (currentDirection) {
                 result.push('sortUnSort');
             }
             result.push(MENU_ITEM_SEPARATOR);

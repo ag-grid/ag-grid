@@ -380,7 +380,17 @@ export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeServ
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
-export { AgColumn, isColumn, _getSortDefFromInput, _normalizeSortType } from './entities/agColumn';
+export {
+    AgColumn,
+    isColumn,
+    _getSortDefFromInput,
+    _isSortDirectionValid,
+    _isSortTypeValid,
+    _isSortDefValid,
+    _areSortDefsEqual,
+    _normalizeSortDirection,
+    _normalizeSortType,
+} from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {

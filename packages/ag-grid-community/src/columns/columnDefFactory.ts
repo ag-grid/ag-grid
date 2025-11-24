@@ -163,7 +163,7 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
         colDefCloned.hide = col.isVisible() ? undefined : true;
         colDefCloned.pinned = col.isPinned() ? col.getPinned() : null;
 
-        colDefCloned.sort = col.getSort() ? col.getSort() : null;
+        // colDefCloned.sort = col.getSort() ? col.getSort() : null; // soft deprecation, colDef.sort is a setter which relies on sortDef
         colDefCloned.sortDef = col.getSortDef();
         colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
 
