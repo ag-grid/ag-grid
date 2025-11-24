@@ -14,6 +14,7 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
+    private validityTimeout: number | undefined = undefined;
 
     constructor(
         private readonly context: Context,
@@ -102,11 +103,22 @@ export class DateCompWrapper {
     }
 
     public setCustomValidity(message: string): void {
-        const eInput = this.dateComp?.getGui().querySelector('.ag-input-field-input');
+        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>('.ag-input-field-input');
 
         if (eInput && 'setCustomValidity' in eInput) {
-            (eInput as HTMLInputElement).setCustomValidity(message);
-            _setAriaInvalid(eInput, message.length > 0);
+            const isInvalid = message.length > 0;
+            eInput.setCustomValidity(message);
+            // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
+            // so we need to call `reportValidity`. However, we also need this to be delayed, otherwise it will
+            // interfere with user inputs
+            if (isInvalid) {
+                if (this.validityTimeout) {
+                    clearTimeout(this.validityTimeout);
+                }
+                this.validityTimeout = setTimeout(() => eInput.reportValidity(), 1000);
+            }
+
+            _setAriaInvalid(eInput, isInvalid);
         }
     }
 }
