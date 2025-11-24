@@ -782,6 +782,7 @@ export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef 
 
 export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
     if (sortDef1 === sortDef2) {
+        // covers nullish too, aka both default
         return true;
     }
     if (!sortDef1 || !sortDef2) {

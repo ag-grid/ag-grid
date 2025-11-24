@@ -9,6 +9,7 @@ import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
+import { _getSortDefFromInput } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
 import { _addGridCommonParams, _getSuppressColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
@@ -222,7 +223,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             setSort: (sort: SortDirection, multiSort?: boolean) => {
                 sortSvc?.setSortForColumn(
                     this.column,
-                    { direction: sort, type: this.column.sortDef?.type ?? 'default' },
+                    _getSortDefFromInput(sort, this.column.colDef)!,
                     !!multiSort,
                     'uiColumnSorted'
                 );
