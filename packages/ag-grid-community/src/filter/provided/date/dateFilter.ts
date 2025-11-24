@@ -285,5 +285,5 @@ function getValidityMessageKey(
     if (!isInvalid) {
         return null;
     }
-    return isFrom ? 'tooEarly' : 'tooLate';
+    return isFrom ? 'tooLate' : 'tooEarly';
 }
