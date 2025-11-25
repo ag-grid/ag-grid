@@ -70,8 +70,7 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
     return gos.get('maintainColumnOrder');
 }
 
-export function _isRowNumbers(beans: BeanCollection) {
-    const { gos, formula } = beans;
+export function _isRowNumbers({ gos, formula }: BeanCollection) {
     const rowNumbers = gos.get('rowNumbers');
     return rowNumbers || (!!formula?.active && rowNumbers !== false);
 }

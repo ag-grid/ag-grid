@@ -78,8 +78,8 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     private isFullAsync(): boolean {
-        const { allowTyping, filterList, filterListAsync } = this.params;
-        return !!(filterListAsync && filterList && allowTyping);
+        const { allowTyping, filterListAsync } = this.params;
+        return !!(filterListAsync && allowTyping);
     }
 
     private buildRichSelectParams(): {
@@ -142,6 +142,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
 
         if (typeof values === 'function') {
             if (fullAsync) {
+                params.filterList = ret.filterList = true; // force filterList when doing full async
                 params.search = formatValue?.(value);
                 ret.onSearch = this.onSearchCallback;
                 ret.allowNoResultsCopy = true;

@@ -292,6 +292,70 @@ describe('ag-grid rows-ordering', () => {
         `);
     });
 
+    test('suppressMaintainUnsortedOrder and deletion (with id)', async () => {
+        const rowData1 = cachedJSONObjects.array([
+            { id: '1', make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
+            { id: '2', make: 'Ford', model: 'F-Series', price: 33850, electric: false },
+            {
+                id: '3',
+                make: 'Toyota',
+                model: 'Corolla',
+                price: 29600,
+                electric: false,
+            },
+            { id: '4', make: 'Mercedes', model: 'EQA', price: 48890, electric: true },
+            { id: '5', make: 'Fiat', model: '500', price: 15774, electric: false },
+            { id: '6', make: 'Nissan', model: 'Juke', price: 20675, electric: false },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }],
+            rowData: rowData1,
+            getRowId: (params) => params.data.id,
+            suppressMaintainUnsortedOrder: true,
+        });
+
+        const gridRowsOptions = {
+            ...defaultGridRowsOptions,
+            columns: true,
+        };
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:2 make:"Ford" model:"F-Series" price:33850 electric:false
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            └── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+        `);
+
+        const rowData2 = rowData1.filter((rd) => rd.id !== '2');
+
+        api.setGridOption('rowData', rowData2);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            └── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+        `);
+
+        api.setGridOption('rowData', rowData1);
+
+        await new GridRows(api, 'data', gridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            ├── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+            └── LEAF id:2 make:"Ford" model:"F-Series" price:33850 electric:false
+        `);
+    });
+
     test('complex setRowData with remove, update, change order, add', async () => {
         const rowData1 = [
             { id: '1', x: 1 },

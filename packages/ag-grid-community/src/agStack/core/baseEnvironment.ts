@@ -74,7 +74,9 @@ export abstract class BaseEnvironment<
         const themeStyleContainer = gos.get('themeStyleContainer');
         const hasShadowRootGlobal = typeof ShadowRoot !== 'undefined';
         const isShadowRoot = hasShadowRootGlobal && eRootDiv.getRootNode() instanceof ShadowRoot;
-        this.eStyleContainer = gos.get('themeStyleContainer') ?? (isShadowRoot ? eRootDiv : document.head);
+        this.eStyleContainer =
+            (typeof themeStyleContainer === 'function' ? themeStyleContainer() : themeStyleContainer) ??
+            (isShadowRoot ? eRootDiv : document.head);
         if (!themeStyleContainer && !isShadowRoot && hasShadowRootGlobal) {
             warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this), this.addDestroyFunc.bind(this));
         }

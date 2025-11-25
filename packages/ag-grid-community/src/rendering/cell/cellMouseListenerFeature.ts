@@ -154,7 +154,7 @@ export class CellMouseListenerFeature extends BeanStub {
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
-        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
+        const { shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
         const { eventSvc, rangeSvc, rowNumbersSvc, focusSvc, gos, editSvc } = beans;
@@ -185,10 +185,6 @@ export class CellMouseListenerFeature extends BeanStub {
         const isRowNumberColumn = isRowNumberCol(column);
 
         if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
-            if (rangeSvc) {
-                mouseEvent.preventDefault();
-            }
-            mouseEvent.stopImmediatePropagation();
             return;
         }
 
@@ -241,18 +237,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        if (rangeSvc) {
-            if (isRowNumberColumn) {
-                mouseEvent.preventDefault();
-            }
-            const hasRightClickedOnRowNumber = _interpretAsRightClick(beans, mouseEvent) && isRowNumberColumn;
-            if (shiftKey) {
-                rangeSvc.extendLatestRangeToCell(cellPosition);
-            } else if (!hasRightClickedOnRowNumber) {
-                const isMultiKey = ctrlKey || metaKey;
-                rangeSvc.setRangeToCell(cellPosition, isMultiKey);
-            }
-        }
+        rangeSvc?.handleCellMouseDown(mouseEvent, cellPosition);
 
         fireMouseDownEvent();
     }

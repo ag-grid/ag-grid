@@ -47,7 +47,7 @@ const gridOptions: GridOptions<any> = {
         },
     },
     defaultColDef: {
-        headerName: '',
+        cellDataType: 'text',
         allowFormula: true,
         editable: true,
         flex: 1,

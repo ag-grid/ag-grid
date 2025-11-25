@@ -2,6 +2,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
@@ -13,6 +14,7 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     ClientSideRowModelModule,
     FormulaModule,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
@@ -44,7 +46,6 @@ const gridOptions: GridOptions<any> = {
         },
     },
     defaultColDef: {
-        headerName: '',
         editable: true,
     },
     rowData,

@@ -40,6 +40,7 @@ import {
     _getRowCtrlForEventTarget,
     _getRowNode,
     _getSuppressMultiRanges,
+    _interpretAsRightClick,
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
@@ -381,6 +382,83 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const endIndex = _getAbsoluteRowIndex(beans, end);
 
         return endIndex - startIndex + 1;
+    }
+
+    public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
+        const { beans } = this;
+
+        const isRowNumber = isRowNumberCol(cell.column);
+        if (isRowNumber) {
+            event.preventDefault();
+        }
+
+        if (event.shiftKey) {
+            return this.extendLatestRangeToCell(cell);
+        }
+
+        if (isRowNumber && _interpretAsRightClick(beans, event)) {
+            return;
+        }
+
+        const isMultiKey = event.ctrlKey || event.metaKey;
+
+        this.setSelectionMode(isRowNumber);
+        const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
+        if (!columns) {
+            return;
+        }
+
+        const containingRange = this.findContainingRange({
+            columns,
+            startRow: cell,
+            endRow: cell,
+        });
+
+        if (isRowNumber && isMultiKey && containingRange) {
+            this.removeRowFromRowNumberRange(cell, containingRange);
+        } else {
+            this.setRangeToCell(cell, isMultiKey);
+        }
+    }
+
+    private removeRowFromRowNumberRange(cell: CellPosition, containingRange: CellRange): void {
+        const { beans, cellRanges } = this;
+        const firstRow = _getFirstRow(beans);
+        const lastRow = _getLastRow(beans);
+        const startRow = this.getRangeStartRow(containingRange);
+        const endRow = this.getRangeEndRow(containingRange);
+
+        if (!startRow && _isSameRow(firstRow!, cell)) {
+            // we've clicked the first row, so the top edge of the range should be moved down
+            replaceEdgeRow(containingRange, _getRowBelow(beans, firstRow!), 'top');
+        } else if (!endRow && _isSameRow(lastRow!, cell)) {
+            // we've clicked the last row, so the bottom edge of the range should be moved up
+            replaceEdgeRow(containingRange, _getRowAbove(beans, lastRow!), 'bottom');
+        } else if (_isSameRow(startRow, endRow)) {
+            // there's only one row in the range, so we remove the range entirely
+            _removeFromArray(cellRanges, containingRange);
+        } else if (_isSameRow(startRow, cell)) {
+            // we've clicked the top row of the range, so the top edge of the range should be moved down
+            replaceEdgeRow(containingRange, _getRowBelow(beans, cell), 'top');
+        } else if (_isSameRow(endRow, cell)) {
+            // we've clicked the bottom row of the range, so the bottom edge of the range should be moved up
+            replaceEdgeRow(containingRange, _getRowAbove(beans, cell), 'bottom');
+        } else {
+            const rowAbove = _getRowAbove(beans, cell);
+            const rowBelow = _getRowBelow(beans, cell);
+
+            // have to set both because start row could come after end row
+            containingRange.startRow = startRow;
+            containingRange.endRow = rowAbove ?? undefined;
+
+            cellRanges.push({
+                ...containingRange,
+                startRow: rowBelow ?? undefined,
+                endRow,
+            });
+        }
+
+        this.dispatchChangedEvent(true, true);
     }
 
     public setRangeToCell(cell: CellPosition, appendRange = false): void {
@@ -876,7 +954,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean {
-        const { beans, cellRanges } = this;
+        const { beans } = this;
         const firstRow = _getFirstRow(beans);
         const lastRow = _getLastRow(beans);
         if (!firstRow || !lastRow) {
@@ -885,7 +963,32 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const columns = column.isColumn ? [column] : column.getDisplayedLeafColumns();
 
-        return findRangeContainingCols(cellRanges, columns, firstRow, lastRow) != null;
+        return this.findContainingRange({ columns, startRow: firstRow, endRow: lastRow }, true) != null;
+    }
+
+    private findContainingRange(
+        { columns, startRow, endRow }: Omit<CellRange, 'startColumn'>,
+        matchOnly = false
+    ): CellRange | undefined {
+        // iterating backwards since we're likely interested in the most recently added range
+        const ranges = this.cellRanges;
+        for (let i = ranges.length - 1; i >= 0; i--) {
+            const range = ranges[i];
+            const hasCols = columns.every((c) => range.columns.includes(c));
+
+            let condition = false;
+            if (matchOnly) {
+                condition = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
+            } else {
+                const isStartBeforeOrEqual = startRow && this.isRowInRange(startRow, range);
+                const isEndAfterOrEqual = endRow && this.isRowInRange(endRow, range);
+                condition = !!isStartBeforeOrEqual && !!isEndAfterOrEqual;
+            }
+
+            if (hasCols && condition) {
+                return range;
+            }
+        }
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
@@ -910,9 +1013,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const firstRow = this.getRangeStartRow(cellRange);
         const lastRow = this.getRangeEndRow(cellRange);
 
-        // compare rowPinned with == instead of === because it can be `null` or `undefined`
-        const equalsFirstRow = thisRow.rowIndex === firstRow.rowIndex && thisRow.rowPinned == firstRow.rowPinned;
-        const equalsLastRow = thisRow.rowIndex === lastRow.rowIndex && thisRow.rowPinned == lastRow.rowPinned;
+        const equalsFirstRow = _isSameRow(thisRow, firstRow);
+        const equalsLastRow = _isSameRow(thisRow, lastRow);
 
         if (equalsFirstRow || equalsLastRow) {
             return true;
@@ -1202,13 +1304,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const firstIndex = Math.min(fromIndex, toIndex);
         const lastIndex = firstIndex === fromIndex ? toIndex : fromIndex;
-        const columns: AgColumn[] = [];
 
-        for (let i = firstIndex; i <= lastIndex; i++) {
-            columns.push(allColumns[i]);
-        }
-
-        return this.getColumnsFromModel(columns);
+        return this.getColumnsFromModel(allColumns.slice(firstIndex, lastIndex + 1));
     }
 
     private focusCellOnNewColumn(currentRange: CellRange, column: AgColumn): void {
@@ -1290,7 +1387,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
             const column = clickedColumn.isColumn ? clickedColumn : _last(clickedColumn.getLeafColumns());
 
-            const range = findRangeContainingCols(cellRanges, [root], firstRow, lastRow);
+            const range = this.findContainingRange({ columns: [root], startRow: firstRow, endRow: lastRow }, true);
             if (!range) {
                 // when no existing range exists, clear the last cell range
                 // and start from the root
@@ -1304,7 +1401,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (hasRanges && (suppressMultiRanges || !isMeta)) {
                 this.removeAllCellRanges(true);
             }
-            const foundRange = findRangeContainingCols(cellRanges, [clickedColumn], firstRow, lastRow);
+            const foundRange = this.findContainingRange(
+                { columns: [clickedColumn], startRow: firstRow, endRow: lastRow },
+                true
+            );
 
             const lastCellRange = foundRange
                 ? this.deselectColumn(clickedColumn, firstRow, lastRow)
@@ -1320,7 +1420,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             }
             // clicked a column group so we want to select all leaf columns of the group
             const leafCols = clickedColumn.getDisplayedLeafColumns();
-            const foundRange = findRangeContainingCols(cellRanges, leafCols, firstRow, lastRow);
+            const foundRange = this.findContainingRange(
+                { columns: leafCols, startRow: firstRow, endRow: lastRow },
+                true
+            );
 
             if (foundRange) {
                 _removeFromArray(cellRanges, foundRange);
@@ -1406,20 +1509,12 @@ function isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
     return isLastColumn && isLastRow;
 }
 
-function findRangeContainingCols(
-    ranges: readonly CellRange[],
-    cols: AgColumn[],
-    startRow: RowPosition,
-    endRow: RowPosition
-): CellRange | undefined {
-    // iterating backwards since we're likely interested in the most recently added range
-    for (let i = ranges.length - 1; i >= 0; i--) {
-        const range = ranges[i];
-        const hasCols = cols.every((c) => range.columns.includes(c));
-        const sameRows = _isSameRow(range.startRow, startRow) && _isSameRow(range.endRow, endRow);
-
-        if (hasCols && sameRows) {
-            return range;
-        }
+function replaceEdgeRow(range: CellRange, row: RowPosition | null, topOrBottom: 'top' | 'bottom') {
+    let key: 'startRow' | 'endRow';
+    if (topOrBottom === 'top') {
+        key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'startRow' : 'endRow';
+    } else {
+        key = !range.startRow || !range.endRow || _isRowBefore(range.startRow, range.endRow) ? 'endRow' : 'startRow';
     }
+    range[key] = row ?? undefined;
 }
