@@ -8,6 +8,7 @@ import { TestGridsManager } from '../testGridsManager';
 import { log, unindentText } from '../utils';
 import { GridRowsDiagramTree } from './gridRowsDiagramTree';
 import { GridRowsErrors } from './gridRowsErrors';
+import { buildRowElementsMap, collectRowElements } from './rowElementLookup';
 import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
 import { GridRowsValidator } from './validation/gridRowsValidator';
 
@@ -138,7 +139,7 @@ export class GridRows<TData = any> {
     }
 
     public get rowsHtmlElements(): HTMLElement[] {
-        return (this.#rowsHtmlElements ??= Array.from(this.gridHtmlElement?.querySelectorAll('[row-id]') ?? []));
+        return (this.#rowsHtmlElements ??= collectRowElements(this.gridHtmlElement));
     }
 
     public getAllRowNodesData(): (TData | undefined)[] {
@@ -188,30 +189,7 @@ export class GridRows<TData = any> {
         id = String(id);
         let map = this.#rowsHtmlElementsMap;
         if (!map) {
-            map = new Map<string, HTMLElement[]>();
-            for (const rowElement of this.rowsHtmlElements) {
-                const rowId = rowElement.getAttribute('row-id');
-                if (rowId !== null) {
-                    const existing = map.get(rowId);
-                    if (existing) {
-                        const index = existing.indexOf(rowElement);
-                        const isMainRowElement = rowElement.closest('.ag-center-cols-container') !== null;
-                        if (index >= 0) {
-                            if (isMainRowElement && index > 0) {
-                                existing.splice(index, 1);
-                                existing.unshift(rowElement);
-                            }
-                        } else if (isMainRowElement) {
-                            existing.unshift(rowElement);
-                        } else {
-                            existing.push(rowElement);
-                        }
-                    } else {
-                        const rowElementArray = [rowElement];
-                        map.set(rowId, rowElementArray);
-                    }
-                }
-            }
+            map = buildRowElementsMap(this.rowsHtmlElements);
             this.#rowsHtmlElementsMap = map;
         }
         return map.get(id) ?? [];

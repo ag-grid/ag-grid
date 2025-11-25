@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import {
@@ -11,6 +12,7 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
+import type { DragAndDropIntermediateStepContext } from '../../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
 
 const createGridManager = () =>
@@ -143,6 +145,120 @@ describe('ag-grid row drag configuration warnings', () => {
         await asyncSetTimeout(3);
 
         expect(wasWarn295Raised()).toBeTruthy();
+    });
+});
+
+describe('drag refreshAfterGroupEdit multi-step interactions', () => {
+    const gridsManager = createGridManager();
+
+    beforeEach(() => {
+        gridsManager.reset();
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('allows dragging a leaf across groups via intermediate hover when suppressMoveWhenRowDragging undefined', async () => {
+        const gridOptions: GridOptions = {
+            animateRows: true,
+            columnDefs: [
+                { field: 'group', rowGroup: true, hide: true },
+                { field: 'value', rowDrag: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Group' },
+            rowData: [
+                { id: '1', group: 'A', value: 'A1' },
+                { id: '2', group: 'A', value: 'A2' },
+                { id: '3', group: 'B', value: 'B1' },
+                { id: '4', group: 'B', value: 'B2' },
+                { id: '5', group: 'C', value: 'C1' },
+                { id: '6', group: 'C', value: 'C2' },
+            ],
+            rowDragManaged: true,
+            refreshAfterGroupEdit: true,
+            groupDefaultExpanded: -1,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-edit-multi-step', gridOptions);
+
+        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A
+            │ ├── LEAF id:1 value:"A1"
+            │ └── LEAF id:2 value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-B
+            │ ├── LEAF id:3 value:"B1"
+            │ └── LEAF id:4 value:"B2"
+            └─┬ LEAF_GROUP id:row-group-group-C
+            · ├── LEAF id:5 value:"C1"
+            · └── LEAF id:6 value:"C2"
+        `);
+
+        const intermediate = `
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A
+            │ └── LEAF id:1 value:"A1"
+            ├─┬ LEAF_GROUP id:row-group-group-B
+            │ ├── LEAF id:3 value:"B1"
+            │ ├── LEAF id:4 value:"B2"
+            │ └── LEAF id:2 value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-C
+            · ├── LEAF id:5 value:"C1"
+            · └── LEAF id:6 value:"C2"
+        `;
+
+        const intermediateStep = async ({ api, rowDragMoveEvents }: DragAndDropIntermediateStepContext) => {
+            await asyncSetTimeout(0);
+            expect(rowDragMoveEvents.some((event) => event.rowsDrop?.newParent?.id === 'row-group-group-B')).toBe(true);
+            const latestRowsDrop = rowDragMoveEvents[rowDragMoveEvents.length - 1]?.rowsDrop;
+            expect(latestRowsDrop?.allowed).toBe(true);
+            expect(latestRowsDrop?.moved).toBe(true);
+            await waitFor(async () => {
+                const intermediateRows = new GridRows(api, 'after intermediate step', {
+                    checkDom: true,
+                    columns: ['value'],
+                });
+                await intermediateRows.check(intermediate);
+                const draggedRowElement = intermediateRows.getRowHtmlElement('2');
+                expect(draggedRowElement).not.toBeNull();
+                expect(draggedRowElement?.classList.contains('ag-row-dragging')).toBe(true);
+            });
+        };
+
+        await dragAndDropRow({
+            api,
+            source: '2',
+            intermediateTargets: [
+                {
+                    target: '3',
+                    targetYOffsetPercent: 0.4,
+                    afterStep: intermediateStep,
+                },
+            ],
+            target: '6',
+            targetYOffsetPercent: 0.9,
+        });
+
+        await asyncSetTimeout(0);
+
+        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A
+            │ └── LEAF id:1 value:"A1"
+            ├─┬ LEAF_GROUP id:row-group-group-B
+            │ ├── LEAF id:3 value:"B1"
+            │ └── LEAF id:4 value:"B2"
+            └─┬ LEAF_GROUP id:row-group-group-C
+            · ├── LEAF id:5 value:"C1"
+            · ├── LEAF id:6 value:"C2"
+            · └── LEAF id:2 value:"A2"
+        `);
+
+        expect(api.getRowNode('2')?.data.group).toBe('C');
     });
 });
 
