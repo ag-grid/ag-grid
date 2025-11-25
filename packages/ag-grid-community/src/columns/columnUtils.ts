@@ -172,9 +172,11 @@ export function _getColumnStateFromColDef(
     };
 
     if (sortSvc) {
-        const { direction, type } = sortSvc.getSortDefFromColDef(colDef);
-        state.sort = direction;
-        state.sortType = type;
+        const sortDef = sortSvc.getSortDefFromColDef(colDef);
+        if (sortDef) {
+            state.sort = sortDef.direction;
+            state.sortType = sortDef.type;
+        }
     }
 
     return state;

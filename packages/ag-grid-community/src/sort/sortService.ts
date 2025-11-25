@@ -321,7 +321,10 @@ export class SortService extends BeanStub implements NamedBean {
     public initCol(column: AgColumn): void {
         const { sortIndex, initialSortIndex } = column.colDef;
 
-        column.setSortDef(this.getSortDefFromColDef(column.colDef));
+        const sortDef = this.getSortDefFromColDef(column.colDef);
+        if (sortDef) {
+            column.setSortDef(sortDef);
+        }
 
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
@@ -333,7 +336,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public getSortDefFromColDef(colDef: ColDef) {
-        const { sort, initialSort } = colDef;
+        const { sort, initialSort, sortingOrder } = colDef;
         const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
         const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
 
@@ -343,8 +346,11 @@ export class SortService extends BeanStub implements NamedBean {
         if (initialSortIsValid) {
             return _getSortDefFromInput(initialSort);
         }
+        if (sortingOrder?.length) {
+            return _getSortDefFromInput(sortingOrder[0]);
+        }
 
-        return _getSortDefFromInput();
+        return null;
     }
 
     /**

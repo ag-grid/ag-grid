@@ -227,7 +227,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                             .join(', ')}]`;
                     }
                 } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
-                    return `sortingOrder must be an array with at least one element, currently it is ${sortingOrder}`;
+                    return `sortingOrder must be an array with at least one element, currently it is [${sortingOrder}]`;
                 }
                 return null;
             },
