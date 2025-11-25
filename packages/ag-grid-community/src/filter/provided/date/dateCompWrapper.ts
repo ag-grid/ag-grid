@@ -1,4 +1,5 @@
 import { _setAriaInvalid } from '../../../agStack/utils/aria';
+import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
@@ -112,14 +113,23 @@ export class DateCompWrapper {
         if (eInput && 'setCustomValidity' in eInput) {
             const isInvalid = message.length > 0;
             eInput.setCustomValidity(message);
+
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
-            // so we need to call `reportValidity`. However, we also need this to be delayed, otherwise it will
-            // interfere with user inputs
+            // so we need to call `reportValidity`.
             if (isInvalid) {
-                if (this.validityTimeout) {
-                    clearTimeout(this.validityTimeout);
+                if (_isBrowserFirefox()) {
+                    // Report validity immediately because firefox handles it well, as opposed to...
+                    eInput.reportValidity();
+                } else {
+                    // ...other browsers, which reset the date input cursor when reporting validity, so we need to delay.
+                    // For example, when typing "2000", when we get to "200", that is a valid year, which
+                    // triggers validation, and the final keystroke of "0" will instead be interpreted as
+                    // the first keystroke of a new year.
+                    if (this.validityTimeout) {
+                        clearTimeout(this.validityTimeout);
+                    }
+                    this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
                 }
-                this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
             }
 
             _setAriaInvalid(eInput, isInvalid);
