@@ -300,7 +300,7 @@ function getValidityMessageKey(
     toDate: Date | null,
     isFrom: boolean
 ): FilterLocaleTextKey | null {
-    const isInvalid = fromDate != null && toDate != null && fromDate > toDate;
+    const isInvalid = fromDate != null && toDate != null && fromDate >= toDate;
     if (!isInvalid) {
         return null;
     }

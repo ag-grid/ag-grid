@@ -196,7 +196,7 @@ function getValidityMessageKey(
     toValue: number | null,
     isFrom: boolean
 ): FilterLocaleTextKey | null {
-    const isInvalid = fromValue != null && toValue != null && fromValue > toValue;
+    const isInvalid = fromValue != null && toValue != null && fromValue >= toValue;
     if (!isInvalid) {
         return null;
     }
