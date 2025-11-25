@@ -4,7 +4,6 @@ import type {
     DefaultMenuItem,
     IAggFuncService,
     IColsService,
-    IconName,
     LocaleTextFunc,
     MenuItemDef,
     NamedBean,
