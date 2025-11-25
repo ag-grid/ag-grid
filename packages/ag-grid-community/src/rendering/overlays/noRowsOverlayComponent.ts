@@ -1,6 +1,6 @@
 import { _makeNull } from '../../agStack/utils/generic';
 import type { ElementParams } from '../../utils/element';
-import type { INoRowsOverlayParams, IOverlay, IOverlayComp } from './overlayComponent';
+import type { INoRowsOverlayParams, IOverlay, IOverlayComp, NoRowsOverlayUserParams } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
 export interface INoRowsOverlay<TData = any, TContext = any> extends IOverlay<TData, TContext, INoRowsOverlayParams> {}
@@ -10,10 +10,10 @@ export interface INoRowsOverlayComp<TData = any, TContext = any>
 const NoRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-rows-center' };
 
 export class NoRowsOverlayComponent
-    extends OverlayComponent<any, any, INoRowsOverlayParams>
+    extends OverlayComponent<any, any, INoRowsOverlayParams & NoRowsOverlayUserParams>
     implements INoRowsOverlayComp<any, any>
 {
-    public init(params: INoRowsOverlayParams): void {
+    public init(params: INoRowsOverlayParams & NoRowsOverlayUserParams): void {
         const { beans, gos } = this;
         const customTemplate = _makeNull(gos.get('overlayNoRowsTemplate')?.trim());
 

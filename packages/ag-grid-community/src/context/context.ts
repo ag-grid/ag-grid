@@ -167,6 +167,7 @@ export type UserComponentName =
     | 'agCheckboxCellRenderer'
     | 'agLoadingOverlay'
     | 'agNoRowsOverlay'
+    | 'agNoMatchingRowsOverlay'
     | 'agTooltipComponent'
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'

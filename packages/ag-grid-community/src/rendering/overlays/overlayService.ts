@@ -13,7 +13,7 @@ const overlayCompTypeOptionalMethods = ['refresh'];
 const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
 
 type OverlayDef = Readonly<{
-    id: AgGridOverlayType | 'activeOverlay' | 'overlayComponent';
+    id: AgGridOverlayType | 'activeOverlay';
     comp: ComponentType;
     wrapperCls: string;
     exclusive?: boolean;
@@ -34,7 +34,7 @@ const LoadingOverlayDef: OverlayDef = {
         const isLoading = gos.get('loading');
         return isLoading === false || (gos.get('suppressLoadingOverlay') === true && isLoading !== true);
     },
-};
+} as const;
 
 const NoRowsOverlayDef: OverlayDef = {
     id: 'agNoRowsOverlay',
@@ -43,6 +43,12 @@ const NoRowsOverlayDef: OverlayDef = {
     compKey: 'noRowsOverlayComponent',
     paramsKey: 'noRowsOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => gos.get('suppressNoRowsOverlay'),
+};
+
+const NoMatchingRowsOverlayDef: OverlayDef = {
+    id: 'agNoMatchingRowsOverlay',
+    comp: overlayCompType('noMatchingRowsOverlayComponent'),
+    wrapperCls: 'ag-overlay-no-matching-rows-wrapper',
 };
 
 const CustomOverlayDef: Readonly<OverlayDef> = {
@@ -56,13 +62,15 @@ const getOverlayDef = (activeOverlay: any): OverlayDef | null => {
     if (!activeOverlay) {
         return null;
     }
-    if (activeOverlay === 'agLoadingOverlay') {
-        return LoadingOverlayDef;
-    }
-    if (activeOverlay === 'agNoRowsOverlay') {
-        return NoRowsOverlayDef;
-    }
-    return CustomOverlayDef;
+    return (
+        (
+            {
+                agLoadingOverlay: LoadingOverlayDef,
+                agNoRowsOverlay: NoRowsOverlayDef,
+                agNoMatchingRowsOverlay: NoMatchingRowsOverlayDef,
+            } as Record<string, OverlayDef>
+        )[activeOverlay] ?? CustomOverlayDef
+    );
 };
 
 export class OverlayService extends BeanStub implements NamedBean {
@@ -92,6 +100,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 this.showInitialOverlay = false;
                 updateOverlayVisibility();
             },
+            modelUpdated: updateOverlayVisibility,
         });
 
         this.addManagedPropertyListeners(
@@ -258,7 +267,8 @@ export class OverlayService extends BeanStub implements NamedBean {
     }
 
     private getOverlayDef(): OverlayDef | null {
-        const gos = this.gos;
+        const { gos, beans } = this;
+        const { colModel, rowModel, filterManager } = beans;
 
         // Active overlay should take priority over loading=true
         const activeOverlayDef = getOverlayDef(gos.get('activeOverlay'));
@@ -277,7 +287,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             }
         } else if (this.showInitialOverlay && !this.isDisabled(LoadingOverlayDef)) {
             const needsInitialLoadingOverlay =
-                !gos.get('columnDefs') || !this.beans.colModel.ready || (this.clientSide && !gos.get('rowData'));
+                !gos.get('columnDefs') || !colModel.ready || (this.clientSide && !gos.get('rowData'));
 
             if (needsInitialLoadingOverlay) {
                 return LoadingOverlayDef;
@@ -289,8 +299,17 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         // activeOverlay already checked above
 
-        if (this.clientSide && !this.isDisabled(NoRowsOverlayDef) && this.beans.rowModel.isEmpty()) {
+        if (this.clientSide && !this.isDisabled(NoRowsOverlayDef) && rowModel.isEmpty()) {
             return NoRowsOverlayDef;
+        }
+
+        if (
+            !this.isDisabled(NoMatchingRowsOverlayDef) &&
+            !rowModel.isEmpty() &&
+            filterManager?.isAnyFilterPresent() &&
+            rowModel.getRowCount() == 0
+        ) {
+            return NoMatchingRowsOverlayDef;
         }
 
         return null;
@@ -341,7 +360,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         legacyParamsKey?: keyof GridOptions,
         defaultOverlay?: string
     ): any {
-        const { gos } = this.beans;
+        const { gos } = this;
 
         const params = includeActiveOverlayParams
             ? gos.get('activeOverlayParams')
@@ -377,12 +396,10 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
     }
 
-    private isDisabled(def: OverlayDef) {
-        const gos = this.gos;
+    private isDisabled(def: OverlayDef): boolean {
+        const { gos } = this;
 
-        const suppressOverlays = gos.get('suppressOverlays') || [];
-        const viaSuppressOverlays = suppressOverlays.includes(def.id as string);
-
+        const viaSuppressOverlays = (gos.get('suppressOverlays') ?? []).includes(def.id as AgGridOverlayType);
         if (viaSuppressOverlays) {
             return true;
         }

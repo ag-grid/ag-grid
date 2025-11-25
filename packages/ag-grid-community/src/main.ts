@@ -752,11 +752,14 @@ export {
 export {
     ILoadingOverlayParams,
     INoRowsOverlayParams,
+    INoMatchingRowsOverlayParams,
     IOverlay,
     IOverlayParams,
     IOverlayComp,
     LoadingOverlayUserParams,
     NoRowsOverlayUserParams,
+    NoMatchingRowsOverlayUserParams,
+    OverlayUserParams,
     OverlaySelectorFunc,
     OverlaySelectorResult,
 } from './rendering/overlays/overlayComponent';

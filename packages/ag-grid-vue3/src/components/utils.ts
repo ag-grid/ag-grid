@@ -1,6 +1,7 @@
 /* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
+    AgGridOverlayType,
     AlignedGrid,
     AutoGroupColumnDef,
     AutoSizeStrategy,
@@ -811,9 +812,9 @@ export interface Props<TData> {
          */
     debug?: boolean,
     /** Show or hide the loading overlay.
-         * When set to `true`, the loading overlay is shown.
-         * When set to `false`, the loading overlay is hidden, and the automatic overlay will not be shown.
-         * Leave to `undefined` to allow the grid to automatically show/hide the loading overlay when appropriate.
+         * - `true`: the loading overlay is shown.
+         * - `false`: the loading overlay is hidden.
+         * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided.
          * @default undefined
          */
     loading?: boolean,
@@ -863,12 +864,14 @@ export interface Props<TData> {
     suppressNoRowsOverlay?: boolean,
     /** List of provided overlay names to suppress.
          */
-    suppressOverlays?: string[],
+    suppressOverlays?: AgGridOverlayType[],
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
          * @initial
          */
     overlayComponent?: any,
     /** Customise the parameters provided to the `overlayComponent`.
+         * Provided overlays accept parameters specified on the `OverlayUserParams` interface.
+         * Any custom parameters can also be provided for custom overlay components.
          */
     overlayComponentParams?: any,
     /** Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.

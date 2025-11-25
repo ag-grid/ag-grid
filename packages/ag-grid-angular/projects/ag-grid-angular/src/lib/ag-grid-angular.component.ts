@@ -19,6 +19,7 @@ import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 // @START_IMPORTS@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
+    AgGridOverlayType,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
     AutoGroupColumnDef,
@@ -991,9 +992,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public debug: boolean | undefined = undefined;
     /** Show or hide the loading overlay.
-     * When set to `true`, the loading overlay is shown.
-     * When set to `false`, the loading overlay is hidden, and the automatic overlay will not be shown.
-     * Leave to `undefined` to allow the grid to automatically show/hide the loading overlay when appropriate.
+     * - `true`: the loading overlay is shown.
+     * - `false`: the loading overlay is hidden.
+     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided.
      * @default undefined
      */
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
@@ -1043,12 +1044,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** List of provided overlay names to suppress.
      */
-    @Input() public suppressOverlays: string[] | undefined = undefined;
+    @Input() public suppressOverlays: AgGridOverlayType[] | undefined = undefined;
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
      * @initial
      */
     @Input() public overlayComponent: any = undefined;
     /** Customise the parameters provided to the `overlayComponent`.
+     * Provided overlays accept parameters specified on the `OverlayUserParams` interface.
+     * Any custom parameters can also be provided for custom overlay components.
      */
     @Input() public overlayComponentParams: any = undefined;
     /** Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.

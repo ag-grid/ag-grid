@@ -2,7 +2,7 @@ import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _makeNull } from '../../agStack/utils/generic';
 import type { ElementParams } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
-import type { ILoadingOverlayParams, IOverlay, IOverlayComp } from './overlayComponent';
+import type { ILoadingOverlayParams, IOverlay, IOverlayComp, LoadingOverlayUserParams } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
 export interface ILoadingOverlay<TData = any, TContext = any>
@@ -20,13 +20,13 @@ const LoadingOverlayElement: ElementParams = {
     ],
 };
 export class LoadingOverlayComponent
-    extends OverlayComponent<any, any, ILoadingOverlayParams>
+    extends OverlayComponent<any, any, ILoadingOverlayParams & LoadingOverlayUserParams>
     implements ILoadingOverlayComp<any, any>
 {
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
-    public init(params: ILoadingOverlayParams): void {
+    public init(params: ILoadingOverlayParams & LoadingOverlayUserParams): void {
         const { beans, gos } = this;
         const customTemplate = _makeNull(gos.get('overlayLoadingTemplate')?.trim());
 

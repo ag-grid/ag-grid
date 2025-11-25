@@ -125,7 +125,7 @@ export interface CustomInnerHeaderProps<TData = any, TContext = any> extends IHe
 export interface CustomInnerHeaderGroupProps<TData = any, TContext = any> extends IHeaderGroupParams<TData, TContext> {}
 
 /** Props provided to custom overlay components */
-export interface CustomOverlayProps<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
+export type CustomOverlayProps<TData = any, TContext = any> = IOverlayParams<TData, TContext>;
 
 /** Props provided to custom loading overlay component */
 export interface CustomLoadingOverlayProps<TData = any, TContext = any>

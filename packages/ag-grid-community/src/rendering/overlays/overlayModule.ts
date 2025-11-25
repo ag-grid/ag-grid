@@ -2,6 +2,7 @@ import type { _OverlayGridApi } from '../../api/gridApi';
 import type { _ModuleWithApi } from '../../interfaces/iModule';
 import { VERSION } from '../../version';
 import { LoadingOverlayComponent } from './loadingOverlayComponent';
+import { NoMatchingRowsOverlayComponent } from './noMatchingRowsOverlayComponent';
 import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
 import { hideOverlay, showLoadingOverlay, showNoRowsOverlay } from './overlayApi';
 import { OverlayService } from './overlayService';
@@ -16,6 +17,7 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
     userComponents: {
         agLoadingOverlay: LoadingOverlayComponent,
         agNoRowsOverlay: NoRowsOverlayComponent,
+        agNoMatchingRowsOverlay: NoMatchingRowsOverlayComponent,
     },
     apiFunctions: {
         showLoadingOverlay,
