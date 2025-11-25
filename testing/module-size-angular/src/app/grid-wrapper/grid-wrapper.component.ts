@@ -76,7 +76,7 @@ export class GridWrapperComponent {
         { field: 'electric' },
         {
             field: 'month',
-            comparator: (valueA, valueB) => {
+            comparator: (valueA: string, valueB: string) => {
                 const months = [
                     'January',
                     'February',
