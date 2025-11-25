@@ -8,9 +8,15 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
+import {
+    DRAG_NO_MOVE_INTERACTION_CASES,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    dragAndDropRow,
+} from '../../test-utils';
 
-describe.each([false, true])('drag selection flows (suppress move %s)', (suppressMoveWhenRowDragging) => {
+describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMove=%s evt=%s', (noMove, eventType) => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -58,7 +64,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             ],
             readOnlyEdit: true,
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: 1,
             getRowId: (params) => params.data.id,
@@ -82,6 +88,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             source: gridRows.getRowHtmlElement('2')!,
             target: gridRows.getRowHtmlElement('3')!,
             targetYOffsetPercent: 0.1,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -111,6 +118,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             source: gridRows.getRowHtmlElement('2')!,
             target: gridRows.getRowHtmlElement('3')!,
             targetYOffsetPercent: 0.1,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -151,7 +159,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             rowSelection: { mode: 'multiRow' },
             rowDragManaged: true,
             rowDragMultiRow: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: 1,
             getRowId: (params) => params.data.id,
@@ -181,6 +189,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             source: gridRows.getRowHtmlElement('1')!,
             target: gridRows.getRowHtmlElement('4')!,
             targetYOffsetPercent: 0.8,
+            eventType,
         });
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
@@ -197,6 +206,100 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
 
         expect(api.getRowNode('1')?.data.group).toBe('B');
         expect(api.getRowNode('2')?.data.group).toBe('B');
+    });
+
+    test('multi-row drag between nested groups moves two selected row to the target group', async () => {
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                { field: 'country', rowGroup: true, editable: true, hide: true },
+                { field: 'year', rowGroup: true, editable: true, hide: true },
+                { field: 'athlete', rowDrag: true },
+                { field: 'age' },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Athletes',
+                rowDrag: true,
+                minWidth: 180,
+            },
+            rowData: [
+                { id: 'r-1', country: 'EMEA', year: '2020', athlete: 'Alice', age: 23 },
+                { id: 'r-2', country: 'EMEA', year: '2020', athlete: 'Bob', age: 24 },
+                { id: 'r-6', country: 'EMEA', year: '2020', athlete: 'Frank', age: 27 },
+                { id: 'r-3', country: 'EMEA', year: '2021', athlete: 'Carol', age: 25 },
+                { id: 'r-4', country: 'EMEA', year: '2022', athlete: 'Dan', age: 22 },
+                { id: 'r-5', country: 'EMEA', year: '2022', athlete: 'Eve', age: 26 },
+            ],
+            rowSelection: { mode: 'multiRow' },
+            rowDragManaged: true,
+            rowDragMultiRow: true,
+            suppressMoveWhenRowDragging: noMove,
+            refreshAfterGroupEdit: true,
+            groupDefaultExpanded: -1,
+            animateRows: true,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-edit-multi-two-level', gridOptions);
+
+        let gridRows = new GridRows(api, 'before checkbox selection', { checkDom: true, columns: ['athlete'] });
+
+        await gridRows.clickRowSelectionCheckbox(['r-1', 'r-2']);
+
+        await asyncSetTimeout(0);
+
+        gridRows.expectRowSelectionCheckboxState('r-1', true);
+        gridRows.expectRowSelectionCheckboxState('r-2', true);
+
+        gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['athlete'] });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-country-EMEA
+            · ├─┬ LEAF_GROUP id:row-group-country-EMEA-year-2020
+            · │ ├── LEAF selected id:r-1 athlete:"Alice"
+            · │ ├── LEAF selected id:r-2 athlete:"Bob"
+            · │ └── LEAF id:r-6 athlete:"Frank"
+            · ├─┬ LEAF_GROUP id:row-group-country-EMEA-year-2021
+            · │ └── LEAF id:r-3 athlete:"Carol"
+            · └─┬ LEAF_GROUP id:row-group-country-EMEA-year-2022
+            · · ├── LEAF id:r-4 athlete:"Dan"
+            · · └── LEAF id:r-5 athlete:"Eve"
+        `);
+
+        const dragResult = await dragAndDropRow({
+            api,
+            source: gridRows.getRowHtmlElement('r-1')!,
+            target: gridRows.getRowHtmlElement('r-4')!,
+            targetYOffsetPercent: 0.7,
+            eventType,
+        });
+
+        expect(dragResult.error).toBeNull();
+
+        await asyncSetTimeout(0);
+
+        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['athlete'] });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-country-EMEA
+            · ├─┬ LEAF_GROUP id:row-group-country-EMEA-year-2020
+            · │ └── LEAF id:r-6 athlete:"Frank"
+            · ├─┬ LEAF_GROUP id:row-group-country-EMEA-year-2021
+            · │ └── LEAF id:r-3 athlete:"Carol"
+            · └─┬ LEAF_GROUP id:row-group-country-EMEA-year-2022
+            · · ├── LEAF id:r-4 athlete:"Dan"
+            · · ├── LEAF selected id:r-1 athlete:"Alice"
+            · · ├── LEAF selected id:r-2 athlete:"Bob"
+            · · └── LEAF id:r-5 athlete:"Eve"
+        `);
+
+        expect(api.getRowNode('r-1')?.data.country).toBe('EMEA');
+        expect(api.getRowNode('r-2')?.data.country).toBe('EMEA');
+        expect(api.getRowNode('r-1')?.data.year).toBe('2022');
+        expect(api.getRowNode('r-2')?.data.year).toBe('2022');
+        expect(api.getRowNode('r-6')?.data.year).toBe('2020');
+
+        gridRows.expectRowSelectionCheckboxState('r-1', true);
+        gridRows.expectRowSelectionCheckboxState('r-2', true);
     });
 
     test('multi-selection with groups moves all descendants to the drop target', async () => {
@@ -218,7 +321,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             rowSelection: { mode: 'multiRow' },
             rowDragManaged: true,
             rowDragMultiRow: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data?.id,
@@ -278,6 +381,7 @@ describe.each([false, true])('drag selection flows (suppress move %s)', (suppres
             source: gridRows.getRowHtmlElement('a1')!,
             target: gammaGroupEl!,
             targetYOffsetPercent: 0.5,
+            eventType,
         });
 
         expect(dragResult.error).toBeNull();

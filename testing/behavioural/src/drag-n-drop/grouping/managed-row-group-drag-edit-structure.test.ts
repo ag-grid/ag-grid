@@ -8,9 +8,15 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
+import {
+    DRAG_NO_MOVE_INTERACTION_CASES,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    dragAndDropRow,
+} from '../../test-utils';
 
-describe.each([false, true])('drag structural moves (suppress move %s)', (suppressMoveWhenRowDragging) => {
+describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s evt=%s', (noMove, eventType) => {
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
@@ -47,7 +53,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b2', level1: 'Beta', level2: 'B', value: 'B2' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -78,6 +84,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: alphaGroupHandle!,
             target: betaGroupHandle!,
             targetYOffsetPercent: 0.2,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -120,7 +127,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b2', level1: 'Beta', level2: 'Four', value: 'Beta-2' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -153,6 +160,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: betaGroup!,
             target: alphaGroup!,
             targetYOffsetPercent: 0.25,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -195,7 +203,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b2', level1: 'Beta', level2: 'Four', value: 'Beta-2' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -228,6 +236,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: alphaGroup!,
             target: betaLevel2Group!,
             targetYOffsetPercent: 0.55,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -266,7 +275,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b2', level1: 'Beta', level2: 'Four', value: 'Beta-2' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -299,6 +308,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: alphaGroup!,
             target: alphaParent!,
             targetYOffsetPercent: 0.85,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -327,7 +337,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
         expect(dragResult.rowDragMoveEvents.length).toBeGreaterThan(0);
         const lastMoveEvent = dragResult.rowDragMoveEvents[dragResult.rowDragMoveEvents.length - 1];
         expect(lastMoveEvent.rowsDrop?.position).not.toBe('inside');
-        if (suppressMoveWhenRowDragging) {
+        if (noMove) {
             expect(lastMoveEvent.rowsDrop?.allowed).toBe(false);
         }
         expect(lastMoveEvent.rowsDrop?.rows?.length).toBe(0);
@@ -349,7 +359,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b1', level1: 'Beta', level2: 'Three', value: 'Beta-1' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -380,6 +390,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: firstChild!,
             target: alphaParent!,
             targetYOffsetPercent: 0.95,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -422,7 +433,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b2', level1: 'Beta', level2: 'Four', value: 'Beta-2' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -455,6 +466,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: alphaRow!,
             target: betaParent!,
             targetYOffsetPercent: 0.05,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -479,7 +491,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
         expect(api.getRowNode('a1')?.data.level1).toBe('Alpha');
         expect(api.getRowNode('a1')?.data.level2).toBe('One');
         expect(lastMoveEvent.rowsDrop?.position).not.toBe('inside');
-        if (suppressMoveWhenRowDragging) {
+        if (noMove) {
             expect(lastMoveEvent.rowsDrop?.allowed).toBe(false);
         }
         expect(lastMoveEvent.rowsDrop?.rows?.length).toBe(0);
@@ -502,7 +514,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
                 { id: 'b2', level1: 'Beta', level2: 'Four', value: 'Beta-2' },
             ],
             rowDragManaged: true,
-            suppressMoveWhenRowDragging,
+            suppressMoveWhenRowDragging: noMove,
             refreshAfterGroupEdit: true,
             groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
@@ -535,6 +547,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
             source: sourceGroup!,
             target: targetGroup!,
             targetYOffsetPercent: 0.05,
+            eventType,
         });
 
         await asyncSetTimeout(0);
@@ -555,7 +568,7 @@ describe.each([false, true])('drag structural moves (suppress move %s)', (suppre
         `);
 
         const lastMoveEvent = dragResult.rowDragMoveEvents[dragResult.rowDragMoveEvents.length - 1];
-        if (suppressMoveWhenRowDragging) {
+        if (noMove) {
             expect(lastMoveEvent.rowsDrop?.allowed).toBe(false);
         }
         expect(lastMoveEvent.rowsDrop?.rows?.length).toBe(0);

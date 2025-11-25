@@ -2,14 +2,166 @@ import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDra
 
 import { initDataTransferPolyfill } from './polyfills/dataTransfer';
 import { mockGridLayout } from './polyfills/mockGridLayout';
+import { initPointerEventPolyfill } from './polyfills/pointerEvent';
 import { TestGridsManager } from './testGridsManager';
 import { asyncSetTimeout } from './utils';
 
-type FireMouseEventFn = (
+type InteractionEventOptions = (MouseEventInit | PointerEventInit | TouchEventInit) & { dataTransfer?: DataTransfer };
+
+type FireInteractionEventFn = (
     element: Element | Document,
     eventType: string,
-    options?: MouseEventInit & { dataTransfer?: DataTransfer }
+    options?: InteractionEventOptions
 ) => Promise<void>;
+
+export type DragInteractionType = 'mouse' | 'pointer' | 'touch';
+
+export const DRAG_INTERACTION_TYPES: readonly DragInteractionType[] = ['mouse', 'pointer', 'touch'];
+
+export const DRAG_NO_MOVE_INTERACTION_CASES: Array<[boolean, DragInteractionType]> = [true, false].flatMap(
+    (suppressMoveWhenRowDragging) =>
+        DRAG_INTERACTION_TYPES.map(
+            (eventType) => [suppressMoveWhenRowDragging, eventType] as [boolean, DragInteractionType]
+        )
+);
+
+const INTERACTION_EVENT_NAMES: Record<DragInteractionType, { down: string; move: string; up: string }> = {
+    mouse: { down: 'mousedown', move: 'mousemove', up: 'mouseup' },
+    pointer: { down: 'pointerdown', move: 'pointermove', up: 'pointerup' },
+    touch: { down: 'touchstart', move: 'touchmove', up: 'touchend' },
+};
+
+const POINTER_COMPATIBILITY_MOUSE_EVENTS: Record<string, string> = {
+    pointerdown: 'mousedown',
+    pointermove: 'mousemove',
+    pointerup: 'mouseup',
+    pointercancel: 'mouseup',
+};
+
+function getClientCoordinate(
+    options: MouseEventInit | PointerEventInit | TouchEventInit | undefined,
+    key: 'clientX' | 'clientY'
+): number {
+    if (!options) {
+        return 0;
+    }
+
+    const value = (options as Record<string, unknown>)[key];
+    return typeof value === 'number' ? value : 0;
+}
+
+function buildSyntheticTouch(
+    element: Element | Document,
+    options: MouseEventInit | PointerEventInit | TouchEventInit | undefined
+): Touch {
+    const clientX = getClientCoordinate(options, 'clientX');
+    const clientY = getClientCoordinate(options, 'clientY');
+    const touchTarget = element as unknown as EventTarget;
+    return new Touch({
+        identifier: 0,
+        target: touchTarget,
+        clientX,
+        clientY,
+        pageX: clientX,
+        pageY: clientY,
+        screenX: clientX,
+        screenY: clientY,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        force: 1,
+        altitudeAngle: Math.PI / 2,
+        azimuthAngle: 0,
+        touchType: 'direct',
+    });
+}
+
+function buildTouchList(
+    element: Element | Document,
+    options: MouseEventInit | PointerEventInit | TouchEventInit | undefined,
+    includeTouch: boolean
+): Touch[] {
+    return includeTouch ? [buildSyntheticTouch(element, options)] : [];
+}
+
+function attachDataTransfer(event: Event, dataTransfer: DataTransfer | undefined): void {
+    if (!dataTransfer) {
+        return;
+    }
+    Object.defineProperty(event, 'dataTransfer', { configurable: true, writable: false, value: dataTransfer });
+}
+
+function sanitizeEventInit(options: InteractionEventOptions | undefined): Record<string, unknown> {
+    if (!options) {
+        return {};
+    }
+
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(options)) {
+        if (key !== 'dataTransfer') {
+            sanitized[key] = value as unknown;
+        }
+    }
+
+    return sanitized;
+}
+
+function createTouchInteractionEvent(
+    element: Element | Document,
+    eventName: string,
+    options: InteractionEventOptions | undefined
+): Event {
+    const isEnd = eventName === 'touchend' || eventName === 'touchcancel';
+    const touchEventInit: TouchEventInit = {
+        bubbles: true,
+        cancelable: true,
+        touches: buildTouchList(element, options, !isEnd),
+        targetTouches: buildTouchList(element, options, !isEnd),
+        changedTouches: buildTouchList(element, options, true),
+        ...(sanitizeEventInit(options) as TouchEventInit),
+    };
+    return new TouchEvent(eventName, touchEventInit);
+}
+
+function createPointerInteractionEvent(
+    eventName: string,
+    options: InteractionEventOptions | undefined,
+    pointerDefaults: PointerEventInit
+): Event {
+    const pointerInit = {
+        bubbles: true,
+        cancelable: true,
+        ...pointerDefaults,
+        ...sanitizeEventInit(options),
+    } as PointerEventInit;
+
+    return new PointerEvent(eventName, pointerInit);
+}
+
+function createMouseInteractionEvent(eventName: string, options: InteractionEventOptions | undefined): Event {
+    return new MouseEvent(eventName, {
+        bubbles: true,
+        cancelable: true,
+        ...(sanitizeEventInit(options) as MouseEventInit),
+    });
+}
+
+function createInteractionEvent(
+    element: Element | Document,
+    eventName: string,
+    options: InteractionEventOptions | undefined,
+    pointerDefaults: PointerEventInit
+): Event {
+    if (eventName.startsWith('touch')) {
+        return createTouchInteractionEvent(element, eventName, options);
+    }
+
+    if (eventName.startsWith('pointer')) {
+        return createPointerInteractionEvent(eventName, options, pointerDefaults);
+    }
+
+    return createMouseInteractionEvent(eventName, options);
+}
 
 export interface DragAndDropRowOptions {
     api: GridApi;
@@ -18,12 +170,14 @@ export interface DragAndDropRowOptions {
     sourceYOffsetPercent?: number;
     targetYOffsetPercent?: number;
     cancel?: boolean;
+    eventType?: DragInteractionType;
     beforeDrop?: (context: {
         api: GridApi;
         sourceElement: Element;
         targetElement: Element;
         dataTransfer: DataTransfer;
-        fireMouseEvent: FireMouseEventFn;
+        fireUserInteractionEvent: FireInteractionEventFn;
+        fireMouseEvent: FireInteractionEventFn;
     }) => Promise<void> | void;
 }
 
@@ -33,10 +187,13 @@ export async function dragAndDropRow({
     target,
     sourceYOffsetPercent = 0.5,
     targetYOffsetPercent = 0.5,
+    cancel = false,
+    eventType = 'mouse',
     beforeDrop,
 }: DragAndDropRowOptions) {
     mockGridLayout.init();
     initDataTransferPolyfill();
+    initPointerEventPolyfill();
 
     const rowDragEnterEvents: RowDragEvent[] = [];
     const rowDragMoveEvents: RowDragMoveEvent[] = [];
@@ -52,6 +209,10 @@ export async function dragAndDropRow({
     };
 
     const gridElement = TestGridsManager.getHTMLElement(api);
+    const ownerDocument = (gridElement?.ownerDocument ?? document) as Document;
+    const rootEventTarget = (gridElement?.getRootNode?.() ?? ownerDocument) as EventTarget & {
+        dispatchEvent: (event: Event) => boolean;
+    };
 
     if (typeof source === 'string') {
         source = gridElement?.querySelector(`[row-id="${source}"]`);
@@ -110,9 +271,21 @@ export async function dragAndDropRow({
 
     const dataTransfer = new DataTransfer();
 
-    const fireMouseEvent: FireMouseEventFn = async (element, eventType, options = {}) => {
-        const event = new MouseEvent(eventType, { bubbles: true, cancelable: true, ...options });
+    const isTouchInteraction = eventType === 'touch';
+    const pointerDefaults: PointerEventInit =
+        eventType === 'pointer' ? { pointerId: 1, pointerType: 'mouse', isPrimary: true } : {};
+
+    const fireUserInteractionEvent: FireInteractionEventFn = async (element, eventName, options = {}) => {
+        const event = createInteractionEvent(element, eventName, options, pointerDefaults);
+        attachDataTransfer(event, options.dataTransfer);
         element.dispatchEvent(event);
+
+        const compatibilityMouseEventName = POINTER_COMPATIBILITY_MOUSE_EVENTS[eventName];
+        if (compatibilityMouseEventName) {
+            const mouseEvent = createMouseInteractionEvent(compatibilityMouseEventName, options);
+            attachDataTransfer(mouseEvent, options.dataTransfer);
+            element.dispatchEvent(mouseEvent);
+        }
         await asyncSetTimeout(0);
     };
 
@@ -134,19 +307,36 @@ export async function dragAndDropRow({
     api.addEventListener('rowDragEnd', rowDragEnd);
     api.addEventListener('rowDragCancel', rowDragCancel);
     try {
-        await fireMouseEvent(dragHandle, 'mousedown', { clientX: startX, clientY: startY, buttons: 1 });
+        const interactionEvents = INTERACTION_EVENT_NAMES[eventType];
+        const moveTarget: Element | Document = isTouchInteraction ? dragHandle : document;
+        const upTarget: Element | Document = moveTarget;
+
+        await fireUserInteractionEvent(dragHandle, interactionEvents.down, {
+            clientX: startX,
+            clientY: startY,
+            buttons: 1,
+            button: 0,
+        });
 
         startY += startY >= sourceRect.bottom - 5 ? -5 : 5;
 
-        await fireMouseEvent(document, 'mousemove', { clientX: startX, clientY: startY, buttons: 1 });
-        await fireMouseEvent(dragHandle, 'dragstart', { dataTransfer, clientX: startX, clientY: startY });
-        await fireMouseEvent(source, 'dragenter', { dataTransfer, clientX: startX, clientY: startY });
-        await fireMouseEvent(source, 'dragover', { dataTransfer, clientX: startX, clientY: startY });
+        await fireUserInteractionEvent(moveTarget, interactionEvents.move, {
+            clientX: startX,
+            clientY: startY,
+            buttons: 1,
+        });
+        await fireUserInteractionEvent(dragHandle, 'dragstart', { dataTransfer, clientX: startX, clientY: startY });
+        await fireUserInteractionEvent(source, 'dragenter', { dataTransfer, clientX: startX, clientY: startY });
+        await fireUserInteractionEvent(source, 'dragover', { dataTransfer, clientX: startX, clientY: startY });
 
-        await fireMouseEvent(document, 'mousemove', { clientX: endX, clientY: endY, buttons: 1 });
-        await fireMouseEvent(source, 'dragleave', { dataTransfer, clientX: startX, clientY: startY });
-        await fireMouseEvent(target, 'dragenter', { dataTransfer, clientX: endX, clientY: endY });
-        await fireMouseEvent(target, 'dragover', { dataTransfer, clientX: endX, clientY: endY });
+        await fireUserInteractionEvent(moveTarget, interactionEvents.move, {
+            clientX: endX,
+            clientY: endY,
+            buttons: 1,
+        });
+        await fireUserInteractionEvent(source, 'dragleave', { dataTransfer, clientX: startX, clientY: startY });
+        await fireUserInteractionEvent(target, 'dragenter', { dataTransfer, clientX: endX, clientY: endY });
+        await fireUserInteractionEvent(target, 'dragover', { dataTransfer, clientX: endX, clientY: endY });
 
         if (api.getGridOption('rowDragManaged') && api.getGridOption('suppressMoveWhenRowDragging')) {
             assertDropIndicatorVisible(api);
@@ -158,14 +348,57 @@ export async function dragAndDropRow({
                 sourceElement: source,
                 targetElement: target,
                 dataTransfer,
-                fireMouseEvent,
+                fireUserInteractionEvent,
+                fireMouseEvent: fireUserInteractionEvent,
             });
         }
-        await fireMouseEvent(dragHandle, 'drag', { dataTransfer, clientX: startX, clientY: startY });
+        await fireUserInteractionEvent(dragHandle, 'drag', { dataTransfer, clientX: startX, clientY: startY });
 
-        await fireMouseEvent(target, 'drop', { dataTransfer, clientX: endX, clientY: endY });
-        await fireMouseEvent(dragHandle, 'dragend', { dataTransfer, clientX: endX, clientY: endY });
-        await fireMouseEvent(document, 'mouseup', { clientX: endX, clientY: endY, buttons: 0 });
+        if (cancel) {
+            dataTransfer.dropEffect = 'none';
+            if (eventType === 'pointer') {
+                await fireUserInteractionEvent(moveTarget, 'pointercancel', {
+                    clientX: endX,
+                    clientY: endY,
+                    buttons: 0,
+                });
+            } else if (eventType === 'touch') {
+                const touchCancelOptions: InteractionEventOptions = {
+                    clientX: endX,
+                    clientY: endY,
+                };
+                await fireUserInteractionEvent(moveTarget, 'touchcancel', touchCancelOptions);
+                if (ownerDocument !== moveTarget) {
+                    await fireUserInteractionEvent(ownerDocument, 'touchcancel', touchCancelOptions);
+                }
+                await asyncSetTimeout(0);
+            } else {
+                rootEventTarget.dispatchEvent(
+                    new KeyboardEvent('keydown', {
+                        key: 'Escape',
+                        code: 'Escape',
+                        bubbles: true,
+                        cancelable: true,
+                    })
+                );
+                await asyncSetTimeout(0);
+            }
+
+            await fireUserInteractionEvent(dragHandle, 'dragend', { dataTransfer, clientX: endX, clientY: endY });
+            await fireUserInteractionEvent(upTarget, interactionEvents.up, {
+                clientX: endX,
+                clientY: endY,
+                buttons: 0,
+            });
+        } else {
+            await fireUserInteractionEvent(target, 'drop', { dataTransfer, clientX: endX, clientY: endY });
+            await fireUserInteractionEvent(dragHandle, 'dragend', { dataTransfer, clientX: endX, clientY: endY });
+            await fireUserInteractionEvent(upTarget, interactionEvents.up, {
+                clientX: endX,
+                clientY: endY,
+                buttons: 0,
+            });
+        }
 
         for (let repeat = 0; !dragEndedPromise && repeat < 50; ++repeat) {
             await asyncSetTimeout(2);
@@ -186,9 +419,14 @@ export async function dragAndDropRow({
 
             expect(rowDragMoveEvents.length).toBeGreaterThan(0);
 
-            expect(rowDragEndEvents.length).toBe(1);
-            expect(rowDragEndEvents[0].node).toBe(rowDragEnterEvents[0].node);
-            expect(rowDragEndEvents[0].nodes).toBe(rowDragEnterEvents[0].nodes);
+            if (cancel) {
+                expect(rowDragEndEvents.length).toBe(0);
+                expect(rowDragCancelEvents.length).toBeGreaterThan(0);
+            } else {
+                expect(rowDragEndEvents.length).toBe(1);
+                expect(rowDragEndEvents[0].node).toBe(rowDragEnterEvents[0].node);
+                expect(rowDragEndEvents[0].nodes).toBe(rowDragEnterEvents[0].nodes);
+            }
         }
 
         if (source.isConnected) {
@@ -198,6 +436,7 @@ export async function dragAndDropRow({
         api.removeEventListener('rowDragEnter', rowDragEnter);
         api.removeEventListener('rowDragMove', rowDragMove);
         api.removeEventListener('rowDragEnd', rowDragEnd);
+        api.removeEventListener('rowDragCancel', rowDragCancel);
     }
 
     return result;

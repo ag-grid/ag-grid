@@ -3,12 +3,15 @@ import { expect } from 'vitest';
 
 import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
+import { firePointerLikeClick } from '../test-utils-events';
 import { TestGridsManager } from '../testGridsManager';
 import { log, unindentText } from '../utils';
 import { GridRowsDiagramTree } from './gridRowsDiagramTree';
 import { GridRowsErrors } from './gridRowsErrors';
 import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
 import { GridRowsValidator } from './validation/gridRowsValidator';
+
+export type RowIdentifier = string | { readonly id: string | null | undefined } | null | undefined;
 
 export interface GridRowsOptions<TData = any> {
     /** If true, selected nodes will be tested. Default is true */
@@ -170,16 +173,12 @@ export class GridRows<TData = any> {
         return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
     }
 
-    public getRowHtmlElement(
-        id: string | { readonly id: string | null | undefined } | null | undefined
-    ): HTMLElement | null {
+    public getRowHtmlElement(id: RowIdentifier): HTMLElement | null {
         const elements = this.getRowHtmlElements(id);
         return elements.length > 0 ? elements[0] : null;
     }
 
-    public getRowHtmlElements(
-        id: string | { readonly id: string | null | undefined } | null | undefined
-    ): HTMLElement[] {
+    public getRowHtmlElements(id: RowIdentifier): HTMLElement[] {
         if (typeof id === 'object') {
             id = id?.id ?? null;
             if (id === null) {
@@ -216,6 +215,37 @@ export class GridRows<TData = any> {
             this.#rowsHtmlElementsMap = map;
         }
         return map.get(id) ?? [];
+    }
+
+    public getRowSelectionCheckboxElement(row: RowIdentifier): HTMLElement | null {
+        const rowElement = this.getRowHtmlElement(row);
+        return findRowSelectionCheckboxElement(rowElement);
+    }
+
+    public async clickRowSelectionCheckbox(row: RowIdentifier | RowIdentifier[]): Promise<void> {
+        if (Array.isArray(row)) {
+            for (const item of row) {
+                await this.clickRowSelectionCheckbox(item);
+            }
+            return;
+        }
+
+        const checkbox = this.#requireRowSelectionCheckboxElement(row);
+        await firePointerLikeClick(checkbox);
+    }
+
+    public getRowSelectionCheckboxState(row: RowIdentifier): CheckboxState | undefined {
+        const checkbox = this.getRowSelectionCheckboxElement(row);
+        return checkbox ? readRowSelectionCheckboxState(checkbox) : undefined;
+    }
+
+    public expectRowSelectionCheckboxState(row: RowIdentifier, expected: CheckboxState): void {
+        const checkbox = this.#requireRowSelectionCheckboxElement(row);
+        const state = readRowSelectionCheckboxState(checkbox);
+        if (state === undefined) {
+            throw new Error(`Unable to determine checkbox state for row id ${String(resolveRowIdentifier(row))}`);
+        }
+        expect(state).toBe(expected);
     }
 
     public loadErrors(): this {
@@ -319,6 +349,16 @@ export class GridRows<TData = any> {
         Error.captureStackTrace(error, callerFn);
         return error;
     }
+
+    #requireRowSelectionCheckboxElement(row: RowIdentifier): HTMLElement {
+        const checkbox = this.getRowSelectionCheckboxElement(row);
+        if (!checkbox) {
+            throw new Error(
+                `Unable to locate selection checkbox element for row id ${String(resolveRowIdentifier(row))}`
+            );
+        }
+        return checkbox;
+    }
 }
 
 /** This is used to add the diagram to print to a vitest assertion error. */
@@ -356,4 +396,84 @@ function addDiagramToError(error: any, diagram: string | null | undefined, label
             enumerable: false,
         });
     }
+}
+
+type CheckboxState = boolean | 'mixed';
+
+const ROW_SELECTION_CHECKBOX_QUERIES = [
+    '.ag-selection-checkbox input[type="checkbox"]',
+    '.ag-selection-checkbox [aria-checked]',
+    '.ag-group-checkbox input[type="checkbox"]',
+    '.ag-group-checkbox [aria-checked]',
+    '.ag-checkbox-input-wrapper input[type="checkbox"]',
+    '.ag-checkbox[aria-checked]',
+    '.ag-checkbox',
+];
+
+function resolveRowIdentifier(row: RowIdentifier): string | null {
+    if (typeof row === 'object') {
+        if (!row) {
+            return null;
+        }
+        const id = (row as any).id;
+        return id == null ? null : String(id);
+    }
+    return row == null ? null : String(row);
+}
+
+function findRowSelectionCheckboxElement(rowElement: HTMLElement | null): HTMLElement | null {
+    if (!rowElement) {
+        return null;
+    }
+    for (const selector of ROW_SELECTION_CHECKBOX_QUERIES) {
+        const candidate = rowElement.querySelector<HTMLElement>(selector);
+        if (candidate) {
+            return candidate;
+        }
+    }
+    return null;
+}
+
+function readRowSelectionCheckboxState(element: HTMLElement): CheckboxState | undefined {
+    if (element instanceof HTMLInputElement && element.type === 'checkbox') {
+        if (element.indeterminate) {
+            return 'mixed';
+        }
+        return element.checked;
+    }
+
+    const ariaChecked = element.getAttribute('aria-checked');
+    if (ariaChecked === 'mixed') {
+        return 'mixed';
+    }
+    if (ariaChecked === 'true') {
+        return true;
+    }
+    if (ariaChecked === 'false') {
+        return false;
+    }
+
+    const inputChild = element.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    if (inputChild) {
+        return readRowSelectionCheckboxState(inputChild);
+    }
+
+    const ariaChild = element.querySelector<HTMLElement>('[aria-checked]');
+    if (ariaChild) {
+        return readRowSelectionCheckboxState(ariaChild);
+    }
+
+    if (element.classList.contains('ag-checkbox')) {
+        if (element.classList.contains('ag-indeterminate')) {
+            return 'mixed';
+        }
+        if (element.classList.contains('ag-checked')) {
+            return true;
+        }
+        if (element.classList.contains('ag-unchecked')) {
+            return false;
+        }
+    }
+
+    return undefined;
 }
