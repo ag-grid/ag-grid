@@ -2,7 +2,6 @@ import type {
     ColDef,
     ColKey,
     ColumnEventType,
-    ColumnState,
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
