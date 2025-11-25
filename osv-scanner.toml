@@ -58,10 +58,6 @@ name = "vite"
 ignore = true
 
 [[IgnoredVulns]]
-id = "GHSA-67mh-4wv8-2f99"
-reason = "We do not use the esbuild development server"
-
-[[IgnoredVulns]]
 id = "GHSA-jr5f-v2jv-69x6"
 reason = "We only use axios in examples"
 
@@ -160,3 +156,8 @@ reason = "astro is only used for generating a static site, so server vulnerabili
 [[IgnoredVulns]]
 id = "GHSA-4hjh-wcwx-xvwj"
 reason = "We only use axios for build and testing"
+
+[[IgnoredVulns]]
+id = "GHSA-5j98-mcp5-4vw2"
+reason = "glob not accessible to end user/external users"
+
