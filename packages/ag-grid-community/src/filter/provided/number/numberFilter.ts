@@ -195,5 +195,5 @@ function getValidityMessageKey(
     if (!isInvalid) {
         return null;
     }
-    return isFrom ? 'tooBig' : 'tooSmall';
+    return `${isFrom ? 'max' : 'min'}ValueValidation`;
 }
