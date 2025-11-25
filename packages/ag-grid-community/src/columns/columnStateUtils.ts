@@ -35,6 +35,8 @@ export interface ColumnStateParams {
     sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
+    enableValue?: boolean | null;
+    valueIndex?: number | null;
     /** The aggregation function applied */
     aggFunc?: string | IAggFunc | null;
     /** True if pivot active */

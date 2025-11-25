@@ -353,12 +353,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const colIdsInOriginalOrder: string[] = [];
         const originalOrderMap: { [colId: string]: number } = {};
-        let orderIndex = 0;
         for (let i = 0; i < primaryCols.length; i++) {
             const colId = primaryCols[i].getColId();
             if (allColIds.has(colId)) {
-                colIdsInOriginalOrder.push(colId);
-                originalOrderMap[colId] = orderIndex++;
+                const len = colIdsInOriginalOrder.push(colId);
+                originalOrderMap[colId] = len - 1;
             }
         }
 
@@ -367,10 +366,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         let hasAddedNewCols = false;
         let lastIndex = 0;
 
-        const enableProp = this.columnOrdering.enableProp;
-        const initialEnableProp = this.columnOrdering.initialEnableProp;
-        const indexProp = this.columnOrdering.indexProp;
-        const initialIndexProp = this.columnOrdering.initialIndexProp;
+        const { enableProp, initialEnableProp, indexProp, initialIndexProp } = this.columnOrdering;
 
         const processPrecedingNewCols = (colId: string) => {
             const originalOrderIndex = originalOrderMap[colId];
@@ -397,7 +393,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 if (missingIndex) {
                     if (!hasAddedNewCols) {
                         const propEnabled =
-                            colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
+                            colDef[enableProp] ||
+                            (colDef[enableProp] === undefined && colDef[initialEnableProp as 'initialRowGroup']);
                         if (propEnabled) {
                             processPrecedingNewCols(colId);
                         } else {

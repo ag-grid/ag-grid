@@ -729,6 +729,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
+     * TODO
+     */
+    valueIndex?: number;
+    /**
+     * TODO
+     */
+    initialValueIndex?: number;
+    /**
      * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */

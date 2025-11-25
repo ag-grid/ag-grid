@@ -21,6 +21,13 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
             this.setValueActive(false, column, source),
     } as const;
 
+    override columnOrdering = {
+        enableProp: 'enableValue',
+        initialEnableProp: 'foo',
+        indexProp: 'valueIndex',
+        initialIndexProp: 'initialValueIndex',
+    } as const;
+
     override columnExtractors = {
         setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) =>
             this.setColValueActive(col, flag, source),
