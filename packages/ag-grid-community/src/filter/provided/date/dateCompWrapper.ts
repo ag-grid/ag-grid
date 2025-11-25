@@ -8,6 +8,8 @@ import type { ColDef } from '../../../entities/colDef';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
+const CLASS_INPUT_FIELD = '.ag-input-field-input';
+
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
@@ -108,7 +110,7 @@ export class DateCompWrapper {
     }
 
     public setCustomValidity(message: string): void {
-        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>('.ag-input-field-input');
+        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
             const isInvalid = message.length > 0;
@@ -134,5 +136,9 @@ export class DateCompWrapper {
 
             _setAriaInvalid(eInput, isInvalid);
         }
+    }
+
+    public getValidity(): ValidityState | undefined {
+        return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
     }
 }

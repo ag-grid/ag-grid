@@ -191,6 +191,20 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return true;
     }
 
+    protected override hasInvalidInputs(): boolean {
+        let invalidInputs = false;
+        this.forEachInput((element) => {
+            // Default validity state to true -> if theres no validity state, we assume everything is fine
+            const { valid = true } = element.getValidity() ?? {};
+            invalidInputs ||= !valid;
+        });
+        return invalidInputs;
+    }
+
+    protected override canApply(_model: DateFilterModel | ICombinedSimpleModel<DateFilterModel> | null): boolean {
+        return !this.hasInvalidInputs();
+    }
+
     protected override isConditionUiComplete(position: number): boolean {
         if (!super.isConditionUiComplete(position)) {
             return false;
