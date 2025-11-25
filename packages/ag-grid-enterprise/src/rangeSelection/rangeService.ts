@@ -415,13 +415,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         });
 
         if (isRowNumber && isMultiKey && containingRange) {
-            this.toggleRowNumberRangeSelection(cell, containingRange);
+            this.removeRowFromRowNumberRange(cell, containingRange);
         } else {
             this.setRangeToCell(cell, isMultiKey);
         }
     }
 
-    private toggleRowNumberRangeSelection(cell: CellPosition, containingRange: CellRange): void {
+    private removeRowFromRowNumberRange(cell: CellPosition, containingRange: CellRange): void {
         const { beans, cellRanges } = this;
         const firstRow = _getFirstRow(beans);
         const lastRow = _getLastRow(beans);
