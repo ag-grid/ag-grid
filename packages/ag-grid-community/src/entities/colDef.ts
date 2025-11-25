@@ -783,24 +783,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default true
      */
     sortable?: boolean;
-    /** If sorting by default, set it here. Set to `asc` or `desc`. */
-    sort?: SortDirection;
 
-    /**
-     * Defines the default sort definition for the column. Takes precedence over sort.
-     */
-    sortDef?: SortDef;
+    /** If sorting by default, set it here. Set to `asc` or `desc`. */
+    sort?: SortDirection | SortDef;
+
     /**
      * Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
      */
-    initialSort?: SortDirection;
-
-    /**
-     * Same as `sortDef`, except only applied when creating a new column. Not applied when updating column definitions.
-     * @initial
-     */
-    initialSortDef?: SortDef;
+    initialSort?: SortDirection | SortDef;
 
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number | null;

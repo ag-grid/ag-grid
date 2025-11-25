@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
+import { AgColumn, _isSortDirectionValid } from '../entities/agColumn';
 import { _areSortDefsEqual, _getSortDefFromInput, _isSortDefValid, _normalizeSortType } from '../entities/agColumn';
 import type { DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from '../events';
@@ -139,10 +139,6 @@ export class SortService extends BeanStub implements NamedBean {
             this.gos.get('sortingOrder') ??
             DEFAULT_SORTING_ORDER
         ).map((objOrDirection: unknown) => _getSortDefFromInput(objOrDirection));
-
-        if (!sortingOrder.find((e) => e.direction === null && e.type === 'default')) {
-            sortingOrder.push({ direction: null, type: 'default' });
-        }
 
         const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
@@ -323,22 +319,15 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public initCol(column: AgColumn): void {
-        const { sort, initialSort, sortDef, initialSortDef, sortIndex, initialSortIndex } = column.colDef;
+        const { sort, initialSort, sortIndex, initialSortIndex } = column.colDef;
 
-        if (sort !== undefined) {
-            if (sort === 'asc' || sort === 'desc') {
-                column.sort = sort;
-            }
-        } else if (initialSort === 'asc' || initialSort === 'desc') {
-            column.sort = initialSort;
-        }
+        const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
+        const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
 
-        if (_isSortDefValid(sortDef)) {
-            column.sortDef = sortDef;
-        } else if (_isSortDefValid(initialSortDef)) {
-            column.sortDef = initialSortDef;
-        } else {
-            column.sortDef = _getSortDefFromInput();
+        if (sortIsValid) {
+            column.setSortDef(_getSortDefFromInput(sort));
+        } else if (initialSortIsValid) {
+            column.setSortDef(_getSortDefFromInput(initialSort));
         }
 
         if (sortIndex !== undefined) {
@@ -367,8 +356,8 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
-        if (!_areSortDefsEqual(column.sortDef, sort)) {
-            column.sortDef = _getSortDefFromInput(sort);
+        if (!_areSortDefsEqual(column.getSortDef(), sort)) {
+            column.setSortDef(_getSortDefFromInput(sort));
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');

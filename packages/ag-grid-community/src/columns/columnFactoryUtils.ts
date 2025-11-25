@@ -378,8 +378,6 @@ export function _addColumnDefaultAndTypes(
             {
                 sort: autoGroupColDef.sort,
                 initialSort: autoGroupColDef.initialSort,
-                initialSortDef: autoGroupColDef.initialSortDef,
-                sortDef: autoGroupColDef.sortDef,
             } as ColDef,
             false,
             true

@@ -194,10 +194,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
                     const invalidItems = sortingOrder.filter((a) => {
-                        if (_isSortDefValid(a)) {
-                            return !_isSortDirectionValid(a.direction, false) || !_isSortTypeValid(a.type, false);
-                        }
-                        return !_isSortDirectionValid(a);
+                        return !(_isSortDefValid(a, false) || _isSortDirectionValid(a));
                     });
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems
@@ -332,8 +329,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     pivotKeys: undefined,
     groupId: undefined,
     colId: undefined,
-    sortDef: undefined,
-    initialSortDef: undefined,
     sort: undefined,
     initialSort: undefined,
     field: undefined,

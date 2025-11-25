@@ -81,7 +81,7 @@ export class AgColumn<TValue = any>
     private left: number | null;
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
-    private _sortDef: SortDef | undefined;
+    private sortDef: SortDef = _getSortDefFromInput();
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -426,29 +426,17 @@ export class AgColumn<TValue = any>
         return this.moving;
     }
 
-    get sort(): SortDirection {
-        return this.getSortDef()?.direction || _normalizeSortDirection(this.getSortDef()?.direction);
-    }
-
-    set sort(value: SortDirection | undefined) {
-        this._sortDef = _getSortDefFromInput(value);
-    }
-
     public getSort(): SortDirection | undefined {
         // soft deprecation as of v35 - use getSortDef instead
-        return this.sort;
+        return this.sortDef.direction || _normalizeSortDirection(this.getSortDef().direction);
     }
 
-    public get sortDef(): SortDef {
-        return _getSortDefFromInput(this._sortDef);
+    public getSortDef(): SortDef {
+        return this.sortDef;
     }
 
-    set sortDef(value: SortDef | undefined) {
-        this._sortDef = value;
-    }
-
-    public getSortDef(): SortDef | undefined {
-        return this._sortDef;
+    public setSortDef(sortDef: SortDef): void {
+        this.sortDef = sortDef;
     }
 
     public isSortable(): boolean {
@@ -457,21 +445,21 @@ export class AgColumn<TValue = any>
 
     /** @deprecated v32 use col.getSort() === 'asc */
     public isSortAscending(): boolean {
-        return this.sort === 'asc';
+        return this.getSort() === 'asc';
     }
 
     /** @deprecated v32 use col.getSort() === 'desc */
     public isSortDescending(): boolean {
-        return this.sort === 'desc';
+        return this.getSort() === 'desc';
     }
     /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
-        return _missing(this.sort);
+        return _missing(this.getSort());
     }
 
     /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
-        return _exists(this.sort);
+        return _exists(this.getSort());
     }
 
     public getSortIndex(): number | null | undefined {
@@ -799,13 +787,16 @@ export function _isSortTypeValid(maybeSortType: unknown, allowNullish = true): m
     );
 }
 
-export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {
+export function _isSortDefValid(maybeSortDef: unknown, allowNullish = true): maybeSortDef is SortDef {
     if (!maybeSortDef || typeof maybeSortDef !== 'object') {
         return false;
     }
 
     const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
-    return _isSortTypeValid(maybeSortDefT.type) && _isSortDirectionValid(maybeSortDefT.direction);
+    return (
+        _isSortTypeValid(maybeSortDefT.type, allowNullish) &&
+        _isSortDirectionValid(maybeSortDefT.direction, allowNullish)
+    );
 }
 
 export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {

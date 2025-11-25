@@ -158,7 +158,7 @@ export interface Column<TValue = any>
     getSort(): SortDirection | undefined;
 
     /** If sorting is active, returns the sort definition. */
-    getSortDef(): SortDef | undefined;
+    getSortDef(): SortDef;
 
     /** Returns `true` if sorting is enabled for this column via the `sortable` property. */
     isSortable(): boolean;

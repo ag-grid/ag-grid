@@ -410,69 +410,63 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         : null;
                 }
                 case 'sortAscending':
-                    return sortSvc
-                        ? {
-                              name: localeTextFunc('sortAscending', 'Sort Ascending'),
-                              icon: _createIconNoSpan('sortAscending', beans, null),
-                              action: () =>
-                                  sortSvc.setSortForColumn(
-                                      column!,
-                                      { type: 'default', direction: 'asc' },
-                                      false,
-                                      source
-                                  ),
-                          }
-                        : null;
+                    if (!sortSvc || !column) {
+                        return null;
+                    }
+                    return {
+                        name: localeTextFunc('sortAscending', 'Sort Ascending'),
+                        icon: _createIconNoSpan('sortAscending', beans, null),
+                        action: () =>
+                            sortSvc.setSortForColumn(column!, { type: 'default', direction: 'asc' }, false, source),
+                    };
+
                 case 'sortDescending':
-                    return sortSvc
-                        ? {
-                              name: localeTextFunc('sortDescending', 'Sort Descending'),
-                              icon: _createIconNoSpan('sortDescending', beans, null),
-                              action: () =>
-                                  sortSvc.setSortForColumn(
-                                      column!,
-                                      { type: 'default', direction: 'desc' },
-                                      false,
-                                      source
-                                  ),
-                          }
-                        : null;
+                    if (!sortSvc || !column) {
+                        return null;
+                    }
+                    return {
+                        name: localeTextFunc('sortDescending', 'Sort Descending'),
+                        icon: _createIconNoSpan('sortDescending', beans, null),
+                        action: () =>
+                            sortSvc.setSortForColumn(column, { type: 'default', direction: 'desc' }, false, source),
+                    };
                 case 'sortAbsoluteAscending': {
-                    if (!sortSvc) {
+                    if (!sortSvc || !column) {
                         return null;
                     }
                     return {
                         name: localeTextFunc('sortAbsoluteAscending', 'Sort Absolute Ascending'),
                         icon: _createIconNoSpan('sortAbsoluteAscending', beans, null),
                         action: () =>
-                            sortSvc.setSortForColumn(column!, { type: 'absolute', direction: 'asc' }, false, source),
+                            sortSvc.setSortForColumn(column, { type: 'absolute', direction: 'asc' }, false, source),
                     };
                 }
                 case 'sortAbsoluteDescending': {
-                    if (!sortSvc) {
+                    if (!sortSvc || !column) {
                         return null;
                     }
                     return {
                         name: localeTextFunc('sortAbsoluteDescending', 'Sort Absolute Descending'),
                         icon: _createIconNoSpan('sortAbsoluteDescending', beans, null),
                         action: () =>
-                            sortSvc.setSortForColumn(column!, { type: 'absolute', direction: 'desc' }, false, source),
+                            sortSvc.setSortForColumn(column, { type: 'absolute', direction: 'desc' }, false, source),
                     };
                 }
                 case 'sortUnSort':
-                    return sortSvc
-                        ? {
-                              name: localeTextFunc('sortUnSort', 'Clear Sort'),
-                              icon: _createIconNoSpan('sortUnSort', beans, null),
-                              action: () =>
-                                  sortSvc.setSortForColumn(
-                                      column!,
-                                      { type: column?.sortDef?.type ?? 'default', direction: null },
-                                      false,
-                                      source
-                                  ),
-                          }
-                        : null;
+                    if (!(sortSvc && column)) {
+                        return null;
+                    }
+                    return {
+                        name: localeTextFunc('sortUnSort', 'Clear Sort'),
+                        icon: _createIconNoSpan('sortUnSort', beans, null),
+                        action: () =>
+                            sortSvc.setSortForColumn(
+                                column,
+                                { type: column.getSortDef().type, direction: null },
+                                false,
+                                source
+                            ),
+                    };
                 default: {
                     _warn(176, { key });
                     return null;

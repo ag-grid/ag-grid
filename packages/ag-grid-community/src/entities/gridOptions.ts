@@ -3140,8 +3140,6 @@ export type SelectionColumnDef = Pick<
     | 'sortable'
     | 'sort'
     | 'initialSort'
-    | 'sortDef'
-    | 'initialSortDef'
     | 'sortIndex'
     | 'initialSortIndex'
     | 'sortingOrder'

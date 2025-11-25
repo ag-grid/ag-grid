@@ -499,8 +499,9 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     const getValueOrNull = <T>(a: T, b: T) => (a != null ? a : b != null ? b : null);
 
     const colDef = column.getColDef();
-    const sort = getValueOrNull(colDef.sort, colDef.initialSort);
-    const sortType = getValueOrNull(colDef.sortDef, colDef.initialSortDef)?.type;
+    const sortDefFromColDef = _getSortDefFromInput(getValueOrNull(colDef.sort, colDef.initialSort));
+    const sort = sortDefFromColDef.direction;
+    const sortType = sortDefFromColDef.type;
     const sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
     const hide = getValueOrNull(colDef.hide, colDef.initialHide);
     const pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
