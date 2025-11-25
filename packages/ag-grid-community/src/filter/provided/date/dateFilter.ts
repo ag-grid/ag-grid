@@ -84,15 +84,19 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     }
 
     private validateInputs(position: number, fromTo: 'from' | 'to'): void {
+        const { dateConditionFromComps, dateConditionToComps, beans } = this;
         const isFrom = fromTo === 'from';
-        const from = this.dateConditionFromComps[position];
-        const to = this.dateConditionToComps[position];
+        const from = dateConditionFromComps[position];
+        const to = dateConditionToComps[position];
 
         const fromDate = from.getDate();
         const toDate = to.getDate();
         const localeKey = getValidityMessageKey(fromDate, toDate, isFrom);
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
         (isFrom ? from : to).setCustomValidity(message);
+        if (message.length > 0) {
+            beans.ariaAnnounce.announceValue(message, 'dateFilter');
+        }
     }
 
     private createDateCompWrapper(element: HTMLElement, position: number, fromTo: 'from' | 'to'): DateCompWrapper {
