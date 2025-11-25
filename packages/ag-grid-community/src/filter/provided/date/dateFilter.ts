@@ -93,7 +93,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const toDate = to.getDate();
         const localeKey = getValidityMessageKey(fromDate, toDate, isFrom);
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
-        (isFrom ? from : to).setCustomValidity(message);
+        (isFrom ? from : to).setCustomValidity(message); // Set validity error state for target input
+        (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
         if (message.length > 0) {
             beans.ariaAnnounce.announceValue(message, 'dateFilter');
         }

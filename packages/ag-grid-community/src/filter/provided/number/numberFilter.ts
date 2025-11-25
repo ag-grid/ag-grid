@@ -66,7 +66,8 @@ export class NumberFilter extends SimpleFilter<
                 const validityMessage = localeKey
                     ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)])
                     : '';
-                (isFrom ? from : to).setCustomValidity(validityMessage);
+                (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
+                (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
                 if (validityMessage.length > 0) {
                     beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
                 }
