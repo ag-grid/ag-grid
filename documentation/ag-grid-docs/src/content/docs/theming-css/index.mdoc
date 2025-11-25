@@ -91,7 +91,7 @@ By default the grid loads its styles without a layer, meaning that they will ove
 To set the layer that the grid styles are loaded into, use the `themeCssLayer` grid option. You may want to use [global grid options](./grid-interface/#global-grid-options) to set this on all grids in your app.
 
 {% note %}
-By default, grid styles are inserted at the start of the document head, making the grid layer the first in the document and causing grid styles to override other styles. If you are setting `themeCssLayer`, you probably also want to move the grid styles later in the document by setting `themeStyleContainer` to the document body. This will ensure that your application styles come before the grid styles, and allow them to declare an order to css layers using e.g. `@layer resets, grid, application;`.
+By default, grid styles are inserted at the start of the document head, making the grid layer the first in the document and causing _all_ other styles to override grid styles. If you are setting `themeCssLayer`, you probably also want to move the grid styles later in the document by setting `themeStyleContainer` to the document body. This will ensure that your application styles come before the grid styles, and allow them to declare an order to css layers using e.g. `@layer resets, grid, application;`.
 {% /note %}
 
 In the following example the header is colored red using styles in the `application` layer, which comes after the `grid` layer allowing it to override the default header colour:
