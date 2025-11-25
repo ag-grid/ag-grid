@@ -6,12 +6,13 @@ import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColKey } from '../entities/colDef';
+import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
+import { SortService } from '../sort/sortService';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
 import type { ColumnCollections } from './columnModel';
-import type { ColumnState, ColumnStateParams } from './columnStateUtils';
+import { ColumnState, ColumnStateParams, _applyColumnState } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
@@ -158,3 +159,23 @@ export const getValueFactory =
 
         return obj;
     };
+
+export function _getColumnStateFromColDef(
+    colDef: ColDef,
+    sortSvc: SortService | undefined,
+    colId: string
+): ColumnState {
+    const state: ColumnState = {
+        ...colDef,
+        sort: undefined,
+        colId,
+    };
+
+    if (sortSvc) {
+        const { direction, type } = sortSvc.getSortDefFromColDef(colDef);
+        state.sort = direction;
+        state.sortType = type;
+    }
+
+    return state;
+}

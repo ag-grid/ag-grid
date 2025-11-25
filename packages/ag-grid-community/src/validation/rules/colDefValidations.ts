@@ -188,6 +188,27 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
+        sort: {
+            validate: (_options) => {
+                if (_isSortDefValid(_options.sort, false) || _isSortDirectionValid(_options.sort, false)) {
+                    return null;
+                }
+
+                return `sort must be of type (SortDirection | SortDef), currently it is ${typeof _options.sort === 'object' ? JSON.stringify(_options.sort) : toStringWithNullUndefined(_options.sort)}`;
+            },
+        },
+        initialSort: {
+            validate: (_options) => {
+                if (
+                    _isSortDefValid(_options.initialSort, false) ||
+                    _isSortDirectionValid(_options.initialSort, false)
+                ) {
+                    return null;
+                }
+
+                return `initialSort must be of non-null type (SortDirection | SortDef), currently it is ${typeof _options.initialSort === 'object' ? JSON.stringify(_options.initialSort) : toStringWithNullUndefined(_options.initialSort)}`;
+            },
+        },
         sortingOrder: {
             validate: (_options) => {
                 const sortingOrder = _options.sortingOrder;
@@ -206,7 +227,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                             .join(', ')}]`;
                     }
                 } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
-                    return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+                    return `sortingOrder must be an array with at least one element, currently it is ${sortingOrder}`;
                 }
                 return null;
             },

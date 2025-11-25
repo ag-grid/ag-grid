@@ -42,6 +42,7 @@ export {
     _updateColsMap,
     _convertColumnEventSourceType,
     _columnsMatch,
+    _getColumnStateFromColDef,
 } from './columns/columnUtils';
 export type { SelectionColService } from './columns/selectionColService';
 export {

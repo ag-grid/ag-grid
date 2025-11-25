@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn, _isSortDirectionValid } from '../entities/agColumn';
 import { _areSortDefsEqual, _getSortDefFromInput, _isSortDefValid, _normalizeSortType } from '../entities/agColumn';
-import type { DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
+import type { ColDef, DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -319,16 +319,9 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public initCol(column: AgColumn): void {
-        const { sort, initialSort, sortIndex, initialSortIndex } = column.colDef;
+        const { sortIndex, initialSortIndex } = column.colDef;
 
-        const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
-        const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
-
-        if (sortIsValid) {
-            column.setSortDef(_getSortDefFromInput(sort));
-        } else if (initialSortIsValid) {
-            column.setSortDef(_getSortDefFromInput(initialSort));
-        }
+        column.setSortDef(this.getSortDefFromColDef(column.colDef));
 
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
@@ -337,6 +330,21 @@ export class SortService extends BeanStub implements NamedBean {
         } else if (initialSortIndex !== null) {
             column.sortIndex = initialSortIndex;
         }
+    }
+
+    public getSortDefFromColDef(colDef: ColDef) {
+        const { sort, initialSort } = colDef;
+        const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
+        const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
+
+        if (sortIsValid) {
+            return _getSortDefFromInput(sort);
+        }
+        if (initialSortIsValid) {
+            return _getSortDefFromInput(initialSort);
+        }
+
+        return _getSortDefFromInput();
     }
 
     /**

@@ -2,6 +2,7 @@ import type {
     ColDef,
     ColKey,
     ColumnEventType,
+    ColumnState,
     IColumnCollectionService,
     NamedBean,
     PropertyValueChangedEvent,
@@ -17,6 +18,7 @@ import {
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
@@ -204,7 +206,8 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
-        _applyColumnState(beans, { state: [{ colId, ...colDef }] }, source);
+
+        _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, beans.sortSvc, colId)] }, source);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {
