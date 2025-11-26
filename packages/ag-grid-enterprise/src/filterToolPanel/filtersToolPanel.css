@@ -39,11 +39,6 @@
     min-height: var(--ag-header-height);
 }
 
-:where(.ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar)
-    .ag-filter-toolpanel-group-instance-header-icon {
-    display: none;
-}
-
 .ag-filter-toolpanel-search-input {
     flex-grow: 1;
     height: calc(var(--ag-spacing) * 4);

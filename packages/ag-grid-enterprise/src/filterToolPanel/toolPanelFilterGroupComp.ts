@@ -10,6 +10,7 @@ import {
     Component,
     RefPlaceholder,
     _clearElement,
+    _createElement,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     isProvidedColumnGroup,
@@ -146,11 +147,13 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private addInIcon(iconName: IconName): void {
+        const iconOuter = _createElement({ tag: 'span' });
         const eIcon = _createIconNoSpan(iconName, this.beans)!;
         if (eIcon) {
-            eIcon.classList.add('ag-filter-toolpanel-group-instance-header-icon');
+            iconOuter.classList.add('ag-filter-toolpanel-group-instance-header-icon');
+            iconOuter.appendChild(eIcon);
         }
-        this.filterGroupComp.addTitleBarWidget(eIcon);
+        this.filterGroupComp.addTitleBarWidget(iconOuter);
     }
 
     private forEachToolPanelFilterChild(action: (filterComp: ToolPanelFilterItem) => void) {
@@ -198,7 +201,14 @@ export class ToolPanelFilterGroupComp extends Component {
         const columns = this.getColumns();
 
         const anyChildFiltersActive = () => columns.some((col) => col.isFilterActive());
-        this.filterGroupComp.toggleCss('ag-has-filter', anyChildFiltersActive());
+
+        const iconOuter = this.filterGroupComp
+            .getGui()
+            .querySelector('.ag-filter-toolpanel-group-instance-header-icon') as HTMLElement;
+
+        if (iconOuter) {
+            iconOuter.classList.toggle('ag-filter-active', anyChildFiltersActive());
+        }
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {
