@@ -346,9 +346,6 @@ export class SortService extends BeanStub implements NamedBean {
         if (initialSortIsValid) {
             return _getSortDefFromInput(initialSort);
         }
-        if (sortingOrder?.length) {
-            return _getSortDefFromInput(sortingOrder[0]);
-        }
 
         return null;
     }
