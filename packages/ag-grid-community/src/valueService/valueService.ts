@@ -404,26 +404,10 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!rowNode || !column) {
             return false;
         }
-        // this happens when enableGroupEdit is turned on and editing is performed on group rows
-        if (_missing(rowNode.data)) {
-            rowNode.data = {};
-        }
+        this.ensureRowData(rowNode);
 
-        const formulaSvc = this.beans.formula;
-        const isFormulaColumn = column.isAllowFormula();
-        const isFormulaValue = isFormulaColumn && formulaSvc?.isFormula(newValue);
-        const formulaDataSvc = this.formulaDataSvc;
-        const hasExternalFormulaData = !!formulaDataSvc?.hasDataSource();
-
-        const { field, valueSetter } = column.getColDef();
-
-        if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
-            _warn(17);
-            return false;
-        }
-
-        if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
-            _warn(135);
+        const colDef = column.getColDef();
+        if (!this.isSetValueSupported({ column, newValue, colDef })) {
             return false;
         }
 
@@ -432,39 +416,31 @@ export class ValueService extends BeanStub implements NamedBean {
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode, undefined, eventSource),
             newValue: newValue,
-            colDef: column.getColDef(),
+            colDef,
             column: column,
         });
 
         params.newValue = newValue;
 
-        if (hasExternalFormulaData && isFormulaColumn) {
-            const existingFormula = formulaDataSvc?.getFormula({ column, rowNode });
-
-            if (isFormulaValue) {
-                const valueWasDifferent = existingFormula !== newValue;
-                if (!valueWasDifferent) {
-                    return false;
-                }
-
-                formulaDataSvc?.setFormula({ column, rowNode, formula: newValue });
-                return this.finishValueChange(rowNode, column, params, eventSource);
-            } else if (existingFormula !== undefined) {
-                formulaDataSvc?.setFormula({ column, rowNode, formula: undefined });
-            }
+        const externalFormulaResult = this.handleExternalFormulaChange({
+            column,
+            eventSource,
+            newValue,
+            setterParams: params,
+            rowNode,
+        });
+        if (externalFormulaResult !== null) {
+            return externalFormulaResult;
         }
 
-        let valueWasDifferent: boolean;
-
-        if (_exists(valueSetter)) {
-            if (typeof valueSetter === 'function') {
-                valueWasDifferent = valueSetter(params);
-            } else {
-                valueWasDifferent = this.expressionSvc?.evaluate(valueSetter, params);
-            }
-        } else {
-            valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
-        }
+        let valueWasDifferent = this.computeValueChange({
+            column,
+            newValue,
+            params,
+            rowData: rowNode.data,
+            valueSetter: colDef.valueSetter,
+            field: colDef.field,
+        });
 
         // in case user forgot to return something (possible if they are not using TypeScript
         // and just forgot we default the return value to true, so we always refresh.
@@ -501,6 +477,92 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         return true;
+    }
+
+    private ensureRowData(rowNode: IRowNode): void {
+        // enableGroupEdit allows editing group rows without data.
+        if (_missing(rowNode.data)) {
+            rowNode.data = {};
+        }
+    }
+
+    private isSetValueSupported(params: {
+        column: AgColumn;
+        newValue: any;
+        colDef: ReturnType<AgColumn['getColDef']>;
+    }): boolean {
+        const { column, newValue, colDef } = params;
+        const { field, valueSetter } = colDef;
+
+        const formulaSvc = this.beans.formula;
+        const isFormulaValue = column.isAllowFormula() && formulaSvc?.isFormula(newValue);
+        const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
+
+        if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
+            _warn(17);
+            return false;
+        }
+
+        if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
+            _warn(135);
+            return false;
+        }
+
+        return true;
+    }
+
+    private handleExternalFormulaChange(args: {
+        column: AgColumn;
+        rowNode: IRowNode;
+        newValue: any;
+        setterParams: ValueSetterParams;
+        eventSource?: string;
+    }): boolean | null {
+        const { column, rowNode, newValue, eventSource, setterParams } = args;
+        const formulaSvc = this.beans.formula;
+        const formulaDataSvc = this.formulaDataSvc;
+        if (!formulaDataSvc?.hasDataSource() || !column.isAllowFormula()) {
+            return null;
+        }
+
+        const isFormulaValue = formulaSvc?.isFormula(newValue);
+        const existingFormula = formulaDataSvc.getFormula({ column, rowNode });
+
+        if (isFormulaValue) {
+            const valueWasDifferent = existingFormula !== newValue;
+            if (!valueWasDifferent) {
+                return false;
+            }
+
+            formulaDataSvc.setFormula({ column, rowNode, formula: newValue });
+            return this.finishValueChange(rowNode, column, setterParams, eventSource);
+        }
+
+        if (existingFormula !== undefined) {
+            formulaDataSvc.setFormula({ column, rowNode, formula: undefined });
+        }
+
+        return null;
+    }
+
+    private computeValueChange(params: {
+        valueSetter: ValueSetterParams['colDef']['valueSetter'];
+        params: ValueSetterParams;
+        rowData: any;
+        field: string | undefined;
+        column: AgColumn;
+        newValue: any;
+    }): boolean | undefined {
+        const { valueSetter, params: setterParams, rowData, field, column, newValue } = params;
+
+        if (_exists(valueSetter)) {
+            if (typeof valueSetter === 'function') {
+                return valueSetter(setterParams);
+            }
+            return this.expressionSvc?.evaluate(valueSetter, setterParams);
+        }
+
+        return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
     }
 
     private dispatchCellValueChangedEvent(
