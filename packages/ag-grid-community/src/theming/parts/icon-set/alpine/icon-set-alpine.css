@@ -10,8 +10,12 @@
     mask-image: url('./alpine-svg-icons/arrows.svg');
 }
 
-.ag-icon-asc::before {
+.ag-icon-asc:before {
     mask-image: url('./alpine-svg-icons/asc.svg');
+}
+
+.ag-icon-aasc:before {
+    mask-image: url('./alpine-svg-icons/aasc.svg');
 }
 
 .ag-icon-cancel::before {
@@ -50,8 +54,12 @@
     mask-image: url('./alpine-svg-icons/cut.svg');
 }
 
-.ag-icon-desc::before {
+.ag-icon-desc:before {
     mask-image: url('./alpine-svg-icons/desc.svg');
+}
+
+.ag-icon-adesc:before {
+    mask-image: url('./alpine-svg-icons/adesc.svg');
 }
 
 .ag-icon-down::before {
