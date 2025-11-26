@@ -72,21 +72,18 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
     };
 
     const hoverTargetCenter = async (
-        api: GridApi,
         targetElement: Element,
-        dataTransfer: DataTransfer,
-        fireMouseEvent: (
+        movePointer: (
             element: Element,
-            type: string,
-            options: MouseEventInit & { dataTransfer?: DataTransfer }
-        ) => Promise<void>
+            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
+        ) => Promise<unknown>
     ) => {
         const rect = targetElement.getBoundingClientRect();
         const clientX = rect.left + rect.width / 2;
         const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
             await asyncSetTimeout(25);
-            await fireMouseEvent(targetElement, 'dragover', { clientX, clientY, dataTransfer });
+            await movePointer(targetElement, { clientX, clientY });
         }
     };
 
@@ -120,11 +117,8 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const result = await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -180,11 +174,8 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const result = await dragAndDropRow({
             api,
-            source: 'draft',
-            target: 'protected',
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: 'draft' }, { target: 'protected', yOffsetPercent: 0.35 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -251,11 +242,11 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const { rowDragEndEvents } = await dragAndDropRow({
             api,
-            source: initialRows.getRowHtmlElement('team')!,
-            target: initialRows.getRowHtmlElement('team-eng')!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [
+                { target: initialRows.getRowHtmlElement('team')! },
+                { target: initialRows.getRowHtmlElement('team-eng')!, yOffsetPercent: 0.6 },
+            ],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -310,11 +301,8 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: 'library-drafts-spec',
-            target: 'library-archive',
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: 'library-drafts-spec' }, { target: 'library-archive', yOffsetPercent: 0.35 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -373,11 +361,8 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const result = await dragAndDropRow({
             api,
-            source: 'library-shared-manual',
-            target: 'library-protected',
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: 'library-shared-manual' }, { target: 'library-protected', yOffsetPercent: 0.35 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 

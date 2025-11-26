@@ -213,7 +213,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private makeRowsDrop(
         lastDraggingEvent: RowDraggingEvent | null,
         draggingEvent: RowDraggingEvent,
-        moving: boolean,
+        fromNudge: boolean,
         dropping: boolean
     ): RowsDrop | null {
         const { beans, gos } = this;
@@ -268,7 +268,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         rowsDrop.pointerPos = computePointerPos(target, rowsDrop.y);
         rowsDrop.yDelta = yDelta;
 
-        groupEditSvc?.fixRowsDrop(rowsDrop, canSetParent, moving, yDelta);
+        groupEditSvc?.fixRowsDrop(rowsDrop, canSetParent, fromNudge, yDelta);
 
         this.validateRowsDrop(rowsDrop, canSetParent, dropping);
 
@@ -325,6 +325,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             highlight: !dropping && rowDragManaged && suppressMoveWhenRowDragging && (withinGrid || !sameGrid),
             yDelta: 0,
             inside: false,
+            droppedManaged: false,
         };
     }
 
@@ -557,12 +558,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public onDragStop(draggingEvent: RowDraggingEvent): void {
+        const previousRowsDrop = (this.lastDraggingEvent?.dropTarget as RowsDrop | null) ?? null;
         const rowsDrop = this.makeRowsDrop(this.lastDraggingEvent, draggingEvent, false, true);
         this.dispatchGridEvent('rowDragEnd', draggingEvent);
         if (
             rowsDrop?.allowed &&
             rowsDrop.rowDragManaged &&
-            (rowsDrop.suppressMoveWhenRowDragging || !rowsDrop.sameGrid || this.autoScroll?.scrolling)
+            (!previousRowsDrop?.droppedManaged || rowsDropChanged(previousRowsDrop, rowsDrop))
         ) {
             this.dropRows(rowsDrop); // Drop the rows after dragging
         }
@@ -590,6 +592,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     /** Drag and drop. Returns false if at least a row was moved, otherwise true */
     private dropRows(rowsDrop: RowsDrop): boolean {
+        rowsDrop.droppedManaged = true;
         return rowsDrop.sameGrid ? this.csrmMoveRows(rowsDrop) : this.csrmAddRows(rowsDrop);
     }
 

@@ -47,7 +47,10 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
         const rows = api.getRenderedNodes();
         expect(rows.length).toBe(20);
 
-        await dragAndDropRow({ api, source: '4', target: '7' });
+        await dragAndDropRow({
+            api,
+            steps: [{ target: '4' }, { target: '7' }],
+        });
 
         const lastMoveEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
         expect(lastMoveEvent).toBeTruthy();
@@ -84,7 +87,10 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
         const rows = api.getRenderedNodes();
         expect(rows.length).toBe(20);
 
-        await dragAndDropRow({ api, source: '24', target: '28' });
+        await dragAndDropRow({
+            api,
+            steps: [{ target: '24' }, { target: '28' }],
+        });
 
         const lastMoveEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
         expect(lastMoveEvent).toBeTruthy();

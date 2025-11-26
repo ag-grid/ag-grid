@@ -65,7 +65,10 @@ describe('ag-grid SSRM treeData managed drag and drop', () => {
 
         // Pick two leaf ids that exist in the small dataset and perform a managed drag
         // 105 and 107 are leaves in the sample dataset
-        await dragAndDropRow({ api, source: '105', target: '107' });
+        await dragAndDropRow({
+            api,
+            steps: [{ target: '105' }, { target: '107' }],
+        });
 
         await waitForNoLoadingRows(api);
 

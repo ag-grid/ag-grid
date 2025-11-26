@@ -49,7 +49,11 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             `);
             if (i < 3) {
                 const el = gridRows.rowsHtmlElements[i];
-                await dragAndDropRow({ api, source: el, target: el, eventType });
+                await dragAndDropRow({
+                    api,
+                    steps: [{ target: el }, { target: el }],
+                    eventType,
+                });
             }
         }
     });
@@ -73,8 +77,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         // Try dragging itself
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[0],
-            target: gridRows.rowsHtmlElements[0],
+            steps: [{ target: gridRows.rowsHtmlElements[0] }, { target: gridRows.rowsHtmlElements[0] }],
             eventType,
         });
 
@@ -106,9 +109,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: initialRows.rowsHtmlElements[0],
-            target: initialRows.rowsHtmlElements[1],
-            targetYOffsetPercent: 0.8,
+            steps: [
+                { target: initialRows.rowsHtmlElements[0] },
+                { target: initialRows.rowsHtmlElements[1], yOffsetPercent: 0.8 },
+            ],
             eventType,
         });
 
@@ -158,9 +162,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             if (index !== null) {
                 await dragAndDropRow({
                     api,
-                    source: gridRows.rowsHtmlElements[index],
-                    target: gridRows.rowsHtmlElements[index],
-                    targetYOffsetPercent: 0.7,
+                    steps: [
+                        { target: gridRows.rowsHtmlElements[index] },
+                        { target: gridRows.rowsHtmlElements[index], yOffsetPercent: 0.7 },
+                    ],
                     eventType,
                 });
             }
@@ -187,8 +192,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: true });
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[0],
-            target: gridRows.rowsHtmlElements[3],
+            steps: [{ target: gridRows.rowsHtmlElements[0] }, { target: gridRows.rowsHtmlElements[3] }],
             eventType,
         });
 
@@ -203,9 +207,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[3],
-            target: gridRows.rowsHtmlElements[0],
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.rowsHtmlElements[3] },
+                { target: gridRows.rowsHtmlElements[0], yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -239,9 +244,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         // Move row 2 (index 1) up
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[1],
-            target: gridRows.rowsHtmlElements[0],
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.rowsHtmlElements[1] },
+                { target: gridRows.rowsHtmlElements[0], yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -256,9 +262,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         const updatedRows = new GridRows(api, '2 now at 0', { checkDom: true, columns: true });
         await dragAndDropRow({
             api,
-            source: updatedRows.rowsHtmlElements[0],
-            target: updatedRows.rowsHtmlElements[1],
-            targetYOffsetPercent: 0.7,
+            steps: [
+                { target: updatedRows.rowsHtmlElements[0] },
+                { target: updatedRows.rowsHtmlElements[1], yOffsetPercent: 0.7 },
+            ],
             eventType,
         });
 
@@ -307,9 +314,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[1],
-            target: gridRows.rowsHtmlElements[3],
-            targetYOffsetPercent: 0.7,
+            steps: [
+                { target: gridRows.rowsHtmlElements[1] },
+                { target: gridRows.rowsHtmlElements[3], yOffsetPercent: 0.7 },
+            ],
             eventType,
         });
 
@@ -325,9 +333,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[2],
-            target: gridRows.rowsHtmlElements[0],
-            targetYOffsetPercent: 0.15,
+            steps: [
+                { target: gridRows.rowsHtmlElements[2] },
+                { target: gridRows.rowsHtmlElements[0], yOffsetPercent: 0.15 },
+            ],
             eventType,
         });
 
@@ -343,9 +352,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[4],
-            target: gridRows.rowsHtmlElements[2],
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.rowsHtmlElements[4] },
+                { target: gridRows.rowsHtmlElements[2], yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -402,8 +412,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[0],
-            target: gridRows.rowsHtmlElements[3],
+            steps: [{ target: gridRows.rowsHtmlElements[0] }, { target: gridRows.rowsHtmlElements[3] }],
             eventType,
         });
 
@@ -419,9 +428,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[2],
-            target: gridRows.rowsHtmlElements[0],
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.rowsHtmlElements[2] },
+                { target: gridRows.rowsHtmlElements[0], yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -475,8 +485,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         let gridRows = new GridRows(api, 'initial', gridRowsOptions);
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[1],
-            target: gridRows.rowsHtmlElements[3],
+            steps: [{ target: gridRows.rowsHtmlElements[1] }, { target: gridRows.rowsHtmlElements[3] }],
             eventType,
         });
 
@@ -540,9 +549,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         let gridRows = new GridRows(api, 'initial', gridRowsOptions);
         await dragAndDropRow({
             api,
-            source: gridRows.rowsHtmlElements[2],
-            target: gridRows.rowsHtmlElements[0],
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.rowsHtmlElements[2] },
+                { target: gridRows.rowsHtmlElements[0], yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -597,9 +607,10 @@ describe.each(DRAG_INTERACTION_TYPES)('managed drag cancellation %s', (eventType
 
         const dragResult = await dragAndDropRow({
             api,
-            source: initialRows.rowsHtmlElements[0],
-            target: initialRows.rowsHtmlElements[1],
-            targetYOffsetPercent: 0.8,
+            steps: [
+                { target: initialRows.rowsHtmlElements[0] },
+                { target: initialRows.rowsHtmlElements[1], yOffsetPercent: 0.8 },
+            ],
             cancel: true,
             eventType,
         });

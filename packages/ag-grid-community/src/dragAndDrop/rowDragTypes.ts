@@ -145,6 +145,7 @@ export interface RowsDrop<TData = any, TContext = any>
 
     yDelta: number;
     inside: boolean;
+    droppedManaged: boolean;
 }
 
 // This is the external-facing version of `RowsDrop`

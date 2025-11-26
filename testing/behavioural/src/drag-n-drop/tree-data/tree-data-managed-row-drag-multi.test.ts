@@ -53,21 +53,18 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
     };
 
     const hoverTargetCenter = async (
-        api: GridApi,
         targetElement: Element,
-        dataTransfer: DataTransfer,
-        fireMouseEvent: (
+        movePointer: (
             element: Element,
-            type: string,
-            options: MouseEventInit & { dataTransfer?: DataTransfer }
-        ) => Promise<void>
+            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
+        ) => Promise<unknown>
     ) => {
         const rect = targetElement.getBoundingClientRect();
         const clientX = rect.left + rect.width / 2;
         const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
             await asyncSetTimeout(25);
-            await fireMouseEvent(targetElement, 'dragover', { clientX, clientY, dataTransfer });
+            await movePointer(targetElement, { clientX, clientY });
         }
     };
 
@@ -119,11 +116,8 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.35 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -186,41 +180,27 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(sourceRow).toBeTruthy();
         expect(targetRow).toBeTruthy();
 
-        const waitForGroupHover = async (
-            gridApi: GridApi,
-            targetElement: Element,
-            dataTransfer: DataTransfer,
-            fireMouseEvent: (
-                element: Element,
-                type: string,
-                options: MouseEventInit & { dataTransfer?: DataTransfer }
-            ) => Promise<void>
-        ): Promise<boolean> => {
-            const rect = targetElement.getBoundingClientRect();
-            const clientX = rect.left + rect.width / 2;
-            const clientY = rect.top + rect.height / 2;
-            for (let i = 0; i < 15; ++i) {
-                await asyncSetTimeout(30);
-                await fireMouseEvent(targetElement, 'dragover', { clientX, clientY, dataTransfer });
-            }
-
-            let expanded = false;
-            gridApi.forEachNode((node: IRowNode) => {
-                if (node.id === 'root-ops') {
-                    expanded = !!node.expanded;
-                }
-            });
-            return expanded;
-        };
-
         let expandedBeforeDrop = false;
         await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, dataTransfer, fireMouseEvent);
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
+            beforeDrop: async ({ targetElement, movePointer }) => {
+                const rect = targetElement.getBoundingClientRect();
+                const clientX = rect.left + rect.width / 2;
+                const clientY = rect.top + rect.height / 2;
+
+                await movePointer(targetElement, { clientX, clientY });
+
+                for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
+                    await asyncSetTimeout(20);
+                    api.forEachNode((node: IRowNode) => {
+                        if (node.id === 'root-ops') {
+                            expandedBeforeDrop = !!node.expanded;
+                        }
+                    });
+                }
+
+                await asyncSetTimeout(10);
             },
         });
         await asyncSetTimeout(0);
@@ -277,11 +257,8 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         const dragResult = await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.35 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 

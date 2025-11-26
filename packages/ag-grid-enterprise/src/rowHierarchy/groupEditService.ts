@@ -133,14 +133,13 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         return true;
     }
 
-    public fixRowsDrop(rowsDrop: _RowsDrop, canSetParent: boolean, moving: boolean, yDelta: number): void {
+    public fixRowsDrop(rowsDrop: _RowsDrop, canSetParent: boolean, fromNudge: boolean, yDelta: number): void {
         let target = rowsDrop.target as IRowNode | null;
         let newParent: IRowNode | null = null;
         let inside = false;
 
         const rootNode = rowsDrop.rootNode as IRowNode;
         const rowModel = this.beans.rowModel;
-        const fromNudge = moving;
         const canStartGroup = target ? this.canDropStartGroup(target) : false;
 
         this.updateDropTarget(canStartGroup ? target : null, fromNudge);

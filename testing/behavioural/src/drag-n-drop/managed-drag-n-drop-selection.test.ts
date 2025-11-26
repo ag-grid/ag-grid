@@ -58,9 +58,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('5')!,
-            targetYOffsetPercent: 0.7,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('5')!, yOffsetPercent: 0.7 },
+            ],
             eventType,
         });
 
@@ -117,9 +118,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('3')!,
-            target: gridRows.getRowHtmlElement('6')!,
-            targetYOffsetPercent: 0.7,
+            steps: [
+                { target: gridRows.getRowHtmlElement('3')! },
+                { target: gridRows.getRowHtmlElement('6')!, yOffsetPercent: 0.7 },
+            ],
             eventType,
         });
 

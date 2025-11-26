@@ -1,44 +1,38 @@
 import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
-import { buildRowElementsMap, collectRowElements, resolveRowElement } from '../gridRows/rowElementLookup';
+import type { RowElementReference } from '../gridRows/gridHtmlRows';
+import { GridHtmlRows } from '../gridRows/gridHtmlRows';
 import { mockGridLayout } from '../polyfills/mockGridLayout';
 import { initPointerEventPolyfill } from '../polyfills/pointerEvent';
 import { TestGridsManager } from '../testGridsManager';
 import { asyncSetTimeout } from '../utils';
-import type { FireInteractionEventFn, InteractionEventOptions } from './drag-event-dispatcher';
+import type { DragInteractionType } from './drag-event-dispatcher';
 import { DragEventDispatcher } from './drag-event-dispatcher';
 
-export type DragInteractionType = 'mouse' | 'pointer' | 'touch';
+export type { DragInteractionType } from './drag-event-dispatcher';
 
-export const DRAG_INTERACTION_TYPES: readonly DragInteractionType[] = ['mouse', 'pointer', 'touch'];
+export interface DragPointerMoveOptions {
+    yOffsetPercent?: number;
+    clientX?: number;
+    clientY?: number;
+}
 
-export const DRAG_NO_MOVE_INTERACTION_CASES: Array<[boolean, DragInteractionType]> = [true, false].flatMap(
-    (suppressMoveWhenRowDragging) =>
-        DRAG_INTERACTION_TYPES.map(
-            (eventType) => [suppressMoveWhenRowDragging, eventType] as [boolean, DragInteractionType]
-        )
-);
-
-const INTERACTION_EVENT_NAMES: Record<DragInteractionType, { down: string; move: string; up: string }> = {
-    mouse: { down: 'mousedown', move: 'mousemove', up: 'mouseup' },
-    pointer: { down: 'pointerdown', move: 'pointermove', up: 'pointerup' },
-    touch: { down: 'touchstart', move: 'touchmove', up: 'touchend' },
-};
+export type DragPointerMoveFn = (target: Element, options?: DragPointerMoveOptions) => Promise<void>;
 
 export interface DragAndDropIntermediateStepContext {
     api: GridApi;
+    dispatcher: DragEventDispatcher;
     stepIndex: number;
     stepElement: Element;
-    dataTransfer: DataTransfer;
-    currentX: number;
-    currentY: number;
-    fireUserInteractionEvent: FireInteractionEventFn;
     rowDragMoveEvents: RowDragMoveEvent[];
+    movePointer: DragPointerMoveFn;
 }
 
-export interface DragAndDropIntermediateTarget {
-    target: Element | string | null | undefined;
-    targetYOffsetPercent?: number;
+export interface DragAndDropRowStep {
+    target: RowElementReference;
+    yOffsetPercent?: number;
+    clientX?: number;
+    clientY?: number;
     afterStep?: (context: DragAndDropIntermediateStepContext) => Promise<void> | void;
 }
 
@@ -46,90 +40,81 @@ export interface DragAndDropBeforeDropContext {
     api: GridApi;
     sourceElement: Element;
     targetElement: Element;
-    dataTransfer: DataTransfer;
-    fireUserInteractionEvent: FireInteractionEventFn;
-    fireMouseEvent: FireInteractionEventFn;
+    dispatcher: DragEventDispatcher;
+    movePointer: DragPointerMoveFn;
 }
 
 type DragMoveStep = {
     element: Element;
     yOffsetPercent: number;
-    afterStep?: DragAndDropIntermediateTarget['afterStep'];
+    afterStep?: DragAndDropRowStep['afterStep'];
+    clientX?: number;
+    clientY?: number;
 };
 
 type DragContextResolution = DragContextSuccess | DragContextError;
 
 interface DragContextSuccess {
+    gridHtmlRows: GridHtmlRows;
     sourceElement: HTMLElement;
     moveSteps: DragMoveStep[];
     finalTarget: HTMLElement;
-    ownerDocument: Document;
-    rootEventTarget: EventTarget & { dispatchEvent: (event: Event) => boolean };
     sourceRowId: string;
+    sourceYOffsetPercent: number;
 }
 
 interface DragContextError {
     error: string;
 }
 
-function resolveDragContext(
-    api: GridApi,
-    sourceRef: Element | string | null | undefined,
-    targetRef: Element | string | null | undefined,
-    targetYOffsetPercent: number,
-    intermediateTargets: ReadonlyArray<DragAndDropIntermediateTarget>
-): DragContextResolution {
-    const gridElement = TestGridsManager.getHTMLElement(api);
-    const ownerDocument = (gridElement?.ownerDocument ?? document) as Document;
-    const rootEventTarget = (gridElement?.getRootNode?.() ?? ownerDocument) as EventTarget & {
-        dispatchEvent: (event: Event) => boolean;
-    };
+function resolveDragContext(api: GridApi, steps: ReadonlyArray<DragAndDropRowStep>): DragContextResolution {
+    if (!steps.length) {
+        return { error: 'No drag steps provided' };
+    }
 
-    const rowElementsMap = buildRowElementsMap(collectRowElements(gridElement));
+    const gridHtmlRows = new GridHtmlRows(api);
+    const [sourceStep, ...remainingSteps] = steps;
 
-    const sourceElement = resolveRowElement(rowElementsMap, sourceRef) as HTMLElement | null;
+    const sourceElement = gridHtmlRows.getRowHtmlElement(sourceStep.target);
     if (!sourceElement) {
         return { error: 'Drop source row not found' };
     }
 
-    const targetElement = resolveRowElement(rowElementsMap, targetRef) as HTMLElement | null;
-    if (!targetElement) {
-        return { error: 'Drop Target row not found' };
-    }
-
     const moveSteps: DragMoveStep[] = [];
-    for (const step of intermediateTargets) {
-        const stepElement = resolveRowElement(rowElementsMap, step.target);
+    let finalTarget: HTMLElement | null = null;
+
+    for (let index = 0; index < remainingSteps.length; index += 1) {
+        const step = remainingSteps[index];
+        const stepElement = gridHtmlRows.getRowHtmlElement(step.target);
         if (!stepElement) {
+            if (index === remainingSteps.length - 1) {
+                return { error: 'Drop Target row not found' };
+            }
             continue;
         }
+
         moveSteps.push({
             element: stepElement,
-            yOffsetPercent: step.targetYOffsetPercent ?? 0.5,
+            yOffsetPercent: step.yOffsetPercent ?? 0.5,
+            clientX: step.clientX,
+            clientY: step.clientY,
             afterStep: step.afterStep,
         });
+        finalTarget = stepElement;
     }
 
-    moveSteps.push({ element: targetElement, yOffsetPercent: targetYOffsetPercent });
-
-    const finalTarget = moveSteps[moveSteps.length - 1]?.element as HTMLElement | undefined;
     if (!finalTarget) {
         return { error: 'Drop Target row not found' };
     }
 
     return {
+        gridHtmlRows,
         sourceElement,
         moveSteps,
         finalTarget,
-        ownerDocument,
-        rootEventTarget,
         sourceRowId: sourceElement.getAttribute('row-id') || '',
+        sourceYOffsetPercent: sourceStep.yOffsetPercent ?? 0.5,
     };
-}
-
-function getInteractionTargets(eventType: DragInteractionType, dragHandle: Element) {
-    const moveTarget: Element | Document = eventType === 'touch' ? dragHandle : document;
-    return { moveTarget, upTarget: moveTarget };
 }
 
 function computeStepPoint(rect: DOMRect, yOffsetPercent: number, previousY: number) {
@@ -146,11 +131,7 @@ const shouldAssertDropIndicator = (api: GridApi) =>
 
 export interface DragAndDropRowOptions {
     api: GridApi;
-    source: Element | string | null | undefined;
-    target: Element | string | null | undefined;
-    sourceYOffsetPercent?: number;
-    targetYOffsetPercent?: number;
-    intermediateTargets?: ReadonlyArray<DragAndDropIntermediateTarget>;
+    steps: ReadonlyArray<DragAndDropRowStep>;
     cancel?: boolean;
     eventType?: DragInteractionType;
     beforeDrop?: (context: DragAndDropBeforeDropContext) => Promise<void> | void;
@@ -170,8 +151,8 @@ class RowDragEventRecorder {
     readonly rowDragCancelEvents: RowDragCancelEvent[] = [];
     readonly listeners: RowDragListeners;
 
-    private settlePromise: Promise<void> | undefined;
-    private resolveSettle: (() => void) | undefined;
+    private settlePromise: Promise<void> | undefined = undefined;
+    private resolveSettle: (() => void) | undefined = undefined;
     private settled = false;
 
     constructor() {
@@ -232,31 +213,9 @@ async function withRowDragListeners(api: GridApi, listeners: RowDragListeners, c
     }
 }
 
-interface DragStepState {
-    currentDropTarget: Element | null;
-    currentX: number;
-    currentY: number;
-}
-
-interface DragRuntimeContext {
-    api: GridApi;
-    dispatcher: DragEventDispatcher;
-    moveTarget: Element | Document;
-    upTarget: Element | Document;
-    dropContainer: Element;
-    dragHandle: Element;
-    verifyDropIndicator: boolean;
-    rowDragMoveEvents: RowDragMoveEvent[];
-    interactionEvents: { down: string; move: string; up: string };
-}
-
 export async function dragAndDropRow({
     api,
-    source: sourceRef,
-    target: targetRef,
-    sourceYOffsetPercent = 0.5,
-    targetYOffsetPercent = 0.5,
-    intermediateTargets = [],
+    steps,
     cancel = false,
     eventType = 'mouse',
     beforeDrop,
@@ -274,17 +233,18 @@ export async function dragAndDropRow({
         rowDragCancelEvents: recorder.rowDragCancelEvents,
     };
 
-    const dragContext = resolveDragContext(api, sourceRef, targetRef, targetYOffsetPercent, intermediateTargets);
+    const dragContext = resolveDragContext(api, steps);
 
     if ('error' in dragContext) {
         result.error = dragContext.error;
         return result;
     }
 
-    const { sourceElement, moveSteps, finalTarget, ownerDocument, rootEventTarget, sourceRowId } = dragContext;
+    const { gridHtmlRows, sourceElement, moveSteps, finalTarget, sourceRowId, sourceYOffsetPercent } = dragContext;
     const gridElement = TestGridsManager.getHTMLElement(api);
     const dropContainer =
-        (gridElement?.querySelector('.ag-body-viewport') as Element | null) ?? ownerDocument.documentElement;
+        (gridElement?.querySelector('.ag-body-viewport') as Element | null) ??
+        gridHtmlRows.ownerDocument.documentElement;
 
     const dragHandle = sourceElement.querySelector('.ag-drag-handle');
 
@@ -293,64 +253,49 @@ export async function dragAndDropRow({
         return result;
     }
 
-    const pointerDefaults: PointerEventInit =
-        eventType === 'pointer' ? { pointerId: 1, pointerType: 'mouse', isPrimary: true } : {};
-
-    const dispatcher = new DragEventDispatcher(pointerDefaults);
-    const interactionEvents = INTERACTION_EVENT_NAMES[eventType];
-    const { moveTarget, upTarget } = getInteractionTargets(eventType, dragHandle);
-    const verifyDropIndicator = !!shouldAssertDropIndicator(api);
-
-    const runtime: DragRuntimeContext = {
-        api,
-        dispatcher,
-        moveTarget,
-        upTarget,
-        dropContainer,
-        dragHandle,
-        verifyDropIndicator,
-        rowDragMoveEvents: recorder.rowDragMoveEvents,
-        interactionEvents,
-    };
-
-    const fireUserInteractionEvent = dispatcher.fire;
+    const dispatcher = new DragEventDispatcher(eventType, dropContainer);
 
     const sourceRect = sourceElement.getBoundingClientRect();
     const handleRect = dragHandle.getBoundingClientRect();
-    const startX = handleRect.left + handleRect.width / 2;
-    let startY = handleRect.top + linearInterpolation(0, handleRect.height, sourceYOffsetPercent);
-    const initialY = startY;
+    const pointerDownX = handleRect.left + handleRect.width / 2;
+    const pointerDownY = handleRect.top + linearInterpolation(0, handleRect.height, sourceYOffsetPercent);
+
+    const firstDragClientX = pointerDownX >= sourceRect.right - 5 ? pointerDownX - 5 : pointerDownX + 5;
+    const firstDragClientY = pointerDownY >= sourceRect.bottom - 5 ? pointerDownY - 5 : pointerDownY + 5;
 
     let finalDropTargetElement: Element | null = null;
 
     await withRowDragListeners(api, recorder.listeners, async () => {
-        await dispatcher.fire(dragHandle, interactionEvents.down, {
-            clientX: startX,
-            clientY: startY,
-            buttons: 1,
-            button: 0,
-        });
+        await dispatcher.startDrag(dragHandle, pointerDownX, pointerDownY);
 
-        startY += startY >= sourceRect.bottom - 5 ? -5 : 5;
+        const applyPostMoveEffects = () => {
+            gridHtmlRows.invalidateHtml();
+            if (shouldAssertDropIndicator(api)) {
+                assertDropIndicatorVisible(api);
+            }
+            finalDropTargetElement = dispatcher.currentDropTarget;
+        };
 
-        await dispatcher.fire(moveTarget, interactionEvents.move, { clientX: startX, clientY: startY, buttons: 1 });
-        await dispatcher.fire(dragHandle, 'dragstart', { clientX: startX, clientY: startY });
-        await dispatcher.fire(dropContainer, 'dragenter', { clientX: startX, clientY: startY });
-        await dispatcher.fire(sourceElement, 'dragenter', { clientX: startX, clientY: startY });
-        await dispatcher.fire(dragHandle, 'drag', { clientX: startX, clientY: startY });
+        await dispatcher.movePointer(sourceElement, firstDragClientX, firstDragClientY);
+        applyPostMoveEffects();
 
-        let state: DragStepState = {
-            currentDropTarget: sourceElement,
-            currentX: startX,
-            currentY: initialY,
+        const movePointer: DragPointerMoveFn = async (targetElement, options = {}) => {
+            const yOffsetPercent = options.yOffsetPercent ?? 0.5;
+            const rect = targetElement.getBoundingClientRect();
+            const computedPoint = computeStepPoint(rect, yOffsetPercent, dispatcher.currentY);
+            const stepX = options.clientX ?? computedPoint.x;
+            const stepY = options.clientY ?? computedPoint.y;
+
+            await dispatcher.movePointer(targetElement, stepX, stepY);
+            applyPostMoveEffects();
         };
 
         for (let index = 0; index < moveSteps.length; index += 1) {
             const step = moveSteps[index];
-            state = await performDragStep(runtime, step, state, index, fireUserInteractionEvent);
+            await performDragStep(api, dispatcher, recorder.rowDragMoveEvents, step, index, movePointer);
         }
 
-        finalDropTargetElement = state.currentDropTarget;
+        finalDropTargetElement = dispatcher.currentDropTarget;
 
         if (!finalDropTargetElement) {
             result.error = 'Drop Target row not found';
@@ -362,21 +307,23 @@ export async function dragAndDropRow({
                 api,
                 sourceElement,
                 targetElement: finalDropTargetElement,
-                dataTransfer: dispatcher.dataTransfer,
-                fireUserInteractionEvent,
-                fireMouseEvent: fireUserInteractionEvent,
+                dispatcher,
+                movePointer,
             });
+
+            finalDropTargetElement = dispatcher.currentDropTarget;
+
+            if (!finalDropTargetElement) {
+                result.error = 'Drop Target row not found';
+                return;
+            }
         }
 
-        await completeDrag(runtime, {
-            cancel,
-            eventType,
-            finalDropTarget: finalDropTargetElement,
-            currentX: state.currentX,
-            currentY: state.currentY,
-            ownerDocument,
-            rootEventTarget,
-        });
+        if (cancel) {
+            await dispatcher.cancelDrag();
+        } else {
+            await dispatcher.finishDrag(finalDropTargetElement);
+        }
     });
 
     if (result.error) {
@@ -400,136 +347,27 @@ export async function dragAndDropRow({
 }
 
 async function performDragStep(
-    runtime: DragRuntimeContext,
+    api: GridApi,
+    dispatcher: DragEventDispatcher,
+    rowDragMoveEvents: RowDragMoveEvent[],
     step: DragMoveStep,
-    state: DragStepState,
     stepIndex: number,
-    fireUserInteractionEvent: FireInteractionEventFn
-): Promise<DragStepState> {
-    const {
-        dispatcher,
-        moveTarget,
-        interactionEvents,
-        dropContainer,
-        dragHandle,
-        verifyDropIndicator,
-        api,
-        rowDragMoveEvents,
-    } = runtime;
-    const { element, yOffsetPercent, afterStep } = step;
-    const stepElement = element;
-    const { currentDropTarget, currentY } = state;
-    const stepRect = stepElement.getBoundingClientRect();
-    const { x: stepX, y: stepY } = computeStepPoint(stepRect, yOffsetPercent, currentY);
-
-    await dispatcher.fire(moveTarget, interactionEvents.move, {
-        clientX: stepX,
-        clientY: stepY,
-        buttons: 1,
-    });
-
-    if (currentDropTarget) {
-        await dispatcher.fire(currentDropTarget, 'dragleave', {
-            clientX: stepX,
-            clientY: stepY,
-        });
-    }
-
-    await dispatcher.fire(dropContainer, 'dragleave', {
-        clientX: stepX,
-        clientY: stepY,
-    });
-
-    await dispatcher.fire(dropContainer, 'dragenter', {
-        clientX: stepX,
-        clientY: stepY,
-    });
-    await dispatcher.fire(stepElement, 'dragenter', {
-        clientX: stepX,
-        clientY: stepY,
-    });
-
-    dispatcher.dataTransfer.dropEffect = 'move';
-    await dispatcher.fire(dropContainer, 'dragover', {
-        clientX: stepX,
-        clientY: stepY,
-    });
-    await dispatcher.fire(stepElement, 'dragover', {
-        clientX: stepX,
-        clientY: stepY,
-    });
-    await asyncSetTimeout(0);
-
-    if (verifyDropIndicator) {
-        assertDropIndicatorVisible(api);
-    }
-
-    await dispatcher.fire(dragHandle, 'drag', {
-        clientX: stepX,
-        clientY: stepY,
-    });
+    movePointer: DragPointerMoveFn
+): Promise<void> {
+    const { element, yOffsetPercent, clientX, clientY, afterStep } = step;
+    await movePointer(element, { yOffsetPercent, clientX, clientY });
 
     if (afterStep) {
         await asyncSetTimeout(0);
         await afterStep({
             api,
+            dispatcher,
             stepIndex,
-            stepElement,
-            dataTransfer: dispatcher.dataTransfer,
-            currentX: stepX,
-            currentY: stepY,
-            fireUserInteractionEvent,
+            stepElement: element,
+            movePointer,
             rowDragMoveEvents,
         });
     }
-
-    return {
-        currentDropTarget: stepElement,
-        currentX: stepX,
-        currentY: stepY,
-    };
-}
-
-interface CompleteDragContext {
-    cancel: boolean;
-    eventType: DragInteractionType;
-    finalDropTarget: Element;
-    currentX: number;
-    currentY: number;
-    ownerDocument: Document;
-    rootEventTarget: EventTarget;
-}
-
-async function completeDrag(runtime: DragRuntimeContext, context: CompleteDragContext) {
-    const { dispatcher, moveTarget, upTarget, interactionEvents, dragHandle } = runtime;
-    const { cancel, eventType, finalDropTarget, currentX, currentY, ownerDocument, rootEventTarget } = context;
-    if (cancel) {
-        dispatcher.dataTransfer.dropEffect = 'none';
-        if (eventType === 'pointer') {
-            await dispatcher.fire(moveTarget, 'pointercancel', {
-                clientX: currentX,
-                clientY: currentY,
-                buttons: 0,
-            });
-        } else if (eventType === 'touch') {
-            const touchCancelOptions: InteractionEventOptions = {
-                clientX: currentX,
-                clientY: currentY,
-            };
-            await dispatcher.fire(moveTarget, 'touchcancel', touchCancelOptions);
-            if (ownerDocument !== moveTarget) {
-                await dispatcher.fire(ownerDocument, 'touchcancel', touchCancelOptions);
-            }
-            await asyncSetTimeout(0);
-        } else {
-            await dispatcher.fireESC(rootEventTarget);
-        }
-    } else {
-        await dispatcher.fire(finalDropTarget, 'drop', { clientX: currentX, clientY: currentY });
-    }
-
-    await dispatcher.fire(dragHandle, 'dragend', { clientX: currentX, clientY: currentY });
-    await dispatcher.fire(upTarget, interactionEvents.up, { clientX: currentX, clientY: currentY, buttons: 0 });
 }
 
 interface ValidateRowDragLifecycleParams {

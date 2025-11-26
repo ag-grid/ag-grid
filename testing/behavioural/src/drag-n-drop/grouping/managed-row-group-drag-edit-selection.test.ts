@@ -85,9 +85,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -115,9 +116,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         gridRows = new GridRows(api, 'before committed move', { checkDom: true, columns: ['value'] });
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
             eventType,
         });
 
@@ -186,9 +188,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('1')!,
-            target: gridRows.getRowHtmlElement('4')!,
-            targetYOffsetPercent: 0.8,
+            steps: [
+                { target: gridRows.getRowHtmlElement('1')! },
+                { target: gridRows.getRowHtmlElement('4')!, yOffsetPercent: 0.8 },
+            ],
             eventType,
         });
 
@@ -247,8 +250,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await asyncSetTimeout(0);
 
-        gridRows.expectRowSelectionCheckboxState('r-1', true);
-        gridRows.expectRowSelectionCheckboxState('r-2', true);
+        expect(gridRows.getRowSelectionCheckboxState('r-1')).toBe(true);
+        expect(gridRows.getRowSelectionCheckboxState('r-2')).toBe(true);
 
         gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['athlete'] });
         await gridRows.check(`
@@ -267,9 +270,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const dragResult = await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('r-1')!,
-            target: gridRows.getRowHtmlElement('r-4')!,
-            targetYOffsetPercent: 0.7,
+            steps: [
+                { target: gridRows.getRowHtmlElement('r-1')! },
+                { target: gridRows.getRowHtmlElement('r-4')!, yOffsetPercent: 0.7 },
+            ],
             eventType,
         });
 
@@ -298,8 +302,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(api.getRowNode('r-2')?.data.year).toBe('2022');
         expect(api.getRowNode('r-6')?.data.year).toBe('2020');
 
-        gridRows.expectRowSelectionCheckboxState('r-1', true);
-        gridRows.expectRowSelectionCheckboxState('r-2', true);
+        expect(gridRows.getRowSelectionCheckboxState('r-1')).toBe(true);
+        expect(gridRows.getRowSelectionCheckboxState('r-2')).toBe(true);
     });
 
     test('multi-selection with groups moves all descendants to the drop target', async () => {
@@ -378,9 +382,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const dragResult = await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('a1')!,
-            target: gammaGroupEl!,
-            targetYOffsetPercent: 0.5,
+            steps: [{ target: gridRows.getRowHtmlElement('a1')! }, { target: gammaGroupEl!, yOffsetPercent: 0.5 }],
             eventType,
         });
 

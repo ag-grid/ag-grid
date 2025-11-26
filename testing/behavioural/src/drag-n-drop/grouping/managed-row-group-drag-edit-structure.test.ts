@@ -81,9 +81,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await dragAndDropRow({
             api,
-            source: alphaGroupHandle!,
-            target: betaGroupHandle!,
-            targetYOffsetPercent: 0.2,
+            steps: [{ target: alphaGroupHandle! }, { target: betaGroupHandle!, yOffsetPercent: 0.2 }],
             eventType,
         });
 
@@ -157,9 +155,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: betaGroup!,
-            target: alphaGroup!,
-            targetYOffsetPercent: 0.25,
+            steps: [{ target: betaGroup! }, { target: alphaGroup!, yOffsetPercent: 0.25 }],
             eventType,
         });
 
@@ -233,9 +229,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await dragAndDropRow({
             api,
-            source: alphaGroup!,
-            target: betaLevel2Group!,
-            targetYOffsetPercent: 0.55,
+            steps: [{ target: alphaGroup! }, { target: betaLevel2Group!, yOffsetPercent: 0.55 }],
             eventType,
         });
 
@@ -305,9 +299,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: alphaGroup!,
-            target: alphaParent!,
-            targetYOffsetPercent: 0.85,
+            steps: [{ target: alphaGroup! }, { target: alphaParent!, yOffsetPercent: 0.85 }],
             eventType,
         });
 
@@ -387,9 +379,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: firstChild!,
-            target: alphaParent!,
-            targetYOffsetPercent: 0.95,
+            steps: [{ target: firstChild! }, { target: alphaParent!, yOffsetPercent: 0.95 }],
             eventType,
         });
 
@@ -463,9 +453,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: alphaRow!,
-            target: betaParent!,
-            targetYOffsetPercent: 0.05,
+            steps: [{ target: alphaRow! }, { target: betaParent!, yOffsetPercent: 0.05 }],
             eventType,
         });
 
@@ -544,9 +532,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const dragResult = await dragAndDropRow({
             api,
-            source: sourceGroup!,
-            target: targetGroup!,
-            targetYOffsetPercent: 0.05,
+            steps: [{ target: sourceGroup! }, { target: targetGroup!, yOffsetPercent: 0.05 }],
             eventType,
         });
 

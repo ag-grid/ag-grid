@@ -17,7 +17,13 @@ export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Pro
 
 const POINTER_EVENT_SUPPORTED = typeof PointerEvent === 'function';
 
-export async function firePointerLikeClick(element: HTMLElement): Promise<boolean> {
+export async function firePointerLikeClick(element: string | HTMLElement | null | undefined): Promise<boolean> {
+    if (typeof element === 'string') {
+        element = document.querySelector<HTMLElement>(element);
+    }
+    if (!element) {
+        return false;
+    }
     const rect = element.getBoundingClientRect();
     const clientX = rect.left + rect.width / 2;
     const clientY = rect.top + rect.height / 2;

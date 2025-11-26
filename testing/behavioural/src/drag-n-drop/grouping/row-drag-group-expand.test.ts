@@ -20,23 +20,17 @@ describe('row drag nudger group expansion', () => {
     const waitForGroupHover = async (
         api: any,
         targetElement: Element,
-        dataTransfer: DataTransfer,
-        fireMouseEvent: (
+        movePointer: (
             element: Element,
-            type: string,
-            options: MouseEventInit & { dataTransfer?: DataTransfer }
-        ) => Promise<void>
+            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
+        ) => Promise<unknown>
     ): Promise<boolean> => {
         const rect = targetElement.getBoundingClientRect();
         const clientX = rect.left + rect.width / 2;
         const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
             await asyncSetTimeout(25);
-            await fireMouseEvent(targetElement, 'dragover', {
-                dataTransfer,
-                clientX,
-                clientY,
-            });
+            await movePointer(targetElement, { clientX, clientY });
         }
 
         let expanded = false;
@@ -94,11 +88,9 @@ describe('row drag nudger group expansion', () => {
 
         const result = await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, dataTransfer, fireMouseEvent);
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
+            beforeDrop: async ({ targetElement, movePointer }) => {
+                expandedBeforeDrop = await waitForGroupHover(api, targetElement, movePointer);
             },
         });
 
@@ -169,11 +161,9 @@ describe('row drag nudger group expansion', () => {
 
         const result = await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, dataTransfer, fireMouseEvent);
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
+            beforeDrop: async ({ targetElement, movePointer }) => {
+                expandedBeforeDrop = await waitForGroupHover(api, targetElement, movePointer);
             },
         });
 

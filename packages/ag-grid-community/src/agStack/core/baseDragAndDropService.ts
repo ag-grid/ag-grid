@@ -59,7 +59,6 @@ export abstract class BaseDragAndDropService<
     private lastDraggingEvent: TDraggingEvent | null = null;
     private dragSource: TDragSource | null = null;
 
-    private dragImageParent: HTMLElement | ShadowRoot | null = null;
     private dragImageCompPromise: AgPromise<IComponent<any> & IDragAndDropImage> | null = null;
     private dragImageComp: (IComponent<any> & IDragAndDropImage) | null = null;
     private dragImageLastIcon: TDragAndDropIcon | null | undefined = undefined;
@@ -218,7 +217,6 @@ export abstract class BaseDragAndDropService<
     private clearDragAndDropProperties(): void {
         this.removeDragImageComp(this.dragImageComp);
         this.dragImageCompPromise = null;
-        this.dragImageParent = null;
         this.dragImageLastIcon = undefined;
         this.dragImageLastLabel = undefined;
         this.lastMouseEvent = null;
@@ -430,7 +428,6 @@ export abstract class BaseDragAndDropService<
         style.left = '20px';
 
         const targetEl = _getPageBody(this.beans);
-        this.dragImageParent = targetEl;
         if (!targetEl) {
             this.warnNoBody();
         } else {

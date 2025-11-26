@@ -124,9 +124,10 @@ describe('ag-grid row drag configuration warnings', () => {
 
         const result = await dragAndDropRow({
             api,
-            source: initialRows.getRowHtmlElement('2')!,
-            target: initialRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: initialRows.getRowHtmlElement('2')! },
+                { target: initialRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
         });
 
         const finalRows = new GridRows(api, 'final', { checkDom: true, columns: ['value'] });
@@ -230,16 +231,11 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await dragAndDropRow({
             api,
-            source: '2',
-            intermediateTargets: [
-                {
-                    target: '3',
-                    targetYOffsetPercent: 0.4,
-                    afterStep: intermediateStep,
-                },
+            steps: [
+                { target: '2' },
+                { target: '3', yOffsetPercent: 0.4, afterStep: intermediateStep },
+                { target: '6', yOffsetPercent: 0.9 },
             ],
-            target: '6',
-            targetYOffsetPercent: 0.9,
         });
 
         await asyncSetTimeout(0);
@@ -307,9 +303,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
         });
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
@@ -364,9 +361,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
         });
 
         await asyncSetTimeout(0);
@@ -393,9 +391,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('4')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('4')!, yOffsetPercent: 0.1 },
+            ],
         });
 
         await asyncSetTimeout(0);
@@ -464,9 +463,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await dragAndDropRow({
             api,
-            source: initialRows.getRowHtmlElement('2')!,
-            target: initialRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: initialRows.getRowHtmlElement('2')! },
+                { target: initialRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
         });
 
         await asyncSetTimeout(0);
@@ -516,9 +516,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const { rowDragMoveEvents, rowDragEndEvents } = await dragAndDropRow({
             api,
-            source: '2',
-            target: '3',
-            targetYOffsetPercent: 0.2,
+            steps: [{ target: '2' }, { target: '3', yOffsetPercent: 0.2 }],
         });
 
         expect(validatorParents).toContain('row-group-group-B');

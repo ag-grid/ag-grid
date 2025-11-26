@@ -53,21 +53,18 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
     };
 
     const hoverTargetCenter = async (
-        api: GridApi,
         targetElement: Element,
-        dataTransfer: DataTransfer,
-        fireMouseEvent: (
+        movePointer: (
             element: Element,
-            type: string,
-            options: MouseEventInit & { dataTransfer?: DataTransfer }
-        ) => Promise<void>
+            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
+        ) => Promise<unknown>
     ) => {
         const rect = targetElement.getBoundingClientRect();
         const clientX = rect.left + rect.width / 2;
         const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
             await asyncSetTimeout(25);
-            await fireMouseEvent(targetElement, 'dragover', { clientX, clientY, dataTransfer });
+            await movePointer(targetElement, { clientX, clientY });
         }
     };
 
@@ -113,11 +110,8 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -175,11 +169,8 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.35 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 
@@ -237,9 +228,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         await dragAndDropRow({
             api,
-            source: source!,
-            target: target!,
-            targetYOffsetPercent: 0.05,
+            steps: [{ target: source! }, { target: target!, yOffsetPercent: 0.05 }],
         });
 
         await asyncSetTimeout(0);
@@ -300,9 +289,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         await dragAndDropRow({
             api,
-            source: source!,
-            target: target!,
-            targetYOffsetPercent: 0.05,
+            steps: [{ target: source! }, { target: target!, yOffsetPercent: 0.05 }],
         });
 
         await asyncSetTimeout(0);
@@ -371,11 +358,8 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         await dragAndDropRow({
             api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
+            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
+            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
         });
         await asyncSetTimeout(0);
 

@@ -72,9 +72,10 @@ describe('managed row drag without edit modules', () => {
 
         await dragAndDropRow({
             api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
+            steps: [
+                { target: gridRows.getRowHtmlElement('2')! },
+                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
+            ],
         });
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
