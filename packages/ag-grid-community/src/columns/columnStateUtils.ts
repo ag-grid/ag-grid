@@ -26,7 +26,7 @@ export interface ColumnStateParams {
     /** True if the column is hidden */
     hide?: boolean | null;
     /** Width of the column in pixels */
-    width?: number;
+    width?: number | null;
     /** Column's flex if flex is set */
     flex?: number | null;
     /** The sort direction of the column */
@@ -459,8 +459,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        const sort = column.getSortDef()?.direction;
-        const sortType = column.getSortDef()?.type;
+        const { direction: sort, type: sortType } = column.getSortDef() || {};
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
         res.push({
@@ -506,7 +505,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     const hide = getValueOrNull(colDef.hide, colDef.initialHide);
     const pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
 
-    const width = getValueOrNull(colDef.width, colDef.initialWidth) || undefined;
+    const width = getValueOrNull(colDef.width, colDef.initialWidth);
     const flex = getValueOrNull(colDef.flex, colDef.initialFlex);
 
     let rowGroupIndex: number | null | undefined = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);

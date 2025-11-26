@@ -3,8 +3,8 @@ import { _defaultComparator } from '../agStack/utils/generic';
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
-import type { SortComparatorFn } from '../entities/colDef';
+import { AgColumn, _normalizeSortType } from '../entities/agColumn';
+import type { ColDef, SortComparatorFn, SortType } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
@@ -100,11 +100,8 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         const colDef = sortOption.column.getColDef();
 
         // comparator on col get preference over everything else
-        const comparatorOnCol = colDef.comparator;
-        if (comparatorOnCol != null) {
-            if (typeof comparatorOnCol === 'object') {
-                return comparatorOnCol[sortOption.type || 'default'];
-            }
+        const comparatorOnCol = this.grabComparatorFromColDef(colDef, sortOption);
+        if (comparatorOnCol) {
             return comparatorOnCol;
         }
 
@@ -123,14 +120,18 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
         // comparator on col get preference over everything else
-        const comparatorOnPrimaryCol = primaryColumn.getColDef().comparator;
-        if (comparatorOnPrimaryCol == null) {
+        return this.grabComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+    }
+
+    private grabComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
+        const comparator = colDef.comparator;
+        if (comparator == null) {
             return;
         }
-        if (typeof comparatorOnPrimaryCol === 'object') {
-            return comparatorOnPrimaryCol[sortOption.type || 'default'];
+        if (typeof comparator === 'object') {
+            return comparator[_normalizeSortType(sortOption.type)];
         }
-        return comparatorOnPrimaryCol;
+        return comparator;
     }
 
     private getValue(node: RowNode, column: AgColumn): any {

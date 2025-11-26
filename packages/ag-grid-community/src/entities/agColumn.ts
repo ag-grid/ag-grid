@@ -756,9 +756,9 @@ export class AgColumn<TValue = any>
  *
  * If input is already a valid SortDef, it is returned as is.
  * If input is a valid SortDirection, a SortDef is created using the input direction and
- *    the type from the provided colDef's sortDef (or 'default' if not available).
+ *    the type from the provided colDef's sort (or 'default' if not available).
  * If input is a valid SortType, a SortDef is created using the input type and
- *    the direction from the provided colDef's sortDef (or null if not available).
+ *    the direction from the provided colDef's sort (or null if not available).
  * If no input is provided or input is none of the above, a default SortDef is returned, which is { type: 'default', direction: null }.
  */
 export function _getSortDefFromInput(input?: unknown): SortDef {
@@ -807,10 +807,10 @@ export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortD
     return !!(sortDef1 && sortDef2 && sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction);
 }
 
-export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
-    return _isSortDirectionValid(sortDirectionLike, false) ? sortDirectionLike : null;
+export function _normalizeSortDirection(sortDirectionLike?: unknown) {
+    return (_isSortDirectionValid(sortDirectionLike, false) ? sortDirectionLike : null) as NonNullable<SortDirection>;
 }
 
-export function _normalizeSortType(sortTypeLike?: unknown): SortType {
-    return _isSortTypeValid(sortTypeLike, false) ? sortTypeLike : 'default';
+export function _normalizeSortType(sortTypeLike?: unknown) {
+    return (_isSortTypeValid(sortTypeLike, false) ? sortTypeLike : 'default') as NonNullable<SortType>;
 }

@@ -8,6 +8,7 @@ import type {
     MenuItemDef,
     NamedBean,
     RowNode,
+    SortDef,
 } from 'ag-grid-community';
 import { BeanStub, _createIconNoSpan, _exists, _getRowNode, _resetColumnState, _warn } from 'ag-grid-community';
 
@@ -32,6 +33,29 @@ export function _removeRepeatsFromArray<T>(array: T[], object: T) {
         }
     }
 }
+
+const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
+    string,
+    { fallback: string; getSortDef: (col?: AgColumn) => SortDef }
+> = {
+    sortAscending: { fallback: 'Sort Ascending', getSortDef: () => ({ type: 'default', direction: 'asc' }) },
+    sortDescending: {
+        fallback: 'Sort Descending',
+        getSortDef: () => ({ type: 'default', direction: 'desc' }),
+    },
+    sortAbsoluteAscending: {
+        fallback: 'Sort Absolute Ascending',
+        getSortDef: () => ({ type: 'absolute', direction: 'asc' }),
+    },
+    sortAbsoluteDescending: {
+        fallback: 'Sort Absolute Descending',
+        getSortDef: () => ({ type: 'absolute', direction: 'desc' }),
+    },
+    sortUnSort: {
+        fallback: 'Clear Sort',
+        getSortDef: (column: AgColumn) => ({ type: column.getSortDef().type, direction: null }),
+    },
+};
 
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
@@ -409,64 +433,24 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                           }
                         : null;
                 }
+                case 'sortUnSort':
                 case 'sortAscending':
-                    if (!sortSvc || !column) {
-                        return null;
-                    }
-                    return {
-                        name: localeTextFunc('sortAscending', 'Sort Ascending'),
-                        icon: _createIconNoSpan('sortAscending', beans, null),
-                        action: () =>
-                            sortSvc.setSortForColumn(column!, { type: 'default', direction: 'asc' }, false, source),
-                    };
-
                 case 'sortDescending':
-                    if (!sortSvc || !column) {
-                        return null;
-                    }
-                    return {
-                        name: localeTextFunc('sortDescending', 'Sort Descending'),
-                        icon: _createIconNoSpan('sortDescending', beans, null),
-                        action: () =>
-                            sortSvc.setSortForColumn(column, { type: 'default', direction: 'desc' }, false, source),
-                    };
-                case 'sortAbsoluteAscending': {
-                    if (!sortSvc || !column) {
-                        return null;
-                    }
-                    return {
-                        name: localeTextFunc('sortAbsoluteAscending', 'Sort Absolute Ascending'),
-                        icon: _createIconNoSpan('sortAbsoluteAscending', beans, null),
-                        action: () =>
-                            sortSvc.setSortForColumn(column, { type: 'absolute', direction: 'asc' }, false, source),
-                    };
-                }
+                case 'sortAbsoluteAscending':
                 case 'sortAbsoluteDescending': {
                     if (!sortSvc || !column) {
                         return null;
                     }
+
+                    const { fallback, getSortDef } = SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS[key];
+
                     return {
-                        name: localeTextFunc('sortAbsoluteDescending', 'Sort Absolute Descending'),
-                        icon: _createIconNoSpan('sortAbsoluteDescending', beans, null),
-                        action: () =>
-                            sortSvc.setSortForColumn(column, { type: 'absolute', direction: 'desc' }, false, source),
+                        name: localeTextFunc(key, fallback),
+                        icon: _createIconNoSpan(key, beans, null),
+                        action: () => sortSvc.setSortForColumn(column, getSortDef(column), false, source),
                     };
                 }
-                case 'sortUnSort':
-                    if (!(sortSvc && column)) {
-                        return null;
-                    }
-                    return {
-                        name: localeTextFunc('sortUnSort', 'Clear Sort'),
-                        icon: _createIconNoSpan('sortUnSort', beans, null),
-                        action: () =>
-                            sortSvc.setSortForColumn(
-                                column,
-                                { type: column.getSortDef().type, direction: null },
-                                false,
-                                source
-                            ),
-                    };
+
                 default: {
                     _warn(176, { key });
                     return null;

@@ -70,7 +70,7 @@ export function convertColumnState(
             hiddenColIds.push(colId);
         }
         if (flex != null || width) {
-            columnSizes.push({ colId, flex: flex ?? undefined, width });
+            columnSizes.push({ colId, flex: flex ?? undefined, width: width === null ? undefined : width });
         }
     }
 

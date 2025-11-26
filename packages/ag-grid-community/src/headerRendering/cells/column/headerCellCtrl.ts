@@ -583,7 +583,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { beans, column, comp, sortable } = this;
         if (sortable) {
             const translate = this.getLocaleTextFunc();
-            const sortDef = beans.sortSvc?._getDisplaySortForColumn(column) ?? null;
+            const sortDef = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
             description = translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {

@@ -43,6 +43,7 @@ export {
     _convertColumnEventSourceType,
     _columnsMatch,
     _getColumnStateFromColDef,
+    _getSortDefFromColDef,
 } from './columns/columnUtils';
 export type { SelectionColService } from './columns/selectionColService';
 export {

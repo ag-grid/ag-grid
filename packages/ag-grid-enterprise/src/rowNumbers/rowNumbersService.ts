@@ -153,16 +153,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
         this.refreshSelectionIntegration();
-        const beans = this.beans;
         for (const col of this.columns?.list ?? []) {
             const colDef = this.createRowNumbersColDef();
             col.setColDef(colDef, null, source);
 
-            _applyColumnState(
-                this.beans,
-                { state: [_getColumnStateFromColDef(colDef, beans.sortSvc, col.getColId())] },
-                source
-            );
+            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.getColId())] }, source);
         }
     }
 

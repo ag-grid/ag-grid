@@ -99,7 +99,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             const colDef = this.createSelectionColDef(event.currentValue);
             col.setColDef(colDef, null, source);
 
-            _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, beans.sortSvc, col.colId)] }, source);
+            _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
         }
     }
 

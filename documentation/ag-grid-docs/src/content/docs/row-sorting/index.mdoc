@@ -137,19 +137,14 @@ In this example, the column `rankingChange` uses the following sort definition:
 ```{% frameworkTransform=true %}
 
 const gridOptions = {
-    defaultColDef: {
-        // ... other default colDef properties
-        unSortIcon: true, // to show no-sort direction icon when applicable
-    },
-
     columnDefs: [
         // ... other columns 
-        { field: 'rankingChange', sortable: true, sortDef: { type: 'absolute' } },
+        { field: 'rankingChange', sortable: true, sort: { type: 'absolute', direction: 'asc' } },
     ],
 };
 ```
 
-{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sortDef"] /%}
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort"] /%}
 
 ## Sorting API
 

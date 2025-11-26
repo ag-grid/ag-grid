@@ -2,7 +2,7 @@ import type { SortDirection, SortType } from '../entities/colDef';
 import type { Column } from './iColumn';
 
 export interface SortOption {
-    sort: SortDirection;
+    sort: NonNullable<SortDirection>;
     type: SortType;
     column: Column;
 }

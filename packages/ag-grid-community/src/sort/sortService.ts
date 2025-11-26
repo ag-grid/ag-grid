@@ -1,8 +1,9 @@
+import { _getSortDefFromColDef } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn, _isSortDirectionValid } from '../entities/agColumn';
 import { _areSortDefsEqual, _getSortDefFromInput, _isSortDefValid, _normalizeSortType } from '../entities/agColumn';
-import type { ColDef, DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
+import type { DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -269,7 +270,7 @@ export class SortService extends BeanStub implements NamedBean {
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }
 
-    public _getDisplaySortForColumn(column: AgColumn): DisplaySortDef | undefined {
+    public getDisplaySortForColumn(column: AgColumn): DisplaySortDef | undefined {
         const linkedColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
         if (!this.canColumnDisplayMixedSort(column) || !linkedColumns?.length) {
             return column.getSortDef();
@@ -321,7 +322,7 @@ export class SortService extends BeanStub implements NamedBean {
     public initCol(column: AgColumn): void {
         const { sortIndex, initialSortIndex } = column.colDef;
 
-        const sortDef = this.getSortDefFromColDef(column.colDef);
+        const sortDef = _getSortDefFromColDef(column.colDef);
         if (sortDef) {
             column.setSortDef(sortDef);
         }
@@ -335,27 +336,9 @@ export class SortService extends BeanStub implements NamedBean {
         }
     }
 
-    public getSortDefFromColDef(colDef: ColDef) {
-        const { sort, initialSort, sortingOrder } = colDef;
-        const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
-        const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
-
-        if (sortIsValid) {
-            return _getSortDefFromInput(sort);
-        }
-        if (initialSortIsValid) {
-            return _getSortDefFromInput(initialSort);
-        }
-        if (sortingOrder?.length) {
-            return _getSortDefFromInput(sortingOrder[0]);
-        }
-
-        return null;
-    }
-
     /**
      * Update a column's sort state from a sort definition.
-     * If `sortDef` is `undefined`, the call is a no-op (no change).
+     * If `sortDefOrDirection` is `undefined`, the call is a no-op (no change).
      */
     public updateColSort(
         column: AgColumn,

@@ -117,7 +117,7 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const sortDirection = beans.sortSvc!._getDisplaySortForColumn(column);
+        const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
         const isAbsoluteSort = sortDirection?.type === 'absolute';
         const isAscending = sortDirection?.direction === 'asc';
         const isDescending = sortDirection?.direction === 'desc';
@@ -165,7 +165,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         const { eSortMixed, beans, column } = this;
         if (eSortMixed) {
-            const isMixedSort = beans.sortSvc!._getDisplaySortForColumn(column)?.direction === 'mixed';
+            const isMixedSort = beans.sortSvc!.getDisplaySortForColumn(column)?.direction === 'mixed';
             _setDisplayed(eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }

@@ -9,7 +9,12 @@ ModuleRegistry.registerModules([
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 150 },
     { field: 'year', maxWidth: 90 },
-    { field: 'rankingChange', sortable: true, sortDef: { direction: null, type: 'absolute' } },
+    {
+        field: 'rankingChange',
+        sortable: true,
+        sort: { direction: 'asc', type: 'absolute' },
+        sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
+    },
 ];
 
 let gridApi: GridApi<IOlympicData>;

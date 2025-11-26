@@ -784,7 +784,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     sortable?: boolean;
 
-    /** If sorting by default, set it here. Set to `asc` or `desc`. */
+    /** If sorting by default, set it here. Set to `SortDef | SortDirection`. */
     sort?: SortDirection | SortDef;
 
     /**
@@ -800,7 +800,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @initial
      */
     initialSortIndex?: number;
-    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
+    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `(SortDef | SortDirection)[]`. Default is ['asc', 'desc', null] */
     sortingOrder?: (SortDirection | SortDef)[];
     /**
      * Override the default sorting order by providing a custom sort comparator, or a map of comparators for different `SortType`s.

@@ -2,7 +2,7 @@ import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties'
 import { _areEqual } from '../agStack/utils/array';
 import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
+import { AgColumn, _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -160,24 +160,35 @@ export const getValueFactory =
         return obj;
     };
 
-export function _getColumnStateFromColDef(
-    colDef: ColDef,
-    sortSvc: SortService | undefined,
-    colId: string
-): ColumnState {
+export function _getColumnStateFromColDef(colDef: ColDef, colId: string): ColumnState {
     const state: ColumnState = {
         ...colDef,
         sort: undefined,
         colId,
     };
-
-    if (sortSvc) {
-        const sortDef = sortSvc.getSortDefFromColDef(colDef);
-        if (sortDef) {
-            state.sort = sortDef.direction;
-            state.sortType = sortDef.type;
-        }
+    const sortDef = _getSortDefFromColDef(colDef);
+    if (sortDef) {
+        state.sort = sortDef.direction;
+        state.sortType = sortDef.type;
     }
 
     return state;
+}
+
+export function _getSortDefFromColDef(colDef: ColDef) {
+    const { sort, initialSort, sortingOrder } = colDef;
+    const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
+    const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
+
+    if (sortIsValid) {
+        return _getSortDefFromInput(sort);
+    }
+    if (initialSortIsValid) {
+        return _getSortDefFromInput(initialSort);
+    }
+    if (sortingOrder?.length) {
+        return _getSortDefFromInput(sortingOrder[0]);
+    }
+
+    return null;
 }
