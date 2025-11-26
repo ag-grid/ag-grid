@@ -324,5 +324,5 @@ function getValidityMessageKey(
     if (!isInvalid) {
         return null;
     }
-    return `${isFrom ? 'max' : 'min'}DateValidation`;
+    return isFrom ? 'tooLate' : 'tooEarly';
 }

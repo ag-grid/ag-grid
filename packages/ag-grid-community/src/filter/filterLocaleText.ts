@@ -50,10 +50,10 @@ const FILTER_LOCALE_TEXT = {
     filterSummaryInRange: 'between',
     filterSummaryInRangeValues: (variableValues: string[]) => `(${variableValues[0]}, ${variableValues[1]})`,
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
-    minDateValidation: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
-    maxDateValidation: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
-    minValueValidation: (variableValues: string[]) => `Value must be greater than or equal to ${variableValues[0]}`,
-    maxValueValidation: (variableValues: string[]) => `Value must be less than or equal to ${variableValues[0]}`,
+    tooEarly: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
+    tooLate: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
+    tooSmall: (variableValues: string[]) => `Value must be greater than ${variableValues[0]}`,
+    tooBig: (variableValues: string[]) => `Value must be less than ${variableValues[0]}`,
 };
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;

@@ -36,6 +36,12 @@ export const AG_GRID_LOCALE_EN = {
     before: 'Before',
     after: 'After',
 
+    // In-Range Filter Validation Messages
+    tooEarly: 'Date must be after ${variable}',
+    tooLate: 'Date must be before ${variable}',
+    tooBig: 'Value must be less than ${variable}',
+    tooSmall: 'Value must be greater than ${variable}',
+
     // Filter Conditions
     andCondition: 'AND',
     orCondition: 'OR',
