@@ -7,6 +7,7 @@ import {
     RowDragDispatcher,
     TestGridsManager,
     asyncSetTimeout,
+    clickRowSelectionCheckbox,
 } from '../test-utils';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s evt=%s', (noMove, eventType) => {
@@ -42,7 +43,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
         const api = gridsManager.createGrid('managed-selection-contiguous', gridOptions);
         let gridRows = new GridRows(api, 'initial contiguous', { checkDom: true, columns: ['value'] });
 
-        await gridRows.clickRowSelectionCheckbox(['2', '3', '4']);
+        await clickRowSelectionCheckbox(api, ['2', '3', '4']);
 
         await asyncSetTimeout(0);
 
@@ -57,8 +58,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(gridRows.getRowHtmlElement('2')!);
-        await dispatcher.move(gridRows.getRowHtmlElement('5')!, { yOffsetPercent: 0.7 });
+        await dispatcher.start('2');
+        await dispatcher.move('5', { yOffsetPercent: 0.7 });
         await dispatcher.finish();
 
         expect(dispatcher.rowDragEndEvents.length).toBeGreaterThan(0);
@@ -96,7 +97,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
         const api = gridsManager.createGrid('managed-selection-non-contiguous', gridOptions);
         let gridRows = new GridRows(api, 'initial non contiguous', { checkDom: true, columns: ['value'] });
 
-        await gridRows.clickRowSelectionCheckbox(['1', '3', '5']);
+        await clickRowSelectionCheckbox(api, ['1', '3', '5']);
 
         await asyncSetTimeout(0);
 
@@ -112,8 +113,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(gridRows.getRowHtmlElement('3')!);
-        await dispatcher.move(gridRows.getRowHtmlElement('6')!, { yOffsetPercent: 0.7 });
+        await dispatcher.start('3');
+        await dispatcher.move('6', { yOffsetPercent: 0.7 });
         await dispatcher.finish();
 
         expect(dispatcher.rowDragEndEvents.length).toBeGreaterThan(0);

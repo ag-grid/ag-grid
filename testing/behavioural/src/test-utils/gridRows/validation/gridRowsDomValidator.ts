@@ -1,5 +1,6 @@
 import type { Column, IRowNode, RowNode } from 'ag-grid-community';
 
+import { getGridHTMLElement, getGridRowsHtmlElements, getRowHtmlElements } from '../gridHtmlRows';
 import type { GridRows } from '../gridRows';
 import type { GridRowErrors, GridRowsErrors } from '../gridRowsErrors';
 
@@ -8,13 +9,13 @@ export class GridRowsDomValidator {
     public constructor(public readonly errors: GridRowsErrors) {}
 
     public validate(gridRows: GridRows<any>) {
-        const gridElement = gridRows.gridHtmlElement;
+        const gridElement = getGridHTMLElement(gridRows.api);
         if (!gridElement) {
             gridRows.errors.default.add('Grid HTMLElement found');
             return;
         }
 
-        const rowElements = gridRows.rowsHtmlElements;
+        const rowElements = getGridRowsHtmlElements(gridRows.api);
         const displayedRows = gridRows.displayedRows;
 
         let duplicates = false;
@@ -54,7 +55,7 @@ export class GridRowsDomValidator {
             this.validatedRows.add(row);
 
             const stringId = String(row.id);
-            const rowElements = gridRows.getRowHtmlElements(stringId);
+            const rowElements = getRowHtmlElements(gridRows.api, stringId);
             if (!rowElements.length) {
                 if (row.id !== undefined) {
                     this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');

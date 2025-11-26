@@ -48,10 +48,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
                 └── LEAF id:3 v:3
             `);
             if (i < 3) {
-                const el = gridRows.rowsHtmlElements[i];
+                const rowId = ['1', '2', '3'][i]!;
                 const dispatcher = new RowDragDispatcher({ api, eventType });
-                await dispatcher.start(el);
-                await dispatcher.move(el);
+                await dispatcher.start(rowId);
+                await dispatcher.move(rowId);
                 await dispatcher.finish();
             }
         }
@@ -75,9 +75,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         // Try dragging itself
         const singleDispatcher = new RowDragDispatcher({ api, eventType });
-        const element = gridRows.rowsHtmlElements[0];
-        await singleDispatcher.start(element);
-        await singleDispatcher.move(element);
+        const rowId = 'only';
+        await singleDispatcher.start(rowId);
+        await singleDispatcher.move(rowId);
         await singleDispatcher.finish();
 
         gridRows = new GridRows(api, 'single-post-drag', { checkDom: true, columns: true });
@@ -107,8 +107,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         const reorderDispatcher = new RowDragDispatcher({ api, eventType });
-        await reorderDispatcher.start(initialRows.rowsHtmlElements[0]);
-        await reorderDispatcher.move(initialRows.rowsHtmlElements[1], { yOffsetPercent: 0.8 });
+        await reorderDispatcher.start('row-1');
+        await reorderDispatcher.move('row-2', { yOffsetPercent: 0.8 });
         await reorderDispatcher.finish();
 
         await new GridRows(api, `${eventType}-after`, { checkDom: true, columns: ['value'] }).check(`
@@ -155,10 +155,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             `);
 
             if (index !== null) {
-                const element = gridRows.rowsHtmlElements[index];
+                const rowId = ['1', '2', '3', '4', '5'][index]!;
                 const dispatcher = new RowDragDispatcher({ api, eventType });
-                await dispatcher.start(element);
-                await dispatcher.move(element, { yOffsetPercent: 0.7 });
+                await dispatcher.start(rowId);
+                await dispatcher.move(rowId, { yOffsetPercent: 0.7 });
                 await dispatcher.finish();
             }
         }
@@ -183,8 +183,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: true });
         const moveFirstToEnd = new RowDragDispatcher({ api, eventType });
-        await moveFirstToEnd.start(gridRows.rowsHtmlElements[0]);
-        await moveFirstToEnd.move(gridRows.rowsHtmlElements[3]);
+        await moveFirstToEnd.start('1');
+        await moveFirstToEnd.move('4');
         await moveFirstToEnd.finish();
 
         gridRows = new GridRows(api, '1 -> end', { checkDom: true, columns: true });
@@ -195,10 +195,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             ├── LEAF id:4 v:4
             └── LEAF id:1 v:1
         `);
-
         const moveLastToStart = new RowDragDispatcher({ api, eventType });
-        await moveLastToStart.start(gridRows.rowsHtmlElements[3]);
-        await moveLastToStart.move(gridRows.rowsHtmlElements[0], { yOffsetPercent: 0.1 });
+        await moveLastToStart.start('1');
+        await moveLastToStart.move('2', { yOffsetPercent: 0.1 });
         await moveLastToStart.finish();
 
         gridRows = new GridRows(api, '1 back -> start', { checkDom: true, columns: true });
@@ -227,11 +226,17 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         const api = gridsManager.createGrid('adjacent', gridOptions);
         const gridRows = new GridRows(api, 'initial', { checkDom: true, columns: true });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 v:1
+            ├── LEAF id:2 v:2
+            └── LEAF id:3 v:3
+        `);
 
         // Move row 2 (index 1) up
         const moveUpDispatcher = new RowDragDispatcher({ api, eventType });
-        await moveUpDispatcher.start(gridRows.rowsHtmlElements[1]);
-        await moveUpDispatcher.move(gridRows.rowsHtmlElements[0], { yOffsetPercent: 0.1 });
+        await moveUpDispatcher.start('2');
+        await moveUpDispatcher.move('1', { yOffsetPercent: 0.1 });
         await moveUpDispatcher.finish();
 
         await new GridRows(api, '2 -> top', { checkDom: true, columns: true }).check(`
@@ -242,10 +247,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         // Move row 2 (now index 0) down
-        const updatedRows = new GridRows(api, '2 now at 0', { checkDom: true, columns: true });
         const moveDownDispatcher = new RowDragDispatcher({ api, eventType });
-        await moveDownDispatcher.start(updatedRows.rowsHtmlElements[0]);
-        await moveDownDispatcher.move(updatedRows.rowsHtmlElements[1], { yOffsetPercent: 0.7 });
+        await moveDownDispatcher.start('2');
+        await moveDownDispatcher.move('1', { yOffsetPercent: 0.7 });
         await moveDownDispatcher.finish();
 
         await new GridRows(api, '2 back to middle', { checkDom: true, columns: true }).check(`
@@ -292,8 +296,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         const dragBDispatcher = new RowDragDispatcher({ api, eventType });
-        await dragBDispatcher.start(gridRows.rowsHtmlElements[1]);
-        await dragBDispatcher.move(gridRows.rowsHtmlElements[3], { yOffsetPercent: 0.7 });
+        await dragBDispatcher.start('2');
+        await dragBDispatcher.move('4', { yOffsetPercent: 0.7 });
         await dragBDispatcher.finish();
 
         gridRows = new GridRows(api, 'a', gridRowsOptions);
@@ -307,8 +311,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         const dragCDispatcher = new RowDragDispatcher({ api, eventType });
-        await dragCDispatcher.start(gridRows.rowsHtmlElements[2]);
-        await dragCDispatcher.move(gridRows.rowsHtmlElements[0], { yOffsetPercent: 0.15 });
+        await dragCDispatcher.start('4');
+        await dragCDispatcher.move('1', { yOffsetPercent: 0.15 });
         await dragCDispatcher.finish();
 
         gridRows = new GridRows(api, 'b', gridRowsOptions);
@@ -322,8 +326,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         const dragDDispatcher = new RowDragDispatcher({ api, eventType });
-        await dragDDispatcher.start(gridRows.rowsHtmlElements[4]);
-        await dragDDispatcher.move(gridRows.rowsHtmlElements[2], { yOffsetPercent: 0.1 });
+        await dragDDispatcher.start('5');
+        await dragDDispatcher.move('3', { yOffsetPercent: 0.1 });
         await dragDDispatcher.finish();
 
         gridRows = new GridRows(api, 'c', gridRowsOptions);
@@ -378,8 +382,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         const multiSelectDragToBottom = new RowDragDispatcher({ api, eventType });
-        await multiSelectDragToBottom.start(gridRows.rowsHtmlElements[0]);
-        await multiSelectDragToBottom.move(gridRows.rowsHtmlElements[3]);
+        await multiSelectDragToBottom.start('1');
+        await multiSelectDragToBottom.move('4');
         await multiSelectDragToBottom.finish();
 
         gridRows = new GridRows(api, '1 -> 2', gridRowsOptions);
@@ -393,8 +397,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         `);
 
         const multiSelectDragToTop = new RowDragDispatcher({ api, eventType });
-        await multiSelectDragToTop.start(gridRows.rowsHtmlElements[2]);
-        await multiSelectDragToTop.move(gridRows.rowsHtmlElements[0], { yOffsetPercent: 0.1 });
+        await multiSelectDragToTop.start('1');
+        await multiSelectDragToTop.move('2', { yOffsetPercent: 0.1 });
         await multiSelectDragToTop.finish();
 
         gridRows = new GridRows(api, '1 -> 2', gridRowsOptions);
@@ -446,8 +450,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         let gridRows = new GridRows(api, 'initial', gridRowsOptions);
         const removeSourceDispatcher = new RowDragDispatcher({ api, eventType });
-        await removeSourceDispatcher.start(gridRows.rowsHtmlElements[1]);
-        await removeSourceDispatcher.move(gridRows.rowsHtmlElements[3]);
+        await removeSourceDispatcher.start('2');
+        await removeSourceDispatcher.move('4');
         await removeSourceDispatcher.finish();
 
         gridRows = new GridRows(api, 'drop', gridRowsOptions);
@@ -509,8 +513,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         let gridRows = new GridRows(api, 'initial', gridRowsOptions);
         const removeSelectionDispatcher = new RowDragDispatcher({ api, eventType });
-        await removeSelectionDispatcher.start(gridRows.rowsHtmlElements[2]);
-        await removeSelectionDispatcher.move(gridRows.rowsHtmlElements[0], { yOffsetPercent: 0.1 });
+        await removeSelectionDispatcher.start('3');
+        await removeSelectionDispatcher.move('1', { yOffsetPercent: 0.1 });
         await removeSelectionDispatcher.finish();
 
         gridRows = new GridRows(api, 'drop', gridRowsOptions);
@@ -563,8 +567,8 @@ describe.each(DRAG_INTERACTION_TYPES)('managed drag cancellation %s', (eventType
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(initialRows.rowsHtmlElements[0]);
-        await dispatcher.move(initialRows.rowsHtmlElements[1], { yOffsetPercent: 0.8 });
+        await dispatcher.start('row-1');
+        await dispatcher.move('row-2', { yOffsetPercent: 0.8 });
         await dispatcher.finish({ cancel: true });
 
         expect(cancellationEvents.dragCancelled).toBeGreaterThan(0);

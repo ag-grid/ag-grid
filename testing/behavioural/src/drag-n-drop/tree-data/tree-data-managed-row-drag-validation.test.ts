@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
@@ -9,6 +9,7 @@ import {
     TestGridsManager,
     assertDropIndicatorVisible,
     asyncSetTimeout,
+    getRowHtmlElement,
 } from '../../test-utils';
 
 describe.each([false, true])('tree row dragging validation (suppress move %s)', (suppressMoveWhenRowDragging) => {
@@ -21,8 +22,6 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         treeData: true,
         columns: ['ag-Grid-AutoColumn'],
     };
-
-    const createTreeRows = (api: GridApi, label: string) => new GridRows(api, label, treeGridRowsOptions);
 
     beforeEach(() => {
         gridsManager.reset();
@@ -73,7 +72,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             rowDragManaged: false,
         });
 
-        const initialRows = createTreeRows(api, 'unmanaged initial');
+    const initialRows = new GridRows(api, 'unmanaged initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -81,20 +80,20 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             └── archive LEAF id:archive ag-Grid-AutoColumn:"Archive"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('drafts');
-        const targetRow = initialRows.getRowHtmlElement('archive');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'drafts';
+        const targetRowId = 'archive';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-    await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.move(targetRowId, { center: true });
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'unmanaged final');
+    const finalRows = new GridRows(api, 'unmanaged final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -135,7 +134,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-        const initialRows = createTreeRows(api, 'validator initial');
+    const initialRows = new GridRows(api, 'validator initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -147,12 +146,12 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('draft');
         await dispatcher.move('protected', { yOffsetPercent: 0.35 });
-    await dispatcher.move('protected', { center: true });
+        await dispatcher.move('protected', { center: true });
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'validator final');
+    const finalRows = new GridRows(api, 'validator final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -204,7 +203,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-        const initialRows = createTreeRows(api, 'cycle initial');
+    const initialRows = new GridRows(api, 'cycle initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -213,17 +212,20 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes"
         `);
 
+        const sourceRowId = 'team';
+        const targetRowId = 'team-eng';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
+
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(initialRows.getRowHtmlElement('team')!);
-        await dispatcher.move(initialRows.getRowHtmlElement('team-eng')!, { yOffsetPercent: 0.6 });
-        const cycleTargetRow = initialRows.getRowHtmlElement('team-eng');
-        expect(cycleTargetRow).toBeTruthy();
-    await dispatcher.move(cycleTargetRow!, { center: true });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.move(targetRowId, { center: true });
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'cycle final');
+    const finalRows = new GridRows(api, 'cycle final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -262,7 +264,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             getDataPath: (data) => data.path,
         });
 
-        const initialRows = createTreeRows(api, 'path managed initial');
+    const initialRows = new GridRows(api, 'path managed initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
@@ -275,12 +277,12 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('library-drafts-spec');
         await dispatcher.move('library-archive', { yOffsetPercent: 0.35 });
-    await dispatcher.move('library-archive', { center: true });
+        await dispatcher.move('library-archive', { center: true });
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'path managed after');
+    const finalRows = new GridRows(api, 'path managed after', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
@@ -324,7 +326,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-        const initialRows = createTreeRows(api, 'path validator initial');
+    const initialRows = new GridRows(api, 'path validator initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
@@ -336,12 +338,12 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('library-shared-manual');
         await dispatcher.move('library-protected', { yOffsetPercent: 0.35 });
-    await dispatcher.move('library-protected', { center: true });
+        await dispatcher.move('library-protected', { center: true });
         assertDropIndicatorVisible(api);
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'path validator final');
+    const finalRows = new GridRows(api, 'path validator final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"

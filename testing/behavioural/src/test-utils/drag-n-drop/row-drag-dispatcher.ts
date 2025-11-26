@@ -1,7 +1,7 @@
 import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
 import type { RowElementReference } from '../gridRows/gridHtmlRows';
-import { GridHtmlRows } from '../gridRows/gridHtmlRows';
+import { getGridOwnerDocument, getRowHtmlElement } from '../gridRows/gridHtmlRows';
 import { mockGridLayout } from '../polyfills/mockGridLayout';
 import { initPointerEventPolyfill } from '../polyfills/pointerEvent';
 import { TestGridsManager } from '../testGridsManager';
@@ -48,7 +48,6 @@ export class RowDragDispatcher {
     private settlePromise: Promise<void> | undefined = undefined;
     private resolveSettle: (() => void) | undefined = undefined;
 
-    private gridHtmlRows: GridHtmlRows;
     private dispatcher: DragEventDispatcher | null = null;
     private sourceElement: HTMLElement | null = null;
     private sourceRowId = '';
@@ -61,7 +60,6 @@ export class RowDragDispatcher {
     constructor({ api, eventType = 'mouse' }: RowDragDispatcherParams) {
         this.api = api;
         this.eventType = eventType;
-        this.gridHtmlRows = new GridHtmlRows(api);
         this.listeners = {
             rowDragEnter: this.createRecorder(this.rowDragEnterEvents),
             rowDragMove: this.createRecorder(this.rowDragMoveEvents),
@@ -81,8 +79,7 @@ export class RowDragDispatcher {
             throw new Error('Row drag already finished');
         }
 
-        this.gridHtmlRows.invalidateHtml();
-        const sourceElement = this.gridHtmlRows.getRowHtmlElement(source);
+        const sourceElement = getRowHtmlElement(this.api, source);
         if (!sourceElement) {
             throw new Error('Drop source row not found');
         }
@@ -95,7 +92,7 @@ export class RowDragDispatcher {
         const gridElement = TestGridsManager.getHTMLElement(this.api);
         const dropContainer =
             (gridElement?.querySelector('.ag-body-viewport') as Element | null) ??
-            this.gridHtmlRows.ownerDocument.documentElement;
+            getGridOwnerDocument(this.api).documentElement ?? document.documentElement;
 
         this.sourceElement = sourceElement;
         this.sourceRowId = sourceElement.getAttribute('row-id') || '';
@@ -124,7 +121,7 @@ export class RowDragDispatcher {
     public async move(target: RowElementReference, options: RowDragMoveOptions = {}): Promise<void> {
         this.ensureActive();
 
-        const targetElement = this.gridHtmlRows.getRowHtmlElement(target);
+        const targetElement = getRowHtmlElement(this.api, target);
         if (!targetElement) {
             throw new Error('Drop Target row not found');
         }
@@ -152,7 +149,6 @@ export class RowDragDispatcher {
 
         await dispatcher.movePointer(targetElement, options.clientX ?? stepX, options.clientY ?? stepY);
 
-        this.gridHtmlRows.invalidateHtml();
         if (shouldAssertDropIndicator(this.api)) {
             assertDropIndicatorVisible(this.api);
         }
@@ -306,8 +302,6 @@ export class RowDragDispatcher {
 
         this.settlePromise = undefined;
         this.resolveSettle = undefined;
-
-        this.gridHtmlRows = new GridHtmlRows(this.api);
     }
 }
 

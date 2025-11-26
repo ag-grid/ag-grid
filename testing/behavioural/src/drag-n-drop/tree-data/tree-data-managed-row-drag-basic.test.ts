@@ -3,7 +3,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
 
 describe.each([false, true])('tree data drag basics (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -87,15 +87,15 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('docs-drafts');
-        const targetRow = initialRows.getRowHtmlElement('archive');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'docs-drafts';
+        const targetRowId = 'archive';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-    await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
@@ -146,14 +146,14 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('plans');
-        const targetRow = initialRows.getRowHtmlElement('archive');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'plans';
+        const targetRowId = 'archive';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
@@ -204,14 +204,14 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old"
         `);
 
-        const source = treeRows.getRowHtmlElement('docs-design');
-        const target = treeRows.getRowHtmlElement('archive');
-        expect(source).toBeTruthy();
-        expect(target).toBeTruthy();
+        const sourceId = 'docs-design';
+        const targetId = 'archive';
+        expect(getRowHtmlElement(api, sourceId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(source!);
-        await dispatcher.move(target!, { yOffsetPercent: 0.05 });
+        await dispatcher.start(sourceId);
+        await dispatcher.move(targetId, { yOffsetPercent: 0.05 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -265,14 +265,14 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report"
         `);
 
-        const source = treeRows.getRowHtmlElement('plans');
-        const target = treeRows.getRowHtmlElement('archive');
-        expect(source).toBeTruthy();
-        expect(target).toBeTruthy();
+        const sourceId = 'plans';
+        const targetId = 'archive';
+        expect(getRowHtmlElement(api, sourceId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(source!);
-        await dispatcher.move(target!, { yOffsetPercent: 0.05 });
+        await dispatcher.start(sourceId);
+        await dispatcher.move(targetId, { yOffsetPercent: 0.05 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -334,15 +334,15 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
             · └── storage-archive LEAF id:storage-archive ag-Grid-AutoColumn:"Archive"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('projects');
-        const targetRow = initialRows.getRowHtmlElement('storage');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'projects';
+        const targetRowId = 'storage';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-    await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 

@@ -1,6 +1,7 @@
 export * from './polyfills/objectUrls';
 export * from './polyfills/mockGridLayout';
 export * from './polyfills/pointerEvent';
+export * from './gridRows/gridHtmlRows';
 export * from './gridRows/gridRows';
 export * from './gridRows/gridRowsErrors';
 export * from './utils';

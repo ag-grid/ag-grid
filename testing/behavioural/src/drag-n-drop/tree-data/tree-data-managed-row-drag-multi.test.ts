@@ -3,7 +3,7 @@ import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
 
 describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -93,15 +93,15 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · └── archive-reports LEAF id:archive-reports ag-Grid-AutoColumn:"Reports"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('alpha');
-        const targetRow = initialRows.getRowHtmlElement('archive');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'alpha';
+        const targetRowId = 'archive';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
-        await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.35 });
+        await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
@@ -159,21 +159,24 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · · └── root-ops-logs LEAF id:root-ops-logs ag-Grid-AutoColumn:"Logs"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('root-plan-tasks');
-        const targetRow = initialRows.getRowHtmlElement('root-ops');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'root-plan-tasks';
+        const targetRowId = 'root-ops';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         let expandedBeforeDrop = false;
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        const insertDelayTarget = targetRow!;
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        const insertDelayTarget = getRowHtmlElement(api, targetRowId);
+        if (!insertDelayTarget) {
+            throw new Error('insert delay target row not found');
+        }
         const rect = insertDelayTarget.getBoundingClientRect();
         const clientX = rect.left + rect.width / 2;
         const clientY = rect.top + rect.height / 2;
 
-        await dispatcher.move(insertDelayTarget, { clientX, clientY });
+        await dispatcher.move(targetRowId, { clientX, clientY });
 
         for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
             await asyncSetTimeout(20);
@@ -185,7 +188,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         }
 
         await asyncSetTimeout(10);
-        await dispatcher.move(insertDelayTarget, { clientX, clientY });
+        await dispatcher.move(targetRowId, { clientX, clientY });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
@@ -234,15 +237,15 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
             · └── incoming LEAF id:incoming ag-Grid-AutoColumn:"Incoming"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('incoming');
-        const targetRow = initialRows.getRowHtmlElement('inbox');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'incoming';
+        const targetRowId = 'inbox';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
-        await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.4 });
+        await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();
         await asyncSetTimeout(0);
 

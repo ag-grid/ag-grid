@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 import type { GridOptions, RowNode } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
 
 const gridsManager = new TestGridsManager({
     modules: [ClientSideRowModelModule, RowDragModule, RowGroupingModule],
@@ -19,15 +19,19 @@ describe('row drag nudger group expansion', () => {
 
     const waitForGroupHover = async (
         api: any,
-        targetElement: Element,
+        targetRowId: string,
         rowDragDispatcher: RowDragDispatcher
     ): Promise<boolean> => {
-        const rect = targetElement.getBoundingClientRect();
-        const clientX = rect.left + rect.width / 2;
-        const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
+            const targetElement = getRowHtmlElement(api, targetRowId);
+            if (!targetElement) {
+                throw new Error(`row element ${targetRowId} not found while waiting for hover`);
+            }
+            const rect = targetElement.getBoundingClientRect();
+            const clientX = rect.left + rect.width / 2;
+            const clientY = rect.top + rect.height / 2;
             await asyncSetTimeout(25);
-            await rowDragDispatcher.move(targetElement, { clientX, clientY });
+            await rowDragDispatcher.move(targetRowId, { clientX, clientY });
         }
 
         let expanded = false;
@@ -76,17 +80,17 @@ describe('row drag nudger group expansion', () => {
                 · └── LEAF hidden id:3 value:"B1"
             `);
 
-        const sourceRow = initialRows.getRowHtmlElement('2');
-        const targetRow = initialRows.getRowHtmlElement('row-group-group-B');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = '2';
+        const targetRowId = 'row-group-group-B';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         let expandedBeforeDrop = false;
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        expandedBeforeDrop = await waitForGroupHover(api, targetRow!, dispatcher);
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        expandedBeforeDrop = await waitForGroupHover(api, targetRowId, dispatcher);
         await dispatcher.finish();
 
         expect(expandedBeforeDrop).toBe(true);
@@ -146,17 +150,17 @@ describe('row drag nudger group expansion', () => {
                 · └── LEAF hidden id:3 value:"B1"
             `);
 
-        const sourceRow = initialRows.getRowHtmlElement('2');
-        const targetRow = initialRows.getRowHtmlElement('row-group-group-B');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = '2';
+        const targetRowId = 'row-group-group-B';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         let expandedBeforeDrop = false;
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(sourceRow!);
-        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        expandedBeforeDrop = await waitForGroupHover(api, targetRow!, dispatcher);
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        expandedBeforeDrop = await waitForGroupHover(api, targetRowId, dispatcher);
         await dispatcher.finish();
 
         expect(expandedBeforeDrop).toBe(true);

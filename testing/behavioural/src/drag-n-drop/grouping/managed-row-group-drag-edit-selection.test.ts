@@ -14,6 +14,9 @@ import {
     RowDragDispatcher,
     TestGridsManager,
     asyncSetTimeout,
+    clickRowSelectionCheckbox,
+    getRowHtmlElement,
+    getRowSelectionCheckboxState,
 } from '../../test-utils';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMove=%s evt=%s', (noMove, eventType) => {
@@ -84,8 +87,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         `);
 
         const firstDrag = new RowDragDispatcher({ api, eventType });
-        await firstDrag.start(gridRows.getRowHtmlElement('2')!);
-        await firstDrag.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await firstDrag.start('2');
+        await firstDrag.move('3', { yOffsetPercent: 0.1 });
         await firstDrag.finish();
 
         await asyncSetTimeout(0);
@@ -111,8 +114,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         gridRows = new GridRows(api, 'before committed move', { checkDom: true, columns: ['value'] });
         const secondDrag = new RowDragDispatcher({ api, eventType });
-        await secondDrag.start(gridRows.getRowHtmlElement('2')!);
-        await secondDrag.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await secondDrag.start('2');
+        await secondDrag.move('3', { yOffsetPercent: 0.1 });
         await secondDrag.finish();
 
         await asyncSetTimeout(0);
@@ -179,8 +182,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(gridRows.getRowHtmlElement('1')!);
-        await dispatcher.move(gridRows.getRowHtmlElement('4')!, { yOffsetPercent: 0.8 });
+        await dispatcher.start('1');
+        await dispatcher.move('4', { yOffsetPercent: 0.8 });
         await dispatcher.finish();
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
@@ -234,12 +237,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         let gridRows = new GridRows(api, 'before checkbox selection', { checkDom: true, columns: ['athlete'] });
 
-        await gridRows.clickRowSelectionCheckbox(['r-1', 'r-2']);
+        await clickRowSelectionCheckbox(api, ['r-1', 'r-2']);
 
         await asyncSetTimeout(0);
 
-        expect(gridRows.getRowSelectionCheckboxState('r-1')).toBe(true);
-        expect(gridRows.getRowSelectionCheckboxState('r-2')).toBe(true);
+        expect(getRowSelectionCheckboxState(api, 'r-1')).toBe(true);
+        expect(getRowSelectionCheckboxState(api, 'r-2')).toBe(true);
 
         gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['athlete'] });
         await gridRows.check(`
@@ -257,8 +260,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(gridRows.getRowHtmlElement('r-1')!);
-        await dispatcher.move(gridRows.getRowHtmlElement('r-4')!, { yOffsetPercent: 0.7 });
+        await dispatcher.start('r-1');
+        await dispatcher.move('r-4', { yOffsetPercent: 0.7 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -284,8 +287,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(api.getRowNode('r-2')?.data.year).toBe('2022');
         expect(api.getRowNode('r-6')?.data.year).toBe('2020');
 
-        expect(gridRows.getRowSelectionCheckboxState('r-1')).toBe(true);
-        expect(gridRows.getRowSelectionCheckboxState('r-2')).toBe(true);
+        expect(getRowSelectionCheckboxState(api, 'r-1')).toBe(true);
+        expect(getRowSelectionCheckboxState(api, 'r-2')).toBe(true);
     });
 
     test('multi-selection with groups moves all descendants to the drop target', async () => {
@@ -357,14 +360,14 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
             · · └── LEAF id:c1 value:"Gamma-1"
         `);
 
-        const alphaGroupEl = gridRows.getRowHtmlElement('row-group-level1-Alpha');
-        const gammaGroupEl = gridRows.getRowHtmlElement('row-group-level1-Gamma');
+        const alphaGroupEl = getRowHtmlElement(api, 'row-group-level1-Alpha');
+        const gammaGroupEl = getRowHtmlElement(api, 'row-group-level1-Gamma');
         expect(alphaGroupEl).toBeTruthy();
         expect(gammaGroupEl).toBeTruthy();
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(gridRows.getRowHtmlElement('a1')!);
-        await dispatcher.move(gammaGroupEl!, { yOffsetPercent: 0.5 });
+        await dispatcher.start('a1');
+        await dispatcher.move('row-group-level1-Gamma', { yOffsetPercent: 0.5 });
         await dispatcher.finish();
 
         expect(dispatcher.rowDragCancelEvents?.length).toBe(0);

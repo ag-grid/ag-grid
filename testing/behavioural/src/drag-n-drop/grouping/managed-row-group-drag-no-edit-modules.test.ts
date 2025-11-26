@@ -70,9 +70,9 @@ describe('managed row drag without edit modules', () => {
             · └── LEAF id:3 value:"B1"
         `);
 
-        const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(gridRows.getRowHtmlElement('2')!);
-        await dispatcher.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+    const dispatcher = new RowDragDispatcher({ api });
+    await dispatcher.start('2');
+    await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });

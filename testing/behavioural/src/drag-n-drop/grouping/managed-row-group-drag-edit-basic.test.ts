@@ -12,7 +12,7 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
 
 const createGridManager = () =>
     new TestGridsManager({
@@ -221,7 +221,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
                     columns: ['value'],
                 });
                 await intermediateRows.check(intermediate);
-                const draggedRowElement = intermediateRows.getRowHtmlElement('2');
+                const draggedRowElement = getRowHtmlElement(api, '2');
                 expect(draggedRowElement).not.toBeNull();
                 expect(draggedRowElement?.classList.contains('ag-row-dragging')).toBe(true);
             });
@@ -298,8 +298,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(gridRows.getRowHtmlElement('2')!);
-        await dispatcher.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
@@ -353,8 +353,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         `);
 
         const firstDrag = new RowDragDispatcher({ api });
-        await firstDrag.start(gridRows.getRowHtmlElement('2')!);
-        await firstDrag.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await firstDrag.start('2');
+        await firstDrag.move('3', { yOffsetPercent: 0.1 });
         await firstDrag.finish();
 
         await asyncSetTimeout(0);
@@ -380,8 +380,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         expect(movedRow?.parent?.parent?.key).toBe('Europe');
 
         const secondDrag = new RowDragDispatcher({ api });
-        await secondDrag.start(gridRows.getRowHtmlElement('2')!);
-        await secondDrag.move(gridRows.getRowHtmlElement('4')!, { yOffsetPercent: 0.1 });
+        await secondDrag.start('2');
+        await secondDrag.move('4', { yOffsetPercent: 0.1 });
         await secondDrag.finish();
 
         await asyncSetTimeout(0);
@@ -449,8 +449,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         modelUpdatedEvents.length = 0;
 
         const dispatcher = new RowDragDispatcher({ api });
-        await dispatcher.start(initialRows.getRowHtmlElement('2')!);
-        await dispatcher.move(initialRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);

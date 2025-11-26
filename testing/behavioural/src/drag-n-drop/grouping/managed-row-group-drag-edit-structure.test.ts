@@ -74,14 +74,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"B2"
         `);
 
-        const alphaGroupHandle = gridRows.getRowHtmlElement('row-group-level1-Alpha-level2-A');
-        const betaGroupHandle = gridRows.getRowHtmlElement('row-group-level1-Beta-level2-B');
-        expect(alphaGroupHandle).toBeTruthy();
-        expect(betaGroupHandle).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(alphaGroupHandle!);
-        await dispatcher.move(betaGroupHandle!, { yOffsetPercent: 0.2 });
+        await dispatcher.start('row-group-level1-Alpha-level2-A'!);
+        await dispatcher.move('row-group-level1-Beta-level2-B', { yOffsetPercent: 0.2 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -147,14 +142,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"Beta-2"
         `);
 
-        const betaGroup = gridRows.getRowHtmlElement('row-group-level1-Beta');
-        const alphaGroup = gridRows.getRowHtmlElement('row-group-level1-Alpha');
-        expect(betaGroup).toBeTruthy();
-        expect(alphaGroup).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(betaGroup!);
-        await dispatcher.move(alphaGroup!, { yOffsetPercent: 0.25 });
+        await dispatcher.start('row-group-level1-Beta'!);
+        await dispatcher.move('row-group-level1-Alpha', { yOffsetPercent: 0.25 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -220,14 +210,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"Beta-2"
         `);
 
-        const alphaGroup = gridRows.getRowHtmlElement('row-group-level1-Alpha');
-        const betaLevel2Group = gridRows.getRowHtmlElement('row-group-level1-Beta-level2-Three');
-        expect(alphaGroup).toBeTruthy();
-        expect(betaLevel2Group).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(alphaGroup!);
-        await dispatcher.move(betaLevel2Group!, { yOffsetPercent: 0.55 });
+        await dispatcher.start('row-group-level1-Alpha'!);
+        await dispatcher.move('row-group-level1-Beta-level2-Three'!, { yOffsetPercent: 0.55 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -289,14 +274,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"Beta-2"
         `);
 
-        const alphaGroup = gridRows.getRowHtmlElement('row-group-level1-Alpha-level2-One');
-        const alphaParent = gridRows.getRowHtmlElement('row-group-level1-Alpha');
-        expect(alphaGroup).toBeTruthy();
-        expect(alphaParent).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(alphaGroup!);
-        await dispatcher.move(alphaParent!, { yOffsetPercent: 0.85 });
+        await dispatcher.start('row-group-level1-Alpha-level2-One'!);
+        await dispatcher.move('row-group-level1-Alpha', { yOffsetPercent: 0.85 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -368,14 +348,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b1 value:"Beta-1"
         `);
 
-        const alphaParent = gridRows.getRowHtmlElement('row-group-level1-Alpha');
-        const firstChild = gridRows.getRowHtmlElement('a1');
-        expect(alphaParent).toBeTruthy();
-        expect(firstChild).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(firstChild!);
-        await dispatcher.move(alphaParent!, { yOffsetPercent: 0.95 });
+        await dispatcher.start('a1');
+        await dispatcher.move('row-group-level1-Alpha', { yOffsetPercent: 0.95 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -441,14 +416,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"Beta-2"
         `);
 
-        const alphaRow = gridRows.getRowHtmlElement('a1');
-        const betaParent = gridRows.getRowHtmlElement('row-group-level1-Beta');
-        expect(alphaRow).toBeTruthy();
-        expect(betaParent).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(alphaRow!);
-        await dispatcher.move(betaParent!, { yOffsetPercent: 0.05 });
+        await dispatcher.start('a1');
+        await dispatcher.move('row-group-level1-Beta', { yOffsetPercent: 0.05 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);
@@ -519,14 +489,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"Beta-2"
         `);
 
-        const sourceGroup = gridRows.getRowHtmlElement('row-group-level1-Alpha-level2-One');
-        const targetGroup = gridRows.getRowHtmlElement('row-group-level1-Beta');
-        expect(sourceGroup).toBeTruthy();
-        expect(targetGroup).toBeTruthy();
-
         const dispatcher = new RowDragDispatcher({ api, eventType });
-        await dispatcher.start(sourceGroup!);
-        await dispatcher.move(targetGroup!, { yOffsetPercent: 0.05 });
+        await dispatcher.start('row-group-level1-Alpha-level2-One');
+        await dispatcher.move('row-group-level1-Beta', { yOffsetPercent: 0.05 });
         await dispatcher.finish();
 
         await asyncSetTimeout(0);

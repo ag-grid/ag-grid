@@ -1,5 +1,4 @@
 import type { GridApi } from 'ag-grid-community';
-import { getGridApi } from 'ag-grid-community';
 
 import { firePointerLikeClick } from '../test-utils-events';
 import { TestGridsManager } from '../testGridsManager';
@@ -8,128 +7,8 @@ export type RowElementReference = string | Element | { readonly id: string | nul
 
 export type CheckboxState = boolean | 'mixed';
 
-export class GridHtmlRows<TData = any> {
-    public readonly api: GridApi<TData>;
-
-    #ownerDocument: Document | null = null;
-    #rootNode: Node | null = null;
-    #rowsHtmlElements: HTMLElement[] | null = null;
-    #gridHtmlElement: HTMLElement | null | undefined = undefined;
-    #rowsHtmlElementsMap: Map<string, HTMLElement[]> | null = null;
-
-    public constructor(api: GridApi<TData> | Element | string | null | undefined) {
-        if (typeof api === 'string' || api instanceof Element) {
-            api = getGridApi(api);
-        }
-        if (!api) {
-            throw new Error('No grid instance found for the provided element');
-        }
-        this.api = api;
-    }
-
-    public get ownerDocument(): Document {
-        return (this.#ownerDocument ??= this.gridHtmlElement?.ownerDocument ?? document);
-    }
-
-    public get rootNode(): Node {
-        return (this.#rootNode ??= this.gridHtmlElement?.getRootNode() ?? this.ownerDocument);
-    }
-
-    public get gridHtmlElement(): HTMLElement | null {
-        let element = this.#gridHtmlElement;
-        if (element === undefined) {
-            element = TestGridsManager.getHTMLElement(this.api);
-            this.#gridHtmlElement = element;
-        }
-        return element ?? null;
-    }
-
-    public get rowsHtmlElements(): HTMLElement[] {
-        return (this.#rowsHtmlElements ??= Array.from(
-            this.gridHtmlElement?.querySelectorAll<HTMLElement>('[row-id]') ?? []
-        ));
-    }
-
-    public getRowHtmlElements(reference: RowElementReference): HTMLElement[] {
-        if (reference == null) {
-            return [];
-        }
-        if (typeof reference === 'object') {
-            if (reference instanceof Element) {
-                const rowElId = reference.getAttribute('row-id');
-                if (rowElId != null) {
-                    reference = rowElId;
-                } else {
-                    const rowEl = reference.closest('[row-id]');
-                    if (!(rowEl instanceof HTMLElement)) {
-                        return [];
-                    }
-                    reference = rowEl.getAttribute('row-id');
-                }
-            } else {
-                reference = reference?.id ?? null;
-            }
-            if (reference === null) {
-                return [];
-            }
-        }
-        reference = String(reference);
-        let map = this.#rowsHtmlElementsMap;
-        if (!map) {
-            map = buildRowElementsMap(this.rowsHtmlElements);
-            this.#rowsHtmlElementsMap = map;
-        }
-        return map.get(reference) ?? [];
-    }
-
-    public getRowHtmlElement(id: RowElementReference): HTMLElement | null {
-        const elements = this.getRowHtmlElements(id);
-        return elements.length > 0 ? elements[0] : null;
-    }
-
-    public getRowSelectionCheckboxElement(row: RowElementReference): HTMLElement | null {
-        const rowElements = this.getRowHtmlElements(row);
-        for (let i = 0, len = rowElements.length; i < len; ++i) {
-            const rowElement = rowElements[i];
-            for (const selector of ROW_SELECTION_CHECKBOX_QUERIES) {
-                const candidate = rowElement.querySelector<HTMLElement>(selector);
-                if (candidate) {
-                    return candidate;
-                }
-            }
-        }
-        return null;
-    }
-
-    public getRowSelectionCheckboxState(row: RowElementReference): CheckboxState | undefined {
-        const checkbox = this.getRowSelectionCheckboxElement(row);
-        return checkbox ? readRowSelectionCheckboxState(checkbox) : undefined;
-    }
-
-    public async clickRowSelectionCheckbox(
-        row: RowElementReference | (RowElementReference | null | undefined)[] | null | undefined
-    ): Promise<boolean> {
-        if (Array.isArray(row)) {
-            let result = false;
-            for (const item of row) {
-                if (await this.clickRowSelectionCheckbox(item)) {
-                    result = true;
-                }
-            }
-            return result;
-        }
-        return firePointerLikeClick(this.getRowSelectionCheckboxElement(row));
-    }
-
-    public invalidateHtml(): void {
-        this.#ownerDocument = null;
-        this.#rootNode = null;
-        this.#rowsHtmlElements = null;
-        this.#gridHtmlElement = undefined;
-        this.#rowsHtmlElementsMap = null;
-    }
-}
-
+const ROW_SELECTOR = '[row-id]';
+const CENTER_CONTAINER_SELECTOR = '.ag-center-cols-container';
 const ROW_SELECTION_CHECKBOX_QUERIES = [
     '.ag-selection-checkbox input[type="checkbox"]',
     '.ag-selection-checkbox [aria-checked]',
@@ -140,36 +19,105 @@ const ROW_SELECTION_CHECKBOX_QUERIES = [
     '.ag-checkbox',
 ];
 
-function buildRowElementsMap(rowElements: Iterable<HTMLElement>): Map<string, HTMLElement[]> {
-    const map = new Map<string, HTMLElement[]>();
+export function getGridHTMLElement<TData = any>(api: GridApi<TData>): HTMLElement | null {
+    return TestGridsManager.getHTMLElement(api) ?? null;
+}
+
+export function getGridOwnerDocument<TData = any>(api: GridApi<TData>): Document {
+    return getGridHTMLElement(api)?.ownerDocument ?? document;
+}
+
+export function getGridRowsHtmlElements<TData = any>(api: GridApi<TData>): HTMLElement[] {
+    const gridElement = getGridHTMLElement(api);
+    return gridElement ? Array.from(gridElement.querySelectorAll<HTMLElement>(ROW_SELECTOR)) : [];
+}
+
+export function getRowHtmlElements<TData = any>(
+    api: GridApi<TData>,
+    reference: RowElementReference
+): HTMLElement[] {
+    const rowId = resolveRowElementId(reference);
+    if (rowId == null) {
+        return [];
+    }
+    const rowElements = getGridRowsHtmlElements(api);
+    const mainRowElements: HTMLElement[] = [];
+    const secondaryRowElements: HTMLElement[] = [];
 
     for (const rowElement of rowElements) {
-        const rowId = rowElement.getAttribute('row-id');
-        if (!rowId) {
+        if (rowElement.getAttribute('row-id') !== rowId) {
             continue;
         }
 
-        const existing = map.get(rowId);
-        const isMainRowElement = rowElement.closest('.ag-center-cols-container') !== null;
-
-        if (existing) {
-            const index = existing.indexOf(rowElement);
-            if (index >= 0) {
-                if (isMainRowElement && index > 0) {
-                    existing.splice(index, 1);
-                    existing.unshift(rowElement);
-                }
-            } else if (isMainRowElement) {
-                existing.unshift(rowElement);
-            } else {
-                existing.push(rowElement);
-            }
+        if (rowElement.closest(CENTER_CONTAINER_SELECTOR)) {
+            mainRowElements.push(rowElement);
         } else {
-            map.set(rowId, [rowElement]);
+            secondaryRowElements.push(rowElement);
         }
     }
 
-    return map;
+    return mainRowElements.length ? mainRowElements.concat(secondaryRowElements) : secondaryRowElements;
+}
+
+export function getRowHtmlElement<TData = any>(api: GridApi<TData>, reference: RowElementReference): HTMLElement | null {
+    const elements = getRowHtmlElements(api, reference);
+    return elements.length > 0 ? elements[0] : null;
+}
+
+export function getRowSelectionCheckboxElement<TData = any>(
+    api: GridApi<TData>,
+    row: RowElementReference
+): HTMLElement | null {
+    const rowElements = getRowHtmlElements(api, row);
+    for (const rowElement of rowElements) {
+        for (const selector of ROW_SELECTION_CHECKBOX_QUERIES) {
+            const candidate = rowElement.querySelector<HTMLElement>(selector);
+            if (candidate) {
+                return candidate;
+            }
+        }
+    }
+    return null;
+}
+
+export function getRowSelectionCheckboxState<TData = any>(
+    api: GridApi<TData>,
+    row: RowElementReference
+): CheckboxState | undefined {
+    const checkbox = getRowSelectionCheckboxElement(api, row);
+    return checkbox ? readRowSelectionCheckboxState(checkbox) : undefined;
+}
+
+export async function clickRowSelectionCheckbox<TData = any>(
+    api: GridApi<TData>,
+    row: RowElementReference | (RowElementReference | null | undefined)[] | null | undefined
+): Promise<boolean> {
+    if (Array.isArray(row)) {
+        let result = false;
+        for (const item of row) {
+            if (await clickRowSelectionCheckbox(api, item)) {
+                result = true;
+            }
+        }
+        return result;
+    }
+    return firePointerLikeClick(getRowSelectionCheckboxElement(api, row));
+}
+
+function resolveRowElementId(reference: RowElementReference): string | null {
+    if (reference == null) {
+        return null;
+    }
+    if (typeof reference === 'object') {
+        if (reference instanceof Element) {
+            const rowElement = reference.matches(ROW_SELECTOR)
+                ? reference
+                : (reference.closest(ROW_SELECTOR) as HTMLElement | null);
+            return rowElement?.getAttribute('row-id') ?? null;
+        }
+        return reference.id ?? null;
+    }
+    return String(reference);
 }
 
 function readRowSelectionCheckboxState(element: HTMLElement): CheckboxState | undefined {

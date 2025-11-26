@@ -4,7 +4,6 @@ import { expect } from 'vitest';
 import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
 import { log, unindentText } from '../utils';
-import { GridHtmlRows } from './gridHtmlRows';
 import { GridRowsDiagramTree } from './gridRowsDiagramTree';
 import { GridRowsErrors } from './gridRowsErrors';
 import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
@@ -47,7 +46,8 @@ export interface GridRowsOptions<TData = any> {
     useFormatter?: boolean;
 }
 
-export class GridRows<TData = any> extends GridHtmlRows {
+export class GridRows<TData = any> {
+    public readonly api: GridApi<TData>;
     public readonly treeData: boolean;
     public readonly rowNodes: RowNode<TData>[];
     public readonly displayedRows: RowNode<TData>[];
@@ -66,7 +66,7 @@ export class GridRows<TData = any> extends GridHtmlRows {
         public readonly label: string = '',
         public readonly options: GridRowsOptions<TData> = {}
     ) {
-        super(api);
+        this.api = api;
         const errors = options.errors || new GridRowsErrors<TData>();
         this.errors = errors;
         this.treeData = options.treeData ?? !!api.getGridOption('treeData');
