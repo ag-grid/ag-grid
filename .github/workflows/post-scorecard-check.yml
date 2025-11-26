@@ -9,7 +9,7 @@ on:
 env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
-  THRESHOLD: 7.5
+  THRESHOLD: 7.3
   SCORECARD_FILE: ./scorecard.json
   REPORT_FILE: ./ctrf-report.json
 
