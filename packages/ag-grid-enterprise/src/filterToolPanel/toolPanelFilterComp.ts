@@ -30,7 +30,6 @@ const ToolPanelFilterElement: ElementParams = {
                     tag: 'span',
                     ref: 'eFilterIcon',
                     cls: 'ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon',
-                    attrs: { 'aria-hidden': 'true' },
                 },
             ],
         },
@@ -80,7 +79,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         this.addInIcon('filterActive', eFilterIcon, column);
 
-        _setDisplayed(eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        eFilterIcon.classList.toggle('ag-filter-active', this.isFilterActive());
         _setDisplayed(eExpandChecked, false);
 
         if (hideHeader) {
@@ -138,7 +137,8 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
     }
 
     private onFilterChanged(): void {
-        _setDisplayed(this.eFilterIcon, this.isFilterActive(), { skipAriaHidden: true });
+        this.eFilterIcon.classList.toggle('ag-filter-active', this.isFilterActive());
+
         this.dispatchLocalEvent({ type: 'filterChanged' });
     }
 
