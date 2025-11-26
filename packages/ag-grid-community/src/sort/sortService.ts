@@ -1,7 +1,8 @@
 import { _getSortDefFromColDef } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { AgColumn, _isSortDirectionValid } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
+import { _isSortDirectionValid } from '../entities/agColumn';
 import { _areSortDefsEqual, _getSortDefFromInput, _isSortDefValid, _normalizeSortType } from '../entities/agColumn';
 import type { DisplaySortDef, SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEventType, SortChangedEvent } from '../events';

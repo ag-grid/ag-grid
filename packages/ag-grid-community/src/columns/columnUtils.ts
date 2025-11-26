@@ -2,8 +2,8 @@ import type { AgPropertyChangedSource } from '../agStack/interfaces/iProperties'
 import { _areEqual } from '../agStack/utils/array';
 import { _exists } from '../agStack/utils/generic';
 import type { BeanCollection } from '../context/context';
-import { AgColumn, _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid } from '../entities/agColumn';
-import { isColumn } from '../entities/agColumn';
+import { _getSortDefFromInput, _isSortDefValid, _isSortDirectionValid, isColumn } from '../entities/agColumn';
+import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColKey } from '../entities/colDef';
@@ -11,7 +11,7 @@ import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
 import type { ColumnCollections } from './columnModel';
-import { ColumnState, ColumnStateParams, _applyColumnState } from './columnStateUtils';
+import type { ColumnState, ColumnStateParams } from './columnStateUtils';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';

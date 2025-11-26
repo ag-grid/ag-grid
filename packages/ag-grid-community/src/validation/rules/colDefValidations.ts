@@ -1,10 +1,5 @@
 import type { UserComponentName } from '../../context/context';
-import {
-    _getSortDefFromInput,
-    _isSortDefValid,
-    _isSortDirectionValid,
-    _isSortTypeValid,
-} from '../../entities/agColumn';
+import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';

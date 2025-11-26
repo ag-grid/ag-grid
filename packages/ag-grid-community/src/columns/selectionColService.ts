@@ -1,7 +1,7 @@
 import { _removeFromArray } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { AgColumn, _getSortDefFromInput } from '../entities/agColumn';
+import { AgColumn } from '../entities/agColumn';
 import type { ColDef, ColKey } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
