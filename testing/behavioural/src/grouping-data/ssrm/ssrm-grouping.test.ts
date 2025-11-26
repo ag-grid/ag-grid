@@ -143,7 +143,6 @@ describe('csv exports for server-side grouping', () => {
         await waitForNoLoadingRows(api);
 
         const gridRows = new GridRows(api, 'ssrm grouping state', {
-            checkDom: false,
             columns: true,
             ignoreUndefinedCells: true,
         });
@@ -236,7 +235,6 @@ describe('csv exports for server-side grouping', () => {
         await waitForNoLoadingRows(api);
 
         const gridRows = new GridRows(api, 'ssrm grouping state', {
-            checkDom: false,
             columns: true,
             ignoreUndefinedCells: true,
         });
@@ -309,7 +307,6 @@ describe('csv exports for server-side grouping', () => {
         await waitForNoLoadingRows(api);
 
         const gridRows = new GridRows(api, 'ssrm grouping state', {
-            checkDom: false,
             columns: true,
             ignoreUndefinedCells: true,
         });

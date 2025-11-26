@@ -4,58 +4,34 @@ import { getGridHTMLElement, getGridRowsHtmlElements, getRowHtmlElements } from 
 import type { GridRows } from '../gridRows';
 import type { GridRowErrors, GridRowsErrors } from '../gridRowsErrors';
 
+const AUTO_GROUP_COL_ID = 'ag-Grid-AutoColumn';
+
 export class GridRowsDomValidator {
     public validatedRows = new Set<IRowNode>();
     public constructor(public readonly errors: GridRowsErrors) {}
 
-    public validate(gridRows: GridRows<any>) {
+    public validate(gridRows: GridRows) {
         const gridElement = getGridHTMLElement(gridRows.api);
         if (!gridElement) {
             gridRows.errors.default.add('Grid HTMLElement found');
             return;
         }
 
-        const rowElements = getGridRowsHtmlElements(gridRows.api);
+        const gridContext = new GridRowDomValidator(gridRows);
+        const domRowIds = getDomRowIds(gridRows);
+        let domRowIdx = 0;
         const displayedRows = gridRows.displayedRows;
-
-        let duplicates = false;
-        for (let index = 0; index < displayedRows.length; index++) {
-            if (gridRows.isDuplicateIdRow(displayedRows[index])) {
-                duplicates = true;
-                break;
-            }
-        }
-
-        const domOrderIsConsistent =
-            !duplicates &&
-            (!!gridRows.api.getGridOption('ensureDomOrder') || gridRows.api.getGridOption('domLayout') === 'print');
-
-        const rowElementsIdsInOrder = !domOrderIsConsistent
-            ? rowElements
-                  .map((rowElement) => rowElement.getAttribute('row-id') ?? '')
-                  .filter((x) => {
-                      const row = gridRows.getById(x);
-                      if (row && row.sticky) {
-                          return false; // Let's ignore sticky rows as they might not be in order
-                      }
-                      return true;
-                  })
-            : null;
-
-        let rowElementsIdsInOrderIdx = 0;
 
         for (let index = 0; index < displayedRows.length; index++) {
             const row = displayedRows[index];
-            if (gridRows.isDuplicateIdRow(row)) {
+            if (gridRows.isDuplicateIdRow(row) || this.validatedRows.has(row)) {
                 continue;
             }
-            if (this.validatedRows.has(row)) {
-                continue;
-            }
-            this.validatedRows.add(row);
 
+            this.validatedRows.add(row);
             const stringId = String(row.id);
             const rowElements = getRowHtmlElements(gridRows.api, stringId);
+
             if (!rowElements.length) {
                 if (row.id !== undefined) {
                     this.errors.get(row).add('Row HTMLElement row-id=' + JSON.stringify(stringId) + ' not found');
@@ -64,89 +40,180 @@ export class GridRowsDomValidator {
             }
 
             if (!row.sticky && !row.detail) {
-                if (
-                    rowElementsIdsInOrder &&
-                    rowElementsIdsInOrderIdx < rowElementsIdsInOrder.length &&
-                    rowElementsIdsInOrder[rowElementsIdsInOrderIdx] !== stringId
-                ) {
-                    gridRows.errors
-                        .get(row)
-                        .add(
-                            'HTMLElement row.id=' +
-                                JSON.stringify(rowElementsIdsInOrder[index]) +
-                                ' found instead, for row index ' +
-                                index
-                        );
-                }
-                ++rowElementsIdsInOrderIdx;
+                domRowIdx = assertDomOrder(gridRows, row, domRowIds, stringId, domRowIdx);
             }
-            this.checkRowDom(gridRows, row, rowElements);
 
-            const detailGridRows = gridRows.getDetailGridRows(row);
-            if (detailGridRows) {
-                this.validate(detailGridRows);
-            }
+            gridContext.validateRow(row, rowElements);
+            this.validateDetailGridRows(row, gridRows);
         }
 
-        for (const element of rowElements) {
-            const id = element.getAttribute('id');
-            if (id !== null && !gridRows.isRowDisplayed(gridRows.getById(id))) {
-                gridRows.errors.default.add(
-                    'HTML row ' + JSON.stringify(id) + ' exists, but no displayed row with that id exists'
-                );
-            }
+        ensureDomRowsBelongToGrid(gridRows);
+    }
+
+    private validateDetailGridRows(row: RowNode<any>, gridRows: GridRows): void {
+        const detailGridRows = gridRows.getDetailGridRows(row);
+        if (detailGridRows) {
+            this.validate(detailGridRows);
+        }
+    }
+}
+
+class GridRowDomValidator {
+    private readonly columns: Column[];
+    private readonly isGroupRowsDisplay: boolean;
+    private readonly autoGroupColumn?: Column;
+
+    public constructor(private readonly gridRows: GridRows) {
+        const api = gridRows.api;
+        this.columns = api.getAllGridColumns() ?? [];
+        this.isGroupRowsDisplay = api.getGridOption('groupDisplayType') === 'groupRows';
+        this.autoGroupColumn = this.lookupAutoGroupColumn();
+    }
+
+    public validateRow(row: RowNode<any>, rowElements: HTMLElement[]): void {
+        const rowErrors = this.gridRows.errors.get(row);
+        this.checkRowSelectionState(row, rowElements, rowErrors);
+
+        if (row.detail) {
+            return;
+        }
+
+        if (this.isGroupRowsDisplay && row.group) {
+            this.validateGroupRow(row, rowElements, rowErrors);
+            return;
+        }
+
+        for (const column of this.columns) {
+            this.validateCell(row, column, rowElements, rowErrors);
         }
     }
 
-    checkRowDom(gridRows: GridRows<any>, row: RowNode<any>, rowElements: HTMLElement[]) {
-        const rowErrors = gridRows.errors.get(row);
-
-        for (const rowElement of rowElements) {
-            if (gridRows.options.checkSelectedNodes ?? true) {
-                if (row.isSelected()) {
-                    if (!rowElement.classList.contains('ag-row-selected')) {
-                        rowErrors.add(
-                            'HTML element should have ag-row-selected class, but has ' + rowElement.className
-                        );
-                    }
-                } else if (rowElement.classList.contains('ag-row-selected')) {
-                    rowErrors.add(
-                        'HTML element should NOT have ag-row-selected class, but has ' + rowElement.className
-                    );
-                }
-            }
+    private validateGroupRow(row: RowNode<any>, rowElements: HTMLElement[], rowErrors: GridRowErrors<any>): void {
+        const wrapper = this.findGroupRowsWrapper(rowElements);
+        if (!wrapper) {
+            rowErrors.add('Missing groupRows cell wrapper for full-width group row');
+            return;
         }
 
-        if (!row.detail) {
-            this.checkRowDomCells(gridRows, row, rowElements, rowErrors);
+        const expected = this.autoGroupColumn
+            ? this.getExpectedGroupTextFromColumn(row, this.autoGroupColumn)
+            : this.getGroupRowFallbackText(row);
+        const actual = this.getGroupRowsActualText(wrapper);
+
+        if (expected !== actual) {
+            rowErrors.add(
+                `HTML groupRows value mismatch, expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`
+            );
         }
     }
 
-    private checkRowDomCells(
-        gridRows: GridRows<any>,
+    private validateCell(
         row: RowNode<any>,
+        column: Column<any>,
         rowElements: HTMLElement[],
         rowErrors: GridRowErrors<any>
-    ) {
-        // Check for cell values
-        const columns = gridRows.api.getAllGridColumns() ?? [];
-        for (let columnIndex = 0; columnIndex < columns.length; ++columnIndex) {
-            const column = columns[columnIndex];
+    ): void {
+        const columnId = column.getColId();
+        const cellElement = this.findCellElement(rowElements, columnId);
 
-            const columnId = column.getColId();
-            const cellElement = this.findCellElement(rowElements, columnId);
+        if (!cellElement) {
+            if (this.shouldReportMissingCell(row, column)) {
+                rowErrors.add(`Missing cell element for column id:"${columnId}"`);
+            }
+            return;
+        }
 
-            if (!cellElement) {
-                if (column.isVisible() && !row.master && columnId !== 'ag-Grid-SelectionColumn') {
-                    if (!column.getId().startsWith('pivot_')) {
-                        rowErrors.add(`Missing cell element for column id:"${columnId}"`);
-                    }
-                }
-                continue;
+        if (this.validateCheckboxCell(cellElement, row, column, rowErrors)) {
+            return;
+        }
+
+        const textContent = cellElement.textContent?.trim() ?? '';
+        if (!textContent && this.isAutoGroupColumn(columnId)) {
+            return;
+        }
+
+        const api = this.gridRows.api;
+        const cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
+        const colDef = column.getColDef();
+        const cellRenderer = colDef?.cellRenderer;
+        const isGroupCol =
+            (!cellRenderer && this.isAutoGroupColumn(columnId)) || cellRenderer === 'agGroupCellRenderer';
+
+        if (isGroupCol) {
+            const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, true));
+
+            if (textContent === childCountText || (cellValue === null && textContent === '')) {
+                return;
             }
 
-            this.checkRowDomCell(cellElement, gridRows, row, column, rowErrors);
+            const expected = this.combineGroupValue(stringCellValue, childCountText);
+            if (textContent === expected) {
+                return;
+            }
+            if (!this.shouldIgnoreGroupMismatch(expected, textContent)) {
+                rowErrors.add(
+                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expected)}, got ${JSON.stringify(textContent)}`
+                );
+            }
+            return;
         }
+
+        const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
+        if (hasGroupRendererDom || !!colDef.showRowGroup) {
+            const expected = this.getExpectedGroupCellText(row, column, stringCellValue);
+            if (expected === undefined) {
+                return;
+            }
+            if (textContent === expected) {
+                return;
+            }
+            if (!this.shouldIgnoreGroupMismatch(expected, textContent)) {
+                rowErrors.add(
+                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expected)}, got ${JSON.stringify(textContent)}`
+                );
+            }
+            return;
+        }
+
+        if (textContent !== stringCellValue) {
+            rowErrors.add(
+                `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(textContent)}`
+            );
+        }
+    }
+
+    private checkRowSelectionState(row: RowNode<any>, rowElements: HTMLElement[], rowErrors: GridRowErrors<any>): void {
+        if (!(this.gridRows.options.checkSelectedNodes ?? true)) {
+            return;
+        }
+
+        const isSelected = !!row.isSelected();
+        for (const rowElement of rowElements) {
+            const hasSelectedClass = rowElement.classList.contains('ag-row-selected');
+            if (isSelected && !hasSelectedClass) {
+                rowErrors.add('HTML element should have ag-row-selected class, but has ' + rowElement.className);
+            } else if (!isSelected && hasSelectedClass) {
+                rowErrors.add('HTML element should NOT have ag-row-selected class, but has ' + rowElement.className);
+            }
+        }
+    }
+
+    private shouldIgnoreGroupMismatch(expected: string, actual: string): boolean {
+        return !!this.gridRows.api.getGridOption('groupHideOpenParents') && expected.endsWith(actual);
+    }
+
+    private shouldReportMissingCell(row: RowNode<any>, column: Column<any>): boolean {
+        if (!column.isVisible() || row.master) {
+            return false;
+        }
+
+        const columnId = column.getColId();
+        if (columnId === 'ag-Grid-SelectionColumn') {
+            return false;
+        }
+
+        return !column.getId().startsWith('pivot_');
     }
 
     private findCellElement(rowElements: HTMLElement[], columnId: string): HTMLElement | null {
@@ -160,94 +227,17 @@ export class GridRowsDomValidator {
         return null;
     }
 
-    private checkRowDomCell(
-        cellElement: Element,
-        gridRows: GridRows<any>,
-        row: RowNode<any>,
-        column: Column<any>,
-        rowErrors: GridRowErrors<any>
-    ) {
-        const columnId = column.getColId();
-        const textContent = cellElement.textContent?.trim() ?? '';
-        const colDef = column.getColDef();
-        const cellRenderer = colDef?.cellRenderer;
-
-        if (this.validateCheckboxCell(cellElement, row, column, rowErrors, gridRows)) {
-            return;
-        }
-
-        if (!textContent && columnId === 'ag-Grid-AutoColumn') {
-            return; // Skip empty auto column as it might not have text content
-        }
-
-        const api = gridRows.api;
-        const cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
-        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
-
-        const isAutoGroupCol = columnId === 'ag-Grid-AutoColumn' || columnId.startsWith('ag-Grid-AutoColumn-');
-        const isGroupCol = (!cellRenderer && isAutoGroupCol) || cellRenderer === 'agGroupCellRenderer';
-        if (isGroupCol) {
-            let childCountText = '';
-            const suppressCount = this.isGroupCountSuppressed(gridRows, column, true);
-            const rowId = row.id != null ? String(row.id) : '';
-            const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
-            const childCount = suppressCount || isFooterRow ? 0 : row.allChildrenCount;
-            if (childCount) {
-                childCountText = `(${childCount})`;
+    private findGroupRowsWrapper(rowElements: HTMLElement[]): HTMLElement | null {
+        for (const rowElement of rowElements) {
+            const wrapper = rowElement.querySelector('.ag-cell-wrapper.ag-row-group');
+            if (wrapper) {
+                return wrapper as HTMLElement;
             }
-
-            if (textContent === childCountText) {
-                return;
-            }
-
-            if (cellValue === null && textContent === '') {
-                return;
-            }
-
-            let expectedText = stringCellValue ? `${stringCellValue} ${childCountText}` : childCountText;
-            expectedText = expectedText.trim();
-
-            if (textContent !== expectedText) {
-                const groupHideOpenParents = !!api.getGridOption('groupHideOpenParents');
-                if (groupHideOpenParents && expectedText.endsWith(textContent)) {
-                    return;
-                }
-                rowErrors.add(
-                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedText)}, got ${JSON.stringify(textContent)}`
-                );
-            }
-            return;
         }
-
-        const hasGroupRendererDom = !!cellElement.querySelector('.ag-group-value');
-        if (hasGroupRendererDom || !!colDef.showRowGroup) {
-            const expectedGroupText = this.getExpectedGroupCellText(gridRows, row, column, stringCellValue);
-            const shouldIgnoreMismatch =
-                expectedGroupText !== undefined &&
-                gridRows.api.getGridOption('groupHideOpenParents') &&
-                expectedGroupText.endsWith(textContent);
-
-            if (expectedGroupText !== undefined && !shouldIgnoreMismatch && textContent !== expectedGroupText) {
-                rowErrors.add(
-                    `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(expectedGroupText)}, got ${JSON.stringify(textContent)}`
-                );
-            }
-            return;
-        }
-
-        if (textContent !== stringCellValue) {
-            rowErrors.add(
-                `HTML cell value mismatch for column id:"${columnId}", expected ${JSON.stringify(cellValue)}, got ${JSON.stringify(textContent)}`
-            );
-        }
+        return null;
     }
 
-    private getExpectedGroupCellText(
-        gridRows: GridRows<any>,
-        row: RowNode<any>,
-        column: Column<any>,
-        valueText: string
-    ): string | undefined {
+    private getExpectedGroupCellText(row: RowNode<any>, column: Column<any>, valueText: string): string | undefined {
         const colDef = column.getColDef();
 
         if (!valueText && colDef.showRowGroup) {
@@ -257,25 +247,33 @@ export class GridRowsDomValidator {
             valueText = String(groupDataValue ?? fallback ?? '').trim();
         }
 
-        const suppressCount = this.isGroupCountSuppressed(gridRows, column, false);
-        const rowId = row.id != null ? String(row.id) : '';
-        const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
-        let childCountText = '';
-        if (!suppressCount && !isFooterRow) {
-            const childCount = row.allChildrenCount;
-            if (childCount) {
-                childCountText = `(${childCount})`;
-            }
-        }
-
+        const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, false));
         if (valueText) {
-            return childCountText ? `${valueText} ${childCountText}` : valueText;
+            return this.combineGroupValue(valueText, childCountText);
         }
-
         return childCountText;
     }
 
-    private isGroupCountSuppressed(gridRows: GridRows<any>, column: Column<any>, isAutoGroupCol: boolean): boolean {
+    private getExpectedGroupTextFromColumn(row: RowNode<any>, column: Column<any>): string {
+        const cellValue = this.gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
+        return this.getExpectedGroupCellText(row, column, stringCellValue) ?? '';
+    }
+
+    private getGroupRowFallbackText(row: RowNode<any>): string {
+        const valueText = String(row.key ?? '').trim();
+        const childCount = row.allChildrenCount ?? 0;
+        const childCountText = childCount ? `(${childCount})` : '';
+        return valueText && childCountText ? `${valueText} ${childCountText}` : valueText || childCountText;
+    }
+
+    private getGroupRowsActualText(wrapper: HTMLElement): string {
+        const value = wrapper.querySelector('.ag-group-value')?.textContent?.trim() ?? '';
+        const childCount = wrapper.querySelector('.ag-group-child-count')?.textContent?.trim() ?? '';
+        return value && childCount ? `${value} ${childCount}` : value || childCount;
+    }
+
+    private isGroupCountSuppressed(column: Column<any>, isAutoGroupCol: boolean): boolean {
         const colDef = column.getColDef();
         const params = colDef.cellRendererParams as any;
         if (params && typeof params === 'object' && 'suppressCount' in params) {
@@ -283,7 +281,7 @@ export class GridRowsDomValidator {
         }
 
         if (isAutoGroupCol) {
-            const autoGroupParams = gridRows.api.getGridOption('autoGroupColumnDef')?.cellRendererParams as any;
+            const autoGroupParams = this.gridRows.api.getGridOption('autoGroupColumnDef')?.cellRendererParams as any;
             if (autoGroupParams && typeof autoGroupParams === 'object' && 'suppressCount' in autoGroupParams) {
                 return !!autoGroupParams.suppressCount;
             }
@@ -292,12 +290,30 @@ export class GridRowsDomValidator {
         return false;
     }
 
+    private getChildCountText(row: RowNode<any>, suppressCount: boolean): string {
+        if (suppressCount) {
+            return '';
+        }
+
+        const rowId = row.id != null ? String(row.id) : '';
+        const isFooterRow = !!row.footer || rowId.startsWith('rowGroupFooter_');
+        if (isFooterRow) {
+            return '';
+        }
+
+        const childCount = row.allChildrenCount ?? 0;
+        return childCount ? `(${childCount})` : '';
+    }
+
+    private combineGroupValue(valueText: string, childCountText: string): string {
+        return valueText ? (childCountText ? `${valueText} ${childCountText}` : valueText) : childCountText;
+    }
+
     private validateCheckboxCell(
         cellElement: Element,
         row: RowNode<any>,
         column: Column<any>,
-        rowErrors: GridRowErrors<any>,
-        gridRows: GridRows<any>
+        rowErrors: GridRowErrors<any>
     ): boolean {
         const columnId = column.getColId();
         if (columnId === 'ag-Grid-SelectionColumn') {
@@ -313,7 +329,7 @@ export class GridRowsDomValidator {
             return false;
         }
 
-        const cellValue = gridRows.api.getCellValue({ rowNode: row, colKey: column });
+        const cellValue = this.gridRows.api.getCellValue({ rowNode: row, colKey: column });
 
         if (!checkboxElement) {
             return true;
@@ -343,5 +359,74 @@ export class GridRowsDomValidator {
         }
 
         return true;
+    }
+
+    private lookupAutoGroupColumn(): Column | undefined {
+        const direct = this.gridRows.api.getColumn(AUTO_GROUP_COL_ID);
+        if (direct) {
+            return direct;
+        }
+
+        return this.gridRows.api.getAllGridColumns()?.find((col) => this.isAutoGroupColumn(col.getColId()));
+    }
+
+    private isAutoGroupColumn(columnId: string): boolean {
+        return columnId === AUTO_GROUP_COL_ID || columnId.startsWith(`${AUTO_GROUP_COL_ID}-`);
+    }
+}
+
+function getDomRowIds(gridRows: GridRows): string[] | null {
+    const displayedRows = gridRows.displayedRows;
+    const hasDuplicates = displayedRows.some((row) => gridRows.isDuplicateIdRow(row));
+    const ensureDomOrder = !!gridRows.api.getGridOption('ensureDomOrder');
+    const domLayoutPrint = gridRows.api.getGridOption('domLayout') === 'print';
+    const shouldCheckDomOrder = hasDuplicates || (!ensureDomOrder && !domLayoutPrint);
+
+    if (!shouldCheckDomOrder) {
+        return null;
+    }
+
+    const rowElements = getGridRowsHtmlElements(gridRows.api);
+    return rowElements
+        .map((rowElement) => rowElement.getAttribute('row-id') ?? '')
+        .filter((id) => {
+            const row = gridRows.getById(id);
+            return !(row && row.sticky);
+        });
+}
+
+function assertDomOrder(
+    gridRows: GridRows,
+    row: RowNode<any>,
+    domRowIds: string[] | null,
+    rowId: string,
+    domIndex: number
+): number {
+    if (!domRowIds || domIndex >= domRowIds.length) {
+        return domIndex;
+    }
+
+    if (domRowIds[domIndex] !== rowId) {
+        gridRows.errors
+            .get(row)
+            .add(
+                'HTMLElement row.id=' +
+                    JSON.stringify(domRowIds[domIndex]) +
+                    ' found instead, for row index ' +
+                    domIndex
+            );
+    }
+    return domIndex + 1;
+}
+
+function ensureDomRowsBelongToGrid(gridRows: GridRows): void {
+    const rowElements = getGridRowsHtmlElements(gridRows.api);
+    for (const element of rowElements) {
+        const id = element.getAttribute('id');
+        if (id !== null && !gridRows.isRowDisplayed(gridRows.getById(id))) {
+            gridRows.errors.default.add(
+                'HTML row ' + JSON.stringify(id) + ' exists, but no displayed row with that id exists'
+            );
+        }
     }
 }

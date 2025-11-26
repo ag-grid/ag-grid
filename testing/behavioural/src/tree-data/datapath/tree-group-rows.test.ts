@@ -45,7 +45,6 @@ describe('ag-grid grouping tree data with groupRows', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: false,
             columns: ['type'],
         };
 

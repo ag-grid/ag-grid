@@ -289,7 +289,6 @@ describe('ag-grid grouping filter aggregation', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['athlete', 'sport', 'gold', 'active'],
-            checkDom: false,
         };
 
         await new GridRows(api, 'external filter active=true', gridRowsOptions).check(`
