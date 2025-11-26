@@ -9,7 +9,6 @@ import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { SortService } from '../sort/sortService';
 import { depthFirstOriginalTreeSearch } from './columnFactoryUtils';
 import type { ColumnCollections } from './columnModel';
 import { ColumnState, ColumnStateParams, _applyColumnState } from './columnStateUtils';
@@ -176,7 +175,7 @@ export function _getColumnStateFromColDef(colDef: ColDef, colId: string): Column
 }
 
 export function _getSortDefFromColDef(colDef: ColDef) {
-    const { sort, initialSort, sortingOrder } = colDef;
+    const { sort, initialSort } = colDef;
     const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
     const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
 

@@ -1,8 +1,24 @@
-import type { DisplaySortDef } from '../../entities/colDef';
 import type { LocaleTextFunc } from '../interfaces/iLocaleService';
 
 /** Per https://www.w3.org/TR/wai-aria/#aria-sort](https://www.w3.org/TR/wai-aria/#aria-sort:~:text=integer-,aria%2Dsort%20property,-Indicates%20if%20items */
 export type AriaSortState = 'ascending' | 'descending' | 'other' | 'none';
+
+export type DisplaySortDef =
+    | SortDef
+    | {
+          direction: 'mixed';
+          type: SortType;
+      };
+
+export type SortDirection = 'asc' | 'desc' | null;
+
+/** nullish is treated as default here */
+export type SortType = 'absolute' | 'default' | null;
+
+export type SortDef = {
+    type: SortType;
+    direction: SortDirection;
+};
 
 // ARIA HELPER FUNCTIONS
 function _toggleAriaAttribute(element: Element, attribute: string, value?: number | boolean | string | null) {

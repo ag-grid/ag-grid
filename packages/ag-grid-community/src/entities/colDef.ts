@@ -1,3 +1,4 @@
+import type { SortDef, SortDirection, SortType } from '../agStack/utils/aria';
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
@@ -10,6 +11,8 @@ import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
+
+export type { SortDirection, SortType, SortDef } from '../agStack/utils/aria';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -800,7 +803,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @initial
      */
     initialSortIndex?: number;
-    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `(SortDef | SortDirection)[]`. Default is ['asc', 'desc', null] */
+    /**
+     * Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `(SortDef | SortDirection)[]`.
+     * @default ['asc', 'desc', null]
+     */
     sortingOrder?: (SortDirection | SortDef)[];
     /**
      * Override the default sorting order by providing a custom sort comparator, or a map of comparators for different `SortType`s.
@@ -1193,23 +1199,6 @@ export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditorPopupPosition` */
     popupPosition?: 'over' | 'under';
 }
-
-export type SortDirection = 'asc' | 'desc' | null;
-
-/** nullish is treated as default here */
-export type SortType = 'absolute' | 'default' | null;
-
-export type SortDef = {
-    type: SortType;
-    direction: SortDirection;
-};
-
-export type DisplaySortDef =
-    | SortDef
-    | {
-          direction: 'mixed';
-          type: SortType;
-      };
 
 export type GroupHierarchyParts =
     | 'year'

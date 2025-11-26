@@ -100,7 +100,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         const colDef = sortOption.column.getColDef();
 
         // comparator on col get preference over everything else
-        const comparatorOnCol = this.grabComparatorFromColDef(colDef, sortOption);
+        const comparatorOnCol = this.getComparatorFromColDef(colDef, sortOption);
         if (comparatorOnCol) {
             return comparatorOnCol;
         }
@@ -120,10 +120,10 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
         // comparator on col get preference over everything else
-        return this.grabComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+        return this.getComparatorFromColDef(primaryColumn.getColDef(), sortOption);
     }
 
-    private grabComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
+    private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
         const comparator = colDef.comparator;
         if (comparator == null) {
             return;
