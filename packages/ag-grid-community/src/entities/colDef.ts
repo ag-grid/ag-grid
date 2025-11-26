@@ -12,7 +12,7 @@ import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRender
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
-export type { SortDirection, SortType, SortDef } from '../agStack/utils/aria';
+export type { SortDirection, SortType, SortDef, DisplaySortDef } from '../agStack/utils/aria';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
