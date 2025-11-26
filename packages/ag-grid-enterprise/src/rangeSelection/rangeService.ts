@@ -1408,7 +1408,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             );
 
             const lastCellRange = foundRange
-                ? this.deselectColumnFromRange(foundRange, clickedColumn)
+                ? this.deselectColumnsFromRange(foundRange, [clickedColumn])
                 : this.selectColumns([clickedColumn], firstRow, lastRow);
 
             if (lastCellRange) {
@@ -1427,15 +1427,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             );
 
             if (foundRange) {
-                _removeAllFromArray(foundRange.columns, leafCols);
-                if (leafCols.includes(foundRange.startColumn as AgColumn)) {
-                    foundRange.startColumn = foundRange.columns[0];
-                }
-                if (foundRange.columns.length === 0) {
-                    _removeFromArray(cellRanges, foundRange);
-                }
+                this.deselectColumnsFromRange(foundRange, leafCols);
                 ctx.root = leafCols[0];
-                this.dispatchChangedEvent(true, true);
             } else {
                 const addedRange = this.selectColumns(leafCols, firstRow, lastRow);
                 ctx.root = leafCols[0];
@@ -1446,9 +1439,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    private deselectColumnFromRange(range: CellRange, column: AgColumn): undefined {
-        _removeFromArray(range.columns as AgColumn[], column);
-        if (range.startColumn === column) {
+    private deselectColumnsFromRange(range: CellRange, columns: AgColumn[]): undefined {
+        _removeAllFromArray(range.columns as AgColumn[], columns);
+        if (columns.includes(range.startColumn as AgColumn)) {
             range.startColumn = range.columns[0];
         }
 
