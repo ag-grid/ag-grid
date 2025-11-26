@@ -186,9 +186,6 @@ export function _getSortDefFromColDef(colDef: ColDef) {
     if (initialSortIsValid) {
         return _getSortDefFromInput(initialSort);
     }
-    if (sortingOrder?.length) {
-        return _getSortDefFromInput(sortingOrder[0]);
-    }
 
     return null;
 }
