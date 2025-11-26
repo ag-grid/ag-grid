@@ -6,7 +6,7 @@ import type {
 
 export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, number> = {
     AlignedGridsModule: 6.88,
-    AllCommunityModule: 490.14,
+    AllCommunityModule: 496.14,
     CellApiModule: 0.28,
     CellSpanModule: 8.08,
     CellStyleModule: 2.24,
