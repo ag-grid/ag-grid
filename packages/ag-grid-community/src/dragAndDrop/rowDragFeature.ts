@@ -718,7 +718,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (groupEditSvc) {
             return groupEditSvc.csrmFirstLeaf(row) as RowNode | undefined;
         }
-        return _csrmFirstLeaf(row) as RowNode | undefined;
+        return _csrmFirstLeaf(row);
     }
 }
 

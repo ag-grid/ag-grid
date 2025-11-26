@@ -26,6 +26,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
     private dropGroupTarget: IRowNode | null = null;
     private dropGroupTimer: number | null = null;
     private dropGroupThrottled = false;
+    private draggingGroups: Map<IRowNode, RowNode[]> | null = null;
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
@@ -41,15 +42,6 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         super.destroy();
     }
 
-    private isDragDisabled(): boolean {
-        const gos = this.gos;
-        return (
-            gos.get('rowDragManaged') &&
-            !gos.get('refreshAfterGroupEdit') &&
-            !!this.beans.rowGroupColsSvc?.columns?.length
-        );
-    }
-
     /** Checks if the drop operation described by `rowsDrop` is a grouping edit */
     public isGroupingDrop(rowsDrop: _RowsDrop): boolean {
         if (!rowsDrop.rowDragManaged || !rowsDrop.sameGrid) {
@@ -60,8 +52,6 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
         return !!this.beans.rowGroupColsSvc?.columns?.length && !this.gos.get('pivotMode');
     }
-
-    private draggingGroups: Map<IRowNode, RowNode[]> | null = null;
 
     private initDraggingGroups(rowsDrop: _RowsDrop): void {
         const structure = new Map<IRowNode, RowNode[]>();
