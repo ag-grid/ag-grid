@@ -86,11 +86,8 @@ describe('row drag nudger group expansion', () => {
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                expandedBeforeDrop = await waitForGroupHover(api, context.targetElement, dispatcher);
-            },
-        });
+        expandedBeforeDrop = await waitForGroupHover(api, targetRow!, dispatcher);
+        await dispatcher.finish();
 
         expect(expandedBeforeDrop).toBe(true);
 
@@ -159,11 +156,8 @@ describe('row drag nudger group expansion', () => {
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                expandedBeforeDrop = await waitForGroupHover(api, context.targetElement, dispatcher);
-            },
-        });
+        expandedBeforeDrop = await waitForGroupHover(api, targetRow!, dispatcher);
+        await dispatcher.finish();
 
         expect(expandedBeforeDrop).toBe(true);
 

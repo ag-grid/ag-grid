@@ -101,11 +101,8 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-            },
-        });
+        await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'multi select after move');
@@ -171,27 +168,25 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async ({ targetElement }) => {
-                const rect = targetElement.getBoundingClientRect();
-                const clientX = rect.left + rect.width / 2;
-                const clientY = rect.top + rect.height / 2;
+        const insertDelayTarget = targetRow!;
+        const rect = insertDelayTarget.getBoundingClientRect();
+        const clientX = rect.left + rect.width / 2;
+        const clientY = rect.top + rect.height / 2;
 
-                await dispatcher.move(targetElement, { clientX, clientY });
+        await dispatcher.move(insertDelayTarget, { clientX, clientY });
 
-                for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
-                    await asyncSetTimeout(20);
-                    api.forEachNode((node: IRowNode) => {
-                        if (node.id === 'root-ops') {
-                            expandedBeforeDrop = !!node.expanded;
-                        }
-                    });
+        for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
+            await asyncSetTimeout(20);
+            api.forEachNode((node: IRowNode) => {
+                if (node.id === 'root-ops') {
+                    expandedBeforeDrop = !!node.expanded;
                 }
+            });
+        }
 
-                await asyncSetTimeout(10);
-                await dispatcher.move(targetElement, { clientX, clientY });
-            },
-        });
+        await asyncSetTimeout(10);
+        await dispatcher.move(insertDelayTarget, { clientX, clientY });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         expect(expandedBeforeDrop).toBe(true);
@@ -247,11 +242,8 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-            },
-        });
+        await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;

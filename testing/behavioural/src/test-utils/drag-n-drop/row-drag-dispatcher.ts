@@ -16,10 +16,7 @@ export interface RowDragMoveOptions {
     yOffsetPercent?: number;
     clientX?: number;
     clientY?: number;
-}
-
-export interface DragAndDropBeforeDropContext {
-    targetElement: Element;
+    center?: boolean;
 }
 
 export interface RowDragDispatcherParams {
@@ -29,7 +26,6 @@ export interface RowDragDispatcherParams {
 
 export interface RowDragFinishOptions {
     cancel?: boolean;
-    beforeDrop?: (context: DragAndDropBeforeDropContext) => Promise<void> | void;
 }
 
 type RowDragListeners = {
@@ -109,21 +105,20 @@ export class RowDragDispatcher {
 
         this.attachListeners();
 
-        const sourceRect = sourceElement.getBoundingClientRect();
         const handleRect = dragHandle.getBoundingClientRect();
 
         const pointerDownX = options.clientX ?? handleRect.left + handleRect.width / 2;
         const pointerDownY =
             options.clientY ?? handleRect.top + linearInterpolation(0, handleRect.height, this.sourceYOffsetPercent);
 
-        const firstDragClientX = pointerDownX >= sourceRect.right - 5 ? pointerDownX - 5 : pointerDownX + 5;
-        const firstDragClientY = pointerDownY >= sourceRect.bottom - 5 ? pointerDownY - 5 : pointerDownY + 5;
-
         await this.dispatcher.startDrag(dragHandle, pointerDownX, pointerDownY);
-        await this.dispatcher.movePointer(sourceElement, firstDragClientX, firstDragClientY);
-        this.applyPostMoveEffects();
 
         this.started = true;
+
+        const sourceRect = sourceElement.getBoundingClientRect();
+        const firstDragClientX = pointerDownX >= sourceRect.right - 5 ? pointerDownX - 5 : pointerDownX + 5;
+        const firstDragClientY = pointerDownY >= sourceRect.bottom - 5 ? pointerDownY - 5 : pointerDownY + 5;
+        await this.move(source, { clientX: firstDragClientX, clientY: firstDragClientY });
     }
 
     public async move(target: RowElementReference, options: RowDragMoveOptions = {}): Promise<void> {
@@ -134,47 +129,44 @@ export class RowDragDispatcher {
             throw new Error('Drop Target row not found');
         }
 
-        await this.internalMovePointer(targetElement, options);
-    }
-
-    public async hoverTargetCenter(targetElement: RowElementReference): Promise<void> {
-        this.ensureActive();
-
-        const targetHtmlElement = this.gridHtmlRows.getRowHtmlElement(targetElement);
-        if (!targetHtmlElement) {
-            throw new Error('Drop Target row not found');
+        const dispatcher = this.dispatcher;
+        if (!dispatcher) {
+            throw new Error('Row drag has not been started');
         }
 
-        const rect = targetHtmlElement.getBoundingClientRect();
-        const clientX = rect.left + rect.width / 2;
-        const clientY = rect.top + rect.height / 2;
+        let stepX = options.clientX;
+        let stepY = options.clientY;
 
-        await this.internalMovePointer(targetHtmlElement, { clientX, clientY });
+        if (stepX === undefined || stepY === undefined) {
+            const rect = targetElement.getBoundingClientRect();
+            if (options.center) {
+                stepX ??= rect.left + rect.width / 2;
+                stepY ??= rect.top + rect.height / 2;
+            } else {
+                const yOffsetPercent = options.yOffsetPercent ?? 0.5;
+                const computedPoint = computeStepPoint(rect, yOffsetPercent, dispatcher.currentY);
+                stepX ??= computedPoint.x;
+                stepY ??= computedPoint.y;
+            }
+        }
+
+        await dispatcher.movePointer(targetElement, options.clientX ?? stepX, options.clientY ?? stepY);
+
+        this.gridHtmlRows.invalidateHtml();
+        if (shouldAssertDropIndicator(this.api)) {
+            assertDropIndicatorVisible(this.api);
+        }
+        this.finalDropTarget = this.dispatcher?.currentDropTarget ?? null;
     }
 
     public async finish(options: RowDragFinishOptions = {}): Promise<void> {
-        if (this.finished) {
-            return;
-        }
-
         this.ensureActive();
 
         const dispatcher = this.dispatcher!;
-        let targetElement = dispatcher.currentDropTarget ?? this.finalDropTarget;
+        const targetElement = dispatcher.currentDropTarget ?? this.finalDropTarget;
 
         if (!targetElement) {
             throw new Error('Drop Target row not found');
-        }
-
-        if (options.beforeDrop) {
-            await options.beforeDrop({
-                targetElement,
-            });
-            targetElement = dispatcher.currentDropTarget ?? targetElement;
-
-            if (!targetElement) {
-                throw new Error('Drop Target row not found');
-            }
         }
 
         const cancel = options.cancel;
@@ -225,32 +217,6 @@ export class RowDragDispatcher {
         }
 
         this.finished = true;
-    }
-
-    private async internalMovePointer(targetElement: Element, options: RowDragMoveOptions = {}): Promise<void> {
-        const dispatcher = this.dispatcher;
-        if (!dispatcher) {
-            throw new Error('Row drag has not been started');
-        }
-
-        const yOffsetPercent = options.yOffsetPercent ?? 0.5;
-        const rect = targetElement.getBoundingClientRect();
-        const computedPoint = computeStepPoint(rect, yOffsetPercent, dispatcher.currentY);
-
-        const stepX = options.clientX ?? computedPoint.x;
-        const stepY = options.clientY ?? computedPoint.y;
-
-        await dispatcher.movePointer(targetElement, stepX, stepY);
-
-        this.applyPostMoveEffects();
-    }
-
-    private applyPostMoveEffects(): void {
-        this.gridHtmlRows.invalidateHtml();
-        if (shouldAssertDropIndicator(this.api)) {
-            assertDropIndicatorVisible(this.api);
-        }
-        this.finalDropTarget = this.dispatcher?.currentDropTarget ?? null;
     }
 
     private attachListeners(): void {

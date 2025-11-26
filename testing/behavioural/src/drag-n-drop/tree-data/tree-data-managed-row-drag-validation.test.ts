@@ -89,12 +89,9 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-                assertDropIndicatorVisible(api);
-            },
-        });
+    await dispatcher.move(targetRow!, { center: true });
+        assertDropIndicatorVisible(api);
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'unmanaged final');
@@ -150,12 +147,9 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('draft');
         await dispatcher.move('protected', { yOffsetPercent: 0.35 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-                assertDropIndicatorVisible(api);
-            },
-        });
+    await dispatcher.move('protected', { center: true });
+        assertDropIndicatorVisible(api);
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'validator final');
@@ -222,12 +216,11 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(initialRows.getRowHtmlElement('team')!);
         await dispatcher.move(initialRows.getRowHtmlElement('team-eng')!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-                assertDropIndicatorVisible(api);
-            },
-        });
+        const cycleTargetRow = initialRows.getRowHtmlElement('team-eng');
+        expect(cycleTargetRow).toBeTruthy();
+    await dispatcher.move(cycleTargetRow!, { center: true });
+        assertDropIndicatorVisible(api);
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'cycle final');
@@ -282,12 +275,9 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('library-drafts-spec');
         await dispatcher.move('library-archive', { yOffsetPercent: 0.35 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-                assertDropIndicatorVisible(api);
-            },
-        });
+    await dispatcher.move('library-archive', { center: true });
+        assertDropIndicatorVisible(api);
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'path managed after');
@@ -346,12 +336,9 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('library-shared-manual');
         await dispatcher.move('library-protected', { yOffsetPercent: 0.35 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-                assertDropIndicatorVisible(api);
-            },
-        });
+    await dispatcher.move('library-protected', { center: true });
+        assertDropIndicatorVisible(api);
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'path validator final');

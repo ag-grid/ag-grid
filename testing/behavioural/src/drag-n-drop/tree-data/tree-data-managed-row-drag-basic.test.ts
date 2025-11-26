@@ -95,11 +95,8 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-            },
-        });
+    await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'after move');
@@ -345,11 +342,8 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRow!);
         await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
-        await dispatcher.finish({
-            beforeDrop: async (context) => {
-                await dispatcher.hoverTargetCenter(context.targetElement);
-            },
-        });
+    await dispatcher.move(targetRow!, { center: true });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
         const finalRows = createTreeRows(api, 'grandchildren after move');
