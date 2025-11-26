@@ -97,7 +97,7 @@ describe('ag-grid hierarchical tree selection', () => {
             │ └─┬ 3 GROUP selected id:3 k:"C" name:"A. Church"
             │ · ├── 6 LEAF id:6 k:"F" name:"Linus Torvalds"
             │ · ├── 7 LEAF id:7 k:"G" name:"Brian Kernighan"
-            │ · └─┬ h GROUP selected id:h k:"H" name:undefined
+            │ · └─┬ h GROUP selected id:h k:"H"
             │ · · └── 8 LEAF id:8 k:"I" name:"Claude Elwood Shannon"
             └── 9 LEAF selected id:9 k:"J" name:"E. Dijkstra"
         `);
@@ -116,7 +116,7 @@ describe('ag-grid hierarchical tree selection', () => {
             │ └─┬ 3 GROUP selected id:3 k:"C" name:"A. Church"
             │ · ├── 6 LEAF id:6 k:"F" name:"Linus Torvalds"
             │ · ├── 7 LEAF id:7 k:"G" name:"Brian Kernighan"
-            │ · └─┬ h GROUP selected id:h k:"H" name:undefined
+            │ · └─┬ h GROUP selected id:h k:"H"
             │ · · └── 8 LEAF selected id:8 k:"I" name:"Claude Elwood Shannon"
             └── 9 LEAF selected id:9 k:"J" name:"E. Dijkstra"
         `);
@@ -157,7 +157,7 @@ describe('ag-grid hierarchical tree selection', () => {
         await new GridRows(api, 'rowData 2', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ 1 GROUP selected id:1 k:"A" name:"John Von Neumann"
-            │ ├─┬ y GROUP id:y k:"Y" name:undefined
+            │ ├─┬ y GROUP id:y k:"Y"
             │ │ ├── 6 LEAF id:6 k:"F" name:"Linus Torvalds"
             │ │ └── 5 LEAF id:5 k:"E" name:"Grace Hopper"
             │ ├── 2 LEAF id:2 k:"B" name:"Alan Turing"

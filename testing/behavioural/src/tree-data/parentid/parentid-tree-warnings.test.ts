@@ -153,7 +153,7 @@ describe('ag-grid parentId tree data warnings', () => {
             │ └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:"2" parentId:"KjDhf3D1"
             │ · └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"3" parentId:"2"
             │ · · └── KjDhf3D4 LEAF id:KjDhf3D4 ag-Grid-AutoColumn:"KjDhf3D4" x:"4" parentId:"3"
-            └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:"5" parentId:undefined
+            └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:"5"
             · └── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:"6" parentId:"5"
         `);
 

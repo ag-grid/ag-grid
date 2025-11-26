@@ -35,10 +35,7 @@ describe('ag-grid grouping hierarchical tree data with groupRows', () => {
             groupDisplayType: 'groupRows',
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: false,
-            columns: true,
-        };
+        const gridRowsOptions: GridRowsOptions = { columns: true };
 
         const gridRows = new GridRows(api, '', gridRowsOptions);
         await gridRows.check(`

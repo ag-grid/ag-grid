@@ -166,14 +166,14 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         await new GridRows(api, 'update 0', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ 0 GROUP id:0 id:"A" x:undefined
+            ├─┬ 0 GROUP id:0 id:"A"
             │ └── 1 LEAF id:1 id:"B" x:0
-            ├─┬ 2 GROUP id:2 id:"P" x:undefined
+            ├─┬ 2 GROUP id:2 id:"P"
             │ ├── 3 LEAF id:3 id:"Q" x:1
             │ └── 4 LEAF id:4 id:"R" x:2
-            ├─┬ 5 GROUP id:5 id:"C" x:undefined
+            ├─┬ 5 GROUP id:5 id:"C"
             │ └── 6 LEAF id:6 id:"D" x:3
-            └─┬ 7 GROUP id:7 id:"X" x:undefined
+            └─┬ 7 GROUP id:7 id:"X"
             · └── 8 LEAF id:8 id:"Y" x:4
         `);
 
@@ -181,10 +181,10 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         await new GridRows(api, 'update 1', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ 0 GROUP id:0 id:"D" x:undefined
+            ├─┬ 0 GROUP id:0 id:"D"
             │ └─┬ 1 GROUP id:1 id:"E" x:5
             │ · └── 2 LEAF id:2 id:"F" x:4
-            └─┬ 3 GROUP id:3 id:"P" x:undefined
+            └─┬ 3 GROUP id:3 id:"P"
             · ├── 4 LEAF id:4 id:"R" x:7
             · └── 5 LEAF id:5 id:"Q" x:1
         `);
@@ -197,10 +197,10 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         await new GridRows(api, 'update 1', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ 0 GROUP id:0 id:"D" x:undefined
+            ├─┬ 0 GROUP id:0 id:"D"
             │ └─┬ 1 GROUP id:1 id:"E" x:5
             │ · └── 2 LEAF id:2 id:"F" x:4
-            └─┬ 3 GROUP id:3 id:"P" x:undefined
+            └─┬ 3 GROUP id:3 id:"P"
             · ├── 4 LEAF id:4 id:"R" x:7
             · └── 5 LEAF id:5 id:"Q" x:1
         `);

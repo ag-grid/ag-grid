@@ -49,18 +49,18 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ ├── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ └── LEAF hidden id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             ├─┬ filler collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            │ │ └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            │ │ └── LEAF hidden id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
+            │ · └── LEAF hidden id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
             └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            · · └── LEAF hidden id:6 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Expand Ireland 2020 group manually
@@ -73,18 +73,18 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             ├─┬ filler collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            │ │ └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            │ │ └── LEAF hidden id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
+            │ · └── LEAF hidden id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
             └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            · · └── LEAF hidden id:6 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Add new data to Ireland 2020 group - expansion should be preserved
@@ -96,19 +96,19 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
-            │ │ └── LEAF id:7 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Pat O'Brien" sport:"Rugby"
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ ├── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ └── LEAF id:7 country:"Ireland" year:2020 athlete:"Pat O'Brien" sport:"Rugby"
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             ├─┬ filler collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            │ │ └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            │ │ └── LEAF hidden id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
+            │ · └── LEAF hidden id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
             └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            · · └── LEAF hidden id:6 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Collapse Ireland 2020, expand Italy 2021
@@ -121,19 +121,19 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ ├── LEAF hidden id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
-            │ │ └── LEAF hidden id:7 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Pat O'Brien" sport:"Rugby"
+            │ │ ├── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ ├── LEAF hidden id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ └── LEAF hidden id:7 country:"Ireland" year:2020 athlete:"Pat O'Brien" sport:"Rugby"
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            │ │ └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            │ │ └── LEAF hidden id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF id:5 ag-Grid-AutoColumn:undefined country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
+            │ · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
             └─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            · · └── LEAF hidden id:6 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Update entire dataset - expansion states should be preserved
@@ -154,21 +154,21 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith Updated" sport:"Sailing"
-            │ │ └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ ├── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith Updated" sport:"Sailing"
+            │ │ └── LEAF hidden id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            │ │ └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            │ │ └── LEAF hidden id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF id:5 ag-Grid-AutoColumn:undefined country:"Italy" year:2021 athlete:"Luigi Verdi Updated" sport:"Football"
+            │ · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi Updated" sport:"Football"
             ├─┬ filler collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
-            │ · └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            │ · └── LEAF hidden id:6 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
             └─┬ filler collapsed id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Spain-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF hidden id:8 ag-Grid-AutoColumn:undefined country:"Spain" year:2020 athlete:"Carlos Garcia" sport:"Basketball"
+            · · └── LEAF hidden id:8 country:"Spain" year:2020 athlete:"Carlos Garcia" sport:"Basketball"
         `);
     });
 
@@ -192,12 +192,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'initial - all expanded', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"France" athlete:"Jean Dupont" sport:"Tennis"
+            · └── LEAF id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Collapse all groups
@@ -206,12 +206,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'after collapse all', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ ├── LEAF hidden id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF hidden id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            │ └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
-            · └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"France" athlete:"Jean Dupont" sport:"Tennis"
+            · └── LEAF hidden id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Expand only Ireland
@@ -220,12 +220,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'Ireland expanded only', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            │ └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
-            · └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"France" athlete:"Jean Dupont" sport:"Tennis"
+            · └── LEAF hidden id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Expand all groups
@@ -234,12 +234,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'after expand all', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            │ └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
-            · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"France" athlete:"Jean Dupont" sport:"Tennis"
+            · └── LEAF id:4 country:"France" athlete:"Jean Dupont" sport:"Tennis"
         `);
     });
 
@@ -268,12 +268,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'initial - groups collapsed', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ ├── LEAF hidden id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
-            │ └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Bob Johnson" sport:"Football"
+            │ ├── LEAF hidden id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ ├── LEAF hidden id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ └── LEAF hidden id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football"
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
-            · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Luigi Verdi" sport:"Football"
+            · ├── LEAF hidden id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF hidden id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football"
         `);
 
         // Expand Ireland
@@ -282,12 +282,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'Ireland expanded', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
-            │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Bob Johnson" sport:"Football"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ └── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football"
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
-            · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Luigi Verdi" sport:"Football"
+            · ├── LEAF hidden id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF hidden id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football"
         `);
 
         // Apply filter to show only Soccer
@@ -296,9 +296,9 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'filter Soccer - Ireland still expanded', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF hidden id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Clear filter - Ireland should remain expanded
@@ -307,12 +307,12 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'filter cleared - Ireland still expanded', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
-            │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Bob Johnson" sport:"Football"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ └── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football"
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
-            · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Luigi Verdi" sport:"Football"
+            · ├── LEAF hidden id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF hidden id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football"
         `);
     });
 
@@ -339,10 +339,10 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'Ireland expanded', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Remove all Ireland rows
@@ -351,7 +351,7 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'Ireland rows removed', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            · └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Add Ireland rows back - expansion state should be preserved
@@ -365,10 +365,10 @@ describe('ag-grid grouping expanded state', () => {
         await new GridRows(api, 'Ireland rows re-added - expansion preserved', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            │ └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            │ └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            · ├── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"New Person" sport:"Tennis"
-            · └── LEAF hidden id:5 ag-Grid-AutoColumn:undefined country:"Ireland" athlete:"Another Person" sport:"Golf"
+            · ├── LEAF hidden id:4 country:"Ireland" athlete:"New Person" sport:"Tennis"
+            · └── LEAF hidden id:5 country:"Ireland" athlete:"Another Person" sport:"Golf"
         `);
     });
 
@@ -399,13 +399,13 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ ├── LEAF hidden id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ └── LEAF hidden id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · └─┬ LEAF_GROUP collapsed id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF hidden id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            · · └── LEAF hidden id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Test groupDefaultExpanded = 2 (both levels expanded)
@@ -427,13 +427,13 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            · · └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
         `);
     });
 
@@ -474,16 +474,16 @@ describe('ag-grid grouping expanded state', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
-            │ │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
-            │ │ └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
             │ └─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
-            │ · └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            │ · └── LEAF hidden id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
             ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
-            │ · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            │ · └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
             └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
             · └─┬ LEAF_GROUP id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
-            · · └── LEAF id:5 ag-Grid-AutoColumn:undefined country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            · · └── LEAF id:5 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Verify the callback was called with correct parameters

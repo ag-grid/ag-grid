@@ -43,7 +43,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -211,7 +210,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -297,7 +295,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
         };
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
         await gridRows.check(`
@@ -445,7 +442,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
         };
 
         // Verify initial structure
@@ -538,7 +534,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
 
             useFormatter: false,
         };
@@ -547,13 +542,13 @@ describe('ag-grid grouping with transactions', () => {
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 name:"Empty" country:"" year:""
             ├── LEAF id:5 name:"Null" country:null year:null
-            ├── LEAF id:6 name:"Orphan" country:undefined year:undefined
+            ├── LEAF id:6 name:"Orphan"
             ├─┬ filler id:row-group-country-Ireland
-            │ ├── LEAF id:2 name:"Jane" country:"Ireland" year:undefined
+            │ ├── LEAF id:2 name:"Jane" country:"Ireland"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ · └── LEAF id:1 name:"John" country:"Ireland" year:2000
             └─┬ filler id:row-group-year-2000
-            · └── LEAF id:3 name:"Mario" country:undefined year:2000
+            · └── LEAF id:3 name:"Mario" year:2000
         `);
 
         // Test with groupAllowUnbalanced: false - should create empty groups
@@ -566,14 +561,14 @@ describe('ag-grid grouping with transactions', () => {
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
             │ │ └── LEAF id:1 name:"John" country:"Ireland" year:2000
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-
-            │ · └── LEAF id:2 name:"Jane" country:"Ireland" year:undefined
+            │ · └── LEAF id:2 name:"Jane" country:"Ireland"
             └─┬ filler id:row-group-country-
             · ├─┬ LEAF_GROUP id:row-group-country--year-2000
-            · │ └── LEAF id:3 name:"Mario" country:undefined year:2000
+            · │ └── LEAF id:3 name:"Mario" year:2000
             · └─┬ LEAF_GROUP id:row-group-country--year-
             · · ├── LEAF id:4 name:"Empty" country:"" year:""
             · · ├── LEAF id:5 name:"Null" country:null year:null
-            · · └── LEAF id:6 name:"Orphan" country:undefined year:undefined
+            · · └── LEAF id:6 name:"Orphan"
         `);
     });
 
@@ -628,7 +623,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
         };
 
         await new GridRows(api, 'custom key creators grouping', gridRowsOptions).check(`
@@ -699,7 +693,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['department', 'level', 'name'],
-            printHiddenRows: true,
         };
 
         await new GridRows(api, 'initial departments', gridRowsOptions).check(`
@@ -805,7 +798,6 @@ describe('ag-grid grouping with transactions', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['status', 'priority', 'name'],
-            printHiddenRows: true,
         };
 
         // Complex async operations that test race conditions

@@ -46,15 +46,15 @@ describe('ag-grid grouping simple data', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
-            │ │ ├── LEAF id:0 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"John Von Neumann"
-            │ │ └── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            │ │ ├── LEAF id:0 country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            │ │ └── LEAF id:1 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
-            │ · └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2001" athlete:"Alan Turing"
+            │ · └── LEAF id:2 country:"Ireland" year:"2001" athlete:"Alan Turing"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
-            · │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" year:"2000" athlete:"Donald Knuth"
+            · │ └── LEAF id:3 country:"Italy" year:"2000" athlete:"Donald Knuth"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
-            · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:"2001" athlete:"Marvin Minsky"
+            · · └── LEAF id:4 country:"Italy" year:"2001" athlete:"Marvin Minsky"
         `);
 
         const rows = gridRows.rowNodes;
@@ -410,7 +410,6 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -581,15 +580,15 @@ describe('ag-grid grouping simple data', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
-            │ │ ├── LEAF id:0 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"John Von Neumann"
-            │ │ └── LEAF id:1 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            │ │ ├── LEAF id:0 country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            │ │ └── LEAF id:1 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:"2001"
-            │ · └── LEAF id:2 ag-Grid-AutoColumn:undefined country:"Ireland" year:"2001" athlete:"Alan Turing"
+            │ · └── LEAF id:2 country:"Ireland" year:"2001" athlete:"Alan Turing"
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:"2000"
-            · │ └── LEAF id:3 ag-Grid-AutoColumn:undefined country:"Italy" year:"2000" athlete:"Donald Knuth"
+            · │ └── LEAF id:3 country:"Italy" year:"2000" athlete:"Donald Knuth"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
-            · · └── LEAF id:4 ag-Grid-AutoColumn:undefined country:"Italy" year:"2001" athlete:"Marvin Minsky"
+            · · └── LEAF id:4 country:"Italy" year:"2001" athlete:"Marvin Minsky"
         `);
     });
 
@@ -663,9 +662,7 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-
             useFormatter: true,
-            ignoreUndefinedCells: true,
         };
 
         await new GridRows(api, 'x1', gridRowsOptions).check(`
@@ -739,9 +736,7 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-
             useFormatter: true,
-            ignoreUndefinedCells: true,
         };
 
         const api = gridsManager.createGrid('blank-groups', gridOptions);

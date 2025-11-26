@@ -38,8 +38,6 @@ describe('ag-grid formulas general behaviour', () => {
     });
 
     const defaultGridRowsOptions: GridRowsOptions = {
-        printHiddenRows: true,
-
         columns: true,
     };
 
@@ -76,7 +74,6 @@ describe('ag-grid formulas general behaviour', () => {
 
         let gridRows = new GridRows(api, 'initial constants', {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             useFormatter: false,
             columns: ['value'],
         });
@@ -103,7 +100,6 @@ describe('ag-grid formulas general behaviour', () => {
 
         gridRows = new GridRows(api, 'after update', {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['value'],
             useFormatter: false,
         });
@@ -244,7 +240,6 @@ describe('ag-grid formulas general behaviour', () => {
 
         const gridRows = new GridRows(api, 'numeric helpers across rows', {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['value'],
         });
         await gridRows.check(`
@@ -366,7 +361,6 @@ describe('ag-grid formulas general behaviour', () => {
 
         const gridRows = new GridRows(api, 'counting functions', {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -634,7 +628,6 @@ describe('ag-grid formulas general behaviour', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['result'],
         };
 
@@ -717,7 +710,6 @@ describe('ag-grid formulas general behaviour', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['value'],
         };
 

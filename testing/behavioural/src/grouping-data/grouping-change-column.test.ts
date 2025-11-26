@@ -35,7 +35,7 @@ describe('ag-grid grouping simple data', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
-            · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"bob"
+            · └── LEAF id:0 1:"bob"
         `);
 
         api.setGridOption('columnDefs', columnDefsB);
@@ -46,7 +46,7 @@ describe('ag-grid grouping simple data', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-cat ag-Grid-AutoColumn:"cat"
-            · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"cat"
+            · └── LEAF id:0 1:"cat"
         `);
 
         api.setGridOption('columnDefs', columnDefsA);
@@ -55,7 +55,7 @@ describe('ag-grid grouping simple data', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
-            · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"bob"
+            · └── LEAF id:0 1:"bob"
         `);
     });
 });

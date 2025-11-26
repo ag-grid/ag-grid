@@ -189,23 +189,22 @@ describe('ag-grid grouping with pivot', () => {
         // Test with pivotComparator: columns should be ordered South, North, East (reverse alphabetical)
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn', 'South_sales', 'North_sales', 'East_sales'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'pivot with custom column ordering', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID 
             ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop" 
-            │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined 
-            │ ├── LEAF hidden id:2 ag-Grid-AutoColumn:undefined 
-            │ └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined 
+            │ ├── LEAF hidden id:1 
+            │ ├── LEAF hidden id:2 
+            │ └── LEAF hidden id:3 
             ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone" 
-            │ ├── LEAF hidden id:4 ag-Grid-AutoColumn:undefined 
-            │ ├── LEAF hidden id:5 ag-Grid-AutoColumn:undefined 
-            │ └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined 
+            │ ├── LEAF hidden id:4 
+            │ ├── LEAF hidden id:5 
+            │ └── LEAF hidden id:6 
             └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet" 
-            · ├── LEAF hidden id:7 ag-Grid-AutoColumn:undefined 
-            · └── LEAF hidden id:8 ag-Grid-AutoColumn:undefined 
+            · ├── LEAF hidden id:7 
+            · └── LEAF hidden id:8 
         `);
 
         // Test sorting by pivot result columns
@@ -218,16 +217,16 @@ describe('ag-grid grouping with pivot', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID 
             ├─┬ LEAF_GROUP collapsed id:row-group-product-Laptop ag-Grid-AutoColumn:"Laptop" 
-            │ ├── LEAF hidden id:1 ag-Grid-AutoColumn:undefined 
-            │ ├── LEAF hidden id:2 ag-Grid-AutoColumn:undefined 
-            │ └── LEAF hidden id:3 ag-Grid-AutoColumn:undefined 
+            │ ├── LEAF hidden id:1 
+            │ ├── LEAF hidden id:2 
+            │ └── LEAF hidden id:3 
             ├─┬ LEAF_GROUP collapsed id:row-group-product-Phone ag-Grid-AutoColumn:"Phone" 
-            │ ├── LEAF hidden id:4 ag-Grid-AutoColumn:undefined 
-            │ ├── LEAF hidden id:5 ag-Grid-AutoColumn:undefined 
-            │ └── LEAF hidden id:6 ag-Grid-AutoColumn:undefined 
+            │ ├── LEAF hidden id:4 
+            │ ├── LEAF hidden id:5 
+            │ └── LEAF hidden id:6 
             └─┬ LEAF_GROUP collapsed id:row-group-product-Tablet ag-Grid-AutoColumn:"Tablet" 
-            · ├── LEAF hidden id:7 ag-Grid-AutoColumn:undefined 
-            · └── LEAF hidden id:8 ag-Grid-AutoColumn:undefined 
+            · ├── LEAF hidden id:7 
+            · └── LEAF hidden id:8 
         `);
     });
 
@@ -260,7 +259,6 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['salesperson', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'initial pivot data', gridRowsOptions);
@@ -344,7 +342,6 @@ describe('ag-grid grouping with pivot', () => {
                 '2021_expenses',
                 '2021_efficiency',
             ],
-            printHiddenRows: true,
         };
 
         const gridRows = new GridRows(api, 'pivot with aggregations', gridRowsOptions);
@@ -387,7 +384,6 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['category', 'North_revenue', 'South_revenue', 'East_revenue', 'West_revenue'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'initial pivot columns', gridRowsOptions);
@@ -456,7 +452,6 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['store', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'initial pivot data', gridRowsOptions);
@@ -564,7 +559,6 @@ describe('ag-grid grouping with pivot', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['team', 'Q1_score', 'Q1_attempts', 'Q1_average', 'Q2_score', 'Q2_attempts', 'Q2_average'],
-            printHiddenRows: true,
         };
 
         const gridRows = new GridRows(api, 'custom aggregations in pivot', gridRowsOptions);
@@ -629,7 +623,6 @@ describe('ag-grid grouping with pivot', () => {
                 'Mar_costs',
                 'Mar_profit',
             ],
-            printHiddenRows: true,
         };
 
         const gridRows = new GridRows(api, 'pivot without grouping', gridRowsOptions);
@@ -675,7 +668,6 @@ describe('ag-grid grouping with pivot', () => {
                 'East_sales',
                 'East_units',
             ],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'before filtering', gridRowsOptions);
@@ -956,12 +948,7 @@ describe('ag-grid grouping with pivot', () => {
             { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
         ]);
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-            printHiddenRows: true,
-
-            ignoreUndefinedCells: true,
-        };
+        const gridRowsOptions: GridRowsOptions = { columns: true };
 
         await asyncSetTimeout(25);
 
@@ -1143,12 +1130,12 @@ describe('ag-grid grouping with pivot', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" gold:2
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
-            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 year:2012 country:"Russia" sport:"Gymnastics" gold:1
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
-            │ · └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            │ · └── LEAF hidden id:1 year:2000 country:"Russia" sport:"Diving" gold:1
             └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
-            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+            · · └── LEAF hidden id:2 year:2000 country:"Netherlands" sport:"Cycling" gold:3
         `);
 
         api.getRowNode('row-group-country-Russia')!.setExpanded(true, undefined, true);
@@ -1156,13 +1143,13 @@ describe('ag-grid grouping with pivot', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
-            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 year:2012 country:"Russia" sport:"Gymnastics" gold:1
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
-            │ │ └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            │ │ └── LEAF hidden id:1 year:2000 country:"Russia" sport:"Diving" gold:1
             │ └─ footer id:rowGroupFooter_row-group-country-Russia ag-Grid-AutoColumn:"Total Russia" gold:2
             └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
-            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+            · · └── LEAF hidden id:2 year:2000 country:"Netherlands" sport:"Cycling" gold:3
         `);
 
         api.getRowNode('row-group-country-Russia')!.setExpanded(false, undefined, true);
@@ -1171,12 +1158,12 @@ describe('ag-grid grouping with pivot', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" gold:2
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
-            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 year:2012 country:"Russia" sport:"Gymnastics" gold:1
             │ └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
-            │ · └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            │ · └── LEAF hidden id:1 year:2000 country:"Russia" sport:"Diving" gold:1
             └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
-            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+            · · └── LEAF hidden id:2 year:2000 country:"Netherlands" sport:"Cycling" gold:3
         `);
 
         api.getRowNode('row-group-country-Russia')!.setExpanded(true, undefined, true);
@@ -1185,13 +1172,13 @@ describe('ag-grid grouping with pivot', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
-            │ │ └── LEAF hidden id:0 ag-Grid-AutoColumn:undefined year:2012 country:"Russia" sport:"Gymnastics" gold:1
+            │ │ └── LEAF hidden id:0 year:2012 country:"Russia" sport:"Gymnastics" gold:1
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Diving ag-Grid-AutoColumn:"Diving" gold:1
-            │ │ └── LEAF hidden id:1 ag-Grid-AutoColumn:undefined year:2000 country:"Russia" sport:"Diving" gold:1
+            │ │ └── LEAF hidden id:1 year:2000 country:"Russia" sport:"Diving" gold:1
             │ └─ footer id:rowGroupFooter_row-group-country-Russia ag-Grid-AutoColumn:"Total Russia" gold:2
             └─┬ filler collapsed id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands" gold:3
             · └─┬ LEAF_GROUP collapsed hidden id:row-group-country-Netherlands-sport-Cycling ag-Grid-AutoColumn:"Cycling" gold:3
-            · · └── LEAF hidden id:2 ag-Grid-AutoColumn:undefined year:2000 country:"Netherlands" sport:"Cycling" gold:3
+            · · └── LEAF hidden id:2 year:2000 country:"Netherlands" sport:"Cycling" gold:3
         `);
     });
 });

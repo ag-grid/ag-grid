@@ -48,8 +48,6 @@ describe('ag-grid formulas filtering', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-
             columns: true,
         };
 
@@ -158,11 +156,7 @@ describe('ag-grid formulas filtering', () => {
 
         const api = gridsManager.createGrid('formulaGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-
-            columns: true,
-        };
+        const gridRowsOptions: GridRowsOptions = { columns: true };
 
         let gridRows = new GridRows(api, 'initial', gridRowsOptions);
         await gridRows.check(`
@@ -244,8 +238,6 @@ describe('ag-grid formulas filtering', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-
             columns: ['athlete'],
         };
 
@@ -296,8 +288,6 @@ describe('ag-grid formulas filtering', () => {
         const api = gridsManager.createGrid('circularGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-
             columns: true,
         };
 
@@ -473,8 +463,6 @@ describe('ag-grid formulas filtering', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-
             columns: ['athlete'],
         };
 
@@ -532,8 +520,6 @@ describe('ag-grid formulas filtering', () => {
         const api = gridsManager.createGrid('rangeGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-
             columns: true,
         };
 
@@ -737,8 +723,6 @@ describe('ag-grid formulas filtering', () => {
 
         await applyFilter('Michael');
         let gridRows = new GridRows(api, 'custom filter', {
-            printHiddenRows: true,
-
             columns: ['athlete'],
         });
         await gridRows.check(`
@@ -749,8 +733,6 @@ describe('ag-grid formulas filtering', () => {
 
         await applyFilter('REF');
         gridRows = new GridRows(api, 'custom filter', {
-            printHiddenRows: true,
-
             columns: ['athlete'],
         });
         await gridRows.check('empty');

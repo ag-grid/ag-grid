@@ -30,8 +30,6 @@ describe('ag-grid formulas sorting', () => {
     });
 
     const defaultGridRowsOptions: GridRowsOptions = {
-        printHiddenRows: true,
-
         columns: true,
     };
 
@@ -386,7 +384,6 @@ describe('ag-grid formulas sorting', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: true,
         };
 
@@ -465,7 +462,6 @@ describe('ag-grid formulas sorting', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: true,
         };
 

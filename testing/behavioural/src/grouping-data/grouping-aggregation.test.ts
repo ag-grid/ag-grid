@@ -244,11 +244,11 @@ describe('ag-grid grouping aggregation', () => {
             ROOT id:ROOT_NODE_ID scores:"Avg: 87.84" metadata:"Min Priority: NaN"
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " scores:"Avg: 87.84" metadata:"Min Priority: NaN"
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 75,88,92" metadata:"Min Priority: -"
+            │ ├── LEAF id:1 category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
+            │ ├── LEAF id:2 category:"A" scores:"Avg: 75,88,92" metadata:"Min Priority: -"
             │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"Total A" scores:"Avg: 85" metadata:"Min Priority: 1"
             └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:3 ag-Grid-AutoColumn:undefined category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
+            · ├── LEAF id:3 category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
             · └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"Total B" scores:"Avg: 90.67" metadata:"Min Priority: 1"
         `);
 
@@ -281,14 +281,14 @@ describe('ag-grid grouping aggregation', () => {
             ROOT id:ROOT_NODE_ID scores:"Avg: 83.72" metadata:"Min Priority: NaN"
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " scores:"Avg: 83.72" metadata:"Min Priority: NaN"
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 82,94,88" metadata:"Min Priority: -"
+            │ ├── LEAF id:1 category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
+            │ ├── LEAF id:2 category:"A" scores:"Avg: 82,94,88" metadata:"Min Priority: -"
             │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"Total A" scores:"Avg: 86.5" metadata:"Min Priority: 1"
             ├─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
-            │ ├── LEAF id:3 ag-Grid-AutoColumn:undefined category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
+            │ ├── LEAF id:3 category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
             │ └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"Total B" scores:"Avg: 90.67" metadata:"Min Priority: 1"
             └─┬ LEAF_GROUP id:row-group-category-C ag-Grid-AutoColumn:"C"
-            · ├── LEAF id:4 ag-Grid-AutoColumn:undefined category:"C" scores:"Avg: 70,74,78" metadata:"Min Priority: -"
+            · ├── LEAF id:4 category:"C" scores:"Avg: 70,74,78" metadata:"Min Priority: -"
             · └─ footer id:rowGroupFooter_row-group-category-C ag-Grid-AutoColumn:"Total C" scores:"Avg: 74" metadata:"Min Priority: 2"
         `);
     });
@@ -321,7 +321,6 @@ describe('ag-grid grouping aggregation', () => {
         await new GridRows(api, 'mixed data types with nulls (unformatted)', {
             columns: true,
             useFormatter: false,
-            ignoreUndefinedCells: true,
         }).check(`
             ROOT id:ROOT_NODE_ID amount:450 quantity:{"count":3,"value":20} active:{"value":5}
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
@@ -338,7 +337,6 @@ describe('ag-grid grouping aggregation', () => {
 
         await new GridRows(api, 'mixed data types with nulls (formatted)', {
             columns: true,
-            ignoreUndefinedCells: true,
         }).check(`
             ROOT id:ROOT_NODE_ID amount:450 quantity:{"count":3,"value":20} active:{"value":5}
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"

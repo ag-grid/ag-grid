@@ -144,7 +144,6 @@ describe('csv exports for server-side grouping', () => {
 
         const gridRows = new GridRows(api, 'ssrm grouping state', {
             columns: true,
-            ignoreUndefinedCells: true,
         });
 
         await gridRows.check(unindentText`
@@ -236,7 +235,6 @@ describe('csv exports for server-side grouping', () => {
 
         const gridRows = new GridRows(api, 'ssrm grouping state', {
             columns: true,
-            ignoreUndefinedCells: true,
         });
 
         await gridRows.check(unindentText`
@@ -308,7 +306,6 @@ describe('csv exports for server-side grouping', () => {
 
         const gridRows = new GridRows(api, 'ssrm grouping state', {
             columns: true,
-            ignoreUndefinedCells: true,
         });
 
         await gridRows.check(unindentText`

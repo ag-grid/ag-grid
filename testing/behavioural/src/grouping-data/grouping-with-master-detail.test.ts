@@ -64,27 +64,27 @@ describe('ag-grid grouping with master detail', () => {
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
-            │ ├─┬ master id:1 ag-Grid-AutoColumn:undefined year:2020 sales:1000
-            │ │ └─┬ detail id:detail_1 ag-Grid-AutoColumn:undefined year:2020 sales:1000
+            │ ├─┬ master id:1 year:2020 sales:1000
+            │ │ └─┬ detail id:detail_1 year:2020 sales:1000
             │ │ · └─┬ ROOT id:ROOT_NODE_ID
             │ │ · · ├── LEAF id:0 orderId:"A" amount:500
             │ │ · · └── LEAF id:1 orderId:"B" amount:500
-            │ └─┬ master id:2 ag-Grid-AutoColumn:undefined year:2021 sales:1200
-            │ · └─┬ detail id:detail_2 ag-Grid-AutoColumn:undefined year:2021 sales:1200
+            │ └─┬ master id:2 year:2021 sales:1200
+            │ · └─┬ detail id:detail_2 year:2021 sales:1200
             │ · · └─┬ ROOT id:ROOT_NODE_ID
             │ · · · └── LEAF id:0 orderId:"C" amount:1200
             ├─┬ LEAF_GROUP id:row-group-country-USA ag-Grid-AutoColumn:"USA"
-            │ ├─┬ master id:3 ag-Grid-AutoColumn:undefined year:2020 sales:2000
-            │ │ └─┬ detail id:detail_3 ag-Grid-AutoColumn:undefined year:2020 sales:2000
+            │ ├─┬ master id:3 year:2020 sales:2000
+            │ │ └─┬ detail id:detail_3 year:2020 sales:2000
             │ │ · └─┬ ROOT id:ROOT_NODE_ID
             │ │ · · └── LEAF id:0 orderId:"D" amount:2000
-            │ └─┬ master id:4 ag-Grid-AutoColumn:undefined year:2021 sales:2200
-            │ · └─┬ detail id:detail_4 ag-Grid-AutoColumn:undefined year:2021 sales:2200
+            │ └─┬ master id:4 year:2021 sales:2200
+            │ · └─┬ detail id:detail_4 year:2021 sales:2200
             │ · · └─┬ ROOT id:ROOT_NODE_ID
             │ · · · └── LEAF id:0 orderId:"E" amount:2200
             └─┬ LEAF_GROUP id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
-            · └─┬ master id:5 ag-Grid-AutoColumn:undefined year:2020 sales:1500
-            · · └─┬ detail id:detail_5 ag-Grid-AutoColumn:undefined year:2020 sales:1500
+            · └─┬ master id:5 year:2020 sales:1500
+            · · └─┬ detail id:detail_5 year:2020 sales:1500
             · · · └─┬ ROOT id:ROOT_NODE_ID
             · · · · └── LEAF id:0 orderId:"F" amount:1500
         `);

@@ -86,10 +86,7 @@ describe('row drag state persistence', () => {
             rowData: getAthletes(),
         });
 
-        let gridRows = new GridRows(api, 'initial hierarchy', {
-            columns: true,
-            ignoreUndefinedCells: true,
-        });
+        let gridRows = new GridRows(api, 'initial hierarchy', { columns: true });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-region-WE ag-Grid-AutoColumn:"WE"
@@ -121,10 +118,7 @@ describe('row drag state persistence', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after leaf drag', {
-            columns: true,
-            ignoreUndefinedCells: true,
-        });
+        gridRows = new GridRows(api, 'after leaf drag', { columns: true });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-region-WE ag-Grid-AutoColumn:"WE"

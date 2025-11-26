@@ -140,7 +140,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             └─┬ 1 GROUP k:"A" name:"John Von Neumann"
             · └─┬ 2 GROUP k:"B" name:"Grace Hopper"
             · · ├── 4 LEAF k:"D" name:"Donald Knuth"
-            · · └─┬ 5 GROUP k:"E" name:undefined
+            · · └─┬ 5 GROUP k:"E"
             · · · └── W LEAF k:"W" name:"Grace Hopper"
         `);
 
@@ -269,7 +269,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · │ ├── 4 LEAF k:"D" value:13 x:1
             · │ └── 5 LEAF k:"E" value:11 x:0
             · ├── 3 LEAF k:"C" value:15 x:1
-            · └─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · └─┬ 6 GROUP k:"F"
             · · ├── 8 LEAF k:"G" value:10 x:0
             · · └── 7 LEAF k:"H" value:16 x:1
         `);
@@ -281,7 +281,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
         await new GridRows(api, 'sort value asc', gridRowsOptions).check(`
             ROOT
             └─┬ 1 GROUP k:"A" value:12 x:1
-            · ├─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · ├─┬ 6 GROUP k:"F"
             · │ ├── 8 LEAF k:"G" value:10 x:0
             · │ └── 7 LEAF k:"H" value:16 x:1
             · ├── 3 LEAF k:"C" value:15 x:1
@@ -362,7 +362,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · │ ├── 4 LEAF k:"D" value:13 x:1
             · │ └── 5 LEAF k:"E" value:11 x:0
             · ├── 3 LEAF k:"C" value:15 x:1
-            · └─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · └─┬ 6 GROUP k:"F"
             · · ├── 7 LEAF k:"H" value:16 x:1
             · · └── 8 LEAF k:"G" value:10 x:0
         `);
@@ -377,7 +377,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
         await new GridRows(api, 'sort x asc', gridRowsOptions).check(`
             ROOT
             └─┬ 1 GROUP k:"A" value:12 x:1
-            · ├─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · ├─┬ 6 GROUP k:"F"
             · │ ├── 8 LEAF k:"G" value:10 x:0
             · │ └── 7 LEAF k:"H" value:16 x:1
             · ├─┬ 2 GROUP k:"B" value:17 x:1
@@ -397,7 +397,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · │ ├── 4 LEAF k:"D" value:13 x:1
             · │ └── 5 LEAF k:"E" value:11 x:0
             · ├── 3 LEAF k:"C" value:15 x:1
-            · └─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · └─┬ 6 GROUP k:"F"
             · · ├── 7 LEAF k:"H" value:16 x:1
             · · └── 8 LEAF k:"G" value:10 x:0
         `);
@@ -442,7 +442,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · │ ├── 5 LEAF k:"E" value:11 x:1
             · │ └── 4 LEAF k:"D" value:13 x:0
             · ├── 3 LEAF k:"C" value:15 x:0
-            · └─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · └─┬ 6 GROUP k:"F"
             · · ├── 7 LEAF k:"H" value:16 x:1
             · · └── 8 LEAF k:"G" value:10 x:1
         `);
@@ -464,7 +464,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             └─┬ 1 GROUP k:"A" value:12 x:1
             · ├─┬ 2 GROUP k:"B" value:17 x:1
             · │ └── 5 LEAF k:"E" value:11 x:0
-            · └─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · └─┬ 6 GROUP k:"F"
             · · └── 8 LEAF k:"G" value:10 x:0
         `);
 
@@ -475,7 +475,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
         await new GridRows(api, 'sort x desc, filter x===0', gridRowsOptions).check(`
             ROOT
             └─┬ 1 GROUP k:"A" value:12 x:1
-            · ├─┬ 6 GROUP k:"F" value:undefined x:undefined
+            · ├─┬ 6 GROUP k:"F"
             · │ └── 8 LEAF k:"G" value:10 x:0
             · └─┬ 2 GROUP k:"B" value:17 x:1
             · · └── 5 LEAF k:"E" value:11 x:0

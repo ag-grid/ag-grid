@@ -41,10 +41,7 @@ describe('ag-grid grouping parentId tree data with groupRows', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: false,
-            columns: true,
-        };
+        const gridRowsOptions: GridRowsOptions = { columns: true };
 
         const gridRows = new GridRows(api, '', gridRowsOptions);
         await gridRows.check(`

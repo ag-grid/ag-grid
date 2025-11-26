@@ -68,7 +68,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ └─┬ 2 GROUP id:2 n:"C" x:51 y:3
                 │ · ├── 5 LEAF id:5 n:"F" x:16 y:1
                 │ · ├── 6 LEAF id:6 n:"G" x:17 y:2
-                │ · └─┬ H GROUP id:H n:"H" x:18 y:undefined
+                │ · └─┬ H GROUP id:H n:"H" x:18
                 │ · · └── 7 LEAF id:7 n:"I" x:18 y:3
                 └─┬ 8 GROUP id:8 n:"J" x:20 y:4
                 · └── 9 LEAF id:9 n:"K" x:20 y:5
@@ -160,7 +160,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
                 │ └─┬ 2 GROUP id:2 n:"C" x:51 y:3
                 │ · ├── 5 LEAF id:5 n:"F" x:16 y:1
                 │ · ├── 6 LEAF id:6 n:"G" x:17 y:2
-                │ · └─┬ H GROUP id:H n:"H" x:18 y:undefined
+                │ · └─┬ H GROUP id:H n:"H" x:18
                 │ · · └── 7 LEAF id:7 n:"I" x:18 y:3
                 └─┬ 8 GROUP id:8 n:"J" x:20 y:4
                 · └── 9 LEAF id:9 n:"K" x:20 y:0
