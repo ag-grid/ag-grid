@@ -17,6 +17,7 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import type { IFormulaDataService } from '../interfaces/formulas';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -32,6 +33,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private dataTypeSvc?: DataTypeService;
     private editSvc?: IEditService;
     private hasEditSvc: boolean = false;
+    private formulaDataSvc?: IFormulaDataService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -40,6 +42,7 @@ export class ValueService extends BeanStub implements NamedBean {
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
         this.hasEditSvc = !!beans.editSvc;
+        this.formulaDataSvc = beans.formulaDataSvc;
     }
 
     private cellExpressions: boolean;
@@ -223,11 +226,29 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
+    private getFormulaFromDataSource(column: AgColumn, rowNode: IRowNode): string | undefined {
+        const dataSource = this.formulaDataSvc;
+        if (!dataSource?.hasDataSource() || !column.isAllowFormula()) {
+            return undefined;
+        }
+
+        if (!dataSource.hasFormula({ column, rowNode })) {
+            return undefined;
+        }
+
+        return dataSource.getFormula({ column, rowNode });
+    }
+
     private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
         const colDef = column.getColDef();
         const colId = column.getColId();
 
         const isTreeData = this.isTreeData;
+
+        const dataSourceFormula = this.getFormulaFromDataSource(column, rowNode);
+        if (dataSourceFormula !== undefined) {
+            return dataSourceFormula;
+        }
 
         // if there is a value getter, this gets precedence over a field
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
@@ -388,9 +409,15 @@ export class ValueService extends BeanStub implements NamedBean {
             rowNode.data = {};
         }
 
+        const formulaSvc = this.beans.formula;
+        const isFormulaColumn = column.isAllowFormula();
+        const isFormulaValue = isFormulaColumn && formulaSvc?.isFormula(newValue);
+        const formulaDataSvc = this.formulaDataSvc;
+        const hasExternalFormulaData = !!formulaDataSvc?.hasDataSource();
+
         const { field, valueSetter } = column.getColDef();
 
-        if (_missing(field) && _missing(valueSetter)) {
+        if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
             _warn(17);
             return false;
         }
@@ -410,6 +437,22 @@ export class ValueService extends BeanStub implements NamedBean {
         });
 
         params.newValue = newValue;
+
+        if (hasExternalFormulaData && isFormulaColumn) {
+            const existingFormula = formulaDataSvc?.getFormula({ column, rowNode });
+
+            if (isFormulaValue) {
+                const valueWasDifferent = existingFormula !== newValue;
+                if (!valueWasDifferent) {
+                    return false;
+                }
+
+                formulaDataSvc?.setFormula({ column, rowNode, formula: newValue });
+                return this.finishValueChange(rowNode, column, params, eventSource);
+            } else if (existingFormula !== undefined) {
+                formulaDataSvc?.setFormula({ column, rowNode, formula: undefined });
+            }
+        }
 
         let valueWasDifferent: boolean;
 
@@ -436,6 +479,15 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
+        return this.finishValueChange(rowNode, column, params, eventSource);
+    }
+
+    private finishValueChange(
+        rowNode: IRowNode,
+        column: AgColumn,
+        params: ValueSetterParams,
+        eventSource?: string
+    ): boolean {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 

@@ -2,6 +2,7 @@ import type { ColumnCollections } from '../columns/columnModel';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
+import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';
 
 // Value argument
@@ -27,6 +28,44 @@ export type FormulaFunctionParams = {
     args: Iterable<FormulaParam>; // top level params iterator only
     values: Iterable<unknown>; // flattens all ranges and top level params
 };
+
+export interface GetFormulaParams {
+    column: AgColumn;
+    rowNode: IRowNode;
+}
+
+export interface SetFormulaParams extends GetFormulaParams {
+    formula: string | undefined;
+    /** Optional computed value associated with the formula. */
+    value?: unknown;
+}
+
+export interface FormulaDataSourceParams extends AgGridCommon<any, any> {}
+
+/**
+ * Control where formula data is stored/retrieved from.
+ * Idea for implementation could be to store the formula back into the row data
+ * Idea for implementation could be to have a separate map store for formulas
+ */
+export interface FormulaDataSource {
+    /** Initialise the data source so that the user can take a reference to the gridApi if they are going to need it. */
+    init?(params: FormulaDataSourceParams): void;
+    /** Return `true` if the provided cell is backed by a formula. */
+    hasFormula?(params: GetFormulaParams): boolean;
+    /** Return the formula string for the given cell. */
+    getFormula?(params: GetFormulaParams): string | undefined;
+    /** Set the formula string for the given cell. */
+    setFormula(params: SetFormulaParams): void;
+    /** Called by the grid when the data source is being disposed. */
+    destroy?(): void;
+}
+
+export interface IFormulaDataService extends Bean {
+    hasDataSource(): boolean;
+    hasFormula(params: GetFormulaParams): boolean;
+    getFormula(params: GetFormulaParams): string | undefined;
+    setFormula(params: SetFormulaParams): void;
+}
 
 export interface IFormulaService extends Bean {
     active: boolean;

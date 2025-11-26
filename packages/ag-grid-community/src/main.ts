@@ -1302,7 +1302,18 @@ export { _downloadFile } from './export/downloader';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './export/iGridSerializer';
 
 //formulas
-export { FormulaParam, RangeParam, ValueParam, FormulaFunctionParams, IFormulaService } from './interfaces/formulas';
+export {
+    FormulaParam,
+    RangeParam,
+    ValueParam,
+    FormulaFunctionParams,
+    FormulaDataSource,
+    FormulaDataSourceParams,
+    GetFormulaParams,
+    SetFormulaParams,
+    IFormulaDataService,
+    IFormulaService,
+} from './interfaces/formulas';
 
 // modules
 export {

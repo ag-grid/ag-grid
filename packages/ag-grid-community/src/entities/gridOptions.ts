@@ -125,7 +125,7 @@ import type {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
-import type { FormulaFunctionParams } from '../interfaces/formulas';
+import type { FormulaDataSource, FormulaFunctionParams } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
@@ -1102,6 +1102,14 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFuncs?: { [key: string]: IAggFunc<TData> };
+
+    /**
+     * Provide a data source to control where formulas are stored and retrieved.
+     * If not supplied, formulas are read from and written to the row data.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    formulaDataSource?: FormulaDataSource;
 
     /**
      * A map of 'function name' to 'function' for custom functions that are used for formulas.

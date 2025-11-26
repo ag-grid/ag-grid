@@ -102,6 +102,7 @@ import type {
     FirstDataRenderedEvent,
     FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
+    FormulaDataSource,
     FormulaFunctionParams,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
@@ -1112,6 +1113,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
+    /** Provide a data source to control where formulas are stored and retrieved.
+     * If not supplied, formulas are read from and written to the row data.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`
