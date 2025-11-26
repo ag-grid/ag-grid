@@ -50,6 +50,7 @@ import {
     _last,
     _makeNull,
     _missing,
+    _removeAllFromArray,
     _removeFromArray,
     _warn,
     isRowNumberCol,
@@ -1407,7 +1408,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             );
 
             const lastCellRange = foundRange
-                ? this.deselectColumn(clickedColumn, firstRow, lastRow)
+                ? this.deselectColumnsFromRange(foundRange, [clickedColumn])
                 : this.selectColumns([clickedColumn], firstRow, lastRow);
 
             if (lastCellRange) {
@@ -1426,9 +1427,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             );
 
             if (foundRange) {
-                _removeFromArray(cellRanges, foundRange);
+                this.deselectColumnsFromRange(foundRange, leafCols);
                 ctx.root = leafCols[0];
-                this.dispatchChangedEvent(true, true);
             } else {
                 const addedRange = this.selectColumns(leafCols, firstRow, lastRow);
                 ctx.root = leafCols[0];
@@ -1439,25 +1439,23 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    private deselectColumn(column: AgColumn, startRow: RowPosition, endRow: RowPosition): undefined {
-        for (const range of this.cellRanges) {
-            if (_isSameRow(startRow, range.startRow) && _isSameRow(endRow, range.endRow)) {
-                _removeFromArray(range.columns, column);
-                if (range.startColumn === column) {
-                    range.startColumn = range.columns[0];
-                }
-            }
+    private deselectColumnsFromRange(range: CellRange, columns: AgColumn[]): undefined {
+        _removeAllFromArray(range.columns as AgColumn[], columns);
+        if (columns.includes(range.startColumn as AgColumn)) {
+            range.startColumn = range.columns[0];
         }
 
-        // clean up empty ranges
-        this.cellRanges = this.cellRanges.filter((r) => r.columns.length !== 0);
+        if (range.columns.length === 0) {
+            // clean up empty range
+            _removeFromArray(this.cellRanges, range);
+        }
 
         this.dispatchChangedEvent(true, true);
     }
 
     private selectColumns(columns: AgColumn[], startRow: RowPosition, endRow: RowPosition): CellRange | undefined {
         return this.addCellRange({
-            columns: columns,
+            columns,
             columnStart: columns[0],
             columnEnd: _last(columns),
             rowStartIndex: startRow.rowIndex,

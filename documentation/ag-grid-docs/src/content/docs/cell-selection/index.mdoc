@@ -59,19 +59,17 @@ The following example demonstrates single range cell selection:
 
 ## Selecting Cells via Column Headers
 
-{% note %}
-When column selection is enabled, [Row Sorting](./row-sorting) requires holding down the {% kbd "Alt" /%} key in addition to the normal interaction (i.e. clicking or pressing {% kbd "↵ Enter" /%}).
-{% /note %}
-
-Users can select all visible cells in a column by setting `cellSelection.enableColumnSelection` to `true` and then either clicking a column header, or pressing {% kbd "␣ Space" /%} while a column header is focussed.
+Users can select all visible cells in a column by setting `cellSelection.enableColumnSelection` to `true` and then either clicking a column header.
 
 Normally, when selecting a column, all other ranges are cleared. If you wish to keep existing selections, hold {% kbd "^ Ctrl" /%} and then select a column header.
 
-Cells that have been selected via column selection may be de-selected by holding {% kbd "^ Ctrl" /%} and then clicking the column header or pressing {% kbd "␣ Space" /%} while a column header is focussed.
+Cells that have been selected via column selection may be de-selected by holding {% kbd "^ Ctrl" /%} and then clicking the column header.
 
-Users can extend the range of a column selection by holding {% kbd "⇧ Shift" /%} and then either clicking on another column header, or pressing {% kbd "␣ Space" /%} while a column header is focussed.
+Users can extend the range of a column selection by holding {% kbd "⇧ Shift" /%} and then clicking on another column header.
 
-This is illustrated in the example below, which uses the following configuration:
+When interacting via the keyboard, users may press {% kbd "↵ Enter" /%} while a column header is focussed instead of clicking a column header.
+
+This feature is illustrated in the example below, which uses the following configuration:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -82,6 +80,10 @@ const gridOptions = {
 ```
 
 {% gridExampleRunner title="Cell Selection via Column Headers" name="column-header-cell-selection" /%}
+
+{% note %}
+When column selection is enabled, [Row Sorting](./row-sorting) requires holding down the {% kbd "⌥ Alt" /%} key in addition to the normal interaction (i.e. clicking or pressing {% kbd "↵ Enter" /%}).
+{% /note %}
 
 ## Ranges with Pinned Columns and Rows
 

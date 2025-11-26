@@ -705,5 +705,52 @@ describe('Cell Selection', () => {
                 └── LEAF sport:"tennis"
             `);
         });
+
+        test('CTRL-click group header de-selects children from existing spanning range', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'sport',
+                    },
+                    {
+                        headerName: 'Category A1',
+                        children: [
+                            {
+                                headerName: 'Category A2',
+                                children: [{ field: 'year' }, { field: 'amount' }],
+                            },
+                        ],
+                    },
+                    {
+                        headerName: 'Category B1',
+                        children: [{ field: 'day' }],
+                    },
+                ],
+                rowData,
+                cellSelection: { enableColumnSelection: true },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('1_0'));
+            const dayHeader = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
+
+            await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+
+            await userSession.keyboard('{Shift>}');
+            await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Shift}');
+
+            assertColumnsSelected([['sport', 'year', 'amount', 'day']], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([['sport', 'day']], api);
+        });
     });
 });
