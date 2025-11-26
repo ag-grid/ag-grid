@@ -6,14 +6,14 @@ import { _addGridCommonParams, _isClientSideRowModel, _isServerSideRowModel } fr
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
-import type { AgGridOverlayType } from './overlayComponent';
+import type { AgOverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
 
 const overlayCompTypeOptionalMethods = ['refresh'];
 const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
 
 type OverlayDef = Readonly<{
-    id: AgGridOverlayType | 'activeOverlay';
+    id: AgOverlayType | 'activeOverlay';
     comp: ComponentType;
     wrapperCls: string;
     exclusive?: boolean;
@@ -299,17 +299,19 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         // activeOverlay already checked above
 
-        if (this.clientSide && !this.isDisabled(NoRowsOverlayDef) && rowModel.isEmpty()) {
-            return NoRowsOverlayDef;
-        }
+        if (this.clientSide) {
+            if (!this.isDisabled(NoRowsOverlayDef) && rowModel.isEmpty()) {
+                return NoRowsOverlayDef;
+            }
 
-        if (
-            !this.isDisabled(NoMatchingRowsOverlayDef) &&
-            !rowModel.isEmpty() &&
-            filterManager?.isAnyFilterPresent() &&
-            rowModel.getRowCount() == 0
-        ) {
-            return NoMatchingRowsOverlayDef;
+            if (
+                !this.isDisabled(NoMatchingRowsOverlayDef) &&
+                !rowModel.isEmpty() &&
+                filterManager?.isAnyFilterPresent() &&
+                rowModel.getRowCount() == 0
+            ) {
+                return NoMatchingRowsOverlayDef;
+            }
         }
 
         return null;
@@ -399,7 +401,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private isDisabled(def: OverlayDef): boolean {
         const { gos } = this;
 
-        const viaSuppressOverlays = (gos.get('suppressOverlays') ?? []).includes(def.id as AgGridOverlayType);
+        const viaSuppressOverlays = (gos.get('suppressOverlays') ?? []).includes(def.id as AgOverlayType);
         if (viaSuppressOverlays) {
             return true;
         }

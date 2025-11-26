@@ -19,7 +19,7 @@ import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 // @START_IMPORTS@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AgGridOverlayType,
+    AgOverlayType,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
     AutoGroupColumnDef,
@@ -1044,7 +1044,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** List of provided overlay names to suppress.
      */
-    @Input() public suppressOverlays: AgGridOverlayType[] | undefined = undefined;
+    @Input() public suppressOverlays: AgOverlayType[] | undefined = undefined;
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
      * @initial
      */

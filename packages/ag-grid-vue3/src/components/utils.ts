@@ -1,7 +1,7 @@
 /* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
-    AgGridOverlayType,
+    AgOverlayType,
     AlignedGrid,
     AutoGroupColumnDef,
     AutoSizeStrategy,
@@ -864,7 +864,7 @@ export interface Props<TData> {
     suppressNoRowsOverlay?: boolean,
     /** List of provided overlay names to suppress.
          */
-    suppressOverlays?: AgGridOverlayType[],
+    suppressOverlays?: AgOverlayType[],
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
          * @initial
          */

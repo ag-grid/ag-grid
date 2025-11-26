@@ -187,7 +187,7 @@ import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
-import type { AgGridOverlayType, OverlaySelectorFunc } from '../rendering/overlays/overlayComponent';
+import type { AgOverlayType, OverlaySelectorFunc } from '../rendering/overlays/overlayComponent';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
@@ -1015,7 +1015,7 @@ export interface GridOptions<TData = any> {
     /**
      * List of provided overlay names to suppress.
      */
-    suppressOverlays?: AgGridOverlayType[];
+    suppressOverlays?: AgOverlayType[];
 
     /**
      * Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).

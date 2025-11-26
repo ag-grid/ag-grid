@@ -25,6 +25,8 @@ import type {
     ILoadingOverlayParams,
     IMenuItem,
     IMenuItemParams,
+    INoMatchingRowsOverlay,
+    INoMatchingRowsOverlayParams,
     INoRowsOverlay,
     INoRowsOverlayParams,
     IOverlay,
@@ -90,6 +92,9 @@ export interface IOverlayAngularComp extends AgFrameworkComponent<IOverlayParams
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {}
 
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams>, INoRowsOverlay {}
+export interface INoMatchingRowsOverlayAngularComp
+    extends AgFrameworkComponent<INoMatchingRowsOverlayParams>,
+        INoMatchingRowsOverlay {}
 
 export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams>, IStatusPanel {}
 

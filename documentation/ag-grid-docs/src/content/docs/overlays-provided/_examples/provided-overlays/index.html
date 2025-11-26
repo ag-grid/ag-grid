@@ -1,0 +1,14 @@
+<div class="example-wrapper">
+    <div>
+        <label class="checkbox">
+            <input type="checkbox" checked onchange="setLoading(event.currentTarget.checked)" />
+            loading
+        </label>
+
+        <button onclick="onBtnSetRowData()">Set Row Data</button>
+        <button onclick="onBtnClearRowData()">Clear Row Data</button>
+        <button onclick="onBtnSetFilter()">Set Non Matching Filter</button>
+        <button onclick="onBtnClearFilter()">Clear Filter</button>
+    </div>
+    <div id="myGrid"></div>
+</div>

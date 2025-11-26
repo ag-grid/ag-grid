@@ -750,6 +750,7 @@ export {
 
 // overlays
 export {
+    AgOverlayType,
     ILoadingOverlayParams,
     INoRowsOverlayParams,
     INoMatchingRowsOverlayParams,
@@ -765,6 +766,10 @@ export {
 } from './rendering/overlays/overlayComponent';
 export { ILoadingOverlayComp, ILoadingOverlay } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
+export {
+    INoMatchingRowsOverlayComp,
+    INoMatchingRowsOverlay,
+} from './rendering/overlays/noMatchingRowsOverlayComponent';
 export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features

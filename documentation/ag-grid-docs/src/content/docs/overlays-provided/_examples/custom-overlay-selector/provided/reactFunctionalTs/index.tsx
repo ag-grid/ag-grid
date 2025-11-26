@@ -1,4 +1,4 @@
-import React, { StrictMode, useMemo, useState } from 'react';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
@@ -8,7 +8,7 @@ import {
     TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, IOverlayParams } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import CustomLoadingOverlay from './customLoadingOverlay';
@@ -31,12 +31,7 @@ const columnDefs: ColDef[] = [
     { field: 'country', width: 120 },
 ];
 
-const rowData: IAthlete[] = [
-    { athlete: 'Michael Phelps', country: 'United States' },
-    { athlete: 'Natalie Coughlin', country: 'United States' },
-    { athlete: 'Aleksey Nemov', country: 'Russia' },
-    { athlete: 'Alicia Coutts', country: 'Australia' },
-];
+const rowData: IAthlete[] = [];
 
 const defaultColDef: ColDef = {
     editable: true,
@@ -48,8 +43,17 @@ const defaultColDef: ColDef = {
 const GridExample = () => {
     const [loading, setLoading] = useState(true);
 
-    const loadingOverlayComponentParams = useMemo(() => {
-        return { loadingMessage: 'One moment please...' };
+    const overlayComponentSelector = useCallback((params: IOverlayParams) => {
+        if (params.defaultOverlay === 'agLoadingOverlay') {
+            return {
+                component: CustomLoadingOverlay,
+                params: {
+                    loadingMessage: 'Please wait while data is loading...',
+                },
+            };
+        }
+        // return undefined to use the provided overlay for other overlay types
+        return undefined;
     }, []);
 
     return (
@@ -67,8 +71,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    loadingOverlayComponent={CustomLoadingOverlay}
-                    loadingOverlayComponentParams={loadingOverlayComponentParams}
+                    overlayComponentSelector={overlayComponentSelector}
                 />
             </div>
         </div>

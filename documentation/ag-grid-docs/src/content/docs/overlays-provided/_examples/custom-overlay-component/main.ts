@@ -8,7 +8,7 @@ import {
     createGrid,
 } from 'ag-grid-community';
 
-import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
+import { CustomOverlay } from './customOverlay_typescript';
 
 ModuleRegistry.registerModules([
     TextEditorModule,
@@ -27,13 +27,6 @@ const columnDefs: ColDef[] = [
     { field: 'country', width: 120 },
 ];
 
-const rowData: IAthlete[] = [
-    { athlete: 'Michael Phelps', country: 'United States' },
-    { athlete: 'Natalie Coughlin', country: 'United States' },
-    { athlete: 'Aleksey Nemov', country: 'Russia' },
-    { athlete: 'Alicia Coutts', country: 'Australia' },
-];
-
 let gridApi: GridApi<IAthlete>;
 
 const gridOptions: GridOptions<IAthlete> = {
@@ -47,11 +40,12 @@ const gridOptions: GridOptions<IAthlete> = {
     loading: true,
 
     columnDefs: columnDefs,
-    rowData,
+    rowData: [],
 
-    loadingOverlayComponent: CustomLoadingOverlay,
-    loadingOverlayComponentParams: {
-        loadingMessage: 'One moment please...',
+    overlayComponent: CustomOverlay,
+    overlayComponentParams: {
+        loadingMessage: 'Custom loading message',
+        noRowsMessage: 'Custom no rows message',
     },
 };
 
