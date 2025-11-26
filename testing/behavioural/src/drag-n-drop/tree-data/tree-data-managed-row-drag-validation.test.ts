@@ -2,32 +2,19 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import type { DragAndDropRowOptions, GridRowsOptions } from '../../test-utils';
+import type { GridRowsOptions } from '../../test-utils';
 import {
     GridRows,
+    RowDragDispatcher,
     TestGridsManager,
     assertDropIndicatorVisible,
     asyncSetTimeout,
-    dragAndDropRow as baseDragAndDropRow,
 } from '../../test-utils';
 
 describe.each([false, true])('tree row dragging validation (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, TreeDataModule],
     });
-
-    const dragAndDropRow = (options: DragAndDropRowOptions) => {
-        const { beforeDrop, ...rest } = options;
-        return baseDragAndDropRow({
-            ...rest,
-            beforeDrop: async (context) => {
-                if (beforeDrop) {
-                    await beforeDrop(context);
-                }
-                assertDropIndicatorVisible(context.api);
-            },
-        });
-    };
 
     const treeGridRowsOptions: GridRowsOptions = {
         checkDom: true,
@@ -71,22 +58,6 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         return gridsManager.createGrid(id, gridOptions);
     };
 
-    const hoverTargetCenter = async (
-        targetElement: Element,
-        movePointer: (
-            element: Element,
-            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
-        ) => Promise<unknown>
-    ) => {
-        const rect = targetElement.getBoundingClientRect();
-        const clientX = rect.left + rect.width / 2;
-        const clientY = rect.top + rect.height / 2;
-        for (let i = 0; i < 12; ++i) {
-            await asyncSetTimeout(25);
-            await movePointer(targetElement, { clientX, clientY });
-        }
-    };
-
     test('unmanaged tree data drag leaves hierarchy unchanged', async () => {
         const rowData = [
             {
@@ -115,10 +86,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         expect(sourceRow).toBeTruthy();
         expect(targetRow).toBeTruthy();
 
-        const result = await dragAndDropRow({
-            api,
-            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRow!);
+        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+                assertDropIndicatorVisible(api);
+            },
         });
         await asyncSetTimeout(0);
 
@@ -130,7 +105,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             └── archive LEAF id:archive ag-Grid-AutoColumn:"Archive"
         `);
 
-        const endEvent = result.rowDragEndEvents[0];
+        const endEvent = dispatcher.rowDragEndEvents[0];
         expect(endEvent?.rowsDrop?.newParent?.id).toBe('ROOT_NODE_ID');
     });
 
@@ -172,10 +147,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             · └── draft LEAF id:draft ag-Grid-AutoColumn:"Draft"
         `);
 
-        const result = await dragAndDropRow({
-            api,
-            steps: [{ target: 'draft' }, { target: 'protected', yOffsetPercent: 0.35 }],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('draft');
+        await dispatcher.move('protected', { yOffsetPercent: 0.35 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+                assertDropIndicatorVisible(api);
+            },
         });
         await asyncSetTimeout(0);
 
@@ -189,7 +168,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         `);
 
         expect(validatorParents).toContain('protected');
-        const endEvent = result.rowDragEndEvents[0];
+        const endEvent = dispatcher.rowDragEndEvents[0];
         expect(endEvent?.rowsDrop?.allowed ?? false).toBe(false);
     });
 
@@ -240,13 +219,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes"
         `);
 
-        const { rowDragEndEvents } = await dragAndDropRow({
-            api,
-            steps: [
-                { target: initialRows.getRowHtmlElement('team')! },
-                { target: initialRows.getRowHtmlElement('team-eng')!, yOffsetPercent: 0.6 },
-            ],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(initialRows.getRowHtmlElement('team')!);
+        await dispatcher.move(initialRows.getRowHtmlElement('team-eng')!, { yOffsetPercent: 0.6 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+                assertDropIndicatorVisible(api);
+            },
         });
         await asyncSetTimeout(0);
 
@@ -259,7 +239,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes"
         `);
 
-        const endEvent = rowDragEndEvents[0];
+        const endEvent = dispatcher.rowDragEndEvents[0];
         expect(endEvent?.rowsDrop?.allowed ?? false).toBe(false);
         expect(endEvent?.rowsDrop?.newParent?.id).not.toBe('team-eng');
         expect(api.getRowNode('team')?.parent?.id).toBe('root');
@@ -299,10 +279,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             · · └── Reports LEAF id:library-archive-reports ag-Grid-AutoColumn:"Reports"
         `);
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: 'library-drafts-spec' }, { target: 'library-archive', yOffsetPercent: 0.35 }],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('library-drafts-spec');
+        await dispatcher.move('library-archive', { yOffsetPercent: 0.35 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+                assertDropIndicatorVisible(api);
+            },
         });
         await asyncSetTimeout(0);
 
@@ -317,7 +301,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         `);
 
         expect(api.getRowNode('library-drafts-spec')?.parent?.id).toBe('library-archive');
-        expect(dragResult.rowDragEndEvents[0]?.rowsDrop?.allowed ?? false).toBe(true);
+        expect(dispatcher.rowDragEndEvents[0]?.rowsDrop?.allowed ?? false).toBe(true);
     });
 
     test('getDataPath validator can block reassignment into protected folders', async () => {
@@ -359,10 +343,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             · · └── Manual LEAF id:library-shared-manual ag-Grid-AutoColumn:"Manual"
         `);
 
-        const result = await dragAndDropRow({
-            api,
-            steps: [{ target: 'library-shared-manual' }, { target: 'library-protected', yOffsetPercent: 0.35 }],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('library-shared-manual');
+        await dispatcher.move('library-protected', { yOffsetPercent: 0.35 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+                assertDropIndicatorVisible(api);
+            },
         });
         await asyncSetTimeout(0);
 
@@ -381,7 +369,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
                 ({ parent, target }) => parent === 'library-protected' || target === 'library-protected'
             )
         ).toBe(true);
-        expect(result.rowDragEndEvents[0]?.rowsDrop?.allowed ?? false).toBe(false);
+        expect(dispatcher.rowDragEndEvents[0]?.rowsDrop?.allowed ?? false).toBe(false);
         expect(api.getRowNode('library-shared-manual')?.parent?.id).toBe('library-shared');
     });
 });

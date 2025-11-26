@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions, RowDragMoveEvent } from 'ag-grid-community';
 import { PaginationModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, dragAndDropRow } from '../test-utils';
+import { RowDragDispatcher, TestGridsManager } from '../test-utils';
 
 describe('ag-grid unmanaged drag and drop with pagination', () => {
     const gridsManager = new TestGridsManager({
@@ -47,10 +47,10 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
         const rows = api.getRenderedNodes();
         expect(rows.length).toBe(20);
 
-        await dragAndDropRow({
-            api,
-            steps: [{ target: '4' }, { target: '7' }],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('4');
+        await dispatcher.move('7');
+        await dispatcher.finish();
 
         const lastMoveEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
         expect(lastMoveEvent).toBeTruthy();
@@ -87,10 +87,10 @@ describe('ag-grid unmanaged drag and drop with pagination', () => {
         const rows = api.getRenderedNodes();
         expect(rows.length).toBe(20);
 
-        await dragAndDropRow({
-            api,
-            steps: [{ target: '24' }, { target: '28' }],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('24');
+        await dispatcher.move('28');
+        await dispatcher.finish();
 
         const lastMoveEvent = rowDragMoveEvents[rowDragMoveEvents.length - 1];
         expect(lastMoveEvent).toBeTruthy();

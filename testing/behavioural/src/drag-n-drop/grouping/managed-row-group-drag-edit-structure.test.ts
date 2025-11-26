@@ -11,9 +11,9 @@ import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
     GridRows,
+    RowDragDispatcher,
     TestGridsManager,
     asyncSetTimeout,
-    dragAndDropRow,
 } from '../../test-utils';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s evt=%s', (noMove, eventType) => {
@@ -79,11 +79,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(alphaGroupHandle).toBeTruthy();
         expect(betaGroupHandle).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            steps: [{ target: alphaGroupHandle! }, { target: betaGroupHandle!, yOffsetPercent: 0.2 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(alphaGroupHandle!);
+        await dispatcher.move(betaGroupHandle!, { yOffsetPercent: 0.2 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -153,15 +152,14 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(betaGroup).toBeTruthy();
         expect(alphaGroup).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: betaGroup! }, { target: alphaGroup!, yOffsetPercent: 0.25 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(betaGroup!);
+        await dispatcher.move(alphaGroup!, { yOffsetPercent: 0.25 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
-        const lastDropInfo = dragResult.rowDragEndEvents.at(-1);
+        const lastDropInfo = dispatcher.rowDragEndEvents.at(-1);
         expect(lastDropInfo?.rowsDrop?.allowed).toBe(true);
         expect(lastDropInfo?.rowsDrop?.target?.id).toBe('row-group-level1-Alpha');
         expect(lastDropInfo?.rowsDrop?.rows.length).toBe(1);
@@ -227,11 +225,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(alphaGroup).toBeTruthy();
         expect(betaLevel2Group).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            steps: [{ target: alphaGroup! }, { target: betaLevel2Group!, yOffsetPercent: 0.55 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(alphaGroup!);
+        await dispatcher.move(betaLevel2Group!, { yOffsetPercent: 0.55 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -297,11 +294,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(alphaGroup).toBeTruthy();
         expect(alphaParent).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: alphaGroup! }, { target: alphaParent!, yOffsetPercent: 0.85 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(alphaGroup!);
+        await dispatcher.move(alphaParent!, { yOffsetPercent: 0.85 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -326,14 +322,14 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(api.getRowNode('a2')?.data.level2).toBe('Two');
         expect(api.getRowNode('b1')?.data.level1).toBe('Beta');
         expect(api.getRowNode('b2')?.data.level1).toBe('Beta');
-        expect(dragResult.rowDragMoveEvents.length).toBeGreaterThan(0);
-        const lastMoveEvent = dragResult.rowDragMoveEvents[dragResult.rowDragMoveEvents.length - 1];
+        expect(dispatcher.rowDragMoveEvents.length).toBeGreaterThan(0);
+        const lastMoveEvent = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];
         expect(lastMoveEvent.rowsDrop?.position).not.toBe('inside');
         if (noMove) {
             expect(lastMoveEvent.rowsDrop?.allowed).toBe(false);
         }
         expect(lastMoveEvent.rowsDrop?.rows?.length).toBe(0);
-        expect(dragResult.rowDragEndEvents?.length).toBe(1);
+        expect(dispatcher.rowDragEndEvents.length).toBe(1);
     });
 
     test('dropping at the lower edge of a parent reorders siblings', async () => {
@@ -377,15 +373,14 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(alphaParent).toBeTruthy();
         expect(firstChild).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: firstChild! }, { target: alphaParent!, yOffsetPercent: 0.95 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(firstChild!);
+        await dispatcher.move(alphaParent!, { yOffsetPercent: 0.95 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
-        const dropInfo = dragResult.rowDragEndEvents[0]?.rowsDrop;
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
         expect(dropInfo?.allowed).toBe(true);
         expect(dropInfo?.rows?.length).toBeGreaterThan(0);
         expect(dropInfo?.overNode?.id).toBe('row-group-level1-Alpha');
@@ -451,17 +446,16 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(alphaRow).toBeTruthy();
         expect(betaParent).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: alphaRow! }, { target: betaParent!, yOffsetPercent: 0.05 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(alphaRow!);
+        await dispatcher.move(betaParent!, { yOffsetPercent: 0.05 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
         gridRows = new GridRows(api, 'after invalid move', { checkDom: true, columns: ['value'] });
-        expect(dragResult.rowDragMoveEvents.length).toBeGreaterThan(0);
-        const lastMoveEvent = dragResult.rowDragMoveEvents[dragResult.rowDragMoveEvents.length - 1];
+        expect(dispatcher.rowDragMoveEvents.length).toBeGreaterThan(0);
+        const lastMoveEvent = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -483,7 +477,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             expect(lastMoveEvent.rowsDrop?.allowed).toBe(false);
         }
         expect(lastMoveEvent.rowsDrop?.rows?.length).toBe(0);
-        expect(dragResult.rowDragEndEvents?.length).toBe(1);
+        expect(dispatcher.rowDragEndEvents.length).toBe(1);
     });
 
     test('dragging a child group between shallower groups is disallowed', async () => {
@@ -530,11 +524,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(sourceGroup).toBeTruthy();
         expect(targetGroup).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: sourceGroup! }, { target: targetGroup!, yOffsetPercent: 0.05 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(sourceGroup!);
+        await dispatcher.move(targetGroup!, { yOffsetPercent: 0.05 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -553,7 +546,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
             · · └── LEAF id:b2 value:"Beta-2"
         `);
 
-        const lastMoveEvent = dragResult.rowDragMoveEvents[dragResult.rowDragMoveEvents.length - 1];
+        const lastMoveEvent = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];
         if (noMove) {
             expect(lastMoveEvent.rowsDrop?.allowed).toBe(false);
         }

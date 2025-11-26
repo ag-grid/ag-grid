@@ -12,8 +12,7 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { DragAndDropIntermediateStepContext } from '../../test-utils';
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 const createGridManager = () =>
     new TestGridsManager({
@@ -107,6 +106,7 @@ describe('ag-grid row drag configuration warnings', () => {
             ],
             rowDragManaged: true,
             suppressMoveWhenRowDragging: true,
+            groupDefaultExpanded: -1,
             getRowId: (params) => params.data.id,
         };
 
@@ -115,33 +115,30 @@ describe('ag-grid row drag configuration warnings', () => {
         const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP collapsed id:row-group-group-A
-            │ ├── LEAF hidden id:1 value:"A1"
-            │ └── LEAF hidden id:2 value:"A2"
-            └─┬ LEAF_GROUP collapsed id:row-group-group-B
-            · └── LEAF hidden id:3 value:"B1"
+            ├─┬ LEAF_GROUP id:row-group-group-A
+            │ ├── LEAF id:1 value:"A1"
+            │ └── LEAF id:2 value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B
+            · └── LEAF id:3 value:"B1"
         `);
 
-        const result = await dragAndDropRow({
-            api,
-            steps: [
-                { target: initialRows.getRowHtmlElement('2')! },
-                { target: initialRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
-            ],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.1 });
+        await dispatcher.finish();
 
         const finalRows = new GridRows(api, 'final', { checkDom: true, columns: ['value'] });
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP collapsed id:row-group-group-A
-            │ ├── LEAF hidden id:1 value:"A1"
-            │ └── LEAF hidden id:2 value:"A2"
-            └─┬ LEAF_GROUP collapsed id:row-group-group-B
-            · └── LEAF hidden id:3 value:"B1"
+            ├─┬ LEAF_GROUP id:row-group-group-A
+            │ ├── LEAF id:1 value:"A1"
+            │ └── LEAF id:2 value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B
+            · └── LEAF id:3 value:"B1"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('A');
-        expect(result.rowDragEndEvents[0]?.rowsDrop?.allowed ?? false).toBe(false);
+        expect(dispatcher.rowDragEndEvents[0]?.rowsDrop?.allowed ?? false).toBe(false);
 
         await asyncSetTimeout(3);
 
@@ -211,8 +208,9 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
             · └── LEAF id:6 value:"C2"
         `;
 
-        const intermediateStep = async ({ api, rowDragMoveEvents }: DragAndDropIntermediateStepContext) => {
+        const intermediateStep = async () => {
             await asyncSetTimeout(0);
+            const rowDragMoveEvents = dispatcher.rowDragMoveEvents;
             expect(rowDragMoveEvents.some((event) => event.rowsDrop?.newParent?.id === 'row-group-group-B')).toBe(true);
             const latestRowsDrop = rowDragMoveEvents[rowDragMoveEvents.length - 1]?.rowsDrop;
             expect(latestRowsDrop?.allowed).toBe(true);
@@ -229,14 +227,12 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
             });
         };
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: '2' },
-                { target: '3', yOffsetPercent: 0.4, afterStep: intermediateStep },
-                { target: '6', yOffsetPercent: 0.9 },
-            ],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.4 });
+        await intermediateStep();
+        await dispatcher.move('6', { yOffsetPercent: 0.9 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -301,13 +297,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             · └── LEAF id:3 value:"B1"
         `);
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('2')! },
-                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
-            ],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(gridRows.getRowHtmlElement('2')!);
+        await dispatcher.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await dispatcher.finish();
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
         await gridRows.check(`
@@ -359,13 +352,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             · · └── LEAF id:4 city:"Tokyo"
         `);
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('2')! },
-                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
-            ],
-        });
+        const firstDrag = new RowDragDispatcher({ api });
+        await firstDrag.start(gridRows.getRowHtmlElement('2')!);
+        await firstDrag.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await firstDrag.finish();
 
         await asyncSetTimeout(0);
 
@@ -389,13 +379,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         expect(movedRow?.parent?.key).toBe('Germany');
         expect(movedRow?.parent?.parent?.key).toBe('Europe');
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('2')! },
-                { target: gridRows.getRowHtmlElement('4')!, yOffsetPercent: 0.1 },
-            ],
-        });
+        const secondDrag = new RowDragDispatcher({ api });
+        await secondDrag.start(gridRows.getRowHtmlElement('2')!);
+        await secondDrag.move(gridRows.getRowHtmlElement('4')!, { yOffsetPercent: 0.1 });
+        await secondDrag.finish();
 
         await asyncSetTimeout(0);
 
@@ -461,13 +448,10 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         modelUpdatedEvents.length = 0;
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: initialRows.getRowHtmlElement('2')! },
-                { target: initialRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
-            ],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(initialRows.getRowHtmlElement('2')!);
+        await dispatcher.move(initialRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -514,13 +498,15 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-new-parent', gridOptions);
 
-        const { rowDragMoveEvents, rowDragEndEvents } = await dragAndDropRow({
-            api,
-            steps: [{ target: '2' }, { target: '3', yOffsetPercent: 0.2 }],
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.2 });
+        await dispatcher.finish();
 
         expect(validatorParents).toContain('row-group-group-B');
-        expect(rowDragMoveEvents.some((event) => event.rowsDrop?.newParent?.id === 'row-group-group-B')).toBe(true);
-        expect(rowDragEndEvents[0].rowsDrop?.newParent?.id).toBe('row-group-group-B');
+        expect(
+            dispatcher.rowDragMoveEvents.some((event) => event.rowsDrop?.newParent?.id === 'row-group-group-B')
+        ).toBe(true);
+        expect(dispatcher.rowDragEndEvents[0].rowsDrop?.newParent?.id).toBe('row-group-group-B');
     });
 });

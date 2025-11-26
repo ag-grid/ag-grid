@@ -2,8 +2,8 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
@@ -52,22 +52,6 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         return gridsManager.createGrid(id, gridOptions);
     };
 
-    const hoverTargetCenter = async (
-        targetElement: Element,
-        movePointer: (
-            element: Element,
-            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
-        ) => Promise<unknown>
-    ) => {
-        const rect = targetElement.getBoundingClientRect();
-        const clientX = rect.left + rect.width / 2;
-        const clientY = rect.top + rect.height / 2;
-        for (let i = 0; i < 12; ++i) {
-            await asyncSetTimeout(25);
-            await movePointer(targetElement, { clientX, clientY });
-        }
-    };
-
     test('multi-row drag moves every selected node', async () => {
         const rowData = [
             {
@@ -114,10 +98,13 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(sourceRow).toBeTruthy();
         expect(targetRow).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.35 }],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRow!);
+        await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+            },
         });
         await asyncSetTimeout(0);
 
@@ -181,15 +168,16 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(targetRow).toBeTruthy();
 
         let expandedBeforeDrop = false;
-        await dragAndDropRow({
-            api,
-            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
-            beforeDrop: async ({ targetElement, movePointer }) => {
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRow!);
+        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
+        await dispatcher.finish({
+            beforeDrop: async ({ targetElement }) => {
                 const rect = targetElement.getBoundingClientRect();
                 const clientX = rect.left + rect.width / 2;
                 const clientY = rect.top + rect.height / 2;
 
-                await movePointer(targetElement, { clientX, clientY });
+                await dispatcher.move(targetElement, { clientX, clientY });
 
                 for (let i = 0; i < 30 && !expandedBeforeDrop; ++i) {
                     await asyncSetTimeout(20);
@@ -201,6 +189,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
                 }
 
                 await asyncSetTimeout(10);
+                await dispatcher.move(targetElement, { clientX, clientY });
             },
         });
         await asyncSetTimeout(0);
@@ -255,14 +244,17 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         expect(sourceRow).toBeTruthy();
         expect(targetRow).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.35 }],
-            beforeDrop: async ({ targetElement, movePointer }) => hoverTargetCenter(targetElement, movePointer),
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRow!);
+        await dispatcher.move(targetRow!, { yOffsetPercent: 0.35 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                await dispatcher.hoverTargetCenter(context.targetElement);
+            },
         });
         await asyncSetTimeout(0);
 
-        const dropInfo = dragResult.rowDragEndEvents[0]?.rowsDrop;
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
 
         const finalRows = createTreeRows(api, 'insert promote after');
         await finalRows.check(`

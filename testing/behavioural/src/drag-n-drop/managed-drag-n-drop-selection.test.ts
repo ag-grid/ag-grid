@@ -4,9 +4,9 @@ import type { GridOptions } from 'ag-grid-community';
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
     GridRows,
+    RowDragDispatcher,
     TestGridsManager,
     asyncSetTimeout,
-    dragAndDropRow,
 } from '../test-utils';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s evt=%s', (noMove, eventType) => {
@@ -56,17 +56,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
             └── LEAF id:5 value:"E"
         `);
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('2')! },
-                { target: gridRows.getRowHtmlElement('5')!, yOffsetPercent: 0.7 },
-            ],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(gridRows.getRowHtmlElement('2')!);
+        await dispatcher.move(gridRows.getRowHtmlElement('5')!, { yOffsetPercent: 0.7 });
+        await dispatcher.finish();
 
-        expect(dragResult.error).toBeNull();
-        expect(dragResult.rowDragEndEvents.length).toBeGreaterThan(0);
+        expect(dispatcher.rowDragEndEvents.length).toBeGreaterThan(0);
 
         await asyncSetTimeout(0);
 
@@ -116,17 +111,12 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
             └── LEAF id:6 value:"F"
         `);
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('3')! },
-                { target: gridRows.getRowHtmlElement('6')!, yOffsetPercent: 0.7 },
-            ],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(gridRows.getRowHtmlElement('3')!);
+        await dispatcher.move(gridRows.getRowHtmlElement('6')!, { yOffsetPercent: 0.7 });
+        await dispatcher.finish();
 
-        expect(dragResult.error).toBeNull();
-        expect(dragResult.rowDragEndEvents.length).toBeGreaterThan(0);
+        expect(dispatcher.rowDragEndEvents.length).toBeGreaterThan(0);
 
         await asyncSetTimeout(0);
 

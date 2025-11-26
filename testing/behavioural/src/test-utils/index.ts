@@ -9,6 +9,7 @@ export * from './testGridsManager';
 export * from './rows-snapshot';
 export * from './drag-n-drop/drag-event-dispatcher';
 export * from './drag-n-drop/drag-n-drop-utils';
+export * from './drag-n-drop/row-drag-dispatcher';
 export * from './ssrm-test-utils';
 export * from './prng';
 export * from './test-utils-assertions';

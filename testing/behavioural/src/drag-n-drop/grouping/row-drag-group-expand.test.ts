@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 import type { GridOptions, RowNode } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 
 const gridsManager = new TestGridsManager({
     modules: [ClientSideRowModelModule, RowDragModule, RowGroupingModule],
@@ -20,17 +20,14 @@ describe('row drag nudger group expansion', () => {
     const waitForGroupHover = async (
         api: any,
         targetElement: Element,
-        movePointer: (
-            element: Element,
-            options?: { clientX?: number; clientY?: number; yOffsetPercent?: number }
-        ) => Promise<unknown>
+        rowDragDispatcher: RowDragDispatcher
     ): Promise<boolean> => {
         const rect = targetElement.getBoundingClientRect();
         const clientX = rect.left + rect.width / 2;
         const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
             await asyncSetTimeout(25);
-            await movePointer(targetElement, { clientX, clientY });
+            await rowDragDispatcher.move(targetElement, { clientX, clientY });
         }
 
         let expanded = false;
@@ -86,15 +83,15 @@ describe('row drag nudger group expansion', () => {
 
         let expandedBeforeDrop = false;
 
-        const result = await dragAndDropRow({
-            api,
-            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
-            beforeDrop: async ({ targetElement, movePointer }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, movePointer);
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRow!);
+        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                expandedBeforeDrop = await waitForGroupHover(api, context.targetElement, dispatcher);
             },
         });
 
-        expect(result.error).toBeNull();
         expect(expandedBeforeDrop).toBe(true);
 
         let expandedAfterDrop = false;
@@ -159,15 +156,15 @@ describe('row drag nudger group expansion', () => {
 
         let expandedBeforeDrop = false;
 
-        const result = await dragAndDropRow({
-            api,
-            steps: [{ target: sourceRow! }, { target: targetRow!, yOffsetPercent: 0.6 }],
-            beforeDrop: async ({ targetElement, movePointer }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, movePointer);
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRow!);
+        await dispatcher.move(targetRow!, { yOffsetPercent: 0.6 });
+        await dispatcher.finish({
+            beforeDrop: async (context) => {
+                expandedBeforeDrop = await waitForGroupHover(api, context.targetElement, dispatcher);
             },
         });
 
-        expect(result.error).toBeNull();
         expect(expandedBeforeDrop).toBe(true);
 
         let expandedAfterDrop = false;

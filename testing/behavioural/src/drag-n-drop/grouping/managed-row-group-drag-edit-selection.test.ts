@@ -11,9 +11,9 @@ import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 import {
     DRAG_NO_MOVE_INTERACTION_CASES,
     GridRows,
+    RowDragDispatcher,
     TestGridsManager,
     asyncSetTimeout,
-    dragAndDropRow,
 } from '../../test-utils';
 
 describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMove=%s evt=%s', (noMove, eventType) => {
@@ -83,14 +83,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
             · └── LEAF id:3 value:"B1"
         `);
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('2')! },
-                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
-            ],
-            eventType,
-        });
+        const firstDrag = new RowDragDispatcher({ api, eventType });
+        await firstDrag.start(gridRows.getRowHtmlElement('2')!);
+        await firstDrag.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await firstDrag.finish();
 
         await asyncSetTimeout(0);
 
@@ -114,14 +110,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         commitOnEdit = true;
 
         gridRows = new GridRows(api, 'before committed move', { checkDom: true, columns: ['value'] });
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('2')! },
-                { target: gridRows.getRowHtmlElement('3')!, yOffsetPercent: 0.1 },
-            ],
-            eventType,
-        });
+        const secondDrag = new RowDragDispatcher({ api, eventType });
+        await secondDrag.start(gridRows.getRowHtmlElement('2')!);
+        await secondDrag.move(gridRows.getRowHtmlElement('3')!, { yOffsetPercent: 0.1 });
+        await secondDrag.finish();
 
         await asyncSetTimeout(0);
 
@@ -186,14 +178,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
             · └── LEAF id:5 value:"B2"
         `);
 
-        await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('1')! },
-                { target: gridRows.getRowHtmlElement('4')!, yOffsetPercent: 0.8 },
-            ],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(gridRows.getRowHtmlElement('1')!);
+        await dispatcher.move(gridRows.getRowHtmlElement('4')!, { yOffsetPercent: 0.8 });
+        await dispatcher.finish();
 
         gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
         await gridRows.check(`
@@ -268,16 +256,10 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
             · · └── LEAF id:r-5 athlete:"Eve"
         `);
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [
-                { target: gridRows.getRowHtmlElement('r-1')! },
-                { target: gridRows.getRowHtmlElement('r-4')!, yOffsetPercent: 0.7 },
-            ],
-            eventType,
-        });
-
-        expect(dragResult.error).toBeNull();
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(gridRows.getRowHtmlElement('r-1')!);
+        await dispatcher.move(gridRows.getRowHtmlElement('r-4')!, { yOffsetPercent: 0.7 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
@@ -380,15 +362,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(alphaGroupEl).toBeTruthy();
         expect(gammaGroupEl).toBeTruthy();
 
-        const dragResult = await dragAndDropRow({
-            api,
-            steps: [{ target: gridRows.getRowHtmlElement('a1')! }, { target: gammaGroupEl!, yOffsetPercent: 0.5 }],
-            eventType,
-        });
+        const dispatcher = new RowDragDispatcher({ api, eventType });
+        await dispatcher.start(gridRows.getRowHtmlElement('a1')!);
+        await dispatcher.move(gammaGroupEl!, { yOffsetPercent: 0.5 });
+        await dispatcher.finish();
 
-        expect(dragResult.error).toBeNull();
-        expect(dragResult.rowDragCancelEvents?.length).toBe(0);
-        const draggedIds = dragResult.rowDragEndEvents[0]?.nodes?.map((node) => node.id) ?? [];
+        expect(dispatcher.rowDragCancelEvents?.length).toBe(0);
+        const draggedIds = dispatcher.rowDragEndEvents[0]?.nodes?.map((node) => node.id) ?? [];
         expect(draggedIds.length).toBeGreaterThan(0);
         expect(draggedIds).toContain('row-group-level1-Alpha');
 
