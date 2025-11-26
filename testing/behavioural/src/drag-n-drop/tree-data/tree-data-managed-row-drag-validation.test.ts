@@ -72,7 +72,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             rowDragManaged: false,
         });
 
-    const initialRows = new GridRows(api, 'unmanaged initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'unmanaged initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -93,7 +93,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-    const finalRows = new GridRows(api, 'unmanaged final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'unmanaged final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -134,7 +134,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-    const initialRows = new GridRows(api, 'validator initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'validator initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -151,7 +151,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-    const finalRows = new GridRows(api, 'validator final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'validator final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -203,7 +203,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-    const initialRows = new GridRows(api, 'cycle initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'cycle initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -225,7 +225,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-    const finalRows = new GridRows(api, 'cycle final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'cycle final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
@@ -264,7 +264,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             getDataPath: (data) => data.path,
         });
 
-    const initialRows = new GridRows(api, 'path managed initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'path managed initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
@@ -282,7 +282,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-    const finalRows = new GridRows(api, 'path managed after', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'path managed after', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
@@ -326,7 +326,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-    const initialRows = new GridRows(api, 'path validator initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'path validator initial', treeGridRowsOptions);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
@@ -343,7 +343,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-    const finalRows = new GridRows(api, 'path validator final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'path validator final', treeGridRowsOptions);
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"

@@ -8,5 +8,6 @@ export interface IGroupEditService {
     canDropRow(row: IRowNode, rowsDrop: RowsDrop): boolean;
     canDropStartGroup(target: IRowNode | null | undefined): boolean;
     fixRowsDrop(rowsDrop: RowsDrop, canSetParent: boolean, moving: boolean, yDelta: number): void;
-    resetDrag(): void;
+    stopDragging(final: boolean): void;
+    csrmFirstLeaf(parent: IRowNode | null): IRowNode | null;
 }

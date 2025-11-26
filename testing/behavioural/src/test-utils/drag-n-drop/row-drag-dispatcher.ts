@@ -92,7 +92,7 @@ export class RowDragDispatcher {
         const gridElement = TestGridsManager.getHTMLElement(this.api);
         const dropContainer =
             (gridElement?.querySelector('.ag-body-viewport') as Element | null) ??
-            getGridOwnerDocument(this.api).documentElement ?? document.documentElement;
+            getGridOwnerDocument(this.api).documentElement;
 
         this.sourceElement = sourceElement;
         this.sourceRowId = sourceElement.getAttribute('row-id') || '';

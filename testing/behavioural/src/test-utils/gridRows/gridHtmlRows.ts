@@ -32,10 +32,7 @@ export function getGridRowsHtmlElements<TData = any>(api: GridApi<TData>): HTMLE
     return gridElement ? Array.from(gridElement.querySelectorAll<HTMLElement>(ROW_SELECTOR)) : [];
 }
 
-export function getRowHtmlElements<TData = any>(
-    api: GridApi<TData>,
-    reference: RowElementReference
-): HTMLElement[] {
+export function getRowHtmlElements<TData = any>(api: GridApi<TData>, reference: RowElementReference): HTMLElement[] {
     const rowId = resolveRowElementId(reference);
     if (rowId == null) {
         return [];
@@ -59,7 +56,10 @@ export function getRowHtmlElements<TData = any>(
     return mainRowElements.length ? mainRowElements.concat(secondaryRowElements) : secondaryRowElements;
 }
 
-export function getRowHtmlElement<TData = any>(api: GridApi<TData>, reference: RowElementReference): HTMLElement | null {
+export function getRowHtmlElement<TData = any>(
+    api: GridApi<TData>,
+    reference: RowElementReference
+): HTMLElement | null {
     const elements = getRowHtmlElements(api, reference);
     return elements.length > 0 ? elements[0] : null;
 }

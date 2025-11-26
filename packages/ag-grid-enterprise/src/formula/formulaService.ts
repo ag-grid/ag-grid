@@ -117,31 +117,31 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
         if (this.gos.get('masterDetail')) {
-            _warn(296, { blockedService: 'Master Detail' });
+            _warn(295, { blockedService: 'Master Detail' });
             return false;
         }
 
         if (this.gos.get('treeData')) {
-            _warn(296, { blockedService: 'Tree Data' });
+            _warn(295, { blockedService: 'Tree Data' });
             return false;
         }
 
         if (this.gos.get('enableCellExpressions')) {
-            _warn(296, { blockedService: 'Cell Expressions' });
+            _warn(295, { blockedService: 'Cell Expressions' });
             return false;
         }
 
         return cols.list.every((col) => {
             if (col.isAllowPivot() || col.isPivotActive()) {
-                _warn(296, { blockedService: 'Column Pivoting' });
+                _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
             if (col.isAllowRowGroup() || col.isRowGroupActive()) {
-                _warn(296, { blockedService: 'Row Groups' });
+                _warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
             if (col.isAllowValue() || col.isValueActive() || col.getAggFunc()) {
-                _warn(296, { blockedService: 'Value Aggregation' });
+                _warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }
             return true;

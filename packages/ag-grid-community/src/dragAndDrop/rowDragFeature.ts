@@ -554,7 +554,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public onDragLeave(draggingEvent: RowDraggingEvent): void {
         this.dispatchGridEvent('rowDragLeave', draggingEvent);
-        this.stopDragging(draggingEvent);
+        this.stopDragging(draggingEvent, false);
     }
 
     public onDragStop(draggingEvent: RowDraggingEvent): void {
@@ -568,17 +568,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         ) {
             this.dropRows(rowsDrop); // Drop the rows after dragging
         }
-        this.stopDragging(draggingEvent);
+        this.stopDragging(draggingEvent, true);
     }
 
     public onDragCancel(draggingEvent: RowDraggingEvent): void {
         this.dispatchGridEvent('rowDragCancel', draggingEvent);
-        this.stopDragging(draggingEvent);
+        this.stopDragging(draggingEvent, true);
     }
 
-    private stopDragging(draggingEvent: RowDraggingEvent): void {
+    private stopDragging(draggingEvent: RowDraggingEvent, final: boolean): void {
         this.clearAutoScroll();
-        this.beans.groupEditSvc?.resetDrag();
+        this.beans.groupEditSvc?.stopDragging(final);
         this.beans.rowDropHighlightSvc?.fromDrag(null);
         setRowNodesDragging(draggingEvent.dragItem.rowNodes, false);
     }
@@ -613,7 +613,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let addIndex: number | undefined;
         if (target) {
-            const leaf = csrmGetLeaf(target);
+            const leaf = target.sourceRowIndex >= 0 ? target : _csrmFirstLeaf(target);
             if (leaf) {
                 addIndex = leaf.sourceRowIndex + (position === 'above' ? 0 : 1);
             }
@@ -633,8 +633,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (
                 !row ||
                 row.footer ||
-                (row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
-                !csrmGetLeaf(row) // No leaf to move, so nothing to do
+                (!row.group && row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
+                !this.csrmGetLeaf(row) // No leaf to move, so nothing to do
             ) {
                 valid = false;
             }
@@ -667,7 +667,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 row.treeParent = newParent as RowNode;
                 changed = true;
             }
-            const leafRow = csrmGetLeaf(row);
+            const leafRow = this.csrmGetLeaf(row);
             if (leafRow) {
                 leafs.add(leafRow);
             }
@@ -709,11 +709,18 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         return true;
     }
-}
 
-const csrmGetLeaf = (row: IRowNode): RowNode | undefined => {
-    return row.sourceRowIndex >= 0 ? (row as RowNode) : _csrmFirstLeaf(row as RowNode);
-};
+    private csrmGetLeaf(row: IRowNode): RowNode | undefined {
+        if (row.sourceRowIndex >= 0) {
+            return row as RowNode;
+        }
+        const groupEditSvc = this.beans.groupEditSvc;
+        if (groupEditSvc) {
+            return groupEditSvc.csrmFirstLeaf(row) as RowNode | undefined;
+        }
+        return _csrmFirstLeaf(row) as RowNode | undefined;
+    }
+}
 
 const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
     for (let i = 0, len = rows.length; i < len; ++i) {
