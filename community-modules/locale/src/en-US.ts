@@ -25,12 +25,6 @@ export const AG_GRID_LOCALE_EN = {
     inRangeStart: 'From',
     inRangeEnd: 'To',
 
-    // In-Range Number & Date Filter Validation
-    tooBig: 'Please select a value that is no more than ${variable}',
-    tooSmall: 'Please select a value that is no less than ${variable}',
-    tooEarly: 'Please select a date that is no earlier than ${variable}',
-    tooLate: 'Please select a date that is no later than ${variable}',
-
     // Text Filter
     contains: 'Contains',
     notContains: 'Does not contain',
@@ -156,7 +150,9 @@ export const AG_GRID_LOCALE_EN = {
     maxDateValidation: 'Date must be before ${variable}',
     maxLengthValidation: 'Must be ${variable} characters or fewer.',
     minValueValidation: 'Must be greater than or equal to ${variable}',
-    maxValueValidation: 'Must be less than or equal to  ${variable}',
+    maxValueValidation: 'Must be less than or equal to ${variable}',
+    strictMinValueValidation: 'Must be greater than ${variable}',
+    strictMaxValueValidation: 'Must be less than ${variable}',
     invalidSelectionValidation: 'Invalid selection.',
     tooltipValidationErrorSeparator: '. ',
 

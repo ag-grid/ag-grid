@@ -44,13 +44,14 @@ export class NumberFilter extends SimpleFilter<
     }
 
     protected createEValue(): HTMLElement {
-        const allowedCharPattern = getAllowedCharPattern(this.params);
-        const parser = this.params.numberParser;
+        const { beans, params, eValuesFrom, eValuesTo } = this;
+        const allowedCharPattern = getAllowedCharPattern(params);
+        const parser = params.numberParser;
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
-        const from = this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
-        const to = this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
+        const from = this.createFromToElement(eCondition, eValuesFrom, 'from', allowedCharPattern);
+        const to = this.createFromToElement(eCondition, eValuesTo, 'to', allowedCharPattern);
 
         const getFieldChangedListener =
             (
@@ -65,7 +66,11 @@ export class NumberFilter extends SimpleFilter<
                 const validityMessage = localeKey
                     ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)])
                     : '';
-                (isFrom ? from : to).setCustomValidity(validityMessage);
+                (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
+                (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
+                if (validityMessage.length > 0) {
+                    beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
+                }
             };
 
         from.addManagedListeners(from, {
@@ -191,9 +196,9 @@ function getValidityMessageKey(
     toValue: number | null,
     isFrom: boolean
 ): FilterLocaleTextKey | null {
-    const isInvalid = fromValue != null && toValue != null && fromValue > toValue;
+    const isInvalid = fromValue != null && toValue != null && fromValue >= toValue;
     if (!isInvalid) {
         return null;
     }
-    return isFrom ? 'tooBig' : 'tooSmall';
+    return `strict${isFrom ? 'Max' : 'Min'}ValueValidation`;
 }
