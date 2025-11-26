@@ -39,12 +39,10 @@ describe('ag-grid initialGroupOrderComparator', () => {
 
     const gridRowsOptions: GridRowsOptions = {
         columns: ['athlete', 'country'],
-        checkDom: true,
     };
 
     const gridRowsOptionsTwoLevel: GridRowsOptions = {
         columns: ['athlete', 'country', 'sport'],
-        checkDom: true,
     };
 
     // Two-level grouping tests (country -> sport)

@@ -52,7 +52,6 @@ describe('ag-grid grouping with pivot', () => {
                 'pivot_year_2021_profit',
             ],
             printHiddenRows: false, // Don't show hidden rows to see if groups are actually expanded
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'basic pivot', gridRowsOptions);
@@ -94,7 +93,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn', 'pivot_year_2020_sales', 'pivot_year_2021_sales'],
             printHiddenRows: false,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'multiple levels with pivot', gridRowsOptions);
@@ -145,7 +143,6 @@ describe('ag-grid grouping with pivot', () => {
                 'pivot_year-quarter_2021_sales',
             ],
             printHiddenRows: false,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'multiple pivot columns', gridRowsOptions);
@@ -193,7 +190,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn', 'South_sales', 'North_sales', 'East_sales'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'pivot with custom column ordering', gridRowsOptions);
@@ -265,7 +261,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['salesperson', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'initial pivot data', gridRowsOptions);
@@ -350,7 +345,6 @@ describe('ag-grid grouping with pivot', () => {
                 '2021_efficiency',
             ],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'pivot with aggregations', gridRowsOptions);
@@ -394,7 +388,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['category', 'North_revenue', 'South_revenue', 'East_revenue', 'West_revenue'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'initial pivot columns', gridRowsOptions);
@@ -464,7 +457,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['store', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'initial pivot data', gridRowsOptions);
@@ -573,7 +565,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['team', 'Q1_score', 'Q1_attempts', 'Q1_average', 'Q2_score', 'Q2_attempts', 'Q2_average'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'custom aggregations in pivot', gridRowsOptions);
@@ -639,7 +630,6 @@ describe('ag-grid grouping with pivot', () => {
                 'Mar_profit',
             ],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'pivot without grouping', gridRowsOptions);
@@ -686,7 +676,6 @@ describe('ag-grid grouping with pivot', () => {
                 'East_units',
             ],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'before filtering', gridRowsOptions);
@@ -784,7 +773,6 @@ describe('ag-grid grouping with pivot', () => {
                 'pivot_quarter_Q2_expenses',
             ],
             printHiddenRows: false, // Only show expanded rows
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'pivot with expanded groups', gridRowsOptions);
@@ -832,7 +820,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn'], // Just check group structure, not pivot values
             printHiddenRows: false,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'pivot with column customization', gridRowsOptions);
@@ -877,7 +864,6 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn'], // Just test filtering behavior, not specific values
             printHiddenRows: false,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'before filtering pivot results', gridRowsOptions);
@@ -973,7 +959,7 @@ describe('ag-grid grouping with pivot', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
             printHiddenRows: true,
-            checkDom: true,
+
             ignoreUndefinedCells: true,
         };
 
@@ -1072,7 +1058,6 @@ describe('ag-grid grouping with pivot', () => {
                 ...(pivotResultColumns?.map((col) => col.getColId()) || []),
             ],
             printHiddenRows: false,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'pivot mode with API validation', gridRowsOptions);
@@ -1151,7 +1136,6 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 

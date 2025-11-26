@@ -18,7 +18,6 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
     });
 
     const treeGridRowsOptions: GridRowsOptions = {
-        checkDom: true,
         treeData: true,
         columns: ['ag-Grid-AutoColumn'],
     };

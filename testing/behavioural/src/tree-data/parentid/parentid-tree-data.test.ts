@@ -103,7 +103,6 @@ describe('ag-grid tree data parent id', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
@@ -158,7 +157,6 @@ describe('ag-grid tree data parent id', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
@@ -209,7 +207,6 @@ describe('ag-grid tree data parent id', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -237,7 +234,6 @@ describe('ag-grid tree data parent id', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -308,7 +304,6 @@ describe('ag-grid tree data parent id', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);

@@ -70,7 +70,7 @@ describe('row drag nudger group expansion', () => {
             }
         });
 
-        const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial', { columns: ['value'] });
         await initialRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ LEAF_GROUP id:row-group-group-A
@@ -104,7 +104,7 @@ describe('row drag nudger group expansion', () => {
         expect(expandedAfterDrop).toBe(true);
         expect(api.getRowNode('2')?.data.group).toBe('B');
 
-        const afterRows = new GridRows(api, 'after', { checkDom: true, columns: ['value'] });
+        const afterRows = new GridRows(api, 'after', { columns: ['value'] });
         await afterRows.check([
             'ROOT id:ROOT_NODE_ID',
             '├─┬ LEAF_GROUP id:row-group-group-A',
@@ -140,7 +140,7 @@ describe('row drag nudger group expansion', () => {
             }
         });
 
-        const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial', { columns: ['value'] });
         await initialRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ LEAF_GROUP id:row-group-group-A
@@ -174,7 +174,7 @@ describe('row drag nudger group expansion', () => {
         expect(expandedAfterDrop).toBe(true);
         expect(api.getRowNode('2')?.data.group).toBe('A');
 
-        const afterRows = new GridRows(api, 'after', { checkDom: true, columns: ['value'] });
+        const afterRows = new GridRows(api, 'after', { columns: ['value'] });
         await afterRows.check([
             'ROOT id:ROOT_NODE_ID',
             '├─┬ LEAF_GROUP id:row-group-group-A',

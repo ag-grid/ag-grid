@@ -49,7 +49,6 @@ describe('ag-grid tree data without hierarchical and without data path', () => {
         consoleErrorSpy?.mockRestore();
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 

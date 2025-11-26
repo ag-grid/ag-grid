@@ -12,9 +12,7 @@ describe('ag-grid tree duplicate keys', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    const gridRowsOptions = {
-        checkDom: true,
-    };
+    const gridRowsOptions = {};
 
     let consoleWarnSpy: MockInstance;
 

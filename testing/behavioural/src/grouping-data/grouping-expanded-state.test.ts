@@ -10,7 +10,6 @@ describe('ag-grid grouping expanded state', () => {
     });
 
     const gridRowsOptions: GridRowsOptions = {
-        checkDom: true,
         columns: true,
     };
 

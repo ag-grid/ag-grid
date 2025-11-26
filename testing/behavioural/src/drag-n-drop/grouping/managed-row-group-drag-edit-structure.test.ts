@@ -61,7 +61,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-descendant-update', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -81,7 +81,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-level1-Beta
@@ -127,7 +127,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-root-reorder', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -154,7 +154,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(lastDropInfo?.rowsDrop?.target?.id).toBe('row-group-level1-Alpha');
         expect(lastDropInfo?.rowsDrop?.rows.length).toBe(1);
 
-        gridRows = new GridRows(api, 'after reorder', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after reorder', { columns: ['value'] });
         // TODO: the order here is not correct, need to fix GroupStrategy
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -195,7 +195,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-reassign-level1-into-level2', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -217,7 +217,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-level1-Beta
@@ -259,7 +259,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-disallow-parent-drop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -281,7 +281,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after invalid move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after invalid move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -335,7 +335,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-reorder-with-parent-edge', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -362,7 +362,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(dropInfo?.position).toBe('above');
         expect(dropInfo?.target?.id).toBe('row-group-level1-Alpha-level2-One');
 
-        gridRows = new GridRows(api, 'after reorder', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after reorder', { columns: ['value'] });
         // TODO: the order here is not correct, need to fix GroupStrategy
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -401,7 +401,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-disallow-parent-row-drop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -423,7 +423,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after invalid move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after invalid move', { columns: ['value'] });
         expect(dispatcher.rowDragMoveEvents.length).toBeGreaterThan(0);
         const lastMoveEvent = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];
         await gridRows.check(`
@@ -474,7 +474,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-disallow-deeper-to-shallow', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha
@@ -496,7 +496,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after invalid move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after invalid move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Alpha

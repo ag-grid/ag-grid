@@ -54,7 +54,6 @@ describe('ag-grid grouping filter aggregation', () => {
 
             const gridRowsOptions: GridRowsOptions = {
                 columns: ['year', 'sport', 'gold'],
-                checkDom: true,
             };
 
             await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -212,7 +211,6 @@ describe('ag-grid grouping filter aggregation', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['athlete', 'sport', 'gold'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

@@ -39,7 +39,7 @@ describe('ag-grid formulas general behaviour', () => {
 
     const defaultGridRowsOptions: GridRowsOptions = {
         printHiddenRows: true,
-        checkDom: true,
+
         columns: true,
     };
 

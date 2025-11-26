@@ -87,7 +87,6 @@ describe('ag-grid hierarchical tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -123,7 +122,6 @@ describe('ag-grid hierarchical tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -189,7 +187,6 @@ describe('ag-grid hierarchical tree data', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -262,7 +259,6 @@ describe('ag-grid hierarchical tree data', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -368,7 +364,6 @@ describe('ag-grid hierarchical tree data', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -400,7 +395,6 @@ describe('ag-grid hierarchical tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -436,7 +430,6 @@ describe('ag-grid hierarchical tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -504,7 +497,6 @@ describe('ag-grid hierarchical tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -537,7 +529,6 @@ describe('ag-grid hierarchical tree data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -626,7 +617,6 @@ describe('ag-grid hierarchical tree data', () => {
 
         const gridRowsOptions = {
             columns: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);

@@ -52,7 +52,6 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -121,7 +120,6 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 

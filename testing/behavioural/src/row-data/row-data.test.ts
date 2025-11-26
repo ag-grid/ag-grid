@@ -88,7 +88,6 @@ describe('ag-grid row data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: ['value'],
         };
 
@@ -227,7 +226,6 @@ describe('ag-grid row data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -308,7 +306,6 @@ describe('ag-grid row data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -354,7 +351,6 @@ describe('ag-grid row data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: ['value'],
         };
 

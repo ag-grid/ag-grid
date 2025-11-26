@@ -62,7 +62,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-multi-step', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -98,7 +98,6 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
             expect(latestRowsDrop?.moved).toBe(true);
             await waitFor(async () => {
                 const intermediateRows = new GridRows(api, label, {
-                    checkDom: true,
                     columns: ['value'],
                 });
                 await intermediateRows.check(snapshot);
@@ -119,7 +118,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -165,7 +164,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-year-multi-hop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial years', { checkDom: true, columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial years', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-continent-Europe
@@ -193,7 +192,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'years after multi-hop drag', { checkDom: true, columns: ['city'] });
+        gridRows = new GridRows(api, 'years after multi-hop drag', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-continent-Europe
@@ -244,7 +243,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-group-drag', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial groups', { checkDom: true, columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial groups', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -270,7 +269,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'groups after move', { checkDom: true, columns: ['city'] });
+        gridRows = new GridRows(api, 'groups after move', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -321,7 +320,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-group-multi-hop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial same-level groups', { checkDom: true, columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial same-level groups', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -346,7 +345,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'same-level groups after multi-hop drag', { checkDom: true, columns: ['city'] });
+        gridRows = new GridRows(api, 'same-level groups after multi-hop drag', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -407,7 +406,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-basic', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -422,7 +421,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -458,7 +457,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-multi-level', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -479,7 +478,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move within continent', { checkDom: true, columns: ['city'] });
+        gridRows = new GridRows(api, 'after move within continent', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -506,7 +505,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move across continents', { checkDom: true, columns: ['city'] });
+        gridRows = new GridRows(api, 'after move across continents', { columns: ['city'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-continent-Europe
@@ -556,7 +555,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial', { columns: ['value'] });
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -575,7 +574,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        const finalRows = new GridRows(api, 'after move', { columns: ['value'] });
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A

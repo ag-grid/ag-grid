@@ -46,7 +46,6 @@ describe('ag-grid grouping aggregation', () => {
 
         const gridRowsOptionsFormatted: GridRowsOptions = {
             columns: ['sport', 'gold', 'silver'],
-            checkDom: true,
         };
 
         const gridRowsOptionsUnformatted: GridRowsOptions = {

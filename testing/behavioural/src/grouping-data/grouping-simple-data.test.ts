@@ -41,7 +41,6 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRows = new GridRows(api, 'data', {
             columns: true,
-            checkDom: true,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -412,7 +411,6 @@ describe('ag-grid grouping simple data', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -466,7 +464,6 @@ describe('ag-grid grouping simple data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -547,7 +544,6 @@ describe('ag-grid grouping simple data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -607,7 +603,6 @@ describe('ag-grid grouping simple data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -668,7 +663,7 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-            checkDom: true,
+
             useFormatter: true,
             ignoreUndefinedCells: true,
         };
@@ -744,7 +739,7 @@ describe('ag-grid grouping simple data', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-            checkDom: true,
+
             useFormatter: true,
             ignoreUndefinedCells: true,
         };

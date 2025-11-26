@@ -59,7 +59,6 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -369,7 +368,6 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);

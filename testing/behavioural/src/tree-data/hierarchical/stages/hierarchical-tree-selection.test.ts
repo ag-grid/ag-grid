@@ -73,7 +73,7 @@ describe('ag-grid hierarchical tree selection', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['k', 'name'],
-            checkDom: true,
+
             checkSelectedNodes: true,
         };
 

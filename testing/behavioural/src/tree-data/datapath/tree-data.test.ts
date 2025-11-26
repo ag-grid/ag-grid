@@ -110,9 +110,7 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
@@ -169,9 +167,7 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
@@ -228,7 +224,6 @@ describe('ag-grid tree data', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -256,7 +251,6 @@ describe('ag-grid tree data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -313,7 +307,6 @@ describe('ag-grid tree data', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -389,7 +382,6 @@ describe('ag-grid tree data', () => {
 
         const gridRowsOptions = {
             columns: true,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);

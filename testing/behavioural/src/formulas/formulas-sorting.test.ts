@@ -31,7 +31,7 @@ describe('ag-grid formulas sorting', () => {
 
     const defaultGridRowsOptions: GridRowsOptions = {
         printHiddenRows: true,
-        checkDom: true,
+
         columns: true,
     };
 

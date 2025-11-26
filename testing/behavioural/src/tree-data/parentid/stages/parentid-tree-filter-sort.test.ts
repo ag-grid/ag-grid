@@ -41,7 +41,6 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['name'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -194,7 +193,6 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['value', 'x'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -425,7 +423,6 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['value', 'n'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

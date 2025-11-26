@@ -58,7 +58,6 @@ describe('ag-grid grouping with master detail', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['ag-Grid-AutoColumn', 'year', 'sales'],
             printHiddenRows: false,
-            checkDom: true,
         };
 
         const gridRows = new GridRows(api, 'basic grouping with master detail', gridRowsOptions);

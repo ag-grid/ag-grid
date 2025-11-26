@@ -10,7 +10,6 @@ describe('ag-grid hierarchical tree expanded state', () => {
     });
 
     const gridRowsOptions: GridRowsOptions = {
-        checkDom: true,
         columns: ['ag-Grid-AutoColumn'],
     };
 

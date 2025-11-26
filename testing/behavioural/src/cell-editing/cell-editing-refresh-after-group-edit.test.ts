@@ -88,7 +88,6 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         batchStoppedEvents.length = 0;
 
         const initialRows = new GridRows(api, 'initial', {
-            checkDom: true,
             columns: ['value'],
             nodeDataProps: ['group'],
         });
@@ -139,7 +138,6 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         expect(modelUpdatedEvents).toHaveLength(1);
 
         const finalRows = new GridRows(api, 'after commit', {
-            checkDom: true,
             columns: ['value'],
             nodeDataProps: ['group'],
         });

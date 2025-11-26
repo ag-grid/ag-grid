@@ -7,9 +7,7 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
-const defaultGridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
+const defaultGridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({

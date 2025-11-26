@@ -49,7 +49,7 @@ describe('ag-grid formulas filtering', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: true,
         };
 
@@ -160,7 +160,7 @@ describe('ag-grid formulas filtering', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: true,
         };
 
@@ -245,7 +245,7 @@ describe('ag-grid formulas filtering', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: ['athlete'],
         };
 
@@ -297,7 +297,7 @@ describe('ag-grid formulas filtering', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: true,
         };
 
@@ -474,7 +474,7 @@ describe('ag-grid formulas filtering', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: ['athlete'],
         };
 
@@ -533,7 +533,7 @@ describe('ag-grid formulas filtering', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: true,
         };
 
@@ -738,7 +738,7 @@ describe('ag-grid formulas filtering', () => {
         await applyFilter('Michael');
         let gridRows = new GridRows(api, 'custom filter', {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: ['athlete'],
         });
         await gridRows.check(`
@@ -750,7 +750,7 @@ describe('ag-grid formulas filtering', () => {
         await applyFilter('REF');
         gridRows = new GridRows(api, 'custom filter', {
             printHiddenRows: true,
-            checkDom: true,
+
             columns: ['athlete'],
         });
         await gridRows.check('empty');

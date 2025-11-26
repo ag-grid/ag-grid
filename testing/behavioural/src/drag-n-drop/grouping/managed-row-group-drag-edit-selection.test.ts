@@ -76,7 +76,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const api = gridsManager.createGrid('row-group-edit-readonly', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -93,7 +93,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move attempt', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move attempt', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -112,7 +112,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         commitOnEdit = true;
 
-        gridRows = new GridRows(api, 'before committed move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'before committed move', { columns: ['value'] });
         const secondDrag = new RowDragDispatcher({ api, eventType });
         await secondDrag.start('2');
         await secondDrag.move('3', { yOffsetPercent: 0.1 });
@@ -120,7 +120,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after committed move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after committed move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -169,7 +169,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
             newValue: true,
         });
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -186,7 +186,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         await dispatcher.move('4', { yOffsetPercent: 0.8 });
         await dispatcher.finish();
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -235,7 +235,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const api = gridsManager.createGrid('row-group-edit-multi-two-level', gridOptions);
 
-        let gridRows = new GridRows(api, 'before checkbox selection', { checkDom: true, columns: ['athlete'] });
+        let gridRows = new GridRows(api, 'before checkbox selection', { columns: ['athlete'] });
 
         await clickRowSelectionCheckbox(api, ['r-1', 'r-2']);
 
@@ -244,7 +244,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         expect(getRowSelectionCheckboxState(api, 'r-1')).toBe(true);
         expect(getRowSelectionCheckboxState(api, 'r-2')).toBe(true);
 
-        gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['athlete'] });
+        gridRows = new GridRows(api, 'initial', { columns: ['athlete'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-EMEA
@@ -266,7 +266,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['athlete'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['athlete'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-EMEA
@@ -342,7 +342,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await asyncSetTimeout(0);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler selected id:row-group-level1-Alpha
@@ -377,7 +377,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-level1-Beta

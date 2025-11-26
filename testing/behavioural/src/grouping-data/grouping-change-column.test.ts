@@ -42,7 +42,6 @@ describe('ag-grid grouping simple data', () => {
 
         gridRows = new GridRows(api, 'column B', {
             columns: true,
-            checkDom: true,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID

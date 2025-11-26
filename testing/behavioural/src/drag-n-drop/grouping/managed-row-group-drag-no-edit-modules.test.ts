@@ -60,7 +60,7 @@ describe('managed row drag without edit modules', () => {
 
         const api = gridsManager.createGrid('row-group-edit-no-edit-modules', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A
@@ -75,7 +75,7 @@ describe('managed row drag without edit modules', () => {
         await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-group-A

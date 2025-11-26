@@ -61,7 +61,6 @@ describe('ag-grid tree data without tree module', () => {
         consoleErrorSpy.mockRestore();
 
         const gridRowsOptions = {
-            checkDom: true,
             columns: true,
             treeData: false,
         };

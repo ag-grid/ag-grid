@@ -51,7 +51,6 @@ describe('ag-grid parentId immutable tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 
@@ -389,7 +388,6 @@ describe('ag-grid parentId immutable tree data', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 

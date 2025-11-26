@@ -44,7 +44,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -213,7 +212,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
@@ -300,7 +298,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
         let gridRows = new GridRows(api, 'first', gridRowsOptions);
         await gridRows.check(`
@@ -449,7 +446,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         // Verify initial structure
@@ -543,7 +539,7 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
+
             useFormatter: false,
         };
 
@@ -633,7 +629,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['country', 'year', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         await new GridRows(api, 'custom key creators grouping', gridRowsOptions).check(`
@@ -705,7 +700,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['department', 'level', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial departments', gridRowsOptions).check(`
@@ -812,7 +806,6 @@ describe('ag-grid grouping with transactions', () => {
         const gridRowsOptions: GridRowsOptions = {
             columns: ['status', 'priority', 'name'],
             printHiddenRows: true,
-            checkDom: true,
         };
 
         // Complex async operations that test race conditions

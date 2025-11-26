@@ -53,7 +53,6 @@ describe('ag-grid hierarchical tree filter sort', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['k', 'name'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -261,7 +260,6 @@ describe('ag-grid hierarchical tree filter sort', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['k', 'value', 'x'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

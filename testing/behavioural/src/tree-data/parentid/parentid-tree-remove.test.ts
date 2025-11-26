@@ -6,9 +6,7 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
-const gridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
+const gridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid parentId tree remove', () => {
     let consoleWarnSpy: MockInstance | undefined;

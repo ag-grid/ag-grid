@@ -54,7 +54,6 @@ describe('ag-grid parentId tree expanded state', () => {
         await asyncSetTimeout(1);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: ['ag-Grid-AutoColumn'],
         };
 
@@ -146,9 +145,7 @@ describe('ag-grid parentId tree expanded state', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
 
@@ -193,9 +190,7 @@ describe('ag-grid parentId tree expanded state', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
 

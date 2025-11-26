@@ -53,7 +53,6 @@ describe('ag-grid grouping treeData is reactive', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: true,
-            checkDom: true,
         };
 
         for (let repeat = 0; repeat < 2; repeat++) {

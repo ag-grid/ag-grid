@@ -48,7 +48,6 @@ describe('ag-grid grouping parentId treeData is reactive', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
             columns: true,
         };
 

@@ -81,7 +81,6 @@ describe('ag-grid hierarchical tree aggregation and filter', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['n', 'x', 'y'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

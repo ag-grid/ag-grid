@@ -11,9 +11,7 @@ describe('ag-grid tree expanded state', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    const gridRowsOptions: GridRowsOptions = {
-        checkDom: true,
-    };
+    const gridRowsOptions: GridRowsOptions = {};
 
     beforeEach(() => {
         gridsManager.reset();

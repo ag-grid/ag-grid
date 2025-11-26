@@ -40,9 +40,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         let gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
@@ -124,9 +122,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         let gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
