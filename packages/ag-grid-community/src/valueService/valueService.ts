@@ -535,6 +535,22 @@ export class ValueService extends BeanStub implements NamedBean {
             }
 
             formulaDataSvc.setFormula({ column, rowNode, formula: newValue });
+
+            // Store the computed value into rowData for consumers that do not understand formulas.
+            const computedValue = formulaSvc?.resolveValue(column, rowNode as RowNode);
+            const colDef = column.getColDef();
+            if (_exists(colDef.valueSetter) || !_missing(colDef.field)) {
+                const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
+                this.computeValueChange({
+                    column,
+                    newValue: computedValue,
+                    params: computedParams,
+                    rowData: rowNode.data,
+                    valueSetter: colDef.valueSetter,
+                    field: colDef.field,
+                });
+            }
+
             return this.finishValueChange(rowNode, column, setterParams, eventSource);
         }
 
