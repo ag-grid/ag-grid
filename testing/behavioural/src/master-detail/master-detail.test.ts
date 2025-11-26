@@ -112,7 +112,6 @@ describe('ag-grid master detail', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['k'],
-            printHiddenRows: true,
         };
 
         let gridRows = new GridRows(api, 'data', gridRowsOptions);
