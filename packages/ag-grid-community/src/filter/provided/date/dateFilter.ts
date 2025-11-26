@@ -1,3 +1,4 @@
+import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
@@ -43,6 +44,25 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         super.afterGuiAttached(params);
 
         this.dateConditionFromComps[0].afterGuiAttached(params);
+    }
+
+    public override afterGuiDetached(): void {
+        this.clearInvalidInputs();
+    }
+
+    private clearInvalidInputs(): void {
+        // Browser behavioural difference between Firefox and Chrome/Safari:
+        // When users enter incomplete dates in a filter input, then close the filter and re-open it, FF will clear the input, while the other browsers won't
+        // As such, when we have invalid inputs for the `inRange` filter, we want to mimic this behaviour:
+        // In FF we will clear any inputs that are invalid. In other browsers, we do nothing (which effectively keeps the input state)
+        if (_isBrowserFirefox()) {
+            for (const comp of this.dateConditionFromComps.concat(this.dateConditionToComps)) {
+                const isInputValid = comp.getValidity()?.valid ?? true;
+                if (!isInputValid) {
+                    comp.setDate(null);
+                }
+            }
+        }
     }
 
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
