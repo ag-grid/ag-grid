@@ -168,17 +168,6 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue3/lib" />
       <excludeFolder url="file://$MODULE_DIR$/testing/shared/packages/ag-grid-community/dist" />
       <excludeFolder url="file://$MODULE_DIR$/testing/performance/packages/ag-grid-community/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/testing/shared/community-modules/locale/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/.github" />
-      <excludeFolder url="file://$MODULE_DIR$/.run" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules" />
-      <excludeFolder url="file://$MODULE_DIR$/documentation" />
-      <excludeFolder url="file://$MODULE_DIR$/external" />
-      <excludeFolder url="file://$MODULE_DIR$/patches" />
-      <excludeFolder url="file://$MODULE_DIR$/plugins" />
-      <excludeFolder url="file://$MODULE_DIR$/readme-assets" />
-      <excludeFolder url="file://$MODULE_DIR$/scripts" />
-      <excludeFolder url="file://$MODULE_DIR$/testing" />
     </content>
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
     <content url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
