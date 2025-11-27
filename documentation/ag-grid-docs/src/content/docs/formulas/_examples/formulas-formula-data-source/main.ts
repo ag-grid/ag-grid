@@ -67,9 +67,6 @@ const gridOptions: GridOptions<RowData> = {
     },
     // Store formulas externally so rowData stays raw
     formulaDataSource: {
-        hasFormula: ({ column, rowNode }) => {
-            return formulaStore.has(formulaKey(rowNode.id!, column.getColId()));
-        },
         getFormula: ({ column, rowNode }) => {
             return formulaStore.get(formulaKey(rowNode.id!, column.getColId()));
         },

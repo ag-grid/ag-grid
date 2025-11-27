@@ -25,23 +25,9 @@ export class FormulaDataService extends BeanStub implements IFormulaDataService,
         return this.hasSource;
     }
 
-    public hasFormula(params: GetFormulaParams): boolean {
-        const { dataSource } = this;
-        if (!dataSource) {
-            return false;
-        }
-
-        if (dataSource.hasFormula) {
-            return dataSource.hasFormula(params);
-        }
-
-        const formula = dataSource.getFormula?.(params);
-
-        return _isExpressionString(formula);
-    }
-
     public getFormula(params: GetFormulaParams): string | undefined {
-        return this.dataSource?.getFormula?.(params);
+        const formula = this.dataSource?.getFormula(params);
+        return _isExpressionString(formula) ? formula : undefined;
     }
 
     public setFormula(params: SetFormulaParams): void {
