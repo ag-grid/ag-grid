@@ -35,4 +35,14 @@ ignore:
                   Glob is only used for development and we control what files are passed in
               expires: 2025-12-08T12:00:00.000Z
               created: 2025-11-20T10:29:00.007Z
+    SNYK-JS-NODEFORGE-14114940:
+        - '@angular-devkit/build-angular@18.2.21 > webpack-dev-server@5.2.2 > selfsigned@2.4.1 > node-forge@1.3.1':
+              reason: Only used for dev server
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-11-27T11:45:00.007Z
+    SNYK-JS-NODEFORGE-14125745:
+        - '@angular-devkit/build-angular@18.2.21 > webpack-dev-server@5.2.2 > selfsigned@2.4.1 > node-forge@1.3.1':
+              reason: Only used for dev server
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-11-27T11:45:00.007Z
 patch: {}
