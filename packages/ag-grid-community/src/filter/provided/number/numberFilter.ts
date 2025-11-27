@@ -41,6 +41,9 @@ export class NumberFilter extends SimpleFilter<
         const { numberFormatter } = this.params;
         const valueToSet = !fromFloatingFilter && numberFormatter ? numberFormatter(value ?? null) : value;
         super.setElementValue(element, valueToSet as any);
+        if (valueToSet === null) {
+            element.setCustomValidity('');
+        }
     }
 
     protected createEValue(): HTMLElement {

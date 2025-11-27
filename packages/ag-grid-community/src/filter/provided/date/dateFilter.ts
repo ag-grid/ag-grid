@@ -145,6 +145,9 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
     protected override setElementValue(element: DateCompWrapper, value: Date | null): void {
         element.setDate(value);
+        if (!value) {
+            element.setCustomValidity('');
+        }
     }
 
     protected override setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
