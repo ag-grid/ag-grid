@@ -9,11 +9,11 @@
     mask-image: url('./balham-svg-icons/arrows.svg');
 }
 
-.ag-icon-asc:before {
+.ag-icon-asc::before {
     mask-image: url('./balham-svg-icons/asc.svg');
 }
 
-.ag-icon-aasc:before {
+.ag-icon-aasc::before {
     mask-image: url('./balham-svg-icons/aasc.svg');
 }
 
@@ -53,11 +53,11 @@
     mask-image: url('./balham-svg-icons/cut.svg');
 }
 
-.ag-icon-desc:before {
+.ag-icon-desc::before {
     mask-image: url('./balham-svg-icons/desc.svg');
 }
 
-.ag-icon-adesc:before {
+.ag-icon-adesc::before {
     mask-image: url('./balham-svg-icons/adesc.svg');
 }
 
