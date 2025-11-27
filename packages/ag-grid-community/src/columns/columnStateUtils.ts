@@ -119,7 +119,10 @@ export function _applyColumnState(
             beans,
             column,
             getValue('hide').value1,
-            _getSortDefFromInput({ type: getValue('sortType').value1, direction: getValue('sort').value1 }),
+            {
+                type: _normalizeSortType(getValue('sortType').value1),
+                direction: _normalizeSortDirection(getValue('sort').value1),
+            },
             getValue('sortIndex').value1,
             getValue('pinned').value1,
             flex,
@@ -465,7 +468,6 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        const { direction: sort, type: sortType } = column.getSortDef() || {};
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
         res.push({
@@ -473,8 +475,8 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             width: column.getActualWidth(),
             hide: !column.isVisible(),
             pinned: column.getPinned(),
-            sort,
-            sortType,
+            sort: column.getSort(),
+            sortType: column.getSortDef()?.type,
             sortIndex,
             aggFunc,
             rowGroup: column.isRowGroupActive(),
