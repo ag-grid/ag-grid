@@ -58,12 +58,35 @@ export const getAllRows = (api: GridApi | null | undefined): RowNode[] => {
     return rows;
 };
 
-function collectAllNodes(api: GridApi, includeSiblings: boolean): Set<IRowNode> {
+function validateNodeState(node: IRowNode, context: string): void {
+    if (node.destroyed) {
+        throw new Error(`[${context}] Row node ${rowIdAndIndexToString(node)} is destroyed`);
+    }
+
+    const sibling = node.sibling;
+    if (sibling) {
+        if (sibling === node) {
+            throw new Error(`[${context}] Row node ${rowIdAndIndexToString(node)} cannot be its own sibling`);
+        }
+        if (sibling.sibling !== node) {
+            throw new Error(
+                `[${context}] Row node ${rowIdAndIndexToString(node)} sibling ${rowIdAndIndexToString(sibling)} does not point back to the original row`
+            );
+        }
+        if (!!node.footer === !!sibling.footer) {
+            throw new Error(
+                `[${context}] Row node ${rowIdAndIndexToString(node)} and sibling ${rowIdAndIndexToString(sibling)} both report footer=${node.footer}`
+            );
+        }
+    } else if (node.footer) {
+        throw new Error(`[${context}] Footer row ${rowIdAndIndexToString(node)} does not have a header sibling`);
+    }
+}
+
+function collectAllNodes(api: GridApi, includeSiblings: boolean, context: string): Set<IRowNode> {
     const rows = new Set<IRowNode<any>>();
     const addNode = (node: IRowNode) => {
-        if (node.destroyed) {
-            throw new Error(`Row node ${rowIdAndIndexToString(node)} is destroyed`);
-        }
+        validateNodeState(node, context);
         rows.add(node as RowNode);
     };
     api?.forEachNode(addNode);
@@ -71,15 +94,17 @@ function collectAllNodes(api: GridApi, includeSiblings: boolean): Set<IRowNode> 
     if (includeSiblings) {
         for (const node of Array.from(rows)) {
             const sibling = node.sibling;
+
             if (sibling) {
-                rows.add(sibling);
-                if (sibling.sibling !== node) {
-                    throw new Error(
-                        `Row node ${rowIdAndIndexToString(sibling)} sibling does not point back to original node ${rowIdAndIndexToString(
-                            node
-                        )}`
-                    );
+                if (rows.has(sibling)) {
+                    continue;
                 }
+                rows.add(sibling);
+                validateNodeState(sibling, context);
+            } else if (node.footer) {
+                throw new Error(
+                    `[${context}] Footer row ${rowIdAndIndexToString(node)} lost its header sibling reference`
+                );
             }
         }
     }
@@ -90,11 +115,11 @@ export class DestroyedRowNodesChecker {
     private readonly originalNodes: Set<IRowNode>;
 
     public constructor(private readonly api: GridApi) {
-        this.originalNodes = collectAllNodes(api, true);
+        this.originalNodes = collectAllNodes(api, true, 'initial scan');
     }
 
     public check(): void {
-        const newRowsSet = collectAllNodes(this.api, true);
+        const newRowsSet = collectAllNodes(this.api, true, 'post-change scan');
         for (const originalNode of this.originalNodes) {
             if (newRowsSet.has(originalNode)) {
                 continue;

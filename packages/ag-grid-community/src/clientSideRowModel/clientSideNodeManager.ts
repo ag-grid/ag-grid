@@ -226,16 +226,17 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
             if (sourceRowIndex > filterEndIdx) {
                 filterEndIdx = sourceRowIndex;
             }
-            if (this.destroyNode(rowNode)) {
-                if (rowNode.isSelected()) {
-                    nodesToUnselect.push(rowNode);
-                }
-                if (!adds.delete(rowNode)) {
-                    updates.delete(rowNode);
-                    removals.push(rowNode);
-                }
-            }
             removedResult[removeCount++] = rowNode;
+            if (!this.destroyNode(rowNode)) {
+                continue;
+            }
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+            if (!adds.delete(rowNode)) {
+                updates.delete(rowNode);
+                removals.push(rowNode);
+            }
         }
         removedResult.length = removeCount;
         if (removeCount) {
