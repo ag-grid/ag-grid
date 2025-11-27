@@ -8,7 +8,7 @@ type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: stri
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div class="ag-overlay-loading-center" role="presentation">
+        <div class="overlay-loading-center" role="presentation">
             <div
                 role="presentation"
                 style="width: 100px; height: 100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"

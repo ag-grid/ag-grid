@@ -9,7 +9,7 @@ export class CustomNoRowsOverlay implements INoRowsOverlayComp {
     init(params: CustomNoRowsOverlayParams) {
         this.eGui = document.createElement('div');
         const overlay = document.createElement('div');
-        overlay.className = 'ag-overlay-loading-center';
+        overlay.className = 'overlay-loading-center';
         overlay.setAttribute('role', 'presentation');
         overlay.style.backgroundColor = '#b4bebe';
 

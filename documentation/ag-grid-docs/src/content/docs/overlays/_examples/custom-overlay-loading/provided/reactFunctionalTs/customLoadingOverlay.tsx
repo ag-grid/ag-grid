@@ -4,7 +4,7 @@ import type { CustomLoadingOverlayProps } from 'ag-grid-react';
 
 export default (props: CustomLoadingOverlayProps & { loadingMessage: string }) => {
     return (
-        <div className="ag-overlay-loading-center" role="presentation">
+        <div className="overlay-loading-center" role="presentation">
             <div
                 role="presentation"
                 className="custom-loading-overlay"
