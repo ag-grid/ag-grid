@@ -191,7 +191,7 @@ describe('ag-grid overlays no matching rows', () => {
                 columnDefs: [...columnDefs, { field: 'country' }],
                 rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23, country: 'USA' }],
                 loading: true,
-                suppressOverlays: ['agNoRowsOverlay'],
+                suppressOverlays: ['noRows'],
             });
 
             api.setFilterModel({ athlete: { type: 'contains', filter: 'Nonexistent' } });
@@ -200,14 +200,14 @@ describe('ag-grid overlays no matching rows', () => {
             expect(hasNoMatchingRowsOverlay()).toBeFalsy();
         });
 
-        test('no matching rows overlay is not shown when suppressOverlays has agNoMatchingRowsOverlay', async () => {
+        test('no matching rows overlay is not shown when suppressOverlays has noMatchingRows', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [...columnDefs, { field: 'country' }],
                 rowData: [
                     { athlete: 'Michael Phelps', sport: 'Swimming', age: 23, country: 'USA' },
                     { athlete: 'Emma Thompson', sport: 'Tennis', age: 25, country: 'UK' },
                 ],
-                suppressOverlays: ['agNoMatchingRowsOverlay'],
+                suppressOverlays: ['noMatchingRows'],
             });
 
             api.setFilterModel({ athlete: { type: 'contains', filter: 'Nonexistent' } });

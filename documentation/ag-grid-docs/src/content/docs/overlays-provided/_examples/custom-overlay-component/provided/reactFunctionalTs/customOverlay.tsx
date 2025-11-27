@@ -5,15 +5,15 @@ import type { CustomOverlayProps } from 'ag-grid-react';
 export default (props: CustomOverlayProps & { loadingMessage: string; noRowsMessage: string }) => {
 
     let message = '';
-    if (props.defaultOverlay === 'agLoadingOverlay') {
+    if (props.overlayType === 'loading') {
         message = props.loadingMessage;
-    } else if (props.defaultOverlay === 'agNoRowsOverlay') {
+    } else if (props.overlayType === 'noRows') {
         message = props.noRowsMessage;
     }
 
     return (
         <div className="overlay-center" role="presentation">
-            {props.defaultOverlay === 'agLoadingOverlay' ? <div
+            {props.overlayType === 'loading' ? <div
                 role="presentation"
                 className="custom-loading-overlay"
                 style={{

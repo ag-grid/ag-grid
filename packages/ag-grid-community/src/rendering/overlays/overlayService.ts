@@ -6,14 +6,17 @@ import { _addGridCommonParams, _isClientSideRowModel, _isServerSideRowModel } fr
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
-import type { AgOverlayType } from './overlayComponent';
+import type { OverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
 
 const overlayCompTypeOptionalMethods = ['refresh'];
 const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
 
+type OverlayCompType = 'agLoadingOverlay' | 'agNoRowsOverlay' | 'agNoMatchingRowsOverlay' | 'activeOverlay';
+
 type OverlayDef = Readonly<{
-    id: AgOverlayType | 'activeOverlay';
+    id: OverlayCompType;
+    overlayType?: OverlayType;
     comp: ComponentType;
     wrapperCls: string;
     exclusive?: boolean;
@@ -25,6 +28,7 @@ type OverlayDef = Readonly<{
 
 const LoadingOverlayDef: OverlayDef = {
     id: 'agLoadingOverlay',
+    overlayType: 'loading',
     comp: overlayCompType('loadingOverlayComponent'),
     wrapperCls: 'ag-overlay-loading-wrapper',
     exclusive: true,
@@ -38,6 +42,7 @@ const LoadingOverlayDef: OverlayDef = {
 
 const NoRowsOverlayDef: OverlayDef = {
     id: 'agNoRowsOverlay',
+    overlayType: 'noRows',
     comp: overlayCompType('noRowsOverlayComponent'),
     wrapperCls: 'ag-overlay-no-rows-wrapper',
     compKey: 'noRowsOverlayComponent',
@@ -47,6 +52,7 @@ const NoRowsOverlayDef: OverlayDef = {
 
 const NoMatchingRowsOverlayDef: OverlayDef = {
     id: 'agNoMatchingRowsOverlay',
+    overlayType: 'noMatchingRows',
     comp: overlayCompType('noMatchingRowsOverlayComponent'),
     wrapperCls: 'ag-overlay-no-matching-rows-wrapper',
 };
@@ -204,9 +210,9 @@ export class OverlayService extends BeanStub implements NamedBean {
                 changedProps.has('overlayComponentParams') ||
                 (paramsKey && changedProps.has(paramsKey))
             ) {
-                const defaultOverlay = !activeOverlayParamsChanged ? currentDef.id : undefined;
+                const overlayCompType = !activeOverlayParamsChanged ? currentDef.overlayType : undefined;
                 activeOverlay.refresh?.(
-                    this.makeCompParams(currentDef.id === 'activeOverlay', paramsKey, defaultOverlay)
+                    this.makeCompParams(currentDef.id === 'activeOverlay', paramsKey, overlayCompType)
                 );
             }
         }
@@ -230,7 +236,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 const compDetails = this.beans.userCompFactory.getCompDetailsFromGridOptions(
                     { name: 'overlayComponent', optionalMethods: ['refresh'] },
                     undefined,
-                    this.makeCompParams(false, desiredDef.paramsKey, desiredDef.id)
+                    this.makeCompParams(false, desiredDef.paramsKey, desiredDef.overlayType)
                 );
                 if (compDetails) {
                     desiredDef = { ...desiredDef, overriddenComp: compDetails };
@@ -346,7 +352,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             beans.userCompFactory.getCompDetailsFromGridOptions(
                 componentDef.comp,
                 componentDef === CustomOverlayDef ? undefined : componentDef.id,
-                this.makeCompParams(componentDef.id === 'activeOverlay', legacyParamsKey, componentDef.id),
+                this.makeCompParams(componentDef.id === 'activeOverlay', legacyParamsKey, componentDef.overlayType),
                 false,
                 true
             );
@@ -360,7 +366,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private makeCompParams(
         includeActiveOverlayParams: boolean,
         legacyParamsKey?: keyof GridOptions,
-        defaultOverlay?: string
+        overlayType?: OverlayType
     ): any {
         const { gos } = this;
 
@@ -369,7 +375,7 @@ export class OverlayService extends BeanStub implements NamedBean {
             : {
                   ...gos.get('overlayComponentParams'),
                   ...((legacyParamsKey && gos.get(legacyParamsKey)) || null),
-                  defaultOverlay,
+                  overlayType,
               };
 
         return _addGridCommonParams(gos, params ?? {});
@@ -401,9 +407,11 @@ export class OverlayService extends BeanStub implements NamedBean {
     private isDisabled(def: OverlayDef): boolean {
         const { gos } = this;
 
-        const viaSuppressOverlays = (gos.get('suppressOverlays') ?? []).includes(def.id as AgOverlayType);
-        if (viaSuppressOverlays) {
-            return true;
+        if (def.overlayType) {
+            const viaSuppressOverlays = (gos.get('suppressOverlays') ?? []).includes(def.overlayType);
+            if (viaSuppressOverlays) {
+                return true;
+            }
         }
 
         return def.isSuppressed?.(gos) === true;

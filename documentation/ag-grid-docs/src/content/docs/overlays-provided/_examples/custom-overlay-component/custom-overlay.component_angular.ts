@@ -10,7 +10,7 @@ type CustomOverlayParams = IOverlayParams & { loadingMessage: string; noRowsMess
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="overlay-center" role="presentation">
-            @if (params()?.defaultOverlay === 'agLoadingOverlay') {
+            @if (params()?.overlayType === 'loading') {
                 <div
                     role="presentation"
                     style="width: 100px; height: 100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"
@@ -32,9 +32,9 @@ export class CustomOverlay implements IOverlayAngularComp {
         this.params.set(params);
 
         let message = '';
-        if (params.defaultOverlay === 'agLoadingOverlay') {
+        if (params.overlayType === 'loading') {
             message = params.loadingMessage;
-        } else if (params.defaultOverlay === 'agNoRowsOverlay') {
+        } else if (params.overlayType === 'noRows') {
             message = params.noRowsMessage;
         }
 

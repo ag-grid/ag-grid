@@ -1,7 +1,6 @@
 /* eslint-disable no-duplicate-imports */
 // @START_IMPORTS@
 import type {
-    AgOverlayType,
     AlignedGrid,
     AutoGroupColumnDef,
     AutoSizeStrategy,
@@ -65,6 +64,7 @@ import type {
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     OverlaySelectorFunc,
+    OverlayType,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     PostSortRowsParams,
@@ -834,7 +834,7 @@ export interface Props<TData> {
          */
     loadingOverlayComponentParams?: any,
     /** Disables the 'loading' overlay.
-         * @deprecated v32 - Deprecated. Use `suppressOverlays=['agLoadingOverlay']` or `loading=false` instead.
+         * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
          * @default false
          * @initial
          */
@@ -856,21 +856,21 @@ export interface Props<TData> {
     noRowsOverlayComponentParams?: any,
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
          *
-         *     **Prefer `suppressOverlays=['agNoRowsOverlay']`instead.**
+         *     **Prefer `suppressOverlays=['noRows']`instead.**
          *
          * @default false
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
-    /** List of provided overlay names to suppress.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`.
          */
-    suppressOverlays?: AgOverlayType[],
+    suppressOverlays?: OverlayType[],
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
          * @initial
          */
     overlayComponent?: any,
     /** Customise the parameters provided to the `overlayComponent`.
-         * Provided overlays accept parameters specified on the `OverlayUserParams` interface.
+         * Provided overlays accept parameters specified on the `OverlayComponentUserParams` interface.
          * Any custom parameters can also be provided for custom overlay components.
          */
     overlayComponentParams?: any,

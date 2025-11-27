@@ -12,7 +12,7 @@ export class CustomOverlay implements IOverlayComp {
         overlay.className = 'overlay-center';
         overlay.setAttribute('role', 'presentation');
 
-        if (params.defaultOverlay === 'agLoadingOverlay') {
+        if (params.overlayType === 'loading') {
             const spinner = document.createElement('div');
             spinner.setAttribute('role', 'presentation');
             spinner.style.height = '100px';
@@ -45,9 +45,9 @@ export class CustomOverlay implements IOverlayComp {
         }
 
         let message = '';
-        if (params.defaultOverlay === 'agLoadingOverlay') {
+        if (params.overlayType === 'loading') {
             message = params.loadingMessage;
-        } else if (params.defaultOverlay === 'agNoRowsOverlay') {
+        } else if (params.overlayType === 'noRows') {
             message = params.noRowsMessage;
         }
 

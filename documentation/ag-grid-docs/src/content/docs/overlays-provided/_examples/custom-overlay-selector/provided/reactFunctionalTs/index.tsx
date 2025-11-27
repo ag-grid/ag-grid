@@ -44,7 +44,7 @@ const GridExample = () => {
     const [loading, setLoading] = useState(true);
 
     const overlayComponentSelector = useCallback((params: IOverlayParams) => {
-        if (params.defaultOverlay === 'agLoadingOverlay') {
+        if (params.overlayType === 'loading') {
             return {
                 component: CustomLoadingOverlay,
                 params: {

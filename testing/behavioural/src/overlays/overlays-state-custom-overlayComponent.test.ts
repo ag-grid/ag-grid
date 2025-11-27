@@ -47,11 +47,11 @@ describe('ag-grid overlayComponent', () => {
             columnDefs,
 
             overlayComponentSelector: (params) => {
-                if (params.defaultOverlay === 'agLoadingOverlay') {
+                if (params.overlayType === 'loading') {
                     return {
                         component: makeOverlayComp(capturedParams, 'my-custom-loading-overlay'),
                     };
-                } else if (params.defaultOverlay === 'agNoRowsOverlay') {
+                } else if (params.overlayType === 'noRows') {
                     return {
                         component: makeOverlayComp(capturedParams, 'my-custom-no-rows-overlay'),
                     };
@@ -89,7 +89,7 @@ describe('ag-grid overlayComponent', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             overlayComponentSelector: (params) => {
-                if (params.defaultOverlay === 'agLoadingOverlay') {
+                if (params.overlayType === 'loading') {
                     return {
                         component: makeOverlayComp(capturedParams, 'my-resolve-loader'),
                         params: { fromTest: 'loadingParam' },
@@ -128,11 +128,11 @@ describe('ag-grid overlayComponent', () => {
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
         expect(document.querySelector('.my-resolve-loader')).toBeTruthy();
         expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam');
-        expect(capturedParams['my-resolve-loader']?.defaultOverlay).toBe('agLoadingOverlay');
+        expect(capturedParams['my-resolve-loader']?.overlayType).toBe('loading');
         // update specific loading params should refresh the component
         api.setGridOption('overlayComponentParams', { fromTest: 'loadingParam2' });
         expect(capturedParams['my-resolve-loader']?.fromTest).toBe('loadingParam2');
-        expect(capturedParams['my-resolve-loader']?.defaultOverlay).toBe('agLoadingOverlay');
+        expect(capturedParams['my-resolve-loader']?.overlayType).toBe('loading');
     });
 
     test('activeOverlay that resolves to a built in loading overlay triggers the overlayComponentSelector', () => {
@@ -140,7 +140,7 @@ describe('ag-grid overlayComponent', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs,
             overlayComponentSelector: (params) => {
-                if (params.defaultOverlay === 'agLoadingOverlay') {
+                if (params.overlayType === 'loading') {
                     return {
                         component: makeOverlayComp(capturedParams, 'my-resolve-loader'),
                         params: { fromTest: 'loadingParam' },
@@ -162,7 +162,7 @@ describe('ag-grid overlayComponent', () => {
         gridsManager.createGrid('myGrid', {
             columnDefs,
             overlayComponentSelector: (params) => {
-                if (params.defaultOverlay === 'agNoRowsOverlay') {
+                if (params.overlayType === 'noRows') {
                     return {
                         component: makeOverlayComp(capturedParams, 'my-resolve-no-rows'),
                     };
@@ -341,11 +341,11 @@ describe('ag-grid overlayComponent', () => {
             },
 
             overlayComponentSelector: (params) => {
-                if (params.defaultOverlay === 'agNoRowsOverlay') {
+                if (params.overlayType === 'noRows') {
                     return {
                         component: 'customNoRowsKey',
                     };
-                } else if (params.defaultOverlay === 'agLoadingOverlay') {
+                } else if (params.overlayType === 'loading') {
                     return {
                         component: 'customLoaderKey',
                     };
@@ -382,7 +382,7 @@ describe('ag-grid overlayComponent', () => {
             },
 
             overlayComponentSelector: (params) => {
-                if (params.defaultOverlay === 'agLoadingOverlay') {
+                if (params.overlayType === 'loading') {
                     return {
                         component: 'customLoaderKey2',
                     };
@@ -410,10 +410,10 @@ describe('ag-grid overlayComponent', () => {
         expect(capturedParams['my-custom-no-rows-key-1']).toBeDefined();
     });
 
-    test('suppressOverlays: [agLoadingOverlay] does not disables loading overlay forced via activeOverlay', () => {
+    test('suppressOverlays: [loading] does not disables loading overlay forced via activeOverlay', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
-            suppressOverlays: ['agLoadingOverlay'],
+            suppressOverlays: ['loading'],
         });
 
         expect(hasLoadingOverlay()).toBeFalsy();
@@ -429,12 +429,12 @@ describe('ag-grid overlayComponent', () => {
         expect(hasLoadingOverlayWrapper()).toBeTruthy();
     });
 
-    test('suppressOverlays: [agNoRowsOverlay] disables no-rows overlay unless forced via activeOverlay', () => {
+    test('suppressOverlays: [noRows] disables no-rows overlay unless forced via activeOverlay', () => {
         expect(document.querySelector('.my-custom-no-rows-overlay1')).toBeFalsy();
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
             rowData: [],
-            suppressOverlays: ['agNoRowsOverlay'],
+            suppressOverlays: ['noRows'],
         });
 
         expect(hasNoRowsOverlay()).toBeFalsy();

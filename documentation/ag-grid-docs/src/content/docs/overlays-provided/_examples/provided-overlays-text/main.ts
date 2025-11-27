@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, OverlayComponentUserParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -27,11 +27,10 @@ const gridOptions: GridOptions<IAthlete> = {
     },
     columnDefs: [{ field: 'athlete' }, { field: 'country' }],
     overlayComponentParams: {
-        // Override the default text for provided overlays
-        agLoadingOverlayText: 'Please wait while your data is loading...',
-        agNoRowsOverlayText: 'This grid has no data!',
-        agNoMatchingRowsOverlayText: 'Current Filter Matches No Rows',
-    },
+        loading: { overlayText: 'Please wait while your data is loading...' },
+        noRows: { overlayText: 'This grid has no data!' },
+        noMatchingRows: { overlayText: 'Current Filter Matches No Rows' },
+    } satisfies OverlayComponentUserParams,
 };
 
 function setLoading(value: boolean) {

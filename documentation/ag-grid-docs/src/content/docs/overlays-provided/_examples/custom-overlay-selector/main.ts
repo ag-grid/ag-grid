@@ -7,6 +7,7 @@ import {
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
+import type { IOverlayParams } from 'ag-grid-community';
 
 import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
 
@@ -44,8 +45,8 @@ const gridOptions: GridOptions<IAthlete> = {
     columnDefs: columnDefs,
     rowData,
 
-    overlayComponentSelector: (params) => {
-        if (params.defaultOverlay === 'agLoadingOverlay') {
+    overlayComponentSelector: (params: IOverlayParams) => {
+        if (params.overlayType === 'loading') {
             return {
                 component: CustomLoadingOverlay,
                 params: {

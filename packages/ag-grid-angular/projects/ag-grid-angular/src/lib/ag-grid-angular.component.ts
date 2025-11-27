@@ -19,7 +19,6 @@ import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 // @START_IMPORTS@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AgOverlayType,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
     AutoGroupColumnDef,
@@ -150,6 +149,7 @@ import type {
     NavigateToNextHeaderParams,
     NewColumnsLoadedEvent,
     OverlaySelectorFunc,
+    OverlayType,
     PaginationChangedEvent,
     PaginationNumberFormatterParams,
     PasteEndEvent,
@@ -1014,7 +1014,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
-     * @deprecated v32 - Deprecated. Use `suppressOverlays=['agLoadingOverlay']` or `loading=false` instead.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
      * @default false
      * @initial
      */
@@ -1036,21 +1036,21 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      *
-     *     **Prefer `suppressOverlays=['agNoRowsOverlay']`instead.**
+     *     **Prefer `suppressOverlays=['noRows']`instead.**
      *
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
-    /** List of provided overlay names to suppress.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`.
      */
-    @Input() public suppressOverlays: AgOverlayType[] | undefined = undefined;
+    @Input() public suppressOverlays: OverlayType[] | undefined = undefined;
     /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
      * @initial
      */
     @Input() public overlayComponent: any = undefined;
     /** Customise the parameters provided to the `overlayComponent`.
-     * Provided overlays accept parameters specified on the `OverlayUserParams` interface.
+     * Provided overlays accept parameters specified on the `OverlayComponentUserParams` interface.
      * Any custom parameters can also be provided for custom overlay components.
      */
     @Input() public overlayComponentParams: any = undefined;

@@ -3,28 +3,29 @@ import type {
     INoMatchingRowsOverlayParams,
     IOverlay,
     IOverlayComp,
-    NoMatchingRowsOverlayUserParams,
+    IOverlayParams,
+    OverlayComponentUserParams,
 } from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
 export interface INoMatchingRowsOverlay<TData = any, TContext = any>
-    extends IOverlay<TData, TContext, INoMatchingRowsOverlayParams> {}
-
+    extends IOverlay<TData, TContext, INoMatchingRowsOverlayParams<TData, TContext>> {}
 export interface INoMatchingRowsOverlayComp<TData = any, TContext = any>
     extends IOverlayComp<TData, TContext, INoMatchingRowsOverlayParams<TData, TContext>> {}
+
 const NoMatchingRowsOverlayElement: ElementParams = { tag: 'span', cls: 'ag-overlay-no-matching-rows-center' };
 
 export class NoMatchingRowsOverlayComponent
-    extends OverlayComponent<any, any, INoMatchingRowsOverlayParams & NoMatchingRowsOverlayUserParams>
+    extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements INoMatchingRowsOverlayComp<any, any>
 {
-    public init(params: INoMatchingRowsOverlayParams & NoMatchingRowsOverlayUserParams): void {
+    public init(params: IOverlayParams & OverlayComponentUserParams): void {
         const { beans } = this;
 
         this.setTemplate(NoMatchingRowsOverlayElement);
 
         const noRowsText =
-            params.agNoMatchingRowsOverlayText ?? this.getLocaleTextFunc()('noMatchingRows', 'No Matching Rows');
+            params.noMatchingRows?.overlayText ?? this.getLocaleTextFunc()('noMatchingRows', 'No Matching Rows');
         this.getGui().textContent = noRowsText;
 
         beans.ariaAnnounce.announceValue(noRowsText, 'overlay');

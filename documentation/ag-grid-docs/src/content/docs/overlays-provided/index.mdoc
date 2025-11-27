@@ -41,17 +41,17 @@ The provided overlays can be customised to change their content or completely re
 
 ### Text Customisation
 
-Customise the text within the provided overlays via the `overlayComponentParams` grid option using the `OverlayUserParams` interface.
+Customise the text within the provided overlays via the `overlayComponentParams` grid option using the `OverlayComponentUserParams` interface.
 
-{% interfaceDocumentation interfaceName="OverlayUserParams" config={"asCode":false } /%}
+{% interfaceDocumentation interfaceName="OverlayComponentUserParams" config={"asCode":false } /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     overlayComponentParams: {
-        agLoadingOverlayText: 'Please wait while your data is loading...',
-        agNoRowsOverlayText: 'This grid has no data!',
-        agNoMatchingRowsOverlayText: 'Current Filter Matches No Rows',
-    },
+        loading: { overlayText: 'Please wait while your data is loading...' },
+        noRows: { overlayText: 'This grid has no data!' },
+        noMatchingRows: { overlayText: 'Current Filter Matches No Rows' },
+    } satisfies OverlayComponentUserParams,
 };
 ```
 
@@ -102,9 +102,9 @@ const gridOptions = {
 
 ### Overlay Component Selector
 
-Dynamically provide custom overlay components for each provided overlay via the `overlayComponentSelector(params)` callback. The `params.defaultOverlay` property can be used to selectively override each overlay type. Custom parameters can be supplied via the `params` property alongside the custom `component`.
+Dynamically provide custom overlay components for each provided overlay via the `overlayComponentSelector(params)` callback. The `params.overlayType` property can be used to selectively override each overlay type. Custom parameters can be supplied via the `params` property alongside the custom `component`.
 
-Returning `undefined` from the selector will fallback to the overlay specified in `params.defaultOverlay`.
+Returning `undefined` from the selector will fallback to the overlay specified in `params.overlayType`.
 
 The `component` property also accepts the string keys of components registered via the `components` map.
 
@@ -113,7 +113,7 @@ The `component` property also accepts the string keys of components registered v
 ```{% frameworkTransform=true %}
 const gridOptions = {
     overlayComponentSelector: (params) => {
-        if (params.defaultOverlay === 'agLoadingOverlay') {
+        if (params.overlayType === 'loading') {
             return {
                 component: CustomLoadingOverlay,
                 params: {
@@ -132,7 +132,7 @@ const gridOptions = {
 
 ### Combined Overlay Component
 
-Provide a custom component to `overlayComponent` to be used in place of all the provided overlays. The custom component receives a `defaultOverlay` parameter which identifies which of the provided overlays should be displayed. This can be used to conditionally render different content based on the overlay type.
+Provide a custom component to `overlayComponent` to be used in place of all the provided overlays. The custom component receives a `overlayType` parameter which identifies which of the provided overlays should be displayed. This can be used to conditionally render different content based on the overlay type.
 
 Custom parameters can be supplied to the overlay component via the `overlayComponentParams` grid option.
 

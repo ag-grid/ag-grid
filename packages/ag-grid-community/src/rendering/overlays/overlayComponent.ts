@@ -2,55 +2,49 @@ import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 
-export type AgOverlayType = 'agLoadingOverlay' | 'agNoRowsOverlay' | 'agNoMatchingRowsOverlay';
+export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows';
 
-export interface LoadingOverlayUserParams {
+export interface ProvidedOverlayUserParams {
     /**
-     * User provided custom text for the `agLoadingOverlay` supplied via `overlayComponentParams`.
+     * Override the default text of the provided overlay.
      */
-    agLoadingOverlayText?: string;
+    overlayText?: string;
 }
+
+export interface LoadingOverlayUserParams extends ProvidedOverlayUserParams {}
+export interface NoRowsOverlayUserParams extends ProvidedOverlayUserParams {}
+export interface NoMatchingRowsOverlayUserParams extends ProvidedOverlayUserParams {}
 
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * The default overlay the grid would show in the given state.
      */
-    defaultOverlay: 'agLoadingOverlay';
-}
-
-export interface NoRowsOverlayUserParams {
-    /**
-     * User provided custom text for the `agNoRowsOverlay` supplied via `overlayComponentParams`.
-     */
-    agNoRowsOverlayText?: string;
+    overlayType: 'loading';
 }
 export interface INoRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * The default overlay the grid would show in the given state.
      */
-    defaultOverlay: 'agNoRowsOverlay';
+    overlayType: 'noRows';
 }
 
-export interface NoMatchingRowsOverlayUserParams {
-    /**
-     * User provided custom text for the `agNoMatchingRowsOverlay` supplied via `overlayComponentParams`.
-     */
-    agNoMatchingRowsOverlayText?: string;
-}
 export interface INoMatchingRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * The default overlay the grid would show in the given state.
      */
-    defaultOverlay: 'agNoMatchingRowsOverlay';
+    overlayType: 'noMatchingRows';
 }
 
 /**
  * Parameters available to configure the provided overlays.
  */
-export interface OverlayUserParams
-    extends NoRowsOverlayUserParams,
-        LoadingOverlayUserParams,
-        NoMatchingRowsOverlayUserParams {}
+export type OverlayComponentUserParams = {
+    [K in OverlayType]?: K extends 'loading'
+        ? LoadingOverlayUserParams
+        : K extends 'noRows'
+          ? NoRowsOverlayUserParams
+          : NoMatchingRowsOverlayUserParams;
+};
 
 export type IOverlayParams<TData = any, TContext = any> =
     | ILoadingOverlayParams<TData, TContext>

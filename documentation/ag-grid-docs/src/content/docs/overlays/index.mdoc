@@ -14,17 +14,22 @@ This page documents the legacy approach to handling overlays. For the latest doc
 
 Show or hide the loading overlay by setting the `loading` property to `true` or `false`.
 
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["loading"] /%}
+
 The loading overlay takes precedence over the no-rows overlay and is not dependent of the state of `rowData`.
 
 {% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=350 /%}
 
 ## No rows overlay
 
-When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay. The no-rows overlay can also be programmatically shown / hidden via the grid API methods `showNoRowsOverlay()` and `hideOverlay()`.
+When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay. The no-rows overlay can also be programmatically shown / hidden via the grid API.
+
+{% apiDocumentation source="grid-api/api.json" section="overlays" names=["showNoRowsOverlay", "hideOverlay"] /%}
 
 The automatic displaying of the no-rows overlay can be suppressed by setting `suppressNoRowsOverlay` to `true`.
 
 {% gridExampleRunner title="No Rows Overlay" name="no-rows-overlay"  exampleHeight=350 /%}
+
 
 
 ## Initial loading overlay
@@ -39,6 +44,8 @@ Overlays can be customised by providing either a HTML string or custom component
 ### Custom Loading Overlay
 
 The loading overlay can be customised via the grid properties `overlayLoadingTemplate` or `loadingOverlayComponent` and `loadingOverlayComponentParams`.
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayLoadingTemplate", "loadingOverlayComponent", "loadingOverlayComponentParams"] /%}
 
 {% if isFramework("javascript", "angular") %}
 Implement this interface to provide a custom overlay when data is being loaded.
@@ -67,6 +74,8 @@ This example demonstrates how to provide a custom loading overlay component cust
 ### Custom No Rows Overlay
 
 The no-rows overlay can be customised via the grid properties `overlayNoRowsTemplate` or `noRowsOverlayComponent` and `noRowsOverlayComponentParams`.
+
+{% apiDocumentation source="grid-options/properties.json" section="overlays" names=["overlayNoRowsTemplate", "noRowsOverlayComponent", "noRowsOverlayComponentParams"] /%}
 
 {% if isFramework("javascript", "angular") %}
 Implement this interface to provide a custom overlay when no-rows loaded.

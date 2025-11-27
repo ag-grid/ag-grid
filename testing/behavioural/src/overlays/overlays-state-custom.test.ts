@@ -784,7 +784,7 @@ describe('ag-grid modern overlays state', () => {
                     agNoRowsOverlay: makeOverlayComp({}, 'my-suppress-no-rows'),
                     mySuppressCustom: makeOverlayComp({}, 'my-suppress-custom'),
                 },
-                suppressOverlays: ['agLoadingOverlay', 'agNoRowsOverlay', 'mySuppressCustom'],
+                suppressOverlays: ['loading', 'noRows'],
             });
 
             expect(document.querySelector('.my-suppress-loading')).toBeFalsy();

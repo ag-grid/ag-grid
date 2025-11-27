@@ -909,6 +909,48 @@
                 "name": "Active Overlay",
                 "url": "./overlays-custom/"
             }
+        },
+        "overlayLoadingTemplate": {
+            "more": {
+                "name": "Custom Overlays",
+                "url": "./overlays/#customisation"
+            }
+        },
+        "loadingOverlayComponent": {
+            "more": {
+                "name": "Loading Overlay Component",
+                "url": "./overlays/"
+            }
+        },
+        "loadingOverlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays/"
+            }
+        },
+        "suppressNoRowsOverlay": {
+            "more": {
+                "name": "No rows overlay",
+                "url": "./overlays/#no-rows-overlay"
+            }
+        },
+        "overlayNoRowsTemplate": {
+            "more": {
+                "name": "Custom Overlays",
+                "url": "./overlays/#customisation"
+            }
+        },
+        "noRowsOverlayComponent": {
+            "more": {
+                "name": "No Rows Overlay Component",
+                "url": "./overlays/"
+            }
+        },
+        "noRowsOverlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays/"
+            }
         }
     },
     "nav": {

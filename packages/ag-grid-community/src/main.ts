@@ -750,7 +750,7 @@ export {
 
 // overlays
 export {
-    AgOverlayType,
+    OverlayType,
     ILoadingOverlayParams,
     INoRowsOverlayParams,
     INoMatchingRowsOverlayParams,
@@ -760,7 +760,7 @@ export {
     LoadingOverlayUserParams,
     NoRowsOverlayUserParams,
     NoMatchingRowsOverlayUserParams,
-    OverlayUserParams,
+    OverlayComponentUserParams,
     OverlaySelectorFunc,
     OverlaySelectorResult,
 } from './rendering/overlays/overlayComponent';

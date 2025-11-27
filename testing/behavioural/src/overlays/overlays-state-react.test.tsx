@@ -56,7 +56,7 @@ describe('ag-grid overlays state (react)', () => {
     });
 
     test('react render suppress no-rows via suppressOverlays', () => {
-        render(<AgGridReact columnDefs={columnDefs} rowData={[]} suppressOverlays={['agNoRowsOverlay']} />);
+        render(<AgGridReact columnDefs={columnDefs} rowData={[]} suppressOverlays={['noRows']} />);
         expect(hasNoRowsOverlay()).toBe(false);
 
     });
