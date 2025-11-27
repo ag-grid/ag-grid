@@ -43,7 +43,7 @@ describe('ag-grid tree transactions', () => {
         api.getRowNode('2')!.setSelected(true);
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['dateModified'],
+            columns: [],
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

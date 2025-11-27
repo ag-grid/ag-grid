@@ -3,7 +3,6 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
-import type { GridRowsOptions } from '../test-utils';
 import {
     GridRows,
     TestGridsManager,
@@ -87,11 +86,6 @@ describe('ag-grid row data', () => {
             },
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: ['value'],
-        };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
         await asyncSetTimeout(1);
 
@@ -99,7 +93,7 @@ describe('ag-grid row data', () => {
         expect(modelUpdatedCount).toBe(1);
         expect(compareCalled).toBe(true);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -112,7 +106,7 @@ describe('ag-grid row data', () => {
         api.setGridOption('rowData', rowData2);
         await asyncSetTimeout(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -128,7 +122,7 @@ describe('ag-grid row data', () => {
         await executeTransactionsAsync([{ update: [{ id: '3', value: 300 }] }], api);
         await asyncSetTimeout(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -142,7 +136,7 @@ describe('ag-grid row data', () => {
 
         api.refreshClientSideRowModel('everything');
         await asyncSetTimeout(1);
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -158,7 +152,7 @@ describe('ag-grid row data', () => {
         await executeTransactionsAsync([{ add: [{ id: '7', value: 700 }] }, { remove: [{ id: '4' }] }], api);
         await asyncSetTimeout(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -174,7 +168,7 @@ describe('ag-grid row data', () => {
         await executeTransactionsAsync([{ add: [{ id: '8', value: 8 }] }, { remove: [{ id: '8' }] }], api);
         await asyncSetTimeout(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -190,7 +184,7 @@ describe('ag-grid row data', () => {
         api.updateGridOptions({ suppressModelUpdateAfterUpdateTransaction: false, rowData: rowData3 });
         await asyncSetTimeout(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -205,7 +199,7 @@ describe('ag-grid row data', () => {
         api.updateGridOptions({ suppressModelUpdateAfterUpdateTransaction: false, rowData: rowData4 });
         await asyncSetTimeout(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 value:2
             ├── LEAF id:5 value:5
@@ -226,11 +220,6 @@ describe('ag-grid row data', () => {
             onModelUpdated: () => ++modelUpdated,
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         await asyncSetTimeout(1);
@@ -247,7 +236,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+        await new GridRows(api, 'empty').check('empty');
 
         api.setGridOption('columnDefs', [{ field: 'value' }]);
 
@@ -255,7 +244,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -268,7 +257,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(2);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1 x:10
             ├── LEAF id:2 value:2 x:20
@@ -290,7 +279,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(2);
         expect(modelUpdated).toBe(4);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:10 value:1
             └── LEAF id:4 x:40 value:4
@@ -305,11 +294,6 @@ describe('ag-grid row data', () => {
             getRowId: (params) => params.data.id,
             onRowDataUpdated: () => ++rowDataUpdated,
             onModelUpdated: () => ++modelUpdated,
-        };
-
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -328,7 +312,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+        await new GridRows(api, 'empty').check('empty');
 
         api.setGridOption('columnDefs', [{ field: 'value' }]);
 
@@ -336,7 +320,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
             ├── LEAF id:2 value:2
@@ -351,11 +335,6 @@ describe('ag-grid row data', () => {
             getRowId: (params) => params.data.id,
             onRowDataUpdated: () => ++rowDataUpdated,
             onModelUpdated: () => ++modelUpdated,
-        };
-
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: ['value'],
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -376,7 +355,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        await new GridRows(api, 'data', gridRowsOptions).check('empty');
+        await new GridRows(api, 'data').check('empty');
 
         api.setGridOption('columnDefs', [{ field: 'value' }, { field: 'value' }]);
 
@@ -384,11 +363,11 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 value:1
-            ├── LEAF id:2 value:2
-            └── LEAF id:3 value:3
+            ├── LEAF id:1 value:1 value_1:1
+            ├── LEAF id:2 value:2 value_1:2
+            └── LEAF id:3 value:3 value_1:3
         `);
     });
 });

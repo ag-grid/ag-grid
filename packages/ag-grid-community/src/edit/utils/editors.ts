@@ -80,7 +80,7 @@ export function _setupEditors(
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition, false) ??
-                    valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
+                    valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode })?.value ??
                     oldValue ??
                     UNEDITED;
 
@@ -244,7 +244,9 @@ function _createEditorParams(
             : cellDataValue;
 
     const value =
-        initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
+        initialNewValue === UNEDITED
+            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode })?.value
+            : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.
     let paramsValue = enableGroupEditing ? initialNewValue : value;
@@ -371,10 +373,15 @@ export function _syncFromEditor(
 
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
-        edit = editModelSvc.setEdit(position, {
+        const editValue: Partial<EditValue> = {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
             pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
-        });
+        };
+
+        if (params?.persist) {
+            editValue.state = 'changed';
+        }
+        edit = editModelSvc.setEdit(position, editValue);
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.

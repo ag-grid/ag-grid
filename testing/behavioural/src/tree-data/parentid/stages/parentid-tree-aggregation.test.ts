@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';
 
 describe('ag-grid parentId tree aggregation', () => {
@@ -44,23 +43,18 @@ describe('ag-grid parentId tree aggregation', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name', 'x'],
-            checkDom: true,
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ 1 GROUP id:1 name:"John Von Neumann" x:9
-            │ ├─┬ 2 GROUP id:2 name:"Alan Turing" x:3
-            │ │ ├── 4 LEAF id:4 name:"Donald Knuth" x:1
-            │ │ └── 5 LEAF id:5 name:"Grace Hopper" x:2
-            │ └─┬ 3 GROUP id:3 name:"A. Church" x:6
-            │ · ├── 6 LEAF id:6 name:"Linus Torvalds" x:2
-            │ · ├── 7 LEAF id:7 name:"Brian Kernighan" x:2
-            │ · └─┬ 10 GROUP id:10 name:"-" x:2
-            │ · · └── 8 LEAF id:8 name:"Claude Elwood Shannon" x:2
-            └── 9 LEAF id:9 name:"E. Dijkstra" x:2
+            ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"John Von Neumann" x:9
+            │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" name:"Alan Turing" x:3
+            │ │ ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" name:"Donald Knuth" x:1
+            │ │ └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" name:"Grace Hopper" x:2
+            │ └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" name:"A. Church" x:6
+            │ · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" name:"Linus Torvalds" x:2
+            │ · ├── 7 LEAF id:7 ag-Grid-AutoColumn:"7" name:"Brian Kernighan" x:2
+            │ · └─┬ 10 GROUP id:10 ag-Grid-AutoColumn:"10" name:"-" x:2
+            │ · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" name:"Claude Elwood Shannon" x:2
+            └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" name:"E. Dijkstra" x:2
         `);
 
         api.setGridOption(
@@ -79,18 +73,18 @@ describe('ag-grid parentId tree aggregation', () => {
             ])
         );
 
-        await new GridRows(api, 'update x', gridRowsOptions).check(`
+        await new GridRows(api, 'update x').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ 1 GROUP id:1 name:"John Von Neumann" x:26
-            │ ├─┬ 2 GROUP id:2 name:"Alan Turing" x:12
-            │ │ ├── 5 LEAF id:5 name:"Grace Hopper" x:2
-            │ │ └── 4 LEAF id:4 name:"Donald Knuth" x:10
-            │ └─┬ 3 GROUP id:3 name:"A. Church" x:14
-            │ · ├── 6 LEAF id:6 name:"Linus Torvalds" x:2
-            │ · ├── 7 LEAF id:7 name:"Brian Kernighan" x:2
-            │ · └─┬ 10 GROUP id:10 name:"-" x:10
-            │ · · └── 8 LEAF id:8 name:"Claude Elwood Shannon" x:10
-            └── 9 LEAF id:9 name:"E. Dijkstra" x:2
+            ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"John Von Neumann" x:26
+            │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" name:"Alan Turing" x:12
+            │ │ ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" name:"Grace Hopper" x:2
+            │ │ └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" name:"Donald Knuth" x:10
+            │ └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" name:"A. Church" x:14
+            │ · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" name:"Linus Torvalds" x:2
+            │ · ├── 7 LEAF id:7 ag-Grid-AutoColumn:"7" name:"Brian Kernighan" x:2
+            │ · └─┬ 10 GROUP id:10 ag-Grid-AutoColumn:"10" name:"-" x:10
+            │ · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" name:"Claude Elwood Shannon" x:10
+            └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" name:"E. Dijkstra" x:2
         `);
 
         api.setGridOption(
@@ -108,17 +102,17 @@ describe('ag-grid parentId tree aggregation', () => {
             ])
         );
 
-        await new GridRows(api, 'delete', gridRowsOptions).check(`
+        await new GridRows(api, 'delete').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ 1 GROUP id:1 name:"John Von Neumann" x:24
-            │ ├─┬ 2 GROUP id:2 name:"Alan Turing" x:12
-            │ │ ├── 5 LEAF id:5 name:"Grace Hopper" x:2
-            │ │ └── 4 LEAF id:4 name:"Donald Knuth" x:10
-            │ └─┬ 3 GROUP id:3 name:"A. Church" x:12
-            │ · ├── 6 LEAF id:6 name:"Linus Torvalds" x:2
-            │ · └─┬ 10 GROUP id:10 name:"-" x:10
-            │ · · └── 8 LEAF id:8 name:"Claude Elwood Shannon" x:10
-            └── 9 LEAF id:9 name:"E. Dijkstra" x:2
+            ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"John Von Neumann" x:24
+            │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" name:"Alan Turing" x:12
+            │ │ ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" name:"Grace Hopper" x:2
+            │ │ └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" name:"Donald Knuth" x:10
+            │ └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" name:"A. Church" x:12
+            │ · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" name:"Linus Torvalds" x:2
+            │ · └─┬ 10 GROUP id:10 ag-Grid-AutoColumn:"10" name:"-" x:10
+            │ · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" name:"Claude Elwood Shannon" x:10
+            └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" name:"E. Dijkstra" x:2
         `);
 
         const movedRowData = cachedJSONObjects.array([
@@ -138,17 +132,17 @@ describe('ag-grid parentId tree aggregation', () => {
             rowData: movedRowData,
         });
 
-        await new GridRows(api, 'move', gridRowsOptions).check(`
+        await new GridRows(api, 'move').check(`
             ROOT id:ROOT_NODE_ID x:37
-            ├─┬ 1 GROUP id:1 name:"John Von Neumann" x:25
-            │ ├─┬ 2 GROUP id:2 name:"Alan Turing" x:24
-            │ │ ├── 5 LEAF id:5 name:"Grace Hopper" x:2
-            │ │ ├── 4 LEAF id:4 name:"Donald Knuth" x:10
-            │ │ ├─┬ 10 GROUP id:10 name:"-" x:2
-            │ │ │ └── 6 LEAF id:6 name:"Linus Torvalds" x:2
-            │ │ └── 8 LEAF id:8 name:"Claude Elwood Shannon" x:10
-            │ └── 3 LEAF id:3 name:"A. Church" x:1
-            └── 9 LEAF id:9 name:"E. Dijkstra" x:12
+            ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" name:"John Von Neumann" x:25
+            │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" name:"Alan Turing" x:24
+            │ │ ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" name:"Grace Hopper" x:2
+            │ │ ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" name:"Donald Knuth" x:10
+            │ │ ├─┬ 10 GROUP id:10 ag-Grid-AutoColumn:"10" name:"-" x:2
+            │ │ │ └── 6 LEAF id:6 ag-Grid-AutoColumn:"6" name:"Linus Torvalds" x:2
+            │ │ └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" name:"Claude Elwood Shannon" x:10
+            │ └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" name:"A. Church" x:1
+            └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" name:"E. Dijkstra" x:12
         `);
     });
 
@@ -186,25 +180,20 @@ describe('ag-grid parentId tree aggregation', () => {
                 treeDataParentIdField: 'parentId',
             });
 
-            const gridRowsOptions: GridRowsOptions = {
-                columns: ['x', 'y'],
-                checkDom: true,
-            };
-
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID
-                └─┬ 0 GROUP id:0 x:12 y:28
-                · ├─┬ 1 GROUP id:1 x:2 y:3
-                · │ ├── 2 LEAF id:2 x:1 y:1
-                · │ └── 3 LEAF id:3 x:1 y:2
-                · └─┬ 4 GROUP id:4 x:10 y:25
-                · · ├── 5 LEAF id:5 x:2 y:3
-                · · ├── 6 LEAF id:6 x:2 y:4
-                · · └─┬ 7 GROUP id:7 x:6 y:18
-                · · · ├── 8 LEAF id:8 x:2 y:5
-                · · · ├── 9 LEAF id:9 x:2 y:6
-                · · · └─┬ 10 GROUP id:10 x:2 y:7
-                · · · · └── 11 LEAF id:11 x:2 y:7
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:12 y:28
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:2 y:3
+                · │ ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · │ └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:1 y:2
+                · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:10 y:25
+                · · ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:2 y:3
+                · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:2 y:4
+                · · └─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"7" x:6 y:18
+                · · · ├── 8 LEAF id:8 ag-Grid-AutoColumn:"8" x:2 y:5
+                · · · ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" x:2 y:6
+                · · · └─┬ 10 GROUP id:10 ag-Grid-AutoColumn:"10" x:2 y:7
+                · · · · └── 11 LEAF id:11 ag-Grid-AutoColumn:"11" x:2 y:7
             `);
 
             if (mode === 'transactions') {
@@ -226,17 +215,17 @@ describe('ag-grid parentId tree aggregation', () => {
                 );
             }
 
-            await new GridRows(api, 'transaction 0 (remove)', gridRowsOptions).check(`
+            await new GridRows(api, 'transaction 0 (remove)').check(`
                 ROOT id:ROOT_NODE_ID
-                └─┬ 0 GROUP id:0 x:9 y:19
-                · ├─┬ 1 GROUP id:1 x:1 y:1
-                · │ └── 2 LEAF id:2 x:1 y:1
-                · └─┬ 4 GROUP id:4 x:8 y:18
-                · · ├── 5 LEAF id:5 x:2 y:3
-                · · ├── 6 LEAF id:6 x:2 y:4
-                · · └─┬ 7 GROUP id:7 x:4 y:11
-                · · · ├── 8 LEAF id:8 x:2 y:5
-                · · · └── 9 LEAF id:9 x:2 y:6
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:9 y:19
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:1 y:1
+                · │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:8 y:18
+                · · ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:2 y:3
+                · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:2 y:4
+                · · └─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"7" x:4 y:11
+                · · · ├── 8 LEAF id:8 ag-Grid-AutoColumn:"8" x:2 y:5
+                · · · └── 9 LEAF id:9 ag-Grid-AutoColumn:"9" x:2 y:6
             `);
 
             if (mode === 'transactions') {
@@ -280,18 +269,18 @@ describe('ag-grid parentId tree aggregation', () => {
                 );
             }
 
-            await new GridRows(api, 'transaction 1 (re-add, update)', gridRowsOptions).check(`
+            await new GridRows(api, 'transaction 1 (re-add, update)').check(`
                 ROOT id:ROOT_NODE_ID
-                └─┬ 0 GROUP id:0 x:10 y:1021
-                · ├─┬ 1 GROUP id:1 x:2 y:3
-                · │ ├── 2 LEAF id:2 x:1 y:1
-                · │ └── 3 LEAF id:3 x:1 y:2
-                · └─┬ 4 GROUP id:4 x:8 y:1018
-                · · ├── 5 LEAF id:5 x:2 y:4
-                · · ├─┬ 6 GROUP id:6 x:2 y:7
-                · · │ └── 11 LEAF id:11 x:2 y:7
-                · · ├── 7 LEAF id:7 x:2 y:1000
-                · · └── 8 LEAF id:8 x:2 y:7
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:10 y:1021
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:2 y:3
+                · │ ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · │ └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:1 y:2
+                · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:8 y:1018
+                · · ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:2 y:4
+                · · ├─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:2 y:7
+                · · │ └── 11 LEAF id:11 ag-Grid-AutoColumn:"11" x:2 y:7
+                · · ├── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:2 y:1000
+                · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" x:2 y:7
             `);
 
             if (mode === 'transactions') {
@@ -317,18 +306,18 @@ describe('ag-grid parentId tree aggregation', () => {
                 ]);
             }
 
-            await new GridRows(api, 'transaction 2 (change path)', gridRowsOptions).check(`
+            await new GridRows(api, 'transaction 2 (change path)').check(`
                 ROOT id:ROOT_NODE_ID
-                └─┬ 0 GROUP id:0 x:7 y:265
-                · ├─┬ 1 GROUP id:1 x:5 y:258
-                · │ ├── 2 LEAF id:2 x:1 y:1
-                · │ └─┬ 3 GROUP id:3 x:4 y:257
-                · │ · ├─┬ 5 GROUP id:5 x:2 y:250
-                · │ · │ └── 7 LEAF id:7 x:2 y:250
-                · │ · └─┬ 6 GROUP id:6 x:2 y:7
-                · │ · · └── 11 LEAF id:11 x:2 y:7
-                · └─┬ 4 GROUP id:4 x:2 y:7
-                · · └── 8 LEAF id:8 x:2 y:7
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:7 y:265
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:5 y:258
+                · │ ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · │ └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:4 y:257
+                · │ · ├─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:2 y:250
+                · │ · │ └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:2 y:250
+                · │ · └─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:2 y:7
+                · │ · · └── 11 LEAF id:11 ag-Grid-AutoColumn:"11" x:2 y:7
+                · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:2 y:7
+                · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" x:2 y:7
             `);
 
             api.setGridOption('columnDefs', [
@@ -336,18 +325,18 @@ describe('ag-grid parentId tree aggregation', () => {
                 { field: 'y', aggFunc: 'avg' },
             ]);
 
-            await new GridRows(api, 'change aggFunc', gridRowsOptions).check(`
+            await new GridRows(api, 'change aggFunc').check(`
                 ROOT id:ROOT_NODE_ID
-                └─┬ 0 GROUP id:0 x:7 y:{"count":4,"value":66.25}
-                · ├─┬ 1 GROUP id:1 x:5 y:{"count":3,"value":86}
-                · │ ├── 2 LEAF id:2 x:1 y:1
-                · │ └─┬ 3 GROUP id:3 x:4 y:{"count":2,"value":128.5}
-                · │ · ├─┬ 5 GROUP id:5 x:2 y:{"count":1,"value":250}
-                · │ · │ └── 7 LEAF id:7 x:2 y:250
-                · │ · └─┬ 6 GROUP id:6 x:2 y:{"count":1,"value":7}
-                · │ · · └── 11 LEAF id:11 x:2 y:7
-                · └─┬ 4 GROUP id:4 x:2 y:{"count":1,"value":7}
-                · · └── 8 LEAF id:8 x:2 y:7
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:7 y:{"count":4,"value":66.25}
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:5 y:{"count":3,"value":86}
+                · │ ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · │ └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:4 y:{"count":2,"value":128.5}
+                · │ · ├─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:2 y:{"count":1,"value":250}
+                · │ · │ └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:2 y:250
+                · │ · └─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:2 y:{"count":1,"value":7}
+                · │ · · └── 11 LEAF id:11 ag-Grid-AutoColumn:"11" x:2 y:7
+                · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:2 y:{"count":1,"value":7}
+                · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" x:2 y:7
             `);
 
             if (mode === 'transactions') {
@@ -378,16 +367,16 @@ describe('ag-grid parentId tree aggregation', () => {
                 );
             }
 
-            await new GridRows(api, 'transaction 4 (update and change path)', gridRowsOptions).check(`
+            await new GridRows(api, 'transaction 4 (update and change path)').check(`
                 ROOT id:ROOT_NODE_ID
-                └─┬ 0 GROUP id:0 x:204 y:{"count":3,"value":70}
-                · ├─┬ 1 GROUP id:1 x:202 y:{"count":2,"value":103.5}
-                · │ └─┬ 8 GROUP id:8 x:202 y:{"count":2,"value":103.5}
-                · │ · └─┬ 7 GROUP id:7 x:202 y:{"count":2,"value":103.5}
-                · │ · · ├── 5 LEAF id:5 x:200 y:200
-                · │ · · └─┬ 6 GROUP id:6 x:2 y:{"count":1,"value":7}
-                · │ · · · └── 11 LEAF id:11 x:2 y:7
-                · └── 4 LEAF id:4 x:2 y:3
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:204 y:{"count":3,"value":70}
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:202 y:{"count":2,"value":103.5}
+                · │ └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" x:202 y:{"count":2,"value":103.5}
+                · │ · └─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"7" x:202 y:{"count":2,"value":103.5}
+                · │ · · ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:200 y:200
+                · │ · · └─┬ 6 GROUP id:6 ag-Grid-AutoColumn:"6" x:2 y:{"count":1,"value":7}
+                · │ · · · └── 11 LEAF id:11 ag-Grid-AutoColumn:"11" x:2 y:7
+                · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:2 y:3
             `);
         }
     );
@@ -420,19 +409,14 @@ describe('ag-grid parentId tree aggregation', () => {
                 treeDataParentIdField: 'parentId',
             });
 
-            const gridRowsOptions: GridRowsOptions = {
-                columns: ['x', 'y'],
-                checkDom: true,
-            };
-
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID x:6 y:10
-                └─┬ 0 GROUP id:0 x:6 y:10
-                · ├─┬ 1 GROUP id:1 x:2 y:3
-                · │ ├── 2 LEAF id:2 x:1 y:1
-                · │ └── 3 LEAF id:3 x:1 y:2
-                · ├── 4 LEAF id:4 x:2 y:3
-                · └── 5 LEAF id:5 x:2 y:4
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:6 y:10
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:2 y:3
+                · │ ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · │ └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:1 y:2
+                · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:2 y:3
+                · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:2 y:4
             `);
 
             if (mode === 'transactions') {
@@ -450,13 +434,13 @@ describe('ag-grid parentId tree aggregation', () => {
                 );
             }
 
-            await new GridRows(api, 'transaction 1', gridRowsOptions).check(`
+            await new GridRows(api, 'transaction 1').check(`
                 ROOT id:ROOT_NODE_ID x:5 y:8
-                └─┬ 0 GROUP id:0 x:5 y:8
-                · ├─┬ 1 GROUP id:1 x:1 y:1
-                · │ └── 2 LEAF id:2 x:1 y:1
-                · ├── 4 LEAF id:4 x:2 y:3
-                · └── 5 LEAF id:5 x:2 y:4
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:5 y:8
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:1 y:1
+                · │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:2 y:3
+                · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:2 y:4
             `);
 
             if (mode === 'transactions') {
@@ -474,13 +458,13 @@ describe('ag-grid parentId tree aggregation', () => {
                 );
             }
 
-            await new GridRows(api, 'transaction 2', gridRowsOptions).check(`
+            await new GridRows(api, 'transaction 2').check(`
                 ROOT id:ROOT_NODE_ID x:103 y:105
-                └─┬ 0 GROUP id:0 x:103 y:105
-                · ├─┬ 1 GROUP id:1 x:1 y:1
-                · │ └── 2 LEAF id:2 x:1 y:1
-                · ├── 4 LEAF id:4 x:100 y:100
-                · └── 5 LEAF id:5 x:2 y:4
+                └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:103 y:105
+                · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:1 y:1
+                · │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:1 y:1
+                · ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4" x:100 y:100
+                · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" x:2 y:4
             `);
         }
     );
@@ -514,24 +498,19 @@ describe('ag-grid parentId tree aggregation', () => {
                 treeDataParentIdField: 'parentId',
             });
 
-            const gridRowsOptions: GridRowsOptions = {
-                columns: ['x'],
-                checkDom: true,
-            };
-
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ 0 GROUP id:0 x:55
-                │ └─┬ 1 GROUP id:1 x:55
-                │ · └─┬ 2 GROUP id:2 x:55
-                │ · · └─┬ 3 GROUP id:3 x:55
-                │ · · · └─┬ 4 GROUP id:4 x:55
-                │ · · · · └─┬ 5 GROUP id:5 x:55
-                │ · · · · · ├── 6 LEAF id:6 x:32
-                │ · · · · · └── 7 LEAF id:7 x:23
-                └─┬ 8 GROUP id:8 x:22
-                · ├── 9 LEAF id:9 x:10
-                · └── 10 LEAF id:10 x:12
+                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:55
+                │ └─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:55
+                │ · └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:55
+                │ · · └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:55
+                │ · · · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:55
+                │ · · · · └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:55
+                │ · · · · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:32
+                │ · · · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:23
+                └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" x:22
+                · ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" x:10
+                · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" x:12
             `);
 
             if (mode === 'transactions') {
@@ -555,19 +534,19 @@ describe('ag-grid parentId tree aggregation', () => {
                 );
             }
 
-            await new GridRows(api, 'moved', gridRowsOptions).check(`
+            await new GridRows(api, 'moved').check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ 0 GROUP id:0 x:99
-                │ └── 1 LEAF id:1 x:99
-                └─┬ 8 GROUP id:8 x:67
-                · ├─┬ 9 GROUP id:9 x:55
-                · │ └─┬ 2 GROUP id:2 x:55
-                · │ · └─┬ 3 GROUP id:3 x:55
-                · │ · · └─┬ 4 GROUP id:4 x:55
-                · │ · · · └─┬ 5 GROUP id:5 x:55
-                · │ · · · · ├── 6 LEAF id:6 x:32
-                · │ · · · · └── 7 LEAF id:7 x:23
-                · └── 10 LEAF id:10 x:12
+                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:99
+                │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:99
+                └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" x:67
+                · ├─┬ 9 GROUP id:9 ag-Grid-AutoColumn:"9" x:55
+                · │ └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:55
+                · │ · └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:55
+                · │ · · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:55
+                · │ · · · └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:55
+                · │ · · · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:32
+                · │ · · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:23
+                · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" x:12
             `);
 
             api.updateGridOptions({
@@ -587,19 +566,19 @@ describe('ag-grid parentId tree aggregation', () => {
                 ]),
             });
 
-            await new GridRows(api, 'moved 2', gridRowsOptions).check(`
+            await new GridRows(api, 'moved 2').check(`
                 ROOT id:ROOT_NODE_ID x:164
-                ├─┬ 0 GROUP id:0 x:99
-                │ └── 1 LEAF id:1 x:99
-                └─┬ 8 GROUP id:8 x:65
-                · ├── 9 LEAF id:9 x:10
-                · └─┬ 10 GROUP id:10 x:55
-                · · └─┬ 2 GROUP id:2 x:55
-                · · · └─┬ 3 GROUP id:3 x:55
-                · · · · └─┬ 4 GROUP id:4 x:55
-                · · · · · └─┬ 5 GROUP id:5 x:55
-                · · · · · · ├── 6 LEAF id:6 x:32
-                · · · · · · └── 7 LEAF id:7 x:23
+                ├─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"0" x:99
+                │ └── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:99
+                └─┬ 8 GROUP id:8 ag-Grid-AutoColumn:"8" x:65
+                · ├── 9 LEAF id:9 ag-Grid-AutoColumn:"9" x:10
+                · └─┬ 10 GROUP id:10 ag-Grid-AutoColumn:"10" x:55
+                · · └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:55
+                · · · └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:55
+                · · · · └─┬ 4 GROUP id:4 ag-Grid-AutoColumn:"4" x:55
+                · · · · · └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:55
+                · · · · · · ├── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:32
+                · · · · · · └── 7 LEAF id:7 ag-Grid-AutoColumn:"7" x:23
             `);
         }
     );

@@ -1,5 +1,7 @@
-import type { FormulaParam, RangeParam, ValueParam } from 'ag-grid-community';
+import type { BeanCollection, FormulaParam, RangeParam, ValueParam } from 'ag-grid-community';
 
+import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId } from '../ast/serializer';
+import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
 
 export function take<T>(values: Iterable<T>, name: string, n: 1): [T];
@@ -196,3 +198,100 @@ export function criteriaToPredicate(criteria: unknown): (cell: unknown) => boole
     const regexp = wildcardToRegExp(query);
     return REGEX_COMPARE_VALUES.bind(null, symbol ?? '=', regexp);
 }
+
+const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef) => {
+    if (!ref || delta === 0 || ref.absolute) {
+        return;
+    }
+
+    const { visibleCols, colModel } = beans;
+
+    const cols = visibleCols.allCols;
+
+    const i0 = colIndexFromId(colModel, cols, ref.id); // 0-based
+    if (i0 == null) {
+        return;
+    }
+
+    const j0 = i0 + delta;
+    if (j0 < 0) {
+        return;
+    }
+
+    const nextId = colIdFromIndex(cols, j0);
+    if (nextId) {
+        ref.id = nextId;
+    }
+};
+
+const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef, unsafe?: boolean) => {
+    if (!ref || rowDelta === 0 || ref.absolute) {
+        return;
+    }
+
+    if (unsafe) {
+        const numericId = Number(ref.id);
+        if (!Number.isFinite(numericId)) {
+            return;
+        }
+        ref.id = String(numericId + rowDelta);
+        return;
+    }
+
+    const idx1 = rowIndexFromId(beans, ref.id); // 1-based
+    if (idx1 == null) {
+        return;
+    }
+
+    const next1 = idx1 + rowDelta;
+    if (next1 < 1) {
+        return;
+    }
+
+    const nextId = rowIdFromIndex(beans, next1);
+    if (nextId) {
+        ref.id = nextId;
+    }
+};
+
+const isCellOperand = (
+    value: string | number | boolean | Cell
+): value is { column: CellRef; row: CellRef; endColumn?: CellRef; endRow?: CellRef } => {
+    return (
+        !!value && typeof value === 'object' && value !== null && 'row' in (value as any) && 'column' in (value as any)
+    );
+};
+
+// Traverse the AST and apply shifts to any cell references
+export const shiftNode = (
+    beans: BeanCollection,
+    node: FormulaNode,
+    rowDelta: number,
+    columnDelta: number,
+    unsafe: boolean
+): void => {
+    if (node.type === 'operand') {
+        const { value } = node;
+        if (!isCellOperand(value)) {
+            return;
+        }
+
+        const { row, column, endRow, endColumn } = value;
+
+        // Shift the primary row and column
+        shiftRowRef(beans, rowDelta, row, unsafe);
+        shiftColRef(beans, columnDelta, column);
+
+        // Shift the range end, if present
+        shiftRowRef(beans, rowDelta, endRow, unsafe);
+        shiftColRef(beans, columnDelta, endColumn);
+
+        return;
+    }
+
+    if (node.type === 'operation') {
+        for (const child of node.operands) {
+            shiftNode(beans, child, rowDelta, columnDelta, unsafe);
+        }
+    }
+};

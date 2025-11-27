@@ -3,6 +3,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { _setAriaInvalid } from '../utils/aria';
 import { _exists } from '../utils/generic';
 import { _isEventFromPrintableCharacter } from '../utils/keyboard';
 import type { AgAbstractInputFieldEvent } from './agAbstractInputField';
@@ -64,7 +65,17 @@ export class AgInputTextField<
     }
 
     public setCustomValidity(message: string): void {
-        this.eInput.setCustomValidity(message);
+        const eInput = this.eInput;
+        const isInvalid = message.length > 0;
+        eInput.setCustomValidity(message);
+
+        // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
+        // so we need to call `reportValidity`.
+        if (isInvalid) {
+            eInput.reportValidity();
+        }
+
+        _setAriaInvalid(eInput, isInvalid);
     }
 
     private preventDisallowedCharacters(): void {

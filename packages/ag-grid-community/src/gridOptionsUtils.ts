@@ -70,8 +70,7 @@ export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColum
     return gos.get('maintainColumnOrder');
 }
 
-export function _isRowNumbers(beans: BeanCollection) {
-    const { gos, formula } = beans;
+export function _isRowNumbers({ gos, formula }: BeanCollection) {
     const rowNumbers = gos.get('rowNumbers');
     return rowNumbers || (!!formula?.active && rowNumbers !== false);
 }
@@ -393,16 +392,9 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
     return typeof selection !== 'boolean' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
-function _getRawSuppressColumnSelection(gos: GridOptionsService): boolean {
+export function _getEnableColumnSelection(gos: GridOptionsService): boolean {
     const cellSelection = gos.get('cellSelection') ?? false;
-    return (typeof cellSelection === 'object' && cellSelection.suppressColumnSelection) ?? false;
-}
-
-export function _getSuppressColumnSelection(gos: GridOptionsService): boolean {
-    const multiSortKey = gos.get('multiSortKey');
-
-    // Automatically disabled when multiSortKey = ctrl
-    return multiSortKey === 'ctrl' || _getRawSuppressColumnSelection(gos);
+    return (typeof cellSelection === 'object' && cellSelection.enableColumnSelection) ?? false;
 }
 
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {

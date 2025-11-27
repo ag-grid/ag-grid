@@ -6,9 +6,7 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
-const defaultGridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
+const defaultGridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({
@@ -71,11 +69,11 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         await new GridRows(api, 'tree', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └── B LEAF id:B
-            └─┬ C GROUP id:C
-            · ├── D LEAF id:D
-            · └── E LEAF id:E
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B"
+            └─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
+            · ├── D LEAF id:D ag-Grid-AutoColumn:"D"
+            · └── E LEAF id:E ag-Grid-AutoColumn:"E"
         `);
     });
 });

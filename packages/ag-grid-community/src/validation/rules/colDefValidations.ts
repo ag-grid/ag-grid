@@ -113,6 +113,9 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
+        allowFormula: {
+            supportedRowModels: ['clientSide'],
+        },
         cellRendererParams: {
             validate: (colDef) => {
                 const groupColumn =

@@ -4,11 +4,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
-
-const gridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
 
 describe('ag-grid parentId tree remove', () => {
     let consoleWarnSpy: MockInstance | undefined;
@@ -45,22 +40,22 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ a GROUP id:a
-            · └─┬ b GROUP id:b
-            · · └─┬ c GROUP id:c
-            · · · └── d LEAF id:d
+            └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · └─┬ b GROUP id:b ag-Grid-AutoColumn:"b"
+            · · └─┬ c GROUP id:c ag-Grid-AutoColumn:"c"
+            · · · └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
         api.applyTransaction({ remove: [rowD] });
         api.applyTransaction({ remove: [rowC] });
 
-        const gridRows = new GridRows(api, '', gridRowsOptions);
+        const gridRows = new GridRows(api, '');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ a GROUP id:a
-            · └── b LEAF id:b
+            └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · └── b LEAF id:b ag-Grid-AutoColumn:"b"
         `);
 
         const rows = gridRows.rootAllLeafChildren;
@@ -88,22 +83,22 @@ describe('ag-grid parentId tree remove', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ a GROUP id:a
-            · └─┬ b GROUP id:b
-            · · └─┬ c-xDhjGsdDc GROUP id:c-xDhjGsdDc
-            · · · └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd
+            └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · └─┬ b GROUP id:b ag-Grid-AutoColumn:"b"
+            · · └─┬ c-xDhjGsdDc GROUP id:c-xDhjGsdDc ag-Grid-AutoColumn:"c-xDhjGsdDc"
+            · · · └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd ag-Grid-AutoColumn:"d-xDhjGsdDd"
         `);
 
         api.applyTransaction({ remove: [rowC] });
 
-        const gridRows = new GridRows(api, '', gridRowsOptions);
+        const gridRows = new GridRows(api, '');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ a GROUP id:a
-            │ └── b LEAF id:b
-            └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd
+            ├─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            │ └── b LEAF id:b ag-Grid-AutoColumn:"b"
+            └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd ag-Grid-AutoColumn:"d-xDhjGsdDd"
         `);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -137,38 +132,38 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ a GROUP id:a
-                │ ├── b LEAF id:b
-                │ └── c LEAF id:c
-                └── d LEAF id:d
-            `);
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            │ ├── b LEAF id:b ag-Grid-AutoColumn:"b"
+            │ └── c LEAF id:c ag-Grid-AutoColumn:"c"
+            └── d LEAF id:d ag-Grid-AutoColumn:"d"
+        `);
 
         api.applyTransaction({ remove: [rowB, rowC] });
 
-        await new GridRows(api, 'Transaction[0]', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── a LEAF id:a
-                └── d LEAF id:d
-            `);
+        await new GridRows(api, 'Transaction[0]').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── a LEAF id:a ag-Grid-AutoColumn:"a"
+            └── d LEAF id:d ag-Grid-AutoColumn:"d"
+        `);
 
         api.applyTransaction({ remove: [rowA] });
 
-        await new GridRows(api, 'Transaction[0]', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                └── d LEAF id:d
-            `);
+        await new GridRows(api, 'Transaction[0]').check(`
+            ROOT id:ROOT_NODE_ID
+            └── d LEAF id:d ag-Grid-AutoColumn:"d"
+        `);
 
         api.applyTransaction({ add: [rowC, rowA, rowB] });
 
-        await new GridRows(api, 'finalSync', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── d LEAF id:d
-                └─┬ a GROUP id:a
-                · ├── c LEAF id:c
-                · └── b LEAF id:b
-            `);
+        await new GridRows(api, 'finalSync').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── d LEAF id:d ag-Grid-AutoColumn:"d"
+            └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · └── b LEAF id:b ag-Grid-AutoColumn:"b"
+        `);
     });
 
     test('ag-grid tree same transaction remove re-insert', async () => {
@@ -188,44 +183,44 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ a GROUP id:a
-                │ ├── b LEAF id:b
-                │ └── c LEAF id:c
-                └── d LEAF id:d
-            `);
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            │ ├── b LEAF id:b ag-Grid-AutoColumn:"b"
+            │ └── c LEAF id:c ag-Grid-AutoColumn:"c"
+            └── d LEAF id:d ag-Grid-AutoColumn:"d"
+        `);
 
         api.applyTransaction({ remove: [rowA, rowB, rowC], add: [rowC, rowA, rowB] });
 
-        await new GridRows(api, 'finalTogether', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                ├── d LEAF id:d
-                └─┬ a GROUP id:a
-                · ├── c LEAF id:c
-                · └── b LEAF id:b
-            `);
+        await new GridRows(api, 'finalTogether').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── d LEAF id:d ag-Grid-AutoColumn:"d"
+            └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · └── b LEAF id:b ag-Grid-AutoColumn:"b"
+        `);
 
         api.applyTransaction({ update: [{ ...rowA, parentId: 'd' }] });
 
-        await new GridRows(api, 'moved', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                └─┬ d GROUP id:d
-                · └─┬ a GROUP id:a
-                · · ├── c LEAF id:c
-                · · └── b LEAF id:b
-            `);
+        await new GridRows(api, 'moved').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ d GROUP id:d ag-Grid-AutoColumn:"d"
+            · └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · · └── b LEAF id:b ag-Grid-AutoColumn:"b"
+        `);
 
         api.applyTransaction({ update: [{ ...rowD, parentId: 'x' }], add: [{ id: 'x' }] });
 
-        await new GridRows(api, 'moved 2', gridRowsOptions).check(`
-                ROOT id:ROOT_NODE_ID
-                └─┬ x GROUP id:x
-                · └─┬ d GROUP id:d
-                · · └─┬ a GROUP id:a
-                · · · ├── c LEAF id:c
-                · · · └── b LEAF id:b
-            `);
+        await new GridRows(api, 'moved 2').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ x GROUP id:x ag-Grid-AutoColumn:"x"
+            · └─┬ d GROUP id:d ag-Grid-AutoColumn:"d"
+            · · └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · · · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · · · └── b LEAF id:b ag-Grid-AutoColumn:"b"
+        `);
     });
 
     test('ag-grid tree async remove re-insert', async () => {
@@ -245,12 +240,12 @@ describe('ag-grid parentId tree remove', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ a GROUP id:a
-            │ ├── b LEAF id:b
-            │ └── c LEAF id:c
-            └── d LEAF id:d
+            ├─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            │ ├── b LEAF id:b ag-Grid-AutoColumn:"b"
+            │ └── c LEAF id:c ag-Grid-AutoColumn:"c"
+            └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
         await executeTransactionsAsync(
@@ -258,33 +253,33 @@ describe('ag-grid parentId tree remove', () => {
             api
         );
 
-        await new GridRows(api, 'finalTogether', gridRowsOptions).check(`
+        await new GridRows(api, 'finalTogether').check(`
             ROOT id:ROOT_NODE_ID
-            ├── d LEAF id:d
-            └─┬ a GROUP id:a
-            · ├── c LEAF id:c
-            · └── b LEAF id:b
+            ├── d LEAF id:d ag-Grid-AutoColumn:"d"
+            └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · └── b LEAF id:b ag-Grid-AutoColumn:"b"
         `);
 
         await executeTransactionsAsync({ update: [{ ...rowA, parentId: 'd' }] }, api);
 
-        await new GridRows(api, 'moved', gridRowsOptions).check(`
+        await new GridRows(api, 'moved').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ d GROUP id:d
-            · └─┬ a GROUP id:a
-            · · ├── c LEAF id:c
-            · · └── b LEAF id:b
+            └─┬ d GROUP id:d ag-Grid-AutoColumn:"d"
+            · └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · · └── b LEAF id:b ag-Grid-AutoColumn:"b"
         `);
 
         await executeTransactionsAsync({ update: [{ ...rowD, parentId: 'x' }], add: [{ id: 'x' }] }, api);
 
-        await new GridRows(api, 'moved 2', gridRowsOptions).check(`
+        await new GridRows(api, 'moved 2').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ x GROUP id:x
-            · └─┬ d GROUP id:d
-            · · └─┬ a GROUP id:a
-            · · · ├── c LEAF id:c
-            · · · └── b LEAF id:b
+            └─┬ x GROUP id:x ag-Grid-AutoColumn:"x"
+            · └─┬ d GROUP id:d ag-Grid-AutoColumn:"d"
+            · · └─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            · · · ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            · · · └── b LEAF id:b ag-Grid-AutoColumn:"b"
         `);
     });
 });

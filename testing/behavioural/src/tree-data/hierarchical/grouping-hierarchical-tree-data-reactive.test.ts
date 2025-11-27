@@ -2,7 +2,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('ag-grid grouping hierarchical treeData is reactive', () => {
@@ -51,15 +50,10 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
         for (let repeat = 0; repeat < 2; repeat++) {
             api.setGridOption('treeData', false);
 
-            let gridRows = new GridRows(api, 'data 1 ' + repeat, gridRowsOptions);
+            let gridRows = new GridRows(api, 'data 1 ' + repeat);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"X-ROOT_NODE_ID"
                 ├─┬ LEAF_GROUP id:row-group-g-0 ag-Grid-AutoColumn:0
@@ -73,7 +67,7 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
 
             api.setGridOption('treeData', true);
 
-            gridRows = new GridRows(api, 'data 2 ' + repeat, gridRowsOptions);
+            gridRows = new GridRows(api, 'data 2 ' + repeat);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"X-ROOT_NODE_ID"
                 ├─┬ A GROUP id:A ag-Grid-AutoColumn:"X-A" g:0 v:0
@@ -120,15 +114,10 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
         for (let repeat = 0; repeat < 2; repeat++) {
             api.setGridOption('treeData', false);
 
-            let gridRows = new GridRows(api, 'data 1 ' + repeat, gridRowsOptions);
+            let gridRows = new GridRows(api, 'data 1 ' + repeat);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"X-ROOT_NODE_ID"
                 ├─┬ filler id:row-group-g-0 ag-Grid-AutoColumn:0
@@ -145,7 +134,7 @@ describe('ag-grid grouping hierarchical treeData is reactive', () => {
 
             api.setGridOption('treeData', true);
 
-            gridRows = new GridRows(api, 'data 2 ' + repeat, gridRowsOptions);
+            gridRows = new GridRows(api, 'data 2 ' + repeat);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"X-ROOT_NODE_ID"
                 ├─┬ A GROUP id:A ag-Grid-AutoColumn:"X-A" g:0 v:0

@@ -53,25 +53,20 @@ describe('ag-grid parentId tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: ['ag-Grid-AutoColumn'],
-        };
-
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
-            └─┬ 0 GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers"
-            · └─┬ 1 GROUP collapsed hidden id:1 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · · ├─┬ 2 GROUP collapsed hidden id:2 ag-Grid-AutoColumn:"Esther Baker"
-            · · │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson"
-            · · │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers"
-            · · │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton"
-            · · ├── 6 LEAF hidden id:6 ag-Grid-AutoColumn:"Derek Paul"
-            · · └─┬ 7 GROUP collapsed hidden id:7 ag-Grid-AutoColumn:"Francis Strickland"
-            · · · ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson"
-            · · · ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler"
-            · · · ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise"
-            · · · └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper"
+            └─┬ 0 GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
+            · └─┬ 1 GROUP collapsed hidden id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · · ├─┬ 2 GROUP collapsed hidden id:2 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · · │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson" jobTitle:"Fleet Coordinator" employmentType:"Permanent"
+            · · │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers" jobTitle:"Parts Technician" employmentType:"Contract"
+            · · │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton" jobTitle:"Service Technician" employmentType:"Contract"
+            · · ├── 6 LEAF hidden id:6 ag-Grid-AutoColumn:"Derek Paul" jobTitle:"Inventory Control" employmentType:"Permanent"
+            · · └─┬ 7 GROUP collapsed hidden id:7 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · · · ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson" jobTitle:"Sales Manager" employmentType:"Permanent"
+            · · · ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler" jobTitle:"Sales Executive" employmentType:"Contract"
+            · · · ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise" jobTitle:"Sales Executive" employmentType:"Contract"
+            · · · └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper" jobTitle:"Sales Executive" employmentType:"Permanent"
         `);
 
         api.getRowNode('0')!.setExpanded(true, undefined, true);
@@ -79,22 +74,22 @@ describe('ag-grid parentId tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
-            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers"
-            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · │ ├─┬ 2 GROUP collapsed id:2 ag-Grid-AutoColumn:"Esther Baker"
-            · │ │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson"
-            · │ │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers"
-            · │ │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton"
-            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul"
-            · │ ├─┬ 7 GROUP collapsed id:7 ag-Grid-AutoColumn:"Francis Strickland"
-            · │ │ ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson"
-            · │ │ ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler"
-            · │ │ ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise"
-            · │ │ └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper"
-            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers"
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
+            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · │ ├─┬ 2 GROUP collapsed id:2 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · │ │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson" jobTitle:"Fleet Coordinator" employmentType:"Permanent"
+            · │ │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers" jobTitle:"Parts Technician" employmentType:"Contract"
+            · │ │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton" jobTitle:"Service Technician" employmentType:"Contract"
+            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul" jobTitle:"Inventory Control" employmentType:"Permanent"
+            · │ ├─┬ 7 GROUP collapsed id:7 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · │ │ ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson" jobTitle:"Sales Manager" employmentType:"Permanent"
+            · │ │ ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper" jobTitle:"Sales Executive" employmentType:"Permanent"
+            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
         `);
 
         api.getRowNode('7')!.setExpanded(true, undefined, true);
@@ -102,24 +97,24 @@ describe('ag-grid parentId tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
-            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers"
-            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"Esther Baker"
-            · │ │ ├─┬ 3 GROUP collapsed id:3 ag-Grid-AutoColumn:"Brittany Hanson"
-            · │ │ │ ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers"
-            · │ │ │ └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton"
-            · │ │ └── yoo-4 LEAF id:yoo-4 ag-Grid-AutoColumn:"Esther Baker"
-            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul"
-            · │ ├─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"Francis Strickland"
-            · │ │ ├── 8 LEAF id:8 ag-Grid-AutoColumn:"Morris Hanson"
-            · │ │ ├── 9 LEAF id:9 ag-Grid-AutoColumn:"Todd Tyler"
-            · │ │ ├── 10 LEAF id:10 ag-Grid-AutoColumn:"Bennie Wise"
-            · │ │ ├── 11 LEAF id:11 ag-Grid-AutoColumn:"Joel Cooper"
-            · │ │ └── yoo-3 LEAF id:yoo-3 ag-Grid-AutoColumn:"Francis Strickland"
-            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers"
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
+            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · │ │ ├─┬ 3 GROUP collapsed id:3 ag-Grid-AutoColumn:"Brittany Hanson" jobTitle:"Fleet Coordinator" employmentType:"Permanent"
+            · │ │ │ ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers" jobTitle:"Parts Technician" employmentType:"Contract"
+            · │ │ │ └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton" jobTitle:"Service Technician" employmentType:"Contract"
+            · │ │ └── yoo-4 LEAF id:yoo-4 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul" jobTitle:"Inventory Control" employmentType:"Permanent"
+            · │ ├─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · │ │ ├── 8 LEAF id:8 ag-Grid-AutoColumn:"Morris Hanson" jobTitle:"Sales Manager" employmentType:"Permanent"
+            · │ │ ├── 9 LEAF id:9 ag-Grid-AutoColumn:"Todd Tyler" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ ├── 10 LEAF id:10 ag-Grid-AutoColumn:"Bennie Wise" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ ├── 11 LEAF id:11 ag-Grid-AutoColumn:"Joel Cooper" jobTitle:"Sales Executive" employmentType:"Permanent"
+            · │ │ └── yoo-3 LEAF id:yoo-3 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
         `);
     });
 
@@ -146,22 +141,20 @@ describe('ag-grid parentId tree expanded state', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └── B LEAF id:B
-            ├─┬ C GROUP id:C
-            │ └── D LEAF id:D
-            └─┬ E GROUP id:E
-            · └─┬ F GROUP collapsed id:F
-            · · └─┬ G GROUP collapsed hidden id:G
-            · · · └── H LEAF hidden id:H
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"A"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B" x:"B"
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" x:"C"
+            │ └── D LEAF id:D ag-Grid-AutoColumn:"D" x:"D"
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"E"
+            · └─┬ F GROUP collapsed id:F ag-Grid-AutoColumn:"F" x:"F"
+            · · └─┬ G GROUP collapsed hidden id:G ag-Grid-AutoColumn:"G" x:"G"
+            · · · └── H LEAF hidden id:H ag-Grid-AutoColumn:"H" x:"H"
         `);
     });
 
@@ -193,22 +186,20 @@ describe('ag-grid parentId tree expanded state', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └─┬ B GROUP id:B
-            │ · └─┬ C GROUP collapsed id:C
-            │ · · └── D LEAF hidden id:D
-            └─┬ E GROUP id:E
-            · └─┬ F GROUP id:F
-            · · └─┬ G GROUP collapsed id:G
-            · · · └── H LEAF hidden id:H
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"A"
+            │ └─┬ B GROUP id:B ag-Grid-AutoColumn:"B" x:"B"
+            │ · └─┬ C GROUP collapsed id:C ag-Grid-AutoColumn:"C" x:"C"
+            │ · · └── D LEAF hidden id:D ag-Grid-AutoColumn:"D" x:"D"
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"E"
+            · └─┬ F GROUP id:F ag-Grid-AutoColumn:"F" x:"F"
+            · · └─┬ G GROUP collapsed id:G ag-Grid-AutoColumn:"G" x:"G"
+            · · · └── H LEAF hidden id:H ag-Grid-AutoColumn:"H" x:"H"
         `);
 
         calls.sort((a, b) => a.key.localeCompare(b.key));

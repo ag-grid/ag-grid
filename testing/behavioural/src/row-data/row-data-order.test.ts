@@ -13,11 +13,6 @@ import {
 } from '../test-utils';
 import { VERSION } from '../version';
 
-const defaultGridRowsOptions: GridRowsOptions = {
-    columns: ['x'],
-    checkDom: true,
-};
-
 describe('ag-grid rows-ordering', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule],
@@ -50,7 +45,7 @@ describe('ag-grid rows-ordering', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:1
             ├── LEAF id:1 x:2
@@ -60,7 +55,7 @@ describe('ag-grid rows-ordering', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:2
             ├── LEAF id:1 x:1
@@ -69,7 +64,7 @@ describe('ag-grid rows-ordering', () => {
 
         api.applyTransaction({ add: [{ x: 7 }, { x: 5 }] });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:2
             ├── LEAF id:1 x:1
@@ -80,7 +75,7 @@ describe('ag-grid rows-ordering', () => {
 
         api.applyTransaction({ addIndex: 1, add: [{ x: 6 }] });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:2
             ├── LEAF id:5 x:6
@@ -111,7 +106,7 @@ describe('ag-grid rows-ordering', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:1
             ├── LEAF id:2 x:2
@@ -121,7 +116,7 @@ describe('ag-grid rows-ordering', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
             ├── LEAF id:1 x:1
@@ -135,7 +130,7 @@ describe('ag-grid rows-ordering', () => {
             ],
         });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
             ├── LEAF id:1 x:1
@@ -149,7 +144,7 @@ describe('ag-grid rows-ordering', () => {
             add: [{ id: '6', x: 6 }],
         });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
             ├── LEAF id:6 x:6
@@ -190,7 +185,7 @@ describe('ag-grid rows-ordering', () => {
 
         consoleWarnSpy.mockRestore();
 
-        await new GridRows(api, 'data', { ...defaultGridRowsOptions, checkDom: false }).check(`
+        await new GridRows(api, 'data', { checkDom: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
             ├── LEAF id:1 x:1
@@ -223,7 +218,7 @@ describe('ag-grid rows-ordering', () => {
             { id: '1', x: 1 },
         ]);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:2
             └── LEAF id:1 x:1
@@ -241,7 +236,7 @@ describe('ag-grid rows-ordering', () => {
             { id: '1', x: 11 },
         ]);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:12
             ├── LEAF id:1 x:11
@@ -272,7 +267,7 @@ describe('ag-grid rows-ordering', () => {
             suppressMaintainUnsortedOrder: true,
         });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:1
             ├── LEAF id:2 x:2
@@ -282,13 +277,72 @@ describe('ag-grid rows-ordering', () => {
 
         api.setGridOption('rowData', rowData2);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:11
             ├── LEAF id:3 x:13
             ├── LEAF id:4 x:14
             ├── LEAF id:5 x:15
             └── LEAF id:6 x:16
+        `);
+    });
+
+    test('suppressMaintainUnsortedOrder and deletion (with id)', async () => {
+        const rowData1 = cachedJSONObjects.array([
+            { id: '1', make: 'Tesla', model: 'Model Y', price: 64950, electric: true },
+            { id: '2', make: 'Ford', model: 'F-Series', price: 33850, electric: false },
+            {
+                id: '3',
+                make: 'Toyota',
+                model: 'Corolla',
+                price: 29600,
+                electric: false,
+            },
+            { id: '4', make: 'Mercedes', model: 'EQA', price: 48890, electric: true },
+            { id: '5', make: 'Fiat', model: '500', price: 15774, electric: false },
+            { id: '6', make: 'Nissan', model: 'Juke', price: 20675, electric: false },
+        ]);
+
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }, { field: 'electric' }],
+            rowData: rowData1,
+            getRowId: (params) => params.data.id,
+            suppressMaintainUnsortedOrder: true,
+        });
+
+        await new GridRows(api, 'data').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:2 make:"Ford" model:"F-Series" price:33850 electric:false
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            └── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+        `);
+
+        const rowData2 = rowData1.filter((rd) => rd.id !== '2');
+
+        api.setGridOption('rowData', rowData2);
+
+        await new GridRows(api, 'data').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            └── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+        `);
+
+        api.setGridOption('rowData', rowData1);
+
+        await new GridRows(api, 'data').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 make:"Tesla" model:"Model Y" price:64950 electric:true
+            ├── LEAF id:3 make:"Toyota" model:"Corolla" price:29600 electric:false
+            ├── LEAF id:4 make:"Mercedes" model:"EQA" price:48890 electric:true
+            ├── LEAF id:5 make:"Fiat" model:"500" price:15774 electric:false
+            ├── LEAF id:6 make:"Nissan" model:"Juke" price:20675 electric:false
+            └── LEAF id:2 make:"Ford" model:"F-Series" price:33850 electric:false
         `);
     });
 
@@ -316,7 +370,7 @@ describe('ag-grid rows-ordering', () => {
             { id: '3', x: 14 },
         ]);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:5 x:11
             ├── LEAF id:2 x:13
@@ -338,7 +392,7 @@ describe('ag-grid rows-ordering', () => {
             ],
         });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 x:13
             ├── LEAF id:7 x:102
@@ -395,7 +449,7 @@ describe('ag-grid rows-ordering', () => {
             api
         );
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:1
             ├── LEAF id:7 x:33
@@ -454,7 +508,7 @@ describe('ag-grid rows-ordering', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:1
             ├── LEAF id:1 x:1
@@ -465,7 +519,7 @@ describe('ag-grid rows-ordering', () => {
         `);
 
         api.setGridOption('rowData', rowData2);
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:1
             ├── LEAF id:1 x:1
@@ -476,7 +530,7 @@ describe('ag-grid rows-ordering', () => {
         `);
 
         api.setGridOption('rowData', rowData3);
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 x:1
             ├── LEAF id:1 x:1
@@ -487,7 +541,7 @@ describe('ag-grid rows-ordering', () => {
         `);
 
         api.setGridOption('rowData', rowData4);
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:5 x:1
             ├── LEAF id:1 x:1
@@ -528,7 +582,7 @@ describe('ag-grid rows-ordering', () => {
                 getRowId: (params) => params.data.id,
             });
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 └── LEAF id:1 x:"1a"
@@ -536,7 +590,7 @@ describe('ag-grid rows-ordering', () => {
 
             api.applyTransaction(transactions[0]);
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 ├── LEAF id:1 x:"1a"
@@ -545,7 +599,7 @@ describe('ag-grid rows-ordering', () => {
 
             api.applyTransaction(transactions[1]);
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 ├── LEAF id:1 x:"1b"
@@ -556,7 +610,7 @@ describe('ag-grid rows-ordering', () => {
 
             api.applyTransaction(transactions[2]);
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 ├── LEAF id:2 x:"2"
@@ -568,7 +622,7 @@ describe('ag-grid rows-ordering', () => {
 
             api.applyTransaction(transactions[3]);
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 ├── LEAF id:3 x:"3"
@@ -579,7 +633,7 @@ describe('ag-grid rows-ordering', () => {
 
             api.applyTransaction(transactions[4]);
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 ├── LEAF id:3 x:"3"
@@ -620,7 +674,7 @@ describe('ag-grid rows-ordering', () => {
 
             await executeTransactionsAsync(transactions, api);
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 x:"0"
                 ├── LEAF id:3 x:"3"
@@ -665,7 +719,7 @@ describe('ag-grid rows-ordering', () => {
 
             consoleErrorSpy.mockRestore();
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 x:1
                 └── LEAF id:2 x:2
@@ -683,7 +737,6 @@ describe('ag-grid rows-ordering', () => {
             ];
 
             const gridRowsOptions: GridRowsOptions = {
-                ...defaultGridRowsOptions,
                 checkDom: false,
             };
 
@@ -772,7 +825,7 @@ describe('ag-grid rows-ordering', () => {
                 api
             );
 
-            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            await new GridRows(api, 'data').check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 x:1
                 ├── LEAF id:2 x:2
@@ -844,7 +897,7 @@ describe('ag-grid rows-ordering', () => {
         await asyncSetTimeout(0);
         await asyncSetTimeout(2);
 
-        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 x:4
             ├── LEAF id:1 x:1

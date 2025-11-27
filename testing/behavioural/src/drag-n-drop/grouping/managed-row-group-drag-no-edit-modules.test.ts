@@ -12,7 +12,7 @@ import {
 import type { GridOptions } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, dragAndDropRow } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager } from '../../test-utils';
 
 describe('managed row drag without edit modules', () => {
     const gridsManager = new TestGridsManager({
@@ -60,31 +60,29 @@ describe('managed row drag without edit modules', () => {
 
         const api = gridsManager.createGrid('row-group-edit-no-edit-modules', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ ├── LEAF id:1 value:"A1"
-            │ └── LEAF id:2 value:"A2"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · └── LEAF id:3 value:"B1"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
 
-        await dragAndDropRow({
-            api,
-            source: gridRows.getRowHtmlElement('2')!,
-            target: gridRows.getRowHtmlElement('3')!,
-            targetYOffsetPercent: 0.1,
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('2');
+        await dispatcher.move('3', { yOffsetPercent: 0.1 });
+        await dispatcher.finish();
 
-        gridRows = new GridRows(api, 'after move', { checkDom: true, columns: ['value'] });
+        gridRows = new GridRows(api, 'after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ └── LEAF id:1 value:"A1"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · ├── LEAF id:3 value:"B1"
-            · └── LEAF id:2 value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 group:"B" value:"B1"
+            · └── LEAF id:2 group:"B" value:"A2"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');

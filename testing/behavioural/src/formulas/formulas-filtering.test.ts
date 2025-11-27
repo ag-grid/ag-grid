@@ -47,13 +47,7 @@ describe('ag-grid formulas filtering', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-            checkDom: true,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID 
             ├── LEAF id:1 row-number:"1" A:10 B:20 name:"John"
@@ -64,7 +58,7 @@ describe('ag-grid formulas filtering', () => {
         `);
 
         api.setFilterModel({ B: { type: 'lessThan', filter: 60 } });
-        gridRows = new GridRows(api, 'filter b < 60', gridRowsOptions);
+        gridRows = new GridRows(api, 'filter b < 60');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:10 B:20 name:"John"
@@ -72,7 +66,7 @@ describe('ag-grid formulas filtering', () => {
         `);
 
         api.setFilterModel({ B: { type: 'greaterThan', filter: 60 } });
-        gridRows = new GridRows(api, 'filter b > 60', gridRowsOptions);
+        gridRows = new GridRows(api, 'filter b > 60');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 row-number:"4" A:45 B:90 name:"Alice"
@@ -80,7 +74,7 @@ describe('ag-grid formulas filtering', () => {
         `);
 
         api.applyTransaction({ update: [{ id: '1', name: 'John Wick', A: 99, B: '=A1*2' }] });
-        gridRows = new GridRows(api, 'filter b < 60 - update John', gridRowsOptions);
+        gridRows = new GridRows(api, 'filter b < 60 - update John');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:99 B:198 name:"John Wick"
@@ -158,13 +152,7 @@ describe('ag-grid formulas filtering', () => {
 
         const api = gridsManager.createGrid('formulaGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-            checkDom: true,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:5 B:15
@@ -175,7 +163,7 @@ describe('ag-grid formulas filtering', () => {
 
         api.setFilterModel({ A: { type: 'greaterThan', filter: 10 } });
 
-        gridRows = new GridRows(api, 'filtered A > 10', gridRowsOptions);
+        gridRows = new GridRows(api, 'filtered A > 10');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"3" A:15 B:25
@@ -184,7 +172,7 @@ describe('ag-grid formulas filtering', () => {
 
         api.applyTransaction({ update: [{ id: '2', A: 9 }] });
 
-        gridRows = new GridRows(api, 'filtered A > 10 after hidden update', gridRowsOptions);
+        gridRows = new GridRows(api, 'filtered A > 10 after hidden update');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"3" A:15 B:24
@@ -244,8 +232,6 @@ describe('ag-grid formulas filtering', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-            checkDom: true,
             columns: ['athlete'],
         };
 
@@ -295,13 +281,7 @@ describe('ag-grid formulas filtering', () => {
 
         const api = gridsManager.createGrid('circularGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-            checkDom: true,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:20 B:10
@@ -311,7 +291,7 @@ describe('ag-grid formulas filtering', () => {
 
         api.setFilterModel({ B: { type: 'greaterThan', filter: 15 } });
 
-        gridRows = new GridRows(api, 'filtered B > 15', gridRowsOptions);
+        gridRows = new GridRows(api, 'filtered B > 15');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 row-number:"2" A:30 B:20
@@ -473,8 +453,6 @@ describe('ag-grid formulas filtering', () => {
         };
 
         const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-            checkDom: true,
             columns: ['athlete'],
         };
 
@@ -531,13 +509,7 @@ describe('ag-grid formulas filtering', () => {
 
         const api = gridsManager.createGrid('rangeGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            printHiddenRows: true,
-            checkDom: true,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:1 B:21
@@ -561,7 +533,7 @@ describe('ag-grid formulas filtering', () => {
         });
         await modelUpdated;
 
-        gridRows = new GridRows(api, 'filtered 2 < A < 6', gridRowsOptions);
+        gridRows = new GridRows(api, 'filtered 2 < A < 6');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"3" A:3 B:21
@@ -580,7 +552,7 @@ describe('ag-grid formulas filtering', () => {
             ],
         });
 
-        gridRows = new GridRows(api, 'filtered 2 < A < 6 after range updates', gridRowsOptions);
+        gridRows = new GridRows(api, 'filtered 2 < A < 6 after range updates');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"3" A:3 B:21
@@ -590,7 +562,7 @@ describe('ag-grid formulas filtering', () => {
 
         api.setFilterModel({});
 
-        gridRows = new GridRows(api, 'filtered 2 < A < 6 after range updates', gridRowsOptions);
+        gridRows = new GridRows(api, 'filtered 2 < A < 6 after range updates');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:1 B:21
@@ -737,8 +709,6 @@ describe('ag-grid formulas filtering', () => {
 
         await applyFilter('Michael');
         let gridRows = new GridRows(api, 'custom filter', {
-            printHiddenRows: true,
-            checkDom: true,
             columns: ['athlete'],
         });
         await gridRows.check(`
@@ -749,8 +719,6 @@ describe('ag-grid formulas filtering', () => {
 
         await applyFilter('REF');
         gridRows = new GridRows(api, 'custom filter', {
-            printHiddenRows: true,
-            checkDom: true,
             columns: ['athlete'],
         });
         await gridRows.check('empty');

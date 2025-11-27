@@ -10,7 +10,7 @@ import { _getHeaderCompDetails } from '../../../components/framework/userCompUti
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
-import { _addGridCommonParams, _getSuppressColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
@@ -261,11 +261,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            if (e.ctrlKey || e.metaKey) {
-                this.beans.rangeSvc?.handleColumnSelection(this.column, e);
-            } else {
-                this.selectAllFeature?.onSpaceKeyDown(e);
-            }
+            this.selectAllFeature?.onSpaceKeyDown(e);
         } else if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
         } else if (e.key === KeyCode.DOWN && e.altKey) {
@@ -274,23 +270,35 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
+        const { column, gos, sortable, beans } = this;
+
+        let actioned = false;
         if (e.ctrlKey || e.metaKey) {
-            this.showMenuOnKeyPress(e, true);
-        } else if (this.sortable) {
-            this.beans.sortSvc?.progressSort(this.column, e.shiftKey, 'uiColumnSorted');
+            actioned = this.showMenuOnKeyPress(e, true);
+        }
+
+        if (!actioned) {
+            if (!e.altKey && _getEnableColumnSelection(gos)) {
+                beans.rangeSvc?.handleColumnSelection(column, e);
+            } else if (sortable) {
+                beans.sortSvc?.progressSort(column, e.shiftKey, 'uiColumnSorted');
+            }
         }
     }
 
-    private showMenuOnKeyPress(e: KeyboardEvent, isFilterShortcut: boolean): void {
+    private showMenuOnKeyPress(e: KeyboardEvent, isFilterShortcut: boolean): boolean {
         const headerComp = this.comp.getUserCompInstance();
         if (!isHeaderComp(headerComp)) {
-            return;
+            return false;
         }
 
         // the header comp knows what features are enabled, so let it handle the shortcut
         if (headerComp.onMenuKeyboardShortcut(isFilterShortcut)) {
             e.preventDefault();
+            return true;
         }
+
+        return false;
     }
 
     private onFocusIn(e: FocusEvent) {
@@ -619,9 +627,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshAriaCellSelection(): void {
         let description: string | null = null;
         const { gos, column, beans } = this;
-        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const enableColumnSelection = _getEnableColumnSelection(gos);
 
-        if (!suppressColumnSelection) {
+        if (enableColumnSelection) {
             const translate = this.getLocaleTextFunc();
             const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(

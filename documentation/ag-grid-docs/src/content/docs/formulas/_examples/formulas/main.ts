@@ -1,8 +1,21 @@
-import type { GetRowIdParams, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, TextEditorModule, createGrid } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridApi, GridOptions, ValueFormatterParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ModuleRegistry,
+    NumberEditorModule,
+    TextEditorModule,
+    ValidationModule,
+    createGrid,
+} from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, FormulaModule, TextEditorModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    FormulaModule,
+    NumberEditorModule,
+    TextEditorModule,
+    ValidationModule,
+]);
 
 let gridApi: GridApi<any>;
 
@@ -46,17 +59,20 @@ const rowData = [
 ];
 
 const valueFormatter = ({ value }: ValueFormatterParams) => `$ ${Number(value).toFixed(2)}`;
+const getRowId = (params: GetRowIdParams) => String(params.data.id);
 
-const gridOptions: GridOptions<GridOptions> = {
-    columnDefs: [
-        { field: 'product' },
-        { field: 'price', valueFormatter },
-        { field: 'quantity', headerName: 'Qty', maxWidth: 100 },
-        { field: 'subtotal', valueFormatter, allowFormula: true },
-        { field: 'tax', headerName: 'Tax (10%)', valueFormatter, allowFormula: true },
-        { field: 'total', valueFormatter, allowFormula: true },
-    ],
-    getRowId: (params: GetRowIdParams) => String(params.data.id),
+const columnDefs: ColDef[] = [
+    { field: 'product' },
+    { field: 'price', valueFormatter: valueFormatter },
+    { field: 'quantity', headerName: 'Qty', maxWidth: 100 },
+    { field: 'subtotal', valueFormatter: valueFormatter, allowFormula: true },
+    { field: 'tax', headerName: 'Tax (10%)', valueFormatter: valueFormatter, allowFormula: true },
+    { field: 'total', valueFormatter: valueFormatter, allowFormula: true },
+];
+
+const gridOptions: GridOptions<any> = {
+    columnDefs,
+    getRowId,
     defaultColDef: {
         editable: true,
         flex: 1,

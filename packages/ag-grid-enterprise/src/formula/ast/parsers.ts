@@ -11,6 +11,7 @@ import { FormulaParseError } from './utils';
  *
  * @param beans Helpers for looking up rows/columns (used to resolve cell refs).
  * @param operand The raw text of the operand (e.g. `"123"`, `"true"`, `"A1"`).
+ * @param unsafe If `true` it will not validate if the row/column exists when parsing the formula.
  * @returns A JS value (string/number/boolean) or a Cell object, or null if unknown.
  * @throws FormulaParseError if a cell reference is invalid.
  *
@@ -19,7 +20,11 @@ import { FormulaParseError } from './utils';
  *  parseOperand(beans, '42')      // => 42
  *  parseOperand(beans, 'A1')      // => { column:{...}, row:{...} }
  */
-const parseOperand = (beans: BeanCollection, operand: string): string | number | boolean | Cell | null => {
+const parseOperand = (
+    beans: BeanCollection,
+    operand: string,
+    unsafe: boolean
+): string | number | boolean | Cell | null => {
     const trimmed = operand.trim();
 
     // string literal
@@ -49,9 +54,10 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
     if (match) {
         const [, absCol1, col1, absRow1, row1, absCol2, col2, absRow2, row2] = match;
 
-        const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string): Cell => {
-            const col = colAbs ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
-            const row = rowAbs ? rowStr : _getClientSideRowModel(beans)?.getFormulaRow(Number(rowStr) - 1)?.id; // TODO handle NaN
+        const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string, unsafe: boolean): Cell => {
+            const col = colAbs || unsafe ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
+            const row =
+                rowAbs || unsafe ? rowStr : _getClientSideRowModel(beans)?.getFormulaRow(Number(rowStr) - 1)?.id; // TODO handle NaN
 
             if (col == null || row == null) {
                 throw new FormulaParseError(`Invalid cell reference: ${trimmed}`, 0, 0);
@@ -63,10 +69,10 @@ const parseOperand = (beans: BeanCollection, operand: string): string | number |
             };
         };
 
-        const start: Cell = toCell(absCol1 === '$', col1, absRow1 === '$', row1);
+        const start: Cell = toCell(absCol1 === '$', col1, absRow1 === '$', row1, unsafe);
 
         if (col2 && row2) {
-            const end: Cell = toCell(absCol2 === '$', col2, absRow2 === '$', row2);
+            const end: Cell = toCell(absCol2 === '$', col2, absRow2 === '$', row2, unsafe);
             start.endColumn = end.column;
             start.endRow = end.row;
         }
@@ -258,13 +264,14 @@ function pickOpDefForContext(symbol: string, prevToken: string | undefined): Ope
  * Handles + - * / ^, unary +/-, postfix %, parentheses, and nested functions.
  *
  * @param expr The formula body (without the leading '=').
+ * @param unsafe If `true` it will not validate if the row/column exists before returning the formula.
  * @returns A FormulaNode AST representing the expression.
  * @throws FormulaParseError for mismatched parentheses, missing operands, etc.
  *
  * @example
  * parseExpression(beans, 'SUM(1, 2+3)') // => { type:"operation", operation:"SUM", operands:[...]}
  */
-function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
+function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): FormulaNode {
     const tokens = tokenize(expr);
 
     const output: FormulaNode[] = [];
@@ -434,7 +441,7 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
         }
 
         // Operand
-        const parsed = parseOperand(beans, token);
+        const parsed = parseOperand(beans, token, unsafe);
         if (parsed == null) {
             throw new FormulaParseError('Unsupported operand: ' + token, 0, token.length);
         }
@@ -462,18 +469,19 @@ function parseExpression(beans: BeanCollection, expr: string): FormulaNode {
  * Parse a full formula string that starts with "=" into an AST.
  *
  * @param formula The full formula, e.g. "=SUM(A1, 2+3)".
+ * @param unsafe If `true` it will not validate if the row/column exists when parsing the formula.
  * @returns The root FormulaNode of the parsed expression.
  * @throws FormulaParseError if the "=" is missing or the body is invalid.
  *
  * @example
  * parseFormula(beans, '=1+2') // => operation("+", [1,2])
  */
-export const parseFormula = (beans: BeanCollection, formula: string): FormulaNode => {
+export const parseFormula = (beans: BeanCollection, formula: string, unsafe: boolean = false): FormulaNode => {
     if (!_isExpressionString(formula)) {
         throw new FormulaParseError('Formulas must begin with =', 0, 1);
     }
     const body = formula.slice(1).trim();
-    return normalizeRefCells(parseExpression(beans, body));
+    return normalizeRefCells(parseExpression(beans, body, unsafe));
 };
 
 function isOperation(node: FormulaNode, name: string): node is FormulaOperation {

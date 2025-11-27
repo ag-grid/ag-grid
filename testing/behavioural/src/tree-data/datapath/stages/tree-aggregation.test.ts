@@ -45,7 +45,6 @@ describe('ag-grid tree aggregation', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['name', 'x'],
-            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -178,7 +177,6 @@ describe('ag-grid tree aggregation', () => {
 
             const gridRowsOptions: GridRowsOptions = {
                 columns: ['x', 'y'],
-                checkDom: true,
             };
 
             await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -402,7 +400,6 @@ describe('ag-grid tree aggregation', () => {
 
             const gridRowsOptions: GridRowsOptions = {
                 columns: ['x', 'y'],
-                checkDom: true,
             };
 
             await new GridRows(api, 'initial', gridRowsOptions).check(`

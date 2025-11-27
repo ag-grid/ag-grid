@@ -37,7 +37,12 @@ export interface IFormulaService extends Bean {
     normaliseFormula(value: string, shorthand: boolean): string | null;
     getColByRef(ref: string): AgColumn | null;
     getColRef(col: AgColumn): string | null;
-    updateFormulaByOffset(value: string, direction: 'up' | 'down' | 'left' | 'right'): string;
+    updateFormulaByOffset(params: {
+        value: string;
+        rowDelta?: number;
+        columnDelta?: number;
+        useRefFormat?: boolean;
+    }): string;
     refreshFormulas(refreshRows: boolean): void;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
 }

@@ -5,9 +5,7 @@ import { TreeDataModule } from 'ag-grid-enterprise';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
-const gridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
+const gridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -58,10 +56,10 @@ describe('ag-grid tree transactions', () => {
         let gridRows = new GridRows(api, 'rowData', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── A LEAF id:0
-            └─┬ X filler id:row-group-0-X
-            · └─┬ Y filler id:row-group-0-X-1-Y
-            · · └── Z LEAF id:1
+            ├── A LEAF id:0 ag-Grid-AutoColumn:"A" x:"0"
+            └─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"
+            · └─┬ Y filler id:row-group-0-X-1-Y ag-Grid-AutoColumn:"Y"
+            · · └── Z LEAF id:1 ag-Grid-AutoColumn:"Z" x:"1a"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a]);
 
@@ -70,11 +68,11 @@ describe('ag-grid tree transactions', () => {
         gridRows = new GridRows(api, 'Transaction 0', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── A LEAF id:0
-            └─┬ X filler id:row-group-0-X
-            · └─┬ Y filler id:row-group-0-X-1-Y
-            · · └─┬ Z GROUP id:1
-            · · · └── W LEAF id:2
+            ├── A LEAF id:0 ag-Grid-AutoColumn:"A" x:"0"
+            └─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"
+            · └─┬ Y filler id:row-group-0-X-1-Y ag-Grid-AutoColumn:"Y"
+            · · └─┬ Z GROUP id:1 ag-Grid-AutoColumn:"Z" x:"1a"
+            · · · └── W LEAF id:2 ag-Grid-AutoColumn:"W" x:"2"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a, row2]);
 
@@ -83,16 +81,16 @@ describe('ag-grid tree transactions', () => {
         gridRows = new GridRows(api, 'Transaction 1', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:0
-            │ ├─┬ Y filler id:row-group-0-A-1-Y
-            │ │ └── Z LEAF id:1
-            │ └── B LEAF id:3
-            ├─┬ X filler id:row-group-0-X
-            │ └─┬ Y filler id:row-group-0-X-1-Y
-            │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z
-            │ · · └── W LEAF id:2
-            └─┬ C filler id:row-group-0-C
-            · └── D LEAF id:4
+            ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:"0"
+            │ ├─┬ Y filler id:row-group-0-A-1-Y ag-Grid-AutoColumn:"Y"
+            │ │ └── Z LEAF id:1 ag-Grid-AutoColumn:"Z" x:"1b"
+            │ └── B LEAF id:3 ag-Grid-AutoColumn:"B" x:"3"
+            ├─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"
+            │ └─┬ Y filler id:row-group-0-X-1-Y ag-Grid-AutoColumn:"Y"
+            │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z ag-Grid-AutoColumn:"Z"
+            │ · · └── W LEAF id:2 ag-Grid-AutoColumn:"W" x:"2"
+            └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C"
+            · └── D LEAF id:4 ag-Grid-AutoColumn:"D" x:"4"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1b, row2, row3, row4]);
 
@@ -101,15 +99,15 @@ describe('ag-grid tree transactions', () => {
         gridRows = new GridRows(api, 'Transaction 2', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:0
-            │ └── B LEAF id:3
-            ├─┬ X filler id:row-group-0-X
-            │ └─┬ Y filler id:row-group-0-X-1-Y
-            │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z
-            │ · · ├── W LEAF id:2
-            │ · · └── H LEAF id:5
-            └─┬ C filler id:row-group-0-C
-            · └── D LEAF id:4
+            ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:"0"
+            │ └── B LEAF id:3 ag-Grid-AutoColumn:"B" x:"3"
+            ├─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"
+            │ └─┬ Y filler id:row-group-0-X-1-Y ag-Grid-AutoColumn:"Y"
+            │ · └─┬ Z filler id:row-group-0-X-1-Y-2-Z ag-Grid-AutoColumn:"Z"
+            │ · · ├── W LEAF id:2 ag-Grid-AutoColumn:"W" x:"2"
+            │ · · └── H LEAF id:5 ag-Grid-AutoColumn:"H" x:"5a"
+            └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C"
+            · └── D LEAF id:4 ag-Grid-AutoColumn:"D" x:"4"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row2, row3, row4, row5a]);
 
@@ -118,11 +116,11 @@ describe('ag-grid tree transactions', () => {
         gridRows = new GridRows(api, 'final', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:0
-            │ └── B LEAF id:3
-            └─┬ C filler id:row-group-0-C
-            · ├── D LEAF id:4
-            · └── E LEAF id:5
+            ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:"0"
+            │ └── B LEAF id:3 ag-Grid-AutoColumn:"B" x:"3"
+            └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C"
+            · ├── D LEAF id:4 ag-Grid-AutoColumn:"D" x:"4"
+            · └── E LEAF id:5 ag-Grid-AutoColumn:"E" x:"5b"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row3, row4, row5b]);
     });
@@ -162,10 +160,10 @@ describe('ag-grid tree transactions', () => {
 
         await new GridRows(api, 'rowData', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├── A LEAF id:0
-            └─┬ X filler id:row-group-0-X
-            · └─┬ Y filler id:row-group-0-X-1-Y
-            · · └── Z LEAF id:1
+            ├── A LEAF id:0 ag-Grid-AutoColumn:"A"
+            └─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"
+            · └─┬ Y filler id:row-group-0-X-1-Y ag-Grid-AutoColumn:"Y"
+            · · └── Z LEAF id:1 ag-Grid-AutoColumn:"Z"
         `);
 
         await executeTransactionsAsync(transactions, api);
@@ -173,11 +171,11 @@ describe('ag-grid tree transactions', () => {
         const gridRows = new GridRows(api, 'final', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:0
-            │ └── B LEAF id:3
-            └─┬ C filler id:row-group-0-C
-            · ├── D LEAF id:4
-            · └── E LEAF id:5
+            ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A"
+            │ └── B LEAF id:3 ag-Grid-AutoColumn:"B"
+            └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C"
+            · ├── D LEAF id:4 ag-Grid-AutoColumn:"D"
+            · └── E LEAF id:5 ag-Grid-AutoColumn:"E"
         `);
 
         expect(gridRows.rowNodes.map((row) => row.data)).toEqual([row0, row3, undefined, row4, row5b]);
@@ -228,11 +226,11 @@ describe('ag-grid tree transactions', () => {
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler1 filler id:row-group-0-filler1
-            · └─┬ X1 GROUP id:X1
-            · · └─┬ filler2 filler id:row-group-0-filler1-1-X1-2-filler2
-            · · · └─┬ X2 GROUP id:X2
-            · · · · └── X3 LEAF id:X3
+            └─┬ filler1 filler id:row-group-0-filler1 ag-Grid-AutoColumn:"filler1"
+            · └─┬ X1 GROUP id:X1 ag-Grid-AutoColumn:"X1" id:"X1"
+            · · └─┬ filler2 filler id:row-group-0-filler1-1-X1-2-filler2 ag-Grid-AutoColumn:"filler2"
+            · · · └─┬ X2 GROUP id:X2 ag-Grid-AutoColumn:"X2" id:"X2"
+            · · · · └── X3 LEAF id:X3 ag-Grid-AutoColumn:"X3" id:"X3"
         `);
 
         // Add more nested data in shuffled order to ensure filler IDs are stable regardless of creation order
@@ -273,21 +271,21 @@ describe('ag-grid tree transactions', () => {
         // Verify filler IDs and structure regardless of insertion order
         await new GridRows(api, 'more', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler1 filler id:row-group-0-filler1
-            · └─┬ X1 GROUP id:X1
-            · · └─┬ filler2 filler id:row-group-0-filler1-1-X1-2-filler2
-            · · · ├─┬ X2 GROUP id:X2
-            · · · │ ├── X3 LEAF id:X3
-            · · · │ ├─┬ filler3 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-filler3
-            · · · │ │ └── X4 LEAF id:X4
-            · · · │ └─┬ X2.1 GROUP id:X2.1
-            · · · │ · ├─┬ filler3 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1-5-filler3
-            · · · │ · │ └─┬ filler4 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1-5-filler3-6-filler4
-            · · · │ · │ · └─┬ filler5 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1-5-filler3-6-filler4-7-filler5
-            · · · │ · │ · · ├── X6 LEAF id:X6
-            · · · │ · │ · · └── X7 LEAF id:X7
-            · · · │ · └── X2.2 LEAF id:X2.2
-            · · · └── X5 LEAF id:X5
+            └─┬ filler1 filler id:row-group-0-filler1 ag-Grid-AutoColumn:"filler1"
+            · └─┬ X1 GROUP id:X1 ag-Grid-AutoColumn:"X1" id:"X1"
+            · · └─┬ filler2 filler id:row-group-0-filler1-1-X1-2-filler2 ag-Grid-AutoColumn:"filler2"
+            · · · ├─┬ X2 GROUP id:X2 ag-Grid-AutoColumn:"X2" id:"X2"
+            · · · │ ├── X3 LEAF id:X3 ag-Grid-AutoColumn:"X3" id:"X3"
+            · · · │ ├─┬ filler3 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-filler3 ag-Grid-AutoColumn:"filler3"
+            · · · │ │ └── X4 LEAF id:X4 ag-Grid-AutoColumn:"X4" id:"X4"
+            · · · │ └─┬ X2.1 GROUP id:X2.1 ag-Grid-AutoColumn:"X2.1" id:"X2.1"
+            · · · │ · ├─┬ filler3 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1-5-filler3 ag-Grid-AutoColumn:"filler3"
+            · · · │ · │ └─┬ filler4 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1-5-filler3-6-filler4 ag-Grid-AutoColumn:"filler4"
+            · · · │ · │ · └─┬ filler5 filler id:row-group-0-filler1-1-X1-2-filler2-3-X2-4-X2.1-5-filler3-6-filler4-7-filler5 ag-Grid-AutoColumn:"filler5"
+            · · · │ · │ · · ├── X6 LEAF id:X6 ag-Grid-AutoColumn:"X6" id:"X6"
+            · · · │ · │ · · └── X7 LEAF id:X7 ag-Grid-AutoColumn:"X7" id:"X7"
+            · · · │ · └── X2.2 LEAF id:X2.2 ag-Grid-AutoColumn:"X2.2" id:"X2.2"
+            · · · └── X5 LEAF id:X5 ag-Grid-AutoColumn:"X5" id:"X5"
         `);
     });
 });

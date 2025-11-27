@@ -89,11 +89,7 @@ describe('ag-grid grouping display types and footers', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-        };
-
-        await new GridRows(api, 'custom display type', gridRowsOptions).check(`
+        await new GridRows(api, 'custom display type').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland gold:3
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1

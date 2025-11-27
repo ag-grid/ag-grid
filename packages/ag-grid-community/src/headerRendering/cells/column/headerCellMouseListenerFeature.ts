@@ -1,5 +1,6 @@
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
+import { _getEnableColumnSelection } from '../../../gridOptionsUtils';
 
 export class HeaderCellMouseListenerFeature extends BeanStub {
     private lastMovingChanged = 0;
@@ -24,9 +25,12 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
     }
 
     public onClick(event: MouseEvent): void {
-        const { sortSvc, rangeSvc } = this.beans;
+        const { sortSvc, rangeSvc, gos } = this.beans;
+        // When column selection is enabled, we require users to use the ALT modifier
+        // to access sorting functionality.
+        const sortFromClick = _getEnableColumnSelection(gos) ? event.altKey : true;
 
-        if (event.ctrlKey || event.metaKey) {
+        if (!sortFromClick) {
             rangeSvc?.handleColumnSelection(this.column, event);
         } else if (this.column.isSortable()) {
             // sometimes when moving a column via dragging, this was also firing a clicked event.

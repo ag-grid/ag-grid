@@ -110,21 +110,19 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:0
-            │ └── B LEAF id:1
-            ├─┬ C filler id:row-group-0-C
-            │ └── D LEAF id:2
-            └─┬ E filler id:row-group-0-E
-            · └─┬ F filler id:row-group-0-E-1-F
-            · · └─┬ G filler id:row-group-0-E-1-F-2-G
-            · · · └── H LEAF id:3
+            ROOT id:ROOT_NODE_ID groupType:"Filler"
+            ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" groupType:"Provided"
+            │ └── B LEAF id:1 ag-Grid-AutoColumn:"B" groupType:"Provided"
+            ├─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C" groupType:"Filler"
+            │ └── D LEAF id:2 ag-Grid-AutoColumn:"D" groupType:"Provided"
+            └─┬ E filler id:row-group-0-E ag-Grid-AutoColumn:"E" groupType:"Filler"
+            · └─┬ F filler id:row-group-0-E-1-F ag-Grid-AutoColumn:"F" groupType:"Filler"
+            · · └─┬ G filler id:row-group-0-E-1-F-2-G ag-Grid-AutoColumn:"G" groupType:"Filler"
+            · · · └── H LEAF id:3 ag-Grid-AutoColumn:"H" groupType:"Provided"
         `);
 
         const rows = gridRows.rowNodes;
@@ -169,18 +167,16 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-        };
+        const gridRowsOptions: GridRowsOptions = {};
 
         const gridRows = new GridRows(api, 'data', gridRowsOptions);
         await gridRows.check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:2
-            │ └── B LEAF id:0
-            └─┬ C filler id:row-group-0-C
-            · └─┬ D GROUP id:3
-            · · └── E LEAF id:1
+            ROOT id:ROOT_NODE_ID groupType:"Filler"
+            ├─┬ A GROUP id:2 ag-Grid-AutoColumn:"A" groupType:"Provided"
+            │ └── B LEAF id:0 ag-Grid-AutoColumn:"B" groupType:"Provided"
+            └─┬ C filler id:row-group-0-C ag-Grid-AutoColumn:"C" groupType:"Filler"
+            · └─┬ D GROUP id:3 ag-Grid-AutoColumn:"D" groupType:"Provided"
+            · · └── E LEAF id:1 ag-Grid-AutoColumn:"E" groupType:"Provided"
         `);
 
         const rows = gridRows.rowNodes;
@@ -227,12 +223,7 @@ describe('ag-grid tree data', () => {
             treeData: true,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
-        const gridRows = new GridRows(api, 'update 1', gridRowsOptions);
+        const gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:2 ag-Grid-AutoColumn:"A" x:"a"
@@ -255,11 +246,6 @@ describe('ag-grid tree data', () => {
             onModelUpdated: () => ++modelUpdated,
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         await asyncSetTimeout(1);
@@ -277,7 +263,7 @@ describe('ag-grid tree data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+        await new GridRows(api, 'empty').check('empty');
 
         api.setGridOption('columnDefs', [
             { field: 'groupType', valueGetter: (params) => (params.data ? 'Provided' : 'Filler') },
@@ -287,7 +273,7 @@ describe('ag-grid tree data', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID groupType:"Filler"
             ├─┬ A GROUP id:a ag-Grid-AutoColumn:"A" groupType:"Provided"
             │ └── B LEAF id:b ag-Grid-AutoColumn:"B" groupType:"Provided"
@@ -310,11 +296,6 @@ describe('ag-grid tree data', () => {
             getRowId: (params) => params.data.id,
             onRowDataUpdated: () => ++rowDataUpdated,
             onModelUpdated: () => ++modelUpdated,
-        };
-
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -341,7 +322,7 @@ describe('ag-grid tree data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+        await new GridRows(api, 'empty').check('empty');
 
         api.setGridOption('columnDefs', [
             { field: 'groupType', valueGetter: (params) => (params.data ? 'Provided' : 'Filler') },
@@ -351,7 +332,7 @@ describe('ag-grid tree data', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID groupType:"Filler"
             ├─┬ A GROUP id:a ag-Grid-AutoColumn:"A" groupType:"Provided"
             │ └── B LEAF id:b ag-Grid-AutoColumn:"B" groupType:"Provided"
@@ -381,18 +362,13 @@ describe('ag-grid tree data', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData,
-            autoGroupColumnDef: { headerName: 'H', colId: 'zzz' },
+            autoGroupColumnDef: { headerName: 'H' },
             getRowId: (params) => params.data.id,
             treeData: true,
             getDataPath: (data) => data.path,
         });
 
-        const gridRowsOptions = {
-            columns: true,
-            checkDom: true,
-        };
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
 
         await gridRows.check(`
                 ROOT id:ROOT_NODE_ID

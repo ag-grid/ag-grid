@@ -122,16 +122,16 @@ function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
     throw `Cannot map row id '${ref.id}' to A1 index`;
 }
 
-function serializeCellA1(beans: BeanCollection, cell: Cell): string {
+function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): string {
     const a = (abs: boolean, x: string | number) => (abs ? '$' : '') + String(x);
 
-    const col1 = columnLabelForA1(beans, cell.column);
-    const row1 = rowIndexForA1(beans, cell.row);
+    const col1 = unsafe ? cell.column.id : columnLabelForA1(beans, cell.column);
+    const row1 = unsafe ? cell.row.id : rowIndexForA1(beans, cell.row);
     const startRef = a(cell.column.absolute, col1) + a(cell.row.absolute, row1);
 
     if (cell.endColumn && cell.endRow) {
-        const col2 = columnLabelForA1(beans, cell.endColumn);
-        const row2 = rowIndexForA1(beans, cell.endRow);
+        const col2 = unsafe ? cell.endColumn.id : columnLabelForA1(beans, cell.endColumn);
+        const row2 = unsafe ? cell.endRow.id : rowIndexForA1(beans, cell.endRow);
         return `${startRef}:${a(cell.endColumn.absolute, col2)}${a(cell.endRow.absolute, row2)}`;
     }
     return startRef;
@@ -236,8 +236,14 @@ function needsParensForUnaryMinus(rhs: FormulaNode): boolean {
  * useRefFormat = true  -> REF(COLUMN(...),ROW(...))
  * useRefFormat = false -> A1 ($A$1:$B2)
  */
-export function serializeFormula(beans: BeanCollection, root: FormulaNode, useRefFormat: boolean): string {
-    const emitCell = (cell: Cell) => (useRefFormat ? serializeCellREF(beans, cell) : serializeCellA1(beans, cell));
+export function serializeFormula(
+    beans: BeanCollection,
+    root: FormulaNode,
+    useRefFormat: boolean,
+    unsafe: boolean
+): string {
+    const emitCell = (cell: Cell) =>
+        useRefFormat ? serializeCellREF(beans, cell) : serializeCellA1(beans, cell, unsafe);
 
     function emit(node: FormulaNode): string {
         if (node.type === 'operand') {

@@ -37,12 +37,6 @@ describe('ag-grid formulas general behaviour', () => {
         }
     });
 
-    const defaultGridRowsOptions: GridRowsOptions = {
-        printHiddenRows: true,
-        checkDom: true,
-        columns: true,
-    };
-
     test('constants and cell references evaluate correctly', async () => {
         const rowData = [
             { id: 'value-a1', value: 10 },
@@ -75,8 +69,7 @@ describe('ag-grid formulas general behaviour', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         let gridRows = new GridRows(api, 'initial constants', {
-            ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
+            useFormatter: false,
             columns: ['value'],
         });
         await gridRows.check(`
@@ -101,9 +94,8 @@ describe('ag-grid formulas general behaviour', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         gridRows = new GridRows(api, 'after update', {
-            ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['value'],
+            useFormatter: false,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -173,7 +165,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-operators', gridOptions);
 
-        const gridRows = new GridRows(api, 'operators', defaultGridRowsOptions);
+        const gridRows = new GridRows(api, 'operators');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ops row-number:"1" A:5 B:2 C:"Hi" add:7 subtract:3 multiply:10 divide:2.5 exponent:25 concat:"Hi there" equal:false notEqual:true greaterThan:true lessThan:false greaterThanOrEqual:true lessThanOrEqual:false
@@ -241,8 +233,6 @@ describe('ag-grid formulas general behaviour', () => {
         const api = gridsManager.createGrid('formulas-numeric-rows', gridOptions);
 
         const gridRows = new GridRows(api, 'numeric helpers across rows', {
-            ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['value'],
         });
         await gridRows.check(`
@@ -312,9 +302,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-nested-order', gridOptions);
 
-        const gridRows = new GridRows(api, 'nested evaluation order', {
-            ...defaultGridRowsOptions,
-        });
+        const gridRows = new GridRows(api, 'nested evaluation order');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:nested row-number:"1" A:4 B:28 C:10 D:59
@@ -362,10 +350,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        const gridRows = new GridRows(api, 'counting functions', {
-            ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
-        });
+        const gridRows = new GridRows(api, 'counting functions');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:1 B:"Alpha" C:"first" countNumbers:3 countAll:7 countBlank:5 countIfAlpha:2 countIfGreaterThanTwo:1
@@ -413,9 +398,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-logical', gridOptions);
 
-        const gridRows = new GridRows(api, 'logical functions', {
-            ...defaultGridRowsOptions,
-        });
+        const gridRows = new GridRows(api, 'logical functions');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:logic row-number:"1" A:5 B:3 branch:"High" equals:false notEquals:true greater:true greaterOrEqual:true less:false lessOrEqual:true
@@ -441,7 +424,6 @@ describe('ag-grid formulas general behaviour', () => {
             const api = gridsManager.createGrid('formulas-date', gridOptions);
 
             const gridRows = new GridRows(api, 'date functions fixed clock', {
-                ...defaultGridRowsOptions,
                 columns: ['today', 'now'],
             });
 
@@ -504,9 +486,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-custom-iterator', gridOptions);
 
-        const gridRows = new GridRows(api, 'custom function', {
-            ...defaultGridRowsOptions,
-        });
+        const gridRows = new GridRows(api, 'custom function');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:custom row-number:"1" A:1 B:2 result:6
@@ -543,7 +523,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-custom-error', gridOptions);
 
-        const gridRows = new GridRows(api, 'custom error', defaultGridRowsOptions);
+        const gridRows = new GridRows(api, 'custom error');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:error row-number:"1" A:1 result:"#ERROR!"
@@ -599,9 +579,7 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-custom-range', gridOptions);
 
-        const gridRows = new GridRows(api, 'complex custom function', {
-            ...defaultGridRowsOptions,
-        });
+        const gridRows = new GridRows(api, 'complex custom function');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:range row-number:"1" A:1 B:1 C:2 matchCount:2
@@ -631,8 +609,6 @@ describe('ag-grid formulas general behaviour', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         const gridRowsOptions: GridRowsOptions = {
-            ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['result'],
         };
 
@@ -714,8 +690,6 @@ describe('ag-grid formulas general behaviour', () => {
         const api = gridsManager.createGrid('formulas-abs-rel', gridOptions);
 
         const gridRowsOptions: GridRowsOptions = {
-            ...defaultGridRowsOptions,
-            ignoreUndefinedCells: true,
             columns: ['value'],
         };
 

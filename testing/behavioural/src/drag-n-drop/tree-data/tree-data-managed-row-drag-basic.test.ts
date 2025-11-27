@@ -1,22 +1,13 @@
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
 
 describe.each([false, true])('tree data drag basics (suppress move %s)', (suppressMoveWhenRowDragging) => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, TreeDataModule],
     });
-
-    const treeGridRowsOptions: GridRowsOptions = {
-        checkDom: true,
-        treeData: true,
-        columns: ['ag-Grid-AutoColumn'],
-    };
-
-    const createTreeRows = (api: GridApi, label: string) => new GridRows(api, label, treeGridRowsOptions);
 
     beforeEach(() => {
         gridsManager.reset();
@@ -52,25 +43,6 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
         return gridsManager.createGrid(id, gridOptions);
     };
 
-    const hoverTargetCenter = async (
-        api: GridApi,
-        targetElement: Element,
-        dataTransfer: DataTransfer,
-        fireMouseEvent: (
-            element: Element,
-            type: string,
-            options: MouseEventInit & { dataTransfer?: DataTransfer }
-        ) => Promise<void>
-    ) => {
-        const rect = targetElement.getBoundingClientRect();
-        const clientX = rect.left + rect.width / 2;
-        const clientY = rect.top + rect.height / 2;
-        for (let i = 0; i < 12; ++i) {
-            await asyncSetTimeout(25);
-            await fireMouseEvent(targetElement, 'dragover', { clientX, clientY, dataTransfer });
-        }
-    };
-
     test('reassigns the parent when dropping into another group', async () => {
         const rowData = [
             {
@@ -96,39 +68,36 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const api = createGrid('tree-managed-move', rowData);
 
-        const initialRows = createTreeRows(api, 'initial');
+        const initialRows = new GridRows(api, 'initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ docs GROUP id:docs ag-Grid-AutoColumn:"Documents"
-            │ └─┬ docs-design GROUP id:docs-design ag-Grid-AutoColumn:"Design"
-            │ · └── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old"
+            ├─┬ docs GROUP id:docs ag-Grid-AutoColumn:"Documents" type:"folder"
+            │ └─┬ docs-design GROUP id:docs-design ag-Grid-AutoColumn:"Design" type:"folder"
+            │ · └── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts" type:"file"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old" type:"file"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('docs-drafts');
-        const targetRow = initialRows.getRowHtmlElement('archive');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'docs-drafts';
+        const targetRowId = 'archive';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.move(targetRowId, { center: true });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'after move');
+        const finalRows = new GridRows(api, 'after move');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ docs GROUP id:docs ag-Grid-AutoColumn:"Documents"
-            │ └── docs-design LEAF id:docs-design ag-Grid-AutoColumn:"Design"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · ├── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts"
-            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old"
+            ├─┬ docs GROUP id:docs ag-Grid-AutoColumn:"Documents" type:"folder"
+            │ └── docs-design LEAF id:docs-design ag-Grid-AutoColumn:"Design" type:"folder"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · ├── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts" type:"file"
+            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old" type:"file"
         `);
         expect(api.getRowNode('docs-drafts')?.parent?.id).toBe('archive');
     });
@@ -158,39 +127,35 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const api = createGrid('tree-managed-parent', rowData);
 
-        const initialRows = createTreeRows(api, 'parent initial');
+        const initialRows = new GridRows(api, 'parent initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            │ └─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans"
-            │ · └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report"
+            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            │ └─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans" type:"folder"
+            │ · └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft" type:"file"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report" type:"file"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('plans');
-        const targetRow = initialRows.getRowHtmlElement('archive');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'plans';
+        const targetRowId = 'archive';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.35,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'parent after move');
+        const finalRows = new GridRows(api, 'parent after move');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── root LEAF id:root ag-Grid-AutoColumn:"Root"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · ├─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans"
-            · │ └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft"
-            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report"
+            ├── root LEAF id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · ├─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans" type:"folder"
+            · │ └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft" type:"file"
+            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report" type:"file"
         `);
         expect(finalRows.getById('plans')?.parent?.id).toBe('archive');
     });
@@ -220,38 +185,36 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const api = createGrid('tree-edge-drop-nested', rowData);
 
-        let treeRows = createTreeRows(api, 'initial');
+        let treeRows = new GridRows(api, 'initial');
         await treeRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ docs GROUP id:docs ag-Grid-AutoColumn:"Documents"
-            │ └─┬ docs-design GROUP id:docs-design ag-Grid-AutoColumn:"Design"
-            │ · └── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old"
+            ├─┬ docs GROUP id:docs ag-Grid-AutoColumn:"Documents" type:"folder"
+            │ └─┬ docs-design GROUP id:docs-design ag-Grid-AutoColumn:"Design" type:"folder"
+            │ · └── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts" type:"file"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old" type:"file"
         `);
 
-        const source = treeRows.getRowHtmlElement('docs-design');
-        const target = treeRows.getRowHtmlElement('archive');
-        expect(source).toBeTruthy();
-        expect(target).toBeTruthy();
+        const sourceId = 'docs-design';
+        const targetId = 'archive';
+        expect(getRowHtmlElement(api, sourceId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetId)).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            source: source!,
-            target: target!,
-            targetYOffsetPercent: 0.05,
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceId);
+        await dispatcher.move(targetId, { yOffsetPercent: 0.05 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
-        treeRows = createTreeRows(api, 'after move');
+        treeRows = new GridRows(api, 'after move');
         await treeRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── docs LEAF id:docs ag-Grid-AutoColumn:"Documents"
-            ├─┬ docs-design GROUP id:docs-design ag-Grid-AutoColumn:"Design"
-            │ └── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old"
+            ├── docs LEAF id:docs ag-Grid-AutoColumn:"Documents" type:"folder"
+            ├─┬ docs-design GROUP id:docs-design ag-Grid-AutoColumn:"Design" type:"folder"
+            │ └── docs-drafts LEAF id:docs-drafts ag-Grid-AutoColumn:"Drafts" type:"file"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · └── archive-old LEAF id:archive-old ag-Grid-AutoColumn:"Old" type:"file"
         `);
 
         expect(api.getRowNode('docs-design')?.parent?.id).toBe('ROOT_NODE_ID');
@@ -283,38 +246,36 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const api = createGrid('tree-edge-drop-parent', rowData);
 
-        let treeRows = createTreeRows(api, 'initial parent');
+        let treeRows = new GridRows(api, 'initial parent');
         await treeRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            │ └─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans"
-            │ · └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report"
+            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            │ └─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans" type:"folder"
+            │ · └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft" type:"file"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report" type:"file"
         `);
 
-        const source = treeRows.getRowHtmlElement('plans');
-        const target = treeRows.getRowHtmlElement('archive');
-        expect(source).toBeTruthy();
-        expect(target).toBeTruthy();
+        const sourceId = 'plans';
+        const targetId = 'archive';
+        expect(getRowHtmlElement(api, sourceId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetId)).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            source: source!,
-            target: target!,
-            targetYOffsetPercent: 0.05,
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceId);
+        await dispatcher.move(targetId, { yOffsetPercent: 0.05 });
+        await dispatcher.finish();
 
         await asyncSetTimeout(0);
 
-        treeRows = createTreeRows(api, 'after parent move');
+        treeRows = new GridRows(api, 'after parent move');
         await treeRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── root LEAF id:root ag-Grid-AutoColumn:"Root"
-            ├─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans"
-            │ └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft"
-            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive"
-            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report"
+            ├── root LEAF id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            ├─┬ plans GROUP id:plans ag-Grid-AutoColumn:"Plans" type:"folder"
+            │ └── plans-draft LEAF id:plans-draft ag-Grid-AutoColumn:"Draft" type:"file"
+            └─┬ archive GROUP id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · └── archive-report LEAF id:archive-report ag-Grid-AutoColumn:"Report" type:"file"
         `);
 
         expect(api.getRowNode('plans')?.parent?.id).toBe('ROOT_NODE_ID');
@@ -353,41 +314,38 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const api = createGrid('tree-managed-grandchildren', rowData);
 
-        const initialRows = createTreeRows(api, 'grandchildren initial');
+        const initialRows = new GridRows(api, 'grandchildren initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ documents GROUP id:documents ag-Grid-AutoColumn:"Documents"
-            │ └─┬ projects GROUP id:projects ag-Grid-AutoColumn:"Projects"
-            │ · └─┬ project-alpha GROUP id:project-alpha ag-Grid-AutoColumn:"Alpha"
-            │ · · └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"Design Notes"
-            └─┬ storage GROUP id:storage ag-Grid-AutoColumn:"Storage"
-            · └── storage-archive LEAF id:storage-archive ag-Grid-AutoColumn:"Archive"
+            ├─┬ documents GROUP id:documents ag-Grid-AutoColumn:"Documents" type:"folder"
+            │ └─┬ projects GROUP id:projects ag-Grid-AutoColumn:"Projects" type:"folder"
+            │ · └─┬ project-alpha GROUP id:project-alpha ag-Grid-AutoColumn:"Alpha" type:"folder"
+            │ · · └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"Design Notes" type:"file"
+            └─┬ storage GROUP id:storage ag-Grid-AutoColumn:"Storage" type:"folder"
+            · └── storage-archive LEAF id:storage-archive ag-Grid-AutoColumn:"Archive" type:"file"
         `);
 
-        const sourceRow = initialRows.getRowHtmlElement('projects');
-        const targetRow = initialRows.getRowHtmlElement('storage');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = 'projects';
+        const targetRowId = 'storage';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
-        await dragAndDropRow({
-            api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) =>
-                hoverTargetCenter(api, targetElement, dataTransfer, fireMouseEvent),
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        await dispatcher.move(targetRowId, { center: true });
+        await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = createTreeRows(api, 'grandchildren after move');
+        const finalRows = new GridRows(api, 'grandchildren after move');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── documents LEAF id:documents ag-Grid-AutoColumn:"Documents"
-            └─┬ storage GROUP id:storage ag-Grid-AutoColumn:"Storage"
-            · ├─┬ projects GROUP id:projects ag-Grid-AutoColumn:"Projects"
-            · │ └─┬ project-alpha GROUP id:project-alpha ag-Grid-AutoColumn:"Alpha"
-            · │ · └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"Design Notes"
-            · └── storage-archive LEAF id:storage-archive ag-Grid-AutoColumn:"Archive"
+            ├── documents LEAF id:documents ag-Grid-AutoColumn:"Documents" type:"folder"
+            └─┬ storage GROUP id:storage ag-Grid-AutoColumn:"Storage" type:"folder"
+            · ├─┬ projects GROUP id:projects ag-Grid-AutoColumn:"Projects" type:"folder"
+            · │ └─┬ project-alpha GROUP id:project-alpha ag-Grid-AutoColumn:"Alpha" type:"folder"
+            · │ · └── alpha-design LEAF id:alpha-design ag-Grid-AutoColumn:"Design Notes" type:"file"
+            · └── storage-archive LEAF id:storage-archive ag-Grid-AutoColumn:"Archive" type:"file"
         `);
 
         expect(api.getRowNode('projects')?.parent?.id).toBe('storage');

@@ -2,17 +2,11 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid hierarchical tree expanded state', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
-
-    const gridRowsOptions: GridRowsOptions = {
-        checkDom: true,
-        columns: ['ag-Grid-AutoColumn'],
-    };
 
     beforeEach(() => {
         gridsManager.reset();
@@ -54,20 +48,20 @@ describe('ag-grid hierarchical tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
-            └─┬ 0 GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers"
-            · └─┬ 1 GROUP collapsed hidden id:1 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · · ├─┬ 2 GROUP collapsed hidden id:2 ag-Grid-AutoColumn:"Esther Baker"
-            · · │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson"
-            · · │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers"
-            · · │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton"
-            · · ├── 6 LEAF hidden id:6 ag-Grid-AutoColumn:"Derek Paul"
-            · · └─┬ 7 GROUP collapsed hidden id:7 ag-Grid-AutoColumn:"Francis Strickland"
-            · · · ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson"
-            · · · ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler"
-            · · · ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise"
-            · · · └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper"
+            └─┬ 0 GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
+            · └─┬ 1 GROUP collapsed hidden id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · · ├─┬ 2 GROUP collapsed hidden id:2 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · · │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson" jobTitle:"Fleet Coordinator" employmentType:"Permanent"
+            · · │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers" jobTitle:"Parts Technician" employmentType:"Contract"
+            · · │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton" jobTitle:"Service Technician" employmentType:"Contract"
+            · · ├── 6 LEAF hidden id:6 ag-Grid-AutoColumn:"Derek Paul" jobTitle:"Inventory Control" employmentType:"Permanent"
+            · · └─┬ 7 GROUP collapsed hidden id:7 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · · · ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson" jobTitle:"Sales Manager" employmentType:"Permanent"
+            · · · ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler" jobTitle:"Sales Executive" employmentType:"Contract"
+            · · · ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise" jobTitle:"Sales Executive" employmentType:"Contract"
+            · · · └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper" jobTitle:"Sales Executive" employmentType:"Permanent"
         `);
 
         api.getRowNode('0')!.setExpanded(true, undefined, true);
@@ -75,22 +69,22 @@ describe('ag-grid hierarchical tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
-            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers"
-            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · │ ├─┬ 2 GROUP collapsed id:2 ag-Grid-AutoColumn:"Esther Baker"
-            · │ │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson"
-            · │ │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers"
-            · │ │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton"
-            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul"
-            · │ ├─┬ 7 GROUP collapsed id:7 ag-Grid-AutoColumn:"Francis Strickland"
-            · │ │ ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson"
-            · │ │ ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler"
-            · │ │ ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise"
-            · │ │ └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper"
-            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers"
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
+            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · │ ├─┬ 2 GROUP collapsed id:2 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · │ │ └─┬ 3 GROUP collapsed hidden id:3 ag-Grid-AutoColumn:"Brittany Hanson" jobTitle:"Fleet Coordinator" employmentType:"Permanent"
+            · │ │ · ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers" jobTitle:"Parts Technician" employmentType:"Contract"
+            · │ │ · └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton" jobTitle:"Service Technician" employmentType:"Contract"
+            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul" jobTitle:"Inventory Control" employmentType:"Permanent"
+            · │ ├─┬ 7 GROUP collapsed id:7 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · │ │ ├── 8 LEAF hidden id:8 ag-Grid-AutoColumn:"Morris Hanson" jobTitle:"Sales Manager" employmentType:"Permanent"
+            · │ │ ├── 9 LEAF hidden id:9 ag-Grid-AutoColumn:"Todd Tyler" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ ├── 10 LEAF hidden id:10 ag-Grid-AutoColumn:"Bennie Wise" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ └── 11 LEAF hidden id:11 ag-Grid-AutoColumn:"Joel Cooper" jobTitle:"Sales Executive" employmentType:"Permanent"
+            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
         `);
 
         api.getRowNode('7')!.setExpanded(true, undefined, true);
@@ -98,24 +92,24 @@ describe('ag-grid hierarchical tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:"unknown"
-            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers"
-            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"Esther Baker"
-            · │ │ ├─┬ 3 GROUP collapsed id:3 ag-Grid-AutoColumn:"Brittany Hanson"
-            · │ │ │ ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers"
-            · │ │ │ └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton"
-            · │ │ └── yoo-4 LEAF id:yoo-4 ag-Grid-AutoColumn:"Esther Baker"
-            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul"
-            · │ ├─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"Francis Strickland"
-            · │ │ ├── 8 LEAF id:8 ag-Grid-AutoColumn:"Morris Hanson"
-            · │ │ ├── 9 LEAF id:9 ag-Grid-AutoColumn:"Todd Tyler"
-            · │ │ ├── 10 LEAF id:10 ag-Grid-AutoColumn:"Bennie Wise"
-            · │ │ ├── 11 LEAF id:11 ag-Grid-AutoColumn:"Joel Cooper"
-            · │ │ └── yoo-3 LEAF id:yoo-3 ag-Grid-AutoColumn:"Francis Strickland"
-            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett"
-            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers"
+            └─┬ 0 GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
+            · ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · │ ├─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · │ │ ├─┬ 3 GROUP collapsed id:3 ag-Grid-AutoColumn:"Brittany Hanson" jobTitle:"Fleet Coordinator" employmentType:"Permanent"
+            · │ │ │ ├── 4 LEAF hidden id:4 ag-Grid-AutoColumn:"Leah Flowers" jobTitle:"Parts Technician" employmentType:"Contract"
+            · │ │ │ └── 5 LEAF hidden id:5 ag-Grid-AutoColumn:"Tammy Sutton" jobTitle:"Service Technician" employmentType:"Contract"
+            · │ │ └── yoo-4 LEAF id:yoo-4 ag-Grid-AutoColumn:"Esther Baker" jobTitle:"Director of Operations" employmentType:"Permanent"
+            · │ ├── 6 LEAF id:6 ag-Grid-AutoColumn:"Derek Paul" jobTitle:"Inventory Control" employmentType:"Permanent"
+            · │ ├─┬ 7 GROUP id:7 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · │ │ ├── 8 LEAF id:8 ag-Grid-AutoColumn:"Morris Hanson" jobTitle:"Sales Manager" employmentType:"Permanent"
+            · │ │ ├── 9 LEAF id:9 ag-Grid-AutoColumn:"Todd Tyler" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ ├── 10 LEAF id:10 ag-Grid-AutoColumn:"Bennie Wise" jobTitle:"Sales Executive" employmentType:"Contract"
+            · │ │ ├── 11 LEAF id:11 ag-Grid-AutoColumn:"Joel Cooper" jobTitle:"Sales Executive" employmentType:"Permanent"
+            · │ │ └── yoo-3 LEAF id:yoo-3 ag-Grid-AutoColumn:"Francis Strickland" jobTitle:"VP Sales" employmentType:"Permanent"
+            · │ └── yoo-2 LEAF id:yoo-2 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
+            · └── yoo-1 LEAF id:yoo-1 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
         `);
     });
 });

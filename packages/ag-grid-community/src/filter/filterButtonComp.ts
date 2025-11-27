@@ -140,8 +140,8 @@ export class FilterButtonComp extends Component<FilterAction> {
         if (!eApplyButton) {
             return;
         }
-        _setDisabled(eApplyButton, valid === false);
-        this.validationMessage = message ?? null;
+        _setDisabled(eApplyButton, !valid);
+        this.validationMessage = message;
         this.validationTooltipFeature?.setTooltipAndRefresh(this.validationMessage);
     }
 

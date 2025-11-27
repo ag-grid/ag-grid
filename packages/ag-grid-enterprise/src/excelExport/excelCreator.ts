@@ -326,7 +326,7 @@ export class ExcelCreator
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos } = this.beans;
 
         const config: ExcelGridSerializingParams = {
             ...params,
@@ -334,6 +334,7 @@ export class ExcelCreator
             colNames,
             rowGroupColsSvc,
             valueSvc,
+            formulaSvc: formula,
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,

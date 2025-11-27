@@ -2,6 +2,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
@@ -12,6 +13,7 @@ import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([
     CellSelectionModule,
     ClientSideRowModelModule,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     FormulaModule,
@@ -35,7 +37,7 @@ const gridOptions: GridOptions<any> = {
     columnDefs: [
         { field: 'A', colId: '0', width: 150 },
         { field: 'B', colId: '1', width: 150 },
-        { field: 'C', colId: '2', flex: 1, allowFormula: true },
+        { field: 'C', colId: '2', flex: 1, cellDataType: 'text', allowFormula: true },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
@@ -44,7 +46,6 @@ const gridOptions: GridOptions<any> = {
         },
     },
     defaultColDef: {
-        headerName: '',
         editable: true,
     },
     rowData,

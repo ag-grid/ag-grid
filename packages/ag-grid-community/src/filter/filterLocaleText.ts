@@ -50,15 +50,11 @@ const FILTER_LOCALE_TEXT = {
     filterSummaryInRange: 'between',
     filterSummaryInRangeValues: (variableValues: string[]) => `(${variableValues[0]}, ${variableValues[1]})`,
     filterSummaryTextQuote: (variableValues: string[]) => `"${variableValues[0]}"`,
-    tooBig: (variableValues: string[]) => getRangeValidityMessage('value', 'no more than', variableValues[0]),
-    tooSmall: (variableValues: string[]) => getRangeValidityMessage('value', 'no less than', variableValues[0]),
-    tooEarly: (variableValues: string[]) => getRangeValidityMessage('date', 'after', variableValues[0]),
-    tooLate: (variableValues: string[]) => getRangeValidityMessage('date', 'before', variableValues[0]),
+    minDateValidation: (variableValues: string[]) => `Date must be after ${variableValues[0]}`,
+    maxDateValidation: (variableValues: string[]) => `Date must be before ${variableValues[0]}`,
+    strictMinValueValidation: (variableValues: string[]) => `Must be greater than ${variableValues[0]}`,
+    strictMaxValueValidation: (variableValues: string[]) => `Must be less than ${variableValues[0]}`,
 };
-
-function getRangeValidityMessage(kind: 'value' | 'date', relation: string, value: any): string {
-    return `Please select a ${kind} that is ${relation} ${value}`;
-}
 
 export type FilterLocaleTextKey = keyof typeof FILTER_LOCALE_TEXT;
 

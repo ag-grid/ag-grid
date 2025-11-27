@@ -12,9 +12,7 @@ describe('ag-grid tree duplicate keys', () => {
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
-    const gridRowsOptions = {
-        checkDom: true,
-    };
+    const gridRowsOptions = {};
 
     let consoleWarnSpy: MockInstance;
 
@@ -57,7 +55,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └── A LEAF id:KtTkR5g-0
+            └── A LEAF id:KtTkR5g-0 ag-Grid-AutoColumn:"A"
         `);
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -72,8 +70,8 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'after update', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├── A LEAF id:KtTkR5g-0
-            └── B LEAF id:X80CJzw-1
+            ├── A LEAF id:KtTkR5g-0 ag-Grid-AutoColumn:"A"
+            └── B LEAF id:X80CJzw-1 ag-Grid-AutoColumn:"B"
         `);
     });
 
@@ -107,8 +105,8 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · └── B LEAF id:j4SDrJw-0
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · └── B LEAF id:j4SDrJw-0 ag-Grid-AutoColumn:"B"
         `);
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -122,9 +120,9 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'updated', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · └─┬ B GROUP id:j4SDrJw-0
-            · · └── C LEAF id:BexVZIg-1
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · └─┬ B GROUP id:j4SDrJw-0 ag-Grid-AutoColumn:"B"
+            · · └── C LEAF id:BexVZIg-1 ag-Grid-AutoColumn:"C"
         `);
     });
 
@@ -161,10 +159,10 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · └─┬ B GROUP id:UzWrPgX-0
-            · · ├── C LEAF id:q7lpQ9A-1
-            · · └── D LEAF id:NXtKeUA-3
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · └─┬ B GROUP id:UzWrPgX-0 ag-Grid-AutoColumn:"B"
+            · · ├── C LEAF id:q7lpQ9A-1 ag-Grid-AutoColumn:"C"
+            · · └── D LEAF id:NXtKeUA-3 ag-Grid-AutoColumn:"D"
         `);
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -181,11 +179,11 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'updated', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · ├── X LEAF id:UzWrPgX-0
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · ├── X LEAF id:UzWrPgX-0 ag-Grid-AutoColumn:"X"
             · └─┬ B GROUP id:zIJkvFA-2
-            · · ├── C LEAF id:q7lpQ9A-1
-            · · └── D LEAF id:NXtKeUA-3
+            · · ├── C LEAF id:q7lpQ9A-1 ag-Grid-AutoColumn:"C"
+            · · └── D LEAF id:NXtKeUA-3 ag-Grid-AutoColumn:"D"
         `);
     });
 
@@ -207,9 +205,9 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · ├── B LEAF id:B5XPAQx-0
-            · └── C LEAF id:K7mRgOg-2
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · ├── B LEAF id:B5XPAQx-0 ag-Grid-AutoColumn:"B"
+            · └── C LEAF id:K7mRgOg-2 ag-Grid-AutoColumn:"C"
         `);
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
@@ -226,9 +224,9 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · ├── C LEAF id:B5XPAQx-0
-            · └── B LEAF id:K7mRgOg-2
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · ├── C LEAF id:B5XPAQx-0 ag-Grid-AutoColumn:"C"
+            · └── B LEAF id:K7mRgOg-2 ag-Grid-AutoColumn:"B"
         `);
     });
 
@@ -255,8 +253,8 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · └── B LEAF id:xRow-0
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · └── B LEAF id:xRow-0 ag-Grid-AutoColumn:"B"
         `);
 
         expect(consoleWarnSpy).toHaveBeenCalled();
@@ -271,7 +269,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'update 1', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
             · └── B LEAF id:xRow-2
         `);
 
@@ -285,9 +283,9 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'update 2', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
             · ├── B LEAF id:xRow-3
-            · └── C LEAF id:xRow-2
+            · └── C LEAF id:xRow-2 ag-Grid-AutoColumn:"C"
         `);
 
         api.setGridOption('rowData', [
@@ -301,8 +299,8 @@ describe('ag-grid tree duplicate keys', () => {
 
         await new GridRows(api, 'update 3', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A filler id:row-group-0-A
-            · ├── C LEAF id:xRow-2
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · ├── C LEAF id:xRow-2 ag-Grid-AutoColumn:"C"
             · └── B LEAF id:xRow-0
         `);
 

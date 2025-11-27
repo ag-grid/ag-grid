@@ -2,7 +2,7 @@ import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 import type { GridOptions, RowNode } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, dragAndDropRow } from '../../test-utils';
+import { GridRows, RowDragDispatcher, TestGridsManager, asyncSetTimeout, getRowHtmlElement } from '../../test-utils';
 
 const gridsManager = new TestGridsManager({
     modules: [ClientSideRowModelModule, RowDragModule, RowGroupingModule],
@@ -19,24 +19,19 @@ describe('row drag nudger group expansion', () => {
 
     const waitForGroupHover = async (
         api: any,
-        targetElement: Element,
-        dataTransfer: DataTransfer,
-        fireMouseEvent: (
-            element: Element,
-            type: string,
-            options: MouseEventInit & { dataTransfer?: DataTransfer }
-        ) => Promise<void>
+        targetRowId: string,
+        rowDragDispatcher: RowDragDispatcher
     ): Promise<boolean> => {
-        const rect = targetElement.getBoundingClientRect();
-        const clientX = rect.left + rect.width / 2;
-        const clientY = rect.top + rect.height / 2;
         for (let i = 0; i < 12; ++i) {
+            const targetElement = getRowHtmlElement(api, targetRowId);
+            if (!targetElement) {
+                throw new Error(`row element ${targetRowId} not found while waiting for hover`);
+            }
+            const rect = targetElement.getBoundingClientRect();
+            const clientX = rect.left + rect.width / 2;
+            const clientY = rect.top + rect.height / 2;
             await asyncSetTimeout(25);
-            await fireMouseEvent(targetElement, 'dragover', {
-                dataTransfer,
-                clientX,
-                clientY,
-            });
+            await rowDragDispatcher.move(targetRowId, { clientX, clientY });
         }
 
         let expanded = false;
@@ -75,34 +70,29 @@ describe('row drag nudger group expansion', () => {
             }
         });
 
-        const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial');
         await initialRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-group-A
-                │ ├── LEAF id:1 value:"A1"
-                │ └── LEAF id:2 value:"A2"
-                └─┬ LEAF_GROUP collapsed id:row-group-group-B
-                · └── LEAF hidden id:3 value:"B1"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP collapsed id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF hidden id:3 group:"B" value:"B1"
+        `);
 
-        const sourceRow = initialRows.getRowHtmlElement('2');
-        const targetRow = initialRows.getRowHtmlElement('row-group-group-B');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = '2';
+        const targetRowId = 'row-group-group-B';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         let expandedBeforeDrop = false;
 
-        const result = await dragAndDropRow({
-            api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, dataTransfer, fireMouseEvent);
-            },
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        expandedBeforeDrop = await waitForGroupHover(api, targetRowId, dispatcher);
+        await dispatcher.finish();
 
-        expect(result.error).toBeNull();
         expect(expandedBeforeDrop).toBe(true);
 
         let expandedAfterDrop = false;
@@ -114,15 +104,15 @@ describe('row drag nudger group expansion', () => {
         expect(expandedAfterDrop).toBe(true);
         expect(api.getRowNode('2')?.data.group).toBe('B');
 
-        const afterRows = new GridRows(api, 'after', { checkDom: true, columns: ['value'] });
-        await afterRows.check([
-            'ROOT id:ROOT_NODE_ID',
-            '├─┬ LEAF_GROUP id:row-group-group-A',
-            '│ └── LEAF id:1 value:"A1"',
-            '└─┬ LEAF_GROUP id:row-group-group-B',
-            '· ├── LEAF id:3 value:"B1"',
-            '· └── LEAF id:2 value:"A2"',
-        ]);
+        const afterRows = new GridRows(api, 'after');
+        await afterRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 group:"B" value:"B1"
+            · └── LEAF id:2 group:"B" value:"A2"
+        `);
     });
 
     test('unmanaged row data still auto-expands collapsed groups after the insert delay', async () => {
@@ -150,34 +140,29 @@ describe('row drag nudger group expansion', () => {
             }
         });
 
-        const initialRows = new GridRows(api, 'initial', { checkDom: true, columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial');
         await initialRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-group-A
-                │ ├── LEAF id:1 value:"A1"
-                │ └── LEAF id:2 value:"A2"
-                └─┬ LEAF_GROUP collapsed id:row-group-group-B
-                · └── LEAF hidden id:3 value:"B1"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP collapsed id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF hidden id:3 group:"B" value:"B1"
+        `);
 
-        const sourceRow = initialRows.getRowHtmlElement('2');
-        const targetRow = initialRows.getRowHtmlElement('row-group-group-B');
-        expect(sourceRow).toBeTruthy();
-        expect(targetRow).toBeTruthy();
+        const sourceRowId = '2';
+        const targetRowId = 'row-group-group-B';
+        expect(getRowHtmlElement(api, sourceRowId)).toBeTruthy();
+        expect(getRowHtmlElement(api, targetRowId)).toBeTruthy();
 
         let expandedBeforeDrop = false;
 
-        const result = await dragAndDropRow({
-            api,
-            source: sourceRow!,
-            target: targetRow!,
-            targetYOffsetPercent: 0.6,
-            beforeDrop: async ({ targetElement, dataTransfer, fireMouseEvent }) => {
-                expandedBeforeDrop = await waitForGroupHover(api, targetElement, dataTransfer, fireMouseEvent);
-            },
-        });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start(sourceRowId);
+        await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
+        expandedBeforeDrop = await waitForGroupHover(api, targetRowId, dispatcher);
+        await dispatcher.finish();
 
-        expect(result.error).toBeNull();
         expect(expandedBeforeDrop).toBe(true);
 
         let expandedAfterDrop = false;
@@ -189,14 +174,14 @@ describe('row drag nudger group expansion', () => {
         expect(expandedAfterDrop).toBe(true);
         expect(api.getRowNode('2')?.data.group).toBe('A');
 
-        const afterRows = new GridRows(api, 'after', { checkDom: true, columns: ['value'] });
-        await afterRows.check([
-            'ROOT id:ROOT_NODE_ID',
-            '├─┬ LEAF_GROUP id:row-group-group-A',
-            '│ ├── LEAF id:1 value:"A1"',
-            '│ └── LEAF id:2 value:"A2"',
-            '└─┬ LEAF_GROUP id:row-group-group-B',
-            '· └── LEAF id:3 value:"B1"',
-        ]);
+        const afterRows = new GridRows(api, 'after');
+        await afterRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
+        `);
     });
 });

@@ -5,7 +5,6 @@ import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 import { simpleParentIdRowsSnapshot } from './simpleParentIdRowsSnapshot';
 
 describe('ag-grid tree data parent id', () => {
@@ -101,12 +100,7 @@ describe('ag-grid tree data parent id', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-            checkDom: true,
-        };
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"a"
@@ -156,12 +150,7 @@ describe('ag-grid tree data parent id', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-            checkDom: true,
-        };
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" V:"c"
@@ -208,12 +197,7 @@ describe('ag-grid tree data parent id', () => {
             treeData: true,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
-        const gridRows = new GridRows(api, 'update 1', gridRowsOptions);
+        const gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"a"
@@ -234,11 +218,6 @@ describe('ag-grid tree data parent id', () => {
             getRowId: (params) => params.data.id,
             onRowDataUpdated: () => ++rowDataUpdated,
             onModelUpdated: () => ++modelUpdated,
-        };
-
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
         };
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
@@ -262,7 +241,7 @@ describe('ag-grid tree data parent id', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        await new GridRows(api, 'empty', gridRowsOptions).check('empty');
+        await new GridRows(api, 'empty').check('empty');
 
         api.setGridOption('columnDefs', [{ field: 'xid', valueGetter: (params) => params.data?.id }, { field: 'x' }]);
 
@@ -270,7 +249,7 @@ describe('ag-grid tree data parent id', () => {
         expect(rowDataUpdated).toBe(1);
         expect(modelUpdated).toBe(1);
 
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        await new GridRows(api, 'data').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ a GROUP id:a ag-Grid-AutoColumn:"a" xid:"a" x:1
             │ └── b LEAF id:b ag-Grid-AutoColumn:"b" xid:"b" x:7
@@ -297,7 +276,7 @@ describe('ag-grid tree data parent id', () => {
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'x' }],
-            autoGroupColumnDef: { headerName: 'X', colId: 'aaa' },
+            autoGroupColumnDef: { headerName: 'X' },
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData,
@@ -306,12 +285,7 @@ describe('ag-grid tree data parent id', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-            checkDom: true,
-        };
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -327,7 +301,7 @@ describe('ag-grid tree data parent id', () => {
 
         api.updateGridOptions({
             columnDefs: [{ field: 'x' }, { field: 'id' }, { field: 'z' }],
-            autoGroupColumnDef: { headerName: 'X', field: 'x', colId: 'xxx' },
+            autoGroupColumnDef: { headerName: 'X', field: 'x' },
         });
 
         await gridRows.check(`
@@ -343,7 +317,7 @@ describe('ag-grid tree data parent id', () => {
         `);
 
         api.updateGridOptions({
-            autoGroupColumnDef: { headerName: 'X', field: 'z', colId: 'www' },
+            autoGroupColumnDef: { headerName: 'X', field: 'z' },
         });
 
         await gridRows.check(`

@@ -1,5 +1,5 @@
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
-import { AllCommunityModule, _doOnce, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, _doOnce, createGrid, getGridElement } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
@@ -155,7 +155,9 @@ export class TestGridsManager {
     }
 
     public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {
-        return (api && gridApiHtmlElementsMap.get(api)) ?? null;
+        return (api && gridApiHtmlElementsMap.get(api)) ?? api
+            ? (getGridElement(api) as HTMLElement | undefined) ?? null
+            : null;
     }
 
     public static registerHTMLElement(api: GridApi, element: HTMLElement) {
