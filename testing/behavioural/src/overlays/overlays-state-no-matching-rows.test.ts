@@ -1,12 +1,14 @@
 import { waitFor } from '@testing-library/dom';
 
+import type { AdvancedFilterModel } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlays no matching rows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule],
+        modules: [ClientSideRowModelModule, TextFilterModule, AdvancedFilterModule],
     });
     const columnDefs = [
         { field: 'athlete', filter: true },
@@ -275,6 +277,59 @@ describe('ag-grid overlays no matching rows', () => {
                 athlete: { type: 'contains', filter: 'Nonexistent' },
                 sport: { type: 'contains', filter: 'Nonexistent' },
             });
+
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
+
+        test('no matching rows overlay shows with advanced filter', async () => {
+            const initialAdvancedFilterModel: AdvancedFilterModel = {
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    {
+                        filterType: 'text',
+                        colId: 'country',
+                        type: 'contains',
+                        filter: 'Nonexistent',
+                    },
+                ],
+            };
+
+            gridsManager.createGrid('myGrid', {
+                enableAdvancedFilter: true,
+                initialState: {
+                    filter: {
+                        advancedFilterModel: initialAdvancedFilterModel,
+                    },
+                },
+                columnDefs: [...columnDefs, { field: 'country', filter: true }],
+                rowData: [
+                    { athlete: 'Michael Phelps', sport: 'Swimming', age: 23, country: 'USA' },
+                    { athlete: 'Emma Thompson', sport: 'Tennis', age: 25, country: 'UK' },
+                ],
+            });
+
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+        });
+
+        test('no matching rows overlay shows with quick filter', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [...columnDefs, { field: 'country' }],
+                rowData: [
+                    { athlete: 'Michael Phelps', sport: 'Swimming', age: 23, country: 'USA' },
+                    { athlete: 'Emma Thompson', sport: 'Tennis', age: 25, country: 'UK' },
+                ],
+            });
+
+            console.log('before', api.getDisplayedRowCount()); // to ensure grid is initialised
+
+            api.setGridOption('quickFilterText', 'Nonexistent');
+
+            console.log(api.getDisplayedRowCount()); // to ensure grid is initialised
 
             expect(hasNoMatchingRowsOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
