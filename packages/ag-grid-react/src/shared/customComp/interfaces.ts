@@ -23,6 +23,7 @@ import type {
     IHeaderParams,
     ILoadingCellRendererParams,
     ILoadingOverlayParams,
+    INoMatchingRowsOverlayParams,
     INoRowsOverlayParams,
     IOverlayParams,
     IStatusPanelParams,
@@ -133,6 +134,10 @@ export interface CustomLoadingOverlayProps<TData = any, TContext = any>
 
 /** Props provided to custom no-rows overlay component */
 export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
+
+/** Props provided to custom no--matching-rows overlay component */
+export interface CustomNoMatchingRowsOverlayProps<TData = any, TContext = any>
+    extends INoMatchingRowsOverlayParams<TData, TContext> {}
 
 /** Props provided to custom status panel components */
 export interface CustomStatusPanelProps<TData = any, TContext = any> extends IStatusPanelParams<TData, TContext> {}
