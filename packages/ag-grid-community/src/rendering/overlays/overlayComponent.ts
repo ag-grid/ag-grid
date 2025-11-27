@@ -82,9 +82,10 @@ export abstract class OverlayComponent<
     public abstract init(params: IOverlayParams): void;
 }
 
-export interface OverlaySelectorFunc<TData = any, TContext = any> {
-    (params: IOverlayParams<TData, TContext>): OverlaySelectorResult | undefined;
-}
+export type OverlaySelectorFunc<TData = any, TContext = any> = (
+    params: IOverlayParams<TData, TContext>
+) => OverlaySelectorResult | undefined;
+
 export interface OverlaySelectorResult {
     /** Equivalent of setting `gridOptions.overlayComponent`. */
     component?: any;

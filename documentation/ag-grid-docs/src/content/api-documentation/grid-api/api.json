@@ -808,6 +808,17 @@
         "setRowCount": {},
         "getCacheBlockState": {}
     },
+    "overlays": {
+        "meta": {
+            "displayName": "Overlays",
+            "page": {
+                "name": "Overlays",
+                "url": "./overlays/"
+            }
+        },
+        "showNoRowsOverlay": {},
+        "hideOverlay": {}
+    },
     "clipboard": {
         "meta": {
             "displayName": "Clipboard",
