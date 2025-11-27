@@ -99,10 +99,6 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             return;
         }
 
-        if (float == null && rowNode.destroyed) {
-            return;
-        }
-
         // Pinning grand total row is the only case in which pinned rows are not duplicates of rows
         // in the main viewport. So we have to handle them differently:
         // 1. We first set `_grandTotalPinned` to mark the location the grand total row should be pinned to.
