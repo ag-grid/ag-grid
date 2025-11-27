@@ -151,14 +151,14 @@ describe('ag-grid parentId tree expanded state', () => {
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └── B LEAF id:B
-            ├─┬ C GROUP id:C
-            │ └── D LEAF id:D
-            └─┬ E GROUP id:E
-            · └─┬ F GROUP collapsed id:F
-            · · └─┬ G GROUP collapsed hidden id:G
-            · · · └── H LEAF hidden id:H
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"A"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B" x:"B"
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" x:"C"
+            │ └── D LEAF id:D ag-Grid-AutoColumn:"D" x:"D"
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"E"
+            · └─┬ F GROUP collapsed id:F ag-Grid-AutoColumn:"F" x:"F"
+            · · └─┬ G GROUP collapsed hidden id:G ag-Grid-AutoColumn:"G" x:"G"
+            · · · └── H LEAF hidden id:H ag-Grid-AutoColumn:"H" x:"H"
         `);
     });
 
@@ -196,14 +196,14 @@ describe('ag-grid parentId tree expanded state', () => {
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └─┬ B GROUP id:B
-            │ · └─┬ C GROUP collapsed id:C
-            │ · · └── D LEAF hidden id:D
-            └─┬ E GROUP id:E
-            · └─┬ F GROUP id:F
-            · · └─┬ G GROUP collapsed id:G
-            · · · └── H LEAF hidden id:H
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" x:"A"
+            │ └─┬ B GROUP id:B ag-Grid-AutoColumn:"B" x:"B"
+            │ · └─┬ C GROUP collapsed id:C ag-Grid-AutoColumn:"C" x:"C"
+            │ · · └── D LEAF hidden id:D ag-Grid-AutoColumn:"D" x:"D"
+            └─┬ E GROUP id:E ag-Grid-AutoColumn:"E" x:"E"
+            · └─┬ F GROUP id:F ag-Grid-AutoColumn:"F" x:"F"
+            · · └─┬ G GROUP collapsed id:G ag-Grid-AutoColumn:"G" x:"G"
+            · · · └── H LEAF hidden id:H ag-Grid-AutoColumn:"H" x:"H"
         `);
 
         calls.sort((a, b) => a.key.localeCompare(b.key));

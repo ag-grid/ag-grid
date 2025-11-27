@@ -2,7 +2,6 @@ import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 /** Row numbers refresh on a debounced path (~10ms), so allow a small buffer before asserting the DOM. */
@@ -29,10 +28,6 @@ describe('ag-grid formulas sorting', () => {
         gridsManager.reset();
     });
 
-    const defaultGridRowsOptions: GridRowsOptions = {
-        columns: true,
-    };
-
     test('Sorting and filtering still work when formulas are disabled', async () => {
         const rowData = [
             { id: '1', A: 1, B: 'alpha' },
@@ -56,7 +51,7 @@ describe('ag-grid formulas sorting', () => {
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        let gridRows = new GridRows(api, 'initial no formulas', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial no formulas');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:1 B:"alpha"
@@ -75,7 +70,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'filter A > 2 no formulas', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'filter A > 2 no formulas');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 row-number:"1" A:3 B:"bravo"
@@ -89,7 +84,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'filter A > 2 sort desc no formulas', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'filter A > 2 sort desc no formulas');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 row-number:"1" A:5 B:"delta"
@@ -121,7 +116,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc1', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:10 B:20
@@ -137,7 +132,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted B asc', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'sorted B asc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:10 B:20
@@ -169,7 +164,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc2', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:5 B:20
@@ -183,7 +178,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted A desc', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'sorted A desc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"1" A:15 B:25
@@ -211,7 +206,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc3', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:100 B:1 C:102
@@ -226,7 +221,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted A desc', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'sorted A desc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 row-number:"1" A:400 B:4 C:403
@@ -259,7 +254,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc4', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:1 B:9
@@ -275,7 +270,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted A desc', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'sorted A desc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 row-number:"1" A:5 B:3.5
@@ -309,7 +304,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc5', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:1 B:3
@@ -328,7 +323,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'filtered A > 2', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'filtered A > 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"3" A:3 B:7
@@ -342,7 +337,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'filtered and sorted', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'filtered and sorted');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:5 row-number:"1" A:5 B:6
@@ -382,12 +377,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc6', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            ...defaultGridRowsOptions,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'initial order', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial order');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:100
@@ -401,7 +391,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted A asc', gridRowsOptions);
+        gridRows = new GridRows(api, 'sorted A asc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 row-number:"1" A:10 B:100 C:10 D:100 E:10
@@ -415,7 +405,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted A desc', gridRowsOptions);
+        gridRows = new GridRows(api, 'sorted A desc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:100
@@ -460,11 +450,6 @@ describe('ag-grid formulas sorting', () => {
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        const gridRowsOptions: GridRowsOptions = {
-            ...defaultGridRowsOptions,
-            columns: true,
-        };
-
         const assertRelativeValues = (afterSort: boolean) => {
             const rowNode = api.getRowNode('relative');
             expect(rowNode).toBeDefined();
@@ -475,7 +460,7 @@ describe('ag-grid formulas sorting', () => {
             expect(getValue('E')).toBe(afterSort ? 5 : 40);
         };
 
-        let gridRows = new GridRows(api, 'initial order', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial order');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:base row-number:"1" A:40
@@ -492,7 +477,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted A asc', gridRowsOptions);
+        gridRows = new GridRows(api, 'sorted A asc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:relative row-number:"1" A:5 B:40 C:5 D:40 E:5
@@ -512,7 +497,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'sorted asc filtered A < 90', gridRowsOptions);
+        gridRows = new GridRows(api, 'sorted asc filtered A < 90');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:relative row-number:"1" A:5 B:40 C:5 D:40 E:5
@@ -525,7 +510,7 @@ describe('ag-grid formulas sorting', () => {
         api.refreshClientSideRowModel('everything');
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after refreshModel everything', gridRowsOptions);
+        gridRows = new GridRows(api, 'after refreshModel everything');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:relative row-number:"1" A:5 B:40 C:5 D:40 E:5
@@ -538,7 +523,7 @@ describe('ag-grid formulas sorting', () => {
         api.refreshClientSideRowModel('sort');
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after refreshModel sort', gridRowsOptions);
+        gridRows = new GridRows(api, 'after refreshModel sort');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:relative row-number:"1" A:5 B:40 C:5 D:40 E:5
@@ -551,7 +536,7 @@ describe('ag-grid formulas sorting', () => {
         api.refreshClientSideRowModel('filter');
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after refreshModel filter', gridRowsOptions);
+        gridRows = new GridRows(api, 'after refreshModel filter');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:relative row-number:"1" A:5 B:40 C:5 D:40 E:5
@@ -586,7 +571,7 @@ describe('ag-grid formulas sorting', () => {
 
         const api = gridsManager.createGrid('sorting-tc6', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', defaultGridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:10 B:30 category:"Keep"
@@ -604,7 +589,7 @@ describe('ag-grid formulas sorting', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'filtered category Keep', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'filtered category Keep');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 row-number:"1" A:10 B:30 category:"Keep"
@@ -617,7 +602,7 @@ describe('ag-grid formulas sorting', () => {
             defaultState: { sort: null },
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
-        gridRows = new GridRows(api, 'filtered keep sorted B desc', defaultGridRowsOptions);
+        gridRows = new GridRows(api, 'filtered keep sorted B desc');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:3 row-number:"1" A:30 B:70 category:"Keep"

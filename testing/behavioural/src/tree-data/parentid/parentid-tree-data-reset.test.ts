@@ -49,22 +49,22 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'initial', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └── B LEAF id:B
-            └─┬ C GROUP id:C
-            · ├── D LEAF id:D
-            · └── E LEAF id:E
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B"
+            └─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
+            · ├── D LEAF id:D ag-Grid-AutoColumn:"D"
+            · └── E LEAF id:E ag-Grid-AutoColumn:"E"
         `);
 
         api.setGridOption('rowData', rowData);
 
         await new GridRows(api, 'update 1', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP id:A
-            │ └── B LEAF id:B
-            └─┬ C GROUP id:C
-            · ├── D LEAF id:D
-            · └── E LEAF id:E
+            ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B"
+            └─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
+            · ├── D LEAF id:D ag-Grid-AutoColumn:"D"
+            · └── E LEAF id:E ag-Grid-AutoColumn:"E"
         `);
 
         api.setGridOption(
@@ -80,11 +80,11 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'update 2', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ C GROUP id:C
-            │ ├── D LEAF id:D
-            │ └── E LEAF id:E
-            └─┬ A GROUP id:A
-            · └── B LEAF id:B
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
+            │ ├── D LEAF id:D ag-Grid-AutoColumn:"D"
+            │ └── E LEAF id:E ag-Grid-AutoColumn:"E"
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
+            · └── B LEAF id:B ag-Grid-AutoColumn:"B"
         `);
 
         api.setGridOption(
@@ -100,11 +100,11 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'update 3', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ C GROUP id:C
-            │ ├── E LEAF id:E
-            │ └── D LEAF id:D
-            └─┬ A GROUP id:A
-            · └── B LEAF id:B
+            ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
+            │ ├── E LEAF id:E ag-Grid-AutoColumn:"E"
+            │ └── D LEAF id:D ag-Grid-AutoColumn:"D"
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
+            · └── B LEAF id:B ag-Grid-AutoColumn:"B"
         `);
     });
 
@@ -134,8 +134,8 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'initial', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A GROUP id:A
-            · └── B LEAF id:B
+            └─┬ A GROUP id:A ag-Grid-AutoColumn:"A"
+            · └── B LEAF id:B ag-Grid-AutoColumn:"B"
         `);
 
         await asyncSetTimeout(1); // Simulate async re-loading
@@ -144,8 +144,8 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'updated', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ C GROUP id:C
-            · └── D LEAF id:D
+            └─┬ C GROUP id:C ag-Grid-AutoColumn:"C"
+            · └── D LEAF id:D ag-Grid-AutoColumn:"D"
         `);
     });
 
@@ -168,23 +168,23 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'update 0', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├── b LEAF id:b
-            ├─┬ c GROUP id:c
-            │ └── d LEAF id:d
-            └── e LEAF id:e
+            ├── b LEAF id:b ag-Grid-AutoColumn:"b"
+            ├─┬ c GROUP id:c ag-Grid-AutoColumn:"c"
+            │ └── d LEAF id:d ag-Grid-AutoColumn:"d"
+            └── e LEAF id:e ag-Grid-AutoColumn:"e"
         `);
 
         api.setGridOption('rowData', rowData2);
 
         await new GridRows(api, 'update1', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├── a LEAF id:a
-            ├── b LEAF id:b
-            ├─┬ c GROUP id:c
-            │ └── d LEAF id:d
-            ├── e LEAF id:e
-            └─┬ f GROUP id:f
-            · └── g LEAF id:g
+            ├── a LEAF id:a ag-Grid-AutoColumn:"a"
+            ├── b LEAF id:b ag-Grid-AutoColumn:"b"
+            ├─┬ c GROUP id:c ag-Grid-AutoColumn:"c"
+            │ └── d LEAF id:d ag-Grid-AutoColumn:"d"
+            ├── e LEAF id:e ag-Grid-AutoColumn:"e"
+            └─┬ f GROUP id:f ag-Grid-AutoColumn:"f"
+            · └── g LEAF id:g ag-Grid-AutoColumn:"g"
         `);
     });
 
@@ -217,14 +217,14 @@ describe('ag-grid parentId tree data reset', () => {
 
         await new GridRows(api, 'update 0', defaultGridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ p GROUP id:p
-            │ ├── r LEAF id:r
-            │ └── q LEAF id:q
-            ├─┬ a GROUP id:a
-            │ ├── c LEAF id:c
-            │ └── b LEAF id:b
-            └─┬ s GROUP id:s
-            · └── t LEAF id:t
+            ├─┬ p GROUP id:p ag-Grid-AutoColumn:"p"
+            │ ├── r LEAF id:r ag-Grid-AutoColumn:"r"
+            │ └── q LEAF id:q ag-Grid-AutoColumn:"q"
+            ├─┬ a GROUP id:a ag-Grid-AutoColumn:"a"
+            │ ├── c LEAF id:c ag-Grid-AutoColumn:"c"
+            │ └── b LEAF id:b ag-Grid-AutoColumn:"b"
+            └─┬ s GROUP id:s ag-Grid-AutoColumn:"s"
+            · └── t LEAF id:t ag-Grid-AutoColumn:"t"
         `);
     });
 
@@ -263,12 +263,12 @@ describe('ag-grid parentId tree data reset', () => {
         let gridRows = new GridRows(api, 'update 0', defaultGridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── 0 LEAF id:0
-            ├── 1 LEAF id:1
-            ├── 2 LEAF id:2
-            ├── 3 LEAF id:3
-            ├── 4 LEAF id:4
-            └── 5 LEAF id:5
+            ├── 0 LEAF id:0 ag-Grid-AutoColumn:"0"
+            ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1"
+            ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2"
+            ├── 3 LEAF id:3 ag-Grid-AutoColumn:"3"
+            ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4"
+            └── 5 LEAF id:5 ag-Grid-AutoColumn:"5"
         `);
         expect(gridRows.rootAllLeafChildren.map((n) => n.data)).toEqual(rowData1);
 
@@ -277,12 +277,12 @@ describe('ag-grid parentId tree data reset', () => {
         gridRows = new GridRows(api, 'update 1', defaultGridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── 1 LEAF id:1
-            ├── 5 LEAF id:5
-            ├── 2 LEAF id:2
-            ├── 4 LEAF id:4
-            ├── 0 LEAF id:0
-            └── 3 LEAF id:3
+            ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1"
+            ├── 5 LEAF id:5 ag-Grid-AutoColumn:"5"
+            ├── 2 LEAF id:2 ag-Grid-AutoColumn:"2"
+            ├── 4 LEAF id:4 ag-Grid-AutoColumn:"4"
+            ├── 0 LEAF id:0 ag-Grid-AutoColumn:"0"
+            └── 3 LEAF id:3 ag-Grid-AutoColumn:"3"
         `);
         expect(gridRows.rootAllLeafChildren.map((n) => n.data)).toEqual(rowData2);
     });

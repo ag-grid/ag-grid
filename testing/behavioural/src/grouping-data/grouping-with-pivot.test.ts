@@ -948,11 +948,9 @@ describe('ag-grid grouping with pivot', () => {
             { id: '4', country: 'United Kingdom', athlete: 'Mo', year: 2012, gold: 2 },
         ]);
 
-        const gridRowsOptions: GridRowsOptions = { columns: true };
-
         await asyncSetTimeout(25);
 
-        const beforePivotRows = new GridRows(api, 'custom group columns before pivot', gridRowsOptions);
+        const beforePivotRows = new GridRows(api, 'custom group columns before pivot');
         await beforePivotRows.check(`
             ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
             ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
@@ -970,7 +968,7 @@ describe('ag-grid grouping with pivot', () => {
         api.setGridOption('pivotMode', true);
         await asyncSetTimeout(25);
 
-        const pivotRows = new GridRows(api, 'custom group columns with pivot enabled', gridRowsOptions);
+        const pivotRows = new GridRows(api, 'custom group columns with pivot enabled');
         await pivotRows.check(`
             ROOT id:ROOT_NODE_ID pivot_year_2008_gold:11 pivot_year_2012_gold:4
             ├─┬ filler id:row-group-country-USA ag-Grid-AutoColumn:"USA" pivot_year_2008_gold:8 pivot_year_2012_gold:2
@@ -988,7 +986,7 @@ describe('ag-grid grouping with pivot', () => {
         api.setGridOption('pivotMode', false);
         await asyncSetTimeout(25);
 
-        const afterPivotRows = new GridRows(api, 'custom group columns after pivot disabled', gridRowsOptions);
+        const afterPivotRows = new GridRows(api, 'custom group columns after pivot disabled');
         await afterPivotRows.check(`
             ROOT id:ROOT_NODE_ID countryGroupCol:null athleteGroupCol:null
             ├─┬ filler id:row-group-country-USA countryGroupCol:"USA" athleteGroupCol:null gold:10
@@ -1122,11 +1120,7 @@ describe('ag-grid grouping with pivot', () => {
             ],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-        };
-
-        await new GridRows(api, 'initial - only country level expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'initial - only country level expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" gold:2
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
@@ -1139,7 +1133,7 @@ describe('ag-grid grouping with pivot', () => {
         `);
 
         api.getRowNode('row-group-country-Russia')!.setExpanded(true, undefined, true);
-        await new GridRows(api, 'expand Russia', gridRowsOptions).check(`
+        await new GridRows(api, 'expand Russia').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
@@ -1154,7 +1148,7 @@ describe('ag-grid grouping with pivot', () => {
 
         api.getRowNode('row-group-country-Russia')!.setExpanded(false, undefined, true);
 
-        await new GridRows(api, 'collapse Russia', gridRowsOptions).check(`
+        await new GridRows(api, 'collapse Russia').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Russia ag-Grid-AutoColumn:"Russia" gold:2
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1
@@ -1168,7 +1162,7 @@ describe('ag-grid grouping with pivot', () => {
 
         api.getRowNode('row-group-country-Russia')!.setExpanded(true, undefined, true);
 
-        await new GridRows(api, 'expand Russia async', gridRowsOptions).check(`
+        await new GridRows(api, 'expand Russia async').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Russia ag-Grid-AutoColumn:"Russia"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Russia-sport-Gymnastics ag-Grid-AutoColumn:"Gymnastics" gold:1

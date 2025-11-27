@@ -1,17 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowGroupingModule],
     });
-
-    const gridRowsOptions: GridRowsOptions = {
-        columns: true,
-    };
 
     beforeEach(() => {
         gridsManager.reset();
@@ -45,7 +40,7 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'initial - only country level expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'initial - only country level expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -69,7 +64,7 @@ describe('ag-grid grouping expanded state', () => {
         const ireland2020Node = api.getRowNode('row-group-country-Ireland-year-2020');
         api.setRowNodeExpanded(ireland2020Node!, true, false, true);
 
-        await new GridRows(api, 'Ireland 2020 expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland 2020 expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -92,7 +87,7 @@ describe('ag-grid grouping expanded state', () => {
             add: [{ id: '7', country: 'Ireland', year: 2020, athlete: "Pat O'Brien", sport: 'Rugby' }],
         });
 
-        await new GridRows(api, 'after adding to Ireland 2020', gridRowsOptions).check(`
+        await new GridRows(api, 'after adding to Ireland 2020').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -117,7 +112,7 @@ describe('ag-grid grouping expanded state', () => {
         api.setRowNodeExpanded(italyNode!, true, false, true);
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Italy-year-2021')!, true, false, true);
 
-        await new GridRows(api, 'Ireland 2020 collapsed, Italy 2021 expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland 2020 collapsed, Italy 2021 expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -150,7 +145,7 @@ describe('ag-grid grouping expanded state', () => {
             ])
         );
 
-        await new GridRows(api, 'after data update - expansion preserved', gridRowsOptions).check(`
+        await new GridRows(api, 'after data update - expansion preserved').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -189,7 +184,7 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'initial - all expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'initial - all expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -203,7 +198,7 @@ describe('ag-grid grouping expanded state', () => {
         // Collapse all groups
         api.collapseAll();
 
-        await new GridRows(api, 'after collapse all', gridRowsOptions).check(`
+        await new GridRows(api, 'after collapse all').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF hidden id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -217,7 +212,7 @@ describe('ag-grid grouping expanded state', () => {
         // Expand only Ireland
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
 
-        await new GridRows(api, 'Ireland expanded only', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland expanded only').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -231,7 +226,7 @@ describe('ag-grid grouping expanded state', () => {
         // Expand all groups
         api.expandAll();
 
-        await new GridRows(api, 'after expand all', gridRowsOptions).check(`
+        await new GridRows(api, 'after expand all').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -265,7 +260,7 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'initial - groups collapsed', gridRowsOptions).check(`
+        await new GridRows(api, 'initial - groups collapsed').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF hidden id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -279,7 +274,7 @@ describe('ag-grid grouping expanded state', () => {
         // Expand Ireland
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
 
-        await new GridRows(api, 'Ireland expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -293,7 +288,7 @@ describe('ag-grid grouping expanded state', () => {
         // Apply filter to show only Soccer
         api.setFilterModel({ sport: { type: 'equals', filter: 'Soccer' } });
 
-        await new GridRows(api, 'filter Soccer - Ireland still expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'filter Soccer - Ireland still expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
@@ -304,7 +299,7 @@ describe('ag-grid grouping expanded state', () => {
         // Clear filter - Ireland should remain expanded
         api.setFilterModel(null);
 
-        await new GridRows(api, 'filter cleared - Ireland still expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'filter cleared - Ireland still expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -336,7 +331,7 @@ describe('ag-grid grouping expanded state', () => {
         // Expand Ireland
         api.setRowNodeExpanded(api.getRowNode('row-group-country-Ireland')!, true, false, true);
 
-        await new GridRows(api, 'Ireland expanded', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland expanded').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -348,7 +343,7 @@ describe('ag-grid grouping expanded state', () => {
         // Remove all Ireland rows
         api.applyTransaction({ remove: [{ id: '1' }, { id: '2' }] });
 
-        await new GridRows(api, 'Ireland rows removed', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland rows removed').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
@@ -362,7 +357,7 @@ describe('ag-grid grouping expanded state', () => {
             ],
         });
 
-        await new GridRows(api, 'Ireland rows re-added - expansion preserved', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland rows re-added - expansion preserved').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP collapsed id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ └── LEAF hidden id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
@@ -395,7 +390,7 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api1, 'groupDefaultExpanded = 1', gridRowsOptions).check(`
+        await new GridRows(api1, 'groupDefaultExpanded = 1').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -423,7 +418,7 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api2, 'groupDefaultExpanded = 2', gridRowsOptions).check(`
+        await new GridRows(api2, 'groupDefaultExpanded = 2').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -470,7 +465,7 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'isGroupOpenByDefault callback', gridRowsOptions).check(`
+        await new GridRows(api, 'isGroupOpenByDefault callback').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -629,11 +624,9 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
+        await new GridRows(api, 'custom groupDefaultExpanded callback', {
             columns: ['title'],
-        };
-
-        await new GridRows(api, 'custom groupDefaultExpanded callback', gridRowsOptions).check(`
+        }).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-priority-High
             │ ├─┬ LEAF_GROUP collapsed id:row-group-priority-High-category-Bug
@@ -677,11 +670,9 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
+        await new GridRows(api, 'isGroupOpenByDefault callback', {
             columns: ['sales'],
-        };
-
-        await new GridRows(api, 'isGroupOpenByDefault callback', gridRowsOptions).check(`
+        }).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-status-Active sales:4500
             │ ├─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-North sales:1000

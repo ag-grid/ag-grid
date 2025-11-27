@@ -31,7 +31,7 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        let gridRows = new GridRows(api, 'column A', { columns: true, checkDom: true });
+        let gridRows = new GridRows(api, 'column A');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
@@ -40,9 +40,7 @@ describe('ag-grid grouping simple data', () => {
 
         api.setGridOption('columnDefs', columnDefsB);
 
-        gridRows = new GridRows(api, 'column B', {
-            columns: true,
-        });
+        gridRows = new GridRows(api, 'column B');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-cat ag-Grid-AutoColumn:"cat"
@@ -51,7 +49,7 @@ describe('ag-grid grouping simple data', () => {
 
         api.setGridOption('columnDefs', columnDefsA);
 
-        gridRows = new GridRows(api, 'column A (2)', { columns: true, checkDom: true });
+        gridRows = new GridRows(api, 'column A (2)');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"

@@ -238,9 +238,7 @@ describe('ag-grid grouping aggregation', () => {
             · └─ footer id:rowGroupFooter_row-group-category-B scores:90.67 metadata:{"minPriority":1}
         `);
 
-        await new GridRows(api, 'custom aggregation functions (formatted)', {
-            columns: true,
-        }).check(`
+        await new GridRows(api, 'custom aggregation functions (formatted)').check(`
             ROOT id:ROOT_NODE_ID scores:"Avg: 87.84" metadata:"Min Priority: NaN"
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " scores:"Avg: 87.84" metadata:"Min Priority: NaN"
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
@@ -275,9 +273,7 @@ describe('ag-grid grouping aggregation', () => {
             · └─ footer id:rowGroupFooter_row-group-category-C scores:74 metadata:{"minPriority":2}
         `);
 
-        await new GridRows(api, 'after transaction (formatted)', {
-            columns: true,
-        }).check(`
+        await new GridRows(api, 'after transaction (formatted)').check(`
             ROOT id:ROOT_NODE_ID scores:"Avg: 83.72" metadata:"Min Priority: NaN"
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " scores:"Avg: 83.72" metadata:"Min Priority: NaN"
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
@@ -319,7 +315,6 @@ describe('ag-grid grouping aggregation', () => {
         });
 
         await new GridRows(api, 'mixed data types with nulls (unformatted)', {
-            columns: true,
             useFormatter: false,
         }).check(`
             ROOT id:ROOT_NODE_ID amount:450 quantity:{"count":3,"value":20} active:{"value":5}
@@ -335,9 +330,7 @@ describe('ag-grid grouping aggregation', () => {
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null amount:450 quantity:{"count":3,"value":20} active:{"value":5}
         `);
 
-        await new GridRows(api, 'mixed data types with nulls (formatted)', {
-            columns: true,
-        }).check(`
+        await new GridRows(api, 'mixed data types with nulls (formatted)').check(`
             ROOT id:ROOT_NODE_ID amount:450 quantity:{"count":3,"value":20} active:{"value":5}
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
             │ ├─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"Total A" amount:300 quantity:{"count":2,"value":30} active:{"value":3}

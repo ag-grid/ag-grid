@@ -2,7 +2,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid parentId tree with master detail', () => {
     test('nested groups expansion and callback calls', async () => {
@@ -109,9 +108,7 @@ describe('ag-grid parentId tree with master detail', () => {
             },
         });
 
-        const gridRowsOptions: GridRowsOptions = { columns: true };
-
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
@@ -143,7 +140,7 @@ describe('ag-grid parentId tree with master detail', () => {
 
         api.setGridOption('masterDetail', false);
 
-        gridRows = new GridRows(api, 'masterDetail=false', gridRowsOptions);
+        gridRows = new GridRows(api, 'masterDetail=false');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
@@ -160,7 +157,7 @@ describe('ag-grid parentId tree with master detail', () => {
 
         api.setGridOption('masterDetail', true);
 
-        gridRows = new GridRows(api, 'masterDetail=true', gridRowsOptions);
+        gridRows = new GridRows(api, 'masterDetail=true');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"
@@ -196,7 +193,7 @@ describe('ag-grid parentId tree with master detail', () => {
             update: [{ id: 'E', parentId: 'D' }],
         });
 
-        gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"

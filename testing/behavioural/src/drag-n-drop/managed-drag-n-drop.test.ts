@@ -40,7 +40,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
         for (let i = 0; i < 4; ++i) {
-            const gridRows = new GridRows(api, i.toString(), { columns: true });
+            const gridRows = new GridRows(api, i.toString());
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 v:1
@@ -67,7 +67,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             suppressMoveWhenRowDragging: noMove,
         });
 
-        let gridRows = new GridRows(api, 'single', { columns: true });
+        let gridRows = new GridRows(api, 'single');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:only v:1
@@ -80,7 +80,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await singleDispatcher.move(rowId);
         await singleDispatcher.finish();
 
-        gridRows = new GridRows(api, 'single-post-drag', { columns: true });
+        gridRows = new GridRows(api, 'single-post-drag');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:only v:1
@@ -181,13 +181,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         const api = gridsManager.createGrid('first-last', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: true });
+        let gridRows = new GridRows(api, 'initial');
         const moveFirstToEnd = new RowDragDispatcher({ api, eventType });
         await moveFirstToEnd.start('1');
         await moveFirstToEnd.move('4');
         await moveFirstToEnd.finish();
 
-        gridRows = new GridRows(api, '1 -> end', { columns: true });
+        gridRows = new GridRows(api, '1 -> end');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 v:2
@@ -200,7 +200,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await moveLastToStart.move('2', { yOffsetPercent: 0.1 });
         await moveLastToStart.finish();
 
-        gridRows = new GridRows(api, '1 back -> start', { columns: true });
+        gridRows = new GridRows(api, '1 back -> start');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 v:1
@@ -225,7 +225,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         };
 
         const api = gridsManager.createGrid('adjacent', gridOptions);
-        const gridRows = new GridRows(api, 'initial', { columns: true });
+        const gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 v:1
@@ -239,7 +239,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await moveUpDispatcher.move('1', { yOffsetPercent: 0.1 });
         await moveUpDispatcher.finish();
 
-        await new GridRows(api, '2 -> top', { columns: true }).check(`
+        await new GridRows(api, '2 -> top').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 v:2
             ├── LEAF id:1 v:1
@@ -252,7 +252,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await moveDownDispatcher.move('1', { yOffsetPercent: 0.7 });
         await moveDownDispatcher.finish();
 
-        await new GridRows(api, '2 back to middle', { columns: true }).check(`
+        await new GridRows(api, '2 back to middle').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 v:1
             ├── LEAF id:2 v:2
@@ -278,13 +278,9 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             suppressMoveWhenRowDragging: noMove,
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-        };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
@@ -299,7 +295,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await dragBDispatcher.move('4', { yOffsetPercent: 0.7 });
         await dragBDispatcher.finish();
 
-        gridRows = new GridRows(api, 'a', gridRowsOptions);
+        gridRows = new GridRows(api, 'a');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1
@@ -314,7 +310,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await dragCDispatcher.move('1', { yOffsetPercent: 0.15 });
         await dragCDispatcher.finish();
 
-        gridRows = new GridRows(api, 'b', gridRowsOptions);
+        gridRows = new GridRows(api, 'b');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 value:4
@@ -329,7 +325,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await dragDDispatcher.move('3', { yOffsetPercent: 0.1 });
         await dragDDispatcher.finish();
 
-        gridRows = new GridRows(api, 'c', gridRowsOptions);
+        gridRows = new GridRows(api, 'c');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 value:4
@@ -440,19 +436,15 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             },
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: true,
-        };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         const removeSourceDispatcher = new RowDragDispatcher({ api, eventType });
         await removeSourceDispatcher.start('2');
         await removeSourceDispatcher.move('4');
         await removeSourceDispatcher.finish();
 
-        gridRows = new GridRows(api, 'drop', gridRowsOptions);
+        gridRows = new GridRows(api, 'drop');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:1

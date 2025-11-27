@@ -19,6 +19,7 @@ export interface GridRowsOptions<TData = any> {
     /**
      * Columns to include when making the diagram. If true, all columns will be included.
      * If an array, it must contain the id of the columns to include. Default is false, no columns.
+     * Default is true
      */
     columns?: (string | Column)[] | boolean;
 
@@ -94,7 +95,7 @@ export class GridRows<TData = any> {
                         const detailGridRow = new GridRows(api, label, {
                             ...options,
                             errors,
-                            columns: !!options.columns,
+                            columns: options.columns ?? true,
                         });
                         detailGridRows.set(row, detailGridRow);
                         detailGridRows.set(api, detailGridRow);
@@ -162,10 +163,11 @@ export class GridRows<TData = any> {
 
     public makeDiagram(printErrors = false): string {
         let columns: Column[] | null = null;
-        if (this.options.columns) {
+        const optionsColumns = this.options.columns ?? true;
+        if (optionsColumns) {
             columns = this.api.getAllGridColumns();
-            if (Array.isArray(this.options.columns)) {
-                const set = new Set(this.options.columns);
+            if (Array.isArray(optionsColumns)) {
+                const set = new Set(optionsColumns);
                 columns = columns.filter((column) => set.has(column) || set.has(column.getColId()));
             }
         }
