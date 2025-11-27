@@ -74,9 +74,9 @@
             "displayName": "Data"
         },
         "id": {},
-        "removed": {},
         "sourceRowIndex": {},
         "data": {},
+        "destroyed": {},
         "updateData": {},
         "setData": {
             "more": {
