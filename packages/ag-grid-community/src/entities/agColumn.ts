@@ -82,7 +82,7 @@ export class AgColumn<TValue = any>
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
     private sortDef: SortDef = _getSortDefFromInput();
-    private _hasUserInteractedWithSort: boolean = false;
+    private _isSortExplicitlySet: boolean = false;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -442,12 +442,12 @@ export class AgColumn<TValue = any>
         return this.sortDef;
     }
 
-    get hasUserInteractedWithSort(): boolean {
-        return this._hasUserInteractedWithSort;
+    get isSortExplicitlySet(): boolean {
+        return this._isSortExplicitlySet;
     }
 
     public setSortDef(sortDef: SortDef, initial = false): void {
-        this._hasUserInteractedWithSort = !initial;
+        this._isSortExplicitlySet = !initial;
         this.sortDef = sortDef;
     }
 
