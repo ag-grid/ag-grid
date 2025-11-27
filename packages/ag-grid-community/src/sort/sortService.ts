@@ -12,8 +12,6 @@ import type { SortOption } from '../interfaces/iSortOption';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
-const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
-
 export class SortService extends BeanStub implements NamedBean {
     beanName = 'sortSvc' as const;
 
@@ -137,11 +135,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     private getNextSortDirection(column: AgColumn): SortDef {
-        const sortingOrder = (
-            column.getColDef().sortingOrder ??
-            this.gos.get('sortingOrder') ??
-            DEFAULT_SORTING_ORDER
-        ).map((objOrDirection: unknown) => _getSortDefFromInput(objOrDirection));
+        const sortingOrder = column.getSortingOrder();
 
         const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
@@ -326,7 +320,7 @@ export class SortService extends BeanStub implements NamedBean {
 
         const sortDef = _getSortDefFromColDef(column.colDef);
         if (sortDef) {
-            column.setSortDef(sortDef);
+            column.setSortDef(sortDef, true);
         }
 
         if (sortIndex !== undefined) {

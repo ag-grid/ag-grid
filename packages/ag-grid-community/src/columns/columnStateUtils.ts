@@ -3,7 +3,12 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import { _getSortDefFromInput } from '../entities/agColumn';
+import {
+    _areSortDefsEqual,
+    _getSortDefFromInput,
+    _normalizeSortDirection,
+    _normalizeSortType,
+} from '../entities/agColumn';
 import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -428,9 +433,10 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
-            cs.sort != c.getSortDef()?.direction ||
-            cs.sortType != c.getSortDef()?.type ||
-            cs.sortIndex != c.getSortIndex();
+            !_areSortDefsEqual(c.getSortDef(), {
+                type: _normalizeSortType(cs.sortType),
+                direction: _normalizeSortDirection(cs.sort),
+            }) || cs.sortIndex != c.getSortIndex();
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {
             sortSvc?.dispatchSortChangedEvents(source, changedColumns);

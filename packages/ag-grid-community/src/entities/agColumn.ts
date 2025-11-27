@@ -51,6 +51,8 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
     return col instanceof AgColumn;
 }
 
+const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
+
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and ProvidedColumnGroupChild as the class can
@@ -442,6 +444,16 @@ export class AgColumn<TValue = any>
         return this.sortDef;
     }
 
+    public getSortingOrder() {
+        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? DEFAULT_SORTING_ORDER).map(
+            (objOrDirection: unknown) => _getSortDefFromInput(objOrDirection)
+        );
+    }
+
+    public getAvailableSortTypes() {
+        return new Set(this.getSortingOrder().map((so) => so.type));
+    }
+
     get isSortExplicitlySet(): boolean {
         return this._isSortExplicitlySet;
     }
@@ -794,11 +806,14 @@ export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef 
 }
 
 export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2: SortDef | null | undefined): boolean {
-    if (sortDef1 == sortDef2) {
-        // covers nullish too, aka both default
-        return true;
+    if (!sortDef1) {
+        return sortDef2 ? sortDef2.direction === null : true;
     }
-    return !!(sortDef1 && sortDef2 && sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction);
+    if (!sortDef2) {
+        return sortDef1 ? sortDef1.direction === null : true;
+    }
+
+    return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
 }
 
 export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
