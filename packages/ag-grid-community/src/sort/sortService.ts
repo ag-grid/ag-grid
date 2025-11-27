@@ -126,8 +126,9 @@ export class SortService extends BeanStub implements NamedBean {
                     clearedColumns.push(columnToClear);
                 }
 
-                // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
-                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
+                // setting to 'undefined' hits a special condition, which marks
+                // a column's sortDef as implicitly modified (initial), this allows
+                // groupMaintainOrder gridOption feature to work
                 this.setColSort(columnToClear, undefined, source);
             }
         });
@@ -325,7 +326,7 @@ export class SortService extends BeanStub implements NamedBean {
 
         const sortDef = _getSortDefFromColDef(column.colDef);
         if (sortDef) {
-            column.setSortDef(sortDef, true);
+            column.setSortDef(sortDef);
         }
 
         if (sortIndex !== undefined) {
@@ -355,7 +356,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
         if (!_areSortDefsEqual(column.getSortDef(), sort)) {
-            column.setSortDef(_getSortDefFromInput(sort));
+            column.setSortDef(_getSortDefFromInput(sort), sort === undefined);
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');

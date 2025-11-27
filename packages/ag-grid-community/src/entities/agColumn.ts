@@ -447,9 +447,7 @@ export class AgColumn<TValue = any>
     }
 
     public setSortDef(sortDef: SortDef, initial = false): void {
-        if (!initial) {
-            this._hasUserInteractedWithSort = true;
-        }
+        this._hasUserInteractedWithSort = !initial;
         this.sortDef = sortDef;
     }
 
