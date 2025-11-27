@@ -102,6 +102,7 @@ export function _applyColumnState(
         stateItem: ColumnState | null,
         rowGroupIndexes: { [key: string]: number } | null,
         pivotIndexes: { [key: string]: number } | null,
+        valueIndexes: { [key: string]: number } | null,
         autoCol: boolean
     ) => {
         if (!column) {
@@ -158,6 +159,7 @@ export function _applyColumnState(
 
         const rowGroupIndexes: { [key: string]: number } = {};
         const pivotIndexes: { [key: string]: number } = {};
+        const valueIndexes: { [key: string]: number } = {};
         const autoColStates: ColumnState[] = [];
         const selectionColStates: ColumnState[] = [];
         // If pivoting is modified, these are the states we try to reapply after
@@ -167,6 +169,7 @@ export function _applyColumnState(
 
         const previousRowGroupCols = rowGroupColsSvc?.columns.slice() ?? [];
         const previousPivotCols = pivotColsSvc?.columns.slice() ?? [];
+        const previousValueCols = valueColsSvc?.columns.slice() ?? [];
 
         for (const state of states) {
             const colId = state.colId;
@@ -191,19 +194,20 @@ export function _applyColumnState(
                 unmatchedAndAutoStates.push(state);
                 unmatchedCount += 1;
             } else {
-                syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, false);
+                syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, valueIndexes, false);
                 _removeFromArray(columnsWithNoState, column);
             }
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         const applyDefaultsFunc = (col: AgColumn) =>
-            syncColumnWithStateItem(col, null, rowGroupIndexes, pivotIndexes, false);
+            syncColumnWithStateItem(col, null, rowGroupIndexes, pivotIndexes, valueIndexes, false);
 
         columnsWithNoState.forEach(applyDefaultsFunc);
 
         rowGroupColsSvc?.sortColumns(comparatorByIndex.bind(rowGroupColsSvc, rowGroupIndexes, previousRowGroupCols));
         pivotColsSvc?.sortColumns(comparatorByIndex.bind(pivotColsSvc, pivotIndexes, previousPivotCols));
+        valueColsSvc?.sortColumns(comparatorByIndex.bind(valueColsSvc, valueIndexes, previousValueCols));
 
         colModel.refreshCols(false, source);
 
@@ -215,7 +219,7 @@ export function _applyColumnState(
             for (const stateItem of colStates) {
                 const col = getCol(stateItem.colId);
                 _removeFromArray(columns, col);
-                syncColumnWithStateItem(col, stateItem, null, null, true);
+                syncColumnWithStateItem(col, stateItem, null, null, null, true);
             }
             columns.forEach(applyDefaultsFunc);
         };

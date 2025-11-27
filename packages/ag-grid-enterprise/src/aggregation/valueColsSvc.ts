@@ -31,8 +31,8 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
     override columnExtractors = {
         setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) =>
             this.setColValueActive(col, flag, source),
-        getIndexFunc: () => undefined,
-        getInitialIndexFunc: () => undefined,
+        getIndexFunc: (colDef: ColDef) => colDef.valueIndex,
+        getInitialIndexFunc: (colDef: ColDef) => colDef.initialValueIndex,
         getValueFunc: (colDef: ColDef) => {
             const aggFunc = colDef.aggFunc;
             // null or empty string means clear
@@ -103,7 +103,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
         ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined }
     ): void {
         // noop
-        const aggFunc = getValue('aggFunc').value1;
+        const { value1: aggFunc, value2: valueIndex } = getValue('aggFunc', 'valueIndex');
         if (aggFunc !== undefined) {
             if (typeof aggFunc === 'string') {
                 this.setColAggFunc(column, aggFunc);
