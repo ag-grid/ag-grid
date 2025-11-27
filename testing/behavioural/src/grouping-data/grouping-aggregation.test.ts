@@ -142,13 +142,13 @@ describe('ag-grid grouping aggregation', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api1, 'alwaysAggregateAtRootLevel=false', { columns: ['value'] }).check(`
+        await new GridRows(api1, 'alwaysAggregateAtRootLevel=false').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-category-A value:300
-            │ ├── LEAF id:1 value:100
-            │ └── LEAF id:2 value:200
-            └─┬ LEAF_GROUP id:row-group-category-B value:150
-            · └── LEAF id:3 value:150
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:300
+            │ ├── LEAF id:1 category:"A" value:100
+            │ └── LEAF id:2 category:"A" value:200
+            └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:150
+            · └── LEAF id:3 category:"B" value:150
         `);
 
         // Test alwaysAggregateAtRootLevel
@@ -165,13 +165,13 @@ describe('ag-grid grouping aggregation', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api2, 'alwaysAggregateAtRootLevel=true', { columns: ['value'] }).check(`
+        await new GridRows(api2, 'alwaysAggregateAtRootLevel=true').check(`
             ROOT id:ROOT_NODE_ID value:450
-            ├─┬ LEAF_GROUP id:row-group-category-A value:300
-            │ ├── LEAF id:1 value:100
-            │ └── LEAF id:2 value:200
-            └─┬ LEAF_GROUP id:row-group-category-B value:150
-            · └── LEAF id:3 value:150
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:300
+            │ ├── LEAF id:1 category:"A" value:100
+            │ └── LEAF id:2 category:"A" value:200
+            └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:150
+            · └── LEAF id:3 category:"B" value:150
         `);
     });
 

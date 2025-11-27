@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
-import type { DragInteractionType, GridRowsOptions } from '../test-utils';
+import type { DragInteractionType } from '../test-utils';
 import {
     DRAG_INTERACTION_TYPES,
     DRAG_NO_MOVE_INTERACTION_CASES,
@@ -99,7 +99,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             suppressMoveWhenRowDragging: noMove,
         });
 
-        const initialRows = new GridRows(api, `${eventType}-initial`, { columns: ['value'] });
+        const initialRows = new GridRows(api, `${eventType}-initial`);
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:row-1 value:1
@@ -111,7 +111,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await reorderDispatcher.move('row-2', { yOffsetPercent: 0.8 });
         await reorderDispatcher.finish();
 
-        await new GridRows(api, `${eventType}-after`, { columns: ['value'] }).check(`
+        await new GridRows(api, `${eventType}-after`).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:row-2 value:2
             └── LEAF id:row-1 value:1
@@ -144,7 +144,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
 
         for (const index of [null, 0]) {
             // TODO: add 3, 4
-            const gridRows = new GridRows(api, 'drag ' + index, { columns: ['v'] });
+            const gridRows = new GridRows(api, 'drag ' + index);
             await gridRows.check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF selected id:1 v:1
@@ -356,8 +356,6 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             suppressMoveWhenRowDragging: noMove,
         };
 
-        const gridRowsOptions: GridRowsOptions = { columns: ['value'] };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         api.setNodesSelected({
@@ -365,7 +363,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             newValue: true,
         });
 
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -381,7 +379,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await multiSelectDragToBottom.move('4');
         await multiSelectDragToBottom.finish();
 
-        gridRows = new GridRows(api, '1 -> 2', gridRowsOptions);
+        gridRows = new GridRows(api, '1 -> 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 value:2
@@ -396,7 +394,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
         await multiSelectDragToTop.move('2', { yOffsetPercent: 0.1 });
         await multiSelectDragToTop.finish();
 
-        gridRows = new GridRows(api, '1 -> 2', gridRowsOptions);
+        gridRows = new GridRows(api, '1 -> 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF selected id:1 value:1
@@ -489,10 +487,6 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             },
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['value'],
-        };
-
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         api.setNodesSelected({
@@ -500,13 +494,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag noMove=%s evt=%s', (
             newValue: true,
         });
 
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         const removeSelectionDispatcher = new RowDragDispatcher({ api, eventType });
         await removeSelectionDispatcher.start('3');
         await removeSelectionDispatcher.move('1', { yOffsetPercent: 0.1 });
         await removeSelectionDispatcher.finish();
 
-        gridRows = new GridRows(api, 'drop', gridRowsOptions);
+        gridRows = new GridRows(api, 'drop');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF selected id:3 value:3
@@ -548,7 +542,7 @@ describe.each(DRAG_INTERACTION_TYPES)('managed drag cancellation %s', (eventType
             },
         });
 
-        const initialRows = new GridRows(api, 'cancel-initial', { columns: ['value'] });
+        const initialRows = new GridRows(api, 'cancel-initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:row-1 value:1
@@ -565,7 +559,7 @@ describe.each(DRAG_INTERACTION_TYPES)('managed drag cancellation %s', (eventType
         expect(dispatcher.rowDragEndEvents.length).toBe(0);
         expect(dispatcher.rowDragMoveEvents.length).toBeGreaterThan(0);
 
-        await new GridRows(api, 'cancel-after', { columns: ['value'] }).check(`
+        await new GridRows(api, 'cancel-after').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:row-1 value:1
             └── LEAF id:row-2 value:2

@@ -61,17 +61,17 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-descendant-update', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-A
-            │ · ├── LEAF id:a1 value:"A1"
-            │ · └── LEAF id:a2 value:"A2"
-            └─┬ filler id:row-group-level1-Beta
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-B
-            · · ├── LEAF id:b1 value:"B1"
-            · · └── LEAF id:b2 value:"B2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-A ag-Grid-AutoColumn:"A"
+            │ · ├── LEAF id:a1 level1:"Alpha" level2:"A" value:"A1"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"A" value:"A2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-B ag-Grid-AutoColumn:"B"
+            · · ├── LEAF id:b1 level1:"Beta" level2:"B" value:"B1"
+            · · └── LEAF id:b2 level1:"Beta" level2:"B" value:"B2"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -81,16 +81,16 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-B
-            · │ ├── LEAF id:b1 value:"B1"
-            · │ └── LEAF id:b2 value:"B2"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-A
-            · · ├── LEAF id:a1 value:"A1"
-            · · └── LEAF id:a2 value:"A2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-B ag-Grid-AutoColumn:"B"
+            · │ ├── LEAF id:b1 level1:"Beta" level2:"B" value:"B1"
+            · │ └── LEAF id:b2 level1:"Beta" level2:"B" value:"B2"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-A ag-Grid-AutoColumn:"A"
+            · · ├── LEAF id:a1 level1:"Beta" level2:"A" value:"A1"
+            · · └── LEAF id:a2 level1:"Beta" level2:"A" value:"A2"
         `);
 
         expect(api.getRowNode('a1')?.data.level1).toBe('Beta');
@@ -127,19 +127,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-root-reorder', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -154,20 +154,20 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(lastDropInfo?.rowsDrop?.target?.id).toBe('row-group-level1-Alpha');
         expect(lastDropInfo?.rowsDrop?.rows.length).toBe(1);
 
-        gridRows = new GridRows(api, 'after reorder', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after reorder');
         // TODO: the order here is not correct, need to fix GroupStrategy
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
     });
 
@@ -195,19 +195,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-reassign-level1-into-level2', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -217,16 +217,16 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ ├── LEAF id:b1 value:"Beta-1"
-            · │ ├── LEAF id:a1 value:"Alpha-1"
-            · │ └── LEAF id:a2 value:"Alpha-2"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ ├── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · │ ├── LEAF id:a1 level1:"Beta" level2:"Three" value:"Alpha-1"
+            · │ └── LEAF id:a2 level1:"Beta" level2:"Three" value:"Alpha-2"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         expect(api.getRowNode('a1')?.data.level1).toBe('Beta');
@@ -259,19 +259,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-disallow-parent-drop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -281,19 +281,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after invalid move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after invalid move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         expect(api.getRowNode('a1')?.data.level1).toBe('Alpha');
@@ -335,17 +335,17 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-reorder-with-parent-edge', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · · └── LEAF id:b1 value:"Beta-1"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · · └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -362,18 +362,18 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(dropInfo?.position).toBe('above');
         expect(dropInfo?.target?.id).toBe('row-group-level1-Alpha-level2-One');
 
-        gridRows = new GridRows(api, 'after reorder', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after reorder');
         // TODO: the order here is not correct, need to fix GroupStrategy
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · · └── LEAF id:b1 value:"Beta-1"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · · └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
         `);
     });
 
@@ -401,19 +401,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-disallow-parent-row-drop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -423,21 +423,21 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after invalid move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after invalid move');
         expect(dispatcher.rowDragMoveEvents.length).toBeGreaterThan(0);
         const lastMoveEvent = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         expect(api.getRowNode('a1')?.data.level1).toBe('Alpha');
@@ -474,19 +474,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         const api = gridsManager.createGrid('row-group-edit-disallow-deeper-to-shallow', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
@@ -496,19 +496,19 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after invalid move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after invalid move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-level1-Alpha
-            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One
-            │ │ └── LEAF id:a1 value:"Alpha-1"
-            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two
-            │ · └── LEAF id:a2 value:"Alpha-2"
-            └─┬ filler id:row-group-level1-Beta
-            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three
-            · │ └── LEAF id:b1 value:"Beta-1"
-            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four
-            · · └── LEAF id:b2 value:"Beta-2"
+            ├─┬ filler id:row-group-level1-Alpha ag-Grid-AutoColumn:"Alpha"
+            │ ├─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-One ag-Grid-AutoColumn:"One"
+            │ │ └── LEAF id:a1 level1:"Alpha" level2:"One" value:"Alpha-1"
+            │ └─┬ LEAF_GROUP id:row-group-level1-Alpha-level2-Two ag-Grid-AutoColumn:"Two"
+            │ · └── LEAF id:a2 level1:"Alpha" level2:"Two" value:"Alpha-2"
+            └─┬ filler id:row-group-level1-Beta ag-Grid-AutoColumn:"Beta"
+            · ├─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Three ag-Grid-AutoColumn:"Three"
+            · │ └── LEAF id:b1 level1:"Beta" level2:"Three" value:"Beta-1"
+            · └─┬ LEAF_GROUP id:row-group-level1-Beta-level2-Four ag-Grid-AutoColumn:"Four"
+            · · └── LEAF id:b2 level1:"Beta" level2:"Four" value:"Beta-2"
         `);
 
         const lastMoveEvent = dispatcher.rowDragMoveEvents[dispatcher.rowDragMoveEvents.length - 1];

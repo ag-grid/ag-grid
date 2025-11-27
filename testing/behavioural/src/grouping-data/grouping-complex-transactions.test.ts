@@ -389,20 +389,16 @@ describe('ag-grid grouping complex transactions', () => {
             update: [{ id: '1', department: 'HR', level: 'Manager', name: 'Alice Updated' }],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-        };
-
-        await new GridRows(api, 'complex batch transaction', gridRowsOptions).check(`
+        await new GridRows(api, 'complex batch transaction').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-HR
-            │ └─┬ LEAF_GROUP id:row-group-department-HR-level-Manager
-            │ · └── LEAF id:1 name:"Alice Updated"
-            └─┬ filler id:row-group-department-Sales
-            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Manager
-            · │ └── LEAF id:4 name:"Diana"
-            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
-            · · └── LEAF id:5 name:"Eve"
+            ├─┬ filler id:row-group-department-HR ag-Grid-AutoColumn:"HR"
+            │ └─┬ LEAF_GROUP id:row-group-department-HR-level-Manager ag-Grid-AutoColumn:"Manager"
+            │ · └── LEAF id:1 department:"HR" level:"Manager" name:"Alice Updated"
+            └─┬ filler id:row-group-department-Sales ag-Grid-AutoColumn:"Sales"
+            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Manager ag-Grid-AutoColumn:"Manager"
+            · │ └── LEAF id:4 department:"Sales" level:"Manager" name:"Diana"
+            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior ag-Grid-AutoColumn:"Junior"
+            · · └── LEAF id:5 department:"Sales" level:"Junior" name:"Eve"
         `);
     });
 });

@@ -60,14 +60,14 @@ describe('managed row drag without edit modules', () => {
 
         const api = gridsManager.createGrid('row-group-edit-no-edit-modules', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ ├── LEAF id:1 value:"A1"
-            │ └── LEAF id:2 value:"A2"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · └── LEAF id:3 value:"B1"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -75,14 +75,14 @@ describe('managed row drag without edit modules', () => {
         await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
-        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ └── LEAF id:1 value:"A1"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · ├── LEAF id:3 value:"B1"
-            · └── LEAF id:2 value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 group:"B" value:"B1"
+            · └── LEAF id:2 group:"B" value:"A2"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');

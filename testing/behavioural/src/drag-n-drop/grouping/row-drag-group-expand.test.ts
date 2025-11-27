@@ -70,15 +70,15 @@ describe('row drag nudger group expansion', () => {
             }
         });
 
-        const initialRows = new GridRows(api, 'initial', { columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial');
         await initialRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-group-A
-                │ ├── LEAF id:1 value:"A1"
-                │ └── LEAF id:2 value:"A2"
-                └─┬ LEAF_GROUP collapsed id:row-group-group-B
-                · └── LEAF hidden id:3 value:"B1"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP collapsed id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF hidden id:3 group:"B" value:"B1"
+        `);
 
         const sourceRowId = '2';
         const targetRowId = 'row-group-group-B';
@@ -104,15 +104,15 @@ describe('row drag nudger group expansion', () => {
         expect(expandedAfterDrop).toBe(true);
         expect(api.getRowNode('2')?.data.group).toBe('B');
 
-        const afterRows = new GridRows(api, 'after', { columns: ['value'] });
-        await afterRows.check([
-            'ROOT id:ROOT_NODE_ID',
-            '├─┬ LEAF_GROUP id:row-group-group-A',
-            '│ └── LEAF id:1 value:"A1"',
-            '└─┬ LEAF_GROUP id:row-group-group-B',
-            '· ├── LEAF id:3 value:"B1"',
-            '· └── LEAF id:2 value:"A2"',
-        ]);
+        const afterRows = new GridRows(api, 'after');
+        await afterRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 group:"B" value:"B1"
+            · └── LEAF id:2 group:"B" value:"A2"
+        `);
     });
 
     test('unmanaged row data still auto-expands collapsed groups after the insert delay', async () => {
@@ -140,15 +140,15 @@ describe('row drag nudger group expansion', () => {
             }
         });
 
-        const initialRows = new GridRows(api, 'initial', { columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial');
         await initialRows.check(`
-                ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-group-A
-                │ ├── LEAF id:1 value:"A1"
-                │ └── LEAF id:2 value:"A2"
-                └─┬ LEAF_GROUP collapsed id:row-group-group-B
-                · └── LEAF hidden id:3 value:"B1"
-            `);
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP collapsed id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF hidden id:3 group:"B" value:"B1"
+        `);
 
         const sourceRowId = '2';
         const targetRowId = 'row-group-group-B';
@@ -174,14 +174,14 @@ describe('row drag nudger group expansion', () => {
         expect(expandedAfterDrop).toBe(true);
         expect(api.getRowNode('2')?.data.group).toBe('A');
 
-        const afterRows = new GridRows(api, 'after', { columns: ['value'] });
-        await afterRows.check([
-            'ROOT id:ROOT_NODE_ID',
-            '├─┬ LEAF_GROUP id:row-group-group-A',
-            '│ ├── LEAF id:1 value:"A1"',
-            '│ └── LEAF id:2 value:"A2"',
-            '└─┬ LEAF_GROUP id:row-group-group-B',
-            '· └── LEAF id:3 value:"B1"',
-        ]);
+        const afterRows = new GridRows(api, 'after');
+        await afterRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
+        `);
     });
 });

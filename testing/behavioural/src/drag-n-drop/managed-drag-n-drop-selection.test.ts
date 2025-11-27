@@ -41,13 +41,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
         };
 
         const api = gridsManager.createGrid('managed-selection-contiguous', gridOptions);
-        let gridRows = new GridRows(api, 'initial contiguous', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial contiguous');
 
         await clickRowSelectionCheckbox(api, ['2', '3', '4']);
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'contiguous selected', { columns: ['value'] });
+        gridRows = new GridRows(api, 'contiguous selected');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:"A"
@@ -66,7 +66,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
 
         await asyncSetTimeout(0);
 
-        await new GridRows(api, 'contiguous moved', { columns: ['value'] }).check(`
+        await new GridRows(api, 'contiguous moved').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 value:"A"
             ├── LEAF id:5 value:"E"
@@ -95,13 +95,13 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
         };
 
         const api = gridsManager.createGrid('managed-selection-non-contiguous', gridOptions);
-        let gridRows = new GridRows(api, 'initial non contiguous', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial non contiguous');
 
         await clickRowSelectionCheckbox(api, ['1', '3', '5']);
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'non contiguous selected', { columns: ['value'] });
+        gridRows = new GridRows(api, 'non contiguous selected');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF selected id:1 value:"A"
@@ -121,7 +121,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('managed drag selection noMove=%s 
 
         await asyncSetTimeout(0);
 
-        await new GridRows(api, 'non contiguous moved', { columns: ['value'] }).check(`
+        await new GridRows(api, 'non contiguous moved').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:2 value:"B"
             ├── LEAF id:4 value:"D"

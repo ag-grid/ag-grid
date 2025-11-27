@@ -62,31 +62,31 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-multi-step', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ ├── LEAF id:1 value:"A1"
-            │ └── LEAF id:2 value:"A2"
-            ├─┬ LEAF_GROUP id:row-group-group-B
-            │ ├── LEAF id:3 value:"B1"
-            │ └── LEAF id:4 value:"B2"
-            └─┬ LEAF_GROUP id:row-group-group-C
-            · ├── LEAF id:5 value:"C1"
-            · └── LEAF id:6 value:"C2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            │ ├── LEAF id:3 group:"B" value:"B1"
+            │ └── LEAF id:4 group:"B" value:"B2"
+            └─┬ LEAF_GROUP id:row-group-group-C ag-Grid-AutoColumn:"C"
+            · ├── LEAF id:5 group:"C" value:"C1"
+            · └── LEAF id:6 group:"C" value:"C2"
         `);
 
         const intermediateHoverLeaf = `
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ └── LEAF id:1 value:"A1"
-            ├─┬ LEAF_GROUP id:row-group-group-B
-            │ ├── LEAF id:3 value:"B1"
-            │ ├── LEAF id:4 value:"B2"
-            │ └── LEAF id:2 value:"A2"
-            └─┬ LEAF_GROUP id:row-group-group-C
-            · ├── LEAF id:5 value:"C1"
-            · └── LEAF id:6 value:"C2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            ├─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            │ ├── LEAF id:3 group:"B" value:"B1"
+            │ ├── LEAF id:4 group:"B" value:"B2"
+            │ └── LEAF id:2 group:"B" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-C ag-Grid-AutoColumn:"C"
+            · ├── LEAF id:5 group:"C" value:"C1"
+            · └── LEAF id:6 group:"C" value:"C2"
         `;
 
         const assertIntermediateStep = async (expectedParentId: string, snapshot: string, label: string) => {
@@ -97,9 +97,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
             expect(latestRowsDrop?.allowed).toBe(true);
             expect(latestRowsDrop?.moved).toBe(true);
             await waitFor(async () => {
-                const intermediateRows = new GridRows(api, label, {
-                    columns: ['value'],
-                });
+                const intermediateRows = new GridRows(api, label);
                 await intermediateRows.check(snapshot);
                 const draggedRowElement = getRowHtmlElement(api, '2');
                 expect(draggedRowElement).not.toBeNull();
@@ -118,18 +116,18 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ └── LEAF id:1 value:"A1"
-            ├─┬ LEAF_GROUP id:row-group-group-B
-            │ ├── LEAF id:3 value:"B1"
-            │ └── LEAF id:4 value:"B2"
-            └─┬ LEAF_GROUP id:row-group-group-C
-            · ├── LEAF id:5 value:"C1"
-            · ├── LEAF id:6 value:"C2"
-            · └── LEAF id:2 value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            ├─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            │ ├── LEAF id:3 group:"B" value:"B1"
+            │ └── LEAF id:4 group:"B" value:"B2"
+            └─┬ LEAF_GROUP id:row-group-group-C ag-Grid-AutoColumn:"C"
+            · ├── LEAF id:5 group:"C" value:"C1"
+            · ├── LEAF id:6 group:"C" value:"C2"
+            · └── LEAF id:2 group:"C" value:"A2"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('C');
@@ -164,24 +162,24 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-year-multi-hop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial years', { columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial years');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-continent-Europe
-            · ├─┬ filler id:row-group-continent-Europe-country-France
-            · │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2020
-            · │ │ ├── LEAF id:1 city:"Paris"
-            · │ │ └── LEAF id:2 city:"Lyon"
-            · │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2021
-            · │ │ └── LEAF id:3 city:"Nice"
-            · │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2022
-            · │ · ├── LEAF id:4 city:"Marseille"
-            · │ · └── LEAF id:5 city:"Bordeaux"
-            · └─┬ filler id:row-group-continent-Europe-country-Germany
-            · · ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2020
-            · · │ └── LEAF id:6 city:"Berlin"
-            · · └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2021
-            · · · └── LEAF id:7 city:"Munich"
+            └─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            · ├─┬ filler id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            · │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2020 ag-Grid-AutoColumn:"2020"
+            · │ │ ├── LEAF id:1 continent:"Europe" country:"France" year:"2020" city:"Paris"
+            · │ │ └── LEAF id:2 continent:"Europe" country:"France" year:"2020" city:"Lyon"
+            · │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2021 ag-Grid-AutoColumn:"2021"
+            · │ │ └── LEAF id:3 continent:"Europe" country:"France" year:"2021" city:"Nice"
+            · │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2022 ag-Grid-AutoColumn:"2022"
+            · │ · ├── LEAF id:4 continent:"Europe" country:"France" year:"2022" city:"Marseille"
+            · │ · └── LEAF id:5 continent:"Europe" country:"France" year:"2022" city:"Bordeaux"
+            · └─┬ filler id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            · · ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2020 ag-Grid-AutoColumn:"2020"
+            · · │ └── LEAF id:6 continent:"Europe" country:"Germany" year:"2020" city:"Berlin"
+            · · └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2021 ag-Grid-AutoColumn:"2021"
+            · · · └── LEAF id:7 continent:"Europe" country:"Germany" year:"2021" city:"Munich"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -192,23 +190,23 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'years after multi-hop drag', { columns: ['city'] });
+        gridRows = new GridRows(api, 'years after multi-hop drag');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-continent-Europe
-            · ├─┬ filler id:row-group-continent-Europe-country-France
-            · │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2021
-            · │ │ └── LEAF id:3 city:"Nice"
-            · │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2022
-            · │ · ├── LEAF id:1 city:"Paris"
-            · │ · ├── LEAF id:2 city:"Lyon"
-            · │ · ├── LEAF id:4 city:"Marseille"
-            · │ · └── LEAF id:5 city:"Bordeaux"
-            · └─┬ filler id:row-group-continent-Europe-country-Germany
-            · · ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2020
-            · · │ └── LEAF id:6 city:"Berlin"
-            · · └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2021
-            · · · └── LEAF id:7 city:"Munich"
+            └─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            · ├─┬ filler id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            · │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2021 ag-Grid-AutoColumn:"2021"
+            · │ │ └── LEAF id:3 continent:"Europe" country:"France" year:"2021" city:"Nice"
+            · │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-France-year-2022 ag-Grid-AutoColumn:"2022"
+            · │ · ├── LEAF id:1 continent:"Europe" country:"France" year:"2022" city:"Paris"
+            · │ · ├── LEAF id:2 continent:"Europe" country:"France" year:"2022" city:"Lyon"
+            · │ · ├── LEAF id:4 continent:"Europe" country:"France" year:"2022" city:"Marseille"
+            · │ · └── LEAF id:5 continent:"Europe" country:"France" year:"2022" city:"Bordeaux"
+            · └─┬ filler id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            · · ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2020 ag-Grid-AutoColumn:"2020"
+            · · │ └── LEAF id:6 continent:"Europe" country:"Germany" year:"2020" city:"Berlin"
+            · · └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany-year-2021 ag-Grid-AutoColumn:"2021"
+            · · · └── LEAF id:7 continent:"Europe" country:"Germany" year:"2021" city:"Munich"
         `);
 
         const movedParis = api.getRowNode('1');
@@ -243,18 +241,18 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-group-drag', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial groups', { columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial groups');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France
-            │ │ ├── LEAF id:1 city:"Paris"
-            │ │ └── LEAF id:2 city:"Lyon"
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ · └── LEAF id:3 city:"Berlin"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · └── LEAF id:4 city:"Tokyo"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            │ │ ├── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
+            │ │ └── LEAF id:2 continent:"Europe" country:"France" city:"Lyon"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ · └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · └── LEAF id:4 continent:"Asia" country:"Japan" city:"Tokyo"
         `);
 
         expect(getRowHtmlElement(api, 'row-group-continent-Europe-country-France')).toBeTruthy();
@@ -269,17 +267,17 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'groups after move', { columns: ['city'] });
+        gridRows = new GridRows(api, 'groups after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ · └── LEAF id:3 city:"Berlin"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · ├── LEAF id:4 city:"Tokyo"
-            · · ├── LEAF id:1 city:"Paris"
-            · · └── LEAF id:2 city:"Lyon"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ · └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · ├── LEAF id:4 continent:"Asia" country:"Japan" city:"Tokyo"
+            · · ├── LEAF id:1 continent:"Asia" country:"Japan" city:"Paris"
+            · · └── LEAF id:2 continent:"Asia" country:"Japan" city:"Lyon"
         `);
 
         const movedParis = api.getRowNode('1');
@@ -320,21 +318,21 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const api = gridsManager.createGrid('row-group-edit-group-multi-hop', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial same-level groups', { columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial same-level groups');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France
-            │ │ ├── LEAF id:1 city:"Paris"
-            │ │ └── LEAF id:2 city:"Lyon"
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ │ └── LEAF id:3 city:"Berlin"
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Spain
-            │ · ├── LEAF id:4 city:"Madrid"
-            │ · └── LEAF id:5 city:"Barcelona"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · └── LEAF id:6 city:"Tokyo"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            │ │ ├── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
+            │ │ └── LEAF id:2 continent:"Europe" country:"France" city:"Lyon"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ │ └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Spain ag-Grid-AutoColumn:"Spain"
+            │ · ├── LEAF id:4 continent:"Europe" country:"Spain" city:"Madrid"
+            │ · └── LEAF id:5 continent:"Europe" country:"Spain" city:"Barcelona"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · └── LEAF id:6 continent:"Asia" country:"Japan" city:"Tokyo"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -345,20 +343,20 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'same-level groups after multi-hop drag', { columns: ['city'] });
+        gridRows = new GridRows(api, 'same-level groups after multi-hop drag');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ │ └── LEAF id:3 city:"Berlin"
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Spain
-            │ · ├── LEAF id:1 city:"Paris"
-            │ · ├── LEAF id:2 city:"Lyon"
-            │ · ├── LEAF id:4 city:"Madrid"
-            │ · └── LEAF id:5 city:"Barcelona"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · └── LEAF id:6 city:"Tokyo"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ │ └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Spain ag-Grid-AutoColumn:"Spain"
+            │ · ├── LEAF id:1 continent:"Europe" country:"Spain" city:"Paris"
+            │ · ├── LEAF id:2 continent:"Europe" country:"Spain" city:"Lyon"
+            │ · ├── LEAF id:4 continent:"Europe" country:"Spain" city:"Madrid"
+            │ · └── LEAF id:5 continent:"Europe" country:"Spain" city:"Barcelona"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · └── LEAF id:6 continent:"Asia" country:"Japan" city:"Tokyo"
         `);
 
         const movedParis = api.getRowNode('1');
@@ -406,14 +404,14 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-basic', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['value'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ ├── LEAF id:1 value:"A1"
-            │ └── LEAF id:2 value:"A2"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · └── LEAF id:3 value:"B1"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -421,14 +419,14 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
         await dispatcher.move('3', { yOffsetPercent: 0.1 });
         await dispatcher.finish();
 
-        gridRows = new GridRows(api, 'after move', { columns: ['value'] });
+        gridRows = new GridRows(api, 'after move');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ └── LEAF id:1 value:"A1"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · ├── LEAF id:3 value:"B1"
-            · └── LEAF id:2 value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 group:"B" value:"B1"
+            · └── LEAF id:2 group:"B" value:"A2"
         `);
         expect(api.getRowNode('2')?.data.group).toBe('B');
     });
@@ -457,18 +455,18 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const api = gridsManager.createGrid('row-group-edit-multi-level', gridOptions);
 
-        let gridRows = new GridRows(api, 'initial', { columns: ['city'] });
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France
-            │ │ ├── LEAF id:1 city:"Paris"
-            │ │ └── LEAF id:2 city:"Lyon"
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ · └── LEAF id:3 city:"Berlin"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · └── LEAF id:4 city:"Tokyo"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            │ │ ├── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
+            │ │ └── LEAF id:2 continent:"Europe" country:"France" city:"Lyon"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ · └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · └── LEAF id:4 continent:"Asia" country:"Japan" city:"Tokyo"
         `);
 
         const firstDrag = new RowDragDispatcher({ api });
@@ -478,18 +476,18 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move within continent', { columns: ['city'] });
+        gridRows = new GridRows(api, 'after move within continent');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France
-            │ │ └── LEAF id:1 city:"Paris"
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ · ├── LEAF id:3 city:"Berlin"
-            │ · └── LEAF id:2 city:"Lyon"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · └── LEAF id:4 city:"Tokyo"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            │ │ └── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ · ├── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            │ · └── LEAF id:2 continent:"Europe" country:"Germany" city:"Lyon"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · └── LEAF id:4 continent:"Asia" country:"Japan" city:"Tokyo"
         `);
 
         let movedRow = api.getRowNode('2');
@@ -505,18 +503,18 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        gridRows = new GridRows(api, 'after move across continents', { columns: ['city'] });
+        gridRows = new GridRows(api, 'after move across continents');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-continent-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France
-            │ │ └── LEAF id:1 city:"Paris"
-            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany
-            │ · └── LEAF id:3 city:"Berlin"
-            └─┬ filler id:row-group-continent-Asia
-            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan
-            · · ├── LEAF id:2 city:"Lyon"
-            · · └── LEAF id:4 city:"Tokyo"
+            ├─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            │ │ └── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
+            │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            │ · └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
+            └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
+            · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
+            · · ├── LEAF id:2 continent:"Asia" country:"Japan" city:"Lyon"
+            · · └── LEAF id:4 continent:"Asia" country:"Japan" city:"Tokyo"
         `);
 
         movedRow = api.getRowNode('2');
@@ -555,14 +553,14 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        const initialRows = new GridRows(api, 'initial', { columns: ['value'] });
+        const initialRows = new GridRows(api, 'initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ ├── LEAF id:1 value:"A1"
-            │ └── LEAF id:2 value:"A2"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · └── LEAF id:3 value:"B1"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 group:"A" value:"A1"
+            │ └── LEAF id:2 group:"A" value:"A2"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
 
         modelUpdatedEvents.length = 0;
@@ -574,14 +572,14 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'after move', { columns: ['value'] });
+        const finalRows = new GridRows(api, 'after move');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-group-A
-            │ └── LEAF id:1 value:"A1"
-            └─┬ LEAF_GROUP id:row-group-group-B
-            · ├── LEAF id:3 value:"B1"
-            · └── LEAF id:2 value:"A2"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
+            │ └── LEAF id:1 group:"A" value:"A1"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 group:"B" value:"B1"
+            · └── LEAF id:2 group:"B" value:"A2"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');

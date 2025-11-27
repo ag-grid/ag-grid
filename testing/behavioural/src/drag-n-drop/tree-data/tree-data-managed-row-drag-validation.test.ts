@@ -2,7 +2,6 @@ import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
 import {
     GridRows,
     RowDragDispatcher,
@@ -16,11 +15,6 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowDragModule, RowSelectionModule, TreeDataModule],
     });
-
-    const treeGridRowsOptions: GridRowsOptions = {
-        treeData: true,
-        columns: ['ag-Grid-AutoColumn'],
-    };
 
     beforeEach(() => {
         gridsManager.reset();
@@ -71,12 +65,12 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             rowDragManaged: false,
         });
 
-        const initialRows = new GridRows(api, 'unmanaged initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'unmanaged initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            │ └── drafts LEAF id:drafts ag-Grid-AutoColumn:"Drafts"
-            └── archive LEAF id:archive ag-Grid-AutoColumn:"Archive"
+            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            │ └── drafts LEAF id:drafts ag-Grid-AutoColumn:"Drafts" type:"file"
+            └── archive LEAF id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
         `);
 
         const sourceRowId = 'drafts';
@@ -92,12 +86,12 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'unmanaged final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'unmanaged final');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            │ └── drafts LEAF id:drafts ag-Grid-AutoColumn:"Drafts"
-            └── archive LEAF id:archive ag-Grid-AutoColumn:"Archive"
+            ├─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            │ └── drafts LEAF id:drafts ag-Grid-AutoColumn:"Drafts" type:"file"
+            └── archive LEAF id:archive ag-Grid-AutoColumn:"Archive" type:"folder"
         `);
 
         const endEvent = dispatcher.rowDragEndEvents[0];
@@ -133,13 +127,13 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-        const initialRows = new GridRows(api, 'validator initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'validator initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            · ├─┬ protected GROUP id:protected ag-Grid-AutoColumn:"System"
-            · │ └── protected-log LEAF id:protected-log ag-Grid-AutoColumn:"Log"
-            · └── draft LEAF id:draft ag-Grid-AutoColumn:"Draft"
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · ├─┬ protected GROUP id:protected ag-Grid-AutoColumn:"System" type:"folder"
+            · │ └── protected-log LEAF id:protected-log ag-Grid-AutoColumn:"Log" type:"file"
+            · └── draft LEAF id:draft ag-Grid-AutoColumn:"Draft" type:"file"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -150,13 +144,13 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'validator final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'validator final');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            · ├─┬ protected GROUP id:protected ag-Grid-AutoColumn:"System"
-            · │ └── protected-log LEAF id:protected-log ag-Grid-AutoColumn:"Log"
-            · └── draft LEAF id:draft ag-Grid-AutoColumn:"Draft"
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · ├─┬ protected GROUP id:protected ag-Grid-AutoColumn:"System" type:"folder"
+            · │ └── protected-log LEAF id:protected-log ag-Grid-AutoColumn:"Log" type:"file"
+            · └── draft LEAF id:draft ag-Grid-AutoColumn:"Draft" type:"file"
         `);
 
         expect(validatorParents).toContain('protected');
@@ -202,13 +196,13 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-        const initialRows = new GridRows(api, 'cycle initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'cycle initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            · └─┬ team GROUP id:team ag-Grid-AutoColumn:"Team"
-            · · └─┬ team-eng GROUP id:team-eng ag-Grid-AutoColumn:"Engineering"
-            · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes"
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · └─┬ team GROUP id:team ag-Grid-AutoColumn:"Team" type:"folder"
+            · · └─┬ team-eng GROUP id:team-eng ag-Grid-AutoColumn:"Engineering" type:"folder"
+            · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes" type:"file"
         `);
 
         const sourceRowId = 'team';
@@ -224,13 +218,13 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'cycle final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'cycle final');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root"
-            · └─┬ team GROUP id:team ag-Grid-AutoColumn:"Team"
-            · · └─┬ team-eng GROUP id:team-eng ag-Grid-AutoColumn:"Engineering"
-            · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes"
+            └─┬ root GROUP id:root ag-Grid-AutoColumn:"Root" type:"folder"
+            · └─┬ team GROUP id:team ag-Grid-AutoColumn:"Team" type:"folder"
+            · · └─┬ team-eng GROUP id:team-eng ag-Grid-AutoColumn:"Engineering" type:"folder"
+            · · · └── team-eng-notes LEAF id:team-eng-notes ag-Grid-AutoColumn:"Notes" type:"file"
         `);
 
         const endEvent = dispatcher.rowDragEndEvents[0];
@@ -263,14 +257,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             getDataPath: (data) => data.path,
         });
 
-        const initialRows = new GridRows(api, 'path managed initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'path managed initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
-            · ├─┬ Drafts GROUP id:library-drafts ag-Grid-AutoColumn:"Drafts"
-            · │ └── Spec LEAF id:library-drafts-spec ag-Grid-AutoColumn:"Spec"
-            · └─┬ Archive GROUP id:library-archive ag-Grid-AutoColumn:"Archive"
-            · · └── Reports LEAF id:library-archive-reports ag-Grid-AutoColumn:"Reports"
+            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library" type:"root"
+            · ├─┬ Drafts GROUP id:library-drafts ag-Grid-AutoColumn:"Drafts" type:"folder"
+            · │ └── Spec LEAF id:library-drafts-spec ag-Grid-AutoColumn:"Spec" type:"file"
+            · └─┬ Archive GROUP id:library-archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · · └── Reports LEAF id:library-archive-reports ag-Grid-AutoColumn:"Reports" type:"file"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -281,14 +275,14 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'path managed after', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'path managed after');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
-            · ├── Drafts LEAF id:library-drafts ag-Grid-AutoColumn:"Drafts"
-            · └─┬ Archive GROUP id:library-archive ag-Grid-AutoColumn:"Archive"
-            · · ├── Spec LEAF id:library-drafts-spec ag-Grid-AutoColumn:"Spec"
-            · · └── Reports LEAF id:library-archive-reports ag-Grid-AutoColumn:"Reports"
+            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library" type:"root"
+            · ├── Drafts LEAF id:library-drafts ag-Grid-AutoColumn:"Drafts" type:"folder"
+            · └─┬ Archive GROUP id:library-archive ag-Grid-AutoColumn:"Archive" type:"folder"
+            · · ├── Spec LEAF id:library-drafts-spec ag-Grid-AutoColumn:"Spec" type:"file"
+            · · └── Reports LEAF id:library-archive-reports ag-Grid-AutoColumn:"Reports" type:"file"
         `);
 
         expect(api.getRowNode('library-drafts-spec')?.parent?.id).toBe('library-archive');
@@ -325,13 +319,13 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
             },
         });
 
-        const initialRows = new GridRows(api, 'path validator initial', treeGridRowsOptions);
+        const initialRows = new GridRows(api, 'path validator initial');
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
-            · ├── Protected LEAF id:library-protected ag-Grid-AutoColumn:"Protected"
-            · └─┬ Shared GROUP id:library-shared ag-Grid-AutoColumn:"Shared"
-            · · └── Manual LEAF id:library-shared-manual ag-Grid-AutoColumn:"Manual"
+            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library" type:"root"
+            · ├── Protected LEAF id:library-protected ag-Grid-AutoColumn:"Protected" type:"folder"
+            · └─┬ Shared GROUP id:library-shared ag-Grid-AutoColumn:"Shared" type:"folder"
+            · · └── Manual LEAF id:library-shared-manual ag-Grid-AutoColumn:"Manual" type:"file"
         `);
 
         const dispatcher = new RowDragDispatcher({ api });
@@ -342,13 +336,13 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
         await dispatcher.finish();
         await asyncSetTimeout(0);
 
-        const finalRows = new GridRows(api, 'path validator final', treeGridRowsOptions);
+        const finalRows = new GridRows(api, 'path validator final');
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library"
-            · ├── Protected LEAF id:library-protected ag-Grid-AutoColumn:"Protected"
-            · └─┬ Shared GROUP id:library-shared ag-Grid-AutoColumn:"Shared"
-            · · └── Manual LEAF id:library-shared-manual ag-Grid-AutoColumn:"Manual"
+            └─┬ Library GROUP id:library ag-Grid-AutoColumn:"Library" type:"root"
+            · ├── Protected LEAF id:library-protected ag-Grid-AutoColumn:"Protected" type:"folder"
+            · └─┬ Shared GROUP id:library-shared ag-Grid-AutoColumn:"Shared" type:"folder"
+            · · └── Manual LEAF id:library-shared-manual ag-Grid-AutoColumn:"Manual" type:"file"
         `);
 
         expect(rejectedAttempt).toBe(true);
