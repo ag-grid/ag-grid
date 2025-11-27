@@ -428,8 +428,8 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
-            cs.sort != c.getSortDef().direction ||
-            cs.sortType != c.getSortDef().type ||
+            cs.sort != c.getSortDef()?.direction ||
+            cs.sortType != c.getSortDef()?.type ||
             cs.sortIndex != c.getSortIndex();
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {

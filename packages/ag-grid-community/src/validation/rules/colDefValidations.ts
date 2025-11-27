@@ -185,7 +185,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         sort: {
             validate: (_options) => {
-                if (_isSortDefValid(_options.sort, false) || _isSortDirectionValid(_options.sort, false)) {
+                if (_isSortDefValid(_options.sort) || _isSortDirectionValid(_options.sort)) {
                     return null;
                 }
 
@@ -194,10 +194,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
         },
         initialSort: {
             validate: (_options) => {
-                if (
-                    _isSortDefValid(_options.initialSort, false) ||
-                    _isSortDirectionValid(_options.initialSort, false)
-                ) {
+                if (_isSortDefValid(_options.initialSort) || _isSortDirectionValid(_options.initialSort)) {
                     return null;
                 }
 
@@ -210,7 +207,7 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
                     const invalidItems = sortingOrder.filter((a) => {
-                        return !(_isSortDefValid(a, false) || _isSortDirectionValid(a));
+                        return !(_isSortDefValid(a) || _isSortDirectionValid(a));
                     });
                     if (invalidItems.length > 0) {
                         return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems

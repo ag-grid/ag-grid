@@ -117,10 +117,10 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
-        const isAbsoluteSort = sortDirection?.type === 'absolute';
-        const isAscending = sortDirection?.direction === 'asc';
-        const isDescending = sortDirection?.direction === 'desc';
+        const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+        const isAbsoluteSort = sortDef?.type === 'absolute';
+        const isAscending = sortDef?.direction === 'asc';
+        const isDescending = sortDef?.direction === 'desc';
 
         if (eSortAsc) {
             _setDisplayed(eSortAsc, isAscending && !isAbsoluteSort, { skipAriaHidden: true });
@@ -132,7 +132,7 @@ export class SortIndicatorComp extends Component {
 
         if (eSortNone) {
             const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.get('unSortIcon');
-            const isNone = sortDirection?.direction == null;
+            const isNone = sortDef?.direction == null;
             _setDisplayed(eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }
 
