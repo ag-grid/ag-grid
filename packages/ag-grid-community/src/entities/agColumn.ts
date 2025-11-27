@@ -82,6 +82,7 @@ export class AgColumn<TValue = any>
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
     private sortDef: SortDef = _getSortDefFromInput();
+    private _hasUserInteractedWithSort: boolean = false;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -134,7 +135,7 @@ export class AgColumn<TValue = any>
         return this.instanceId;
     }
 
-    private setState(): void {
+    private initState(): void {
         const {
             colDef,
             beans: { sortSvc, pinnedCols, colFlex },
@@ -187,7 +188,7 @@ export class AgColumn<TValue = any>
 
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
-        this.setState();
+        this.initState();
 
         this.initMinAndMaxWidths();
 
@@ -441,7 +442,14 @@ export class AgColumn<TValue = any>
         return this.sortDef;
     }
 
-    public setSortDef(sortDef: SortDef): void {
+    get hasUserInteractedWithSort(): boolean {
+        return this._hasUserInteractedWithSort;
+    }
+
+    public setSortDef(sortDef: SortDef, initial = false): void {
+        if (!initial) {
+            this._hasUserInteractedWithSort = true;
+        }
         this.sortDef = sortDef;
     }
 

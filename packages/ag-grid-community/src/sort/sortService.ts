@@ -325,7 +325,7 @@ export class SortService extends BeanStub implements NamedBean {
 
         const sortDef = _getSortDefFromColDef(column.colDef);
         if (sortDef) {
-            column.setSortDef(sortDef);
+            column.setSortDef(sortDef, true);
         }
 
         if (sortIndex !== undefined) {
