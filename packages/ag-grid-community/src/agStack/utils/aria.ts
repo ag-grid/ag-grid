@@ -12,8 +12,7 @@ export type DisplaySortDef =
 
 export type SortDirection = 'asc' | 'desc' | null;
 
-/** nullish is treated as default here */
-export type SortType = 'absolute' | 'default' | null;
+export type SortType = 'absolute' | 'default';
 
 export type SortDef = {
     type: SortType;
