@@ -220,7 +220,7 @@ export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = [
                 | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
 
-export type SortComparatorFn = <TData, TValue>(
+export type SortComparatorFn<TData = any, TValue = any> = (
     valueA: TValue | null | undefined,
     valueB: TValue | null | undefined,
     nodeA: IRowNode<TData>,
@@ -820,7 +820,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?: SortComparatorFn | Partial<Record<NonNullable<SortType>, SortComparatorFn>>;
+    comparator?:
+        | SortComparatorFn<TData, TValue>
+        | Partial<Record<NonNullable<SortType>, SortComparatorFn<TData, TValue>>>;
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
