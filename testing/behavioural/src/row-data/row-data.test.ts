@@ -6,9 +6,11 @@ import type { GridOptions } from 'ag-grid-community';
 import {
     GridRows,
     TestGridsManager,
+    applyTransactionChecked,
     asyncSetTimeout,
     cachedJSONObjects,
     executeTransactionsAsync,
+    setRowDataChecked,
 } from '../test-utils';
 
 describe('ag-grid row data', () => {
@@ -103,7 +105,7 @@ describe('ag-grid row data', () => {
         `);
 
         compareCalled = false;
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
         await asyncSetTimeout(1);
 
         await new GridRows(api, 'data').check(`
@@ -226,7 +228,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', value: 1, x: 10 },
             { id: '2', value: 2, x: 20 },
             { id: '3', value: 3, x: 30 },
@@ -264,7 +266,7 @@ describe('ag-grid row data', () => {
             └── LEAF id:3 value:3 x:30
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', value: 1, x: 10 },
             { id: '4', value: 4, x: 40 },
         ]);
@@ -302,7 +304,7 @@ describe('ag-grid row data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', value: 1, x: 10 },
             { id: '2', value: 2, x: 20 },
             { id: '3', value: 3, x: 30 },
@@ -339,14 +341,14 @@ describe('ag-grid row data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', value: 0 },
                 { id: '2', value: 2 },
             ],
         });
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '1', value: 1 }],
             add: [{ id: '3', value: 3 }],
         });

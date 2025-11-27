@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping expanded state', () => {
     const gridsManager = new TestGridsManager({
@@ -83,7 +83,7 @@ describe('ag-grid grouping expanded state', () => {
         `);
 
         // Add new data to Ireland 2020 group - expansion should be preserved
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [{ id: '7', country: 'Ireland', year: 2020, athlete: "Pat O'Brien", sport: 'Rugby' }],
         });
 
@@ -341,7 +341,7 @@ describe('ag-grid grouping expanded state', () => {
         `);
 
         // Remove all Ireland rows
-        api.applyTransaction({ remove: [{ id: '1' }, { id: '2' }] });
+        applyTransactionChecked(api, { remove: [{ id: '1' }, { id: '2' }] });
 
         await new GridRows(api, 'Ireland rows removed').check(`
             ROOT id:ROOT_NODE_ID
@@ -350,7 +350,7 @@ describe('ag-grid grouping expanded state', () => {
         `);
 
         // Add Ireland rows back - expansion state should be preserved
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '4', country: 'Ireland', athlete: 'New Person', sport: 'Tennis' },
                 { id: '5', country: 'Ireland', athlete: 'Another Person', sport: 'Golf' },
@@ -541,7 +541,7 @@ describe('ag-grid grouping expanded state', () => {
                     sport: 'Dynamic Sport',
                 };
 
-                api.applyTransaction({ add: [newRow] });
+                applyTransactionChecked(api, { add: [newRow] });
             },
         });
 
@@ -565,7 +565,7 @@ describe('ag-grid grouping expanded state', () => {
         expect(dynamicNode?.data?.athlete).toBe('Dynamic Athlete 1');
 
         // Add a completely new country (Spain) which should trigger the groupDefaultExpanded callback
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [{ id: 'spain-1', country: 'Spain', athlete: 'Carlos Garcia', sport: 'Basketball' }],
         });
 
@@ -747,7 +747,7 @@ describe('ag-grid grouping expanded state', () => {
         `);
 
         // Add new data and verify expansion state persists
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '5', region: 'North', country: 'USA', city: 'Chicago' },
                 { id: '6', region: 'North', country: 'Canada', city: 'Montreal' },

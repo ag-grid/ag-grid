@@ -43,7 +43,7 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const transactionResult = api.applyTransaction({
+        const transactionResult = applyTransactionChecked(api, {
             add: [{ id: 'F', children: [{ id: 'G' }] }],
             remove: [{ id: 'A' }],
             update: [{ id: 'C', children: [{ id: 'D' }] }],

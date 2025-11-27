@@ -1,7 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+} from '../../../test-utils';
 
 describe('ag-grid parentId tree data parentId filter sort', () => {
     const gridsManager = new TestGridsManager({
@@ -54,7 +60,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · └── C LEAF id:C ag-Grid-AutoColumn:"C" name:"A. Church"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'A', name: 'John Von Neumann' },
             { id: 'B', name: 'Alan Turing', parentId: 'A' },
             { id: 'C', name: 'A. Church', parentId: 'B' },
@@ -72,7 +78,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Grace Hopper' } });
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'filter 2').check(`
             ROOT id:ROOT_NODE_ID
@@ -81,7 +87,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · └── E LEAF id:E ag-Grid-AutoColumn:"E" name:"Grace Hopper"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'A', name: 'John Von Neumann' },
             { id: 'B', name: 'Grace Hopper', parentId: 'A' },
             { id: 'C', name: 'A. Church', parentId: 'B' },
@@ -112,7 +118,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · · └── D LEAF id:D ag-Grid-AutoColumn:"D" name:"Donald Knuth"
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'filter 3').check(`
             ROOT id:ROOT_NODE_ID
@@ -127,7 +133,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             ROOT id:ROOT_NODE_ID
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'A', name: 'Kurt Gödel' },
             { id: 'B', name: 'Alan Turing', parentId: 'A' },
             { id: 'C', name: 'A. Church', parentId: 'A' },
@@ -146,7 +152,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
 
         api.setFilterModel({});
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'no filter').check(`
             ROOT id:ROOT_NODE_ID
@@ -254,7 +260,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · └── G LEAF id:G ag-Grid-AutoColumn:"G" value:16 x:1
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'sort value desc').check(`
             ROOT id:ROOT_NODE_ID
@@ -340,7 +346,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · └── G LEAF id:G ag-Grid-AutoColumn:"G" value:16 x:0
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'sort x desc, filter x===0, rowData 3').check(`
             ROOT id:ROOT_NODE_ID
@@ -429,7 +435,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · └── C LEAF id:C ag-Grid-AutoColumn:"C" value:4 n:4
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { ...rowData.find((x) => x.id === 'L'), parentId: 'A' },
                 { ...rowData.find((x) => x.id === 'G'), parentId: 'J' },
@@ -456,7 +462,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · └── C LEAF id:C ag-Grid-AutoColumn:"C" value:4 n:4
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { ...rowData.find((x) => x.id === 'D'), value: 40 },
                 { ...rowData.find((x) => x.id === 'E'), value: 41 },
@@ -483,7 +489,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · └── C LEAF id:C ag-Grid-AutoColumn:"C" value:4 n:4
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ ...rowData.find((x) => x.id === 'H'), parentId: 'X' }],
         });
 
@@ -507,7 +513,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · └── C LEAF id:C ag-Grid-AutoColumn:"C" value:4 n:4
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ ...rowData.find((x) => x.id === 'X'), parentId: 'B' }],
         });
 
@@ -531,7 +537,7 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
             · · └── C LEAF id:C ag-Grid-AutoColumn:"C" value:4 n:4
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ ...rowData.find((x) => x.id === 'D'), value: 200 }],
         });
 

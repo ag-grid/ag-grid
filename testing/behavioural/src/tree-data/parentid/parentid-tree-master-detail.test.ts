@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('ag-grid parentId tree with master detail', () => {
     test('nested groups expansion and callback calls', async () => {
@@ -187,7 +187,7 @@ describe('ag-grid parentId tree with master detail', () => {
             · · └── E2 LEAF id:E2 ag-Grid-AutoColumn:"E2" id:"E2"
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [{ id: 'G', parentId: 'E', records: [{ name: 'X4' }, { name: 'Y4' }] }],
             remove: [{ id: 'F2' }, { id: 'F' }, { id: 'F1' }],
             update: [{ id: 'E', parentId: 'D' }],

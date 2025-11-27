@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid hierarchical tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -50,17 +50,17 @@ describe('ag-grid hierarchical tree data', () => {
         expect(hasLoadingOverlay()).toBe(true);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         await asyncSetTimeout(10);
 
@@ -186,7 +186,7 @@ describe('ag-grid hierarchical tree data', () => {
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" x:"D"
         `);
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
@@ -264,7 +264,7 @@ describe('ag-grid hierarchical tree data', () => {
             └── LEAF id:3 x:"D"
         `);
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         api.updateGridOptions({
             treeData: true,
@@ -502,8 +502,8 @@ describe('ag-grid hierarchical tree data', () => {
         expect(modelUpdated).toBe(0);
 
         const allData = getHierarchicalData();
-        api.setGridOption('rowData', cachedJSONObjects.array([allData[0]]));
-        api.setGridOption('rowData', cachedJSONObjects.array(allData));
+        setRowDataChecked(api, cachedJSONObjects.array([allData[0]]));
+        setRowDataChecked(api, cachedJSONObjects.array(allData));
 
         await asyncSetTimeout(1);
         expect(rowDataUpdated).toBe(0);

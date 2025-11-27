@@ -345,7 +345,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             if (row.group) {
                 visitGroupedChildren(row);
             } else {
-                const firstLeaf = row.sourceRowIndex >= 0 ? row : this.csrmFirstLeaf(row);
+                const firstLeaf = row.sourceRowIndex >= 0 && !row.destroyed ? row : this.csrmFirstLeaf(row);
                 if (firstLeaf) {
                     processLeaf(firstLeaf);
                 }
@@ -506,11 +506,26 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         while (children?.length) {
             const child: IRowNode = children[0];
             if (child.sourceRowIndex >= 0) {
-                return child as RowNode;
+                if (!child.destroyed) {
+                    return child as RowNode;
+                }
+                return this.firstAliveChildLeaf(child);
             }
             children = draggingGroups?.get(child) ?? child.childrenAfterGroup;
         }
         return _csrmFirstLeaf(parent) as RowNode | null;
+    }
+
+    private firstAliveChildLeaf(parent: IRowNode): RowNode | null {
+        const children = this.draggingGroups?.get(parent) ?? parent.childrenAfterGroup;
+        if (children) {
+            for (const grandChild of children) {
+                if (grandChild.sourceRowIndex >= 0 && !grandChild.destroyed) {
+                    return grandChild as RowNode;
+                }
+            }
+        }
+        return null;
     }
 
     private findFirstLeafForParent(parent: IRowNode | null, exclude: ReadonlySet<RowNode>): RowNode | null {

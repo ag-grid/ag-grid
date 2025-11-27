@@ -1,7 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+} from '../../../test-utils';
 
 describe('ag-grid parentId tree aggregation and filter', () => {
     const gridsManager = new TestGridsManager({
@@ -86,14 +92,14 @@ describe('ag-grid parentId tree aggregation and filter', () => {
 
             // Update the y value for row D (id: '3')
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[3], y: 200 }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[3], y: 200 }] });
             } else {
                 rowData = cachedJSONObjects.array([
                     ...rowData.slice(0, 3),
                     { ...rowData[3], y: 200 },
                     ...rowData.slice(4),
                 ]);
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'filter greater than - update 1').check(`
@@ -110,10 +116,10 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             // Update the y value for row K (id: '9')
             // (Note: with the additional filler row, row with id '9' is at index 10)
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[10], y: 0 }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[10], y: 0 }] });
             } else {
                 rowData = cachedJSONObjects.array([...rowData.slice(0, 10), { ...rowData[10], y: 0 }]);
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'filter greater than - update 2').check(`
@@ -127,10 +133,10 @@ describe('ag-grid parentId tree aggregation and filter', () => {
 
             // Remove row D (id: '3')
             if (mode === 'transactions') {
-                api.applyTransaction({ remove: [rowData[3]] });
+                applyTransactionChecked(api, { remove: [rowData[3]] });
             } else {
                 rowData = rowData.filter((row) => row.id !== '3');
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'filter greater than - remove').check(`
@@ -279,7 +285,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             · · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" n:"J" y:9
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ ...rowData.find((row) => row.id === '3'), parentId: '8' }],
         });
 
@@ -297,7 +303,7 @@ describe('ag-grid parentId tree aggregation and filter', () => {
             · · └── 10 LEAF id:10 ag-Grid-AutoColumn:"10" n:"J" y:9
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ ...rowData.find((row) => row.id === '3'), y: 100 }],
         });
 

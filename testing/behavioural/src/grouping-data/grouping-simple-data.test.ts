@@ -3,7 +3,14 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions, RowSnapshot } from '../test-utils';
-import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot } from '../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    getRowsSnapshot,
+    setRowDataChecked,
+} from '../test-utils';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({
@@ -398,7 +405,7 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '0', country: 'Ireland', year: 2000, name: 'John Von Neumann' },
             { id: '1', country: 'Ireland', year: 2000, name: 'Ada Lovelace' },
             { id: '2', country: 'Ireland', year: 2001, name: 'Alan Turing' },
@@ -426,7 +433,7 @@ describe('ag-grid grouping simple data', () => {
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '0', country: 'Germany', year: 2000, name: 'John Von Neumann' },
             { id: '1', country: 'Germany', year: 2000, name: 'Ada Lovelace' },
             { id: '2', country: 'Germany', year: 2001, name: 'Alan Turing' },
@@ -466,7 +473,7 @@ describe('ag-grid grouping simple data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', value: 1, x: 10 },
             { id: '2', value: 2, x: 20 },
             { id: '3', value: 3, x: 30 },
@@ -504,7 +511,7 @@ describe('ag-grid grouping simple data', () => {
             └── LEAF id:3 value:3 x:30
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', value: 1, x: 10 },
             { id: '4', value: 4, x: 40 },
         ]);
@@ -542,7 +549,7 @@ describe('ag-grid grouping simple data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '0', country: 'Ireland', year: '2000', sport: 'Sailing', athlete: 'John Von Neumann' },
             { id: '1', country: 'Ireland', year: '2000', sport: 'Soccer', athlete: 'Ada Lovelace' },
             { id: '2', country: 'Ireland', year: '2001', sport: 'Football', athlete: 'Alan Turing' },
@@ -593,14 +600,14 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', value: 0 },
                 { id: '2', value: 2 },
             ],
         });
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '1', value: 1 }],
             add: [{ id: '3', value: 3 }],
         });

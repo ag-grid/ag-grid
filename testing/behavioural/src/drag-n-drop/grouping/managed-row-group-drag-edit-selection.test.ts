@@ -13,6 +13,7 @@ import {
     GridRows,
     RowDragDispatcher,
     TestGridsManager,
+    applyTransactionChecked,
     asyncSetTimeout,
     clickRowSelectionCheckbox,
     getRowHtmlElement,
@@ -50,7 +51,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
                     ...event.node.data,
                     [event.column.getColId()]: event.newValue,
                 };
-                event.api.applyTransaction({ update: [updatedData] });
+                applyTransactionChecked(event.api, { update: [updatedData] });
             }
         };
         const gridOptions: GridOptions = {

@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, executeTransactionsAsync } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../test-utils';
 
 describe('ag-grid grouping with transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -31,7 +31,7 @@ describe('ag-grid grouping with transactions', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '0', country: 'Ireland', year: 2000, name: 'John Von Neumann' },
                 { id: '1', country: 'Ireland', year: 2000, name: 'Ada Lovelace' },
@@ -58,7 +58,7 @@ describe('ag-grid grouping with transactions', () => {
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
-        api.applyTransaction({ add: [{ id: '5', country: 'Ireland', year: 2001, name: 'Grace Hopper' }] });
+        applyTransactionChecked(api, { add: [{ id: '5', country: 'Ireland', year: 2001, name: 'Grace Hopper' }] });
 
         gridRows = new GridRows(api, 'add');
 
@@ -78,7 +78,7 @@ describe('ag-grid grouping with transactions', () => {
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [{ id: '3' }],
             update: [
                 { id: '2', country: 'Italy', year: 1940, name: 'Alan M. Turing' },
@@ -427,7 +427,7 @@ describe('ag-grid grouping with transactions', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         // Create initial data with multiple groups
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', country: 'Ireland', year: 2000, name: 'John' },
                 { id: '2', country: 'Ireland', year: 2001, name: 'Jane' },
@@ -457,7 +457,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Remove all items from one year group - should remove the year group
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [{ id: '2' }],
         });
 
@@ -475,7 +475,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Remove all items from a country - should remove the entire country group
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [{ id: '4' }],
         });
 
@@ -490,7 +490,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Remove all items from Ireland, leaving only one item in the whole grid
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [{ id: '1' }],
         });
 
@@ -517,7 +517,7 @@ describe('ag-grid grouping with transactions', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         // Add data with missing values in grouping columns
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', country: 'Ireland', year: 2000, name: 'John' },
                 { id: '2', country: 'Ireland', name: 'Jane' }, // missing year
@@ -606,7 +606,7 @@ describe('ag-grid grouping with transactions', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', country: 'Ireland', year: 2001, name: 'John' },
                 { id: '2', country: 'France', year: 2005, name: 'Pierre' },
@@ -641,7 +641,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Test updating data that changes the custom key
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '6', country: 'Ireland', year: 2010, name: 'Mystery Irish' }],
         });
 
@@ -678,7 +678,7 @@ describe('ag-grid grouping with transactions', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         // Create initial data
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', department: 'Engineering', level: 'Junior', name: 'Alice' },
                 { id: '2', department: 'Engineering', level: 'Senior', name: 'Bob' },
@@ -706,7 +706,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Move Alice from Engineering to Sales (department change)
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '1', department: 'Sales', level: 'Junior', name: 'Alice' }],
         });
 
@@ -724,7 +724,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Move Bob to a completely new department and level
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '2', department: 'Marketing', level: 'Manager', name: 'Bob' }],
         });
 
@@ -742,7 +742,7 @@ describe('ag-grid grouping with transactions', () => {
         `);
 
         // Batch update that moves multiple nodes to different paths
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: '3', department: 'Engineering', level: 'Senior', name: 'Charlie' },
                 { id: '4', department: 'Engineering', level: 'Junior', name: 'Diana' },

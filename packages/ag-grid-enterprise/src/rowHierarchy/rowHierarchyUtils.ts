@@ -24,6 +24,9 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
 
     /** Used to lazily compute and store groupData for a row node */
     loadGroupData(node: RowNode<TData>): Record<string, any> | null;
+
+    /** Clears any cached group/filler nodes maintained by the strategy. */
+    clearNonLeafs(): void;
 }
 
 /**

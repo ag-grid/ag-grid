@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid grouping with transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -234,7 +234,7 @@ describe('ag-grid grouping with transactions', () => {
             · · └── LEAF id:6 name:"unknown" country:"Germany" year:1900
         `);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         gridRows = new GridRows(api, 'clear', gridRowsOptions);
         await gridRows.check('empty');
@@ -373,7 +373,7 @@ describe('ag-grid grouping with transactions', () => {
             · └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2005
         `);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         gridRows = new GridRows(api, 'clear', gridRowsOptions);
         await gridRows.check('empty');

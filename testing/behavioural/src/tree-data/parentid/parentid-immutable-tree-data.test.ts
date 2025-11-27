@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid parentId immutable tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -84,7 +84,7 @@ describe('ag-grid parentId immutable tree data', () => {
 
         const rows1 = gridRows.displayedRows;
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         gridRows = new GridRows(api, 'update some values');
         await gridRows.check(`
@@ -127,7 +127,7 @@ describe('ag-grid parentId immutable tree data', () => {
             { id: 'N', v: 888, parentId: 'M' },
         ]);
 
-        api.setGridOption('rowData', rowData3);
+        setRowDataChecked(api, rowData3);
 
         gridRows = new GridRows(api, 'add, update nodes');
         await gridRows.check(`
@@ -183,7 +183,7 @@ describe('ag-grid parentId immutable tree data', () => {
             { id: 'K', v: 110, parentId: 'J' },
         ]);
 
-        api.setGridOption('rowData', rowData4);
+        setRowDataChecked(api, rowData4);
 
         gridRows = new GridRows(api, 'add, reorder, move some nodes');
         await gridRows.check(`
@@ -233,7 +233,7 @@ describe('ag-grid parentId immutable tree data', () => {
             { id: 'I', v: 9, parentId: 'F' },
         ]);
 
-        api.setGridOption('rowData', rowData5);
+        setRowDataChecked(api, rowData5);
 
         gridRows = new GridRows(api, 'remove groups');
 
@@ -262,7 +262,7 @@ describe('ag-grid parentId immutable tree data', () => {
             { id: 'I', v: 9, parentId: 'F' },
         ]);
 
-        api.setGridOption('rowData', rowData6);
+        setRowDataChecked(api, rowData6);
 
         gridRows = new GridRows(api, 'swap groups children');
 
@@ -317,7 +317,7 @@ describe('ag-grid parentId immutable tree data', () => {
             { id: 'X', v: 100 },
         ]);
 
-        api.setGridOption('rowData', rowData8);
+        setRowDataChecked(api, rowData8);
 
         gridRows = new GridRows(api, 'change a group and add a new node while treeData is false');
 
@@ -422,7 +422,7 @@ describe('ag-grid parentId immutable tree data', () => {
             { id: 'B', v: 1, parentId: 'A' },
         ]);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         const gridRows2 = new GridRows(api, 'change the order, insert some nodes');
 

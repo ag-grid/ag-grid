@@ -1,5 +1,6 @@
 import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
+import { DestroyedRowNodesChecker } from '../grid-test-utils';
 import type { RowElementReference } from '../gridRows/gridHtmlRows';
 import { getGridOwnerDocument, getRowHtmlElement } from '../gridRows/gridHtmlRows';
 import { mockGridLayout } from '../polyfills/mockGridLayout';
@@ -44,6 +45,7 @@ export class RowDragDispatcher {
     private readonly api: GridApi;
     private readonly eventType: DragInteractionType;
     private readonly listeners: RowDragListeners;
+    private destroyedNodeChecker: DestroyedRowNodesChecker | null = null;
 
     private settlePromise: Promise<void> | undefined = undefined;
     private resolveSettle: (() => void) | undefined = undefined;
@@ -88,6 +90,8 @@ export class RowDragDispatcher {
         if (!dragHandle) {
             throw new Error('Row drag handle not found');
         }
+
+        this.destroyedNodeChecker = new DestroyedRowNodesChecker(this.api);
 
         const gridElement = TestGridsManager.getHTMLElement(this.api);
         const dropContainer =
@@ -213,6 +217,9 @@ export class RowDragDispatcher {
         }
 
         this.finished = true;
+
+        this.destroyedNodeChecker?.check();
+        this.destroyedNodeChecker = null;
     }
 
     private attachListeners(): void {

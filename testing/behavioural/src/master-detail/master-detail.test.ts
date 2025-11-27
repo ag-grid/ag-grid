@@ -4,7 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
@@ -165,7 +165,7 @@ describe('ag-grid master detail', () => {
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
-        api.setGridOption('rowData', [{ k: '2', records: [{ x: 'a' }, { x: 'b' }] }]);
+        setRowDataChecked(api, [{ k: '2', records: [{ x: 'a' }, { x: 'b' }] }]);
 
         consoleErrorSpy.mockRestore();
 
@@ -221,7 +221,7 @@ describe('ag-grid master detail', () => {
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             {
                 id: 'master',
                 k: '2',
@@ -295,7 +295,7 @@ describe('ag-grid master detail', () => {
 
         consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [{ id: 'x0' }],
             add: [{ id: 'x2', k: 'a2', records: [{ id: 's', x: 't' }] }],
             update: [{ id: 'x1', k: 'a1', records: [{ id: 'y1', x: 'a1' }] }],

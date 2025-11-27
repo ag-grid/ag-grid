@@ -4,7 +4,7 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid hierarchical tree data reset', () => {
     const gridsManager = new TestGridsManager({
@@ -50,7 +50,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── E LEAF id:E ag-Grid-AutoColumn:"E"
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'update 1').check(`
             ROOT id:ROOT_NODE_ID
@@ -62,7 +62,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         `);
 
         rowData.reverse();
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'update 2').check(`
             ROOT id:ROOT_NODE_ID
@@ -74,7 +74,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         `);
 
         rowData[0].children.reverse();
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'update 3').check(`
             ROOT id:ROOT_NODE_ID
@@ -102,7 +102,7 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         await asyncSetTimeout(1); // Simulate async loading
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
@@ -112,7 +112,7 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         await asyncSetTimeout(1); // Simulate async re-loading
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         await new GridRows(api, 'updated').check(`
             ROOT id:ROOT_NODE_ID
@@ -154,7 +154,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         await new GridRows(api, 'update 0').check(`
             ROOT id:ROOT_NODE_ID
@@ -169,7 +169,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" id:"Y" x:4
         `);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         await new GridRows(api, 'update 1').check(`
             ROOT id:ROOT_NODE_ID
@@ -181,11 +181,11 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" id:"Q" x:1
         `);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         await new GridRows(api, 'empty').check('empty');
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         await new GridRows(api, 'update 1').check(`
             ROOT id:ROOT_NODE_ID
@@ -213,7 +213,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'update 0').check(`
             ROOT id:ROOT_NODE_ID
@@ -223,7 +223,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             └── e LEAF id:e ag-Grid-AutoColumn:"e"
         `);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         await new GridRows(api, 'update1').check(`
             ROOT id:ROOT_NODE_ID
@@ -255,7 +255,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'update 0').check(`
             ROOT id:ROOT_NODE_ID
@@ -300,7 +300,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         let gridRows = new GridRows(api, 'update 0');
         await gridRows.check(`
@@ -314,7 +314,7 @@ describe('ag-grid hierarchical tree data reset', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((n) => n.data)).toEqual(rowData1);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
@@ -389,7 +389,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         await new GridRows(api, 'update 0').check(`
             ROOT id:ROOT_NODE_ID
@@ -403,7 +403,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── T LEAF id:T ag-Grid-AutoColumn:"T" label:"t1"
         `);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         await new GridRows(api, 'update 1').check(`
             ROOT id:ROOT_NODE_ID
@@ -519,7 +519,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             getRowId: (params) => params.data.id,
         });
 
-        api.setGridOption('rowData', rowData1);
+        setRowDataChecked(api, rowData1);
 
         // set B collapsed (a leaf)
         api.setRowNodeExpanded(api.getRowNode('1')!, false, undefined, true);
@@ -548,7 +548,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             └── 7 LEAF selected id:7 ag-Grid-AutoColumn:"7" label:"7-v1" x:"N"
         `);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
         await new GridRows(api, 'update 1').check(`
             ROOT id:ROOT_NODE_ID
@@ -563,7 +563,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             └── 6 LEAF selected id:6 ag-Grid-AutoColumn:"6" label:"6-v2" x:"M"
         `);
 
-        api.setGridOption('rowData', rowData3);
+        setRowDataChecked(api, rowData3);
         api.getRowNode('g3')!.setExpanded(false, undefined, true);
 
         await new GridRows(api, 'update 2').check(`
@@ -573,7 +573,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── 3 LEAF hidden id:3 ag-Grid-AutoColumn:"3" label:"3-v3" x:"D"
         `);
 
-        api.setGridOption('rowData', rowData3);
+        setRowDataChecked(api, rowData3);
         await new GridRows(api, 'update 2 (repeat)').check(`
             ROOT id:ROOT_NODE_ID
             ├── 100 LEAF id:100 ag-Grid-AutoColumn:"100" label:"100-v3" x:"a"
@@ -581,7 +581,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── 3 LEAF hidden id:3 ag-Grid-AutoColumn:"3" label:"3-v3" x:"D"
         `);
 
-        api.setGridOption('rowData', rowData4);
+        setRowDataChecked(api, rowData4);
 
         await new GridRows(api, 'update 3').check(`
             ROOT id:ROOT_NODE_ID
@@ -590,7 +590,7 @@ describe('ag-grid hierarchical tree data reset', () => {
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" label:"3-v3" x:"D"
         `);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         await new GridRows(api, 'cleared').check('empty');
     });

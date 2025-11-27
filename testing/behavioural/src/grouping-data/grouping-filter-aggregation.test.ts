@@ -2,7 +2,14 @@ import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects, unindentText } from '../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+    unindentText,
+} from '../test-utils';
 
 describe('ag-grid grouping filter aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -113,7 +120,7 @@ describe('ag-grid grouping filter aggregation', () => {
 
             // Update data during filtering
             if (mode === 'transactions') {
-                api.applyTransaction({
+                applyTransactionChecked(api, {
                     add: [{ id: '10', country: 'Portugal', year: 2021, sport: 'Soccer', gold: 6 }],
                 });
                 // Ensure grid consistency after adding new group during filtering
@@ -123,7 +130,7 @@ describe('ag-grid grouping filter aggregation', () => {
                     ...rowData,
                     { id: '10', country: 'Portugal', year: 2021, sport: 'Soccer', gold: 6 },
                 ]);
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'after adding Portugal Soccer 2021', gridRowsOptions).check(`

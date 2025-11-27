@@ -6,7 +6,7 @@ import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 
@@ -90,7 +90,7 @@ describe('ag-grid formulas general behaviour', () => {
         `);
 
         const updatedRow2 = { ...rowData[1], value: 50 };
-        api.applyTransaction({ update: [updatedRow2] });
+        applyTransactionChecked(api, { update: [updatedRow2] });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         gridRows = new GridRows(api, 'after update', {
@@ -621,7 +621,7 @@ describe('ag-grid formulas general behaviour', () => {
             └── LEAF id:relative-row result:100
         `);
 
-        api.applyTransaction({ update: [{ id: 'base', source: 250 }] });
+        applyTransactionChecked(api, { update: [{ id: 'base', source: 250 }] });
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -634,7 +634,7 @@ describe('ag-grid formulas general behaviour', () => {
             └── LEAF id:relative-row result:250
         `);
 
-        api.applyTransaction({ add: [{ id: 'prepended', source: 10 }], addIndex: 0 });
+        applyTransactionChecked(api, { add: [{ id: 'prepended', source: 10 }], addIndex: 0 });
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
@@ -759,7 +759,7 @@ describe('ag-grid formulas general behaviour', () => {
             └── LEAF id:"absolute-mixed-A$1+$B2" value:43
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [{ id: 'prepended-row', x: -5, y: -2 }],
             addIndex: 0,
         });

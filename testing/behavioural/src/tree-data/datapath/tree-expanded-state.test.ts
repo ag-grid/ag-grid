@@ -1,7 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    setRowDataChecked,
+} from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
@@ -55,7 +61,7 @@ describe('ag-grid tree expanded state', () => {
                     },
                 ];
 
-                api.setGridOption('rowData', newEntries);
+                setRowDataChecked(api, newEntries);
             },
         });
 
@@ -184,7 +190,7 @@ describe('ag-grid tree expanded state', () => {
 
             newNode.path = [...newNode.path.slice(0, newNode.path.length - 1), last_node + '-virtual', 'newNode'];
 
-            api.applyTransaction({ update: [updateNode], add: [newNode] });
+            applyTransactionChecked(api, { update: [updateNode], add: [newNode] });
         };
 
         update();

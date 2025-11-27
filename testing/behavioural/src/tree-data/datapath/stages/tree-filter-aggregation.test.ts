@@ -2,7 +2,13 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+} from '../../../test-utils';
 
 describe('ag-grid tree aggregation and filter', () => {
     const gridsManager = new TestGridsManager({
@@ -87,14 +93,14 @@ describe('ag-grid tree aggregation and filter', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[3], y: 200 }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[3], y: 200 }] });
             } else {
                 rowData = cachedJSONObjects.array([
                     ...rowData.slice(0, 3),
                     { ...rowData[3], y: 200 },
                     ...rowData.slice(4),
                 ]);
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'filter greater than - update 1', gridRowsOptions).check(`
@@ -109,10 +115,10 @@ describe('ag-grid tree aggregation and filter', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[9], y: 0 }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[9], y: 0 }] });
             } else {
                 rowData = cachedJSONObjects.array([...rowData.slice(0, 9), { ...rowData[9], y: 0 }]);
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'filter greater than - update 2', gridRowsOptions).check(`
@@ -125,10 +131,10 @@ describe('ag-grid tree aggregation and filter', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ remove: [rowData[3]] });
+                applyTransactionChecked(api, { remove: [rowData[3]] });
             } else {
                 rowData = rowData.filter((row) => row.id !== '3');
-                api.setGridOption('rowData', rowData);
+                setRowDataChecked(api, rowData);
             }
 
             await new GridRows(api, 'filter greater than - remove', gridRowsOptions).check(`

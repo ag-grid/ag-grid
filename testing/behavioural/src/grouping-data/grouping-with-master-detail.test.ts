@@ -2,7 +2,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('ag-grid grouping with master detail', () => {
     const gridsManager = new TestGridsManager({
@@ -35,7 +35,7 @@ describe('ag-grid grouping with master detail', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 {
                     id: '1',

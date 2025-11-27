@@ -2,7 +2,14 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    executeTransactionsAsync,
+    setRowDataChecked,
+} from '../../../test-utils';
 
 describe('ag-grid tree aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -128,7 +135,7 @@ describe('ag-grid tree aggregation', () => {
             { id: '9', name: 'E. Dijkstra', x: 2, path: ['J'] },
         ]);
 
-        api.setGridOption('rowData', movedRowData);
+        setRowDataChecked(api, movedRowData);
 
         await new GridRows(api, 'move', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -196,7 +203,7 @@ describe('ag-grid tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ remove: [rowData[3], rowData[8]] });
+                applyTransactionChecked(api, { remove: [rowData[3], rowData[8]] });
             } else {
                 api.setGridOption(
                     'rowData',
@@ -270,7 +277,7 @@ describe('ag-grid tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({
+                applyTransactionChecked(api, {
                     update: [
                         { ...rowData[6], path: ['X', 'Y'] },
                         { ...rowData[7], path: ['X', 'Z'] },
@@ -278,7 +285,7 @@ describe('ag-grid tree aggregation', () => {
                     ],
                 });
             } else {
-                api.setGridOption('rowData', [
+                setRowDataChecked(api, [
                     { id: '0', path: ['A'] },
                     { id: '1', path: ['A', 'B'] },
                     { id: '2', x: 1, y: 1, path: ['A', 'B', 'D'] },
@@ -331,7 +338,7 @@ describe('ag-grid tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({
+                applyTransactionChecked(api, {
                     remove: [rowData[2], rowData[3]],
                     update: [
                         { ...rowData[8], path: ['A', 'B', 'R'], x: 100, y: 100 },
@@ -414,7 +421,7 @@ describe('ag-grid tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ remove: [rowData[3]] });
+                applyTransactionChecked(api, { remove: [rowData[3]] });
             } else {
                 api.setGridOption(
                     'rowData',
@@ -439,7 +446,7 @@ describe('ag-grid tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[4], x: 100, y: 100 }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[4], x: 100, y: 100 }] });
             } else {
                 api.setGridOption(
                     'rowData',
