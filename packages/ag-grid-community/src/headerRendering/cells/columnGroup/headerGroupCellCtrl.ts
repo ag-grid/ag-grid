@@ -384,7 +384,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         const { column, expandable, gos, beans } = this;
-        if (e.key === KeyCode.ENTER && expandable) {
+        const enableColumnSelection = _getEnableColumnSelection(gos);
+
+        if (e.key != KeyCode.ENTER) {
+            return;
+        }
+
+        if (enableColumnSelection && !e.altKey) {
+            beans.rangeSvc?.handleColumnSelection(column, e);
+        } else if (expandable) {
             const newExpandedValue = !column.isExpanded();
 
             beans.colGroupSvc!.setColumnGroupOpened(
@@ -392,8 +400,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 newExpandedValue,
                 'uiColumnExpanded'
             );
-        } else if (e.key === KeyCode.SPACE && _getEnableColumnSelection(gos)) {
-            beans.rangeSvc?.handleColumnSelection(column, e);
         }
     }
 
