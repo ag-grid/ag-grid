@@ -47,6 +47,9 @@ jobs:
 
               const { results, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
 
+              const messageType = hasPassed ? '::notice' : '::error';
+              console.log(`${messageType}::Scorecard score for ${project}: ${results.score} (threshold = ${threshold})`);
+
               fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
               fs.writeFileSync("${{ env.SCORECARD_FILE }}", JSON.stringify(results));
 

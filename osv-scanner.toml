@@ -57,6 +57,11 @@ ignore = true
 name = "vite"
 ignore = true
 
+# node-forge is only used for angular dev server
+[[PackageOverrides]]
+name = "node-forge"
+ignore = true
+
 [[IgnoredVulns]]
 id = "GHSA-jr5f-v2jv-69x6"
 reason = "We only use axios in examples"
@@ -152,6 +157,30 @@ reason = "esbuild dev server is only used for development/testing - it's not use
 [[IgnoredVulns]]
 id = "GHSA-5ff5-9fcw-vg88"
 reason = "astro is only used for generating a static site, so server vulnerabilities do not apply"
+
+[[IgnoredVulns]]
+id = "GHSA-fvmw-cj7j-j39q"
+reason = "astro is only used for generating a static site, so server vulnerabilities do not apply. We also do not use the cloudflare plugin"
+
+[[IgnoredVulns]]
+id = "GHSA-ggxq-hp9w-j794"
+reason = "astro is only used for generating a static site, so server middleware vulnerabilities do not apply"
+
+[[IgnoredVulns]]
+id = "GHSA-hr2q-hp5q-x767"
+reason = "astro is only used for generating a static site, so server middleware vulnerabilities do not apply"
+
+[[IgnoredVulns]]
+id = "GHSA-w2vj-39qv-7vh7"
+reason = "astro is only used for generating a static site, and this only applies to the development server"
+
+[[IgnoredVulns]]
+id = "GHSA-x3h8-62x9-952g"
+reason = "astro is only used for generating a static site, and this only applies to the development server"
+
+[[IgnoredVulns]]
+id = "GHSA-wrwg-2hg8-v723"
+reason = "This vulnerability affects server-side code, but astro is only used for generating a static site"
 
 [[IgnoredVulns]]
 id = "GHSA-4hjh-wcwx-xvwj"

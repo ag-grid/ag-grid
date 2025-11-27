@@ -1,6 +1,6 @@
 import type { IEventEmitter } from '../agStack/interfaces/iEventEmitter';
 import type { AgProvidedColumnGroupEvent } from '../entities/agProvidedColumnGroup';
-import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDirection } from '../entities/colDef';
+import type { AbstractColDef, ColDef, ColGroupDef, IAggFunc, SortDef, SortDirection } from '../entities/colDef';
 import type { ColumnEvent } from '../events';
 import type { BrandedType } from '../interfaces/brandedType';
 import type { IRowNode } from './iRowNode';
@@ -156,6 +156,9 @@ export interface Column<TValue = any>
 
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
     getSort(): SortDirection | undefined;
+
+    /** If sorting is active, returns the sort definition. */
+    getSortDef(): SortDef;
 
     /** Returns `true` if sorting is enabled for this column via the `sortable` property. */
     isSortable(): boolean;

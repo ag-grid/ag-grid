@@ -1,6 +1,6 @@
 import type { UserComponentName } from '../../context/context';
+import { _isSortDefValid, _isSortDirectionValid } from '../../entities/agColumn';
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
-import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, ModuleValidation, OptionsValidator, Validations } from '../validationTypes';
 import { USER_COMP_MODULES } from './userCompValidations';
@@ -183,17 +183,46 @@ const COLUMN_DEFINITION_VALIDATIONS: () => Validations<ColDef | ColGroupDef> = (
                 return null;
             },
         },
+        sort: {
+            validate: (_options) => {
+                if (_isSortDefValid(_options.sort, false) || _isSortDirectionValid(_options.sort, false)) {
+                    return null;
+                }
+
+                return `sort must be of type (SortDirection | SortDef), currently it is ${typeof _options.sort === 'object' ? JSON.stringify(_options.sort) : toStringWithNullUndefined(_options.sort)}`;
+            },
+        },
+        initialSort: {
+            validate: (_options) => {
+                if (
+                    _isSortDefValid(_options.initialSort, false) ||
+                    _isSortDirectionValid(_options.initialSort, false)
+                ) {
+                    return null;
+                }
+
+                return `initialSort must be of non-null type (SortDirection | SortDef), currently it is ${typeof _options.initialSort === 'object' ? JSON.stringify(_options.initialSort) : toStringWithNullUndefined(_options.initialSort)}`;
+            },
+        },
         sortingOrder: {
             validate: (_options) => {
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                    const invalidItems = sortingOrder.filter((a) => {
+                        return !(_isSortDefValid(a, false) || _isSortDirectionValid(a));
+                    });
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                        return `sortingOrder must be an array of type non-null (SortDirection | SortDef)[], incorrect items are: [${invalidItems
+                            .map((item) =>
+                                typeof item === 'string' || item == null
+                                    ? toStringWithNullUndefined(item)
+                                    : JSON.stringify(item)
+                            )
+                            .join(', ')}]`;
                     }
-                } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-                    return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
+                    return `sortingOrder must be an array with at least one element, currently it is [${sortingOrder}]`;
                 }
                 return null;
             },

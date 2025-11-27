@@ -33,6 +33,36 @@ Certain features do not work in conjunction with formulas:
 - [Master Detail](./master-detail/)
 - [Server-Side Row Model](./server-side-model/), [Infinite Row Model](./infinite-scrolling/), and [Viewport Row Model](./viewport/)
 
+### Using a Formula Data Source
+
+Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep raw data clean, or persist formulas separately (e.g. to local storage or your own API).
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'product' },
+        { field: 'price' },
+        { field: 'quantity' },
+        { field: 'subtotal', allowFormula: true },
+        { field: 'total', allowFormula: true },
+    ],
+    getRowId: (params) => String(params.data.rid),
+    formulaDataSource: {
+        hasFormula: ({ column, rowNode }) => formulaStore.has(formula),
+        getFormula: ({ column, rowNode }) => formulaStore.get(formula),
+        setFormula: ({ column, rowNode, formula }) => {
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
+
 ## Formula Syntax
 
 Formulas are a text string that starts with an equals sign (`=`) and can contain references to other cells, functions, operators, and constants.

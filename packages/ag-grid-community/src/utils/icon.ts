@@ -95,6 +95,8 @@ export type IconName =
     | 'smallUp' // deprecated v33
     | 'sortAscending'
     | 'sortDescending'
+    | 'sortAbsoluteAscending'
+    | 'sortAbsoluteDescending'
     | 'sortUnSort'
     | 'advancedFilterBuilder'
     | 'advancedFilterBuilderDrag'
@@ -166,6 +168,8 @@ export type IconValue =
     | 'small-up'
     | 'asc'
     | 'desc'
+    | 'aasc'
+    | 'adesc'
     | 'none'
     | 'up'
     | 'down'

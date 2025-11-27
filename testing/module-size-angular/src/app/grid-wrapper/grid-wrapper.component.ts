@@ -62,7 +62,7 @@ export class GridWrapperComponent {
         { make: 'Fiat', model: 'Panda', price: 13724, electric: false, month: 'November' },
         { make: 'Jaguar', model: 'I-PACE', price: 69425, electric: true, month: 'May' },
     ];
-    public columnDefs: ColDef[] = [
+    public columnDefs: ColDef<any, string>[] = [
         {
             field: 'make',
             editable: true,
@@ -91,8 +91,8 @@ export class GridWrapperComponent {
                     'November',
                     'December',
                 ];
-                const idxA = months.indexOf(valueA);
-                const idxB = months.indexOf(valueB);
+                const idxA = months.indexOf(valueA as string);
+                const idxB = months.indexOf(valueB as string);
                 return idxA - idxB;
             },
         },

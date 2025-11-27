@@ -32,7 +32,9 @@ import type {
     ColumnFunctionCallbackParams,
     IAggFunc,
     RowSpanParams,
+    SortDef,
     SortDirection,
+    SortType,
 } from './colDef';
 
 const COL_DEF_DEFAULTS: Partial<ColDef> = {
@@ -79,7 +81,7 @@ export class AgColumn<TValue = any>
     private left: number | null;
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
-    public sort: SortDirection | undefined;
+    private sortDef: SortDef = _getSortDefFromInput();
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -425,7 +427,16 @@ export class AgColumn<TValue = any>
     }
 
     public getSort(): SortDirection | undefined {
-        return this.sort;
+        // soft deprecation as of v35 - use getSortDef instead
+        return this.sortDef.direction || _normalizeSortDirection(this.getSortDef().direction);
+    }
+
+    public getSortDef(): SortDef {
+        return this.sortDef;
+    }
+
+    public setSortDef(sortDef: SortDef): void {
+        this.sortDef = sortDef;
     }
 
     public isSortable(): boolean {
@@ -434,21 +445,21 @@ export class AgColumn<TValue = any>
 
     /** @deprecated v32 use col.getSort() === 'asc */
     public isSortAscending(): boolean {
-        return this.sort === 'asc';
+        return this.getSort() === 'asc';
     }
 
     /** @deprecated v32 use col.getSort() === 'desc */
     public isSortDescending(): boolean {
-        return this.sort === 'desc';
+        return this.getSort() === 'desc';
     }
     /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
-        return _missing(this.sort);
+        return _missing(this.getSort());
     }
 
     /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
-        return _exists(this.sort);
+        return _exists(this.getSort());
     }
 
     public getSortIndex(): number | null | undefined {
@@ -738,4 +749,68 @@ export class AgColumn<TValue = any>
             key,
         } as AgEvent<'columnStateUpdated'>);
     }
+}
+
+/**
+ * Helper to convert input into SortDef, does normalization of direction and type.
+ *
+ * If input is already a valid SortDef, it is returned as is.
+ * If input is a valid SortDirection, a SortDef is created using the input direction and
+ *    the type from the provided colDef's sort (or 'default' if not available).
+ * If input is a valid SortType, a SortDef is created using the input type and
+ *    the direction from the provided colDef's sort (or null if not available).
+ * If no input is provided or input is none of the above, a default SortDef is returned, which is { type: 'default', direction: null }.
+ */
+export function _getSortDefFromInput(input?: unknown): SortDef {
+    let direction: unknown;
+    let type: unknown;
+    if (_isSortDefValid(input)) {
+        direction = input.direction;
+        type = input.type;
+    } else if (_isSortDirectionValid(input)) {
+        direction = input;
+        type = undefined;
+    } else {
+        direction = undefined;
+        type = input;
+    }
+    return { direction: _normalizeSortDirection(direction), type: _normalizeSortType(type) };
+}
+
+export function _isSortDirectionValid(maybeSortDir: unknown, allowNullish = true): maybeSortDir is SortDirection {
+    return maybeSortDir === 'asc' || maybeSortDir === 'desc' || (allowNullish ? maybeSortDir === null : false);
+}
+
+export function _isSortTypeValid(maybeSortType: unknown, allowNullish = true): maybeSortType is SortType {
+    return (
+        maybeSortType === 'default' || maybeSortType === 'absolute' || (allowNullish ? maybeSortType == null : false)
+    );
+}
+
+export function _isSortDefValid(maybeSortDef: unknown, allowNullish = true): maybeSortDef is SortDef {
+    if (!maybeSortDef || typeof maybeSortDef !== 'object') {
+        return false;
+    }
+
+    const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
+    return (
+        _isSortTypeValid(maybeSortDefT.type, allowNullish) &&
+        _isSortDirectionValid(maybeSortDefT.direction, allowNullish)
+    );
+}
+
+export function _areSortDefsEqual(sortDef1: SortDef | undefined, sortDef2: SortDef | undefined): boolean {
+    if (sortDef1 == sortDef2) {
+        // covers nullish too, aka both default
+        return true;
+    }
+    return !!(sortDef1 && sortDef2 && sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction);
+}
+
+export function _normalizeSortDirection(sortDirectionLike?: unknown) {
+    return (_isSortDirectionValid(sortDirectionLike, false) ? sortDirectionLike : null) as NonNullable<SortDirection>;
+}
+
+export function _normalizeSortType(sortTypeLike?: unknown) {
+    return (_isSortTypeValid(sortTypeLike, false) ? sortTypeLike : 'default') as NonNullable<SortType>;
 }

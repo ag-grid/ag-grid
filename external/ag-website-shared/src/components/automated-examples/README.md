@@ -1,0 +1,1 @@
+This folder contains the automated examples component used on the website home page. It provides small, self-playing AG Grid demos driven by short scripted interactions to showcase features and behaviors without requiring visitor setup.

@@ -453,7 +453,7 @@ To know when a column's sort state has changed (e.g. when to update your icons),
 column.addEventListener('sortChanged', function() {
 
     // get sort state from column
-    var sort = column.getSort();
+    var sort = column.getSortDef()?.direction;
     console.log('sort state of column is ' + sort); // prints one of ['asc',desc',null]
 
     // then do what you need, e.g. set relevant icons visible

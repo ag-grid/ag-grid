@@ -47,7 +47,7 @@ import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader'
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { IFormulaService } from '../interfaces/formulas';
+import type { IFormulaDataService, IFormulaService } from '../interfaces/formulas';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -360,6 +360,7 @@ interface CoreBeanCollection
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
+    formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
 }
 

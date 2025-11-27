@@ -1,5 +1,5 @@
 import type { IComponent } from '../agStack/interfaces/iComponent';
-import type { SortDirection } from '../entities/colDef';
+import type { SortDef, SortDirection } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 
@@ -59,7 +59,7 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
-    setSort: (sort: SortDirection, multiSort?: boolean) => void;
+    setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => void;
 
     /** Custom header template if provided to `headerComponentParams`, otherwise will be `undefined`. See [Header Templates](https://www.ag-grid.com/javascript-data-grid/column-headers/#header-templates) */
     template?: string;

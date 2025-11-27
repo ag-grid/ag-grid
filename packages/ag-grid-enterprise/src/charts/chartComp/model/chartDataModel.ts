@@ -654,6 +654,7 @@ export class ChartDataModel extends BeanStub {
                 sortOptions.push({
                     sort,
                     column,
+                    type: column.getSortDef().type ?? null,
                 });
             }
         });

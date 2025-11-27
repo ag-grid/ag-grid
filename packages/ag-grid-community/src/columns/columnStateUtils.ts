@@ -3,7 +3,8 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc } from '../entities/colDef';
+import { _getSortDefFromInput } from '../entities/agColumn';
+import type { IAggFunc, SortDirection, SortType } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType, ColumnsResetEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
@@ -25,11 +26,13 @@ export interface ColumnStateParams {
     /** True if the column is hidden */
     hide?: boolean | null;
     /** Width of the column in pixels */
-    width?: number;
+    width?: number | null;
     /** Column's flex if flex is set */
     flex?: number | null;
-    /** Sort applied to the column */
-    sort?: 'asc' | 'desc' | null;
+    /** The sort direction of the column */
+    sort?: SortDirection;
+    /** The type of sort applied to the column */
+    sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */
@@ -111,7 +114,7 @@ export function _applyColumnState(
             beans,
             column,
             getValue('hide').value1,
-            getValue('sort').value1,
+            _getSortDefFromInput({ type: getValue('sortType').value1, direction: getValue('sort').value1 }),
             getValue('sortIndex').value1,
             getValue('pinned').value1,
             flex,
@@ -425,7 +428,9 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         dispatchColumnVisibleEvent(eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
         const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
-            cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
+            cs.sort != c.getSortDef().direction ||
+            cs.sortType != c.getSortDef().type ||
+            cs.sortIndex != c.getSortIndex();
         const changedColumns = getChangedColumns(sortChangePredicate);
         if (changedColumns.length > 0) {
             sortSvc?.dispatchSortChangedEvents(source, changedColumns);
@@ -454,7 +459,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
-        const sort = column.getSort() != null ? column.getSort() : null;
+        const { direction: sort, type: sortType } = column.getSortDef() || {};
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
 
         res.push({
@@ -463,6 +468,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             hide: !column.isVisible(),
             pinned: column.getPinned(),
             sort,
+            sortType,
             sortIndex,
             aggFunc,
             rowGroup: column.isRowGroupActive(),
@@ -489,10 +495,12 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 }
 
 export function getColumnStateFromColDef(column: AgColumn): ColumnState {
-    const getValueOrNull = (a: any, b: any) => (a != null ? a : b != null ? b : null);
+    const getValueOrNull = <T>(a: T, b: T) => (a != null ? a : b != null ? b : null);
 
     const colDef = column.getColDef();
-    const sort = getValueOrNull(colDef.sort, colDef.initialSort);
+    const sortDefFromColDef = _getSortDefFromInput(getValueOrNull(colDef.sort, colDef.initialSort));
+    const sort = sortDefFromColDef.direction;
+    const sortType = sortDefFromColDef.type;
     const sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
     const hide = getValueOrNull(colDef.hide, colDef.initialHide);
     const pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
@@ -521,6 +529,7 @@ export function getColumnStateFromColDef(column: AgColumn): ColumnState {
     return {
         colId: column.getColId(),
         sort,
+        sortType,
         sortIndex,
         hide,
         pinned,

@@ -51,6 +51,10 @@ const MenuCoreModule: _ModuleWithoutApi = {
         sortAscending: 'asc',
         // show on column header when column is sorted descending
         sortDescending: 'desc',
+        // show on column header when column is sorted absolute ascending
+        sortAbsoluteAscending: 'aasc',
+        // show on column header when column is sorted absolute descending
+        sortAbsoluteDescending: 'adesc',
         // show on column header when column has no sort, only when enabled with colDef.unSortIcon=true
         sortUnSort: 'none',
     },

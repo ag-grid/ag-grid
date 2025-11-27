@@ -610,13 +610,26 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.cols?.list ?? [];
     }
 
-    public forAllCols(callback: (column: AgColumn) => void): void {
+    /**
+     * If callback returns true, exit early.
+     */
+    public forAllCols(callback: (column: AgColumn) => boolean | void): void {
         const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
-        _forAll(this.colDefCols?.list, callback);
-        _forAll(autoColSvc?.columns?.list, callback);
-        _forAll(selectionColSvc?.columns?.list, callback);
-        _forAll(groupHierarchyColSvc?.columns?.list, callback);
-        _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
+        if (_forAll(this.colDefCols?.list, callback)) {
+            return;
+        }
+        if (_forAll(autoColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(selectionColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(groupHierarchyColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(pivotResultCols?.getPivotResultCols()?.list, callback)) {
+            return;
+        }
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {
