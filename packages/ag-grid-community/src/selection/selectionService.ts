@@ -151,6 +151,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 continue;
             }
 
+            if (newValue && rowNode.destroyed) {
+                continue; // skip destroyed nodes
+            }
+
             const skipThisNode = this.groupSelectsFiltered && node.group && !gos.get('treeData');
 
             if (!skipThisNode) {
