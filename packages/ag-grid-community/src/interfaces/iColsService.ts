@@ -44,7 +44,7 @@ export interface IColsService {
             key1: U,
             key2?: S
         ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
-        rowIndex?: { [key: string]: number } | null
+        indexMap?: { [key: string]: number } | null
     ): void;
 
     sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void;

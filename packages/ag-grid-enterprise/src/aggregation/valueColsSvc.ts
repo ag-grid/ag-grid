@@ -100,16 +100,19 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
         getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
             key1: U,
             key2?: S
-        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined }
+        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
+        valueIndexMap: { [key: string]: number } | null
     ): void {
-        // noop
         const { value1: aggFunc, value2: valueIndex } = getValue('aggFunc', 'valueIndex');
-        if (aggFunc !== undefined) {
+        if (aggFunc !== undefined || valueIndex !== undefined) {
             if (typeof aggFunc === 'string') {
                 this.setColAggFunc(column, aggFunc);
                 if (!column.isValueActive()) {
                     this.setColValueActive(column, true, source);
                     this.modifyColumnsNoEventsCallbacks.addCol(column);
+                }
+                if (valueIndexMap && typeof valueIndex === 'number') {
+                    valueIndexMap[column.getId()] = valueIndex;
                 }
             } else {
                 if (_exists(aggFunc)) {

@@ -142,7 +142,7 @@ export function _applyColumnState(
             return;
         }
 
-        valueColsSvc?.syncColumnWithState(column, source, getValue);
+        valueColsSvc?.syncColumnWithState(column, source, getValue, valueIndexes);
         rowGroupColsSvc?.syncColumnWithState(column, source, getValue, rowGroupIndexes);
         pivotColsSvc?.syncColumnWithState(column, source, getValue, pivotIndexes);
     };
@@ -449,7 +449,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
 }
 
 export function _getColumnState(beans: BeanCollection): ColumnState[] {
-    const { colModel, rowGroupColsSvc, pivotColsSvc } = beans;
+    const { colModel, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = beans;
     const primaryCols = colModel.getColDefCols();
 
     if (_missing(primaryCols) || !colModel.isAlive()) {
@@ -458,11 +458,13 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 
     const rowGroupColumns = rowGroupColsSvc?.columns;
     const pivotColumns = pivotColsSvc?.columns;
+    const valueColumns = valueColsSvc?.columns;
     const res: ColumnState[] = [];
 
     const createStateItemFromColumn = (column: AgColumn) => {
         const rowGroupIndex = column.isRowGroupActive() && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
+        const valueIndex = column.isValueActive() && valueColumns ? valueColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const { direction: sort, type: sortType } = column.getSortDef() || {};
@@ -477,6 +479,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             sortType,
             sortIndex,
             aggFunc,
+            valueIndex,
             rowGroup: column.isRowGroupActive(),
             rowGroupIndex,
             pivot: column.isPivotActive(),
