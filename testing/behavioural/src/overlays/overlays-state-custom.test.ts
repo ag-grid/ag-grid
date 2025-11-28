@@ -23,6 +23,9 @@ describe('ag-grid modern overlays state', () => {
     function hasNoRowsOverlayWrapper() {
         return isAgHtmlElementVisible('.ag-overlay-no-rows-wrapper');
     }
+    function hasNoMatchingRowsOverlayWrapper() {
+        return isAgHtmlElementVisible('.ag-overlay-no-matching-rows-wrapper');
+    }
 
     function hasCustomOverlayWrapper() {
         return isAgHtmlElementVisible('.ag-overlay-modal-wrapper');
@@ -776,7 +779,7 @@ describe('ag-grid modern overlays state', () => {
             warnSpy.mockRestore();
         });
 
-        test('activeOverlay=false suppresses built-in and custom overlays', () => {
+        test('suppressOverlays: [loading, noRows] suppresses built-in but not custom overlays', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 components: {
@@ -810,6 +813,17 @@ describe('ag-grid modern overlays state', () => {
             api.setGridOption('rowData', [{}]);
             api.setGridOption('activeOverlay', 'mySuppressCustom');
             expect(document.querySelector('.my-suppress-custom')).toBeTruthy();
+
+            // When activeOverlay is re-using the built in overlays they should ignore suppressOverlays
+            // This enables devs to suppress grid state triggering overlays but enable the provided overlays when they want to show them manually via activeOverlay
+            api.setGridOption('activeOverlay', 'agLoadingOverlay');
+            expect(hasLoadingOverlayWrapper()).toBeTruthy();
+
+            api.setGridOption('activeOverlay', 'agNoRowsOverlay');
+            expect(hasNoRowsOverlayWrapper()).toBeTruthy();
+
+            api.setGridOption('activeOverlay', 'agNoMatchingRowsOverlay');
+            expect(hasNoMatchingRowsOverlayWrapper()).toBeTruthy();
         });
     });
 });

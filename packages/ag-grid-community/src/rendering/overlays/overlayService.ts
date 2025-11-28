@@ -2,7 +2,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { GridOptionsService } from '../../gridOptionsService';
-import { _addGridCommonParams, _isClientSideRowModel, _isServerSideRowModel } from '../../gridOptionsUtils';
+import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
@@ -64,7 +64,7 @@ const CustomOverlayDef: Readonly<OverlayDef> = {
     exclusive: true,
 };
 
-const getOverlayDef = (activeOverlay: any): OverlayDef | null => {
+const getActiveOverlayDef = (activeOverlay: any): OverlayDef | null => {
     if (!activeOverlay) {
         return null;
     }
@@ -78,6 +78,18 @@ const getOverlayDef = (activeOverlay: any): OverlayDef | null => {
         )[activeOverlay] ?? CustomOverlayDef
     );
 };
+const getOverlayDefForType = (overlayType: OverlayType | null): OverlayDef | null => {
+    if (!overlayType) {
+        return null;
+    }
+    return (
+        {
+            loading: LoadingOverlayDef,
+            noRows: NoRowsOverlayDef,
+            noMatchingRows: NoMatchingRowsOverlayDef,
+        } as Record<OverlayType, OverlayDef>
+    )[overlayType];
+};
 
 export class OverlayService extends BeanStub implements NamedBean {
     beanName = 'overlays' as const;
@@ -88,15 +100,18 @@ export class OverlayService extends BeanStub implements NamedBean {
     private oldExclusive: boolean = false;
     private currentDef: OverlayDef | null = null;
     private showInitialOverlay: boolean = true;
-    private clientSide: boolean = false;
-    private serverSide: boolean = false;
+    private userForcedNoRows: boolean = false;
 
     public postConstruct(): void {
         const gos = this.gos;
-        this.clientSide = _isClientSideRowModel(gos);
-        this.serverSide = _isServerSideRowModel(gos);
+        this.showInitialOverlay = _isClientSideRowModel(gos);
 
-        const updateOverlayVisibility = () => this.updateOverlay(false);
+        const updateOverlayVisibility = () => {
+            if (this.userForcedNoRows) {
+                return;
+            }
+            this.updateOverlay(false);
+        };
 
         this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
@@ -167,12 +182,15 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (!this.eWrapper || gos.get('activeOverlay') || gos.get('loading') || this.isDisabled(NoRowsOverlayDef)) {
             return;
         }
+        this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
     }
 
     public hideOverlay(): void {
         const gos = this.gos;
         this.showInitialOverlay = false;
+        const userHadForced = this.userForcedNoRows;
+        this.userForcedNoRows = false;
         if (gos.get('loading')) {
             _warn(99);
             return;
@@ -182,6 +200,10 @@ export class OverlayService extends BeanStub implements NamedBean {
             return;
         }
         this.doHideOverlay();
+        if (userHadForced) {
+            // if user had forced no-rows overlay, we need to reevaluate what overlay should be shown now if any
+            this.updateOverlay(false);
+        }
     }
 
     public getOverlayWrapperSelector(): ComponentSelector {
@@ -224,12 +246,19 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.currentDef = null;
             return false;
         }
+        const gos = this.gos;
 
-        let desiredDef = this.getOverlayDef();
+        // Active overlay should take priority over loading=true
+        let desiredDef = getActiveOverlayDef(gos.get('activeOverlay'));
+        if (!desiredDef) {
+            desiredDef = this.getOverlayDef();
+            if (desiredDef && this.isDisabled(desiredDef)) {
+                desiredDef = null;
+            }
+        }
 
         if (desiredDef !== null && desiredDef !== CustomOverlayDef) {
             // Check if we need to change overlay based on the overlayComponent prop
-            const gos = this.gos;
             const overlayComponent = gos.get('overlayComponent') || gos.get('overlayComponentSelector');
             if (overlayComponent) {
                 // userComponentFactory will warn if component missing
@@ -250,9 +279,6 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (desiredDef !== currentDef) {
             if (!desiredDef) {
                 this.showInitialOverlay = false;
-                if (currentDef === NoRowsOverlayDef && this.serverSide && !this.isDisabled(NoRowsOverlayDef)) {
-                    return false;
-                }
                 return this.doHideOverlay();
             }
             this.doShowOverlay(desiredDef);
@@ -274,13 +300,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private getOverlayDef(): OverlayDef | null {
         const { gos, beans } = this;
-        const { colModel, rowModel, filterManager } = beans;
-
-        // Active overlay should take priority over loading=true
-        const activeOverlayDef = getOverlayDef(gos.get('activeOverlay'));
-        if (activeOverlayDef) {
-            return activeOverlayDef;
-        }
+        const { colModel, rowModel } = beans;
 
         const loading = gos.get('loading');
 
@@ -288,14 +308,12 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         if (loadingDefined) {
             this.showInitialOverlay = false;
-            if (loading && !this.isDisabled(LoadingOverlayDef)) {
+            if (loading) {
                 return LoadingOverlayDef;
             }
-        } else if (this.showInitialOverlay && !this.isDisabled(LoadingOverlayDef)) {
-            const needsInitialLoadingOverlay =
-                !gos.get('columnDefs') || !colModel.ready || (this.clientSide && !gos.get('rowData'));
-
-            if (needsInitialLoadingOverlay) {
+        } else if (this.showInitialOverlay) {
+            if (!gos.get('columnDefs') || !colModel.ready || !gos.get('rowData')) {
+                // if no columns or no row data, we show the initial loading overlay
                 return LoadingOverlayDef;
             }
             this.showInitialOverlay = false;
@@ -304,23 +322,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         // activeOverlay already checked above
-
-        if (this.clientSide) {
-            if (!this.isDisabled(NoRowsOverlayDef) && rowModel.isEmpty()) {
-                return NoRowsOverlayDef;
-            }
-
-            if (
-                !this.isDisabled(NoMatchingRowsOverlayDef) &&
-                !rowModel.isEmpty() &&
-                filterManager?.isAnyFilterPresent() &&
-                rowModel.getRowCount() == 0
-            ) {
-                return NoMatchingRowsOverlayDef;
-            }
-        }
-
-        return null;
+        const overlayType = rowModel.getOverlayType();
+        return getOverlayDefForType(overlayType);
     }
 
     /**

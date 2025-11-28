@@ -451,6 +451,45 @@ describe('ag-grid overlays state', () => {
         });
     });
 
+    // If the user has called api.showNoRowsOverlay(), we respect that choice and do not show the provided overlays until
+    // the user calls api.hideOverlay()
+    describe('user shows no rows overlay manually', () => {
+        test('loading true has priority over user action', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+            expect(hasLoadingOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('loading', true);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+
+            // back to automatic overlays and there is no row data, so no-rows overlay shown
+            expect(hasNoRowsOverlay()).toBeTruthy();
+        });
+
+        test('manual hide priority over user action', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [{}] });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+
+            expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+    });
+
     describe('update, with loading initially set to false', () => {
         test('initial no rows, loading false', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, loading: false });

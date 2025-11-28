@@ -325,15 +325,56 @@ describe('ag-grid overlays no matching rows', () => {
                 ],
             });
 
-            console.log('before', api.getDisplayedRowCount()); // to ensure grid is initialised
-
             api.setGridOption('quickFilterText', 'Nonexistent');
-
-            console.log(api.getDisplayedRowCount()); // to ensure grid is initialised
 
             expect(hasNoMatchingRowsOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
             expect(hasLoadingOverlay()).toBeFalsy();
+        });
+    });
+
+    // If the user has called api.showNoRowsOverlay(), we respect that choice and do not show the provided overlays until
+    // the user calls api.hideOverlay()
+    describe('user shows no rows overlay manually', () => {
+        test('loading true has priority over user action', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+            expect(hasLoadingOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('loading', true);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+        });
+
+        test('no matching rows does not override manual showNoRowsOverlay', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23 }],
+            });
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('quickFilterText', 'Nonexistent');
+
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
         });
     });
 });

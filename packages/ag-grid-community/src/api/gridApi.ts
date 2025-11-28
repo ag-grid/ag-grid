@@ -222,7 +222,7 @@ export interface _OverlayGridApi {
 
     /**
      * Hide the no-rows overlay if it is showing.
-     * **Prefer setting `activeOverlay` grid option instead, or set the grid option `noRowsOverlayComponent` to `false` to disable the no-rows overlay permanently.**
+     * **Prefer setting `activeOverlay=undefined` grid option instead.**
      */
     hideOverlay(): void;
 }
