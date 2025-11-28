@@ -6,6 +6,8 @@ import type { AgColumn } from '../entities/agColumn';
 import {
     _areSortDefsEqual,
     _getSortDefFromInput,
+    _isSortDirectionValid,
+    _isSortTypeValid,
     _normalizeSortDirection,
     _normalizeSortType,
 } from '../entities/agColumn';
@@ -115,14 +117,22 @@ export function _applyColumnState(
 
         const flex = getValue('flex').value1;
 
+        const maybeSortDirection = getValue('sort').value1;
+        const maybeSortType = getValue('sortType').value1;
+        const isSortUpdate = _isSortDirectionValid(maybeSortDirection) || _isSortTypeValid(maybeSortType);
+        /**
+         * If only a direction is provided, we treat it as a default sort type.
+         * User must provide both sortType and direction if they wish to preserve sort type
+         */
+        const type = _normalizeSortType(maybeSortType);
+        const direction = _normalizeSortDirection(maybeSortDirection);
+        const newSortDef = isSortUpdate ? { type, direction } : undefined;
+
         updateSomeColumnState(
             beans,
             column,
             getValue('hide').value1,
-            {
-                type: _normalizeSortType(getValue('sortType').value1),
-                direction: _normalizeSortDirection(getValue('sort').value1),
-            },
+            newSortDef,
             getValue('sortIndex').value1,
             getValue('pinned').value1,
             flex,

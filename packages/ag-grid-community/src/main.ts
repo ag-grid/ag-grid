@@ -388,6 +388,7 @@ export {
     isColumn,
     _getSortDefFromInput,
     _isSortDirectionValid,
+    _isSortTypeValid,
     _areSortDefsEqual,
     _normalizeSortDirection,
     _normalizeSortType,

@@ -84,7 +84,7 @@ export class AgColumn<TValue = any>
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
     private sortDef: SortDef = _getSortDefFromInput();
-    private _isSortExplicitlySet: boolean = false;
+    private _wasSortExplicitlyRemoved: boolean = false;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -454,12 +454,14 @@ export class AgColumn<TValue = any>
         return new Set(this.getSortingOrder().map((so) => so.type));
     }
 
-    get isSortExplicitlySet(): boolean {
-        return this._isSortExplicitlySet;
+    get wasSortExplicitlyRemoved(): boolean {
+        return this._wasSortExplicitlyRemoved;
     }
 
     public setSortDef(sortDef: SortDef, initial = false): void {
-        this._isSortExplicitlySet = !initial;
+        if (!initial) {
+            this._wasSortExplicitlyRemoved = !sortDef.direction;
+        }
         this.sortDef = sortDef;
     }
 
@@ -792,7 +794,7 @@ export function _isSortDirectionValid(maybeSortDir: unknown): maybeSortDir is So
     return maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
 }
 
-function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
+export function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
     return maybeSortType === 'default' || maybeSortType === 'absolute';
 }
 
