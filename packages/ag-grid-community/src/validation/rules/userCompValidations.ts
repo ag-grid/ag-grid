@@ -34,6 +34,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agTextColumnFloatingFilter: 'TextFilter',
     agNumberColumnFloatingFilter: 'NumberFilter',
     agDateColumnFloatingFilter: 'DateFilter',
+    agFormulaCellEditor: 'Formula',
     agCellEditor: 'TextEditor',
     agSelectCellEditor: 'SelectEditor',
     agTextCellEditor: 'TextEditor',

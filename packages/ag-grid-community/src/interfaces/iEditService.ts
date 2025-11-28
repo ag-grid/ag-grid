@@ -85,6 +85,9 @@ export interface IEditService extends NamedBean {
     isBatchEditing(): boolean;
     isEditing(position?: EditPosition | null, params?: IsEditingParams | null): boolean;
     isRowEditing(rowNode?: IRowNode | null, params?: IsEditingParams | null): boolean;
+    enableRangeSelectionWhileEditing(): void;
+    disableRangeSelectionWhileEditing(): void;
+    isRangeSelectionEnabledWhileEditing(): boolean;
     startEditing(position: Required<EditPosition>, params: StartEditParams): void;
     stopEditing(position?: EditPosition, params?: StopEditParams): boolean;
     setEditMap(updates: EditMap, params?: _SetEditingCellsParams): void;

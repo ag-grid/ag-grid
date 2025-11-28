@@ -98,6 +98,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     private strategy?: BaseEditStrategy;
     private stopping = false;
     public committing = false;
+    private rangeSelectionWhileEditing = 0;
 
     public postConstruct(): void {
         const { beans } = this;
@@ -223,6 +224,18 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
     public isRowEditing(rowNode?: IRowNode, params?: IsEditingParams): boolean {
         return (rowNode && this.model.hasRowEdits(rowNode, params)) ?? false;
+    }
+
+    public enableRangeSelectionWhileEditing(): void {
+        this.rangeSelectionWhileEditing++;
+    }
+
+    public disableRangeSelectionWhileEditing(): void {
+        this.rangeSelectionWhileEditing = Math.max(0, this.rangeSelectionWhileEditing - 1);
+    }
+
+    public isRangeSelectionEnabledWhileEditing(): boolean {
+        return this.rangeSelectionWhileEditing > 0;
     }
 
     /** @returns whether to prevent default on event */
@@ -408,6 +421,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             }
         }
 
+        this.rangeSelectionWhileEditing = 0;
         this.stopping = false;
 
         return res;

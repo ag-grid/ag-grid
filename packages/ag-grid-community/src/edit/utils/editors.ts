@@ -156,7 +156,7 @@ export function _setupEditor(
     const colDef = position.column.getColDef();
     const compDetails = _getCellEditorDetails(
         beans.userCompFactory,
-        isAllowFormula ? { ...colDef, cellEditor: 'agTextCellEditor' } : colDef,
+        isAllowFormula ? { ...colDef, cellEditor: 'agFormulaCellEditor' } : colDef,
         editorParams
     );
 

@@ -221,6 +221,7 @@ export { AgPickerField } from './agStack/widgets/agPickerField';
 export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
 export { Direction } from './agStack/constants/direction';
 export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
+export { AgContentEditableField, AgContentEditableFieldSelector } from './agStack/widgets/agContentEditableField';
 
 // AG Stack Theming
 export { createPart } from './agStack/theming/partImpl';
