@@ -486,15 +486,15 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
     };
     colModel.forAllCols((col) => createStateItemFromColumn(col));
 
-    // for fast looking, store the index of each column
+    // for fast look-up, store the index of each column
     const colIdToGridIndexMap = new Map<string, number>(
         colModel.getCols().map((col, index) => [col.getColId(), index])
     );
 
-    res.sort((itemA: any, itemB: any) => {
-        const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
-        const posB = colIdToGridIndexMap.has(itemB.colId) ? colIdToGridIndexMap.get(itemB.colId) : -1;
-        return posA! - posB!;
+    res.sort((itemA, itemB) => {
+        const posA = colIdToGridIndexMap.get(itemA.colId) ?? -1;
+        const posB = colIdToGridIndexMap.get(itemB.colId) ?? -1;
+        return posA - posB;
     });
 
     return res;
