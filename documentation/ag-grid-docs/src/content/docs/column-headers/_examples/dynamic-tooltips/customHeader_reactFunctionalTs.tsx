@@ -18,7 +18,7 @@ export default (props: MyCustomHeaderProps) => {
     };
 
     const onSortChanged = () => {
-        const sort = props.column.getSort();
+        const sort = props.column.getSortDef()?.direction;
         setAscSort(sort === 'asc' ? 'active' : 'inactive');
         setDescSort(sort === 'desc' ? 'active' : 'inactive');
         setNoSort(!sort ? 'active' : 'inactive');

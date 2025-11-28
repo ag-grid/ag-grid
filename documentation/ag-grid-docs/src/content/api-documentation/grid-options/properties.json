@@ -1102,6 +1102,7 @@
         "suppressStickyTotalRow": {},
         "alwaysAggregateAtRootLevel": {},
         "getGroupRowAgg": {},
+        "formulaDataSource": {},
         "formulaFuncs": {}
     },
     "rowPivoting": {

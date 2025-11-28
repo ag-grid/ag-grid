@@ -1,8 +1,11 @@
+import type { DefaultComparatorOptions } from '../agStack/utils/generic';
 import { _defaultComparator } from '../agStack/utils/generic';
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import { _normalizeSortType } from '../entities/agColumn';
+import type { ColDef, SortComparatorFn } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
@@ -67,7 +70,11 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _defaultComparator(valueA, valueB, this.isAccentedSort);
+                const opts = { accentedCompare: this.isAccentedSort } as DefaultComparatorOptions;
+                if (sortOption.type === 'absolute') {
+                    opts.transform = _absoluteValueTransformer;
+                }
+                comparatorResult = _defaultComparator(valueA, valueB, opts);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -82,24 +89,29 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getComparator(
-        sortOption: SortOption,
-        rowNode: RowNode
-    ): ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
-        const column = sortOption.column;
+    /**
+     * if user defines a comparator as a function then use that.
+     * if user defines a dictionary of comparators, then use the one matching the sort type.
+     * if no comparator provided, or no matching comparator found in dictionary, then return undefined.
+     *
+     * grid checks later if undefined is returned here and falls back to a default comparator corresponding to sort type on the coldef.
+     * @private
+     */
+    private getComparator(sortOption: SortOption, rowNode: RowNode): SortComparatorFn | undefined {
+        const colDef = sortOption.column.getColDef();
 
         // comparator on col get preference over everything else
-        const comparatorOnCol = column.getColDef().comparator;
-        if (comparatorOnCol != null) {
+        const comparatorOnCol = this.getComparatorFromColDef(colDef, sortOption);
+        if (comparatorOnCol) {
             return comparatorOnCol;
         }
 
-        if (!column.getColDef().showRowGroup) {
+        if (!colDef.showRowGroup) {
             return;
         }
 
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-        const groupLeafField = !rowNode.group && column.getColDef().field;
+        const groupLeafField = !rowNode.group && colDef.field;
         if (!groupLeafField) {
             return;
         }
@@ -108,8 +120,19 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         if (!primaryColumn) {
             return;
         }
+        // comparator on col get preference over everything else
+        return this.getComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+    }
 
-        return primaryColumn.getColDef().comparator;
+    private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
+        const comparator = colDef.comparator;
+        if (comparator == null) {
+            return;
+        }
+        if (typeof comparator === 'object') {
+            return comparator[_normalizeSortType(sortOption.type)];
+        }
+        return comparator;
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
@@ -168,3 +191,11 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
         childrenAfterGroup = node.childrenAfterGroup;
     }
 };
+
+function _absoluteValueTransformer(value: any): number | null {
+    if (value == null) {
+        return null;
+    }
+    const numberValue = Number(value);
+    return isNaN(numberValue) ? value : Math.abs(numberValue);
+}

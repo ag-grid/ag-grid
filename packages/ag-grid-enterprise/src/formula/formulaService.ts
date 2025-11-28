@@ -319,7 +319,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return cf;
         }
 
-        const str = this.fetchRawValue(col, row);
+        const str = this.getFormulaFromDataSource(row, col) ?? this.fetchRawValue(col, row);
         if (typeof str !== 'string' || str[0] !== '=') {
             return null;
         }
@@ -332,6 +332,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         rowMap.set(col, cf);
 
         return cf;
+    }
+
+    private getFormulaFromDataSource(row: RowNode, col: AgColumn): string | undefined {
+        const dataSource = this.beans.formulaDataSvc;
+        if (!dataSource?.hasDataSource()) {
+            return undefined;
+        }
+        return dataSource.getFormula({ column: col, rowNode: row });
     }
 
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */

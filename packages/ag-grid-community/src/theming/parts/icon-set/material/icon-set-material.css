@@ -14,6 +14,10 @@
     mask-image: url('./material-svg-icons/asc.svg');
 }
 
+.ag-icon-aasc::before {
+    mask-image: url('./material-svg-icons/aasc.svg');
+}
+
 .ag-icon-cancel::before {
     mask-image: url('./material-svg-icons/cancel.svg');
 }
@@ -52,6 +56,10 @@
 
 .ag-icon-desc::before {
     mask-image: url('./material-svg-icons/desc.svg');
+}
+
+.ag-icon-adesc::before {
+    mask-image: url('./material-svg-icons/adesc.svg');
 }
 
 .ag-icon-down::before {

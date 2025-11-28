@@ -97,7 +97,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                     const nextGroupIndex = rowNode.level + 1;
                     if (nextGroupIndex < groupCols.length) {
                         // if the sort is null, then sort was explicitly removed, so remove sort from this group.
-                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].getSort() === null;
+                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].getSortDef().direction == null;
                     }
                 }
 

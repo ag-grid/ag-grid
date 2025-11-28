@@ -9,7 +9,8 @@ import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
-import type { HeaderClassParams, SortDirection } from '../../../entities/colDef';
+import { _getSortDefFromInput } from '../../../entities/agColumn';
+import type { HeaderClassParams, SortDef, SortDirection } from '../../../entities/colDef';
 import { _addGridCommonParams, _getEnableColumnSelection, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
@@ -219,8 +220,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             progressSort: (multiSort?: boolean) => {
                 sortSvc?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
-            setSort: (sort: SortDirection, multiSort?: boolean) => {
-                sortSvc?.setSortForColumn(this.column, sort, !!multiSort, 'uiColumnSorted');
+            setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => {
+                sortSvc?.setSortForColumn(this.column, _getSortDefFromInput(sort)!, !!multiSort, 'uiColumnSorted');
             },
             eGridHeader: this.eGui,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
@@ -587,8 +588,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { beans, column, comp, sortable } = this;
         if (sortable) {
             const translate = this.getLocaleTextFunc();
-            const sort = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
-            comp.setAriaSort(_getAriaSortState(sort));
+            const sortDef = beans.sortSvc?.getDisplaySortForColumn(column) ?? null;
+            comp.setAriaSort(_getAriaSortState(sortDef));
             description = translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {
             comp.setAriaSort();

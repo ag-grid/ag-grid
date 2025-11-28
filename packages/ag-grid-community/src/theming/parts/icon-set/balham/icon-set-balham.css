@@ -13,6 +13,10 @@
     mask-image: url('./balham-svg-icons/asc.svg');
 }
 
+.ag-icon-aasc::before {
+    mask-image: url('./balham-svg-icons/aasc.svg');
+}
+
 .ag-icon-cancel::before {
     mask-image: url('./balham-svg-icons/cancel.svg');
 }
@@ -51,6 +55,10 @@
 
 .ag-icon-desc::before {
     mask-image: url('./balham-svg-icons/desc.svg');
+}
+
+.ag-icon-adesc::before {
+    mask-image: url('./balham-svg-icons/adesc.svg');
 }
 
 .ag-icon-down::before {

@@ -79,10 +79,10 @@ describe('ag-grid grouping sorting', () => {
 
         await new GridRows(api, 'sort by gold desc', gridRowsOptions).check(`
             ROOT
-            ├─┬ LEAF_GROUP
+            ├─┬ LEAF_GROUP 
             │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └── LEAF athlete:"John Smith" sport:"Sailing" gold:1
             └─┬ LEAF_GROUP
             · ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
             · └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
@@ -355,8 +355,8 @@ describe('ag-grid grouping sorting', () => {
             ROOT
             ├─┬ filler
             │ ├─┬ LEAF_GROUP
-            │ │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ │ └── LEAF athlete:"John Smith" sport:"Sailing" gold:1
             │ └─┬ LEAF_GROUP
             │ · └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
             └─┬ filler

@@ -5,6 +5,7 @@ import type { SortModelItem } from '../../interfaces/iSortModelItem';
 /**
  * Converts state retrieved from `api.getColumnState()` to grid state.
  *
+ * @param columnState
  * @param enablePivotMode Whether pivot mode should be enabled or not. Default `false`.
  * @returns A partial `GridState` object containing only the properties relevant to columns
  */
@@ -37,6 +38,7 @@ export function convertColumnState(
         const {
             colId,
             sort,
+            sortType,
             sortIndex,
             rowGroup,
             rowGroupIndex,
@@ -50,7 +52,7 @@ export function convertColumnState(
         } = columnState[i];
         columns.push(colId);
         if (sort) {
-            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort };
+            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType ?? null };
         }
         if (rowGroup) {
             groupColIds[rowGroupIndex ?? 0] = colId;
@@ -68,7 +70,7 @@ export function convertColumnState(
             hiddenColIds.push(colId);
         }
         if (flex != null || width) {
-            columnSizes.push({ colId, flex: flex ?? undefined, width });
+            columnSizes.push({ colId, flex: flex ?? undefined, width: width === null ? undefined : width });
         }
     }
 

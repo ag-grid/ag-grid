@@ -42,6 +42,8 @@ export {
     _updateColsMap,
     _convertColumnEventSourceType,
     _columnsMatch,
+    _getColumnStateFromColDef,
+    _getSortDefFromColDef,
 } from './columns/columnUtils';
 export type { SelectionColService } from './columns/selectionColService';
 export {
@@ -381,7 +383,16 @@ export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeServ
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
-export { AgColumn, isColumn } from './entities/agColumn';
+export {
+    AgColumn,
+    isColumn,
+    _getSortDefFromInput,
+    _isSortDirectionValid,
+    _isSortTypeValid,
+    _areSortDefsEqual,
+    _normalizeSortDirection,
+    _normalizeSortType,
+} from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export {
@@ -1129,6 +1140,8 @@ export {
     ToolPanelClass,
     KeyCreatorParams,
     SortDirection,
+    SortType,
+    SortDef,
     NestedFieldPaths,
     GetFindTextParams,
     GetFindTextFunc,
@@ -1317,7 +1330,18 @@ export { _downloadFile } from './export/downloader';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './export/iGridSerializer';
 
 //formulas
-export { FormulaParam, RangeParam, ValueParam, FormulaFunctionParams, IFormulaService } from './interfaces/formulas';
+export {
+    FormulaParam,
+    RangeParam,
+    ValueParam,
+    FormulaFunctionParams,
+    FormulaDataSource,
+    FormulaDataSourceParams,
+    GetFormulaParams,
+    SetFormulaParams,
+    IFormulaDataService,
+    IFormulaService,
+} from './interfaces/formulas';
 
 // modules
 export {

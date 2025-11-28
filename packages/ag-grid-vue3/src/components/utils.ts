@@ -24,6 +24,7 @@ import type {
     FillOperationParams,
     FindOptions,
     FocusGridInnerElementParams,
+    FormulaDataSource,
     FormulaFunctionParams,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -980,6 +981,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
     aggFuncs?: { [key: string]: IAggFunc<TData> },
+    /** Provide a data source to control where formulas are stored and retrieved.
+         * If not supplied, formulas are read from and written to the row data.
+         * @initial
+         * @agModule `FormulaModule`
+         */
+    formulaDataSource?: FormulaDataSource,
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
          * @initial
          * @agModule `FormulaModule`
@@ -2128,6 +2135,7 @@ export function getProps() {
         suppressExpandablePivotGroups: undefined,
         functionsReadOnly: undefined,
         aggFuncs: undefined,
+        formulaDataSource: undefined,
         formulaFuncs: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,

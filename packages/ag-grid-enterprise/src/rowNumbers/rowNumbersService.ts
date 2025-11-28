@@ -10,6 +10,7 @@ import {
     _createElement,
     _debounce,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
@@ -152,11 +153,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
         this.refreshSelectionIntegration();
-
         for (const col of this.columns?.list ?? []) {
-            const newColDef = this.createRowNumbersColDef();
-            col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
+            const colDef = this.createRowNumbersColDef();
+            col.setColDef(colDef, null, source);
+
+            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.getColId())] }, source);
         }
     }
 

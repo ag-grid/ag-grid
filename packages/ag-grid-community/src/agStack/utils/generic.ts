@@ -32,7 +32,17 @@ export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
     return val1Json === val2Json;
 }
 
-export function _defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
+export type DefaultComparatorOptions = {
+    accentedCompare?: boolean;
+    transform?: (val: any) => any;
+};
+
+export function _defaultComparator(valueA: any, valueB: any, options: DefaultComparatorOptions = {}): number {
+    if (options.transform) {
+        valueA = options.transform(valueA);
+        valueB = options.transform(valueB);
+    }
+
     const valueAMissing = valueA == null;
     const valueBMissing = valueB == null;
 
@@ -67,7 +77,7 @@ export function _defaultComparator(valueA: any, valueB: any, accentedCompare: bo
         return doQuickCompare(valueA, valueB);
     }
 
-    if (!accentedCompare) {
+    if (!options.accentedCompare) {
         return doQuickCompare(valueA, valueB);
     }
 

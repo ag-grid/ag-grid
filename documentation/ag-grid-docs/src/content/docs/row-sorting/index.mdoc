@@ -127,6 +127,25 @@ The example below shows different combinations of sorting orders as follows:
 
 {% gridExampleRunner title="Sorting Order and Animation" name="sorting-order-and-animation" /%}
 
+## Example: Absolute Value Sorting
+The example below shows how to use a sort definition to allow sorting by absolute value.
+
+{% gridExampleRunner title="Absolute Value Sorting" name="absolute-sorting" /%}
+
+In this example, the column `rankingChange` uses the following sort definition:
+
+```{% frameworkTransform=true %}
+
+const gridOptions = {
+    columnDefs: [
+        // ... other columns 
+        { field: 'rankingChange', sortable: true, sort: { type: 'absolute', direction: 'asc' } },
+    ],
+};
+```
+
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort"] /%}
+
 ## Sorting API
 
 {% note %}

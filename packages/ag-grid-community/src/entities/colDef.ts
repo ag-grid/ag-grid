@@ -1,3 +1,4 @@
+import type { SortDef, SortDirection, SortType } from '../agStack/utils/aria';
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
@@ -10,6 +11,8 @@ import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
+
+export type { SortDirection, SortType, SortDef, DisplaySortDef } from '../agStack/utils/aria';
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -216,6 +219,14 @@ export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = [
                 | (TData[TKey] extends TValue ? `${TKey}` : never)
                 | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
+
+export type SortComparatorFn<TData = any, TValue = any> = (
+    valueA: TValue | null | undefined,
+    valueB: TValue | null | undefined,
+    nodeA: IRowNode<TData>,
+    nodeB: IRowNode<TData>,
+    isDescending: boolean
+) => number;
 
 /** Configuration options for columns in AG Grid. */
 export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData, TValue>, IFilterDef {
@@ -775,13 +786,16 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default true
      */
     sortable?: boolean;
-    /** If sorting by default, set it here. Set to `asc` or `desc`. */
-    sort?: SortDirection;
+
+    /** If sorting by default, set it here. Set to `SortDef | SortDirection`. */
+    sort?: SortDirection | SortDef;
+
     /**
      * Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions.
      * @initial
      */
-    initialSort?: SortDirection;
+    initialSort?: SortDirection | SortDef;
+
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number | null;
     /**
@@ -789,10 +803,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @initial
      */
     initialSortIndex?: number;
-    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
-    sortingOrder?: SortDirection[];
     /**
-     * Override the default sorting order by providing a custom sort comparator.
+     * Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `(SortDef | SortDirection)[]`.
+     * @default ['asc', 'desc', null]
+     */
+    sortingOrder?: (SortDirection | SortDef)[];
+    /**
+     * Override the default sorting order by providing a custom sort comparator, or a map of comparators for different `SortType`s.
      *
      * - `valueA`, `valueB` are the values to compare.
      * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.
@@ -803,13 +820,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?: (
-        valueA: TValue | null | undefined,
-        valueB: TValue | null | undefined,
-        nodeA: IRowNode<TData>,
-        nodeB: IRowNode<TData>,
-        isDescending: boolean
-    ) => number;
+    comparator?:
+        | SortComparatorFn<TData, TValue>
+        | Partial<Record<NonNullable<SortType>, SortComparatorFn<TData, TValue>>>;
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
@@ -1188,8 +1201,6 @@ export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditorPopupPosition` */
     popupPosition?: 'over' | 'under';
 }
-
-export type SortDirection = 'asc' | 'desc' | null;
 
 export type GroupHierarchyParts =
     | 'year'

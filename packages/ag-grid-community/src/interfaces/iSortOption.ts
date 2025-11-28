@@ -1,6 +1,8 @@
+import type { SortDirection, SortType } from '../entities/colDef';
 import type { Column } from './iColumn';
 
 export interface SortOption {
-    sort: 'asc' | 'desc';
+    sort: NonNullable<SortDirection>;
+    type: SortType;
     column: Column;
 }
