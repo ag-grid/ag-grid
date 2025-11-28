@@ -33,9 +33,11 @@ Certain features do not work in conjunction with formulas:
 - [Master Detail](./master-detail/)
 - [Server-Side Row Model](./server-side-model/), [Infinite Row Model](./infinite-scrolling/), and [Viewport Row Model](./viewport/)
 
-### Using a Formula Data Source
+## Formula Data Source
 
 Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep raw data clean, or persist formulas separately (e.g. to local storage or your own API).
+
+{% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -48,9 +50,12 @@ const gridOptions = {
     ],
     getRowId: (params) => String(params.data.rid),
     formulaDataSource: {
-        hasFormula: ({ column, rowNode }) => formulaStore.has(formula),
-        getFormula: ({ column, rowNode }) => formulaStore.get(formula),
+        getFormula: ({ column, rowNode }) => {
+            const key = `${rowNode.id}-${column.getColId()}`;
+            return formulaStore.get(key);
+        },
         setFormula: ({ column, rowNode, formula }) => {
+            const key = `${rowNode.id}-${column.getColId()}`;
             if (formula === undefined) {
                 formulaStore.delete(key);
             } else {

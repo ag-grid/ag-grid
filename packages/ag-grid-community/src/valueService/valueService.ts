@@ -232,11 +232,8 @@ export class ValueService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        if (!dataSource.hasFormula({ column, rowNode })) {
-            return undefined;
-        }
-
-        return dataSource.getFormula({ column, rowNode });
+        const formula = dataSource.getFormula({ column, rowNode });
+        return _isExpressionString(formula) ? formula : undefined;
     }
 
     private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {

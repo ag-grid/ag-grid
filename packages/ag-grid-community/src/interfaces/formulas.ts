@@ -50,10 +50,8 @@ export interface FormulaDataSourceParams extends AgGridCommon<any, any> {}
 export interface FormulaDataSource {
     /** Initialise the data source so that the user can take a reference to the gridApi if they are going to need it. */
     init?(params: FormulaDataSourceParams): void;
-    /** Return `true` if the provided cell is backed by a formula. */
-    hasFormula?(params: GetFormulaParams): boolean;
     /** Return the formula string for the given cell. */
-    getFormula?(params: GetFormulaParams): string | undefined;
+    getFormula(params: GetFormulaParams): string | undefined;
     /** Set the formula string for the given cell. */
     setFormula(params: SetFormulaParams): void;
     /** Called by the grid when the data source is being disposed. */
@@ -62,7 +60,6 @@ export interface FormulaDataSource {
 
 export interface IFormulaDataService extends Bean {
     hasDataSource(): boolean;
-    hasFormula(params: GetFormulaParams): boolean;
     getFormula(params: GetFormulaParams): string | undefined;
     setFormula(params: SetFormulaParams): void;
 }
