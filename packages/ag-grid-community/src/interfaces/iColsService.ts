@@ -10,8 +10,8 @@ export type ColumnProcessor = (column: AgColumn, added: boolean, source: ColumnE
 export type ColumnProcessors = Record<ColumnProcessorKeys, ColumnProcessor>;
 
 export type ColumnOrdering = {
-    enableProp: 'rowGroup' | 'pivot' | 'enableValue';
-    initialEnableProp: 'initialRowGroup' | 'initialPivot' | 'foo';
+    enableProp: 'rowGroup' | 'pivot' | 'aggFunc';
+    initialEnableProp: 'initialRowGroup' | 'initialPivot' | 'initialAggFunc';
     indexProp: 'rowGroupIndex' | 'pivotIndex' | 'valueIndex';
     initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex' | 'initialValueIndex';
 };

@@ -393,8 +393,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 if (missingIndex) {
                     if (!hasAddedNewCols) {
                         const propEnabled =
-                            colDef[enableProp] ||
-                            (colDef[enableProp] === undefined && colDef[initialEnableProp as 'initialRowGroup']);
+                            colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
                         if (propEnabled) {
                             processPrecedingNewCols(colId);
                         } else {

@@ -22,8 +22,8 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
     } as const;
 
     override columnOrdering = {
-        enableProp: 'enableValue',
-        initialEnableProp: 'foo',
+        enableProp: 'aggFunc',
+        initialEnableProp: 'initialAggFunc',
         indexProp: 'valueIndex',
         initialIndexProp: 'initialValueIndex',
     } as const;
