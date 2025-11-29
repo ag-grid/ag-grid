@@ -35,7 +35,10 @@ export interface ColumnStateParams {
     sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
-    enableValue?: boolean | null;
+    /**
+     * The order of the aggregation column, when aggregating by multiple columns in pivot mode,
+     * with `enableStrictPivotColumnOrder` enabled.
+     */
     valueIndex?: number | null;
     /** The aggregation function applied */
     aggFunc?: string | IAggFunc | null;
