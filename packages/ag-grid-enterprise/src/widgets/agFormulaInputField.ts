@@ -35,12 +35,15 @@ export class AgFormulaInputField extends AgContentEditableField<
 > {
     private currentValue: string = '';
     private editingCellRef?: string;
+    // Caret / token bookkeeping so range updates can re-render without losing position.
     private selectionCaretOffset: number | null = null;
     private lastTokenValueOffset: number | null = null;
     private lastTokenValueLength: number | null = null;
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
+    // All ranges created by this editor (used to clean up on destroy).
     private readonly trackedRangeRefs = new Set<string>();
+    // Stops programmatic range updates from re-entering our range event handler.
     private suppressRangeEvents = false;
 
     constructor() {
@@ -118,6 +121,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         if (event.started) {
+            // Remember caret to reapply after range selection inserts a token.
             this.selectionCaretOffset = this.getCaretOffset() ?? this.currentValue.length;
         }
 
@@ -246,7 +250,8 @@ export class AgFormulaInputField extends AgContentEditableField<
             }
             this.addRangeForRef(ref);
         } else {
-            if (previousRef && previousRef !== ref) {
+            // When dragging a range, we only track the latest ref; ranges will be reconciled later.
+            if (!isNew && previousRef && previousRef !== ref) {
                 this.trackedRangeRefs.delete(previousRef);
             }
             this.trackedRangeRefs.add(ref);
@@ -293,13 +298,14 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         const params = this.getCellRangeParams(ref);
+        const rangeSvc = this.beans.rangeSvc;
 
-        if (!params) {
+        if (!params || !rangeSvc) {
             return;
         }
 
         this.suppressRangeEvents = true;
-        const created = this.beans.rangeSvc?.addCellRange(params);
+        const created = rangeSvc.addCellRange(params);
         this.suppressRangeEvents = false;
         if (created) {
             this.trackedRangeRefs.add(ref);
@@ -312,8 +318,13 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         const rangeSvc = this.beans.rangeSvc;
-        const ranges = rangeSvc?.getCellRanges();
-        if (!rangeSvc || !ranges?.length) {
+        if (!rangeSvc) {
+            this.trackedRangeRefs.delete(ref);
+            return;
+        }
+
+        const ranges = rangeSvc.getCellRanges();
+        if (!ranges?.length) {
             this.trackedRangeRefs.delete(ref);
             return;
         }
@@ -333,13 +344,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private syncRangesFromFormula(value?: string | null): void {
         const text = value ?? this.getCurrentValue() ?? '';
-        const refs = new Set<string>();
-
-        let match: RegExpExecArray | null;
-        CELL_OR_RANGE_REGEX.lastIndex = 0;
-        while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-            refs.add(match[0]);
-        }
+        const refs = this.getRefsFromText(text);
 
         const toRemove: string[] = [];
         for (const tracked of this.trackedRangeRefs) {
@@ -355,6 +360,17 @@ export class AgFormulaInputField extends AgContentEditableField<
                 this.addRangeForRef(ref);
             }
         });
+    }
+
+    private getRefsFromText(text: string): Set<string> {
+        // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
+        const refs = new Set<string>();
+        let match: RegExpExecArray | null;
+        CELL_OR_RANGE_REGEX.lastIndex = 0;
+        while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
+            refs.add(match[0]);
+        }
+        return refs;
     }
 
     private getCellRangeParams(ref: string) {
@@ -428,6 +444,8 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private createReferenceNode(ref: string): HTMLElement {
+        // Render a ref as a single focusable unit so caret/selection treats it like one character.
+        // Visible text comes from CSS ::before; DOM text is a zero-width placeholder.
         const span = document.createElement('span');
         span.className = 'ag-formula-token';
         span.textContent = '\u200B'; // keep selection length at 1 while hiding the actual text
@@ -458,6 +476,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             const el = node as HTMLElement;
 
             if (el.dataset?.formulaRef) {
+                // Token nodes serialize back to their stored ref string (not the placeholder).
                 return el.dataset.formulaRef;
             }
 
