@@ -83,7 +83,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             return;
         }
 
-        const changes: Map<AgColumn, number> = new Map();
+        const changes = new Map<AgColumn, number>();
         // store all original cols and their index.
         masterList.forEach((col, idx) => changes.set(col, idx));
 
