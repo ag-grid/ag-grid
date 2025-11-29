@@ -76,12 +76,8 @@ export class NumberFilter extends SimpleFilter<
                 }
             };
 
-        from.addManagedListeners(from, {
-            fieldValueChanged: getFieldChangedListener(from, to, true),
-        });
-        to.addManagedListeners(to, {
-            fieldValueChanged: getFieldChangedListener(from, to, false),
-        });
+        from.onValueChange(getFieldChangedListener(from, to, true));
+        to.onValueChange(getFieldChangedListener(from, to, false));
 
         return eCondition;
     }

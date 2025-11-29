@@ -239,11 +239,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
 
         let valid = true;
-        this.forEachInput((element, index, elPosition, numberOfInputs) => {
-            if (elPosition !== position || !valid || index >= numberOfInputs) {
+        this.forEachPositionInput(position, (element, index, _pos, numberOfInputs) => {
+            if (!valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && this.isValidDateValue(element.getDate());
+            valid &&= this.isValidDateValue(element.getDate());
         });
 
         return valid;
