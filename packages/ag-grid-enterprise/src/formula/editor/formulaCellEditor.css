@@ -7,5 +7,5 @@
     border-radius: var(--ag-border-radius, 2px);
     background-color: var(--ag-selected-row-background-color, rgb(64 139 251 / 12%));
     border: 1px solid var(--ag-border-color, #c6c6c6);
-    line-height: var(--ag-line-height, 1.6);
+    line-height: normal;
 }

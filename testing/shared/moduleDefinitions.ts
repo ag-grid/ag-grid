@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 222.75,
-    AllEnterpriseModule: 1569,
+    AllEnterpriseModule: 1578.04,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
     CellSelectionModule: 59,
@@ -62,7 +62,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ExcelExportModule: 84,
     FiltersToolPanelModule: 137.67,
     FindModule: 14.51,
-    FormulaModule: 61.25,
+    FormulaModule: 68.96,
     GridChartsModule: 73,
     IntegratedChartsModule: 400,
     GroupFilterModule: 115.18,
@@ -71,7 +71,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MultiFilterModule: 150.24,
     NewFiltersToolPanelModule: 175.32,
     PivotModule: 109,
-    RangeSelectionModule: 59,
+    RangeSelectionModule: 60.78,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
     RowGroupingModule: 95.74,

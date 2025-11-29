@@ -14,10 +14,9 @@ import type { AgWidgetSelectorType } from './agWidgetSelectorType';
 
 type AgContentEditableFieldEvent = AgAbstractFieldEvent;
 
-export interface AgContentEditableFieldParams extends AgFieldParams {
+interface AgContentEditableFieldParams extends AgFieldParams {
     className?: string;
     contentEditable?: boolean | 'plaintext-only';
-    pickerIcon?: string;
     ariaRole?: string;
     renderValueToElement?: boolean;
 }
@@ -31,7 +30,7 @@ const AgContentEditableFieldElement: AgElementParams<any> = {
         {
             tag: 'div',
             ref: 'eWrapper',
-            cls: 'ag-wrapper ag-content-editable-field-wrapper',
+            cls: 'ag-wrapper ag-content-editable-field-input',
             attrs: {
                 contenteditable: 'plaintext-only',
             },

@@ -72,7 +72,15 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
 
     public getValidationErrors(): string[] | null {
         const { params } = this;
-        const value = this.currentValue;
+        const liveValue = this.serializeContent();
+
+        // Keep the internal value in sync with what the DOM currently shows, as validation
+        // can fire before our input handler updates `currentValue`.
+        if (liveValue !== this.currentValue) {
+            this.setEditorValue(liveValue, true);
+        }
+
+        const value = liveValue;
         const translate = this.getLocaleTextFunc();
         const { getValidationErrors } = params;
 
@@ -293,14 +301,14 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         const selection = window.getSelection();
 
         if (!selection || selection.rangeCount === 0) {
-            return null;
+            return this.currentValue?.length ?? null;
         }
 
         const range = selection.getRangeAt(0);
         const container = this.eEditor.getContentElement();
 
         if (!container.contains(range.startContainer)) {
-            return null;
+            return this.currentValue?.length ?? null;
         }
 
         let offset = range.startOffset;
@@ -377,7 +385,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
             const el = node as HTMLElement;
 
             if (el.dataset?.formulaRef) {
-                return el.dataset.formulaRef.length;
+                return 1;
             }
 
             return Array.from(node.childNodes).reduce((sum, child) => sum + this.getNodeTextLength(child), 0);
