@@ -18,6 +18,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         this.appendChild(formulaInputField);
 
         const startValue = (params.value as string) ?? '';
+        this.eEditor.setEditingCellRef(params.column, params.rowIndex);
         this.eEditor.setValue(startValue, true);
         this.enableRangeSelectionWhileEditing();
     }

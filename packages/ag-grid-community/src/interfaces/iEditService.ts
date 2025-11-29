@@ -62,6 +62,7 @@ export interface _SetEditingCellsParams {
 }
 
 export interface IEditService extends NamedBean {
+    committing: boolean;
     shouldStartEditing(
         position: Required<EditPosition>,
         event?: KeyboardEvent | MouseEvent | null,
@@ -124,5 +125,4 @@ export interface IEditService extends NamedBean {
     checkNavWithValidation(position?: EditPosition, event?: Event | CellFocusedEvent): EditNavOnValidationResult;
     revertSingleCellEdit(cellPosition: Required<EditPosition>, focus?: boolean): void;
     allowedFocusTargetOnValidation(cellPosition: EditPosition): CellCtrl | undefined;
-    committing: boolean;
 }

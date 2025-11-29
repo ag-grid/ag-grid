@@ -14,8 +14,16 @@
     outline: none;
     padding: 0 var(--ag-input-padding-start);
     white-space: nowrap;
-    overflow: hidden;
     line-height: normal;
+    overflow: auto;
+    overflow-y: hidden;
+
+    &::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
 }
 
 /* stylelint-disable-next-line selector-max-specificity */

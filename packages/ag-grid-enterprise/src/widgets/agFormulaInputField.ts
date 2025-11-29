@@ -8,7 +8,7 @@ import type {
     GridOptionsWithDefaults,
     RangeSelectionChangedEvent,
 } from 'ag-grid-community';
-import { AgContentEditableField, _last } from 'ag-grid-community';
+import { AgContentEditableField, KeyCode, _last } from 'ag-grid-community';
 
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 
@@ -35,6 +35,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 > {
     private currentValue: string = '';
     private lastRangeId?: string;
+    private editingCellRef?: string;
 
     constructor() {
         // Keep renderValueToElement false so we fully control DOM rendering.
@@ -47,6 +48,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         this.addManagedElementListeners(this.getContentElement(), {
             input: () => this.onContentInput(),
+            keydown: (event: KeyboardEvent) => this.onTokenKeyDown(event),
         });
 
         this.addManagedEventListeners({
@@ -102,7 +104,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         const ref = this.getLatestRangeRef();
 
-        if (!ref) {
+        if (!ref || ref === this.editingCellRef) {
             return;
         }
 
@@ -241,9 +243,11 @@ export class AgFormulaInputField extends AgContentEditableField<
     private createReferenceNode(ref: string): HTMLElement {
         const span = document.createElement('span');
         span.className = 'ag-formula-token';
-        span.textContent = ref;
+        span.textContent = '\u200B'; // keep selection length at 1 while hiding the actual text
         span.dataset.formulaRef = ref;
         span.setAttribute('contenteditable', 'false');
+        span.setAttribute('aria-label', ref);
+        span.tabIndex = -1;
         return span;
     }
 
@@ -327,14 +331,18 @@ export class AgFormulaInputField extends AgContentEditableField<
         const range = document.createRange();
         const { node, localOffset } = this.findNodeAtOffset(container, offset);
 
-        if (!node || !selection) {
+        if (!node || !selection || !container.isConnected || !node.isConnected) {
             return;
         }
 
         range.setStart(node, localOffset);
         range.collapse(true);
         selection.removeAllRanges();
-        selection.addRange(range);
+        try {
+            selection.addRange(range);
+        } catch {
+            // Ignore invalid ranges when the editor is detached from the document.
+        }
     }
 
     private findNodeAtOffset(root: Node, offset: number): { node: Node | null; localOffset: number } {
@@ -387,5 +395,84 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.currentValue = value;
         super.setValue(value, silent);
         return this;
+    }
+
+    public setEditingCellRef(column: any, rowIndex: number | null | undefined): void {
+        const colRef = column ? this.beans.formula?.getColRef(column as any) : undefined;
+
+        if (!colRef || rowIndex == null || rowIndex === undefined) {
+            this.editingCellRef = undefined;
+            return;
+        }
+
+        this.editingCellRef = `${colRef}${rowIndex + 1}`;
+    }
+
+    private onTokenKeyDown(event: KeyboardEvent): void {
+        const target = event.target as HTMLElement;
+
+        if (!target?.dataset?.formulaRef) {
+            return;
+        }
+
+        const caretOffset = this.getOffsetBeforeNode(target);
+        const valueOffset = this.getOffsetBeforeNode(target, true);
+        if (caretOffset == null || valueOffset == null) {
+            return;
+        }
+
+        const value = this.getCurrentValue();
+        const tokenLength = target.dataset.formulaRef?.length ?? 1;
+
+        switch (event.key) {
+            case KeyCode.BACKSPACE:
+            case KeyCode.DELETE: {
+                event.preventDefault();
+                const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
+                this.setEditorValue(updated);
+                this.renderFormula(updated, caretOffset);
+                break;
+            }
+            case KeyCode.LEFT: {
+                event.preventDefault();
+                this.renderFormula(value, caretOffset);
+                this.setEditorValue(value, true);
+                break;
+            }
+            case KeyCode.RIGHT: {
+                event.preventDefault();
+                this.renderFormula(value, caretOffset + 1);
+                this.setEditorValue(value, true);
+                break;
+            }
+            default: {
+                if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
+                    event.preventDefault();
+                    const replacement = this.formatForValue(event.key);
+                    const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
+                    this.setEditorValue(updated);
+                    this.renderFormula(updated, caretOffset + 1);
+                }
+                break;
+            }
+        }
+    }
+
+    private getOffsetBeforeNode(node: Node, useValueLength: boolean = false): number | null {
+        const container = this.getContentElement();
+
+        if (!container.contains(node)) {
+            return null;
+        }
+
+        let offset = 0;
+        for (const child of Array.from(container.childNodes)) {
+            if (child === node) {
+                return offset;
+            }
+            offset += useValueLength ? this.getNodeText(child).length : this.getNodeTextLength(child);
+        }
+
+        return null;
     }
 }

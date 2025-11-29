@@ -227,7 +227,9 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     }
 
     public enableRangeSelectionWhileEditing(): void {
-        this.rangeSelectionWhileEditing++;
+        if (this.beans.rangeSvc && this.gos.get('cellSelection')) {
+            this.rangeSelectionWhileEditing++;
+        }
     }
 
     public disableRangeSelectionWhileEditing(): void {
