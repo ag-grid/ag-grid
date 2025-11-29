@@ -318,14 +318,15 @@ export class AgFormulaInputField extends AgContentEditableField<
             return;
         }
 
-        const target = ranges.find((range) => this.rangeToRef(range) === ref);
-        if (!target) {
+        const remaining = ranges.filter((range) => this.rangeToRef(range) !== ref);
+
+        if (remaining.length === ranges.length) {
             this.trackedRangeRefs.delete(ref);
             return;
         }
 
         this.suppressRangeEvents = true;
-        rangeSvc.setCellRanges(ranges.filter((r) => r !== target));
+        rangeSvc.setCellRanges(remaining);
         this.suppressRangeEvents = false;
         this.trackedRangeRefs.delete(ref);
     }
