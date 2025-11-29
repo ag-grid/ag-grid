@@ -729,11 +729,17 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
-     * TODO
+     * Set this in columns you want to aggregate by to determine the order they appear in when pivoting.
+     *
+     * This property only takes effect when `enableStrictPivotColumnOrder` is enabled.
+     * @agModule `PivotModule`
      */
     valueIndex?: number;
     /**
-     * TODO
+     * Same as `valueIndex`, except only applied when creating a new column definition. Not applied when updating column definitions.
+     *
+     * This property only takes effect when `enableStrictPivotColumnOrder` is enabled.
+     * @agModule `PivotModule`
      */
     initialValueIndex?: number;
     /**
