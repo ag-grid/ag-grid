@@ -157,15 +157,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
+        const { shiftKey } = mouseEvent;
+        const isMultiRange = this.isMultiRange(mouseEvent);
 
-        // ctrlKey for windows, metaKey for Apple
-        const isMultiKey = ctrlKey || metaKey;
-        const allowMulti = !_getSuppressMultiRanges(gos);
-        const isMultiSelect = allowMulti ? isMultiKey : false;
         const extendRange = shiftKey && !!this.cellRanges?.length;
 
-        if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges).type))) {
+        if (!isMultiRange && (!extendRange || _exists(_last(this.cellRanges).type))) {
             this.removeAllCellRanges(true);
         }
 
@@ -183,7 +180,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         this.dragging = true;
         this.lastMouseEvent = mouseEvent;
-        this.intersectionRange = isMultiSelect && this.getCellRangeCount(this.lastCellHovered) > 1;
+        this.intersectionRange = isMultiRange && this.getCellRangeCount(this.lastCellHovered) > 1;
 
         if (!extendRange) {
             this.setNewestRangeStartCell(this.lastCellHovered);
@@ -401,7 +398,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
-        const isMultiKey = event.ctrlKey || event.metaKey;
+        const isMultiRange = this.isMultiRange(event);
 
         this.setSelectionMode(isRowNumber);
         const columns = this.calculateColumnsBetween(cell.column as AgColumn, cell.column as AgColumn);
@@ -415,11 +412,22 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             endRow: cell,
         });
 
-        if (isRowNumber && isMultiKey && containingRange) {
+        if (isRowNumber && isMultiRange && containingRange) {
             this.removeRowFromRowNumberRange(cell, containingRange);
         } else {
-            this.setRangeToCell(cell, isMultiKey);
+            this.setRangeToCell(cell, isMultiRange);
         }
+    }
+
+    private isMultiRange(event: MouseEvent): boolean {
+        const { ctrlKey, metaKey } = event;
+        const { editSvc, gos } = this.beans;
+        const editingWithRanges = !!editSvc?.isEditing() && !!editSvc?.isRangeSelectionEnabledWhileEditing();
+
+        // ctrlKey for windows, metaKey for Apple
+        const isMultiKey = ctrlKey || metaKey;
+        const allowMulti = !_getSuppressMultiRanges(gos);
+        return editingWithRanges || (allowMulti ? isMultiKey : false);
     }
 
     private removeRowFromRowNumberRange(cell: CellPosition, containingRange: CellRange): void {

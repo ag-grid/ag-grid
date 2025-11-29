@@ -47,6 +47,8 @@ export abstract class AgAbstractCellEditor<P extends ICellEditorParams = any, TV
     }
 
     public override destroy(): void {
+        this.eEditor.destroy();
         this.errorMessages = null;
+        super.destroy();
     }
 }

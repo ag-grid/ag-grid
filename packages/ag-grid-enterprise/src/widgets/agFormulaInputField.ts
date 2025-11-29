@@ -39,6 +39,9 @@ export class AgFormulaInputField extends AgContentEditableField<
     private lastTokenValueOffset: number | null = null;
     private lastTokenValueLength: number | null = null;
     private lastTokenCaretOffset: number | null = null;
+    private lastTokenRef?: string;
+    private readonly trackedRangeRefs = new Set<string>();
+    private suppressRangeEvents = false;
 
     constructor() {
         // Keep renderValueToElement false so we fully control DOM rendering.
@@ -62,7 +65,9 @@ export class AgFormulaInputField extends AgContentEditableField<
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
         this.renderFormula(text, null);
-        return this.setEditorValue(text, silent);
+        const res = this.setEditorValue(text, silent);
+        this.syncRangesFromFormula(text);
+        return res;
     }
 
     public getCurrentValue(): string {
@@ -98,9 +103,14 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         this.renderFormula(serialized, caret ?? undefined);
         this.setEditorValue(serialized);
+        this.syncRangesFromFormula(serialized);
     }
 
     private onRangeSelectionChanged(event: RangeSelectionChangedEvent): void {
+        if (this.suppressRangeEvents) {
+            return;
+        }
+
         const ref = this.getLatestRangeRef();
 
         if (!ref || ref === this.editingCellRef) {
@@ -112,18 +122,18 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         if (event.started && event.finished) {
-            this.insertOrReplaceToken(ref, true);
+            this.insertOrReplaceToken(ref, true, false);
             this.restoreCaretAfterToken();
             return;
         }
 
         if (!event.started && !event.finished) {
-            this.insertOrReplaceToken(ref, false);
+            this.insertOrReplaceToken(ref, false, false);
             return;
         }
 
         if (event.finished) {
-            this.insertOrReplaceToken(ref, false);
+            this.insertOrReplaceToken(ref, false, false);
             this.restoreCaretAfterToken();
         }
     }
@@ -206,7 +216,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.setEditorValue(serialized);
     }
 
-    private insertOrReplaceToken(ref: string, isNew: boolean): void {
+    private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean = true): void {
         const caretOffset = this.selectionCaretOffset ?? this.getCaretOffset() ?? this.currentValue.length;
         const valueOffset =
             isNew || this.lastTokenValueOffset == null
@@ -224,10 +234,23 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.lastTokenValueOffset = valueOffset;
         this.lastTokenValueLength = ref.length;
         this.lastTokenCaretOffset = caretOffset;
+        const previousRef = this.lastTokenRef;
+        this.lastTokenRef = ref;
 
         this.setEditorValue(updatedValue);
         this.renderFormula(updatedValue, caretOffset + 1);
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+        if (manageRanges) {
+            if (!isNew && previousRef && previousRef !== ref) {
+                this.removeRangeForRef(previousRef);
+            }
+            this.addRangeForRef(ref);
+        } else {
+            if (previousRef && previousRef !== ref) {
+                this.trackedRangeRefs.delete(previousRef);
+            }
+            this.trackedRangeRefs.add(ref);
+        }
     }
 
     private restoreCaretAfterToken(): void {
@@ -262,6 +285,100 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         return this.currentValue.length;
+    }
+
+    private addRangeForRef(ref: string): void {
+        if (this.trackedRangeRefs.has(ref)) {
+            return;
+        }
+
+        const params = this.getCellRangeParams(ref);
+
+        if (!params) {
+            return;
+        }
+
+        this.suppressRangeEvents = true;
+        const created = this.beans.rangeSvc?.addCellRange(params);
+        this.suppressRangeEvents = false;
+        if (created) {
+            this.trackedRangeRefs.add(ref);
+        }
+    }
+
+    private removeRangeForRef(ref: string | undefined): void {
+        if (!ref || !this.trackedRangeRefs.has(ref)) {
+            return;
+        }
+
+        const rangeSvc = this.beans.rangeSvc;
+        const ranges = rangeSvc?.getCellRanges();
+        if (!rangeSvc || !ranges?.length) {
+            this.trackedRangeRefs.delete(ref);
+            return;
+        }
+
+        const target = ranges.find((range) => this.rangeToRef(range) === ref);
+        if (!target) {
+            this.trackedRangeRefs.delete(ref);
+            return;
+        }
+
+        this.suppressRangeEvents = true;
+        rangeSvc.setCellRanges(ranges.filter((r) => r !== target));
+        this.suppressRangeEvents = false;
+        this.trackedRangeRefs.delete(ref);
+    }
+
+    private syncRangesFromFormula(value?: string | null): void {
+        const text = value ?? this.getCurrentValue() ?? '';
+        const refs = new Set<string>();
+
+        let match: RegExpExecArray | null;
+        CELL_OR_RANGE_REGEX.lastIndex = 0;
+        while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
+            refs.add(match[0]);
+        }
+
+        const toRemove: string[] = [];
+        for (const tracked of this.trackedRangeRefs) {
+            if (!refs.has(tracked)) {
+                toRemove.push(tracked);
+            }
+        }
+
+        toRemove.forEach((ref) => this.removeRangeForRef(ref));
+
+        refs.forEach((ref) => {
+            if (ref !== this.editingCellRef) {
+                this.addRangeForRef(ref);
+            }
+        });
+    }
+
+    private getCellRangeParams(ref: string) {
+        const match = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/.exec(ref);
+        if (!match) {
+            return null;
+        }
+
+        const [, startColRef, startRowStr, endColRef, endRowStr] = match;
+        const startCol = this.beans.formula?.getColByRef(startColRef);
+        const endCol = this.beans.formula?.getColByRef(endColRef ?? startColRef);
+
+        if (!startCol || !endCol) {
+            return null;
+        }
+
+        const rowStartIndex = parseInt(startRowStr, 10) - 1;
+        const rowEndIndex = endRowStr ? parseInt(endRowStr, 10) - 1 : rowStartIndex;
+
+        return {
+            rowStartIndex,
+            rowEndIndex,
+            columnStart: startCol,
+            columnEnd: endCol,
+        };
     }
 
     private renderFormula(value: string, caret?: number | null): void {
@@ -500,6 +617,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                 const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
                 this.setEditorValue(updated);
                 this.renderFormula(updated, caretOffset);
+                this.removeRangeForRef(target.dataset.formulaRef);
                 break;
             }
             case KeyCode.LEFT: {
@@ -521,6 +639,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                     const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
                     this.setEditorValue(updated);
                     this.renderFormula(updated, caretOffset + 1);
+                    this.addRangeForRef(replacement);
                 }
                 break;
             }
@@ -543,5 +662,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         return null;
+    }
+
+    public override destroy(): void {
+        super.destroy();
+        // Remove any ranges we created while editing so they don't linger after the editor closes.
+        this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
+        this.trackedRangeRefs.clear();
     }
 }
