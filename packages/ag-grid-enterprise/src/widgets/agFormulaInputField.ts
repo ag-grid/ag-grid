@@ -34,8 +34,11 @@ export class AgFormulaInputField extends AgContentEditableField<
     string
 > {
     private currentValue: string = '';
-    private lastRangeId?: string;
     private editingCellRef?: string;
+    private selectionCaretOffset: number | null = null;
+    private lastTokenValueOffset: number | null = null;
+    private lastTokenValueLength: number | null = null;
+    private lastTokenCaretOffset: number | null = null;
 
     constructor() {
         // Keep renderValueToElement false so we fully control DOM rendering.
@@ -47,12 +50,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         super.postConstruct();
 
         this.addManagedElementListeners(this.getContentElement(), {
-            input: () => this.onContentInput(),
-            keydown: (event: KeyboardEvent) => this.onTokenKeyDown(event),
+            input: this.onContentInput.bind(this),
+            keydown: this.onTokenKeyDown.bind(this),
         });
 
         this.addManagedEventListeners({
-            rangeSelectionChanged: (event: RangeSelectionChangedEvent) => this.onRangeSelectionChanged(event),
+            rangeSelectionChanged: this.onRangeSelectionChanged.bind(this),
         });
     }
 
@@ -98,23 +101,31 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private onRangeSelectionChanged(event: RangeSelectionChangedEvent): void {
-        if (!event.finished) {
-            return;
-        }
-
         const ref = this.getLatestRangeRef();
 
         if (!ref || ref === this.editingCellRef) {
             return;
         }
 
-        // Avoid inserting the same completed range multiple times when events repeat.
-        if (event.id && this.lastRangeId === event.id && this.currentValue.includes(ref)) {
+        if (event.started) {
+            this.selectionCaretOffset = this.getCaretOffset() ?? this.currentValue.length;
+        }
+
+        if (event.started && event.finished) {
+            this.insertOrReplaceToken(ref, true);
+            this.restoreCaretAfterToken();
             return;
         }
 
-        this.lastRangeId = event.id;
-        this.insertReference(ref);
+        if (!event.started && !event.finished) {
+            this.insertOrReplaceToken(ref, false);
+            return;
+        }
+
+        if (event.finished) {
+            this.insertOrReplaceToken(ref, false);
+            this.restoreCaretAfterToken();
+        }
     }
 
     private getLatestRangeRef(): string | null {
@@ -172,7 +183,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
     }
 
-    private insertReference(ref: string): void {
+    private insertReference(ref: string, caretAfterInsert?: number): void {
         const contentEl = this.getContentElement();
         const selection = window.getSelection();
         const range = selection?.rangeCount && selection.getRangeAt(0);
@@ -191,8 +202,66 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         const serialized = this.serializeContent();
 
-        this.renderFormula(serialized, serialized.length);
+        this.renderFormula(serialized, caretAfterInsert ?? serialized.length);
         this.setEditorValue(serialized);
+    }
+
+    private insertOrReplaceToken(ref: string, isNew: boolean): void {
+        const caretOffset = this.selectionCaretOffset ?? this.getCaretOffset() ?? this.currentValue.length;
+        const valueOffset =
+            isNew || this.lastTokenValueOffset == null
+                ? this.getValueOffsetFromCaret(caretOffset)
+                : this.lastTokenValueOffset;
+
+        if (valueOffset == null) {
+            return;
+        }
+
+        const replaceLen = isNew || this.lastTokenValueLength == null ? 0 : this.lastTokenValueLength;
+        const value = this.getCurrentValue();
+        const updatedValue = value.slice(0, valueOffset) + ref + value.slice(valueOffset + replaceLen);
+
+        this.lastTokenValueOffset = valueOffset;
+        this.lastTokenValueLength = ref.length;
+        this.lastTokenCaretOffset = caretOffset;
+
+        this.setEditorValue(updatedValue);
+        this.renderFormula(updatedValue, caretOffset + 1);
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+    }
+
+    private restoreCaretAfterToken(): void {
+        const caret = (this.lastTokenCaretOffset ?? this.getCaretOffset() ?? this.currentValue.length) + 1;
+        this.selectionCaretOffset = null;
+
+        setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            this.getContentElement().focus({ preventScroll: true });
+            this.restoreCaret(caret);
+        });
+    }
+
+    private getValueOffsetFromCaret(caretOffset: number): number | null {
+        const container = this.getContentElement();
+        let caretRemaining = caretOffset;
+        let valueOffset = 0;
+
+        for (const child of Array.from(container.childNodes)) {
+            const caretLen = this.getNodeTextLength(child);
+            const valueLen = this.getNodeText(child).length;
+
+            if (caretRemaining <= caretLen) {
+                // Tokens count as 1 caret unit but multiple value units.
+                return valueOffset + (caretLen === valueLen ? caretRemaining : 0);
+            }
+
+            caretRemaining -= caretLen;
+            valueOffset += valueLen;
+        }
+
+        return this.currentValue.length;
     }
 
     private renderFormula(value: string, caret?: number | null): void {
