@@ -1,5 +1,4 @@
 import type { AgCheckbox } from '../agStack/widgets/agCheckbox';
-import type { AgContentEditableField } from '../agStack/widgets/agContentEditableField';
 import type { AgCheckboxParams } from '../agStack/widgets/agFieldParams';
 import type { AgInputDateField } from '../agStack/widgets/agInputDateField';
 import type { AgInputNumberField } from '../agStack/widgets/agInputNumberField';
@@ -98,14 +97,4 @@ export type GridSelect<TValue = string | null> = AgSelect<
     GridOptionsService,
     AgComponentSelectorType,
     TValue
->;
-
-export type GridContentEditableField = AgContentEditableField<
-    BeanCollection,
-    GridOptionsWithDefaults,
-    AgEventTypeParams,
-    AgGridCommon<any, any>,
-    GridOptionsService,
-    AgComponentSelectorType,
-    string
 >;
