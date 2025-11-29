@@ -1,4 +1,4 @@
-import type { AgCartesianAxisType, AgChartInstance, AgChartInstanceOptions, AgPolarAxisOptions } from 'ag-charts-types';
+import type { AgCartesianAxisType, AgChartInstance, AgChartInstanceOptions, AgPolarAxisType } from 'ag-charts-types';
 
 export function deproxy(chartOrProxy: AgChartInstance<AgChartInstanceOptions>): AgChartActual {
     if ((chartOrProxy as any).chart != null) {
@@ -28,7 +28,7 @@ export interface AgChartActual extends AgChartInstance {
     axes?: Record<
         string,
         {
-            type: AgCartesianAxisType | AgPolarAxisOptions['type'];
+            type: AgCartesianAxisType | AgPolarAxisType;
             direction: 'x' | 'y';
         }
     >;

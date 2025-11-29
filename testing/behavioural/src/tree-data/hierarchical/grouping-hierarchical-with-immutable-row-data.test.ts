@@ -320,7 +320,7 @@ describe('ag-grid grouping treeDataChildrenField with set immutable data', () =>
             · · └── LEAF id:8 name:"unknown Y" country:"Germany" year:1900
         `);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         gridRows = new GridRows(api, 'clear', gridRowsOptions);
         await gridRows.check('empty');

@@ -3,7 +3,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid grouping with pivot', () => {
     const gridsManager = new TestGridsManager({
@@ -33,7 +33,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', country: 'Ireland', year: 2020, sales: 1000, profit: 200 },
                 { id: '2', country: 'Ireland', year: 2021, sales: 1200, profit: 250 },
@@ -78,7 +78,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', region: 'Europe', country: 'Ireland', year: 2020, sales: 1000 },
                 { id: '2', region: 'Europe', country: 'Ireland', year: 2021, sales: 1200 },
@@ -122,7 +122,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', country: 'Ireland', year: 2020, quarter: 'Q1', sales: 1000 },
                 { id: '2', country: 'Ireland', year: 2020, quarter: 'Q2', sales: 1100 },
@@ -173,7 +173,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', product: 'Laptop', region: 'North', sales: 1000 },
                 { id: '2', product: 'Laptop', region: 'South', sales: 800 },
@@ -244,7 +244,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', salesperson: 'John', month: 'Jan', sales: 1000 },
                 { id: '2', salesperson: 'John', month: 'Feb', sales: 1100 },
@@ -278,7 +278,7 @@ describe('ag-grid grouping with pivot', () => {
         `);
 
         // Update some sales values
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: '2', salesperson: 'John', month: 'Feb', sales: 1500 }, // Increase John's Feb sales
                 { id: '8', salesperson: 'Bob', month: 'Feb', sales: 950 }, // Increase Bob's Feb sales
@@ -322,7 +322,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', department: 'Engineering', year: 2020, budget: 10000, expenses: 8000, efficiency: 0.8 },
                 { id: '2', department: 'Engineering', year: 2021, budget: 12000, expenses: 9000, efficiency: 0.75 },
@@ -373,7 +373,7 @@ describe('ag-grid grouping with pivot', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         // Initial data with North and South regions
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', category: 'Electronics', region: 'North', revenue: 1000 },
                 { id: '2', category: 'Electronics', region: 'South', revenue: 800 },
@@ -398,7 +398,7 @@ describe('ag-grid grouping with pivot', () => {
         `);
 
         // Add data with new regions (East and West)
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '5', category: 'Electronics', region: 'East', revenue: 1200 },
                 { id: '6', category: 'Electronics', region: 'West', revenue: 900 },
@@ -441,7 +441,7 @@ describe('ag-grid grouping with pivot', () => {
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
         // Initial data
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', store: 'Store A', month: 'Jan', sales: 1000 },
                 { id: '2', store: 'Store A', month: 'Feb', sales: 1100 },
@@ -466,7 +466,7 @@ describe('ag-grid grouping with pivot', () => {
         `);
 
         // Update existing records and add new month
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: '1', store: 'Store A', month: 'Jan', sales: 1200 }, // Update Jan sales
                 { id: '3', store: 'Store B', month: 'Jan', sales: 850 }, // Update Jan sales
@@ -496,7 +496,7 @@ describe('ag-grid grouping with pivot', () => {
         `);
 
         // Remove some records
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [
                 { id: '2' }, // Remove Store A Feb
                 { id: '7' }, // Remove Store C Jan
@@ -546,7 +546,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', team: 'Red', quarter: 'Q1', score: 85, attempts: 10, average: 8.5 },
                 { id: '2', team: 'Red', quarter: 'Q1', score: 90, attempts: 12, average: 7.5 },
@@ -601,7 +601,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', month: 'Jan', revenue: 10000, costs: 7000, profit: 3000 },
                 { id: '2', month: 'Jan', revenue: 8000, costs: 6000, profit: 2000 },
@@ -646,7 +646,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', category: 'Electronics', region: 'North', sales: 5000, units: 50 },
                 { id: '2', category: 'Electronics', region: 'South', sales: 4000, units: 40 },
@@ -746,7 +746,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', department: 'Engineering', quarter: 'Q1', budget: 10000, expenses: 8000 },
                 { id: '2', department: 'Engineering', quarter: 'Q2', budget: 12000, expenses: 9000 },
@@ -800,7 +800,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', team: 'Alpha', month: 'Jan', sales: 1000 },
                 { id: '2', team: 'Alpha', month: 'Feb', sales: 1200 },
@@ -842,7 +842,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', region: 'North', product: 'Laptop', revenue: 5000 },
                 { id: '2', region: 'North', product: 'Phone', revenue: 3000 },
@@ -941,7 +941,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', country: 'USA', athlete: 'Michael', year: 2008, gold: 8 },
             { id: '2', country: 'USA', athlete: 'Ryan', year: 2012, gold: 2 },
             { id: '3', country: 'United Kingdom', athlete: 'Chris', year: 2008, gold: 3 },
@@ -1017,7 +1017,7 @@ describe('ag-grid grouping with pivot', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: '1', category: 'Electronics', year: 2023, quarter: 'Q1', sales: 1000 },
                 { id: '2', category: 'Electronics', year: 2023, quarter: 'Q2', sales: 1200 },

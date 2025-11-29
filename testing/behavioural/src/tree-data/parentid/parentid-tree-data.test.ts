@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot, setRowDataChecked } from '../../test-utils';
 import { simpleParentIdRowsSnapshot } from './simpleParentIdRowsSnapshot';
 
 describe('ag-grid tree data parent id', () => {
@@ -57,17 +57,17 @@ describe('ag-grid tree data parent id', () => {
         expect(hasLoadingOverlay()).toBe(true);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         await asyncSetTimeout(10);
 
@@ -226,7 +226,7 @@ describe('ag-grid tree data parent id', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'a', x: 1 },
             { id: 'c', x: 2 },
             { id: 'e', x: 3 },

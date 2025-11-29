@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
 
 describe('ag-grid parentId tree remove', () => {
     let consoleWarnSpy: MockInstance | undefined;
@@ -48,8 +48,8 @@ describe('ag-grid parentId tree remove', () => {
             · · · └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
-        api.applyTransaction({ remove: [rowD] });
-        api.applyTransaction({ remove: [rowC] });
+        applyTransactionChecked(api, { remove: [rowD] });
+        applyTransactionChecked(api, { remove: [rowC] });
 
         const gridRows = new GridRows(api, '');
         await gridRows.check(`
@@ -91,7 +91,7 @@ describe('ag-grid parentId tree remove', () => {
             · · · └── d-xDhjGsdDd LEAF id:d-xDhjGsdDd ag-Grid-AutoColumn:"d-xDhjGsdDd"
         `);
 
-        api.applyTransaction({ remove: [rowC] });
+        applyTransactionChecked(api, { remove: [rowC] });
 
         const gridRows = new GridRows(api, '');
         await gridRows.check(`
@@ -140,7 +140,7 @@ describe('ag-grid parentId tree remove', () => {
             └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
-        api.applyTransaction({ remove: [rowB, rowC] });
+        applyTransactionChecked(api, { remove: [rowB, rowC] });
 
         await new GridRows(api, 'Transaction[0]').check(`
             ROOT id:ROOT_NODE_ID
@@ -148,14 +148,14 @@ describe('ag-grid parentId tree remove', () => {
             └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
-        api.applyTransaction({ remove: [rowA] });
+        applyTransactionChecked(api, { remove: [rowA] });
 
         await new GridRows(api, 'Transaction[0]').check(`
             ROOT id:ROOT_NODE_ID
             └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
-        api.applyTransaction({ add: [rowC, rowA, rowB] });
+        applyTransactionChecked(api, { add: [rowC, rowA, rowB] });
 
         await new GridRows(api, 'finalSync').check(`
             ROOT id:ROOT_NODE_ID
@@ -191,7 +191,7 @@ describe('ag-grid parentId tree remove', () => {
             └── d LEAF id:d ag-Grid-AutoColumn:"d"
         `);
 
-        api.applyTransaction({ remove: [rowA, rowB, rowC], add: [rowC, rowA, rowB] });
+        applyTransactionChecked(api, { remove: [rowA, rowB, rowC], add: [rowC, rowA, rowB] });
 
         await new GridRows(api, 'finalTogether').check(`
             ROOT id:ROOT_NODE_ID
@@ -201,7 +201,7 @@ describe('ag-grid parentId tree remove', () => {
             · └── b LEAF id:b ag-Grid-AutoColumn:"b"
         `);
 
-        api.applyTransaction({ update: [{ ...rowA, parentId: 'd' }] });
+        applyTransactionChecked(api, { update: [{ ...rowA, parentId: 'd' }] });
 
         await new GridRows(api, 'moved').check(`
             ROOT id:ROOT_NODE_ID
@@ -211,7 +211,7 @@ describe('ag-grid parentId tree remove', () => {
             · · └── b LEAF id:b ag-Grid-AutoColumn:"b"
         `);
 
-        api.applyTransaction({ update: [{ ...rowD, parentId: 'x' }], add: [{ id: 'x' }] });
+        applyTransactionChecked(api, { update: [{ ...rowD, parentId: 'x' }], add: [{ id: 'x' }] });
 
         await new GridRows(api, 'moved 2').check(`
             ROOT id:ROOT_NODE_ID

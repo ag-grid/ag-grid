@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 const gridRowsOptions: GridRowsOptions = {};
 
@@ -67,7 +67,7 @@ describe('ag-grid grouping complex transactions', () => {
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toStrictEqual([row0, row1a]);
 
         // Complex transaction: add, update, remove in one go
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [row2, row3, row4],
             update: [row1b],
             remove: [row0],
@@ -91,7 +91,7 @@ describe('ag-grid grouping complex transactions', () => {
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toStrictEqual([row1b, row2, row3, row4]);
 
         // Another complex transaction
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [row5b],
             remove: [row2, row3],
         });
@@ -190,7 +190,7 @@ describe('ag-grid grouping complex transactions', () => {
         `);
 
         // Move John Smith from Ireland to Italy (by updating country)
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: 'a', country: 'Italy', athlete: 'John Smith', sport: 'Sailing' }],
         });
 
@@ -204,7 +204,7 @@ describe('ag-grid grouping complex transactions', () => {
         `);
 
         // Move both Jane and Mario to a new country
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: 'b', country: 'France', athlete: 'Jane Doe', sport: 'Soccer' },
                 { id: 'c', country: 'France', athlete: 'Mario Rossi', sport: 'Soccer' },
@@ -254,7 +254,7 @@ describe('ag-grid grouping complex transactions', () => {
         `);
 
         // Remove all Ireland 2020 rows - the year group should be removed
-        api.applyTransaction({ remove: [rowA, rowB] });
+        applyTransactionChecked(api, { remove: [rowA, rowB] });
 
         await new GridRows(api, 'Ireland 2020 group removed', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID 
@@ -267,7 +267,7 @@ describe('ag-grid grouping complex transactions', () => {
         `);
 
         // Remove the last Ireland row - the country group should be removed
-        api.applyTransaction({ remove: [rowC] });
+        applyTransactionChecked(api, { remove: [rowC] });
 
         await new GridRows(api, 'Ireland country group removed', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -277,12 +277,12 @@ describe('ag-grid grouping complex transactions', () => {
         `);
 
         // Remove the last row completely
-        api.applyTransaction({ remove: [rowD] });
+        applyTransactionChecked(api, { remove: [rowD] });
 
         await new GridRows(api, 'all groups removed', gridRowsOptions).check('empty');
 
         // Add back some data to verify groups are recreated properly
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: 'e', country: 'Spain', year: 2022, athlete: 'Carlos Garcia' },
                 { id: 'f', country: 'Spain', year: 2022, athlete: 'Ana Lopez' },
@@ -316,7 +316,7 @@ describe('ag-grid grouping complex transactions', () => {
 
         if (mode === 'sync') {
             // Add all at once
-            api.applyTransaction({ add: finalData });
+            applyTransactionChecked(api, { add: finalData });
         } else if (mode === 'async') {
             // Add one by one asynchronously
             finalData.forEach((row) => {
@@ -325,9 +325,9 @@ describe('ag-grid grouping complex transactions', () => {
             api.flushAsyncTransactions();
         } else {
             // Mix of sync and async
-            api.applyTransaction({ add: [rowB] });
+            applyTransactionChecked(api, { add: [rowB] });
             api.applyTransactionAsync({ add: [rowC] });
-            api.applyTransaction({ add: [rowD] });
+            applyTransactionChecked(api, { add: [rowD] });
             api.flushAsyncTransactions();
         }
 
@@ -377,7 +377,7 @@ describe('ag-grid grouping complex transactions', () => {
         });
 
         // Complex transaction: remove all from one group, add to new group, move between groups
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [
                 { id: '2', department: 'Engineering', level: 'Junior', name: 'Bob' },
                 { id: '3', department: 'Marketing', level: 'Senior', name: 'Charlie' },

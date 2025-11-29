@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid hierarchical tree expanded state', () => {
     const gridsManager = new TestGridsManager({
@@ -42,7 +42,7 @@ describe('ag-grid hierarchical tree expanded state', () => {
 
                 data.children = [...data.children, { ...data, id: yoo, children: [] }];
 
-                api.setGridOption('rowData', api.getGridOption('rowData'));
+                setRowDataChecked(api, api.getGridOption('rowData'));
             },
         });
 

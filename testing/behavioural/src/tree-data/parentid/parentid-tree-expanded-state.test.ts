@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout, setRowDataChecked } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid parentId tree expanded state', () => {
@@ -47,7 +47,7 @@ describe('ag-grid parentId tree expanded state', () => {
 
                 //data.children = [...data.children, { ...data, id: yoo, children: [] }];
 
-                api.setGridOption('rowData', oldRowData);
+                setRowDataChecked(api, oldRowData);
             },
         });
 

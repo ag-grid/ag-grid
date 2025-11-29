@@ -624,8 +624,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private filterRows(rowsDrop: RowsDrop): IRowNode[] {
-        const { rowModel, groupEditSvc } = this.beans;
-        const { rows } = rowsDrop;
+        const { groupEditSvc } = this.beans;
+        const { rows, sameGrid } = rowsDrop;
         let filtered: IRowNode[] | undefined;
         for (let i = 0, len = rows.length; i < len; ++i) {
             let valid = true;
@@ -633,7 +633,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (
                 !row ||
                 row.footer ||
-                (!row.group && row.rowTop === null && row !== rowModel.getRowNode(row.id!)) || // This row cannot be dragged, not in allLeafChildren and not a filler
+                (sameGrid && row.destroyed && !row.group) ||
                 !this.csrmGetLeaf(row) // No leaf to move, so nothing to do
             ) {
                 valid = false;
@@ -712,7 +712,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private csrmGetLeaf(row: IRowNode): RowNode | undefined {
         if (row.sourceRowIndex >= 0) {
-            return row as RowNode;
+            return row.destroyed ? undefined : (row as RowNode);
         }
         const groupEditSvc = this.beans.groupEditSvc;
         if (groupEditSvc) {

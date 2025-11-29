@@ -4,7 +4,7 @@ import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-ent
 import type { SetFilter } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, waitForEvent } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
 
 describe('ag-grid formulas filtering', () => {
     const gridsManager = new TestGridsManager({
@@ -73,7 +73,7 @@ describe('ag-grid formulas filtering', () => {
             └── LEAF id:5 row-number:"5" A:50 B:100 name:"Jack"
         `);
 
-        api.applyTransaction({ update: [{ id: '1', name: 'John Wick', A: 99, B: '=A1*2' }] });
+        applyTransactionChecked(api, { update: [{ id: '1', name: 'John Wick', A: 99, B: '=A1*2' }] });
         gridRows = new GridRows(api, 'filter b < 60 - update John');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -170,7 +170,7 @@ describe('ag-grid formulas filtering', () => {
             └── LEAF id:4 row-number:"4" A:20 B:35
         `);
 
-        api.applyTransaction({ update: [{ id: '2', A: 9 }] });
+        applyTransactionChecked(api, { update: [{ id: '2', A: 9 }] });
 
         gridRows = new GridRows(api, 'filtered A > 10 after hidden update');
         await gridRows.check(`
@@ -541,7 +541,7 @@ describe('ag-grid formulas filtering', () => {
             └── LEAF id:5 row-number:"5" A:5 B:21
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: '1', A: 1, B: '=SUM(A1:A6)' },
                 { id: '2', A: 2, B: '=SUM(A2:A6)' },

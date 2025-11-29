@@ -2,7 +2,13 @@ import type { RowDataTransaction } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    executeTransactionsAsync,
+} from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const gridRowsOptions: GridRowsOptions = {};
@@ -63,7 +69,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a]);
 
-        api.applyTransaction(transactions[0]);
+        applyTransactionChecked(api, transactions[0]);
 
         gridRows = new GridRows(api, 'Transaction 0', gridRowsOptions);
         await gridRows.check(`
@@ -76,7 +82,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a, row2]);
 
-        api.applyTransaction(transactions[1]);
+        applyTransactionChecked(api, transactions[1]);
 
         gridRows = new GridRows(api, 'Transaction 1', gridRowsOptions);
         await gridRows.check(`
@@ -94,7 +100,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1b, row2, row3, row4]);
 
-        api.applyTransaction(transactions[2]);
+        applyTransactionChecked(api, transactions[2]);
 
         gridRows = new GridRows(api, 'Transaction 2', gridRowsOptions);
         await gridRows.check(`
@@ -111,7 +117,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row2, row3, row4, row5a]);
 
-        api.applyTransaction(transactions[3]);
+        applyTransactionChecked(api, transactions[3]);
 
         gridRows = new GridRows(api, 'final', gridRowsOptions);
         await gridRows.check(`
@@ -216,7 +222,7 @@ describe('ag-grid tree transactions', () => {
             getRowId: (params) => params.data.id,
             getDataPath: (data) => data.versionPath.value,
             onGridReady: () => {
-                api.applyTransaction({ add: rowData });
+                applyTransactionChecked(api, { add: rowData });
                 resolveLoaded();
             },
         });
@@ -266,7 +272,7 @@ describe('ag-grid tree transactions', () => {
             },
         ]);
 
-        api.applyTransaction({ add: more });
+        applyTransactionChecked(api, { add: more });
 
         // Verify filler IDs and structure regardless of insertion order
         await new GridRows(api, 'more', gridRowsOptions).check(`

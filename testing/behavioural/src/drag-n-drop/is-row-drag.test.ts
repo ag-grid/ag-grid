@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { TestGridsManager, applyTransactionChecked, isAgHtmlElementVisible, setRowDataChecked } from '../test-utils';
 
 function isDragHandleVisible(element: Element): boolean {
     return isAgHtmlElementVisible(element.querySelector('.ag-drag-handle'));
@@ -40,7 +40,7 @@ describe('isRowDrag and drag handle refresh', () => {
 
         callCount = 0;
         returnValue = false;
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: 'r1', a: 'X', b: 'x' },
                 { id: 'r2', a: 'Y', b: 'y' },
@@ -52,7 +52,7 @@ describe('isRowDrag and drag handle refresh', () => {
 
         callCount = 0;
         returnValue = true;
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'r1', a: 'A', b: 'a' },
             { id: 'r2', a: 'B', b: 'b' },
         ]);

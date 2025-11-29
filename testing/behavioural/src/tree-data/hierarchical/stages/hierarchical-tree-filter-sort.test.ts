@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../../test-utils';
 
 describe('ag-grid hierarchical tree filter sort', () => {
     const gridsManager = new TestGridsManager({
@@ -66,7 +66,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" k:"C" name:"A. Church"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             {
                 id: '1',
                 k: 'A',
@@ -94,7 +94,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Grace Hopper' } });
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'filter 2').check(`
             ROOT id:ROOT_NODE_ID
@@ -103,7 +103,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · · └── 5 LEAF id:5 ag-Grid-AutoColumn:"5" k:"E" name:"Grace Hopper"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             {
                 id: '1',
                 k: 'A',
@@ -147,7 +147,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · · └── 4 LEAF id:4 ag-Grid-AutoColumn:"4" k:"D" name:"Donald Knuth"
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'filter 3').check(`
             ROOT id:ROOT_NODE_ID
@@ -162,7 +162,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             ROOT id:ROOT_NODE_ID
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             {
                 id: '1',
                 k: 'A',
@@ -193,7 +193,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
 
         api.setFilterModel({});
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'no filter').check(`
             ROOT id:ROOT_NODE_ID
@@ -342,7 +342,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · · └── 8 LEAF id:8 ag-Grid-AutoColumn:"8" k:"G" value:10 x:0
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'sort value desc').check(`
             ROOT id:ROOT_NODE_ID
@@ -446,7 +446,7 @@ describe('ag-grid hierarchical tree filter sort', () => {
             · └── 3 LEAF id:3 ag-Grid-AutoColumn:"3" k:"C" value:15 x:0
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'sort x desc, filter x===0, rowData 3').check(`
             ROOT id:ROOT_NODE_ID

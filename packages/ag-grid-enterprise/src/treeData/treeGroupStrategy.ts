@@ -84,9 +84,20 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     public reset(): void {
-        this.destroyFillerRows();
+        this.clearNonLeafs();
         this.deselectHiddenNodes(false);
         this.fullReload = true;
+    }
+
+    public clearNonLeafs(): void {
+        const fillers = this.nonLeafsById;
+        if (fillers) {
+            for (const node of fillers.values()) {
+                node._destroy(false);
+            }
+            fillers.clear();
+            this.nonLeafsById = null;
+        }
     }
 
     public getNonLeaf(id: string): RowNode<TData> | undefined {
@@ -134,7 +145,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
         }
 
-        const parentsChanged = this.initRowsParents(rootNode, changedRowNodes?.removals);
+        const parentsChanged = this.initRowsParents(rootNode);
 
         this.destroyFillerRows();
 
@@ -159,7 +170,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
 
     private flagUpdatedNodes(changedRowNodes: _ChangedRowNodes<TData>): boolean {
         const { adds, updates, removals } = changedRowNodes;
-        let hasUpdates = removals.size > 0;
+        let hasUpdates = removals.length > 0;
         if (adds.size > 0) {
             hasUpdates = true;
             for (const node of adds) {
@@ -175,22 +186,19 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return hasUpdates;
     }
 
-    private initRowsParents(rootNode: RowNode<TData>, removedNodes: Set<RowNode> | undefined): boolean {
-        if (removedNodes?.size === 0) {
-            removedNodes = undefined; // Avoid checking for emptiness later
-        }
+    private initRowsParents(rootNode: RowNode<TData>): boolean {
         const allLeafs = rootNode._leafs!;
         const allLeafsLen = allLeafs.length;
         let parentsChanged = false;
         for (let i = 0; i < allLeafsLen; ++i) {
-            if (this.initRowParent(allLeafs[i], removedNodes)) {
+            if (this.initRowParent(allLeafs[i])) {
                 parentsChanged = true;
             }
         }
         return parentsChanged;
     }
 
-    private initRowParent(current: RowNode<TData>, removedNodes: Set<RowNode> | undefined): boolean {
+    private initRowParent(current: RowNode<TData>): boolean {
         let parentsChanged = false;
         while (true) {
             const oldParent = current.parent;
@@ -214,7 +222,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             }
 
             if (parentChanged && oldParent) {
-                if (removedNodes?.has(oldParent) && maybeExpandFromRemovedParent(parent, oldParent)) {
+                if (oldParent.destroyed && maybeExpandFromRemovedParent(parent, oldParent)) {
                     parentFlags |= FLAG_EXPANDED_INITIALIZED;
                 }
                 oldParent.treeNodeFlags |= FLAG_CHANGED;
@@ -238,6 +246,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
             for (const node of nonLeafsById.values()) {
                 if (node.treeParent === null || (node.treeNodeFlags & MASK_CHILDREN_LEN) === 0) {
                     nonLeafsById.delete(node.id!); // This filler node is unused
+                    node._destroy(true);
                     this.hideRow(node);
                 }
             }
@@ -449,7 +458,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Load the tree structure for self-referencing data, aka parentId field */
-    private loadSelfRef({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, reload: boolean): void {
+    private loadSelfRef({ rowNode: rootNode }: StageExecuteParams<TData>, reload: boolean): void {
         const allLeafs = rootNode._leafs!;
         const allLeafsLen = allLeafs.length;
         const gos = this.gos;
@@ -462,11 +471,10 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         }
 
         const rowModel = this.beans.rowModel;
-        const removals = changedRowNodes?.removals;
         const parentIdGetter = this.parentIdGetter;
         for (let i = 0; i < allLeafsLen; i++) {
             const row = allLeafs[i];
-            if (reload || row.treeNodeFlags & FLAG_CHANGED || removals?.has(row.treeParent!)) {
+            if (reload || row.treeNodeFlags & FLAG_CHANGED || row.treeParent?.destroyed) {
                 let newParent: RowNode<TData> | null | undefined;
                 const parentId = parentIdGetter?.(row.data!);
                 if (parentId !== null && parentId !== undefined) {

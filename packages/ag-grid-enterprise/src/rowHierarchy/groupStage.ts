@@ -116,6 +116,10 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         return null;
     }
 
+    public clearNonLeafs(): void {
+        this.strategy?.clearNonLeafs();
+    }
+
     private getStrategy(): IRowGroupingStrategy<TData> | null {
         let strategy = this.strategy;
         if (strategy !== undefined && this.isAlive()) {

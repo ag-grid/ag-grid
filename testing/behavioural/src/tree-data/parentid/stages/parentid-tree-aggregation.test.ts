@@ -1,7 +1,14 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    executeTransactionsAsync,
+    setRowDataChecked,
+} from '../../../test-utils';
 
 describe('ag-grid parentId tree aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -197,7 +204,7 @@ describe('ag-grid parentId tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ remove: [rowData[3], rowData[10], rowData[11]] });
+                applyTransactionChecked(api, { remove: [rowData[3], rowData[10], rowData[11]] });
             } else {
                 api.setGridOption(
                     'rowData',
@@ -284,7 +291,7 @@ describe('ag-grid parentId tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({
+                applyTransactionChecked(api, {
                     update: [
                         { id: '5', x: 2, y: 4, parentId: '3' },
                         { id: '6', x: 100, y: 5, parentId: '3' },
@@ -292,7 +299,7 @@ describe('ag-grid parentId tree aggregation', () => {
                     ],
                 });
             } else {
-                api.setGridOption('rowData', [
+                setRowDataChecked(api, [
                     { id: '0' },
                     { id: '1', parentId: '0' },
                     { id: '2', x: 1, y: 1, parentId: '1' },
@@ -340,7 +347,7 @@ describe('ag-grid parentId tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({
+                applyTransactionChecked(api, {
                     remove: [rowData[2], rowData[3]],
                     update: [
                         { id: '8', x: 100, y: 100, parentId: '1' },
@@ -420,7 +427,7 @@ describe('ag-grid parentId tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ remove: [rowData[3]] });
+                applyTransactionChecked(api, { remove: [rowData[3]] });
             } else {
                 api.setGridOption(
                     'rowData',
@@ -444,7 +451,7 @@ describe('ag-grid parentId tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[4], x: 100, y: 100 }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[4], x: 100, y: 100 }] });
             } else {
                 api.setGridOption(
                     'rowData',
@@ -514,7 +521,7 @@ describe('ag-grid parentId tree aggregation', () => {
             `);
 
             if (mode === 'transactions') {
-                api.applyTransaction({ update: [{ ...rowData[2], parentId: '9' }] });
+                applyTransactionChecked(api, { update: [{ ...rowData[2], parentId: '9' }] });
             } else {
                 api.setGridOption(
                     'rowData',

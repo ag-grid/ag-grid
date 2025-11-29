@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../../test-utils';
 
 describe('ag-grid tree filter sort', () => {
     const gridsManager = new TestGridsManager({
@@ -60,7 +60,7 @@ describe('ag-grid tree filter sort', () => {
             · └── C LEAF name:"A. Church"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
             { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
             { id: '5', name: 'A. Church', orgHierarchy: ['A', 'B', 'E'] },
@@ -78,7 +78,7 @@ describe('ag-grid tree filter sort', () => {
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Grace Hopper' } });
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'filter 2', gridRowsOptions).check(`
             ROOT
@@ -87,7 +87,7 @@ describe('ag-grid tree filter sort', () => {
             · · └── E LEAF name:"Grace Hopper"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', name: 'John Von Neumann', orgHierarchy: ['A'] },
             { id: '2', name: 'Grace Hopper', orgHierarchy: ['A', 'B'] },
             { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C', 'J'] },
@@ -114,7 +114,7 @@ describe('ag-grid tree filter sort', () => {
             · · └── D LEAF name:"Donald Knuth"
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'filter 3', gridRowsOptions).check(`
             ROOT
@@ -129,7 +129,7 @@ describe('ag-grid tree filter sort', () => {
             ROOT
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: '1', name: 'Kurt Gödel', orgHierarchy: ['A'] },
             { id: '2', name: 'Alan Turing', orgHierarchy: ['A', 'B'] },
             { id: '3', name: 'A. Church', orgHierarchy: ['A', 'C'] },
@@ -148,7 +148,7 @@ describe('ag-grid tree filter sort', () => {
 
         api.setFilterModel({});
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'no filter', gridRowsOptions).check(`
             ROOT
@@ -259,7 +259,7 @@ describe('ag-grid tree filter sort', () => {
             · · └── G LEAF value:10 x:0
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'sort value desc', gridRowsOptions).check(`
             ROOT
@@ -343,7 +343,7 @@ describe('ag-grid tree filter sort', () => {
             · └── C LEAF value:15 x:0
         `);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         await new GridRows(api, 'sort x desc, filter x===0, rowData 3', gridRowsOptions).check(`
             ROOT

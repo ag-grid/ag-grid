@@ -38,6 +38,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         this.nonLeafsById.clear();
     }
 
+    public clearNonLeafs(): void {
+        const nonLeafsById = this.nonLeafsById;
+        for (const node of nonLeafsById.values()) {
+            node._destroy(false);
+        }
+        nonLeafsById.clear();
+    }
+
     public loadGroupData(node: RowNode): Record<string, any> | null {
         if (!node.group) {
             node._groupData = null;
@@ -163,11 +171,13 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             activeChangedPath = null;
         }
 
-        for (const rowNode of removals) {
-            const oldParent = rowNode.parent;
-            this.removeFromParent(rowNode);
-            parentsWithRemovals.add(oldParent);
-            activeChangedPath?.addParentNode(oldParent);
+        for (let i = 0, len = removals.length; i < len; ++i) {
+            const rowNode = removals[i];
+            const oldParent = this.removeFromParent(rowNode);
+            if (!parentsWithRemovals.has(oldParent)) {
+                parentsWithRemovals.add(oldParent);
+                activeChangedPath?.addParentNode(oldParent);
+            }
         }
 
         for (const rowNode of updates) {
@@ -187,8 +197,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         if (parentsWithRemovals.size) {
-            batchedRemove(parentsWithRemovals, removals);
-            this.removeEmptyGroups(parentsWithRemovals, removals);
+            batchedRemove(parentsWithRemovals);
+            this.removeEmptyGroups(parentsWithRemovals);
         }
 
         if (reordered) {
@@ -296,7 +306,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
     }
 
-    private removeEmptyGroups(parents: Set<RowNode | null>, removals: Set<RowNode>): void {
+    private removeEmptyGroups(parents: Set<RowNode | null>): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
@@ -310,7 +320,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                 let pointer = possibleEmptyGroups[idx];
                 while (pointer) {
                     const parent: RowNode | null = pointer.parent;
-                    if (removals.has(pointer)) {
+                    if (pointer.destroyed) {
                         possibleEmptyGroups[idx] = parent;
                         pointer = parent;
                         continue;
@@ -323,7 +333,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         continue;
                     }
                     parents.add(parent);
-                    removals.add(pointer); // Mark the empty group node as removed
                     this.removeFromParent(pointer);
                     // we remove selection on filler nodes here, as the selection would not be removed
                     // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
@@ -333,10 +342,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     }
                     possibleEmptyGroups[idx] = parent;
                     groupsById.delete(pointer.id!);
+                    pointer._destroy(true);
                     pointer = parent;
                 }
             }
-            batchedRemove(parents, removals);
+            batchedRemove(parents);
         } while (parents.size);
 
         if (nodesToUnselect) {
@@ -353,11 +363,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // b) removing from childrenMapped (immediately)
     // c) setRowTop(null) - as the rowRenderer uses this to know the RowNode is no longer needed
     // d) setRowIndex(null) - as the rowNode will no longer be displayed.
-    private removeFromParent(child: RowNode) {
-        const parent = child.parent;
-        if (parent) {
+    private removeFromParent(child: RowNode): RowNode | null {
+        const oldParent = child.parent;
+        if (oldParent) {
             const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
-            const childParentChildrenMapped = parent.childrenMapped;
+            const childParentChildrenMapped = oldParent.childrenMapped;
             if (childParentChildrenMapped) {
                 delete childParentChildrenMapped[mapKey];
             }
@@ -366,6 +376,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
         child.setRowIndex(null);
+        return oldParent;
     }
 
     /**
@@ -542,7 +553,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
  * to get around this, we do all the removes in a batch. this class manages the batch.
  * This problem was brought to light by a client (AG-2879), with dataset of 20,000
  */
-const batchedRemove = (parents: Iterable<RowNode | null>, removals: ReadonlySet<RowNode>): void => {
+const batchedRemove = (parents: Iterable<RowNode | null>): void => {
     for (const parent of parents) {
         const childrenAfterGroup = parent?.childrenAfterGroup;
         if (!childrenAfterGroup) {
@@ -552,7 +563,7 @@ const batchedRemove = (parents: Iterable<RowNode | null>, removals: ReadonlySet<
         let writeIdx = 0;
         for (let readIdx = 0; readIdx < childrenAfterGroupLen; ++readIdx) {
             const item = childrenAfterGroup[readIdx];
-            if (item.parent === parent && !removals.has(item)) {
+            if (item.parent === parent && !item.destroyed) {
                 if (writeIdx !== readIdx) {
                     childrenAfterGroup[writeIdx] = item; // Keep the child
                 }

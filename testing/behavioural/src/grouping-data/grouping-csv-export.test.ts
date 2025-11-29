@@ -2,7 +2,7 @@ import type { IAggFunc, IAggFuncParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, unindentText } from '../test-utils';
+import { TestGridsManager, applyTransactionChecked, unindentText } from '../test-utils';
 
 const qualifiedAggFunc: IAggFunc = ({ values }: IAggFuncParams) => {
     let qualified = 0;
@@ -87,7 +87,7 @@ describe('csv exports for grouped aggregations', () => {
             Total ,,37,4.2,3/5 Qualified,
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 {
                     id: '6',

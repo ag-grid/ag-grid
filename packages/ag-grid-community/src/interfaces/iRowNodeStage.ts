@@ -34,4 +34,7 @@ export interface IRowGroupStage<TResult = void, TData = any> extends IRowNodeSta
     loadLeafs(node: RowNode<TData>): RowNode<TData>[] | null;
     /** Used to lazily compute and store groupData for a row node - not for siblings */
     loadGroupData(node: RowNode<TData>): Record<string, any> | null;
+
+    /** Clears all stored group rows / tree data fillers */
+    clearNonLeafs(): void;
 }

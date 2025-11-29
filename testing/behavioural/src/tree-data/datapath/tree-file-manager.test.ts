@@ -3,7 +3,7 @@ import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -89,7 +89,7 @@ describe('ag-grid tree transactions', () => {
             └── temp.txt LEAF id:12
         `);
 
-        api.applyTransaction({ update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xls-renamed'] }] });
+        applyTransactionChecked(api, { update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xls-renamed'] }] });
 
         await new GridRows(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -129,7 +129,7 @@ describe('ag-grid tree transactions', () => {
         function moveSelectedNodeToTarget(targetRowId) {
             const selectedNode = api.getSelectedNodes()[0]; // single selection
             const targetNode = api.getRowNode(targetRowId);
-            api.applyTransaction({ update: getRowsToUpdate(selectedNode, targetNode!.data.filePath) });
+            applyTransactionChecked(api, { update: getRowsToUpdate(selectedNode, targetNode!.data.filePath) });
         }
     });
 

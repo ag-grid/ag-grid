@@ -157,4 +157,41 @@ describe('Cell Editing Batch', () => {
         const cell2 = getByTestId(gridDiv, agTestIdFor.cell('1', 'number'));
         expect(cell2).not.toHaveClass(/ag-cell-batch-edit/);
     });
+
+    test('commit keeps edited value when focus leaves grid', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    field: 'number',
+                    cellEditor: 'agNumberCellEditor',
+                    editable: true,
+                },
+            ],
+            rowData,
+            stopEditingWhenCellsLoseFocus: true,
+        });
+
+        api.startBatchEdit();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+        const cell = getByTestId(gridDiv, agTestIdFor.cell('0', 'number'));
+
+        const commitButton = document.createElement('button');
+        document.body.appendChild(commitButton);
+        commitButton.addEventListener('click', () => api.commitBatchEdit());
+
+        await userEvent.dblClick(cell);
+        await asyncSetTimeout(1);
+        await userEvent.keyboard('123');
+        await asyncSetTimeout(1);
+
+        await userEvent.click(commitButton);
+        await asyncSetTimeout(1);
+
+        expect(cell).toHaveTextContent('123');
+        expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
+
+        commitButton.remove();
+    });
 });

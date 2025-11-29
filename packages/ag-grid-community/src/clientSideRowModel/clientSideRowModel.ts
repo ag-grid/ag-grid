@@ -495,7 +495,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return false; // Not a transaction update
         }
 
-        if (changedRowNodes.removals.size || changedRowNodes.adds.size) {
+        if (changedRowNodes.removals.length || changedRowNodes.adds.size) {
             return false; // There are added rows or removed rows, not just updates
         }
 

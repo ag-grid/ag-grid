@@ -421,8 +421,7 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
     }
 
     rowNode.rowPinned = null;
-    rowNode.setRowTop(null);
-    rowNode.setRowIndex(null);
+    rowNode._destroy(false);
 
     const mainNode = rowNode.pinnedSibling;
     rowNode.pinnedSibling = undefined as any;
