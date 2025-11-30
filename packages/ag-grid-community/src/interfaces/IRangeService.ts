@@ -35,6 +35,7 @@ export interface IRangeService {
     addCellRange(params: CellRangeParams): CellRange | undefined;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
+    extendRangeToCell(cellRange: CellRange, cell: CellPosition): void;
     extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void;
     extendRangeColumnCountBy(cellRange: CellRange, delta: number): void;
     updateRangeRowBoundary(params: CellRangeBoundaryParams): void;

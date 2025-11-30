@@ -318,7 +318,7 @@ export class CellRangeFeature implements ICellRangeFeature {
             }
         }
 
-        this.selectionHandle?.refresh(this.cellCtrl);
+        this.selectionHandle?.refresh(this.cellCtrl, cellRange);
     }
 
     public destroy(): void {

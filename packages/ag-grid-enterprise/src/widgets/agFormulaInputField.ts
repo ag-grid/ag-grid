@@ -42,6 +42,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     private lastTokenRef?: string;
     // All ranges created by this editor (used to clean up on destroy).
     private readonly trackedRangeRefs = new Set<string>();
+    private readonly trackedRanges = new Map<CellRange, string>();
     // Stops programmatic range updates from re-entering our range event handler.
     private suppressRangeEvents = false;
 
@@ -79,6 +80,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         // Remove any ranges we created while editing so they don't linger after the editor closes.
         this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
         this.trackedRangeRefs.clear();
+        this.trackedRanges.clear();
     }
 
     public getCurrentValue(): string {
@@ -138,6 +140,11 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private onRangeSelectionChanged(event: RangeSelectionChangedEvent): void {
         if (this.suppressRangeEvents) {
+            return;
+        }
+
+        // If a tracked range was resized (e.g. via handle drag), update the existing token instead of adding a new one.
+        if (this.updateTrackedRangeTokens()) {
             return;
         }
 
@@ -268,6 +275,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.suppressRangeEvents = false;
         if (created) {
             this.trackedRangeRefs.add(ref);
+            this.trackedRanges.set(created, ref);
         }
     }
 
@@ -287,6 +295,11 @@ export class AgFormulaInputField extends AgContentEditableField<
         const ranges = rangeSvc.getCellRanges();
         if (!ranges?.length) {
             this.trackedRangeRefs.delete(ref);
+            for (const [range, storedRef] of this.trackedRanges.entries()) {
+                if (storedRef === ref) {
+                    this.trackedRanges.delete(range);
+                }
+            }
             return;
         }
 
@@ -294,6 +307,11 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         if (remaining.length === ranges.length) {
             this.trackedRangeRefs.delete(ref);
+            for (const [range, storedRef] of this.trackedRanges.entries()) {
+                if (storedRef === ref) {
+                    this.trackedRanges.delete(range);
+                }
+            }
             return;
         }
 
@@ -301,6 +319,11 @@ export class AgFormulaInputField extends AgContentEditableField<
         rangeSvc.setCellRanges(remaining);
         this.suppressRangeEvents = false;
         this.trackedRangeRefs.delete(ref);
+        for (const [range, storedRef] of this.trackedRanges.entries()) {
+            if (storedRef === ref) {
+                this.trackedRanges.delete(range);
+            }
+        }
     }
 
     private syncRangesFromFormula(value?: string | null): void {
@@ -321,6 +344,15 @@ export class AgFormulaInputField extends AgContentEditableField<
                 this.addRangeForRef(ref);
             }
         });
+
+        // Drop any range mappings that no longer exist after syncing.
+        for (const [range, storedRef] of this.trackedRanges.entries()) {
+            const rangeWasReplaced = !this.beans.rangeSvc?.getCellRanges().includes(range);
+            if (!this.trackedRangeRefs.has(storedRef) || rangeWasReplaced) {
+                // Remove stale mapping when the ref was removed or the grid replaced the range object.
+                this.trackedRanges.delete(range);
+            }
+        }
     }
 
     private onTokenKeyDown(event: KeyboardEvent): void {
@@ -369,6 +401,63 @@ export class AgFormulaInputField extends AgContentEditableField<
                 break;
             }
         }
+    }
+
+    private updateTrackedRangeTokens(): boolean {
+        const rangeSvc = this.beans.rangeSvc;
+        if (!rangeSvc) {
+            return false;
+        }
+
+        const ranges = rangeSvc.getCellRanges();
+        let updated = false;
+
+        for (const range of ranges) {
+            const previousRef = this.trackedRanges.get(range);
+            if (!previousRef) {
+                continue;
+            }
+
+            const nextRef = rangeToRef(this.beans, range);
+            if (!nextRef || nextRef === previousRef || nextRef === this.editingCellRef) {
+                continue;
+            }
+
+            if (this.replaceTokenRef(previousRef, nextRef)) {
+                this.trackedRanges.set(range, nextRef);
+                this.trackedRangeRefs.delete(previousRef);
+                this.trackedRangeRefs.add(nextRef);
+                updated = true;
+            }
+        }
+
+        return updated;
+    }
+
+    private replaceTokenRef(previousRef: string, nextRef: string): boolean {
+        const contentElement = this.getContentElement();
+        const token = Array.from(contentElement.querySelectorAll<HTMLElement>('.ag-formula-token')).find(
+            (node) => getTokenRef(node) === previousRef
+        );
+
+        if (!token) {
+            return false;
+        }
+
+        const caretOffset = getOffsetBeforeNode(contentElement, token);
+        const valueOffset = getOffsetBeforeNode(contentElement, token, true);
+
+        if (caretOffset == null || valueOffset == null) {
+            return false;
+        }
+
+        const value = this.getCurrentValue();
+        const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
+        this.setEditorValue(updated);
+        renderFormula(contentElement, value, updated, caretOffset + nextRef.length);
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' });
+
+        return true;
     }
 }
 

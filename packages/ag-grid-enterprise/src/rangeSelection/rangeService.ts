@@ -635,6 +635,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.updateRangeRowBoundary({ cellRange, boundary: 'end', cellPosition });
     }
 
+    public extendRangeToCell(cellRange: CellRange, cellPosition: CellPosition): void {
+        if (!cellRange) {
+            return;
+        }
+
+        this.setSelectionMode(isRowNumberCol(cellPosition.column));
+        this.updateRangeRowBoundary({ cellRange, boundary: 'end', cellPosition });
+    }
+
     public updateRangeRowBoundary(params: CellRangeBoundaryParams): void {
         const { cellRange, boundary, cellPosition, silent = false } = params;
         const endColumn = cellPosition.column as AgColumn;

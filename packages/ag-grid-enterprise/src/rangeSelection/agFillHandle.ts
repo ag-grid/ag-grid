@@ -757,15 +757,15 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
     }
 
-    public override refresh(cellCtrl: CellCtrl) {
-        const cellRange = this.beans.rangeSvc!.getCellRanges()[0];
-        const isColumnRange = !cellRange.startRow || !cellRange.endRow;
+    public override refresh(cellCtrl: CellCtrl, cellRange?: CellRange) {
+        const cellRangeToUse = cellRange ?? this.beans.rangeSvc!.getCellRanges()[0];
+        const isColumnRange = !cellRangeToUse.startRow || !cellRangeToUse.endRow;
 
         if (isColumnRange) {
             this.destroy();
             return;
         }
 
-        super.refresh(cellCtrl);
+        super.refresh(cellCtrl, cellRangeToUse);
     }
 }

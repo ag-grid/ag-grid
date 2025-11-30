@@ -1,4 +1,4 @@
-import type { CellCtrl, CellPosition, CellRange, RowPosition } from 'ag-grid-community';
+import type { CellCtrl, CellPosition, CellRange, CellSelectionChangedEvent, RowPosition } from 'ag-grid-community';
 import {
     Component,
     _areCellsEqual,
@@ -64,6 +64,10 @@ export abstract class AbstractSelectionHandle extends Component {
             },
         });
 
+        this.addManagedEventListeners({
+            cellSelectionChanged: this.updateLocalRangeIfNeeded.bind(this),
+        });
+
         this.addManagedElementListeners(this.getGui(), {
             pointerdown: stopEventPropagation,
             mousedown: stopEventPropagation,
@@ -115,14 +119,14 @@ export abstract class AbstractSelectionHandle extends Component {
         return this.type;
     }
 
-    public refresh(cellCtrl: CellCtrl) {
+    public refresh(cellCtrl: CellCtrl, cellRange?: CellRange) {
         const oldCellComp = this.cellCtrl;
         const eGui = this.getGui();
 
-        const cellRange = _last(this.beans.rangeSvc!.getCellRanges());
+        const cellRangeToUse = cellRange ?? _last(this.beans.rangeSvc!.getCellRanges());
 
-        const start = cellRange.startRow;
-        const end = cellRange.endRow;
+        const start = cellRangeToUse.startRow;
+        const end = cellRangeToUse.endRow;
 
         if (start && end) {
             const isBefore = _isRowBefore(end, start);
@@ -144,7 +148,7 @@ export abstract class AbstractSelectionHandle extends Component {
             }
         }
 
-        this.cellRange = cellRange;
+        this.cellRange = cellRangeToUse;
     }
 
     protected clearValues() {
@@ -163,6 +167,22 @@ export abstract class AbstractSelectionHandle extends Component {
         super.destroy();
 
         this.getGui()?.remove();
+    }
+
+    private updateLocalRangeIfNeeded(event: CellSelectionChangedEvent) {
+        if (!this.cellRange) {
+            return;
+        }
+        const { id, type } = this.cellRange;
+        if (!id || id !== event.id) {
+            return;
+        }
+
+        const newRange = this.beans.rangeSvc?.getCellRanges().find((range) => range.id === id && range.type === type);
+
+        if (newRange && newRange !== this.cellRange) {
+            this.cellRange = newRange;
+        }
     }
 }
 
