@@ -67,6 +67,8 @@ export class AgFormulaInputField extends AgContentEditableField<
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
         renderFormula(this.getContentElement(), this.getCurrentValue(), text, null);
+        // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
+        // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
         this.syncRangesFromFormula(text);
         return res;
@@ -115,6 +117,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         this.editingCellRef = `${colRef}${rowIndex + 1}`;
+    }
+
+    private setEditorValue(value: string, silent: boolean = false): this {
+        this.currentValue = value;
+        super.setValue(value, silent);
+        return this;
     }
 
     private onContentInput(): void {
@@ -313,12 +321,6 @@ export class AgFormulaInputField extends AgContentEditableField<
                 this.addRangeForRef(ref);
             }
         });
-    }
-
-    private setEditorValue(value: string, silent: boolean = false): this {
-        this.currentValue = value;
-        super.setValue(value, silent);
-        return this;
     }
 
     private onTokenKeyDown(event: KeyboardEvent): void {

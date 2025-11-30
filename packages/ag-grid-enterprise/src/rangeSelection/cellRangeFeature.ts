@@ -275,8 +275,9 @@ export class CellRangeFeature implements ICellRangeFeature {
             const isCellEditing = editSvc?.isEditing(this.cellCtrl, { withOpenEditor: true });
 
             let handleIsAvailable =
-                isRangeSelectionEnabledWhileEditing ||
-                (rangesLen === 1 && !isCellEditing && (isFillHandleAvailable || isRangeHandleAvailable));
+                !isCellEditing &&
+                (isRangeSelectionEnabledWhileEditing ||
+                    (rangesLen === 1 && (isFillHandleAvailable || isRangeHandleAvailable)));
 
             if (this.hasChartRange) {
                 handleIsAvailable = cellRange.type === CellRangeType.VALUE;
