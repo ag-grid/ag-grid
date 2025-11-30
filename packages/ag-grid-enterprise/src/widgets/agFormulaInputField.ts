@@ -8,7 +8,7 @@ import type {
     GridOptionsWithDefaults,
     RangeSelectionChangedEvent,
 } from 'ag-grid-community';
-import { AgContentEditableField, KeyCode, _last } from 'ag-grid-community';
+import { AgContentEditableField, KeyCode, _createElement, _last } from 'ag-grid-community';
 
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 
@@ -67,16 +67,23 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
-        this.renderFormula(text, null);
+        renderFormula(this.getContentElement(), this.getCurrentValue(), text, null);
         const res = this.setEditorValue(text, silent);
         this.syncRangesFromFormula(text);
         return res;
     }
 
+    public override destroy(): void {
+        super.destroy();
+        // Remove any ranges we created while editing so they don't linger after the editor closes.
+        this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
+        this.trackedRangeRefs.clear();
+    }
+
     public getCurrentValue(): string {
         // Validation can run before our input handler updates `currentValue`, so always
         // re-serialise the DOM to stay in sync with what the user currently sees.
-        const liveValue = this.serializeContent();
+        const liveValue = serializeContent(this.getContentElement());
 
         if (liveValue !== this.currentValue) {
             this.setEditorValue(liveValue, true);
@@ -100,11 +107,24 @@ export class AgFormulaInputField extends AgContentEditableField<
         selection.addRange(range);
     }
 
-    private onContentInput(): void {
-        const caret = this.getCaretOffset();
-        const serialized = this.serializeContent();
+    public setEditingCellRef(column: any, rowIndex: number | null | undefined): void {
+        const colRef = column ? this.beans.formula?.getColRef(column as any) : undefined;
 
-        this.renderFormula(serialized, caret ?? undefined);
+        if (!colRef || rowIndex == null || rowIndex === undefined) {
+            this.editingCellRef = undefined;
+            return;
+        }
+
+        this.editingCellRef = `${colRef}${rowIndex + 1}`;
+    }
+
+    private onContentInput(): void {
+        const contentElement = this.getContentElement();
+        const currentValue = this.getCurrentValue();
+        const caret = getCaretOffset(contentElement, currentValue);
+        const serialized = serializeContent(contentElement);
+
+        renderFormula(contentElement, currentValue, serialized, caret ?? undefined);
         this.setEditorValue(serialized);
         this.syncRangesFromFormula(serialized);
     }
@@ -114,7 +134,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             return;
         }
 
-        const ref = this.getLatestRangeRef();
+        const ref = getLatestRangeRef(this.beans);
 
         if (!ref || ref === this.editingCellRef) {
             return;
@@ -122,7 +142,8 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         if (event.started) {
             // Remember caret to reapply after range selection inserts a token.
-            this.selectionCaretOffset = this.getCaretOffset() ?? this.currentValue.length;
+            this.selectionCaretOffset =
+                getCaretOffset(this.getContentElement(), this.getCurrentValue()) ?? this.currentValue.length;
         }
 
         if (event.started && event.finished) {
@@ -142,86 +163,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
     }
 
-    private getLatestRangeRef(): string | null {
-        const ranges = this.beans.rangeSvc?.getCellRanges();
-        const latest = ranges?.length ? _last(ranges) : null;
-
-        if (!latest) {
-            return null;
-        }
-
-        return this.rangeToRef(latest);
-    }
-
-    private rangeToRef(range: CellRange): string | null {
-        const { rangeSvc, formula } = this.beans;
-
-        if (!rangeSvc || !formula) {
-            return null;
-        }
-
-        const startRow = rangeSvc.getRangeStartRow(range);
-        const endRow = rangeSvc.getRangeEndRow(range);
-
-        if (!startRow || !endRow || startRow.rowPinned || endRow.rowPinned) {
-            return null;
-        }
-
-        const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
-        const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
-
-        const columns = range.columns;
-
-        if (!columns?.length) {
-            return null;
-        }
-
-        const sorted = [...columns];
-        const startCol = sorted[0];
-        const endCol = sorted[sorted.length - 1];
-
-        const colStartRef = formula.getColRef(startCol as any);
-        const colEndRef = formula.getColRef(endCol as any);
-
-        if (!colStartRef || !colEndRef) {
-            return null;
-        }
-
-        const sameCol = colStartRef === colEndRef;
-        const sameRow = rowStartIndex === rowEndIndex;
-
-        if (sameCol && sameRow) {
-            return `${colStartRef}${rowStartIndex}`;
-        }
-
-        return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
-    }
-
-    private insertReference(ref: string, caretAfterInsert?: number): void {
-        const contentEl = this.getContentElement();
-        const selection = window.getSelection();
-        const range = selection?.rangeCount && selection.getRangeAt(0);
-        const refNode = this.createReferenceNode(ref);
-
-        if (range && contentEl.contains(range.startContainer)) {
-            range.deleteContents();
-            range.insertNode(refNode);
-            range.setStartAfter(refNode);
-            range.setEndAfter(refNode);
-            selection!.removeAllRanges();
-            selection!.addRange(range);
-        } else {
-            contentEl.append(refNode);
-        }
-
-        const serialized = this.serializeContent();
-
-        this.renderFormula(serialized, caretAfterInsert ?? serialized.length);
-        this.setEditorValue(serialized);
-    }
-
     private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean = true): void {
-        const caretOffset = this.selectionCaretOffset ?? this.getCaretOffset() ?? this.currentValue.length;
+        const contentElement = this.getContentElement();
+        const caretOffset =
+            this.selectionCaretOffset ??
+            getCaretOffset(contentElement, this.getCurrentValue()) ??
+            this.currentValue.length;
         const valueOffset =
             isNew || this.lastTokenValueOffset == null
                 ? this.getValueOffsetFromCaret(caretOffset)
@@ -242,7 +189,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.lastTokenRef = ref;
 
         this.setEditorValue(updatedValue);
-        this.renderFormula(updatedValue, caretOffset + 1);
+        renderFormula(contentElement, value, updatedValue, caretOffset + 1);
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
         if (manageRanges) {
             if (!isNew && previousRef && previousRef !== ref) {
@@ -259,7 +206,10 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private restoreCaretAfterToken(): void {
-        const caret = (this.lastTokenCaretOffset ?? this.getCaretOffset() ?? this.currentValue.length) + 1;
+        const caret =
+            (this.lastTokenCaretOffset ??
+                getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
+                this.currentValue.length) + 1;
         this.selectionCaretOffset = null;
 
         setTimeout(() => {
@@ -267,7 +217,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                 return;
             }
             this.getContentElement().focus({ preventScroll: true });
-            this.restoreCaret(caret);
+            restoreCaret(this.getContentElement(), caret);
         });
     }
 
@@ -277,8 +227,8 @@ export class AgFormulaInputField extends AgContentEditableField<
         let valueOffset = 0;
 
         for (const child of Array.from(container.childNodes)) {
-            const caretLen = this.getNodeTextLength(child);
-            const valueLen = this.getNodeText(child).length;
+            const caretLen = getNodeTextLength(child);
+            const valueLen = getNodeText(child).length;
 
             if (caretRemaining <= caretLen) {
                 // Tokens count as 1 caret unit but multiple value units.
@@ -297,8 +247,10 @@ export class AgFormulaInputField extends AgContentEditableField<
             return;
         }
 
-        const params = this.getCellRangeParams(ref);
-        const rangeSvc = this.beans.rangeSvc;
+        const beans = this.beans;
+
+        const params = getCellRangeParams(beans, ref);
+        const rangeSvc = beans.rangeSvc;
 
         if (!params || !rangeSvc) {
             return;
@@ -317,7 +269,9 @@ export class AgFormulaInputField extends AgContentEditableField<
             return;
         }
 
-        const rangeSvc = this.beans.rangeSvc;
+        const beans = this.beans;
+        const { rangeSvc } = beans;
+
         if (!rangeSvc) {
             this.trackedRangeRefs.delete(ref);
             return;
@@ -329,7 +283,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             return;
         }
 
-        const remaining = ranges.filter((range) => this.rangeToRef(range) !== ref);
+        const remaining = ranges.filter((range) => rangeToRef(beans, range) !== ref);
 
         if (remaining.length === ranges.length) {
             this.trackedRangeRefs.delete(ref);
@@ -344,7 +298,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private syncRangesFromFormula(value?: string | null): void {
         const text = value ?? this.getCurrentValue() ?? '';
-        const refs = this.getRefsFromText(text);
+        const refs = getRefsFromText(text);
 
         const toRemove: string[] = [];
         for (const tracked of this.trackedRangeRefs) {
@@ -362,273 +316,29 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
     }
 
-    private getRefsFromText(text: string): Set<string> {
-        // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
-        const refs = new Set<string>();
-        let match: RegExpExecArray | null;
-        CELL_OR_RANGE_REGEX.lastIndex = 0;
-        while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-            refs.add(match[0]);
-        }
-        return refs;
-    }
-
-    private getCellRangeParams(ref: string) {
-        const match = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/.exec(ref);
-        if (!match) {
-            return null;
-        }
-
-        const [, startColRef, startRowStr, endColRef, endRowStr] = match;
-        const startCol = this.beans.formula?.getColByRef(startColRef);
-        const endCol = this.beans.formula?.getColByRef(endColRef ?? startColRef);
-
-        if (!startCol || !endCol) {
-            return null;
-        }
-
-        const rowStartIndex = parseInt(startRowStr, 10) - 1;
-        const rowEndIndex = endRowStr ? parseInt(endRowStr, 10) - 1 : rowStartIndex;
-
-        return {
-            rowStartIndex,
-            rowEndIndex,
-            columnStart: startCol,
-            columnEnd: endCol,
-        };
-    }
-
-    private renderFormula(value: string, caret?: number | null): void {
-        const container = this.getContentElement();
-        const caretOffset = caret ?? this.getCaretOffset();
-        const maxCaret = value.length;
-
-        container.textContent = '';
-
-        for (const node of this.tokenize(value)) {
-            container.append(node);
-        }
-
-        const targetCaret = caretOffset != null ? Math.min(caretOffset, maxCaret) : null;
-        this.restoreCaret(targetCaret);
-    }
-
-    private tokenize(value: string): Node[] {
-        const nodes: Node[] = [];
-        let lastIndex = 0;
-        CELL_OR_RANGE_REGEX.lastIndex = 0;
-
-        let match: RegExpExecArray | null;
-
-        while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
-            const [text] = match;
-            const index = match.index ?? 0;
-
-            if (index > lastIndex) {
-                nodes.push(document.createTextNode(this.formatForDisplay(value.slice(lastIndex, index))));
-            }
-
-            nodes.push(this.createReferenceNode(text));
-            lastIndex = index + text.length;
-        }
-
-        if (lastIndex < value.length) {
-            nodes.push(document.createTextNode(this.formatForDisplay(value.slice(lastIndex))));
-        }
-
-        if (!nodes.length) {
-            nodes.push(document.createTextNode(''));
-        }
-
-        return nodes;
-    }
-
-    private createReferenceNode(ref: string): HTMLElement {
-        // Render a ref as a single focusable unit so caret/selection treats it like one character.
-        // Visible text comes from CSS ::before; DOM text is a zero-width placeholder.
-        const span = document.createElement('span');
-        span.className = 'ag-formula-token';
-        span.textContent = '\u200B'; // keep selection length at 1 while hiding the actual text
-        span.dataset.formulaRef = ref;
-        span.setAttribute('contenteditable', 'false');
-        span.setAttribute('aria-label', ref);
-        span.tabIndex = -1;
-        return span;
-    }
-
-    private serializeContent(): string {
-        const contentEl = this.getContentElement();
-        let output = '';
-
-        contentEl.childNodes.forEach((child) => {
-            output += this.getNodeText(child);
-        });
-
-        return output;
-    }
-
-    private getNodeText(node: Node): string {
-        if (node.nodeType === Node.TEXT_NODE) {
-            return this.formatForValue(node.textContent ?? '');
-        }
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as HTMLElement;
-
-            if (el.dataset?.formulaRef) {
-                // Token nodes serialize back to their stored ref string (not the placeholder).
-                return el.dataset.formulaRef;
-            }
-
-            return Array.from(node.childNodes)
-                .map((child) => this.getNodeText(child))
-                .join('');
-        }
-
-        return '';
-    }
-
-    private formatForDisplay(text: string): string {
-        return text.replace(/[/*]/g, (match) => DISPLAY_OPERATOR_LOOKUP[match] ?? match);
-    }
-
-    private formatForValue(text: string): string {
-        return text.replace(/[÷×]/g, (match) => VALUE_OPERATOR_LOOKUP[match] ?? match);
-    }
-
-    private getCaretOffset(): number | null {
-        const selection = window.getSelection();
-
-        if (!selection || selection.rangeCount === 0) {
-            return this.currentValue?.length ?? null;
-        }
-
-        const range = selection.getRangeAt(0);
-        const container = this.getContentElement();
-
-        if (!container.contains(range.startContainer)) {
-            return this.currentValue?.length ?? null;
-        }
-
-        let offset = range.startOffset;
-        let node: Node | null = range.startContainer;
-
-        while (node && node !== container) {
-            let sibling = node.previousSibling;
-
-            while (sibling) {
-                offset += this.getNodeTextLength(sibling);
-                sibling = sibling.previousSibling;
-            }
-
-            node = node.parentNode;
-        }
-
-        return offset;
-    }
-
-    private restoreCaret(offset: number | null): void {
-        if (offset == null) {
-            return;
-        }
-
-        const container = this.getContentElement();
-        const selection = window.getSelection();
-        const range = document.createRange();
-        const { node, localOffset } = this.findNodeAtOffset(container, offset);
-
-        if (!node || !selection || !container.isConnected || !node.isConnected) {
-            return;
-        }
-
-        range.setStart(node, localOffset);
-        range.collapse(true);
-        selection.removeAllRanges();
-        try {
-            selection.addRange(range);
-        } catch {
-            // Ignore invalid ranges when the editor is detached from the document.
-        }
-    }
-
-    private findNodeAtOffset(root: Node, offset: number): { node: Node | null; localOffset: number } {
-        let remaining = offset;
-
-        for (let i = 0; i < root.childNodes.length; i++) {
-            const child = root.childNodes[i];
-            const length = this.getNodeTextLength(child);
-
-            if (remaining > length) {
-                remaining -= length;
-                continue;
-            }
-
-            if (child.nodeType === Node.TEXT_NODE) {
-                return { node: child, localOffset: remaining };
-            }
-
-            if (child.nodeType === Node.ELEMENT_NODE && (child as HTMLElement).dataset?.formulaRef) {
-                const parent = child.parentNode;
-                const position = remaining === 0 ? i : i + 1;
-                return { node: parent, localOffset: position };
-            }
-
-            return this.findNodeAtOffset(child, remaining);
-        }
-
-        return { node: root, localOffset: root.childNodes.length };
-    }
-
-    private getNodeTextLength(node: Node): number {
-        if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent?.length ?? 0;
-        }
-
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const el = node as HTMLElement;
-
-            if (el.dataset?.formulaRef) {
-                return 1;
-            }
-
-            return Array.from(node.childNodes).reduce((sum, child) => sum + this.getNodeTextLength(child), 0);
-        }
-
-        return 0;
-    }
-
     private setEditorValue(value: string, silent: boolean = false): this {
         this.currentValue = value;
         super.setValue(value, silent);
         return this;
     }
 
-    public setEditingCellRef(column: any, rowIndex: number | null | undefined): void {
-        const colRef = column ? this.beans.formula?.getColRef(column as any) : undefined;
-
-        if (!colRef || rowIndex == null || rowIndex === undefined) {
-            this.editingCellRef = undefined;
-            return;
-        }
-
-        this.editingCellRef = `${colRef}${rowIndex + 1}`;
-    }
-
     private onTokenKeyDown(event: KeyboardEvent): void {
-        const target = event.target as HTMLElement;
+        const token = getTokenElement(event.target);
 
-        if (!target?.dataset?.formulaRef) {
+        if (!token) {
             return;
         }
 
-        const caretOffset = this.getOffsetBeforeNode(target);
-        const valueOffset = this.getOffsetBeforeNode(target, true);
+        const contentElement = this.getContentElement();
+        const caretOffset = getOffsetBeforeNode(contentElement, token);
+        const valueOffset = getOffsetBeforeNode(contentElement, token, true);
         if (caretOffset == null || valueOffset == null) {
             return;
         }
 
+        const tokenRef = getTokenRef(token);
         const value = this.getCurrentValue();
-        const tokenLength = target.dataset.formulaRef?.length ?? 1;
+        const tokenLength = tokenRef.length || 1;
 
         switch (event.key) {
             case KeyCode.BACKSPACE:
@@ -636,58 +346,347 @@ export class AgFormulaInputField extends AgContentEditableField<
                 event.preventDefault();
                 const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
                 this.setEditorValue(updated);
-                this.renderFormula(updated, caretOffset);
-                this.removeRangeForRef(target.dataset.formulaRef);
+                renderFormula(contentElement, value, updated, caretOffset);
+                this.removeRangeForRef(tokenRef);
+                this.syncRangesFromFormula(updated);
                 break;
             }
-            case KeyCode.LEFT: {
-                event.preventDefault();
-                this.renderFormula(value, caretOffset);
-                this.setEditorValue(value, true);
-                break;
-            }
+            case KeyCode.LEFT:
             case KeyCode.RIGHT: {
-                event.preventDefault();
-                this.renderFormula(value, caretOffset + 1);
-                this.setEditorValue(value, true);
                 break;
             }
             default: {
                 if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
                     event.preventDefault();
-                    const replacement = this.formatForValue(event.key);
+                    const replacement = formatForValue(event.key);
                     const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
+                    const nextCaret = caretOffset + replacement.length;
                     this.setEditorValue(updated);
-                    this.renderFormula(updated, caretOffset + 1);
-                    this.addRangeForRef(replacement);
+                    renderFormula(contentElement, value, updated, nextCaret);
+                    this.syncRangesFromFormula(updated);
                 }
                 break;
             }
         }
     }
+}
 
-    private getOffsetBeforeNode(node: Node, useValueLength: boolean = false): number | null {
-        const container = this.getContentElement();
+// Rendering & caret helpers
+const tokenize = (value: string): Node[] => {
+    const nodes: Node[] = [];
+    let lastIndex = 0;
+    CELL_OR_RANGE_REGEX.lastIndex = 0;
 
-        if (!container.contains(node)) {
-            return null;
+    let match: RegExpExecArray | null;
+
+    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
+        const [text] = match;
+        const index = match.index ?? 0;
+
+        if (index > lastIndex) {
+            nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, index))));
         }
 
-        let offset = 0;
-        for (const child of Array.from(container.childNodes)) {
-            if (child === node) {
-                return offset;
-            }
-            offset += useValueLength ? this.getNodeText(child).length : this.getNodeTextLength(child);
+        nodes.push(createReferenceNode(text));
+        lastIndex = index + text.length;
+    }
+
+    if (lastIndex < value.length) {
+        nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex))));
+    }
+
+    if (!nodes.length) {
+        nodes.push(document.createTextNode(''));
+    }
+
+    return nodes;
+};
+
+const createReferenceNode = (ref: string): HTMLElement =>
+    _createElement({
+        tag: 'span',
+        cls: 'ag-formula-token',
+        attrs: {
+            contenteditable: 'false',
+            'aria-label': ref,
+            tabIndex: '-1',
+            'data-formula-ref': ref,
+        },
+        children: ref,
+    });
+
+const renderFormula = (
+    contentElement: HTMLElement,
+    currentValue: string,
+    value: string,
+    caret?: number | null
+): void => {
+    const caretOffset = caret ?? getCaretOffset(contentElement, currentValue);
+    const maxCaret = value.length;
+
+    contentElement.textContent = '';
+
+    for (const node of tokenize(value)) {
+        contentElement.append(node);
+    }
+
+    const targetCaret = caretOffset != null ? Math.min(caretOffset, maxCaret) : null;
+    restoreCaret(contentElement, targetCaret);
+};
+
+const getCaretOffset = (contentElement: HTMLElement, currentValue: string): number | null => {
+    const selection = window.getSelection();
+
+    if (!selection || selection.rangeCount === 0) {
+        return currentValue?.length ?? null;
+    }
+
+    const range = selection.getRangeAt(0);
+
+    if (!contentElement.contains(range.startContainer)) {
+        return currentValue?.length ?? null;
+    }
+
+    let offset = range.startOffset;
+    let node: Node | null = range.startContainer;
+
+    while (node && node !== contentElement) {
+        let sibling = node.previousSibling;
+
+        while (sibling) {
+            offset += getNodeTextLength(sibling);
+            sibling = sibling.previousSibling;
         }
 
+        node = node.parentNode;
+    }
+
+    return offset;
+};
+
+const restoreCaret = (contentElement: HTMLElement, offset: number | null): void => {
+    if (offset == null) {
+        return;
+    }
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    const { node, localOffset } = findNodeAtOffset(contentElement, offset);
+
+    if (!node || !selection || !contentElement.isConnected || !node.isConnected) {
+        return;
+    }
+
+    range.setStart(node, localOffset);
+    range.collapse(true);
+    selection.removeAllRanges();
+    try {
+        selection.addRange(range);
+    } catch {
+        // Ignore invalid ranges when the editor is detached from the document.
+    }
+};
+
+const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; localOffset: number } => {
+    let remaining = offset;
+
+    for (let i = 0; i < root.childNodes.length; i++) {
+        const child = root.childNodes[i];
+        const length = getNodeTextLength(child);
+
+        if (remaining > length) {
+            remaining -= length;
+            continue;
+        }
+
+        if (child.nodeType === Node.TEXT_NODE) {
+            return { node: child, localOffset: remaining };
+        }
+
+        if (child.nodeType === Node.ELEMENT_NODE && isTokenElement(child)) {
+            const parent = child.parentNode;
+            const position = remaining === 0 ? i : i + 1;
+            return { node: parent, localOffset: position };
+        }
+
+        return findNodeAtOffset(child, remaining);
+    }
+
+    return { node: root, localOffset: root.childNodes.length };
+};
+
+const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength: boolean = false): number | null => {
+    if (!container.contains(node)) {
         return null;
     }
 
-    public override destroy(): void {
-        super.destroy();
-        // Remove any ranges we created while editing so they don't linger after the editor closes.
-        this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
-        this.trackedRangeRefs.clear();
+    let offset = 0;
+    for (const child of Array.from(container.childNodes)) {
+        if (child === node) {
+            return offset;
+        }
+        offset += useValueLength ? getNodeText(child).length : getNodeTextLength(child);
     }
-}
+
+    return null;
+};
+
+// Serialization helpers
+const serializeContent = (contentElement: HTMLElement): string => {
+    let output = '';
+
+    contentElement.childNodes.forEach((child) => {
+        output += getNodeText(child);
+    });
+
+    return output;
+};
+
+const getNodeText = (node: Node): string => {
+    if (node.nodeType === Node.TEXT_NODE) {
+        return formatForValue(node.textContent ?? '');
+    }
+
+    if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement;
+
+        if (isTokenElement(el)) {
+            // Token nodes serialize back to their stored ref string (not the placeholder).
+            return getTokenRef(el);
+        }
+
+        return Array.from(node.childNodes)
+            .map((child) => getNodeText(child))
+            .join('');
+    }
+
+    return '';
+};
+
+const getNodeTextLength = (node: Node): number => {
+    if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent?.length ?? 0;
+    }
+
+    if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement;
+
+        if (isTokenElement(el)) {
+            return 1;
+        }
+
+        return Array.from(node.childNodes).reduce((sum, child) => sum + getNodeTextLength(child), 0);
+    }
+
+    return 0;
+};
+
+// Range helpers
+const getCellRangeParams = (beans: BeanCollection, ref: string) => {
+    const match = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/.exec(ref);
+    if (!match) {
+        return null;
+    }
+
+    const { formula } = beans;
+
+    const [, startColRef, startRowStr, endColRef, endRowStr] = match;
+    const startCol = formula?.getColByRef(startColRef);
+    const endCol = formula?.getColByRef(endColRef ?? startColRef);
+
+    if (!startCol || !endCol) {
+        return null;
+    }
+
+    const rowStartIndex = parseInt(startRowStr, 10) - 1;
+    const rowEndIndex = endRowStr ? parseInt(endRowStr, 10) - 1 : rowStartIndex;
+
+    return {
+        rowStartIndex,
+        rowEndIndex,
+        columnStart: startCol,
+        columnEnd: endCol,
+    };
+};
+
+const getLatestRangeRef = (beans: BeanCollection): string | null => {
+    const ranges = beans.rangeSvc?.getCellRanges();
+    const latest = ranges?.length ? _last(ranges) : null;
+
+    if (!latest) {
+        return null;
+    }
+
+    return rangeToRef(beans, latest);
+};
+
+const rangeToRef = (beans: BeanCollection, range: CellRange): string | null => {
+    const { rangeSvc, formula } = beans;
+
+    if (!rangeSvc || !formula) {
+        return null;
+    }
+
+    const startRow = rangeSvc.getRangeStartRow(range);
+    const endRow = rangeSvc.getRangeEndRow(range);
+
+    if (!startRow || !endRow || startRow.rowPinned || endRow.rowPinned) {
+        return null;
+    }
+
+    const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
+    const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
+
+    const columns = range.columns;
+
+    if (!columns?.length) {
+        return null;
+    }
+
+    const sorted = [...columns];
+    const startCol = sorted[0];
+    const endCol = sorted[sorted.length - 1];
+
+    const colStartRef = formula.getColRef(startCol as any);
+    const colEndRef = formula.getColRef(endCol as any);
+
+    if (!colStartRef || !colEndRef) {
+        return null;
+    }
+
+    const sameCol = colStartRef === colEndRef;
+    const sameRow = rowStartIndex === rowEndIndex;
+
+    if (sameCol && sameRow) {
+        return `${colStartRef}${rowStartIndex}`;
+    }
+
+    return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
+};
+
+const getRefsFromText = (text: string): Set<string> => {
+    // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
+    const refs = new Set<string>();
+    let match: RegExpExecArray | null;
+    CELL_OR_RANGE_REGEX.lastIndex = 0;
+    while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
+        refs.add(match[0]);
+    }
+    return refs;
+};
+
+// Token helpers
+const getTokenElement = (target: EventTarget | null): HTMLElement | null =>
+    (target as HTMLElement | null)?.closest?.('.ag-formula-token') ?? null;
+
+const isTokenElement = (node: Node | null): node is HTMLElement =>
+    !!node && node instanceof HTMLElement && node.classList.contains('ag-formula-token');
+
+const getTokenRef = (tokenEl: HTMLElement): string => tokenEl.dataset.formulaRef ?? tokenEl.textContent ?? '';
+
+// Text formatting helpers
+const formatForDisplay = (text: string): string =>
+    text.replace(/[/*]/g, (match) => DISPLAY_OPERATOR_LOOKUP[match] ?? match);
+
+const formatForValue = (text: string): string =>
+    text.replace(/[÷×]/g, (match) => VALUE_OPERATOR_LOOKUP[match] ?? match);
