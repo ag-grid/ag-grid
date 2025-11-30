@@ -2,7 +2,7 @@ import { _setAriaInvalid } from '../../agStack/utils/aria';
 import { _getLocaleTextFunc } from '../../agStack/utils/locale';
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
-import type { BeanCollection } from '../../context/context';
+import type { BeanCollection, UserComponentName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { CellEditingStoppedEvent } from '../../events';
@@ -151,11 +151,23 @@ export function _setupEditor(
     }
 
     const colDef = position.column.getColDef();
-    const compDetails = _getCellEditorDetails(
-        userCompFactory,
-        isAllowFormula ? { ...colDef, cellEditor: 'agFormulaCellEditor' } : colDef,
-        editorParams
-    );
+    let cellEditorParams = colDef;
+
+    if (isAllowFormula) {
+        cellEditorParams = { ...colDef };
+        const supportedEditors: UserComponentName[] = [
+            'agFormulaCellEditor',
+            'agTextCellEditor',
+            'agLargeTextCellEditor',
+        ];
+
+        const { cellEditor } = cellEditorParams;
+        if (!supportedEditors.includes(cellEditor)) {
+            cellEditorParams.cellEditor = 'agFormulaCellEditor';
+        }
+    }
+
+    const compDetails = _getCellEditorDetails(userCompFactory, cellEditorParams, editorParams);
 
     if (!compDetails) {
         return;
