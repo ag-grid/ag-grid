@@ -72,13 +72,12 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
-        renderFormula(
-            this.getContentElement(),
-            this.getCurrentValue(),
-            text,
-            this.getColorIndexForRef.bind(this),
-            null
-        );
+        renderFormula({
+            contentElement: this.getContentElement(),
+            currentValue: this.getCurrentValue(),
+            value: text,
+            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+        });
         // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
@@ -138,7 +137,10 @@ export class AgFormulaInputField extends AgContentEditableField<
         return this;
     }
 
-    private getColorIndexForRef(ref: string): number {
+    private getColorIndexForRef(ref: string): number | null {
+        if (!shouldUseTokenColors(this.beans)) {
+            return null;
+        }
         const existing = this.formulaColorByRef.get(ref);
 
         if (existing != null) {
@@ -150,7 +152,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         return next;
     }
 
-    private moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number {
+    private moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number | null {
         const colorIndex =
             fromRef && this.formulaColorByRef.has(fromRef)
                 ? this.getColorIndexForRef(fromRef)
@@ -158,6 +160,10 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         if (fromRef && fromRef !== toRef) {
             this.formulaColorByRef.delete(fromRef);
+        }
+
+        if (colorIndex == null) {
+            return null;
         }
 
         this.formulaColorByRef.set(toRef, colorIndex);
@@ -170,13 +176,13 @@ export class AgFormulaInputField extends AgContentEditableField<
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
 
-        renderFormula(
+        renderFormula({
             contentElement,
             currentValue,
-            serialized,
-            this.getColorIndexForRef.bind(this),
-            caret ?? undefined
-        );
+            value: serialized,
+            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+            caret: caret ?? undefined,
+        });
         this.setEditorValue(serialized);
         this.syncRangesFromFormula(serialized);
     }
@@ -259,7 +265,13 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.lastTokenRef = ref;
 
         this.setEditorValue(updatedValue);
-        renderFormula(contentElement, value, updatedValue, this.getColorIndexForRef.bind(this), caretOffset + 1);
+        renderFormula({
+            contentElement,
+            currentValue: value,
+            value: updatedValue,
+            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+            caret: caretOffset + 1,
+        });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
         if (manageRanges) {
             if (!isNew && previousRef && previousRef !== ref) {
@@ -321,7 +333,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                 .find((range) => rangeToRef(this.beans, range) === ref);
 
             if (existing) {
-                const colorIndex = this.getColorIndexForRef(ref);
+                const colorIndex = this.getColorIndexForRef(ref) ?? undefined;
                 tagRangeWithFormulaColor(existing, ref, colorIndex);
                 this.refreshRangeStyling();
             }
@@ -389,6 +401,10 @@ export class AgFormulaInputField extends AgContentEditableField<
             const inferredColorIndex = getColorIndexFromClass(range.colorClass);
             const colorIndex = existingColorIndex ?? inferredColorIndex ?? this.getColorIndexForRef(ref);
             const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
+
+            if (colorIndex == null) {
+                continue;
+            }
 
             this.formulaColorByRef.set(ref, colorIndex);
 
@@ -521,7 +537,13 @@ export class AgFormulaInputField extends AgContentEditableField<
                 event.preventDefault();
                 const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
                 this.setEditorValue(updated);
-                renderFormula(contentElement, value, updated, this.getColorIndexForRef.bind(this), caretOffset);
+                renderFormula({
+                    contentElement,
+                    currentValue: value,
+                    value: updated,
+                    getColorIndexForRef: this.getColorIndexForRef.bind(this),
+                    caret: caretOffset,
+                });
                 this.removeRangeForRef(tokenRef);
                 this.syncRangesFromFormula(updated);
                 break;
@@ -537,7 +559,13 @@ export class AgFormulaInputField extends AgContentEditableField<
                     const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
                     const nextCaret = caretOffset + replacement.length;
                     this.setEditorValue(updated);
-                    renderFormula(contentElement, value, updated, this.getColorIndexForRef.bind(this), nextCaret);
+                    renderFormula({
+                        contentElement,
+                        currentValue: value,
+                        value: updated,
+                        getColorIndexForRef: this.getColorIndexForRef.bind(this),
+                        caret: nextCaret,
+                    });
                     this.syncRangesFromFormula(updated);
                 }
                 break;
@@ -589,7 +617,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         return updated;
     }
 
-    private replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number): boolean {
+    private replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number | null): boolean {
         const contentElement = this.getContentElement();
         const token = Array.from(contentElement.querySelectorAll<HTMLElement>('.ag-formula-token')).find(
             (node) => getTokenRef(node) === previousRef
@@ -612,13 +640,13 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
         this.setEditorValue(updated);
-        renderFormula(
+        renderFormula({
             contentElement,
-            value,
-            updated,
-            this.getColorIndexForRef.bind(this),
-            caretOffset + nextRef.length
-        );
+            currentValue: value,
+            value: updated,
+            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+            caret: caretOffset + nextRef.length,
+        });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });
 
         return true;
@@ -626,6 +654,13 @@ export class AgFormulaInputField extends AgContentEditableField<
 }
 
 // Color helpers
+const shouldUseTokenColors = (beans: BeanCollection): boolean => {
+    const { editSvc, rangeSvc } = beans;
+    const canCreateRanges = !!rangeSvc && !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
+
+    return canCreateRanges;
+};
+
 const getFormulaColorIndex = (ref: string): number => {
     let hash = 0;
 
@@ -636,9 +671,10 @@ const getFormulaColorIndex = (ref: string): number => {
 
     return Math.abs(hash) % FORMULA_TOKEN_COLOR_COUNT;
 };
+
 const getFormulaColorClasses = (
     ref: string,
-    colorIndexOverride?: number
+    colorIndexOverride?: number | null
 ): { tokenClass: string; rangeClass: string; colorIndex: number } => {
     const index = (colorIndexOverride ?? getFormulaColorIndex(ref)) + 1;
 
@@ -662,7 +698,8 @@ const getColorIndexFromClass = (colorClass?: string | null): number | null => {
     const parsed = parseInt(match[1], 10);
     return Number.isFinite(parsed) ? parsed - 1 : null;
 };
-const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, colorIndex?: number): void => {
+
+const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, colorIndex?: number | null): void => {
     if (!range) {
         return;
     }
@@ -672,7 +709,7 @@ const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, col
 };
 
 // Rendering & caret helpers
-const tokenize = (value: string, getColorIndexForRef: (ref: string) => number): Node[] => {
+const tokenize = (value: string, getColorIndexForRef: (ref: string) => number | null): Node[] => {
     const nodes: Node[] = [];
     let lastIndex = 0;
     CELL_OR_RANGE_REGEX.lastIndex = 0;
@@ -687,7 +724,8 @@ const tokenize = (value: string, getColorIndexForRef: (ref: string) => number): 
             nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, index))));
         }
 
-        nodes.push(createReferenceNode(text, getColorIndexForRef(text)));
+        const colorIndex = getColorIndexForRef(text) ?? null;
+        nodes.push(createReferenceNode(text, colorIndex, colorIndex != null));
         lastIndex = index + text.length;
     }
 
@@ -702,33 +740,41 @@ const tokenize = (value: string, getColorIndexForRef: (ref: string) => number): 
     return nodes;
 };
 
-const createReferenceNode = (ref: string, colorIndex: number): HTMLElement => {
-    const { tokenClass, rangeClass } = getFormulaColorClasses(ref, colorIndex);
+const createReferenceNode = (ref: string, colorIndex: number | null, useTokenColors: boolean): HTMLElement => {
+    const attrs: Record<string, string> = {
+        contenteditable: 'false',
+        'aria-label': ref,
+        tabIndex: '-1',
+        'data-formula-ref': ref,
+    };
+    let tokenClass: string | undefined;
+    if (useTokenColors && colorIndex != null) {
+        const classes = getFormulaColorClasses(ref, colorIndex);
+        tokenClass = classes.tokenClass;
+        attrs['data-formula-range-class'] = classes.rangeClass;
+    }
     const node = _createElement({
         tag: 'span',
         cls: 'ag-formula-token',
-        attrs: {
-            contenteditable: 'false',
-            'aria-label': ref,
-            tabIndex: '-1',
-            'data-formula-ref': ref,
-            'data-formula-range-class': rangeClass,
-        },
+        attrs,
         children: ref,
     });
 
-    node.classList.add(tokenClass);
+    if (tokenClass) {
+        node.classList.add(tokenClass);
+    }
 
     return node;
 };
 
-const renderFormula = (
-    contentElement: HTMLElement,
-    currentValue: string,
-    value: string,
-    getColorIndexForRef: (ref: string) => number,
-    caret?: number | null
-): void => {
+const renderFormula = (params: {
+    contentElement: HTMLElement;
+    currentValue: string;
+    value: string;
+    getColorIndexForRef: (ref: string) => number | null;
+    caret?: number | null;
+}): void => {
+    const { contentElement, currentValue, value, getColorIndexForRef, caret } = params;
     const caretOffset = caret ?? getCaretOffset(contentElement, currentValue);
     const maxCaret = value.length;
 
