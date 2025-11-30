@@ -9,7 +9,7 @@ interface Props {
     displayLogos: boolean;
 }
 
-const Customers: FunctionComponent<Props> = ({ displayLogos }) => {
+const Customers: FunctionComponent<Props> = ({ displayLogos = true }) => {
     return (
         <div className={styles.container}>
             <div className={styles.quotesContainer}>
