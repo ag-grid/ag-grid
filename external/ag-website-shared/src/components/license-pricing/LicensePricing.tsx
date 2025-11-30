@@ -178,6 +178,40 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 );
                             })}
                         </div>
+
+                        <div className={styles.videoPrompt}>
+                            <a
+                                href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                target="_blank"
+                                className={styles.thumbnail}
+                            >
+                                <img
+                                    src="https://img.youtube.com/vi/VPr__OKxH50/hqdefault.jpg"
+                                    alt="AG Grid licence explained video"
+                                />
+                            </a>
+
+                            <div>
+                                <h3>Which licences do I need?</h3>
+                                <p>
+                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
+                                        <span className="icon"></span>
+                                        Watch our short explainer video
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className={styles.enterpriseTrialContainer}>
+                            <EnterpriseTrial />
+                        </div>
+                    </div>
+                </div>
+
+                <SocialProof />
+
+                <div className={styles.topSection}>
+                    <div className={styles.intro}>
                         <div ref={contactSalesRef} className={styles.salesForm}>
                             <div className={styles.salesFormCopy}>
                                 <h3 className="text-2xl">
@@ -205,10 +239,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             </div>
                         </div>
 
-                        <div className={styles.enterpriseTrialContainer}>
-                            <EnterpriseTrial />
-                        </div>
-
                         <div className={styles.licenceKeyDocs}>
                             <h3>Already have a licence and need to install your key?</h3>
                             <p>
@@ -231,38 +261,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 .
                             </p>
                         </div>
-
-                        <div className={styles.videoPrompt}>
-                            <a
-                                id="licence-explainer-video-thumbnail"
-                                href="https://www.youtube.com/watch?v=VPr__OKxH50"
-                                target="_blank"
-                                className={styles.thumbnail}
-                            >
-                                <img
-                                    src="https://img.youtube.com/vi/VPr__OKxH50/hqdefault.jpg"
-                                    alt="AG Grid licence explained video"
-                                />
-                            </a>
-
-                            <div>
-                                <h3>Which licences do I need?</h3>
-                                <p>
-                                    <a
-                                        id="licence-explainer-video-text"
-                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
-                                        target="_blank"
-                                    >
-                                        <span className="icon"></span>
-                                        Watch our short explainer video
-                                    </a>
-                                </p>
-                            </div>
-                        </div>
                     </div>
                 </div>
-
-                <SocialProof />
             </div>
         </>
     );
