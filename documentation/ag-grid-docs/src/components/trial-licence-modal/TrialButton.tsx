@@ -8,7 +8,7 @@ interface TrialButtonProps {
     children: React.ReactNode;
 }
 
-export const TrialButton: React.FC<TrialButtonProps> = ({ id = 'request-trial-licence', className, children }) => {
+export const TrialButton: React.FC<TrialButtonProps> = ({ id = 'request-free-trial', className, children }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (

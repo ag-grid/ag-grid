@@ -399,13 +399,6 @@
     margin-bottom: $spacing-size-1;
 }
 
-.pricingPriceFree {
-    font-size: 48px;
-    font-weight: var(--text-bold);
-    color: var(--color-brand-200);
-    margin-bottom: $spacing-size-1;
-}
-
 .pricingPriceNote {
     font-size: var(--text-fs-sm);
     color: var(--color-fg-secondary);
@@ -584,9 +577,4 @@
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         max-width: 100%;
     }
-}
-
-// Enterprise Trial Section
-.enterpriseTrialSection {
-    margin-top: $spacing-size-12;
 }
