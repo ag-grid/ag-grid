@@ -252,6 +252,20 @@ const reactLandingPage = defineCollection({
     ),
 });
 
+const enterpriseLandingPage = defineCollection({
+    loader: glob({ base: './src/content/enterprise-landing-page', pattern: 'examples.json' }),
+    schema: z.array(
+        z.object({
+            title: z.string(),
+            img: z.string(),
+            imgAlt: z.string(),
+            content: z.string(),
+            docs: z.string(),
+            demo: z.string(),
+        })
+    ),
+});
+
 const aboutPage = defineCollection({
     loader: glob({ base: './src/content/about', pattern: 'about.json' }),
     schema: z.object({
@@ -303,6 +317,7 @@ export const collections = {
     siteHeader,
     seedProjects,
     reactLandingPage,
+    enterpriseLandingPage,
     aboutPage,
     contactResults,
 };

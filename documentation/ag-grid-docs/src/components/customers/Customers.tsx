@@ -1,18 +1,21 @@
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
-import React from 'react';
+import React, { type FunctionComponent } from 'react';
 
 import styles from './Customers.module.scss';
 
-const Customers: React.FC = () => {
+interface Props {
+    displayLogos: boolean;
+}
+
+const Customers: FunctionComponent<Props> = ({ displayLogos }) => {
     return (
         <div className={styles.container}>
             <div className={styles.quotesContainer}>
                 <Quotes data={quotesData} />
             </div>
-
-            <CustomerLogos />
+            {displayLogos && <CustomerLogos />}
         </div>
     );
 };
