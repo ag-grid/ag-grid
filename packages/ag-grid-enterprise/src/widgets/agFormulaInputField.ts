@@ -4,9 +4,9 @@ import type {
     AgGridCommon,
     BeanCollection,
     CellRange,
+    CellSelectionChangedEvent,
     GridOptionsService,
     GridOptionsWithDefaults,
-    RangeSelectionChangedEvent,
 } from 'ag-grid-community';
 import { AgContentEditableField, KeyCode, _createElement, _last } from 'ag-grid-community';
 
@@ -61,7 +61,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
 
         this.addManagedEventListeners({
-            rangeSelectionChanged: this.onRangeSelectionChanged.bind(this),
+            cellSelectionChanged: this.cellSelectionChanged.bind(this),
         });
     }
 
@@ -138,7 +138,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.syncRangesFromFormula(serialized);
     }
 
-    private onRangeSelectionChanged(event: RangeSelectionChangedEvent): void {
+    private cellSelectionChanged(event: CellSelectionChangedEvent): void {
         if (this.suppressRangeEvents) {
             return;
         }
@@ -161,7 +161,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         if (event.started && event.finished) {
-            this.insertOrReplaceToken(ref, true, false);
+            this.insertOrReplaceToken(ref, true, true);
             this.restoreCaretAfterToken();
             return;
         }
@@ -177,7 +177,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
     }
 
-    private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean = true): void {
+    private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean): void {
         const contentElement = this.getContentElement();
         const caretOffset =
             this.selectionCaretOffset ??
@@ -209,7 +209,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             if (!isNew && previousRef && previousRef !== ref) {
                 this.removeRangeForRef(previousRef);
             }
-            this.addRangeForRef(ref);
+            this.addRangeForRef(ref, true);
         } else {
             // When dragging a range, we only track the latest ref; ranges will be reconciled later.
             if (!isNew && previousRef && previousRef !== ref) {
@@ -256,7 +256,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         return this.currentValue.length;
     }
 
-    private addRangeForRef(ref: string): void {
+    private addRangeForRef(ref: string, skipAddCellRange?: boolean): void {
         if (this.trackedRangeRefs.has(ref)) {
             return;
         }
@@ -270,9 +270,18 @@ export class AgFormulaInputField extends AgContentEditableField<
             return;
         }
 
-        this.suppressRangeEvents = true;
-        const created = rangeSvc.addCellRange(params);
-        this.suppressRangeEvents = false;
+        let created: CellRange | undefined;
+
+        if (!skipAddCellRange) {
+            this.suppressRangeEvents = true;
+            created = rangeSvc.addCellRange(params);
+            this.suppressRangeEvents = false;
+        } else {
+            created = rangeSvc
+                .getCellRanges()
+                .find((range) => rangeToRef(beans, range) === ref && range.startRow != null && range.endRow != null);
+        }
+
         if (created) {
             this.trackedRangeRefs.add(ref);
             this.trackedRanges.set(created, ref);

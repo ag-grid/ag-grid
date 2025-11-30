@@ -37,13 +37,23 @@ export abstract class AbstractSelectionHandle extends Component {
             dragStartPixels: 0,
             eElement: this.getGui(),
             onDragging: (e) => {
+                let startingMove = false;
                 if (!this.dragging) {
+                    startingMove = true;
                     this.dragging = true;
                     const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
                     pageBody.classList?.add(this.getDraggingCssClass());
                 }
 
                 this.updateValuesOnMove(e);
+
+                // if this is simply starting the drag, we only need to call `updateValuesOnMove`
+                // to update the last hovered cell. If we call `onDrag` here, then the range will be
+                // updated and trigger events unnecessarily.
+                if (startingMove) {
+                    this.changedCalculatedValues = false;
+                    return;
+                }
 
                 this.beans.rangeSvc!.autoScrollService.check(e);
 
