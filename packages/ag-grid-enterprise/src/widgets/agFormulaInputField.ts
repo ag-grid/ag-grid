@@ -72,11 +72,9 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
-        renderFormula({
-            contentElement: this.getContentElement(),
-            currentValue: this.getCurrentValue(),
+        this.renderFormula({
             value: text,
-            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+            currentValue: this.getCurrentValue(),
         });
         // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
@@ -137,6 +135,14 @@ export class AgFormulaInputField extends AgContentEditableField<
         return this;
     }
 
+    private renderFormula(params: { value: string; currentValue: string; caret?: number | null }): void {
+        renderFormula({
+            contentElement: this.getContentElement(),
+            getColorIndexForRef: this.getColorIndexForRef.bind(this),
+            ...params,
+        });
+    }
+
     private getColorIndexForRef(ref: string): number | null {
         if (!shouldUseTokenColors(this.beans)) {
             return null;
@@ -176,11 +182,9 @@ export class AgFormulaInputField extends AgContentEditableField<
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
 
-        renderFormula({
-            contentElement,
+        this.renderFormula({
             currentValue,
             value: serialized,
-            getColorIndexForRef: this.getColorIndexForRef.bind(this),
             caret: caret ?? undefined,
         });
         this.setEditorValue(serialized);
@@ -240,36 +244,23 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean): void {
-        const contentElement = this.getContentElement();
-        const caretOffset =
-            this.selectionCaretOffset ??
-            getCaretOffset(contentElement, this.getCurrentValue()) ??
-            this.currentValue.length;
-        const valueOffset =
-            isNew || this.lastTokenValueOffset == null
-                ? this.getValueOffsetFromCaret(caretOffset)
-                : this.lastTokenValueOffset;
+        const offsets = this.getTokenInsertOffsets(isNew);
 
-        if (valueOffset == null) {
+        if (!offsets) {
             return;
         }
 
+        const { caretOffset, valueOffset } = offsets;
         const replaceLen = isNew || this.lastTokenValueLength == null ? 0 : this.lastTokenValueLength;
         const value = this.getCurrentValue();
         const updatedValue = value.slice(0, valueOffset) + ref + value.slice(valueOffset + replaceLen);
 
-        this.lastTokenValueOffset = valueOffset;
-        this.lastTokenValueLength = ref.length;
-        this.lastTokenCaretOffset = caretOffset;
-        const previousRef = this.lastTokenRef;
-        this.lastTokenRef = ref;
+        const previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
 
         this.setEditorValue(updatedValue);
-        renderFormula({
-            contentElement,
+        this.renderFormula({
             currentValue: value,
             value: updatedValue,
-            getColorIndexForRef: this.getColorIndexForRef.bind(this),
             caret: caretOffset + 1,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
@@ -324,6 +315,33 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         return this.currentValue.length;
+    }
+
+    private getTokenInsertOffsets(isNew: boolean): { caretOffset: number; valueOffset: number } | null {
+        const contentElement = this.getContentElement();
+        const caretOffset =
+            this.selectionCaretOffset ??
+            getCaretOffset(contentElement, this.getCurrentValue()) ??
+            this.currentValue.length;
+        const valueOffset =
+            isNew || this.lastTokenValueOffset == null
+                ? this.getValueOffsetFromCaret(caretOffset)
+                : this.lastTokenValueOffset;
+
+        if (valueOffset == null) {
+            return null;
+        }
+
+        return { caretOffset, valueOffset };
+    }
+
+    private updateLastTokenTracking(ref: string, caretOffset: number, valueOffset: number): string | undefined {
+        const previousRef = this.lastTokenRef;
+        this.lastTokenValueOffset = valueOffset;
+        this.lastTokenValueLength = ref.length;
+        this.lastTokenCaretOffset = caretOffset;
+        this.lastTokenRef = ref;
+        return previousRef;
     }
 
     private addRangeForRef(ref: string, skipAddCellRange?: boolean): void {
@@ -537,11 +555,9 @@ export class AgFormulaInputField extends AgContentEditableField<
                 event.preventDefault();
                 const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
                 this.setEditorValue(updated);
-                renderFormula({
-                    contentElement,
+                this.renderFormula({
                     currentValue: value,
                     value: updated,
-                    getColorIndexForRef: this.getColorIndexForRef.bind(this),
                     caret: caretOffset,
                 });
                 this.removeRangeForRef(tokenRef);
@@ -559,11 +575,9 @@ export class AgFormulaInputField extends AgContentEditableField<
                     const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
                     const nextCaret = caretOffset + replacement.length;
                     this.setEditorValue(updated);
-                    renderFormula({
-                        contentElement,
+                    this.renderFormula({
                         currentValue: value,
                         value: updated,
-                        getColorIndexForRef: this.getColorIndexForRef.bind(this),
                         caret: nextCaret,
                     });
                     this.syncRangesFromFormula(updated);
@@ -640,11 +654,9 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
         this.setEditorValue(updated);
-        renderFormula({
-            contentElement,
+        this.renderFormula({
             currentValue: value,
             value: updated,
-            getColorIndexForRef: this.getColorIndexForRef.bind(this),
             caret: caretOffset + nextRef.length,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });

@@ -45,7 +45,7 @@
 }
 
 .ag-formula-range-color-2 {
-    --ag-range-selection-border-color: var(--ag-formula-token-6-color);
+    --ag-range-selection-border-color: var(--ag-formula-token-2-color);
     --ag-range-selection-background-color: var(--ag-formula-token-2-background-color);
 }
 
