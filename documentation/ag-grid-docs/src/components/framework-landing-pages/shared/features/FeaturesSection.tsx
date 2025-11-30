@@ -15,6 +15,7 @@ interface FeaturesSectionProps {
 }
 
 const FeaturesSection: React.FC<FeaturesSectionProps> = ({ framework }) => {
+    const slugger = new GithubSlugger();
     const config = FRAMEWORK_CONFIGS[framework];
     const codeExamples = CODE_EXAMPLES[framework];
 
@@ -42,8 +43,8 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ framework }) => {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
-                            id={`feature-tab-${tab.title.toLowerCase().replaceAll(' ', '-')}`}
-                            className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=${config.analyticsPrefix}-${tab.title.toLowerCase()}-tab`}
+                            id={`feature-tab-${slugger.slug(tab.title)}-nav`}
+                            className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=react-table--tab`}
                             onClick={() => handleTabClick(index)}
                         >
                             {tab.title}

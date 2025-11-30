@@ -18,13 +18,9 @@ import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automat
 import { TrialButton } from '../components/trial-licence-modal/TrialButton';
 import { Video } from '@ag-website-shared/components/video/Video';
 import { getPageImages } from '@components/docs/utils/filesData';
-import { EnterpriseTrial } from '@ag-website-shared/components/license-pricing/EnterpriseTrial';
 
 const { data: faqData } = (await getEntry('faqs', 'enterprise-landing-page')) as CollectionEntry<'faqs'>;
-const themeBuilderVideo = await getPageImages({
-    pageName: 'key-features',
-    imagePath: 'resources/theme-builder-demo.mp4',
-});
+const themeBuilderVideo = await getPageImages({ pageName: 'key-features', imagePath: 'resources/theme-builder-demo.mp4' });
 ---
 
 <Layout
@@ -113,11 +109,7 @@ const themeBuilderVideo = await getPageImages({
                 />
             </div>
             <a
-                class:list={[
-                    'button-tertiary',
-                    styles.themeBuilderCta,
-                    'plausible-event-name=enterprise-theme-builder-cta',
-                ]}
+                class:list={['button-tertiary', styles.themeBuilderCta, 'plausible-event-name=enterprise-theme-builder-cta']}
                 href={urlWithBaseUrl('./theme-builder/')}
             >
                 Open Theme Builder
@@ -153,27 +145,6 @@ const themeBuilderVideo = await getPageImages({
     >
         <div class={styles.pricingContainer}>
             <div class={styles.pricingCard}>
-                <h3>Community</h3>
-                <div class={styles.pricingPriceFree}>Free</div>
-                <p class={styles.pricingPriceNote}>forever</p>
-                <ul class={styles.pricingFeatures}>
-                    <li>Core grid functionality</li>
-                    <li>Sorting, filtering & pagination</li>
-                    <li>MIT licensed</li>
-                </ul>
-                <a
-                    id="get-started"
-                    class:list={[
-                        'button-secondary',
-                        styles.pricingCta,
-                        'plausible-event-name=enterprise-community-cta',
-                    ]}
-                    href={urlWithBaseUrl('./getting-started/')}
-                >
-                    Get Started
-                </a>
-            </div>
-            <div class={styles.pricingCard}>
                 <h3>Enterprise</h3>
                 <div class={styles.pricingPrice}>$999</div>
                 <p class={styles.pricingPriceNote}>per developer, perpetual licence</p>
@@ -183,15 +154,15 @@ const themeBuilderVideo = await getPageImages({
                     <li>1 year of support & updates</li>
                 </ul>
                 <a
-                    class:list={['button-tertiary', styles.pricingCta, 'plausible-event-name=enterprise-pricing-cta']}
-                    href={'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both'}
+                    class:list={['button-secondary', styles.pricingCta, 'plausible-event-name=enterprise-pricing-cta']}
+                    href={urlWithBaseUrl('./license-pricing/')}
                 >
-                    Buy Now
+                    View Full Pricing
                 </a>
             </div>
             <div class={styles.pricingCard}>
                 <h3>Enterprise Bundle</h3>
-                <div class={styles.pricingPrice}>$1,498</div>
+                <div class={styles.pricingPrice}>$1,598</div>
                 <p class={styles.pricingPriceNote}>per developer, perpetual licence</p>
                 <ul class={styles.pricingFeatures}>
                     <li>All Grid & Charts Enterprise Features</li>
@@ -199,14 +170,26 @@ const themeBuilderVideo = await getPageImages({
                     <li>1 year of support & updates</li>
                 </ul>
                 <a
-                    class:list={['button-tertiary', styles.pricingCta, 'plausible-event-name=enterprise-bundle-cta']}
-                    href={'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both'}
+                    class:list={['button-secondary', styles.pricingCta, 'plausible-event-name=enterprise-bundle-cta']}
+                    href={urlWithBaseUrl('./license-pricing/')}
                 >
-                    Buy Now
+                    View Full Pricing
                 </a>
             </div>
+            <div class={styles.trialCard}>
+                <h3>Try Before You Buy</h3>
+                <p>
+                    Evaluate all Enterprise features locally for free. Request a trial licence to remove the watermark
+                    during your evaluation period.
+                </p>
+                <TrialButton
+                    client:load
+                    className={`button ctaButton ${styles.trialCta} plausible-event-name=enterprise-trial-card-cta`}
+                >
+                    Request Trial Licence
+                </TrialButton>
+            </div>
         </div>
-        <EnterpriseTrial client:load className={styles.enterpriseTrialSection} />
     </LandingPageSection>
 
     <LandingPageSection

@@ -1,18 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getEntry, type CollectionEntry } from 'astro:content';
-import styles from '../pages-styles/react-table.module.scss';
+import styles from '../pages-styles/framework-landing-page.module.scss';
 import Customers from '../components/customers/Customers';
 import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
-import FeaturesSection from '../components/framework-landing-pages/react/sections/features/FeaturesSection';
-import Showcase from '../components/framework-landing-pages/react/sections/showcase/Showcase';
+import FeaturesSection from '@components/framework-landing-pages/shared/features/FeaturesSection';
+import Showcase from '@components/showcase/Showcase';
 import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
 import GithubSlugger from 'github-slugger';
+import HeroSection from '@components/framework-landing-pages/shared/hero/HeroSection.astro';
+import ExamplesSection from '@components/framework-landing-pages/shared/examples/ExamplesSection.astro';
+import ContactSection from '@components/framework-landing-pages/shared/contact/ContactSection.astro';
+import { FRAMEWORK_CONFIGS } from '@components/framework-landing-pages/shared/types';
 
-import InstallText from '@components/install-text/InstallText';
-import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { Finance } from 'src/components/demos/examples/finance';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+const framework = 'react' as const;
+const config = FRAMEWORK_CONFIGS[framework];
 
 const slugger = new GithubSlugger();
 const { data: faqData } = (await getEntry('faqs', 'react-landing-page')) as CollectionEntry<'faqs'>;
@@ -27,77 +29,22 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
     showDocsNav={false}
     showSearchBar={true}
 >
-    <div class={styles.heroSection}>
-        <div class={styles.blueRectangle}></div>
-        <div class={styles.heroSectionInner}>
-            <div class={styles.heroSectionContainer}>
-                <div class={styles.heroSectionHeadingContainer}>
-                    <a
-                        href={urlWithBaseUrl('./whats-new')}
-                        class:list={[
-                            styles.heroSectionVersionTagContainer,
-                            'plausible-event-name=react-table-whats-new',
-                        ]}
-                    >
-                        <span class={styles.heroSectionVersion}>AG Grid v{latestVersionWithHighlightData?.version}</span
-                        >
-                        <span class={styles.heroSectionFeatureHighlight}>
-                            {
-                                latestVersionWithHighlightData?.landingPageHighlight && (
-                                    <span>{latestVersionWithHighlightData?.landingPageHighlight}</span>
-                                )
-                            }
-                            <Icon svgClasses={styles.heroSectionFeatureArrow} name="arrowRight" />
-                        </span>
-                    </a>
-                    <h1 class={styles.heroSectionTag}>React Table</h1>
-                    <h2 class={styles.heroSectionHeading}>Fast, Powerful and Flexible React Tables</h2>
-                    <h3 class={styles.heroSectionSubHeading}>
-                        Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b> React Data Tables
-                        to your application in <b>minutes</b>, all for <b>free</b>.
-                    </h3>
-                </div>
-                <div class={styles.heroSectionButtonContainer}>
-                    <a
-                        id="'get-started-react"
-                        class:list={[
-                            'button-secondary',
-                            styles.heroSectionCta1,
-                            'plausible-event-name=react-table-get-started',
-                        ]}
-                        href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a
-                    >
-                    <div class={styles.heroSectionCta2}>
-                        <InstallText client:load packageName="ag-grid-react" />
-                    </div>
-                </div>
-                <div class={styles.heroSectionDemoContainer}>
-                    <Finance client:only="react" gridHeight={600} />
-                </div>
-                <a
-                    class:list={[
-                        'button',
-                        styles.heroSectionViewAllDemosLink,
-                        'plausible-event-name=react-table-view-demos',
-                    ]}
-                    href={urlWithBaseUrl('./example')}
-                    >View All Demos
-                    <Icon svgClasses={styles.heroSectionDemosArrow} name="arrowRight" /></a
-                >
-            </div>
-        </div>
-    </div>
+    <HeroSection
+        framework={framework}
+        latestVersion={latestVersionWithHighlightData?.version}
+        landingPageHighlight={latestVersionWithHighlightData?.landingPageHighlight}
+    />
 
     <LandingPageSection
-        tag="Why Use AG Grid to Build React Tables?"
+        tag={config.sections.features.tag}
         heading="Amazingly Fast and Fully Customisable with an Unbeatable Feature Set"
-        subHeading="Get started in minutes and access 1000s of features without compromising on performance. Customise your React Table with your own styles and components or upgrade to enterprise to use our advanced features."
+        subHeading={config.sections.features.subHeading}
     >
-        <FeaturesSection client:load />
+        <FeaturesSection client:load framework={framework} />
     </LandingPageSection>
 
     <LandingPageSection
-        tag="Where Can I See AG Grid React Tables Being Used?"
+        tag={config.sections.showcase.tag}
         heading="Used in Every Industry, for All Types of Data"
         subHeading="Trusted by 90% of Fortune 500 industries from Finance and AI, to DevTools and Aeronautics. Most of these uses are private, but we've hand-picked a few open-source examples:"
     >
@@ -105,62 +52,37 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
     </LandingPageSection>
 
     <LandingPageSection
-        tag="Who Builds React Tables with AG Grid?"
+        tag={config.sections.customers.tag}
         headingHtml={'Loved By Developers<br />Trusted By The Worlds Largest Enterprises'}
-        subHeadingHtml={`<span>Over <b>90% of the Fortune 500</b> build React Tables using AG Grid, with <a href="https://www.npmjs.com/package/ag-grid-community" target="_blank"> 1,000,000+</a> npm downloads per week and over <a href="https://github.com/ag-grid/ag-grid/tree/latest" target="_blank"> 12,000</a> Stars on GitHub.</span>`}
+        subHeadingHtml={config.sections.customers.subHeadingHtml}
     >
         <Customers client:load />
     </LandingPageSection>
 
     <LandingPageSection
-        tag="How Do I Build a React Table with AG Grid?"
-        heading="Get Started with React Table Examples"
-        subHeading=" We have a range of examples, tutorials and documentation to help you start building your first React Table with AG Grid."
+        tag={config.sections.examples.tag}
+        heading={config.sections.examples.heading}
+        subHeading={config.sections.examples.subHeading}
         sectionClass={styles.examplesSection}
         showBackgroundGradient
     >
-        <div class={styles.examplesSectionContainer}>
-            {
-                examples.map((card) => (
-                    <div class={styles.examplesSectionCard}>
-                        <img
-                            class={styles.examplesSectionCardImage}
-                            src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
-                            alt={card.imgAlt}
-                        />
-
-                        <div class={styles.examplesSectionCardDetails}>
-                            <h3>{card.title}</h3>
-                            <p>{card.content}</p>
-                        </div>
-
-                        <div class={styles.examplesSectionCardCta}>
-                            <a
-                                id={`examples-live-demo-cta-${slugger.slug(card.title)}`}
-                                href={urlWithBaseUrl(card.demo)}
-                                target="_blank"
-                            >
-                                Live Demo
-                            </a>
-                            <a
-                                id={`examples-docs-cta-${slugger.slug(card.title)}`}
-                                href={urlWithBaseUrl(card.docs)}
-                                target="_blank"
-                            >
-                                Docs
-                            </a>
-                        </div>
-                    </div>
-                ))
-            }
-        </div>
+        <ExamplesSection examples={examples} />
     </LandingPageSection>
 
     <LandingPageSection
-        tag="React Table FAQs"
+        tag={config.sections.faq.tag}
         heading="Frequently Asked Questions"
-        subHeading="Answers to some commonly asked questions when building React Tables with AG Grid"
+        subHeading={config.sections.faq.subHeading}
     >
-        <LandingPageFAQ client:load FAQData={faqData} framework={'react'} />
+        <LandingPageFAQ client:load FAQData={faqData} framework={framework} />
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="contact"
+        tag="Get In Touch"
+        heading="Contact Our Team"
+        subHeading="Have questions about AG Grid? Get in touch with our team"
+    >
+        <ContactSection framework={framework} />
     </LandingPageSection>
 </Layout>
