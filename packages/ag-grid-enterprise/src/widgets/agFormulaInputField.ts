@@ -172,7 +172,6 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         if (event.finished) {
-            this.insertOrReplaceToken(ref, false, false);
             this.restoreCaretAfterToken();
         }
     }
