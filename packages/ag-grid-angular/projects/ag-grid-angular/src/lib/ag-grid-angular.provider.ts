@@ -10,7 +10,7 @@ export function provideAgGrid(config: AgGridProviderConfig = {}): EnvironmentPro
         useValue: config
       },
       /**
-       * TODO: for angular 18+ we should use `provideAppInitializer`
+       * TODO: for angular 19+ we should use `provideAppInitializer`
        * instead of `APP_INITIALIZER` to avoid the warning
        *     provideAppInitializer(async () => {
        *       const agGridService = inject(AgGridService);
