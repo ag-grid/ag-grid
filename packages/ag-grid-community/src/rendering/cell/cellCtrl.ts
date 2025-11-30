@@ -408,7 +408,7 @@ export class CellCtrl extends BeanStub {
 
         // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
-            _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
+            _requestAnimationFrame(beans, () => rangeFeature?.refreshRangeStyleAndHandle());
         }
 
         this.rowResizeFeature?.refreshRowResizer();
