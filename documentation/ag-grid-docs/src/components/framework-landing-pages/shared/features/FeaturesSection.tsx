@@ -2,18 +2,28 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import GithubSlugger from 'github-slugger';
 import React from 'react';
 
+import { CODE_EXAMPLES, FRAMEWORK_CONFIGS } from '../types';
 import styles from './FeaturesSection.module.scss';
-import AdvancedFeatures from './tabs/advancedfeatures/AdvancedFeatures';
-import BasicFeatures from './tabs/basicfeatures/BasicFeatures';
-import CustomFeatures from './tabs/customfeatures/CustomFeatures';
+import AdvancedFeatures from './tabs/AdvancedFeatures';
+import BasicFeatures from './tabs/BasicFeatures';
+import CustomFeatures from './tabs/CustomFeatures';
 
-const FeaturesSection: React.FC = () => {
+type SupportedFramework = keyof typeof FRAMEWORK_CONFIGS;
+
+interface FeaturesSectionProps {
+    framework: SupportedFramework;
+}
+
+const FeaturesSection: React.FC<FeaturesSectionProps> = ({ framework }) => {
     const slugger = new GithubSlugger();
+    const config = FRAMEWORK_CONFIGS[framework];
+    const codeExamples = CODE_EXAMPLES[framework];
+
     const [activeTab, setActiveTab] = React.useState(0);
     const tabs = [
-        { title: 'Build', component: <BasicFeatures /> },
-        { title: 'Customise', component: <CustomFeatures /> },
-        { title: 'Expand', component: <AdvancedFeatures /> },
+        { title: 'Build', component: <BasicFeatures config={config} codeExamples={codeExamples} /> },
+        { title: 'Customise', component: <CustomFeatures config={config} codeExamples={codeExamples} /> },
+        { title: 'Expand', component: <AdvancedFeatures config={config} codeExamples={codeExamples} /> },
     ];
 
     const handleTabClick = (index: number) => {

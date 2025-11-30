@@ -60,7 +60,23 @@ const SHOWCASE_ITEMS = [
     },
 ];
 
-const ShowcaseItem: React.FC = ({ title, titleIcon, description, projectName, projectLogo, projectHref }) => {
+interface ShowcaseItemProps {
+    title: string;
+    titleIcon: React.ReactNode;
+    description: string;
+    projectName: string;
+    projectLogo: React.ReactNode;
+    projectHref: string;
+}
+
+const ShowcaseItem: React.FC<ShowcaseItemProps> = ({
+    title,
+    titleIcon,
+    description,
+    projectName,
+    projectLogo,
+    projectHref,
+}) => {
     return (
         <div className={styles.showcaseGridItem}>
             <div className={styles.showcaseIconWrapper}>
