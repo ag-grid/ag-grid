@@ -88,6 +88,8 @@ p.name {
     flex-direction: column;
     margin-top: auto;
     margin-bottom: $spacing-size-4;
+    min-height: 90px;
+    justify-content: flex-end;
 }
 
 .standardPrice {
@@ -129,6 +131,11 @@ p.name {
     padding-left: $spacing-size-1;
 }
 
+.pricing {
+    display: flex;
+    gap: 2px;
+}
+
 .priceFullDollars {
     display: flex;
     flex-direction: row;
@@ -139,10 +146,6 @@ p.name {
     line-height: var(--text-lh-ultra-tight);
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
-
-    &.freePrice {
-        margin-bottom: 18px;
-    }
 
     .developerText {
         font-size: var(--text-fs-base) !important;
@@ -169,6 +172,9 @@ p.name {
 }
 
 .licenseActions {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
     width: 100%;
 
     a {
