@@ -77,6 +77,8 @@ export interface CellRange {
     columns: Column[];
     /** The start column for the range */
     startColumn: Column;
+    /** A custom color class to be applied to this range */
+    colorClass?: string | null;
 }
 
 export type PartialCellRange = Omit<CellRange, 'startColumn'> & Partial<Pick<CellRange, 'startColumn'>>;

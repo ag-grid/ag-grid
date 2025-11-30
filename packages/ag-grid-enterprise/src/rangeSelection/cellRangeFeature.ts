@@ -52,6 +52,8 @@ export class CellRangeFeature implements ICellRangeFeature {
 
     private rangeCount: number;
     private hasChartRange: boolean;
+    private rangeColorClass: string | null = null;
+    private handleColorClass: string | null = null;
 
     private selectionHandle: AgFillHandle | AgRangeHandle | null | undefined;
 
@@ -238,6 +240,7 @@ export class CellRangeFeature implements ICellRangeFeature {
             this.addSelectionHandle(rangeForHandle);
         }
 
+        this.refreshHandleColor(rangeForHandle);
         this.cellComp.toggleCss(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
     }
 
@@ -252,7 +255,66 @@ export class CellRangeFeature implements ICellRangeFeature {
             this.cellComp.toggleCss(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
         } else {
             this.cellComp.toggleCss(CSS_CELL_RANGE_CHART_CATEGORY, false);
+            this.applyRangeColor(this.getRangeColorClass());
         }
+    }
+
+    private applyRangeColor(nextClass: string | null): void {
+        if (this.rangeColorClass && this.rangeColorClass !== nextClass) {
+            this.cellComp.toggleCss(this.rangeColorClass, false);
+        }
+
+        if (nextClass) {
+            this.cellComp.toggleCss(nextClass, true);
+        }
+
+        this.rangeColorClass = nextClass ?? null;
+    }
+
+    private getRangeColorClass(): string | null {
+        const { rangeSvc, rangeCount } = this;
+        if (!rangeSvc || !rangeCount) {
+            return null;
+        }
+
+        const ranges = rangeSvc.getCellRanges();
+
+        for (let i = ranges.length - 1; i >= 0; i--) {
+            const range = ranges[i];
+            const colorClass = range.colorClass;
+
+            if (!colorClass) {
+                continue;
+            }
+
+            if (rangeSvc.isCellInSpecificRange(this.cellCtrl.cellPosition, range)) {
+                return colorClass;
+            }
+        }
+
+        return null;
+    }
+
+    private refreshHandleColor(rangeForHandle: CellRange | null): void {
+        const handleGui = this.selectionHandle?.getGui?.();
+        const nextClass = rangeForHandle?.colorClass ?? null;
+
+        if (!handleGui) {
+            this.handleColorClass = null;
+            return;
+        }
+
+        if (this.handleColorClass && this.handleColorClass !== nextClass) {
+            handleGui.classList.remove(this.handleColorClass);
+        }
+
+        if (nextClass) {
+            handleGui.classList.add(nextClass);
+        } else if (this.handleColorClass) {
+            handleGui.classList.remove(this.handleColorClass);
+        }
+
+        this.handleColorClass = nextClass ?? null;
     }
 
     private getRangeForHandle(): CellRange | null {

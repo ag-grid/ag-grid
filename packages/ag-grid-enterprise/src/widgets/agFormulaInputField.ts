@@ -14,6 +14,7 @@ import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 
 // Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
 const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
+const FORMULA_TOKEN_COLOR_COUNT = 6;
 const DISPLAY_OPERATOR_LOOKUP: Record<string, string> = {
     '/': '÷',
     '*': '×',
@@ -43,8 +44,12 @@ export class AgFormulaInputField extends AgContentEditableField<
     // All ranges created by this editor (used to clean up on destroy).
     private readonly trackedRangeRefs = new Set<string>();
     private readonly trackedRanges = new Map<CellRange, string>();
+    // Used to skip token logic when we dispatch synthetic refresh events.
+    private ignoreNextRangeEvent = false;
     // Stops programmatic range updates from re-entering our range event handler.
     private suppressRangeEvents = false;
+    // Stable color assignment per token/ref so resizes keep their original hue.
+    private readonly formulaColorByRef = new Map<string, number>();
 
     constructor() {
         // Keep renderValueToElement false so we fully control DOM rendering.
@@ -67,7 +72,13 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
-        renderFormula(this.getContentElement(), this.getCurrentValue(), text, null);
+        renderFormula(
+            this.getContentElement(),
+            this.getCurrentValue(),
+            text,
+            this.getColorIndexForRef.bind(this),
+            null
+        );
         // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
@@ -127,19 +138,63 @@ export class AgFormulaInputField extends AgContentEditableField<
         return this;
     }
 
+    private getColorIndexForRef(ref: string): number {
+        const existing = this.formulaColorByRef.get(ref);
+
+        if (existing != null) {
+            return existing;
+        }
+
+        const next = getFormulaColorIndex(ref);
+        this.formulaColorByRef.set(ref, next);
+        return next;
+    }
+
+    private moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number {
+        const colorIndex =
+            fromRef && this.formulaColorByRef.has(fromRef)
+                ? this.getColorIndexForRef(fromRef)
+                : fallback ?? this.formulaColorByRef.get(toRef) ?? getFormulaColorIndex(toRef);
+
+        if (fromRef && fromRef !== toRef) {
+            this.formulaColorByRef.delete(fromRef);
+        }
+
+        this.formulaColorByRef.set(toRef, colorIndex);
+        return colorIndex;
+    }
+
     private onContentInput(): void {
         const contentElement = this.getContentElement();
         const currentValue = this.getCurrentValue();
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
 
-        renderFormula(contentElement, currentValue, serialized, caret ?? undefined);
+        renderFormula(
+            contentElement,
+            currentValue,
+            serialized,
+            this.getColorIndexForRef.bind(this),
+            caret ?? undefined
+        );
         this.setEditorValue(serialized);
         this.syncRangesFromFormula(serialized);
     }
 
     private cellSelectionChanged(event: CellSelectionChangedEvent): void {
-        if (this.suppressRangeEvents) {
+        if (this.ignoreNextRangeEvent) {
+            this.ignoreNextRangeEvent = false;
+            return;
+        }
+
+        const retagged = this.ensureTrackedRangeColors();
+
+        if (this.suppressRangeEvents && !retagged) {
+            return;
+        }
+
+        if (this.suppressRangeEvents && retagged) {
+            this.refreshRangeStyling();
             return;
         }
 
@@ -153,6 +208,8 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (!ref || ref === this.editingCellRef) {
             return;
         }
+
+        this.tagLatestRangeForRef(ref);
 
         if (event.started) {
             // Remember caret to reapply after range selection inserts a token.
@@ -202,7 +259,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.lastTokenRef = ref;
 
         this.setEditorValue(updatedValue);
-        renderFormula(contentElement, value, updatedValue, caretOffset + 1);
+        renderFormula(contentElement, value, updatedValue, this.getColorIndexForRef.bind(this), caretOffset + 1);
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
         if (manageRanges) {
             if (!isNew && previousRef && previousRef !== ref) {
@@ -216,6 +273,8 @@ export class AgFormulaInputField extends AgContentEditableField<
             }
             this.trackedRangeRefs.add(ref);
         }
+
+        this.refreshRangeStyling();
     }
 
     private restoreCaretAfterToken(): void {
@@ -257,6 +316,16 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     private addRangeForRef(ref: string, skipAddCellRange?: boolean): void {
         if (this.trackedRangeRefs.has(ref)) {
+            const existing = this.beans.rangeSvc
+                ?.getCellRanges()
+                .find((range) => rangeToRef(this.beans, range) === ref);
+
+            if (existing) {
+                const colorIndex = this.getColorIndexForRef(ref);
+                tagRangeWithFormulaColor(existing, ref, colorIndex);
+                this.refreshRangeStyling();
+            }
+
             return;
         }
 
@@ -282,9 +351,74 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         if (created) {
+            const colorIndex = this.getColorIndexForRef(ref);
+            tagRangeWithFormulaColor(created, ref, colorIndex);
             this.trackedRangeRefs.add(ref);
             this.trackedRanges.set(created, ref);
+            this.refreshRangeStyling();
         }
+    }
+
+    private tagLatestRangeForRef(ref: string): void {
+        const latest = _last(this.beans.rangeSvc?.getCellRanges() ?? []);
+
+        if (latest) {
+            const colorIndex = this.getColorIndexForRef(ref);
+            tagRangeWithFormulaColor(latest, ref, colorIndex);
+            this.refreshRangeStyling();
+        }
+    }
+
+    private ensureTrackedRangeColors(): boolean {
+        const rangeSvc = this.beans.rangeSvc;
+
+        if (!rangeSvc) {
+            return false;
+        }
+
+        const ranges = rangeSvc.getCellRanges();
+        let retagged = false;
+
+        for (const range of ranges) {
+            const ref = rangeToRef(this.beans, range);
+            if (!ref || !this.trackedRangeRefs.has(ref)) {
+                continue;
+            }
+
+            const existingColorIndex = this.formulaColorByRef.get(ref);
+            const inferredColorIndex = getColorIndexFromClass(range.colorClass);
+            const colorIndex = existingColorIndex ?? inferredColorIndex ?? this.getColorIndexForRef(ref);
+            const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
+
+            this.formulaColorByRef.set(ref, colorIndex);
+
+            if (range.colorClass !== rangeClass) {
+                tagRangeWithFormulaColor(range, ref, colorIndex);
+                retagged = true;
+            }
+
+            if (!this.trackedRanges.has(range)) {
+                this.trackedRanges.set(range, ref);
+            }
+        }
+
+        return retagged;
+    }
+
+    private refreshRangeStyling(): void {
+        const { eventSvc } = this.beans;
+        if (!eventSvc) {
+            return;
+        }
+
+        // Re-tag in case the range objects were replaced by the grid.
+        this.ensureTrackedRangeColors();
+        this.ignoreNextRangeEvent = true;
+        eventSvc.dispatchEvent({
+            type: 'cellSelectionChanged',
+            started: false,
+            finished: false,
+        });
     }
 
     private removeRangeForRef(ref: string | undefined): void {
@@ -387,7 +521,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                 event.preventDefault();
                 const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
                 this.setEditorValue(updated);
-                renderFormula(contentElement, value, updated, caretOffset);
+                renderFormula(contentElement, value, updated, this.getColorIndexForRef.bind(this), caretOffset);
                 this.removeRangeForRef(tokenRef);
                 this.syncRangesFromFormula(updated);
                 break;
@@ -403,7 +537,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                     const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
                     const nextCaret = caretOffset + replacement.length;
                     this.setEditorValue(updated);
-                    renderFormula(contentElement, value, updated, nextCaret);
+                    renderFormula(contentElement, value, updated, this.getColorIndexForRef.bind(this), nextCaret);
                     this.syncRangesFromFormula(updated);
                 }
                 break;
@@ -431,18 +565,31 @@ export class AgFormulaInputField extends AgContentEditableField<
                 continue;
             }
 
-            if (this.replaceTokenRef(previousRef, nextRef)) {
-                this.trackedRanges.set(range, nextRef);
-                this.trackedRangeRefs.delete(previousRef);
-                this.trackedRangeRefs.add(nextRef);
-                updated = true;
+            const colorIndex = this.moveColorToRef(
+                previousRef,
+                nextRef,
+                getColorIndexFromClass(range.colorClass) ?? undefined
+            );
+
+            if (!this.replaceTokenRef(previousRef, nextRef, colorIndex)) {
+                continue;
             }
+
+            tagRangeWithFormulaColor(range, nextRef, colorIndex);
+            this.trackedRanges.set(range, nextRef);
+            this.trackedRangeRefs.delete(previousRef);
+            this.trackedRangeRefs.add(nextRef);
+            updated = true;
+        }
+
+        if (updated) {
+            this.refreshRangeStyling();
         }
 
         return updated;
     }
 
-    private replaceTokenRef(previousRef: string, nextRef: string): boolean {
+    private replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number): boolean {
         const contentElement = this.getContentElement();
         const token = Array.from(contentElement.querySelectorAll<HTMLElement>('.ag-formula-token')).find(
             (node) => getTokenRef(node) === previousRef
@@ -460,17 +607,72 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         const value = this.getCurrentValue();
+        if (colorIndex != null) {
+            this.formulaColorByRef.set(nextRef, colorIndex);
+        }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
         this.setEditorValue(updated);
-        renderFormula(contentElement, value, updated, caretOffset + nextRef.length);
+        renderFormula(
+            contentElement,
+            value,
+            updated,
+            this.getColorIndexForRef.bind(this),
+            caretOffset + nextRef.length
+        );
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });
 
         return true;
     }
 }
 
+// Color helpers
+const getFormulaColorIndex = (ref: string): number => {
+    let hash = 0;
+
+    for (let i = 0; i < ref.length; i++) {
+        hash = (hash << 5) - hash + ref.charCodeAt(i);
+        hash |= 0;
+    }
+
+    return Math.abs(hash) % FORMULA_TOKEN_COLOR_COUNT;
+};
+const getFormulaColorClasses = (
+    ref: string,
+    colorIndexOverride?: number
+): { tokenClass: string; rangeClass: string; colorIndex: number } => {
+    const index = (colorIndexOverride ?? getFormulaColorIndex(ref)) + 1;
+
+    return {
+        tokenClass: `ag-formula-token-color-${index}`,
+        rangeClass: `ag-formula-range-color-${index}`,
+        colorIndex: index - 1,
+    };
+};
+const getColorIndexFromClass = (colorClass?: string | null): number | null => {
+    if (!colorClass) {
+        return null;
+    }
+
+    const match = /ag-formula-range-color-(\d+)/.exec(colorClass);
+
+    if (!match) {
+        return null;
+    }
+
+    const parsed = parseInt(match[1], 10);
+    return Number.isFinite(parsed) ? parsed - 1 : null;
+};
+const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, colorIndex?: number): void => {
+    if (!range) {
+        return;
+    }
+
+    const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
+    range.colorClass = rangeClass;
+};
+
 // Rendering & caret helpers
-const tokenize = (value: string): Node[] => {
+const tokenize = (value: string, getColorIndexForRef: (ref: string) => number): Node[] => {
     const nodes: Node[] = [];
     let lastIndex = 0;
     CELL_OR_RANGE_REGEX.lastIndex = 0;
@@ -485,7 +687,7 @@ const tokenize = (value: string): Node[] => {
             nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, index))));
         }
 
-        nodes.push(createReferenceNode(text));
+        nodes.push(createReferenceNode(text, getColorIndexForRef(text)));
         lastIndex = index + text.length;
     }
 
@@ -500,8 +702,9 @@ const tokenize = (value: string): Node[] => {
     return nodes;
 };
 
-const createReferenceNode = (ref: string): HTMLElement =>
-    _createElement({
+const createReferenceNode = (ref: string, colorIndex: number): HTMLElement => {
+    const { tokenClass, rangeClass } = getFormulaColorClasses(ref, colorIndex);
+    const node = _createElement({
         tag: 'span',
         cls: 'ag-formula-token',
         attrs: {
@@ -509,14 +712,21 @@ const createReferenceNode = (ref: string): HTMLElement =>
             'aria-label': ref,
             tabIndex: '-1',
             'data-formula-ref': ref,
+            'data-formula-range-class': rangeClass,
         },
         children: ref,
     });
+
+    node.classList.add(tokenClass);
+
+    return node;
+};
 
 const renderFormula = (
     contentElement: HTMLElement,
     currentValue: string,
     value: string,
+    getColorIndexForRef: (ref: string) => number,
     caret?: number | null
 ): void => {
     const caretOffset = caret ?? getCaretOffset(contentElement, currentValue);
@@ -524,7 +734,7 @@ const renderFormula = (
 
     contentElement.textContent = '';
 
-    for (const node of tokenize(value)) {
+    for (const node of tokenize(value, getColorIndexForRef)) {
         contentElement.append(node);
     }
 
