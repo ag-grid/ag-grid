@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getEntry, type CollectionEntry } from 'astro:content';
+import styles from '../pages-styles/enterprise.module.scss';
+import Customers from '../components/customers/Customers';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
+import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
+import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
+import EnterpriseFeaturesWithExamples from '../components/enterprise-landing-page/sections/features/EnterpriseFeaturesWithExamples.astro';
+import ComparisonTable from '../components/enterprise-landing-page/sections/comparison/ComparisonTable';
+
+import InstallText from '@components/install-text/InstallText';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { Finance } from 'src/components/demos/examples/finance';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import { AutomatedIntegratedCharts } from '@ag-website-shared/components/automated-examples/AutomatedIntegratedCharts';
+import { TrialButton } from '../components/trial-licence-modal/TrialButton';
+import { Video } from '@ag-website-shared/components/video/Video';
+import { getPageImages } from '@components/docs/utils/filesData';
+
+const { data: faqData } = (await getEntry('faqs', 'enterprise-landing-page')) as CollectionEntry<'faqs'>;
+const themeBuilderVideo = await getPageImages({ pageName: 'key-features', imagePath: 'resources/theme-builder-demo.mp4' });
+---
+
+<Layout
+    title={'AG Grid Enterprise: Advanced Data Grid Features for Professional Applications'}
+    description={"Unlock AG Grid's full potential with Enterprise features including AI Toolkit, Server-Side Row Model, Row Grouping, Master/Detail, and Integrated Charts. Start your free trial today."}
+    showDocsNav={false}
+    showSearchBar={true}
+>
+    <div class={styles.heroSection}>
+        <div class={styles.blueRectangle}></div>
+        <div class={styles.heroSectionInner}>
+            <div class={styles.heroSectionContainer}>
+                <div class={styles.heroSectionHeadingContainer}>
+                    <h1 class={styles.heroSectionTag}>Enterprise Data Grid</h1>
+                    <h1 class={styles.heroSectionHeading}>Enterprise Grade Data Grid for Web Apps</h1>
+                    <h2 class={styles.heroSectionSubHeading}>
+                        Fast, secure and accessible, AG Grid Enterprise handles millions of rows and comes with advanced
+                        features, including an AI Toolkit, Integrated Charts, Grouping, and Pivoting.
+                    </h2>
+                </div>
+                <div class={styles.heroSectionButtonContainer}>
+                    <TrialButton
+                        client:load
+                        className={`button-secondary ${styles.heroSectionCta1} plausible-event-name=enterprise-trial-cta`}
+                    >
+                        Start Free Trial
+                    </TrialButton>
+                    <div class={styles.heroSectionCta2}>
+                        <InstallText client:load packageName="ag-grid-enterprise" />
+                    </div>
+                </div>
+                <div class={styles.heroSectionDemoContainer}>
+                    <Finance client:only="react" gridHeight={600} enableRowGroup={true} />
+                </div>
+                <a
+                    class:list={[
+                        'button',
+                        styles.heroSectionViewAllDemosLink,
+                        'plausible-event-name=enterprise-view-demos',
+                    ]}
+                    href={urlWithBaseUrl('./example')}
+                    >View All Demos
+                    <Icon svgClasses={styles.heroSectionDemosArrow} name="arrowRight" /></a
+                >
+                <CustomerLogos client:load />
+            </div>
+        </div>
+    </div>
+
+    <LandingPageSection
+        id="enterprise-features"
+        tag="Why Upgrade to AG Grid Enterprise?"
+        heading="Advanced Features for Complex Data Requirements"
+        subHeading="Handle millions of rows with server-side processing, build interactive charts, enable AI-powered grid interactions, and create hierarchical data views - all with simple configuration."
+    >
+        <EnterpriseFeaturesWithExamples />
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="integrated-charts"
+        tag="Built-in Charting"
+        headingHtml="Integrated Charts, Powered by <a href='https://www.ag-grid.com/charts/'>AG Charts</a>"
+        subHeading="Let your users visualise data with charts directly from the Grid. Select cells, right-click, and create beautiful charts instantly."
+        showBackgroundGradient
+    >
+        <div class={styles.integratedChartsContainer}>
+            <AutomatedIntegratedCharts client:visible visibilityThreshold={0.8} />
+        </div>
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="theme-builder"
+        tag="Fully Customisable"
+        heading="Build Custom Themes with the Theme Builder"
+        subHeading="Create stunning custom themes with our visual editor. Browse and customise hundreds of theme parameters and preview changes in real-time."
+    >
+        <div class={styles.themeBuilderContainer}>
+            <div class={styles.themeBuilderVideoWrapper}>
+                <Video
+                    client:load
+                    videoSrc={themeBuilderVideo.imageSrc!}
+                    darkModeVideoSrc={themeBuilderVideo.darkModeImageSrc}
+                    autoplay={true}
+                    showPlayPauseButtons={true}
+                    centered={false}
+                />
+            </div>
+            <a
+                class:list={['button-tertiary', styles.themeBuilderCta, 'plausible-event-name=enterprise-theme-builder-cta']}
+                href={urlWithBaseUrl('./theme-builder/')}
+            >
+                Open Theme Builder
+            </a>
+        </div>
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="comparison"
+        tag="Community vs Enterprise"
+        heading="Choose the Right Edition for Your Needs"
+        subHeading="AG Grid Community is free forever and includes powerful features. Enterprise unlocks advanced capabilities for professional applications."
+        showBackgroundGradient
+    >
+        <ComparisonTable client:load />
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="customers"
+        tag="Who Uses AG Grid Enterprise?"
+        headingHtml={"Trusted By The World's Leading Companies"}
+        subHeadingHtml={`<span>Over <b>90% of the Fortune 500</b> use AG Grid Enterprise, with <a href="https://www.npmjs.com/package/ag-grid-enterprise" target="_blank">2,500,000+</a> npm downloads per month.</span>`}
+    >
+        <Customers displayLogos={false} client:load />
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="pricing"
+        tag="Ready to Get Started?"
+        heading="Simple, Transparent Pricing"
+        subHeading="One-time perpetual licence with 1 years of support and updates. Volume & renewal discounts available."
+        showBackgroundGradient
+    >
+        <div class={styles.pricingContainer}>
+            <div class={styles.pricingCard}>
+                <h3>Enterprise</h3>
+                <div class={styles.pricingPrice}>$999</div>
+                <p class={styles.pricingPriceNote}>per developer, perpetual licence</p>
+                <ul class={styles.pricingFeatures}>
+                    <li>All Enterprise features</li>
+                    <li>Buy once, use forever</li>
+                    <li>1 year of support & updates</li>
+                </ul>
+                <a
+                    class:list={['button-secondary', styles.pricingCta, 'plausible-event-name=enterprise-pricing-cta']}
+                    href={urlWithBaseUrl('./license-pricing/')}
+                >
+                    View Full Pricing
+                </a>
+            </div>
+            <div class={styles.pricingCard}>
+                <h3>Enterprise Bundle</h3>
+                <div class={styles.pricingPrice}>$1,598</div>
+                <p class={styles.pricingPriceNote}>per developer, perpetual licence</p>
+                <ul class={styles.pricingFeatures}>
+                    <li>All Grid & Charts Enterprise Features</li>
+                    <li>Buy once, use forever</li>
+                    <li>1 year of support & updates</li>
+                </ul>
+                <a
+                    class:list={['button-secondary', styles.pricingCta, 'plausible-event-name=enterprise-bundle-cta']}
+                    href={urlWithBaseUrl('./license-pricing/')}
+                >
+                    View Full Pricing
+                </a>
+            </div>
+            <div class={styles.trialCard}>
+                <h3>Try Before You Buy</h3>
+                <p>
+                    Evaluate all Enterprise features locally for free. Request a trial licence to remove the watermark
+                    during your evaluation period.
+                </p>
+                <TrialButton
+                    client:load
+                    className={`button ctaButton ${styles.trialCta} plausible-event-name=enterprise-trial-card-cta`}
+                >
+                    Request Trial Licence
+                </TrialButton>
+            </div>
+        </div>
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="faq"
+        tag="Enterprise FAQs"
+        heading="Frequently Asked Questions"
+        subHeading="Common questions about AG Grid Enterprise features and licensing"
+    >
+        <LandingPageFAQ client:load FAQData={faqData} framework={'react'} />
+    </LandingPageSection>
+
+    <LandingPageSection
+        id="contact"
+        tag="Get In Touch"
+        heading="Contact Our Sales Team"
+        subHeading="Get help with pricing, explore use-cases for your team, and more"
+    >
+        <div class={styles.contactSection}>
+            <div class={styles.contactInfo}>
+                <div class={styles.contactFeatures}>
+                    <div class={styles.contactFeature}>
+                        <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                        <span>Custom pricing for large teams</span>
+                    </div>
+                    <div class={styles.contactFeature}>
+                        <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                        <span>Dedicated technical support</span>
+                    </div>
+                    <div class={styles.contactFeature}>
+                        <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                        <span>Multi-year discounts available</span>
+                    </div>
+                    <div class={styles.contactFeature}>
+                        <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                        <span>Response within 24 hours</span>
+                    </div>
+                    <div class={styles.contactFeature}>
+                        <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                        <span>Demos & Technical Walkthroughs</span>
+                    </div>
+                </div>
+                <div class={styles.contactLogos}>
+                    <p class={styles.contactLogosLabel}>Trusted by millions of developers:</p>
+                    <CustomerLogos client:load />
+                </div>
+            </div>
+            <div class:list={[styles.contactFormWrapper, 'trial-licence-form']}>
+                <ContactForm client:load formLocation="Grid pricing page" />
+            </div>
+        </div>
+    </LandingPageSection>
+</Layout>
