@@ -1,17 +1,27 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import React from 'react';
 
+import { FRAMEWORK_CONFIGS, CODE_EXAMPLES } from '../types';
 import styles from './FeaturesSection.module.scss';
-import AdvancedFeatures from './tabs/advancedfeatures/AdvancedFeatures';
-import BasicFeatures from './tabs/basicfeatures/BasicFeatures';
-import CustomFeatures from './tabs/customfeatures/CustomFeatures';
+import AdvancedFeatures from './tabs/AdvancedFeatures';
+import BasicFeatures from './tabs/BasicFeatures';
+import CustomFeatures from './tabs/CustomFeatures';
 
-const FeaturesSection: React.FC = () => {
+type SupportedFramework = keyof typeof FRAMEWORK_CONFIGS;
+
+interface FeaturesSectionProps {
+    framework: SupportedFramework;
+}
+
+const FeaturesSection: React.FC<FeaturesSectionProps> = ({ framework }) => {
+    const config = FRAMEWORK_CONFIGS[framework];
+    const codeExamples = CODE_EXAMPLES[framework];
+
     const [activeTab, setActiveTab] = React.useState(0);
     const tabs = [
-        { title: 'Build', component: <BasicFeatures /> },
-        { title: 'Customise', component: <CustomFeatures /> },
-        { title: 'Expand', component: <AdvancedFeatures /> },
+        { title: 'Build', component: <BasicFeatures config={config} codeExamples={codeExamples} /> },
+        { title: 'Customise', component: <CustomFeatures config={config} codeExamples={codeExamples} /> },
+        { title: 'Expand', component: <AdvancedFeatures config={config} codeExamples={codeExamples} /> },
     ];
 
     const handleTabClick = (index: number) => {
@@ -31,7 +41,7 @@ const FeaturesSection: React.FC = () => {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
-                            className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=react-table-${tab.title.toLowerCase()}-tab`}
+                            className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=${config.analyticsPrefix}-${tab.title.toLowerCase()}-tab`}
                             onClick={() => handleTabClick(index)}
                         >
                             {tab.title}

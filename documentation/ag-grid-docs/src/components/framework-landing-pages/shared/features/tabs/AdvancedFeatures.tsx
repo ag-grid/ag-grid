@@ -2,23 +2,17 @@ import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React from 'react';
 
-import styles from '../FeatureTabs.module.scss';
+import type { FrameworkConfig, CodeExamples } from '../../types';
+import styles from './FeatureTabs.module.scss';
 
-const AdvancedFeatures: React.FC = () => {
-    const codeExample = `const [colDefs, setColDefs] = useState<ColDef<IRow>[]>([
-    { field: "make", pivot: true, rowGroup: true, aggFunc: 'sum' },
-]);
+interface AdvancedFeaturesProps {
+    config: FrameworkConfig;
+    codeExamples: CodeExamples;
+}
 
-<AgGridReact 
-    rowData={rowData}
-    columnDefs={colDefs}
-    enableCharts={true}
-    cellSelection={true}
-    masterDetail={true}
-    enableAdvancedFilter={true}
-    rowGroupPanelShow={true}
-    sideBar={true}
-/>`;
+const AdvancedFeatures: React.FC<AdvancedFeaturesProps> = ({ config, codeExamples }) => {
+    const { docsPath, productName, framework } = config;
+    const { code, language } = codeExamples.advanced;
 
     return (
         <div className={styles.columnContainer}>
@@ -28,13 +22,13 @@ const AdvancedFeatures: React.FC = () => {
                     <div className={styles.feature}>
                         <h5 className={styles.featureHeading}>Advanced Features</h5>
                         <span className={styles.featureDetail}>
-                            <a href={urlWithBaseUrl('./react-data-grid/integrated-charts/')}>Build charts</a> directly
-                            from your React Table. Perform data analysis with{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/grouping/')}>Row Grouping</a>,{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/pivoting/')}>Pivoting</a> and{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/master-detail/')}>Master/Detail</a> features.
-                            Access all features from our{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/side-bar/')}>Accessory Panels</a>.
+                            <a href={urlWithBaseUrl(`./${docsPath}/integrated-charts/`)}>Build charts</a> directly from
+                            your {productName}. Perform data analysis with{' '}
+                            <a href={urlWithBaseUrl(`./${docsPath}/grouping/`)}>Row Grouping</a>,{' '}
+                            <a href={urlWithBaseUrl(`./${docsPath}/pivoting/`)}>Pivoting</a> and{' '}
+                            <a href={urlWithBaseUrl(`./${docsPath}/master-detail/`)}>Master/Detail</a> features. Access
+                            all features from our{' '}
+                            <a href={urlWithBaseUrl(`./${docsPath}/side-bar/`)}>Accessory Panels</a>.
                         </span>
                     </div>
                     <div className={styles.feature}>
@@ -42,7 +36,7 @@ const AdvancedFeatures: React.FC = () => {
                         <span className={styles.featureDetail}>
                             Access dedicated support via{' '}
                             <a href={urlWithBaseUrl('https://ag-grid.zendesk.com/hc/en-us')}>Zendesk</a>, monitored by
-                            our support teams 365 days a year, to help build your perfect React Table.
+                            our support teams 365 days a year, to help build your perfect {productName}.
                         </span>
                     </div>
                     <div className={styles.feature}>
@@ -56,7 +50,7 @@ const AdvancedFeatures: React.FC = () => {
                 </div>
             </div>
             <div className={styles.column}>
-                <Snippet framework={'react'} language={'jsx'} content={codeExample} transform={false} copyToClipboard />
+                <Snippet framework={framework} language={language} content={code} transform={false} copyToClipboard />
             </div>
         </div>
     );

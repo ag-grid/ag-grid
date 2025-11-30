@@ -252,6 +252,48 @@ const reactLandingPage = defineCollection({
     ),
 });
 
+const angularLandingPage = defineCollection({
+    loader: glob({ base: './src/content/angular-landing-page', pattern: 'examples.json' }),
+    schema: z.array(
+        z.object({
+            title: z.string(),
+            img: z.string(),
+            imgAlt: z.string(),
+            content: z.string(),
+            docs: z.string(),
+            demo: z.string(),
+        })
+    ),
+});
+
+const javascriptLandingPage = defineCollection({
+    loader: glob({ base: './src/content/javascript-landing-page', pattern: 'examples.json' }),
+    schema: z.array(
+        z.object({
+            title: z.string(),
+            img: z.string(),
+            imgAlt: z.string(),
+            content: z.string(),
+            docs: z.string(),
+            demo: z.string(),
+        })
+    ),
+});
+
+const vueLandingPage = defineCollection({
+    loader: glob({ base: './src/content/vue-landing-page', pattern: 'examples.json' }),
+    schema: z.array(
+        z.object({
+            title: z.string(),
+            img: z.string(),
+            imgAlt: z.string(),
+            content: z.string(),
+            docs: z.string(),
+            demo: z.string(),
+        })
+    ),
+});
+
 const enterpriseLandingPage = defineCollection({
     loader: glob({ base: './src/content/enterprise-landing-page', pattern: 'examples.json' }),
     schema: z.array(
@@ -317,6 +359,9 @@ export const collections = {
     siteHeader,
     seedProjects,
     reactLandingPage,
+    angularLandingPage,
+    javascriptLandingPage,
+    vueLandingPage,
     enterpriseLandingPage,
     aboutPage,
     contactResults,

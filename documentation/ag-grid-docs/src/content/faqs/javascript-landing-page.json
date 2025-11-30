@@ -1,0 +1,42 @@
+[
+    {
+        "question": "What is the difference between AG Grid Community and Enterprise?",
+        "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](/license-pricing/) offers additional advanced features and support."
+    },
+    {
+        "question": "Can I create a JavaScript Data Grid for free?",
+        "answer": "Yes, you can create a JavaScript Data Grid for free using our open-source library, [AG Grid Community](./getting-started/)."
+    },
+    {
+        "question": "Will my JavaScript Data Grids be compatible with AG Charts?",
+        "answer": "Yes, AG Grid is designed to be compatible with AG Charts, allowing seamless integration between JavaScript Data Grids and [JavaScript Charts](https://www.ag-grid.com/charts/javascript/quick-start/)."
+    },
+    {
+        "question": "Can I customise the JavaScript Data Grid?",
+        "answer": "Yes, you can customise AG Grid [themes](./themes/) with CSS, create your own custom themes, and use your own components in cells. Visit our [Theme Builder](/theme-builder/) to start customising themes."
+    },
+    {
+        "question": "Does AG Grid work with any JavaScript framework?",
+        "answer": "Yes, AG Grid works with vanilla JavaScript and has dedicated wrappers for [React](./react-data-grid/getting-started/), [Angular](./angular-data-grid/getting-started/), and [Vue](./vue-data-grid/getting-started/)."
+    },
+    {
+        "question": "Can I use AG Grid with TypeScript?",
+        "answer": "Yes, AG Grid is written in TypeScript and provides full type definitions out of the box for excellent TypeScript support."
+    },
+    {
+        "question": "How Many Rows Can AG Grid Handle?",
+        "answer": "AG Grid can easily handle millions of rows and thousands of columns, with no performance degradation, by using row & column virtualisation."
+    },
+    {
+        "question": "What is AG Grid Enterprise?",
+        "answer": "[AG Grid Community](./getting-started/) is the free version with basic features, while [AG Grid Enterprise](/license-pricing/) offers additional advanced features and support."
+    },
+    {
+        "question": "What is an AG Grid licence?",
+        "answer": "An AG Grid licence is required to use [AG Grid Enterprise](/license-pricing/) in production. Try it for free, or request a trial licence at [info@ag-grid.com](mailto:info@ag-grid.com) to remove the watermark & console messages."
+    },
+    {
+        "question": "How much does AG Grid cost?",
+        "answer": "[AG Grid Community](./getting-started/) is free forever. [AG Grid Enterprise](/license-pricing/) costs $999 USD per licence. Visit the [Pricing page](/license-pricing/) for more information."
+    }
+]

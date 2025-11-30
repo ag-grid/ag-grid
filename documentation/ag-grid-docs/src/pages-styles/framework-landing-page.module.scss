@@ -363,3 +363,69 @@
     padding: $spacing-size-4;
     border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
+
+// Contact Form Section
+.contactSection {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-12;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        flex-direction: row;
+        gap: $spacing-size-16;
+    }
+}
+
+.contactInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-8;
+}
+
+.contactFeatures {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.contactFeature {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-3;
+    font-size: var(--text-fs-lg);
+    color: var(--color-fg-primary);
+}
+
+.contactFeatureIcon {
+    flex-shrink: 0;
+    width: 24px !important;
+    height: 24px !important;
+    fill: var(--color-util-brand-500) !important;
+
+    #{$selector-darkmode} & {
+        fill: var(--color-util-brand-400) !important;
+    }
+}
+
+.contactLogos {
+    margin-top: auto;
+    padding-top: $spacing-size-8;
+    border-top: 1px solid var(--color-border-secondary);
+}
+
+.contactLogosLabel {
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+    margin: 0 0 $spacing-size-4 0;
+}
+
+.contactFormWrapper {
+    flex: 1;
+    max-width: 500px;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        max-width: 100%;
+    }
+}
