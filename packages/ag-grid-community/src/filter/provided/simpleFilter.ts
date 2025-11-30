@@ -1,5 +1,6 @@
 import { _isComponent } from '../../agStack/interfaces/agComponent';
 import { _areEqual } from '../../agStack/utils/array';
+import { _isBrowserFirefox } from '../../agStack/utils/browser';
 import { _addOrRemoveAttribute, _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
 import { AgPromise } from '../../agStack/utils/promise';
 import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
@@ -534,7 +535,9 @@ export abstract class SimpleFilter<
 
         const params = this.params;
 
-        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column)) {
+        const keepInvalidInputState = !_isBrowserFirefox() && this.hasInvalidInputs();
+
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column) || keepInvalidInputState) {
             return;
         }
 
