@@ -12,9 +12,8 @@ import { AgContentEditableField, KeyCode, _createElement, _last } from 'ag-grid-
 
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 
-// Allow partial ranges (eg "A1:"), commas, etc. so we keep typing within the same token
-// until a breaking operator is entered.
-const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?[:,]?/g;
+// Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
+const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
 const DISPLAY_OPERATOR_LOOKUP: Record<string, string> = {
     '/': '÷',
     '*': '×',
@@ -445,6 +444,16 @@ const getCaretOffset = (contentElement: HTMLElement, currentValue: string): numb
 
     if (!contentElement.contains(range.startContainer)) {
         return currentValue?.length ?? null;
+    }
+
+    // If the caret is directly on the container (between child nodes), the range offset is a
+    // child index, so convert it to caret units by summing preceding child lengths.
+    if (range.startContainer === contentElement) {
+        let offset = 0;
+        for (let i = 0; i < range.startOffset; i++) {
+            offset += getNodeTextLength(contentElement.childNodes[i]);
+        }
+        return offset;
     }
 
     let offset = range.startOffset;
