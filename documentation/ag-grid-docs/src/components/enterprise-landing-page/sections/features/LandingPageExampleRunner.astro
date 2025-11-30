@@ -1,0 +1,63 @@
+---
+import type { Framework } from '@ag-grid-types';
+import ExampleRunnerContainer from '@components/example-runner/components/ExampleRunnerContainer.astro';
+import { getIsDev } from '@utils/env';
+import { DocsExampleRunner } from '@components/docs/components/DocsExampleRunner';
+import { DISABLE_EXAMPLE_RUNNER } from '@constants';
+import { getGeneratedContents, type GeneratedExampleParams } from '@components/example-generator';
+import { getSupportedFrameworks } from '@components/docs/utils/filesData';
+
+interface Props {
+    title: string;
+    name: string;
+    pageName: string;
+    exampleHeight?: number;
+    suppressDarkMode?: boolean;
+    typescriptOnly?: boolean;
+    framework?: Framework;
+}
+
+const { title, name, pageName, exampleHeight = 400, typescriptOnly, suppressDarkMode, framework = 'react' } = Astro.props as Props;
+
+const isDev = getIsDev();
+
+const supportedFrameworks = await getSupportedFrameworks({ pageName, exampleName: name });
+const generatedExampleParams: GeneratedExampleParams = {
+    type: 'docs',
+    framework: supportedFrameworks?.values().next().value || 'vanilla',
+    pageName,
+    exampleName: name,
+};
+
+let hasExampleConsoleLog = false;
+try {
+    const contents = await getGeneratedContents(generatedExampleParams);
+    hasExampleConsoleLog = Boolean(contents?.hasExampleConsoleLog);
+} catch (error) {
+    console.error('Error generating contents for:', generatedExampleParams);
+}
+---
+
+{
+    !DISABLE_EXAMPLE_RUNNER && (
+        <ExampleRunnerContainer
+            exampleHeight={exampleHeight}
+            pageName={pageName}
+            exampleName={name}
+            hasExampleConsoleLog={hasExampleConsoleLog}
+        >
+            <DocsExampleRunner
+                client:only="react"
+                title={title}
+                name={name}
+                exampleHeight={exampleHeight}
+                typescriptOnly={typescriptOnly}
+                suppressDarkMode={suppressDarkMode}
+                pageName={pageName}
+                framework={framework}
+                isDev={isDev}
+                hasExampleConsoleLog={hasExampleConsoleLog}
+            />
+        </ExampleRunnerContainer>
+    )
+}

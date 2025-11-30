@@ -2,14 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import styles from '../pages-styles/react-table.module.scss';
-import Customers from '../components/framework-landing-pages/react/sections/customers/Customers';
+import Customers from '../components/customers/Customers';
 import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
 import FeaturesSection from '../components/framework-landing-pages/react/sections/features/FeaturesSection';
 import Showcase from '../components/framework-landing-pages/react/sections/showcase/Showcase';
 import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
 import GithubSlugger from 'github-slugger';
 
-import InstallText from '@components/framework-landing-pages/InstallTextReact';
+import InstallText from '@components/install-text/InstallText';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -68,7 +68,7 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
                         href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a
                     >
                     <div class={styles.heroSectionCta2}>
-                        <InstallText client:load />
+                        <InstallText client:load packageName="ag-grid-react" />
                     </div>
                 </div>
                 <div class={styles.heroSectionDemoContainer}>
