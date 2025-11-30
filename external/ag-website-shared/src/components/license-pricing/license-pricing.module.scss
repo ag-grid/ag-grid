@@ -385,12 +385,23 @@
     }
 }
 
+.enterpriseTrialContainer {
+    padding-bottom: $spacing-size-16;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        flex-direction: row;
+        align-items: flex-start;
+        padding-top: $spacing-size-24;
+        padding-bottom: $spacing-size-20;
+        border-top: 1px solid var(--color-border-secondary);
+    }
+}
+
 .trialLicence {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-4 $spacing-size-10;
     padding-top: $spacing-size-16;
-    padding-bottom: $spacing-size-16;
 
     > .trialLicenceSeparator {
         width: 1px;
@@ -401,7 +412,6 @@
         flex-direction: row;
         align-items: flex-start;
         padding-top: $spacing-size-24;
-        padding-bottom: $spacing-size-20;
         border-top: 1px solid var(--color-border-secondary);
     }
 }
