@@ -391,7 +391,9 @@
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
         align-items: flex-start;
+        padding-top: $spacing-size-24;
         padding-bottom: $spacing-size-20;
+        border-top: 1px solid var(--color-border-secondary);
     }
 }
 
