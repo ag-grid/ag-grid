@@ -222,31 +222,34 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             target.setExpanded(true, undefined, true);
         }
 
-        let canPutInside = false;
-
-        if (target.expanded) {
-            canPutInside = true;
-        } else if (target.group) {
-            if (rowsDrop.pointerPos === 'inside') {
-                canPutInside = true;
-            } else if (!rowsDrop.treeData) {
-                const rows = rowsDrop.rows;
-                const targetLevel = target.level;
-                canPutInside = true;
-                for (let i = 0, len = rows.length; i < len; ++i) {
-                    const row = rows[i];
-                    if (row !== target && row.group && row.level !== targetLevel) {
-                        canPutInside = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (canPutInside) {
+        if (this.canDropInTarget(target, rowsDrop)) {
             this.dropGroupThrottled = true;
             this.dropGroupTarget = target;
         }
+    }
+
+    private canDropInTarget(target: IRowNode, rowsDrop: _RowsDrop): boolean {
+        if (target.expanded) {
+            return true;
+        }
+        if (!target.group) {
+            return false;
+        }
+        if (rowsDrop.pointerPos === 'inside') {
+            return true;
+        }
+        if (rowsDrop.treeData) {
+            return false;
+        }
+        const rows = rowsDrop.rows;
+        const targetLevel = target.level;
+        for (let i = 0, len = rows.length; i < len; ++i) {
+            const row = rows[i];
+            if (row !== target && row.group && row.level !== targetLevel) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private startDropGroupDelay(target: IRowNode): void {
