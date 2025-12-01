@@ -1,6 +1,7 @@
 import { _makeNull } from '../../../agStack/utils/generic';
 import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
 import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
+import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
@@ -32,6 +33,34 @@ export class NumberFilter extends SimpleFilter<
 
     protected override defaultDebounceMs = 500;
 
+    public override afterGuiAttached(params?: IAfterGuiAttachedParams | undefined): void {
+        super.afterGuiAttached(params);
+
+        // Refresh validation
+        for (let i = 0; i < this.eValuesFrom.length; i++) {
+            const from = this.eValuesFrom[i];
+            const to = this.eValuesTo[i];
+            this.refreshInputPairValidation(from, to);
+        }
+    }
+
+    private refreshInputPairValidation(
+        from: GridInputNumberField | GridInputTextField,
+        to: GridInputNumberField | GridInputTextField,
+        isFrom = false
+    ): void {
+        const parser = this.params.numberParser;
+        const fromValue = getNormalisedValue(parser, from);
+        const toValue = getNormalisedValue(parser, to);
+        const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
+        const validityMessage = localeKey ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)]) : '';
+        (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
+        (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
+        if (validityMessage.length > 0) {
+            this.beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
+        }
+    }
+
     protected override setElementValue(
         element: GridInputTextField | GridInputNumberField,
         value: number | null,
@@ -47,9 +76,8 @@ export class NumberFilter extends SimpleFilter<
     }
 
     protected createEValue(): HTMLElement {
-        const { beans, params, eValuesFrom, eValuesTo } = this;
+        const { params, eValuesFrom, eValuesTo } = this;
         const allowedCharPattern = getAllowedCharPattern(params);
-        const parser = params.numberParser;
 
         const eCondition = _createElement({ tag: 'div', cls: 'ag-filter-body', role: 'presentation' });
 
@@ -62,19 +90,8 @@ export class NumberFilter extends SimpleFilter<
                 to: GridInputTextField | GridInputNumberField,
                 isFrom: boolean
             ) =>
-            () => {
-                const fromValue = getNormalisedValue(parser, from);
-                const toValue = getNormalisedValue(parser, to);
-                const localeKey = getValidityMessageKey(fromValue, toValue, isFrom);
-                const validityMessage = localeKey
-                    ? this.translate(localeKey, [String(isFrom ? toValue : fromValue)])
-                    : '';
-                (isFrom ? from : to).setCustomValidity(validityMessage); // Set validity error state for target input
-                (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
-                if (validityMessage.length > 0) {
-                    beans.ariaAnnounce.announceValue(validityMessage, 'dateFilter');
-                }
-            };
+            () =>
+                this.refreshInputPairValidation(from, to, isFrom);
 
         from.onValueChange(getFieldChangedListener(from, to, true));
         to.onValueChange(getFieldChangedListener(from, to, false));
