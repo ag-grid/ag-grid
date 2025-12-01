@@ -41,13 +41,18 @@ interface Props {
     learnMoreTitle?: string;
     ctaTitle?: string;
     ctaUrl?: string;
+    ctaId?: string;
     sectionClass?: string;
     showBackgroundGradient?: boolean;
     children: ReactNode;
     isFramework?: boolean;
 }
 
-const CTAWithFrameworks: FunctionComponent<{ ctaTitle: string; ctaUrl: string }> = ({ ctaTitle, ctaUrl }) => {
+const CTAWithFrameworks: FunctionComponent<{ ctaId: string; ctaTitle: string; ctaUrl: string }> = ({
+    ctaId,
+    ctaTitle,
+    ctaUrl,
+}) => {
     const { framework, internalFramework, handleFrameworkChange } = useFrameworkSelector();
     const [isHovering, setIsHovering] = useState(false);
     const [isHiding, setIsHiding] = useState(false);
@@ -87,6 +92,7 @@ const CTAWithFrameworks: FunctionComponent<{ ctaTitle: string; ctaUrl: string }>
     return (
         <div className={styles.CTAWithFrameworks}>
             <a
+                id={ctaId}
                 href={gridUrlWithPrefix({ framework, url: ctaUrl })}
                 className={classnames([styles.ctaButton, 'button-tertiary'])}
             >
@@ -162,6 +168,7 @@ export const LandingPageSection: FunctionComponent<Props> = ({
     subHeadingHtml,
     ctaTitle = 'Learn more',
     ctaUrl,
+    ctaId,
     isFramework = false,
     sectionClass,
     showBackgroundGradient,
@@ -192,10 +199,10 @@ export const LandingPageSection: FunctionComponent<Props> = ({
                     <h4 className={styles.subHeading}>{subHeading}</h4>
                 )}
 
-                {ctaUrl && isFramework && <CTAWithFrameworks ctaTitle={ctaTitle} ctaUrl={ctaUrl} />}
+                {ctaUrl && isFramework && <CTAWithFrameworks ctaId={ctaId} ctaTitle={ctaTitle} ctaUrl={ctaUrl} />}
 
                 {ctaUrl && !isFramework && (
-                    <a href={ctaUrl} className={classnames([styles.ctaButton, 'button-tertiary'])}>
+                    <a id={ctaId} href={ctaUrl} className={classnames([styles.ctaButton, 'button-tertiary'])}>
                         {ctaTitle} <Icon name="chevronRight" />
                     </a>
                 )}
