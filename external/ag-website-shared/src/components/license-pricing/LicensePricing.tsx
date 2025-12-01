@@ -179,7 +179,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
                         <div ref={contactSalesRef} className={styles.salesForm}>
                             <div className={styles.salesFormCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3 className="text-2xl">
                                     <span>Contact Our Sales Team</span>
                                 </h3>
 
@@ -206,7 +206,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.trialLicence}>
                             <div className={styles.trialLicenceCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3 className="text-2xl">
                                     <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
                                     <span>Enterprise Bundle Trial</span>
                                 </h3>
