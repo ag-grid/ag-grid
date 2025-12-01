@@ -61,6 +61,10 @@ export class NumberFilter extends SimpleFilter<
         }
     }
 
+    protected override getState() {
+        return this.hasInvalidInputs();
+    }
+
     protected override setElementValue(
         element: GridInputTextField | GridInputNumberField,
         value: number | null,

@@ -67,6 +67,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
+    protected override getState() {
+        return this.hasInvalidInputs();
+    }
+
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
         super.commonUpdateSimpleParams(params);
 
