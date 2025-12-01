@@ -85,7 +85,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                   ? 'grid-buy-now'
                                   : 'grid-bundle-buy-now';
 
-                        console.log(ctaId);
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
                                 <span className={classnames(styles.fwProduct, 'text-lg')}>{license.subHeading}</span>
