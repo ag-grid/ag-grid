@@ -63,6 +63,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         if (changedProps.has('treeData')) {
             const value = gos.get('treeData') && this.hasTreeData;
             if (this.treeData !== value) {
+                this.beans.rowDragSvc?.cancelRowDrag();
                 this.treeData = value;
                 this.needReset = true;
                 this.strategy = this.destroyBean(this.strategy);
@@ -98,6 +99,7 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         this.nested = nested;
         if (needReset) {
             this.needReset = false;
+            this.beans.rowDragSvc?.cancelRowDrag();
             resetGrouping(params.rowNode, !nested);
         }
         return strategy ? strategy.execute(params) || needReset : undefined;
