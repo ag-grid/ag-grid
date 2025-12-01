@@ -222,8 +222,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         } else if (target.group) {
             if (rowsDrop.pointerPos === 'inside') {
                 canPutInside = true;
-            } else if (!rowsDrop.treeData && rowsDrop.suppressMoveWhenRowDragging) {
-                // We allow putting inside directly only if none of the rows are groups
+            } else if (!rowsDrop.treeData) {
                 const rows = rowsDrop.rows;
                 const targetLevel = target.level;
                 canPutInside = true;
@@ -278,26 +277,19 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         this.resetDragGroup();
     }
 
-    private shouldDropTargetBeParent({
-        target,
-        rows,
-        pointerPos,
-        treeData,
-        suppressMoveWhenRowDragging,
-    }: _RowsDrop): boolean {
+    private shouldDropTargetBeParent({ target, rows, pointerPos, treeData }: _RowsDrop): boolean {
         if (!target || pointerPos === 'none') {
             return false;
         }
         if (pointerPos === 'inside') {
             return true;
         }
-        if (target.group && !target.expanded && !treeData && suppressMoveWhenRowDragging && this.dropGroupThrottled) {
+        if (!treeData && target.group && !target.expanded) {
             return true;
         }
         if (pointerPos === 'above') {
             return false;
         }
-
         const rowModel = this.beans.rowModel;
         const targetRowIndex = target.rowIndex!;
         let nextRowIndex = targetRowIndex + 1;
