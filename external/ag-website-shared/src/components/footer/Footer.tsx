@@ -19,7 +19,11 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) =>
             <ul className="list-style-none">
                 {links.map(({ name, url, newTab, iconName }: any) => (
                     <li key={`${title}_${name}`}>
-                        <a href={urlWithBaseUrl(url)} {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}>
+                        <a
+                            id={`${name.toLowerCase().replace(' ', '-')}-nav`}
+                            href={urlWithBaseUrl(url)}
+                            {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                        >
                             {iconName && <Icon name={iconName} />}
                             {name}
                         </a>

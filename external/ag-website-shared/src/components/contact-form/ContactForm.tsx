@@ -104,6 +104,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
 
     return (
         <form
+            id="contact-form"
             ref={formRef}
             className={styles.contactForm}
             action={actionUrl}
