@@ -140,6 +140,10 @@ export interface RowsDrop<TData = any, TContext = any>
     extends Omit<IsRowValidDropPositionParams<TData, TContext>, 'draggingEvent'> {
     /** The dragging event that originated this drop operation */
     draggingEvent: RowDraggingEvent<TData, TContext> | null;
+
+    /** True if the grid is using tree data mode. */
+    treeData: boolean;
+
     /** True if the drop target can be highlighted while moving, matching the `position` value. */
     highlight: boolean;
 

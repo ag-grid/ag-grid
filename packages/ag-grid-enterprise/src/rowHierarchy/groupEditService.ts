@@ -3,7 +3,6 @@ import type {
     CellValueChangedEvent,
     IClientSideRowModel,
     IRowNode,
-    RowDropTargetPosition,
     RowNode,
     _IGroupEditService,
     _RowsDrop,
@@ -131,8 +130,11 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
     }
 
     public fixRowsDrop(rowsDrop: _RowsDrop, canSetParent: boolean, fromNudge: boolean, yDelta: number): void {
+        const treeData = !!this.beans.groupStage?.treeData;
+        rowsDrop.treeData = treeData;
+
         const isRowGrouping = !!this.beans.rowGroupColsSvc?.columns?.length || this.gos.get('pivotMode');
-        if (!isRowGrouping && !this.beans.groupStage?.treeData) {
+        if (!isRowGrouping && !treeData) {
             return; // Early exit, no grouping (managed or unmanaged) and no treeData
         }
 
@@ -154,12 +156,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (canSetParent) {
             if (!target || (yDelta >= 0.5 && target.rowIndex === lastRowIndex)) {
                 newParent = rootNode;
-            } else if (
-                rowsDrop.moved &&
-                target &&
-                this.dropGroupThrottled &&
-                this.shouldDropTargetBeParent(target, rowsDrop.pointerPos, rowsDrop.rows)
-            ) {
+            } else if (rowsDrop.moved && target && this.dropGroupThrottled && this.shouldDropTargetBeParent(rowsDrop)) {
                 newParent = target;
             }
 
@@ -225,13 +222,14 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         } else if (target.group) {
             if (rowsDrop.pointerPos === 'inside') {
                 canPutInside = true;
-            } else if (!this.beans.groupStage?.treeData) {
+            } else if (!rowsDrop.treeData && rowsDrop.suppressMoveWhenRowDragging) {
                 // We allow putting inside directly only if none of the rows are groups
                 const rows = rowsDrop.rows;
+                const targetLevel = target.level;
                 canPutInside = true;
                 for (let i = 0, len = rows.length; i < len; ++i) {
                     const row = rows[i];
-                    if (row.group && row !== target) {
+                    if (row !== target && row.group && row.level !== targetLevel) {
                         canPutInside = false;
                         break;
                     }
@@ -280,16 +278,24 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         this.resetDragGroup();
     }
 
-    private shouldDropTargetBeParent(
-        target: IRowNode | null,
-        pointerPosition: RowDropTargetPosition,
-        rows: IRowNode[]
-    ): boolean {
-        if (!target || pointerPosition === 'none' || pointerPosition === 'above') {
+    private shouldDropTargetBeParent({
+        target,
+        rows,
+        pointerPos,
+        treeData,
+        suppressMoveWhenRowDragging,
+    }: _RowsDrop): boolean {
+        if (!target || pointerPos === 'none') {
             return false;
         }
-        if (pointerPosition === 'inside') {
+        if (pointerPos === 'inside') {
             return true;
+        }
+        if (target.group && !target.expanded && !treeData && suppressMoveWhenRowDragging && this.dropGroupThrottled) {
+            return true;
+        }
+        if (pointerPos === 'above') {
+            return false;
         }
 
         const rowModel = this.beans.rowModel;
@@ -303,7 +309,8 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         const childrenAfterGroup = this.draggingGroups?.get(target) ?? target.childrenAfterGroup;
         if (nextRow && nextRow.parent === target && childrenAfterGroup?.length) {
             const rowsSet = new Set(rows);
-            for (const child of childrenAfterGroup) {
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                const child = childrenAfterGroup[i];
                 if (child.rowIndex !== null && !rowsSet.has(child)) {
                     return true;
                 }

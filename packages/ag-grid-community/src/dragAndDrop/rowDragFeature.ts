@@ -310,6 +310,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             suppressMoveWhenRowDragging,
             sameGrid,
             withinGrid,
+            treeData: false,
             rootNode,
             moved: source !== overNode,
             y,
