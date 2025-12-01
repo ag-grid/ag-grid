@@ -74,6 +74,7 @@ const HeaderLinks = ({
                 return (
                     <li key={title.toLocaleLowerCase()} className={linkClasses}>
                         <a
+                            id={`${title.replace(' ', '-').toLowerCase()}-nav`}
                             className={styles.navLink}
                             href={href}
                             onClick={() => {
