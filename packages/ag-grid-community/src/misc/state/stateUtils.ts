@@ -43,6 +43,7 @@ export function convertColumnState(
             rowGroup,
             rowGroupIndex,
             aggFunc,
+            valueIndex,
             pivot,
             pivotIndex,
             pinned,
@@ -52,13 +53,13 @@ export function convertColumnState(
         } = columnState[i];
         columns.push(colId);
         if (sort) {
-            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType ?? null };
+            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType };
         }
         if (rowGroup) {
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns.push({ colId, aggFunc });
+            aggregationColumns[valueIndex ?? 0] = { colId, aggFunc };
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;

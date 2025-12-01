@@ -12,8 +12,6 @@ import type { SortOption } from '../interfaces/iSortOption';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
-const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
-
 export class SortService extends BeanStub implements NamedBean {
     beanName = 'sortSvc' as const;
 
@@ -80,7 +78,7 @@ export class SortService extends BeanStub implements NamedBean {
             }
             return col !== lastSortIndexCol;
         });
-        const sortedColsWithIndices = lastSortIndexCol.getSortDef().direction
+        const sortedColsWithIndices = lastSortIndexCol.getSortDef()
             ? [...allSortedColsWithoutChangesOrGroups, lastSortIndexCol]
             : allSortedColsWithoutChangesOrGroups;
         sortedColsWithIndices.forEach((col, idx) => this.setColSortIndex(col, idx));
@@ -96,7 +94,7 @@ export class SortService extends BeanStub implements NamedBean {
         // pull out all the columns that have sorting set
         let isSorting = false;
         this.beans.colModel.forAllCols((col) => {
-            if (col.getSortDef().direction) {
+            if (col.getSortDef()) {
                 isSorting = true;
                 return true; // exit loop early
             }
@@ -122,12 +120,13 @@ export class SortService extends BeanStub implements NamedBean {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
                 // add to list of cleared cols when sort direction is set
-                if (columnToClear.getSortDef().direction) {
+                if (columnToClear.getSortDef()) {
                     clearedColumns.push(columnToClear);
                 }
 
-                // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
-                // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
+                // setting to 'undefined' hits a special condition, which marks
+                // a column's sortDef as implicitly modified (initial), this allows
+                // groupMaintainOrder gridOption feature to work
                 this.setColSort(columnToClear, undefined, source);
             }
         });
@@ -136,11 +135,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     private getNextSortDirection(column: AgColumn): SortDef {
-        const sortingOrder = (
-            column.getColDef().sortingOrder ??
-            this.gos.get('sortingOrder') ??
-            DEFAULT_SORTING_ORDER
-        ).map((objOrDirection: unknown) => _getSortDefFromInput(objOrDirection));
+        const sortingOrder = column.getSortingOrder();
 
         const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
@@ -160,7 +155,7 @@ export class SortService extends BeanStub implements NamedBean {
         // pull out all the columns that have sorting set
         let allSortedCols: AgColumn[] = [];
         colModel.forAllCols((col) => {
-            if (col.getSortDef().direction) {
+            if (col.getSortDef()) {
                 allSortedCols.push(col);
             }
         });
@@ -177,7 +172,7 @@ export class SortService extends BeanStub implements NamedBean {
             });
         }
 
-        const sortedRowGroupCols = rowGroupColsSvc?.columns.filter((col) => !!col.getSortDef().direction) ?? [];
+        const sortedRowGroupCols = rowGroupColsSvc?.columns.filter((col) => !!col.getSortDef()) ?? [];
 
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
@@ -240,11 +235,11 @@ export class SortService extends BeanStub implements NamedBean {
         const sortItems: T[] = [];
         const columnsWithSortingOrdered = this.getColumnsWithSortingOrdered();
         for (const column of columnsWithSortingOrdered) {
-            const sort = column.getSortDef().direction;
+            const sort = column.getSortDef()?.direction;
             if (!sort) {
                 continue;
             }
-            const type = column.getSortDef().type ?? null;
+            const type = _normalizeSortType(column.getSortDef()?.type);
             const sortItem = { sort, type } as T;
             if (asSortModel) {
                 (sortItem as SortModelItem).colId = column.getId();
@@ -271,7 +266,7 @@ export class SortService extends BeanStub implements NamedBean {
         return isColumnSortCouplingActive && isGroupDisplayColumn;
     }
 
-    public getDisplaySortForColumn(column: AgColumn): DisplaySortDef | undefined {
+    public getDisplaySortForColumn(column: AgColumn): DisplaySortDef | null {
         const linkedColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
         if (!this.canColumnDisplayMixedSort(column) || !linkedColumns?.length) {
             return column.getSortDef();
@@ -285,7 +280,7 @@ export class SortService extends BeanStub implements NamedBean {
         // the == is intentional, as null and undefined both represent no sort, which means they are equivalent
         const allMatch = sortableColumns.every((col) => _areSortDefsEqual(col.getSortDef(), firstSort));
         if (!allMatch) {
-            return { type: _normalizeSortType(column.getSortDef().type), direction: 'mixed' };
+            return { type: _normalizeSortType(column.getSortDef()?.type), direction: 'mixed' };
         }
         return firstSort;
     }
@@ -307,7 +302,7 @@ export class SortService extends BeanStub implements NamedBean {
                 const sourceColumns = this.beans.showRowGroupCols?.getSourceColumnsForGroupColumn(column);
                 // this == is intentional, as it allows null and undefined to match, which are both unsorted states
                 const sortDirectionsMatch = sourceColumns?.every(
-                    (sourceCol) => direction == sourceCol.getSortDef().direction
+                    (sourceCol) => direction == sourceCol.getSortDef()?.direction
                 );
                 const isMultiSorting = !sortDirectionsMatch;
 
@@ -325,7 +320,7 @@ export class SortService extends BeanStub implements NamedBean {
 
         const sortDef = _getSortDefFromColDef(column.colDef);
         if (sortDef) {
-            column.setSortDef(sortDef);
+            column.setSortDef(sortDef, true);
         }
 
         if (sortIndex !== undefined) {
@@ -355,7 +350,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private setColSort(column: AgColumn, sort: SortDef | undefined, source: ColumnEventType): void {
         if (!_areSortDefsEqual(column.getSortDef(), sort)) {
-            column.setSortDef(_getSortDefFromInput(sort));
+            column.setSortDef(_getSortDefFromInput(sort), sort === undefined);
             column.dispatchColEvent('sortChanged', source);
         }
         column.dispatchStateUpdatedEvent('sort');

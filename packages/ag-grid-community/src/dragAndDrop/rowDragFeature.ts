@@ -63,7 +63,7 @@ type RowsDropCustomResult = {
 };
 
 export class RowDragFeature extends BeanStub implements DropTarget {
-    private lastDraggingEvent: RowDraggingEvent | null = null;
+    public lastDraggingEvent: RowDraggingEvent | null = null;
     private autoScroll: AutoScrollService | null = null;
     private autoScrollChanged = false;
     private autoScrollChanging = false;
@@ -230,13 +230,15 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         target ??= rowModel.getRow(rowModel.getRowCount() - 1) ?? null;
 
         const groupEditSvc = this.beans.groupEditSvc;
-        const canSetParent = sameGrid && !!groupEditSvc?.canSetParent(rowsDrop);
+        const canSetParent = !!groupEditSvc?.canSetParent(rowsDrop);
 
         let newParent: IRowNode | null = null;
         if (target?.footer) {
             // Footer row. Get the real parent, that is the sibling of the footer
             const found = _prevOrNextDisplayedRow(rowModel, -1, target) ?? _prevOrNextDisplayedRow(rowModel, 1, target);
-            newParent = target.sibling ?? rootNode;
+            if (canSetParent) {
+                newParent = target.sibling ?? rootNode;
+            }
             target = found ?? null;
         }
         if (target?.detail) {
@@ -310,6 +312,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             suppressMoveWhenRowDragging,
             sameGrid,
             withinGrid,
+            treeData: false,
             rootNode,
             moved: source !== overNode,
             y,
@@ -352,9 +355,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rowsDrop.rows = this.filterRows(rowsDrop);
         }
 
-        this.clearNewParentIfSameParent(rowsDrop, canSetParent);
+        this.beans.groupEditSvc?.clearNewSameParent(rowsDrop, canSetParent);
+
         this.enforceSuppressMoveWhenRowDragging(rowsDrop, suppressMoveWhenRowDragging, 'final');
-        this.ensureInsidePositionHasParent(rowsDrop, fallbackPosition);
+
+        if (rowsDrop.position === 'inside' && (!rowsDrop.allowed || !rowsDrop.newParent)) {
+            rowsDrop.position = fallbackPosition;
+        }
     }
 
     private computeDropPosition(
@@ -398,7 +405,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         rowDragManaged: boolean,
         validator: (params: RowsDrop) => boolean | RowsDropCustomResult | null
     ): void {
-        this.clearNewParentIfSameParent(rowsDrop, canSetParent);
+        this.beans.groupEditSvc?.clearNewSameParent(rowsDrop, canSetParent);
         const result = validator(rowsDrop);
         if (!result) {
             rowsDrop.allowed = false;
@@ -430,21 +437,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
         if (!dropping && result.highlight !== undefined) {
             rowsDrop.highlight = result.highlight;
-        }
-    }
-
-    private clearNewParentIfSameParent(rowsDrop: RowsDrop, canSetParent: boolean): void {
-        if (!canSetParent || !rowsDrop.newParent) {
-            return;
-        }
-        if (rowsHaveSameParent(rowsDrop.rows, rowsDrop.newParent)) {
-            rowsDrop.newParent = null;
-        }
-    }
-
-    private ensureInsidePositionHasParent(rowsDrop: RowsDrop, fallbackPosition: 'above' | 'below'): void {
-        if (rowsDrop.position === 'inside' && (!rowsDrop.allowed || !rowsDrop.newParent)) {
-            rowsDrop.position = fallbackPosition;
         }
     }
 
@@ -581,6 +573,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.beans.groupEditSvc?.stopDragging(final);
         this.beans.rowDropHighlightSvc?.fromDrag(null);
         setRowNodesDragging(draggingEvent.dragItem.rowNodes, false);
+        this.lastDraggingEvent = null;
     }
 
     private clearAutoScroll(): void {
@@ -721,15 +714,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         return _csrmFirstLeaf(row);
     }
 }
-
-const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
-    for (let i = 0, len = rows.length; i < len; ++i) {
-        if (rows[i].parent !== newParent) {
-            return false;
-        }
-    }
-    return true;
-};
 
 const rowsDropChanged = (a: RowsDrop | null | undefined, b: RowsDrop): boolean =>
     a !== b &&

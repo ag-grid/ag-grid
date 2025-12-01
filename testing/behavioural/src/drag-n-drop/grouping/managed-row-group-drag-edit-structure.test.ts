@@ -518,4 +518,138 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups structural noMove=%s 
         expect(lastMoveEvent.rowsDrop?.rows?.length).toBe(0);
         expect(api.getRowNode('a1')?.parent?.id).toBe('row-group-level1-Alpha-level2-One');
     });
+
+    // TODO: this test will be fixed by AG-13321
+    // test('allow reordering two leafs after groups were merged', async () => {
+    //     interface IAthlete {
+    //         athlete: string;
+    //         country: string;
+    //         year: number;
+    //     }
+    //     const rowData: IAthlete[] = [
+    //         { athlete: 'Ian', country: 'AU', year: 2000 },
+    //         { athlete: 'Dara', country: 'US', year: 2000 },
+    //         { athlete: 'Cindy', country: 'Canada', year: 2006 },
+    //         { athlete: 'Nero', country: 'US', year: 2008 },
+    //         { athlete: 'Martin', country: 'Norway', year: 2010 },
+    //         { athlete: 'Sun', country: 'China', year: 2012 },
+    //         { athlete: 'Coventry', country: 'Zimbabwe', year: 2008 },
+    //         { athlete: 'Lenton', country: 'Australia', year: 2008 },
+    //         { athlete: 'Ryan', country: 'United States', year: 2008 },
+    //         { athlete: 'Bruijn', country: 'Netherlands', year: 2004 },
+    //     ];
+
+    //     const gridOptions: GridOptions<IAthlete> = {
+    //         animateRows: true,
+    //         columnDefs: [
+    //             { rowDrag: true, field: 'country', rowGroup: true, editable: true },
+    //             { field: 'athlete' },
+    //             { field: 'year' },
+    //         ],
+    //         autoGroupColumnDef: { headerName: 'Levels' },
+    //         rowData,
+    //         rowDragManaged: true,
+    //         suppressMoveWhenRowDragging: noMove,
+    //         refreshAfterGroupEdit: true,
+    //         groupDefaultExpanded: -1,
+    //         getRowId: (params) => params.data.athlete,
+    //     };
+
+    //     const api = gridsManager.createGrid('my-grid', gridOptions);
+
+    //     const getChinaLeafOrder = () =>
+    //         (api.getRowNode('row-group-country-China')?.childrenAfterSort ?? [])
+    //             .filter((node) => !node.group)
+    //             .map((node) => node.data?.athlete);
+
+    //     await new GridRows(api, 'initial').check(`
+    //         ROOT id:ROOT_NODE_ID
+    //         ├─┬ LEAF_GROUP id:row-group-country-AU ag-Grid-AutoColumn:"AU"
+    //         │ └── LEAF id:Ian country:"AU" athlete:"Ian" year:2000
+    //         ├─┬ LEAF_GROUP id:row-group-country-US ag-Grid-AutoColumn:"US"
+    //         │ ├── LEAF id:Dara country:"US" athlete:"Dara" year:2000
+    //         │ └── LEAF id:Nero country:"US" athlete:"Nero" year:2008
+    //         ├─┬ LEAF_GROUP id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+    //         │ └── LEAF id:Cindy country:"Canada" athlete:"Cindy" year:2006
+    //         ├─┬ LEAF_GROUP id:row-group-country-Norway ag-Grid-AutoColumn:"Norway"
+    //         │ └── LEAF id:Martin country:"Norway" athlete:"Martin" year:2010
+    //         ├─┬ LEAF_GROUP id:row-group-country-China ag-Grid-AutoColumn:"China"
+    //         │ └── LEAF id:Sun country:"China" athlete:"Sun" year:2012
+    //         ├─┬ LEAF_GROUP id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+    //         │ └── LEAF id:Coventry country:"Zimbabwe" athlete:"Coventry" year:2008
+    //         ├─┬ LEAF_GROUP id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+    //         │ └── LEAF id:Lenton country:"Australia" athlete:"Lenton" year:2008
+    //         ├─┬ LEAF_GROUP id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+    //         │ └── LEAF id:Ryan country:"United States" athlete:"Ryan" year:2008
+    //         └─┬ LEAF_GROUP id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+    //         · └── LEAF id:Bruijn country:"Netherlands" athlete:"Bruijn" year:2004
+    //     `);
+
+    //     const dispatcher = new RowDragDispatcher({ api, eventType });
+    //     await dispatcher.start('row-group-country-Norway');
+    //     await dispatcher.move('row-group-country-China', { yOffsetPercent: 0.6 });
+
+    //     await waitFor(() => {
+    //         expect(api.getRowNode('row-group-country-China')?.expanded).toBe(true);
+    //     });
+    //     await waitFor(() => {
+    //         expect(getChinaLeafOrder()).toEqual(['Sun']);
+    //     });
+
+    //     await dispatcher.move('Sun', { yOffsetPercent: 0.1 });
+    //     await dispatcher.finish();
+    //     await asyncSetTimeout(0);
+
+    //     await new GridRows(api, 'after merging Norway into China').check(`
+    //         ROOT id:ROOT_NODE_ID
+    //         ├─┬ LEAF_GROUP id:row-group-country-AU ag-Grid-AutoColumn:"AU"
+    //         │ └── LEAF id:Ian country:"AU" athlete:"Ian" year:2000
+    //         ├─┬ LEAF_GROUP id:row-group-country-US ag-Grid-AutoColumn:"US"
+    //         │ ├── LEAF id:Dara country:"US" athlete:"Dara" year:2000
+    //         │ └── LEAF id:Nero country:"US" athlete:"Nero" year:2008
+    //         ├─┬ LEAF_GROUP id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+    //         │ └── LEAF id:Cindy country:"Canada" athlete:"Cindy" year:2006
+    //         ├─┬ LEAF_GROUP id:row-group-country-China ag-Grid-AutoColumn:"China"
+    //         │ ├── LEAF id:Sun country:"China" athlete:"Sun" year:2012
+    //         │ └── LEAF id:Martin country:"China" athlete:"Martin" year:2010
+    //         ├─┬ LEAF_GROUP id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+    //         │ └── LEAF id:Coventry country:"Zimbabwe" athlete:"Coventry" year:2008
+    //         ├─┬ LEAF_GROUP id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+    //         │ └── LEAF id:Lenton country:"Australia" athlete:"Lenton" year:2008
+    //         ├─┬ LEAF_GROUP id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+    //         │ └── LEAF id:Ryan country:"United States" athlete:"Ryan" year:2008
+    //         └─┬ LEAF_GROUP id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+    //         · └── LEAF id:Bruijn country:"Netherlands" athlete:"Bruijn" year:2004
+    //     `);
+    //     expect(getChinaLeafOrder()).toEqual(['Sun', 'Martin']);
+
+    //     const reorderDispatcher = new RowDragDispatcher({ api, eventType });
+    //     await reorderDispatcher.start('Martin');
+    //     await reorderDispatcher.move('Sun', {});
+    //     await reorderDispatcher.finish();
+    //     await asyncSetTimeout(0);
+
+    //     await new GridRows(api, 'after reordering China leafs').check(`
+    //         ROOT id:ROOT_NODE_ID
+    //         ├─┬ LEAF_GROUP id:row-group-country-AU ag-Grid-AutoColumn:"AU"
+    //         │ └── LEAF id:Ian country:"AU" athlete:"Ian" year:2000
+    //         ├─┬ LEAF_GROUP id:row-group-country-US ag-Grid-AutoColumn:"US"
+    //         │ ├── LEAF id:Dara country:"US" athlete:"Dara" year:2000
+    //         │ └── LEAF id:Nero country:"US" athlete:"Nero" year:2008
+    //         ├─┬ LEAF_GROUP id:row-group-country-Canada ag-Grid-AutoColumn:"Canada"
+    //         │ └── LEAF id:Cindy country:"Canada" athlete:"Cindy" year:2006
+    //         ├─┬ LEAF_GROUP id:row-group-country-China ag-Grid-AutoColumn:"China"
+    //         │ ├── LEAF id:Martin country:"China" athlete:"Martin" year:2010
+    //         │ └── LEAF id:Sun country:"China" athlete:"Sun" year:2012
+    //         ├─┬ LEAF_GROUP id:row-group-country-Zimbabwe ag-Grid-AutoColumn:"Zimbabwe"
+    //         │ └── LEAF id:Coventry country:"Zimbabwe" athlete:"Coventry" year:2008
+    //         ├─┬ LEAF_GROUP id:row-group-country-Australia ag-Grid-AutoColumn:"Australia"
+    //         │ └── LEAF id:Lenton country:"Australia" athlete:"Lenton" year:2008
+    //         ├─┬ LEAF_GROUP id:"row-group-country-United States" ag-Grid-AutoColumn:"United States"
+    //         │ └── LEAF id:Ryan country:"United States" athlete:"Ryan" year:2008
+    //         └─┬ LEAF_GROUP id:row-group-country-Netherlands ag-Grid-AutoColumn:"Netherlands"
+    //         · └── LEAF id:Bruijn country:"Netherlands" athlete:"Bruijn" year:2004
+    //     `);
+    //     expect(getChinaLeafOrder()).toEqual(['Martin', 'Sun']);
+    // });
 });

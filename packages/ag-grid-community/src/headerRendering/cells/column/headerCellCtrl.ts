@@ -221,7 +221,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 sortSvc?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
             setSort: (sort: SortDirection | SortDef, multiSort?: boolean) => {
-                sortSvc?.setSortForColumn(this.column, _getSortDefFromInput(sort)!, !!multiSort, 'uiColumnSorted');
+                sortSvc?.setSortForColumn(this.column, _getSortDefFromInput(sort), !!multiSort, 'uiColumnSorted');
             },
             eGridHeader: this.eGui,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {

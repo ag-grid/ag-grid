@@ -1,5 +1,6 @@
 import { BaseRegistry } from '../../agStack/core/baseRegistry';
 import type { AgBaseComponent } from '../../agStack/interfaces/agComponent';
+import type { IconValue } from '../../agStack/interfaces/iIcon';
 import type { NamedBean } from '../../context/bean';
 import { isComponentMetaFunc } from '../../context/context';
 import type { BeanCollection, DynamicBeanName, ProcessParamsFunc, UserComponentName } from '../../context/context';
@@ -8,7 +9,7 @@ import type { GridOptionsWithDefaults } from '../../gridOptionsDefault';
 import type { GridOptionsService } from '../../gridOptionsService';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { Module } from '../../interfaces/iModule';
-import type { IconName, IconValue } from '../../utils/icon';
+import type { IconName } from '../../utils/icon';
 import { _errMsg } from '../../validation/logging';
 import type { AgComponentSelectorType, ComponentSelector } from '../../widgets/component';
 

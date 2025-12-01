@@ -10,4 +10,5 @@ export interface IGroupEditService {
     fixRowsDrop(rowsDrop: RowsDrop, canSetParent: boolean, moving: boolean, yDelta: number): void;
     stopDragging(final: boolean): void;
     csrmFirstLeaf(parent: IRowNode | null): IRowNode | null;
+    clearNewSameParent(rowsDrop: RowsDrop, canSetParent: boolean): void;
 }

@@ -107,6 +107,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('2');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A2'));
         await dispatcher.move('3', { yOffsetPercent: 0.4 });
         await assertIntermediateStep('row-group-group-B', intermediateHoverLeaf, 'after hover over group B leaf');
         await dispatcher.move('row-group-group-C', { center: true });
@@ -429,6 +430,82 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             · └── LEAF id:2 group:"B" value:"A2"
         `);
         expect(api.getRowNode('2')?.data.group).toBe('B');
+    });
+
+    test.each([0, -0.9, 0.9] as const)('moves a leaf in collapsed sibling group immediately y=%f', async (y) => {
+        const gridOptions: GridOptions = {
+            animateRows: true,
+            columnDefs: [
+                { field: 'continent', rowGroup: true, hide: true },
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'city', rowDrag: true },
+            ],
+            autoGroupColumnDef: { headerName: 'Region' },
+            rowData: [
+                { id: '1', continent: 'Europe', country: 'France', city: 'Paris' },
+                { id: '2', continent: 'Europe', country: 'France', city: 'Lyon' },
+                { id: '3', continent: 'Europe', country: 'Germany', city: 'Berlin' },
+            ],
+            rowDragManaged: true,
+            suppressMoveWhenRowDragging,
+            refreshAfterGroupEdit: true,
+            groupDefaultExpanded: 0,
+            rowDragInsertDelay: 10000,
+            getRowId: ({ data }) => data.id,
+        };
+
+        const api = gridsManager.createGrid('row-group-edit-collapsed-target', gridOptions);
+
+        api.forEachNode((node) => {
+            if (!node.group) {
+                return;
+            }
+            const colId = node.rowGroupColumn?.getId();
+            if (colId === 'continent') {
+                node.setExpanded(node.key === 'Europe', undefined, true);
+            } else if (colId === 'country') {
+                node.setExpanded(node.key === 'France', undefined, true);
+            }
+        });
+        await asyncSetTimeout(0);
+
+        let gridRows = new GridRows(api, 'initial collapsed target group');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            · ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            · │ ├── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
+            · │ └── LEAF id:2 continent:"Europe" country:"France" city:"Lyon"
+            · └─┬ LEAF_GROUP collapsed id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            · · └── LEAF hidden id:3 continent:"Europe" country:"Germany" city:"Berlin"
+        `);
+
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('1');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Paris'));
+        await dispatcher.move('row-group-continent-Europe-country-Germany', { center: true, yOffsetPercent: y });
+        await dispatcher.finish();
+
+        await asyncSetTimeout(0);
+
+        const dropInfo = dispatcher.rowDragEndEvents[0]?.rowsDrop;
+        expect(dropInfo?.allowed).toBe(true);
+        expect(dropInfo?.newParent?.id).toBe('row-group-continent-Europe-country-Germany');
+
+        gridRows = new GridRows(api, 'after dragging into collapsed group');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ filler id:row-group-continent-Europe ag-Grid-AutoColumn:"Europe"
+            · ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
+            · │ └── LEAF id:2 continent:"Europe" country:"France" city:"Lyon"
+            · └─┬ LEAF_GROUP collapsed id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
+            · · ├── LEAF hidden id:1 continent:"Europe" country:"Germany" city:"Paris"
+            · · └── LEAF hidden id:3 continent:"Europe" country:"Germany" city:"Berlin"
+        `);
+
+        const moved = api.getRowNode('1');
+        expect(moved?.data.country).toBe('Germany');
+        expect(moved?.parent?.key).toBe('Germany');
     });
 
     test('multi-level grouping updates each key when rows move between nested groups', async () => {
