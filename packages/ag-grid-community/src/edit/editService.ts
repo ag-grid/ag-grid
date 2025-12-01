@@ -875,7 +875,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             return { compDetails };
         }
 
-        return valueToDisplay;
+        return { valueToDisplay };
     }
 
     public cleanupEditors() {
