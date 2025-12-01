@@ -107,6 +107,7 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('2');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('A2'));
         await dispatcher.move('3', { yOffsetPercent: 0.4 });
         await assertIntermediateStep('row-group-group-B', intermediateHoverLeaf, 'after hover over group B leaf');
         await dispatcher.move('row-group-group-C', { center: true });
@@ -481,6 +482,7 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('1');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Paris'));
         await dispatcher.move('row-group-continent-Europe-country-Germany', { center: true, yOffsetPercent: y });
         await dispatcher.finish();
 

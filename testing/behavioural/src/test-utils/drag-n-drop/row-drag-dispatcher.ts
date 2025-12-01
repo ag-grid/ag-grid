@@ -222,6 +222,12 @@ export class RowDragDispatcher {
         this.finished = true;
     }
 
+    public getDragGhostLabel(): string | null {
+        const ownerDocument = getGridOwnerDocument(this.api);
+        const labelElement = ownerDocument.querySelector('.ag-dnd-ghost-label');
+        return labelElement?.textContent ?? null;
+    }
+
     private attachListeners(): void {
         if (this.listenersAttached) {
             return;

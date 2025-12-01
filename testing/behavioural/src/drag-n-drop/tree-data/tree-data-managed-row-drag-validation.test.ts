@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
@@ -80,6 +82,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Drafts'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         await dispatcher.move(targetRowId, { center: true });
         assertDropIndicatorVisible(api);
@@ -138,6 +141,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('draft');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Draft'));
         await dispatcher.move('protected', { yOffsetPercent: 0.35 });
         await dispatcher.move('protected', { center: true });
         assertDropIndicatorVisible(api);
@@ -212,6 +216,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Team'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         await dispatcher.move(targetRowId, { center: true });
         assertDropIndicatorVisible(api);
@@ -269,6 +274,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('library-drafts-spec');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Spec'));
         await dispatcher.move('library-archive', { yOffsetPercent: 0.35 });
         await dispatcher.move('library-archive', { center: true });
         assertDropIndicatorVisible(api);
@@ -330,6 +336,7 @@ describe.each([false, true])('tree row dragging validation (suppress move %s)', 
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start('library-shared-manual');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Manual'));
         await dispatcher.move('library-protected', { yOffsetPercent: 0.35 });
         await dispatcher.move('library-protected', { center: true });
         assertDropIndicatorVisible(api);
