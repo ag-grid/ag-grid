@@ -200,6 +200,7 @@ export const ContactForm: FunctionComponent<Props> = ({ formLocation = 'About pa
             </div>
 
             <input
+                id="submit-contact-form"
                 className={classnames('button-primary', styles.submitButton, { disabled: isDisabled })}
                 type="submit"
                 value="Send us a message"

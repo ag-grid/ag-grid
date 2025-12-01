@@ -218,6 +218,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 </p>
 
                                 <a
+                                    id="request-trial-licence"
                                     className={classnames('button', styles.trialButton)}
                                     href={gridUrlWithPrefix({
                                         framework,
