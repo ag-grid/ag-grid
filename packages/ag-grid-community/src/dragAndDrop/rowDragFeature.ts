@@ -573,6 +573,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.beans.groupEditSvc?.stopDragging(final);
         this.beans.rowDropHighlightSvc?.fromDrag(null);
         setRowNodesDragging(draggingEvent.dragItem.rowNodes, false);
+        if (this.lastDraggingEvent === draggingEvent) {
+            this.lastDraggingEvent = null;
+        }
     }
 
     private clearAutoScroll(): void {
