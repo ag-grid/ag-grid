@@ -78,7 +78,14 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                     {licenseData.map((license, i) => {
                         const isCommunity = license.id === 'community';
+                        const ctaId =
+                            license.id === 'community'
+                                ? 'get-started'
+                                : license.id === 'enterprise-grid'
+                                  ? 'grid-buy-now'
+                                  : 'grid-bundle-buy-now';
 
+                        console.log(ctaId);
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
                                 <span className={classnames(styles.fwProduct, 'text-lg')}>{license.subHeading}</span>
@@ -96,6 +103,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     </span>
 
                                     <a
+                                        id={ctaId}
                                         className={classnames(
                                             styles.fwAction,
                                             isCommunity ? 'button-tertiary' : 'button'

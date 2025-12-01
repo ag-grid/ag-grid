@@ -84,6 +84,8 @@ const Price: FunctionComponent<{ priceFullDollars: string }> = ({ priceFullDolla
 
 const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
     const { id, description, subHeading, priceFullDollars, buyLink } = props;
+    const ctaId =
+        id === 'community' ? 'get-started' : id === 'enterprise-grid' ? 'grid-buy-now' : 'grid-bundle-buy-now';
 
     return (
         <>
@@ -97,6 +99,7 @@ const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
 
                 <div className={styles.licenseActions}>
                     <a
+                        id={ctaId}
                         className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}
                         href={buyLink}
                         target="_blank"
