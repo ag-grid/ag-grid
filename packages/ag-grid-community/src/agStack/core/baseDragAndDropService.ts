@@ -134,10 +134,6 @@ export abstract class BaseDragAndDropService<
         }
     }
 
-    public isDraggingSource(type: TDragSourceType): boolean {
-        return !!this.dragSource && this.dragSource.type === type && !!this.beans.dragSvc?.dragging;
-    }
-
     private onDragStart(dragSource: TDragSource, mouseEvent: MouseEvent): void {
         this.lastMouseEvent = mouseEvent;
         this.dragSource = dragSource;

@@ -63,7 +63,7 @@ type RowsDropCustomResult = {
 };
 
 export class RowDragFeature extends BeanStub implements DropTarget {
-    private lastDraggingEvent: RowDraggingEvent | null = null;
+    public lastDraggingEvent: RowDraggingEvent | null = null;
     private autoScroll: AutoScrollService | null = null;
     private autoScrollChanged = false;
     private autoScrollChanging = false;

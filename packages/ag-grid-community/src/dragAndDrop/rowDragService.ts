@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../gridOptionsUtils';
-import { DragSourceType } from './dragAndDropService';
 import { RowDragComp } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
 
@@ -75,9 +74,8 @@ export class RowDragService extends BeanStub implements NamedBean {
     }
 
     public cancelRowDrag(): void {
-        const { dragAndDrop, dragSvc } = this.beans;
-        if (dragSvc && dragAndDrop && !dragAndDrop.isDraggingSource(DragSourceType.RowDrag)) {
-            dragSvc.cancelDrag();
+        if (this.rowDragFeature?.lastDraggingEvent) {
+            this.beans.dragSvc?.cancelDrag();
         }
     }
 }
