@@ -261,25 +261,41 @@ export class ExcelCreator
             return;
         }
 
-        const mergedParams = this.getMergedParams(userParams);
-        const data = this.getData(mergedParams);
-
-        const exportParams: ExcelExportMultipleSheetParams = {
-            data: [data],
-            fontSize: mergedParams.fontSize,
-            author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-        };
-
-        this.packageCompressedFile(exportParams).then((packageFile) => {
-            if (packageFile) {
-                const { fileName } = mergedParams;
-                const providedFileName =
-                    typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
-
-                _downloadFile(this.getFileName(providedFileName), packageFile);
-            }
+        let res: (value: void | PromiseLike<void>) => void;
+        const onFinished = new Promise<void>((resolve) => {
+            res = resolve;
         });
+        const exportFunc = () => {
+            const mergedParams = this.getMergedParams(userParams);
+            const data = this.getData(mergedParams);
+
+            const exportParams: ExcelExportMultipleSheetParams = {
+                data: [data],
+                fontSize: mergedParams.fontSize,
+                author: mergedParams.author,
+                mimeType: mergedParams.mimeType,
+            };
+
+            this.packageCompressedFile(exportParams)
+                .then((packageFile) => {
+                    if (packageFile) {
+                        const { fileName } = mergedParams;
+                        const providedFileName =
+                            typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
+
+                        _downloadFile(this.getFileName(providedFileName), packageFile);
+                    }
+                })
+                .finally(() => {
+                    res();
+                });
+        };
+        const { overlays } = this.beans;
+        if (overlays) {
+            overlays.showExportOverlay(exportFunc, onFinished);
+        } else {
+            exportFunc();
+        }
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {

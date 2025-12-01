@@ -9,7 +9,7 @@ Custom overlays are triggered by the application regardless of the state of the 
 To display an overlay programmatically, independent of the state of the grid, set the `activeOverlay` grid option along with `activeOverlayParams` as required. To clear the overlay, reset `activeOverlay` to `undefined`.
 
 The `activeOverlay` grid option accepts the following values:
-- A string key of either `'agLoadingOverlay'` or `'agNoRowsOverlay'` to show the built-in overlays
+- A string key of one of the built-in overlays e.g `'agLoadingOverlay'`
 - A string key to resolve a custom component from the [`components` map](./components)
 - A component class or function to instantiate the overlay directly.
 

@@ -2,7 +2,7 @@ import type { IComponent } from '../../agStack/interfaces/iComponent';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import { Component } from '../../widgets/component';
 
-export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows';
+export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting';
 
 export interface ProvidedOverlayUserParams {
     /**
@@ -12,6 +12,7 @@ export interface ProvidedOverlayUserParams {
 }
 
 export interface LoadingOverlayUserParams extends ProvidedOverlayUserParams {}
+export interface ExportingOverlayUserParams extends ProvidedOverlayUserParams {}
 export interface NoRowsOverlayUserParams extends ProvidedOverlayUserParams {}
 export interface NoMatchingRowsOverlayUserParams extends ProvidedOverlayUserParams {}
 
@@ -20,6 +21,12 @@ export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGr
      * The default overlay the grid would show in the given state.
      */
     overlayType: 'loading';
+}
+export interface IExportingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /**
+     * The default overlay the grid would show in the given state.
+     */
+    overlayType: 'exporting';
 }
 export interface INoRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
@@ -43,11 +50,14 @@ export type OverlayComponentUserParams = {
         ? LoadingOverlayUserParams
         : K extends 'noRows'
           ? NoRowsOverlayUserParams
-          : NoMatchingRowsOverlayUserParams;
+          : K extends 'noMatchingRows'
+            ? NoMatchingRowsOverlayUserParams
+            : ExportingOverlayUserParams;
 };
 
 export type IOverlayParams<TData = any, TContext = any> =
     | ILoadingOverlayParams<TData, TContext>
+    | IExportingOverlayParams<TData, TContext>
     | INoRowsOverlayParams<TData, TContext>
     | INoMatchingRowsOverlayParams<TData, TContext>;
 

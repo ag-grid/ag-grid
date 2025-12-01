@@ -166,6 +166,7 @@ export type UserComponentName =
     | 'agSkeletonCellRenderer'
     | 'agCheckboxCellRenderer'
     | 'agLoadingOverlay'
+    | 'agExportingOverlay'
     | 'agNoRowsOverlay'
     | 'agNoMatchingRowsOverlay'
     | 'agTooltipComponent'

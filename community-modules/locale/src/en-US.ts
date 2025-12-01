@@ -181,6 +181,7 @@ export const AG_GRID_LOCALE_EN = {
     loadingError: 'ERR',
     noRowsToShow: 'No Rows To Show',
     noMatchingRows: 'No Matching Rows',
+    exportingOoo: 'Exporting...',
     enabled: 'Enabled',
 
     // Menu

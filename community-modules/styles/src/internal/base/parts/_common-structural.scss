@@ -1055,6 +1055,7 @@
     }
 
     .ag-overlay-loading-wrapper,
+    .ag-overlay-exporting-wrapper,
     .ag-overlay-modal-wrapper {
         // prevent interaction with grid while it's loading
         pointer-events: all;

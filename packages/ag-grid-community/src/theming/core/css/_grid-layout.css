@@ -346,6 +346,7 @@
 }
 
 .ag-overlay-loading-wrapper,
+.ag-overlay-exporting-wrapper,
 .ag-overlay-modal-wrapper {
     background-color: var(--ag-modal-overlay-background-color);
 }

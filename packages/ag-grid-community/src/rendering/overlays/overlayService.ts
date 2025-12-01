@@ -12,7 +12,12 @@ import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrappe
 const overlayCompTypeOptionalMethods = ['refresh'];
 const overlayCompType = (name: string): ComponentType => ({ name, optionalMethods: overlayCompTypeOptionalMethods });
 
-type OverlayCompType = 'agLoadingOverlay' | 'agNoRowsOverlay' | 'agNoMatchingRowsOverlay' | 'activeOverlay';
+type OverlayCompType =
+    | 'agLoadingOverlay'
+    | 'agNoRowsOverlay'
+    | 'agNoMatchingRowsOverlay'
+    | 'agExportingOverlay'
+    | 'activeOverlay';
 
 type OverlayDef = Readonly<{
     id: OverlayCompType;
@@ -57,6 +62,14 @@ const NoMatchingRowsOverlayDef: OverlayDef = {
     wrapperCls: 'ag-overlay-no-matching-rows-wrapper',
 };
 
+const ExportingOverlayDef: OverlayDef = {
+    id: 'agExportingOverlay',
+    overlayType: 'exporting',
+    comp: overlayCompType('exportingOverlayComponent'),
+    wrapperCls: 'ag-overlay-exporting-wrapper',
+    exclusive: true,
+};
+
 const CustomOverlayDef: Readonly<OverlayDef> = {
     id: 'activeOverlay',
     comp: overlayCompType('activeOverlay'),
@@ -74,6 +87,7 @@ const getActiveOverlayDef = (activeOverlay: any): OverlayDef | null => {
                 agLoadingOverlay: LoadingOverlayDef,
                 agNoRowsOverlay: NoRowsOverlayDef,
                 agNoMatchingRowsOverlay: NoMatchingRowsOverlayDef,
+                agExportingOverlay: ExportingOverlayDef,
             } as Record<string, OverlayDef>
         )[activeOverlay] ?? CustomOverlayDef
     );
@@ -87,6 +101,7 @@ const getOverlayDefForType = (overlayType: OverlayType | null): OverlayDef | nul
             loading: LoadingOverlayDef,
             noRows: NoRowsOverlayDef,
             noMatchingRows: NoMatchingRowsOverlayDef,
+            exporting: ExportingOverlayDef,
         } as Record<OverlayType, OverlayDef>
     )[overlayType];
 };
@@ -188,6 +203,38 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
         this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
+    }
+
+    public showExportOverlay(heavyOperation: () => void, onFinished: Promise<void>) {
+        const gos = this.gos;
+        if (!this.eWrapper || gos.get('activeOverlay') || gos.get('loading') || this.isDisabled(ExportingOverlayDef)) {
+            heavyOperation();
+            return () => {};
+        }
+
+        const shownAt = Date.now();
+
+        this.doShowOverlay(ExportingOverlayDef);
+
+        setTimeout(() => {
+            heavyOperation();
+        });
+
+        onFinished.then(() => {
+            const elapsed = Date.now() - shownAt;
+            const remaining = Math.max(0, 300 - elapsed);
+            if (remaining > 0) {
+                setTimeout(() => this.hideExportOverlay(), remaining);
+            } else {
+                this.hideExportOverlay();
+            }
+        });
+    }
+
+    private hideExportOverlay(): void {
+        if (this.currentDef === ExportingOverlayDef) {
+            this.doHideOverlay();
+        }
     }
 
     public hideOverlay(): void {

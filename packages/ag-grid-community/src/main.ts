@@ -776,6 +776,7 @@ export {
     OverlaySelectorResult,
 } from './rendering/overlays/overlayComponent';
 export { ILoadingOverlayComp, ILoadingOverlay } from './rendering/overlays/loadingOverlayComponent';
+export { IExportingOverlayComp, IExportingOverlay } from './rendering/overlays/exportingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
 export {
     INoMatchingRowsOverlayComp,

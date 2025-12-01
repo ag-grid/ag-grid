@@ -42,17 +42,30 @@ export class CsvCreator
             return;
         }
 
-        const mergedParams = this.getMergedParams(userParams);
-        const data = this.getData(mergedParams);
+        let res: (value: void | PromiseLike<void>) => void;
+        const onFinished = new Promise<void>((resolve) => {
+            res = resolve;
+        });
+        const exportFunc = () => {
+            const mergedParams = this.getMergedParams(userParams);
+            const data = this.getData(mergedParams);
 
-        const packagedFile = new Blob(['\ufeff', data], { type: 'text/plain' });
+            const packagedFile = new Blob(['\ufeff', data], { type: 'text/plain' });
 
-        const fileName =
-            typeof mergedParams.fileName === 'function'
-                ? mergedParams.fileName(_addGridCommonParams(this.gos, {}))
-                : mergedParams.fileName;
+            const fileName =
+                typeof mergedParams.fileName === 'function'
+                    ? mergedParams.fileName(_addGridCommonParams(this.gos, {}))
+                    : mergedParams.fileName;
 
-        _downloadFile(this.getFileName(fileName), packagedFile);
+            _downloadFile(this.getFileName(fileName), packagedFile);
+            res();
+        };
+        const { overlays } = this.beans;
+        if (overlays) {
+            overlays.showExportOverlay(exportFunc, onFinished);
+        } else {
+            exportFunc();
+        }
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {

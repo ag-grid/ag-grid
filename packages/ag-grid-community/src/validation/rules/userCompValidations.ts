@@ -24,6 +24,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agSkeletonCellRenderer: 'SkeletonCellRenderer',
     agCheckboxCellRenderer: 'CheckboxCellRenderer',
     agLoadingOverlay: 'Overlay',
+    agExportingOverlay: 'Overlay',
     agNoRowsOverlay: 'Overlay',
     agNoMatchingRowsOverlay: 'Overlay',
     agTooltipComponent: 'Tooltip',

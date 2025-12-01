@@ -18,6 +18,9 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     protected getData(params: P): string {
+        const start = Date.now();
+        while (Date.now() - start < 2000) {}
+
         const serializingSession = this.createSerializingSession(params);
         return this.beans.gridSerializer!.serialize(serializingSession, params);
     }
