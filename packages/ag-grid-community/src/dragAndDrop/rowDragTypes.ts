@@ -143,8 +143,13 @@ export interface RowsDrop<TData = any, TContext = any>
     /** True if the drop target can be highlighted while moving, matching the `position` value. */
     highlight: boolean;
 
+    /** The vertical pixel offset relative to the target row */
     yDelta: number;
+
+    /** True if the drop needs to happen as a child of the target node */
     inside: boolean;
+
+    /** True when executing a managed drop and rows were moved */
     droppedManaged: boolean;
 }
 

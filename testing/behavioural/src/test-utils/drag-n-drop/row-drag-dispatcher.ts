@@ -136,15 +136,22 @@ export class RowDragDispatcher {
 
         if (stepX === undefined || stepY === undefined) {
             const rect = targetElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
             if (options.center) {
-                stepX ??= rect.left + rect.width / 2;
-                stepY ??= rect.top + rect.height / 2;
-            } else {
+                stepX ??= centerX;
+                stepY ??= centerY;
+            }
+
+            if (!options.center || options.yOffsetPercent !== undefined) {
                 const yOffsetPercent = options.yOffsetPercent ?? 0.5;
                 const computedPoint = computeStepPoint(rect, yOffsetPercent, dispatcher.currentY);
                 stepX ??= computedPoint.x;
                 stepY ??= computedPoint.y;
             }
+
+            stepX ??= centerX;
+            stepY ??= centerY;
         }
 
         await dispatcher.movePointer(targetElement, options.clientX ?? stepX, options.clientY ?? stepY);

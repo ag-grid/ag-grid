@@ -140,7 +140,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             this.initDraggingGroups(rowsDrop);
         }
 
-        let target = rowsDrop.target as IRowNode | null;
+        let target = rowsDrop.target;
         let newParent: IRowNode | null = null;
         let inside = false;
 
@@ -148,7 +148,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         const rowModel = this.beans.rowModel;
         const canStartGroup = target ? this.canDropStartGroup(target) : false;
 
-        this.updateDropTarget(canStartGroup ? target : null, fromNudge);
+        this.updateDropTarget(canStartGroup ? target : null, fromNudge, rowsDrop);
 
         const lastRowIndex = this.beans.pageBounds?.getLastRow?.() ?? rowModel.getRowCount() - 1;
         if (canSetParent) {
@@ -205,26 +205,41 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         rowsDrop.inside = inside;
     }
 
-    private updateDropTarget(target: IRowNode | null, canExpand: boolean): void {
+    private updateDropTarget(target: IRowNode | null, canExpand: boolean, rowsDrop: _RowsDrop): void {
         if (this.dropGroupTarget && this.dropGroupTarget !== target) {
             this.resetDragGroup();
         }
 
-        if (!target) {
+        if (!target?.childrenAfterSort?.length) {
             return;
         }
 
-        if (
-            canExpand &&
-            this.dropGroupThrottled &&
-            !target.expanded &&
-            target.childrenAfterSort?.length &&
-            target.isExpandable?.()
-        ) {
+        if (canExpand && this.dropGroupThrottled && !target.expanded && target.isExpandable?.()) {
             target.setExpanded(true, undefined, true);
         }
 
-        if (target.expanded && target.childrenAfterSort?.length) {
+        let canPutInside = false;
+
+        if (target.expanded) {
+            canPutInside = true;
+        } else if (target.group) {
+            if (rowsDrop.pointerPos === 'inside') {
+                canPutInside = true;
+            } else if (!this.beans.groupStage?.treeData) {
+                // We allow putting inside directly only if none of the rows are groups
+                const rows = rowsDrop.rows;
+                canPutInside = true;
+                for (let i = 0, len = rows.length; i < len; ++i) {
+                    const row = rows[i];
+                    if (row.group && row !== target) {
+                        canPutInside = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (canPutInside) {
             this.dropGroupThrottled = true;
             this.dropGroupTarget = target;
         }
