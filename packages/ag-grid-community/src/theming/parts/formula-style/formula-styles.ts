@@ -4,7 +4,7 @@ import type { BorderValue, ColorValue } from '../../../agStack/theming/themeType
 
 type FormulaStyleParams = {
     /**
-     * The border of the 1st formula field token
+     * The border of the formula field token
      */
     formulaTokenBorder: BorderValue;
     /**
