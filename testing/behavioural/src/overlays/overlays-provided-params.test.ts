@@ -83,7 +83,6 @@ const makeOverlayComp = (paramsMap: Record<string, any>, className: string) => {
             return this.e;
         }
         public init(p?: any) {
-            console.log('init called for', className, p);
             paramsMap[className] = p;
         }
         public refresh(p?: any) {

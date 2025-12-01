@@ -727,6 +727,8 @@ export const AG_GRID_ERRORS = {
         `colDef.allowFormula is not supported with ${blockedService}. Formulas has been turned off.`,
     296: () =>
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
+    297: () =>
+        '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

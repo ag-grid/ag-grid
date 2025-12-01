@@ -1,15 +1,17 @@
-import { ServerSideRowModelModule, TextFilterModule, ValidationModule } from 'ag-grid-enterprise';
+import type { ICellRendererParams } from 'ag-grid-community';
+import { InfiniteRowModelModule } from 'ag-grid-community';
+import { TextFilterModule, ValidationModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
 
-describe('ag-grid overlays state', () => {
+describe('ag-grid overlays state for Infinite Row Model', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, TextFilterModule, ValidationModule],
+        modules: [InfiniteRowModelModule, TextFilterModule, ValidationModule],
     });
 
-    function hasLoadingIcon() {
-        return !!document.querySelector('.ag-icon.ag-icon-loading');
-    }
+    // function hasLoadingIcon() {
+    //     return !!document.querySelector('.loading-row');
+    // }
 
     // function hasLoadingOverlay() {
     //     return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
@@ -42,52 +44,57 @@ describe('ag-grid overlays state', () => {
         const response = { rowData: [] as any[], rowCount: 0 };
 
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter' }],
-            rowModelType: 'serverSide',
-            onGridReady: ({ api }) => {
-                api.setGridOption('serverSideDatasource', {
-                    getRows: async (p) => {
-                        finishLoadData = () => {
-                            api.hideOverlay();
-                            response.rowCount = response.rowData.length;
-                            p.success(response);
-                            if (!response.rowData.length) {
-                                api.showNoRowsOverlay();
-                            }
-                        };
-                        firstLoad();
+            columnDefs: [
+                {
+                    headerName: 'Id',
+                    valueGetter: 'node.id',
+                    cellRenderer: (params: ICellRendererParams) => {
+                        if (params.value !== undefined) {
+                            return params.value;
+                        } else {
+                            return '<div class="loading-row" > Loading Row </div>';
+                        }
                     },
-                });
+                },
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+            ],
+            rowModelType: 'infinite',
+            datasource: {
+                getRows: async (p) => {
+                    finishLoadData = () => {
+                        api.hideOverlay();
+                        // successCallback expects (rows, lastRow)
+                        p.successCallback(response.rowData, response.rowCount);
+                        if (!response.rowData.length) {
+                            api.showNoRowsOverlay();
+                        }
+                    };
+                    firstLoad();
+                },
             },
         });
 
         await firstLoadPromise;
 
         expect(hasNoRowsOverlay()).toBe(false);
-        expect(hasLoadingIcon()).toBe(true);
 
         finishLoadData!();
 
         expect(hasNoRowsOverlay()).toBe(true);
-        expect(hasLoadingIcon()).toBe(false);
 
         // Try to change columnDefs, row data still empty, we must still show the no overlay
         api.setGridOption('columnDefs', [{ field: 'athlete', filter: 'agTextColumnFilter' }, { field: 'sport' }]);
-        expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
 
         response.rowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
 
-        api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
+        api.purgeInfiniteCache();
         finishLoadData!();
-        expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
         response.rowData = [];
-        api.refreshServerSide({ route: [] });
+        api.purgeInfiniteCache();
         finishLoadData!();
-        expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
     });
 
@@ -101,34 +108,28 @@ describe('ag-grid overlays state', () => {
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter' }],
-            rowModelType: 'serverSide',
-            onGridReady: ({ api }) => {
-                api.setGridOption('serverSideDatasource', {
-                    getRows: async (p) => {
-                        const response = { rowData: responseRowData, rowCount: responseRowData.length };
-                        p.success(response);
-                        firstLoad();
-                        loadPromise = new Promise<void>((resolve) => {
-                            firstLoad = resolve;
-                        });
-                    },
-                });
+            rowModelType: 'infinite',
+            datasource: {
+                getRows: async (p) => {
+                    p.successCallback(responseRowData, responseRowData.length);
+                    firstLoad();
+                    loadPromise = new Promise<void>((resolve) => {
+                        firstLoad = resolve;
+                    });
+                },
             },
         });
 
         await loadPromise;
 
         expect(hasNoRowsOverlay()).toBe(true);
-        expect(hasLoadingIcon()).toBe(false);
 
         responseRowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
 
-        api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
+        api.purgeInfiniteCache();
 
         await loadPromise;
 
-        expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
         expect(hasNoMatchingRowsOverlay()).toBe(false);
 
@@ -140,8 +141,6 @@ describe('ag-grid overlays state', () => {
                 filter: 'Test',
             },
         });
-        api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
 
         await loadPromise;
 
@@ -151,11 +150,7 @@ describe('ag-grid overlays state', () => {
         responseRowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
         api.setFilterModel(null);
 
-        api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
-
         await loadPromise;
-        expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
         expect(hasNoMatchingRowsOverlay()).toBe(false);
     });

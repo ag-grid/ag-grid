@@ -151,12 +151,17 @@ describe('ag-grid overlays state', () => {
             test('should not show loading overlay with initial empty rows', () => {
                 gridsManager.createGrid('myGrid', { columnDefs, suppressLoadingOverlay: true, rowData: [] });
                 expect(hasLoadingOverlay()).toBeFalsy();
+                expect(hasNoRowsOverlay()).toBeTruthy();
             });
 
             test('should show no-rows overlay', () => {
-                const api = gridsManager.createGrid('myGrid', { columnDefs, suppressLoadingOverlay: true });
-                expect(hasNoRowsOverlay()).toBeTruthy();
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    suppressLoadingOverlay: true,
+                });
+
                 expect(hasLoadingOverlay()).toBeFalsy();
+                expect(hasNoRowsOverlay()).toBeTruthy();
 
                 api.setGridOption('rowData', []);
                 expect(hasLoadingOverlay()).toBeFalsy();
@@ -470,11 +475,20 @@ describe('ag-grid overlays state', () => {
 
             api.setGridOption('loading', false);
             expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeFalsy();
 
             api.hideOverlay();
 
-            // back to automatic overlays and there is no row data, so no-rows overlay shown
+            // No overlay should be shown
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', columnDefs); // to force a refresh which triggers overlay logic to run
+
+            // This is potentially not what the user would expect but this is where the activeOverlay feature will work
+            // a lot cleaner for them if they want to take control of overlays.
             expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeFalsy();
         });
 
         test('manual hide priority over user action', () => {

@@ -102,27 +102,31 @@ export class OverlayService extends BeanStub implements NamedBean {
     private showInitialOverlay: boolean = true;
     private userForcedNoRows: boolean = false;
 
+    private newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
         const gos = this.gos;
         this.showInitialOverlay = _isClientSideRowModel(gos);
 
         const updateOverlayVisibility = () => {
             if (this.userForcedNoRows) {
+                // Stop handling grid events so we do not clear the manually triggered no rows overlay
                 return;
             }
             this.updateOverlay(false);
         };
 
-        this.addManagedEventListeners({
+        const [newColumnsLoadedCleanup, rowCountReadyCleanup, _, __] = this.addManagedEventListeners({
             newColumnsLoaded: updateOverlayVisibility,
-            rowDataUpdated: updateOverlayVisibility,
             rowCountReady: () => {
                 // Support hiding the initial overlay when data is set via transactions.
-                this.showInitialOverlay = false;
+                this.disableInitialOverlay();
                 updateOverlayVisibility();
+                rowCountReadyCleanup();
             },
+            rowDataUpdated: updateOverlayVisibility,
             modelUpdated: updateOverlayVisibility,
         });
+        this.newColumnsLoadedCleanup = newColumnsLoadedCleanup;
 
         this.addManagedPropertyListeners(
             [
@@ -199,10 +203,16 @@ export class OverlayService extends BeanStub implements NamedBean {
             _warn(296);
             return;
         }
+        if (this.currentDef === NoMatchingRowsOverlayDef) {
+            _warn(297);
+            return;
+        }
         this.doHideOverlay();
         if (userHadForced) {
             // if user had forced no-rows overlay, we need to reevaluate what overlay should be shown now if any
-            this.updateOverlay(false);
+            if (this.getOverlayDef() !== NoRowsOverlayDef) {
+                this.updateOverlay(false);
+            }
         }
     }
 
@@ -278,7 +288,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         if (desiredDef !== currentDef) {
             if (!desiredDef) {
-                this.showInitialOverlay = false;
+                this.disableInitialOverlay();
                 return this.doHideOverlay();
             }
             this.doShowOverlay(desiredDef);
@@ -292,7 +302,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         if (!desiredDef) {
-            this.showInitialOverlay = false;
+            this.disableInitialOverlay();
         }
 
         return false;
@@ -307,23 +317,33 @@ export class OverlayService extends BeanStub implements NamedBean {
         const loadingDefined = loading !== undefined;
 
         if (loadingDefined) {
-            this.showInitialOverlay = false;
+            this.disableInitialOverlay();
             if (loading) {
                 return LoadingOverlayDef;
             }
         } else if (this.showInitialOverlay) {
-            if (!gos.get('columnDefs') || !colModel.ready || !gos.get('rowData')) {
+            if (
+                !this.isDisabled(LoadingOverlayDef) &&
+                (!gos.get('columnDefs') || !colModel.ready || !gos.get('rowData'))
+            ) {
                 // if no columns or no row data, we show the initial loading overlay
                 return LoadingOverlayDef;
             }
-            this.showInitialOverlay = false;
+            this.disableInitialOverlay();
         } else {
-            this.showInitialOverlay = false;
+            this.disableInitialOverlay();
         }
 
         // activeOverlay already checked above
         const overlayType = rowModel.getOverlayType();
         return getOverlayDefForType(overlayType);
+    }
+
+    private disableInitialOverlay(): void {
+        this.showInitialOverlay = false;
+        // Stop listening for new columns loaded as initial overlay is now hidden
+        this.newColumnsLoadedCleanup?.();
+        this.newColumnsLoadedCleanup = null;
     }
 
     /**

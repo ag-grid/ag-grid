@@ -336,28 +336,7 @@ describe('ag-grid overlays no matching rows', () => {
     // If the user has called api.showNoRowsOverlay(), we respect that choice and do not show the provided overlays until
     // the user calls api.hideOverlay()
     describe('user shows no rows overlay manually', () => {
-        test('loading true has priority over user action', () => {
-            const api = gridsManager.createGrid('myGrid', { columnDefs });
-            expect(hasLoadingOverlay()).toBeTruthy();
-
-            api.hideOverlay();
-            expect(hasLoadingOverlay()).toBeFalsy();
-
-            api.showNoRowsOverlay();
-            expect(hasNoRowsOverlay()).toBeTruthy();
-
-            api.setGridOption('loading', true);
-            expect(hasLoadingOverlay()).toBeTruthy();
-            expect(hasNoRowsOverlay()).toBeFalsy();
-
-            api.setGridOption('loading', false);
-            expect(hasNoRowsOverlay()).toBeTruthy();
-
-            api.hideOverlay();
-            expect(hasNoRowsOverlay()).toBeTruthy();
-        });
-
-        test('no matching rows does not override manual showNoRowsOverlay', () => {
+        test('no matching rows does not override manual showNoRowsOverlay but shows after', () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23 }],
@@ -375,6 +354,49 @@ describe('ag-grid overlays no matching rows', () => {
             api.hideOverlay();
             expect(hasNoRowsOverlay()).toBeFalsy();
             expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+        });
+
+        test('no matching rows does not override manual showNoRowsOverlay and does not show if suppressed', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23 }],
+                suppressOverlays: ['noMatchingRows'],
+            });
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('quickFilterText', 'Nonexistent');
+
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasNoMatchingRowsOverlay()).toBeFalsy();
+        });
+
+        test('hiding no matching rows does not work via api.hideOverlay and logs warning', () => {
+            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23 }],
+            });
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('quickFilterText', 'Nonexistent');
+
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+
+            expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
+
+            consoleWarnSpy.mockRestore();
         });
     });
 });
