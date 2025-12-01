@@ -1,8 +1,7 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
 import type { AgColumn } from '../entities/agColumn';
-import { _normalizeSortType } from '../entities/agColumn';
-import { _normalizeSortDirection } from '../entities/agColumn';
+import { _normalizeSortDirection, _normalizeSortType } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
