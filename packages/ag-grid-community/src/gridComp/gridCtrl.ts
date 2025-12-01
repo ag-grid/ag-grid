@@ -177,17 +177,19 @@ export class GridCtrl extends BeanStub {
 
     public allowFocusForNextCoreContainer(up?: boolean): void {
         const coreContainers = this.view.getFocusableContainers();
-        const { nextIndex, indexWithFocus } = this.getNextFocusableIndex(coreContainers, up);
-        if (indexWithFocus === -1 || nextIndex < 0 || nextIndex >= coreContainers.length) {
-            return;
-        }
+        const { nextIndex } = this.getNextFocusableIndex(coreContainers, up);
+
         const comp = coreContainers[nextIndex];
-        comp.setAllowFocus?.(true);
-        // we're letting the browser handle the focus here, so need to wait for focus to move into the container before disabling focus again.
-        // can't do this via event, as the container may not have anything focusable. In which case, the focus will just go out of the grid.
-        setTimeout(() => {
-            comp.setAllowFocus?.(false);
-        });
+
+        // if we got to this point, it means the user wants the browser's default focus behavior
+        // we can no longer allow the browser's default behavior because scrollable divs are
+        // considered focusable which causes the focus to become lost within the grid. So, here
+        // we attempt to throw focus into the next container within the grid, or push focus out.
+        if (comp) {
+            this.focusContainer(comp);
+        } else {
+            this.forceFocusOutOfContainer(up);
+        }
     }
 
     public isFocusable(): boolean {
