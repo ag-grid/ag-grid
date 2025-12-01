@@ -105,7 +105,7 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         const sourceB = this.inverseColumnMap.get(colB);
         if (sourceA && sourceA === sourceB) {
             const hierarchyCols = this.sourceColumnMap.get(sourceA) ?? [];
-            return hierarchyCols?.indexOf(colA) - hierarchyCols?.indexOf(colB);
+            return hierarchyCols.indexOf(colA) - hierarchyCols.indexOf(colB);
         }
 
         if (this.sourceColumnMap.get(colA)?.includes(colB)) {

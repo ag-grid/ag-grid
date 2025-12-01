@@ -42,6 +42,11 @@ export interface ColumnStateParams {
     sortType?: SortType;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
+    /**
+     * The order of the aggregation column, when aggregating by multiple columns in pivot mode,
+     * with `enableStrictPivotColumnOrder` enabled.
+     */
+    valueIndex?: number | null;
     /** The aggregation function applied */
     aggFunc?: string | IAggFunc | null;
     /** True if pivot active */
@@ -107,6 +112,7 @@ export function _applyColumnState(
         stateItem: ColumnState | null,
         rowGroupIndexes: { [key: string]: number } | null,
         pivotIndexes: { [key: string]: number } | null,
+        valueIndexes: { [key: string]: number } | null,
         autoCol: boolean
     ) => {
         if (!column) {
@@ -157,7 +163,7 @@ export function _applyColumnState(
             return;
         }
 
-        valueColsSvc?.syncColumnWithState(column, source, getValue);
+        valueColsSvc?.syncColumnWithState(column, source, getValue, valueIndexes);
         rowGroupColsSvc?.syncColumnWithState(column, source, getValue, rowGroupIndexes);
         pivotColsSvc?.syncColumnWithState(column, source, getValue, pivotIndexes);
     };
@@ -174,6 +180,7 @@ export function _applyColumnState(
 
         const rowGroupIndexes: { [key: string]: number } = {};
         const pivotIndexes: { [key: string]: number } = {};
+        const valueIndexes: { [key: string]: number } = {};
         const autoColStates: ColumnState[] = [];
         const selectionColStates: ColumnState[] = [];
         // If pivoting is modified, these are the states we try to reapply after
@@ -183,6 +190,7 @@ export function _applyColumnState(
 
         const previousRowGroupCols = rowGroupColsSvc?.columns.slice() ?? [];
         const previousPivotCols = pivotColsSvc?.columns.slice() ?? [];
+        const previousValueCols = valueColsSvc?.columns.slice() ?? [];
 
         for (const state of states) {
             const colId = state.colId;
@@ -207,19 +215,20 @@ export function _applyColumnState(
                 unmatchedAndAutoStates.push(state);
                 unmatchedCount += 1;
             } else {
-                syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, false);
+                syncColumnWithStateItem(column, state, rowGroupIndexes, pivotIndexes, valueIndexes, false);
                 _removeFromArray(columnsWithNoState, column);
             }
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         const applyDefaultsFunc = (col: AgColumn) =>
-            syncColumnWithStateItem(col, null, rowGroupIndexes, pivotIndexes, false);
+            syncColumnWithStateItem(col, null, rowGroupIndexes, pivotIndexes, valueIndexes, false);
 
         columnsWithNoState.forEach(applyDefaultsFunc);
 
         rowGroupColsSvc?.sortColumns(comparatorByIndex.bind(rowGroupColsSvc, rowGroupIndexes, previousRowGroupCols));
         pivotColsSvc?.sortColumns(comparatorByIndex.bind(pivotColsSvc, pivotIndexes, previousPivotCols));
+        valueColsSvc?.sortColumns(comparatorByIndex.bind(valueColsSvc, valueIndexes, previousValueCols));
 
         colModel.refreshCols(false, source);
 
@@ -231,7 +240,7 @@ export function _applyColumnState(
             for (const stateItem of colStates) {
                 const col = getCol(stateItem.colId);
                 _removeFromArray(columns, col);
-                syncColumnWithStateItem(col, stateItem, null, null, true);
+                syncColumnWithStateItem(col, stateItem, null, null, null, true);
             }
             columns.forEach(applyDefaultsFunc);
         };
@@ -462,7 +471,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
 }
 
 export function _getColumnState(beans: BeanCollection): ColumnState[] {
-    const { colModel, rowGroupColsSvc, pivotColsSvc } = beans;
+    const { colModel, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = beans;
     const primaryCols = colModel.getColDefCols();
 
     if (_missing(primaryCols) || !colModel.isAlive()) {
@@ -471,11 +480,13 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
 
     const rowGroupColumns = rowGroupColsSvc?.columns;
     const pivotColumns = pivotColsSvc?.columns;
+    const valueColumns = valueColsSvc?.columns;
     const res: ColumnState[] = [];
 
     const createStateItemFromColumn = (column: AgColumn) => {
         const rowGroupIndex = column.isRowGroupActive() && rowGroupColumns ? rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() && pivotColumns ? pivotColumns.indexOf(column) : null;
+        const valueIndex = column.isValueActive() && valueColumns ? valueColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
@@ -489,6 +500,7 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
             sortType: column.getSortDef()?.type,
             sortIndex,
             aggFunc,
+            valueIndex,
             rowGroup: column.isRowGroupActive(),
             rowGroupIndex,
             pivot: column.isPivotActive(),
@@ -498,15 +510,15 @@ export function _getColumnState(beans: BeanCollection): ColumnState[] {
     };
     colModel.forAllCols((col) => createStateItemFromColumn(col));
 
-    // for fast looking, store the index of each column
+    // for fast look-up, store the index of each column
     const colIdToGridIndexMap = new Map<string, number>(
         colModel.getCols().map((col, index) => [col.getColId(), index])
     );
 
-    res.sort((itemA: any, itemB: any) => {
-        const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
-        const posB = colIdToGridIndexMap.has(itemB.colId) ? colIdToGridIndexMap.get(itemB.colId) : -1;
-        return posA! - posB!;
+    res.sort((itemA, itemB) => {
+        const posA = colIdToGridIndexMap.get(itemA.colId) ?? -1;
+        const posB = colIdToGridIndexMap.get(itemB.colId) ?? -1;
+        return posA - posB;
     });
 
     return res;
