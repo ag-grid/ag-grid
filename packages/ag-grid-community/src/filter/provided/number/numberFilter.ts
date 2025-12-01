@@ -6,6 +6,7 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import type { GridInputNumberField, GridInputTextField } from '../../../widgets/gridWidgetTypes';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
+import type { ProvidedFilterParams } from '../iProvidedFilter';
 import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
 import type { INumberFilterParams, NumberFilterModel } from './iNumberFilter';
@@ -37,6 +38,10 @@ export class NumberFilter extends SimpleFilter<
         super.afterGuiAttached(params);
 
         // Refresh validation
+        this.refreshInputValidation();
+    }
+
+    private refreshInputValidation(): void {
         for (let i = 0; i < this.eValuesFrom.length; i++) {
             const from = this.eValuesFrom[i];
             const to = this.eValuesTo[i];
@@ -63,6 +68,14 @@ export class NumberFilter extends SimpleFilter<
 
     protected override getState() {
         return this.hasInvalidInputs();
+    }
+
+    public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
+        const result = super.refresh(legacyNewParams);
+
+        this.refreshInputValidation();
+
+        return result;
     }
 
     protected override setElementValue(
