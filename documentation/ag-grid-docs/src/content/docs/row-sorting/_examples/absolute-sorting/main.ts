@@ -12,7 +12,6 @@ const columnDefs: ColDef[] = [
     {
         field: 'rankingChange',
         sort: { direction: 'asc', type: 'absolute' },
-        sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
     },
 ];
 

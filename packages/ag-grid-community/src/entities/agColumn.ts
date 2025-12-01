@@ -52,6 +52,11 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 }
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
+const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
+    ...DEFAULT_SORTING_ORDER,
+    { type: 'absolute', direction: 'asc' },
+    { type: 'absolute', direction: 'desc' },
+];
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -444,14 +449,26 @@ export class AgColumn<TValue = any>
         return this.sortDef;
     }
 
+    private getColDefAllowedSortTypes(): Set<SortType> {
+        const { sort, initialSort } = this.colDef;
+        const colDefSortType = _normalizeSortType((sort as SortDef)?.type);
+        const colDefInitialSortType = _normalizeSortType((initialSort as SortDef)?.type);
+
+        return new Set([colDefSortType, colDefInitialSortType]);
+    }
+
     public getSortingOrder() {
-        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? DEFAULT_SORTING_ORDER).map(
+        const defaultSortingOrder = this.getColDefAllowedSortTypes().has('absolute')
+            ? DEFAULT_ABSOLUTE_SORTING_ORDER
+            : DEFAULT_SORTING_ORDER;
+
+        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? defaultSortingOrder).map(
             (objOrDirection: unknown) => _getSortDefFromInput(objOrDirection)
         );
     }
 
     public getAvailableSortTypes() {
-        return new Set(this.getSortingOrder().map((so) => so.type));
+        return new Set([...this.getColDefAllowedSortTypes(), this.getSortingOrder().map((so) => so.type)]);
     }
 
     get wasSortExplicitlyRemoved(): boolean {

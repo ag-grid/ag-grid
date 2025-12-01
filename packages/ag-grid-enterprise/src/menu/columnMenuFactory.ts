@@ -1,4 +1,5 @@
 import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
+import { _normalizeSortType } from 'ag-grid-community';
 import {
     BeanStub,
     _addGridCommonParams,
@@ -127,23 +128,26 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         if (sortSvc && !isLegacyMenuEnabled && column.isSortable()) {
             const sortDef = column.getSortDef();
+            const type = _normalizeSortType(sortDef?.type);
             const direction = _normalizeSortDirection(sortDef?.direction);
             const allowedSortTypes = column.getAvailableSortTypes();
             const isDefaultSortAllowed = allowedSortTypes.has('default');
             const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+            const isAbsoluteSort = type === 'absolute';
+            const isDefaultSort = type === 'default';
             const isAscending = direction === 'asc';
             const isDescending = direction === 'desc';
 
-            if (isDefaultSortAllowed && !isAscending) {
+            if (isDefaultSortAllowed && !(isAscending && isDefaultSort)) {
                 result.push('sortAscending');
             }
-            if (isDefaultSortAllowed && !isDescending) {
+            if (isDefaultSortAllowed && !(isDescending && isDefaultSort)) {
                 result.push('sortDescending');
             }
-            if (isAbsoluteSortAllowed && !isAscending) {
+            if (isAbsoluteSortAllowed && !(isAscending && isAbsoluteSort)) {
                 result.push('sortAbsoluteAscending');
             }
-            if (isAbsoluteSortAllowed && !isDescending) {
+            if (isAbsoluteSortAllowed && !(isDescending && isAbsoluteSort)) {
                 result.push('sortAbsoluteDescending');
             }
             if (direction) {
