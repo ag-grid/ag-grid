@@ -139,12 +139,20 @@ In this example, the column `rankingChange` uses the following sort definition:
 const gridOptions = {
     columnDefs: [
         // ... other columns 
-        { field: 'rankingChange', sort: { type: 'absolute', direction: 'asc' } },
+        {
+            field: 'rankingChange',
+            sort: { direction: 'asc', type: 'absolute' },
+            sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
+        },
     ],
 };
 ```
 
 {% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort"] /%}
+
+{% note %}
+The grid uses the `sortingOrder` property to determine if Absolute sort should be enabled for a column. Setting `sort` to `{ type: 'absolute', direction: '...' }` alone is not sufficient.
+{% /note %}
 
 ## Sorting API
 
