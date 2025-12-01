@@ -161,7 +161,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             }
 
             if (!newParent) {
-                newParent = (target?.parent as IRowNode) ?? rootNode;
+                newParent = target?.parent ?? rootNode;
             }
 
             if (
@@ -200,6 +200,13 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         rowsDrop.newParent = newParent;
         rowsDrop.yDelta = yDelta;
         rowsDrop.inside = inside;
+    }
+
+    public clearNewSameParent(rowsDrop: _RowsDrop, canSetParent: boolean): void {
+        const newParent = rowsDrop.newParent;
+        if (newParent && (!canSetParent || rowsHaveSameParent(rowsDrop.rows, newParent))) {
+            rowsDrop.newParent = null;
+        }
     }
 
     private updateDropTarget(target: IRowNode | null, canExpand: boolean, rowsDrop: _RowsDrop): void {
@@ -592,4 +599,13 @@ const wouldCycle = (row: IRowNode, newParent: IRowNode | null | undefined): bool
         current = current.parent;
     }
     return false;
+};
+
+const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
+    for (let i = 0, len = rows.length; i < len; ++i) {
+        if (rows[i].parent !== newParent) {
+            return false;
+        }
+    }
+    return true;
 };
