@@ -1,76 +1,135 @@
 import type { Part } from '../../../agStack/theming/part';
 import { createPart } from '../../../agStack/theming/partImpl';
-import type { ColorValue } from '../../../agStack/theming/themeTypes';
+import type { BorderValue, ColorValue } from '../../../agStack/theming/themeTypes';
 
 type FormulaStyleParams = {
     /**
+     * The border of the 1st formula field token
+     */
+    formulaTokenBorder: BorderValue;
+    /**
      * The color of the 1st formula field token
      */
-    'formulaToken-1Color': ColorValue;
+    formulaToken1Color: ColorValue;
     /**
      * The background color of the 1st formula field token
      */
-    'formulaToken-1BackgroundColor': ColorValue;
+    formulaToken1BackgroundColor: ColorValue;
+    /**
+     * The border of the 1st formula field token
+     */
+    formulaToken1Border: BorderValue;
     /**
      * The color of the 2nd formula field token
      */
-    'formulaToken-2Color': ColorValue;
+    formulaToken2Color: ColorValue;
     /**
      * The background color of the 2nd formula field token
      */
-    'formulaToken-2BackgroundColor': ColorValue;
+    formulaToken2BackgroundColor: ColorValue;
+    /**
+     * The border of the 2nd formula field token
+     */
+    formulaToken2Border: BorderValue;
     /**
      * The color of the 3rd formula field token
      */
-    'formulaToken-3Color': ColorValue;
+    formulaToken3Color: ColorValue;
     /**
      * The background color of the 3rd formula field token
      */
-    'formulaToken-3BackgroundColor': ColorValue;
+    formulaToken3BackgroundColor: ColorValue;
+    /**
+     * The border of the 3rd formula field token
+     */
+    formulaToken3Border: BorderValue;
     /**
      * The color of the 4th formula field token
      */
-    'formulaToken-4Color': ColorValue;
+    formulaToken4Color: ColorValue;
     /**
-     * The background color of the 4h formula field token
+     * The background color of the 4th formula field token
      */
-    'formulaToken-4BackgroundColor': ColorValue;
+    formulaToken4BackgroundColor: ColorValue;
+    /**
+     * The border of the 4th formula field token
+     */
+    formulaToken4Border: BorderValue;
     /**
      * The color of the 5th formula field token
      */
-    'formulaToken-5Color': ColorValue;
+    formulaToken5Color: ColorValue;
     /**
      * The background color of the 5th formula field token
      */
-    'formulaToken-5BackgroundColor': ColorValue;
+    formulaToken5BackgroundColor: ColorValue;
+    /**
+     * The border of the 5th formula field token
+     */
+    formulaToken5Border: BorderValue;
     /**
      * The color of the 6th formula field token
      */
-    'formulaToken-6Color': ColorValue;
+    formulaToken6Color: ColorValue;
     /**
-     * The background color of the 6h formula field token
+     * The background color of the 6th formula field token
      */
-    'formulaToken-6BackgroundColor': ColorValue;
+    formulaToken6BackgroundColor: ColorValue;
+    /**
+     * The border of the 6th formula field token
+     */
+    formulaToken6Border: BorderValue;
 };
 
 const baseParams: FormulaStyleParams = {
-    'formulaToken-1Color': '#4c8bf5',
-    'formulaToken-1BackgroundColor': 'rgb(76 139 245 / 16%)',
+    formulaTokenBorder: true,
+    formulaToken1Color: '#4c8bf5',
+    formulaToken1BackgroundColor: 'rgb(76 139 245 / 16%)',
+    formulaToken1Border: {
+        color: {
+            ref: 'formulaToken1Color',
+        },
+    },
 
-    'formulaToken-2Color': '#e86c60',
-    'formulaToken-2BackgroundColor': 'rgb(232 108 96 / 18%)',
+    formulaToken2Color: '#e86c60',
+    formulaToken2BackgroundColor: 'rgb(232 108 96 / 18%)',
+    formulaToken2Border: {
+        color: {
+            ref: 'formulaToken2Color',
+        },
+    },
 
-    'formulaToken-3Color': '#3fb950',
-    'formulaToken-3BackgroundColor': 'rgb(63 185 80 / 16%)',
+    formulaToken3Color: '#3fb950',
+    formulaToken3BackgroundColor: 'rgb(63 185 80 / 16%)',
+    formulaToken3Border: {
+        color: {
+            ref: 'formulaToken3Color',
+        },
+    },
 
-    'formulaToken-4Color': '#ba68c8',
-    'formulaToken-4BackgroundColor': 'rgb(186 104 200 / 16%)',
+    formulaToken4Color: '#ba68c8',
+    formulaToken4BackgroundColor: 'rgb(186 104 200 / 16%)',
+    formulaToken4Border: {
+        color: {
+            ref: 'formulaToken4Color',
+        },
+    },
 
-    'formulaToken-5Color': '#f2993f',
-    'formulaToken-5BackgroundColor': 'rgb(242 153 63 / 18%)',
+    formulaToken5Color: '#f2993f',
+    formulaToken5BackgroundColor: 'rgb(242 153 63 / 18%)',
+    formulaToken5Border: {
+        color: {
+            ref: 'formulaToken5Color',
+        },
+    },
 
-    'formulaToken-6Color': '#2bb3c0',
-    'formulaToken-6BackgroundColor': 'rgb(43 179 192 / 16%)',
+    formulaToken6Color: '#2bb3c0',
+    formulaToken6BackgroundColor: 'rgb(43 179 192 / 16%)',
+    formulaToken6Border: {
+        color: {
+            ref: 'formulaToken6Color',
+        },
+    },
 };
 
 const makeBatchEditStyleBaseTreeShakeable = () =>

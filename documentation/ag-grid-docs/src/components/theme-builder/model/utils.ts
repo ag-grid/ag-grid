@@ -60,7 +60,7 @@ export const memoize = <R, A = void>(fn: (arg: A) => R): ((arg: A) => R) => {
 export const stripFloatingPointErrors = (value: number) => value.toFixed(10).replace(/\.?0+$/, '');
 
 export const paramToVariableName = (param: string) => `--ag-${kebabCase(param)}`;
-const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
+const kebabCase = (str: string) => str.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
 
 export const cssValueIsValid = (value: string, type: ParamType): boolean => reinterpretCSSValue(value, type) != null;
 
