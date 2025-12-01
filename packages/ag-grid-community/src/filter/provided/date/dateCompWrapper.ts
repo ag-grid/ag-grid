@@ -1,5 +1,4 @@
 import { _setAriaInvalid } from '../../../agStack/utils/aria';
-import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
@@ -17,7 +16,6 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private validityTimeout: number | undefined = undefined;
 
     constructor(
         private readonly context: Context,
@@ -61,10 +59,6 @@ export class DateCompWrapper {
     public destroy(): void {
         this.alive = false;
         this.dateComp = this.context.destroyBean(this.dateComp);
-        if (this.validityTimeout) {
-            clearTimeout(this.validityTimeout);
-            this.validityTimeout = undefined;
-        }
     }
 
     public getDate(): Date | null {
@@ -119,19 +113,7 @@ export class DateCompWrapper {
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
             // so we need to call `reportValidity`.
             if (isInvalid) {
-                if (_isBrowserFirefox()) {
-                    // Report validity immediately because firefox handles it well, as opposed to...
-                    eInput.reportValidity();
-                } else {
-                    // ...other browsers, which reset the date input cursor when reporting validity, so we need to delay.
-                    // For example, when typing "2000", when we get to "200", that is a valid year, which
-                    // triggers validation, and the final keystroke of "0" will instead be interpreted as
-                    // the first keystroke of a new year.
-                    if (this.validityTimeout) {
-                        clearTimeout(this.validityTimeout);
-                    }
-                    this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
-                }
+                eInput.reportValidity();
             }
 
             _setAriaInvalid(eInput, isInvalid);

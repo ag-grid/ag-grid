@@ -1,5 +1,6 @@
 import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils/date';
+import { _debounce } from '../../../agStack/utils/function';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
@@ -131,13 +132,15 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             beans: { userCompFactory, context, gos },
             params,
         } = this;
+        const validationFn = () => this.validateInputs(position, fromTo);
+        const debouncedValidation = _isBrowserFirefox() ? validationFn : _debounce(this, validationFn, 500);
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.validateInputs(position, fromTo);
+                    debouncedValidation();
                     this.onUiChanged();
                 },
                 filterParams: params as any,
