@@ -120,11 +120,7 @@ export abstract class ProvidedFilter<
         const oldState = this.state;
         this.state = newState;
 
-        // We interpret only `valid: false` as invalid. Unset/undefined is valid.
-        const newValidity = newState.valid ?? true;
-        const oldValidity = oldState.valid ?? true;
-
-        if (newState.model !== oldState.model || newState.state !== oldState.state || newValidity !== oldValidity) {
+        if (newState.model !== oldState.model || newState.state !== oldState.state) {
             this.setModelIntoUi(newState.model);
         }
 
