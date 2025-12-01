@@ -787,7 +787,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     sortable?: boolean;
 
-    /** If sorting by default, set it here. Set to `SortDef | SortDirection`. */
+    /** Set the default sort. */
     sort?: SortDirection | SortDef;
 
     /**
