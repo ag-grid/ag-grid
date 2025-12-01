@@ -9,6 +9,8 @@ import { SimplePRNG, TestGridsManager } from '../../test-utils';
 
 suite('row grouping', () => {
     const gridsManager = new TestGridsManager({
+        includeDefaultModules: false,
+        mockGridLayout: false,
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule],
     });
 
@@ -32,6 +34,9 @@ suite('row grouping', () => {
                 rowData: [],
                 groupDefaultExpanded: -1,
                 suppressAggFuncInHeader: true,
+                ensureDomOrder: false,
+                suppressRowVirtualisation: false,
+                suppressColumnVirtualisation: false,
                 getRowId: ({ data }: { data: { id: string } }) => data.id,
             });
         },
