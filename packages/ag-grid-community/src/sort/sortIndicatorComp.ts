@@ -1,6 +1,7 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
 import type { AgColumn } from '../entities/agColumn';
+import { _normalizeSortType } from '../entities/agColumn';
 import { _normalizeSortDirection } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { ElementParams } from '../utils/element';
@@ -119,19 +120,22 @@ export class SortIndicatorComp extends Component {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
         const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+        const type = _normalizeSortType(sortDef?.type);
         const direction = _normalizeSortDirection(sortDef?.direction);
         const allowedSortTypes = column.getAvailableSortTypes();
         const isDefaultSortAllowed = allowedSortTypes.has('default');
         const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+        const isAbsoluteSort = type === 'absolute';
+        const isDefaultSort = type === 'default';
         const isAscending = direction === 'asc';
         const isDescending = direction === 'desc';
 
         if (eSortAsc) {
-            _setDisplayed(eSortAsc, isAscending && isDefaultSortAllowed, { skipAriaHidden: true });
+            _setDisplayed(eSortAsc, isAscending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
         }
 
         if (eSortDesc) {
-            _setDisplayed(eSortDesc, isDescending && isDefaultSortAllowed, { skipAriaHidden: true });
+            _setDisplayed(eSortDesc, isDescending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
         }
 
         if (eSortNone) {
@@ -140,11 +144,15 @@ export class SortIndicatorComp extends Component {
         }
 
         if (eSortAbsoluteAsc) {
-            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSortAllowed, { skipAriaHidden: true });
+            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort && isAbsoluteSortAllowed, {
+                skipAriaHidden: true,
+            });
         }
 
         if (eSortAbsoluteDesc) {
-            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSortAllowed, { skipAriaHidden: true });
+            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort && isAbsoluteSortAllowed, {
+                skipAriaHidden: true,
+            });
         }
     }
 
