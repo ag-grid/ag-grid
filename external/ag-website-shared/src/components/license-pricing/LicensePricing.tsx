@@ -81,9 +81,9 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         const ctaId =
                             license.id === 'community'
                                 ? 'get-started'
-                                : license.id === 'enterprise-grid'
-                                  ? 'grid-buy-now'
-                                  : 'grid-bundle-buy-now';
+                                : license.id.includes('enterprise')
+                                  ? 'buy-now'
+                                  : 'bundle-buy-now';
 
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
