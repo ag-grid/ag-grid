@@ -140,7 +140,7 @@ export class SortService extends BeanStub implements NamedBean {
         const currentSortDef = column.getSortDef();
         const currentIndex = sortingOrder.findIndex((e) => _areSortDefsEqual(e, currentSortDef));
 
-        let nextIndex = Math.max(0, currentIndex) + 1;
+        let nextIndex = currentIndex + 1;
         if (nextIndex >= sortingOrder.length) {
             nextIndex = 0;
         }
