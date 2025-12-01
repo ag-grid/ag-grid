@@ -47,6 +47,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     }
 
     public override afterGuiDetached(): void {
+        super.afterGuiDetached();
+
         this.clearInvalidInputs();
     }
 
