@@ -1169,6 +1169,18 @@
                             "title": "Sorting",
                             "path": "grouping-sorting",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Grouping Edit",
+                            "path": "grouping-edit",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Grouping Row Dragging",
+                            "path": "grouping-row-dragging",
+                            "isEnterprise": true
                         }
                     ]
                 },

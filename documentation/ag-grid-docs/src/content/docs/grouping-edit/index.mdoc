@@ -1,0 +1,25 @@
+---
+title: "Row Grouping - Editing"
+description: "Grouping editing."
+enterprise: true
+---
+
+The grid by default do not refresh the grouping hierarchy when users edit grouped columns.
+To enable the grid to refresh the grouping hierarchy after each edit, set `refreshAfterGroupEdit=true` on the grid options.
+
+## Refreshing Groups After Editing
+
+When grouped columns are editable, enable `refreshAfterGroupEdit=true` so the Client-Side Row Model immediately rebuilds the hierarchy after each group field edit.
+Otherwise the row data updates but the grouping order does not change until the next full refresh.
+
+{% gridExampleRunner title="Refresh After Group Edit" name="refresh-after-group-edit" exampleHeight=600 /%}
+
+In the example above, changing the `region` column of a record causes the grid to re-evaluate the grouping and move the pod to the correct regional group instantly.
+Double click on a `region` cell to edit it.
+
+When using `refreshAfterGroupEdit`, it is recommended to also set `getRowId` so that the grid can track rows by stable IDs while rebuilding the grouping hierarchy.
+
+See also [Read Only Edit](./value-setters/#read-only-edit) for configuring immutable grouped data or connecting the grid with a store.
+
+## Next Up
+Continue to the next section to learn [Grouping Row Dragging](./grouping-row-dragging/).
