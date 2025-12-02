@@ -223,12 +223,12 @@ For advanced filtering scenarios, combine async `values` callback, `allowTyping`
 
 {% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
 
-When `filterListAsync` is `true`, the cell editor:
+When `filterListAsync` is set to `true`, the cell editor behaves as follows:
 
-- Triggers the `values` callback with the current search string on every keystroke.
-- Debounces search requests using a default 300ms delay (configurable via `searchDebounceDelay`).
-- Displays a loading indicator during network requests.
-- Updates the dropdown with filtered results once the promise resolves.
+- It calls the `values` callback with the current search term.
+- It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
+- A loading indicator appears while the network request is in progress.
+- Once the promise resolves, the dropdown is updated with the filtered results.
 
 For example:
 
@@ -255,6 +255,10 @@ columnDefs: [
     }
 ]
 ```
+
+{% warning %}
+Please note, that if provided values() callback does not return a promise, the grid still tries to parse it and render the options. Make sure to always return a promise when using async values.
+{% /warning %}
  
 ## API Reference
 
