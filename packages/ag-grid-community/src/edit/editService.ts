@@ -77,6 +77,7 @@ const INTERNAL_EDITOR_SOURCES = new Set(['ui', 'api']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
+    renderer: 'api',
     paste: 'api',
     rangeSvc: 'api',
     fillHandle: 'api',
@@ -389,7 +390,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const freshEdits = model.getEditMap();
         const editsToDelete = this.processEdits(freshEdits, cancel, source);
 
-        this.strategy?.stop(cancel, event);
+        this.strategy?.stop(cancel, event, source);
 
         this.clearValidationIfNoOpenEditors();
 

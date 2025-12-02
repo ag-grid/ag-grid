@@ -110,17 +110,17 @@ export abstract class ProvidedFilter<
 
         this.params = newParams;
 
-        const source = newParams.source;
+        const { source, state: newState, additionalEventAttributes } = newParams;
 
         if (source === 'colDef') {
             this.updateParams(newParams, oldParams);
         }
 
-        const newState = newParams.state;
         const oldState = this.state;
         this.state = newState;
 
         if (
+            additionalEventAttributes?.fromAction ||
             newState.model !== oldState.model ||
             newState.state !== oldState.state ||
             newState.valid !== oldState.valid
