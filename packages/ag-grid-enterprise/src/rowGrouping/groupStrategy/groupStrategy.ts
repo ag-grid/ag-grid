@@ -188,12 +188,17 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             if (this.moveNodeInWrongPath(rowNode, details)) {
                 parentsWithRemovals.add(oldParent);
                 activeChangedPath?.addParentNode(rowNode.parent);
+
+                reordered = true; // Order may be wrong after a remove + add
             }
         }
 
-        for (const rowNode of adds) {
-            this.insertOneNode(rowNode, details);
-            activeChangedPath?.addParentNode(rowNode.parent);
+        if (adds.size) {
+            for (const rowNode of adds) {
+                this.insertOneNode(rowNode, details);
+                activeChangedPath?.addParentNode(rowNode.parent);
+            }
+            reordered = true; // Order may be wrong after adds
         }
 
         if (parentsWithRemovals.size) {

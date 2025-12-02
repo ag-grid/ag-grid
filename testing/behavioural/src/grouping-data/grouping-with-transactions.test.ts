@@ -405,8 +405,8 @@ describe('ag-grid grouping with transactions', () => {
             · │ ├── LEAF id:6 name:"Albert Einstein" country:"Germany" year:3000
             · │ └── LEAF id:5 name:"added" country:"Germany" year:3000
             · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2001
-            · │ ├── LEAF id:4 name:"Marvin Minsky" country:"Germany" year:2001
-            · │ └── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
+            · │ ├── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
+            · │ └── LEAF id:4 name:"Marvin Minsky" country:"Germany" year:2001
             · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
             · · ├── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
             · · └── LEAF id:3 name:"Donald Knuth" country:"Germany" year:2000
@@ -717,8 +717,8 @@ describe('ag-grid grouping with transactions', () => {
             │ · └── LEAF id:2 name:"Bob" department:"Engineering" level:"Senior"
             └─┬ filler id:row-group-department-Sales
             · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
-            · │ ├── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
-            · │ └── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
+            · │ ├── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
+            · │ └── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
             · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior
             · · └── LEAF id:4 name:"Diana" department:"Sales" level:"Senior"
         `);
@@ -732,8 +732,8 @@ describe('ag-grid grouping with transactions', () => {
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-department-Sales
             │ ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
-            │ │ ├── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
-            │ │ └── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
+            │ │ ├── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
+            │ │ └── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
             │ └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior
             │ · └── LEAF id:4 name:"Diana" department:"Sales" level:"Senior"
             └─┬ filler id:row-group-department-Marketing

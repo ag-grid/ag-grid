@@ -90,7 +90,12 @@ function collectAllNodes(api: GridApi, includeSiblings: boolean, context: string
         rows.add(node as RowNode);
     };
     api?.forEachNode(addNode);
-    api.forEachLeafNode(addNode);
+
+    const rowModelType = api.getGridOption('rowModelType');
+    if (!rowModelType || rowModelType === 'clientSide') {
+        api.forEachLeafNode(addNode);
+    }
+
     if (includeSiblings) {
         for (const node of Array.from(rows)) {
             const sibling = node.sibling;
