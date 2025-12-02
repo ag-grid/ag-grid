@@ -464,25 +464,34 @@ export function _destroyEditor(
 
     const { comp } = cellCtrl;
 
+    // editor already cleaned up, refresh cell (React usually)
     if (comp && !comp.getCellEditor()) {
-        // editor already cleaned up, refresh cell
         cellCtrl?.refreshCell();
 
         if (edit) {
             editModelSvc?.setEdit(position, { state: 'changed' });
-            const args = enableGroupEditing
-                ? groupEditOverrides(params, edit)
-                : params?.source === 'renderer'
-                  ? {
-                        valueChanged: edit.pendingValue !== edit.sourceValue,
-                        newValue: edit.pendingValue,
-                        oldValue: edit.sourceValue,
-                    }
-                  : {
-                        valueChanged: false,
-                        newValue: undefined,
-                        oldValue: edit.sourceValue,
-                    };
+            let args;
+            if (enableGroupEditing) {
+                args = groupEditOverrides(params, edit);
+            }
+            // this is for the case when the lack of editor
+            // is not due to react but because the edit came
+            // from a cell renderer.
+            else if (params?.source === 'renderer') {
+                args = {
+                    valueChanged: edit.pendingValue !== edit.sourceValue,
+                    newValue: edit.pendingValue,
+                    oldValue: edit.sourceValue,
+                };
+            }
+            // otherwise, cleanup
+            else {
+                args = {
+                    valueChanged: false,
+                    newValue: undefined,
+                    oldValue: edit.sourceValue,
+                };
+            }
             dispatchEditingStopped(beans, position, args, params);
         }
 
