@@ -53,9 +53,9 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
-    ...DEFAULT_SORTING_ORDER,
     { type: 'absolute', direction: 'asc' },
     { type: 'absolute', direction: 'desc' },
+    null,
 ];
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -449,16 +449,22 @@ export class AgColumn<TValue = any>
         return this.sortDef;
     }
 
-    private getColDefAllowedSortTypes(): Set<SortType> {
+    private getColDefAllowedSortTypes(): SortType[] {
+        const res: SortType[] = [];
         const { sort, initialSort } = this.colDef;
-        const colDefSortType = _normalizeSortType((sort as SortDef)?.type);
-        const colDefInitialSortType = _normalizeSortType((initialSort as SortDef)?.type);
-
-        return new Set([colDefSortType, colDefInitialSortType]);
+        const colDefSortType = (sort as SortDef)?.type;
+        const colDefInitialSortType = (initialSort as SortDef)?.type;
+        if (colDefSortType) {
+            res.push(colDefSortType);
+        }
+        if (colDefInitialSortType) {
+            res.push(colDefInitialSortType);
+        }
+        return res;
     }
 
     public getSortingOrder() {
-        const defaultSortingOrder = this.getColDefAllowedSortTypes().has('absolute')
+        const defaultSortingOrder = this.getColDefAllowedSortTypes().includes('absolute')
             ? DEFAULT_ABSOLUTE_SORTING_ORDER
             : DEFAULT_SORTING_ORDER;
 
@@ -468,7 +474,13 @@ export class AgColumn<TValue = any>
     }
 
     public getAvailableSortTypes() {
-        return new Set([...this.getColDefAllowedSortTypes(), this.getSortingOrder().map((so) => so.type)]);
+        const explicitSortTypesFromSortingOrder = this.getSortingOrder().reduce<string[]>((acc, so) => {
+            if (so.direction) {
+                acc.push(so.type);
+            }
+            return acc;
+        }, this.getColDefAllowedSortTypes());
+        return new Set(explicitSortTypesFromSortingOrder);
     }
 
     get wasSortExplicitlyRemoved(): boolean {
