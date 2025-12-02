@@ -371,7 +371,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         if (this.shouldHandleMidBatchKey(event, position)) {
             return {
                 res: false,
-                edits: this.handleMidBatchKey(event as KeyboardEvent, position, context),
+                edits: this.handleMidBatchKey(event, position, context),
             };
         }
 
@@ -464,6 +464,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         willCancel,
         willStop,
     }: StopContext & { params?: StopEditParams; position?: EditPosition; res: boolean }): void {
+        const beans = this.beans;
         if (res && position) {
             this.model.removeEdits(position);
         }
@@ -473,13 +474,13 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         // to edit, which causes focus and rendering changes, for each cell in the bulk operation
         this.navigateAfterEdit(params, cellCtrl?.cellPosition);
 
-        _purgeUnchangedEdits(this.beans);
+        _purgeUnchangedEdits(beans);
 
         this.clearValidationIfNoOpenEditors();
 
         this.bulkRefresh();
 
-        const { rowRenderer, formula } = this.beans;
+        const { rowRenderer, formula } = beans;
 
         if (willCancel) {
             // if we cancelled the edit, we need to refresh the rows to remove the pending value and editing styles
