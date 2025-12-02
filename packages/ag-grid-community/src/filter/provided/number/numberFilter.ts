@@ -49,6 +49,10 @@ export class NumberFilter extends SimpleFilter<
         }
     }
 
+    protected override areStatesEqual(stateA: any, stateB: any): boolean {
+        return (stateA ?? false) === (stateB ?? false);
+    }
+
     private refreshInputPairValidation(
         from: GridInputNumberField | GridInputTextField,
         to: GridInputNumberField | GridInputTextField,

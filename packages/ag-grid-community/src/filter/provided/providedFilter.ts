@@ -104,6 +104,10 @@ export abstract class ProvidedFilter<
         this.setModelIntoUi(params.state.model, true).then(() => this.updateUiVisibility());
     }
 
+    protected areStatesEqual(stateA: any, stateB: any): boolean {
+        return stateA === stateB;
+    }
+
     public refresh(legacyNewParams: ProvidedFilterParams): boolean {
         const newParams = legacyNewParams as unknown as P;
         const oldParams = this.params;
@@ -120,7 +124,7 @@ export abstract class ProvidedFilter<
         const oldState = this.state;
         this.state = newState;
 
-        if (newState.model !== oldState.model || newState.state !== oldState.state) {
+        if (newState.model !== oldState.model || !this.areStatesEqual(newState.state, oldState.state)) {
             this.setModelIntoUi(newState.model);
         }
 

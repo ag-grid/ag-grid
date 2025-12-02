@@ -158,6 +158,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return dateCompWrapper;
     }
 
+    protected override areStatesEqual(stateA: any, stateB: any): boolean {
+        return (stateA ?? false) === (stateB ?? false);
+    }
+
     protected override setElementValue(element: DateCompWrapper, value: Date | null): void {
         element.setDate(value);
         if (!value) {
