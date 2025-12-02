@@ -82,23 +82,9 @@ As cell formulas are not immediately parsed when the grid opens, we suggest usin
 
 ### Mathematical Operations
 
-Formulas can be used to construct a Mathematical expression using cell references, constants, functions, and operators and respect the standard order of operations (PEMDAS/BODMAS).
+Formulas can be used to construct mathematical expressions using cell references, constants, functions, and operators. These expressions respect the standard order of operations (PEMDAS/BODMAS).
 
-The following Mathematical operations are supported in formulas:
-| Symbol | Description |
-| ------ | ----------- |
-| `+` | Addition, can be used to add two numbers, or add days to a Date |
-| `-` | Subtraction, can be used to subtract two numbers, or subtract days from a Date |
-| `*` | Multiplication, can be used to multiply two numbers |
-| `/` | Division, can be used to divide two numbers |
-| `^` | Exponentiation, can be used to raise a number to a power |
-| `&` | Concatenation, can be used to join two strings |
-| `=` | Equal to, can be used to compare two values |
-| `<>` | Not equal to, can be used to compare two values |
-| `>` | Greater than, can be used to compare two values |
-| `<` | Less than, can be used to compare two values |
-| `>=` | Greater than or equal to, can be used to compare two values |
-| `<=` | Less than or equal to, can be used to compare two values |
+The full list of available operators can be found below in [List of Mathematical Operators](#list-of-mathematical-operators).
 
 ### Functions
 Formulas can use functions to perform calculations on values. Functions are a string of letters followed by parentheses containing the function arguments.
@@ -112,54 +98,7 @@ Examples of functions:
 - `=SUM(AVG(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
 - `=TODAY()` returns a date object representing the current date.
 
-
-The following functions are built into the grid by default:
-
-Numeric:
-| Function | Description |
-| -------- | ----------- |
-| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
-| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
-| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
-| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
-| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
-| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
-| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
-| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
-| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
-| `PERCENT(arg1, arg2)` | Returns the percentage of the first argument relative to the second argument. |
-| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
-| `RAND()` | Returns a random number between 0 and 1. |
-
-Date:
-| Function | Description |
-| -------- | ----------- |
-| `NOW()` | Returns a date object representing the current date and time. |
-| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
-
-Text:
-| Function | Description |
-| -------- | ----------- |
-| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
-
-Logical:
-| Function | Description |
-| -------- | ----------- |
-| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
-| `EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
-| `NOT_EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
-| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
-| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
-| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
-| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
-
-Counting:
-| Function | Description |
-| -------- | ----------- |
-| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. |
-| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
-| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
-| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
+The full list of functions that are provided by the grid can be found below in [List of Functions](#list-of-functions).
 
 ### Cell Ranges
 Cell ranges are used to refer to a rectangular block of cells in the grid and are symbolised by the top-left cell reference followed by a colon (`:`) and the bottom-right cell reference.
@@ -333,3 +272,75 @@ const gridOptions = {
 ```
 
 {% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
+
+## API Reference
+
+### List of Mathematical Operators
+
+| Symbol | Description |
+| ------ | ----------- |
+| `+` | Addition, can be used to add two numbers, or add days to a Date |
+| `-` | Subtraction, can be used to subtract two numbers, or subtract days from a Date |
+| `*` | Multiplication, can be used to multiply two numbers |
+| `/` | Division, can be used to divide two numbers |
+| `^` | Exponentiation, can be used to raise a number to a power |
+| `&` | Concatenation, can be used to join two strings |
+| `=` | Equal to, can be used to compare two values |
+| `<>` | Not equal to, can be used to compare two values |
+| `>` | Greater than, can be used to compare two values |
+| `<` | Less than, can be used to compare two values |
+| `>=` | Greater than or equal to, can be used to compare two values |
+| `<=` | Less than or equal to, can be used to compare two values |
+
+### List of Functions
+
+#### Numeric Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
+| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
+| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
+| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
+| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
+| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
+| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
+| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
+| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
+| `PERCENT(arg1, arg2)` | Returns the percentage of the first argument relative to the second argument. |
+| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
+| `RAND()` | Returns a random number between 0 and 1. |
+
+#### Date Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `NOW()` | Returns a date object representing the current date and time. |
+| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
+
+#### Text Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
+
+#### Logical Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
+| `EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
+| `NOT_EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
+| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
+| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
+| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
+| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
+
+#### Counting Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. |
+| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
+| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
+| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
