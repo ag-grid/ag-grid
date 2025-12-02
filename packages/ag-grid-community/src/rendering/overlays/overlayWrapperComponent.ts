@@ -4,7 +4,7 @@ import { _last } from '../../agStack/utils/array';
 import { _getActiveDomElement, _isNothingFocused } from '../../agStack/utils/document';
 import { _clearElement } from '../../agStack/utils/dom';
 import { _findNextFocusableElement, _focusInto } from '../../agStack/utils/focus';
-import type { AgPromise } from '../../agStack/utils/promise';
+import { AgPromise } from '../../agStack/utils/promise';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import type { ElementParams } from '../../utils/element';
@@ -111,7 +111,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayComponentPromise: AgPromise<IOverlayComp> | null,
         overlayWrapperCssClass: string,
         exclusive: boolean
-    ): void {
+    ): AgPromise<IOverlayComp | undefined> {
         this.destroyActiveOverlay();
 
         this.elToFocusAfter = null;
@@ -120,7 +120,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         if (!overlayComponentPromise) {
             this.refreshWrapperPadding();
-            return;
+            return AgPromise.resolve();
         }
 
         this.setWrapperTypeClass(overlayWrapperCssClass);
@@ -165,6 +165,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 _focusInto(eOverlayWrapper);
             }
         });
+        return overlayComponentPromise;
     }
 
     public refreshWrapperPadding(): void {

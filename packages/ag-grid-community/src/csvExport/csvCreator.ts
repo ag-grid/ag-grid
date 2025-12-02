@@ -1,15 +1,10 @@
-import type { ColumnModel } from '../columns/columnModel';
-import type { ColumnNameService } from '../columns/columnNameService';
 import type { NamedBean } from '../context/bean';
-import type { BeanCollection } from '../context/context';
 import { BaseCreator } from '../export/baseCreator';
 import { _downloadFile } from '../export/downloader';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
-import type { IColsService } from '../interfaces/iColsService';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import { _warn } from '../validation/logging';
-import type { ValueService } from '../valueService/valueService';
 import { CsvSerializingSession } from './csvSerializingSession';
 
 export class CsvCreator
@@ -17,18 +12,6 @@ export class CsvCreator
     implements NamedBean, ICsvCreator
 {
     beanName = 'csvCreator' as const;
-
-    private colModel: ColumnModel;
-    private colNames: ColumnNameService;
-    private rowGroupColsSvc?: IColsService;
-    private valueSvc: ValueService;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.colModel = beans.colModel;
-        this.colNames = beans.colNames;
-        this.rowGroupColsSvc = beans.rowGroupColsSvc;
-        this.valueSvc = beans.valueSvc;
-    }
 
     protected getMergedParams(params?: CsvExportParams): CsvExportParams {
         const baseParams = this.gos.get('defaultCsvExportParams');
@@ -42,27 +25,23 @@ export class CsvCreator
             return;
         }
 
-        let res: (value: void | PromiseLike<void>) => void;
-        const onFinished = new Promise<void>((resolve) => {
-            res = resolve;
-        });
         const exportFunc = () => {
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
 
             const packagedFile = new Blob(['\ufeff', data], { type: 'text/plain' });
 
+            const fileNameParams = mergedParams.fileName;
             const fileName =
-                typeof mergedParams.fileName === 'function'
-                    ? mergedParams.fileName(_addGridCommonParams(this.gos, {}))
-                    : mergedParams.fileName;
+                typeof fileNameParams === 'function'
+                    ? fileNameParams(_addGridCommonParams(this.gos, {}))
+                    : fileNameParams;
 
             _downloadFile(this.getFileName(fileName), packagedFile);
-            res();
         };
         const { overlays } = this.beans;
         if (overlays) {
-            overlays.showExportOverlay(exportFunc, onFinished);
+            overlays.showExportOverlay(exportFunc);
         } else {
             exportFunc();
         }
@@ -83,7 +62,7 @@ export class CsvCreator
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this.beans;
         const {
             processCellCallback,
             processHeaderCallback,

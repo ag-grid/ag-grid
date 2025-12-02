@@ -1,3 +1,4 @@
+import { AgPromise } from '../../agStack/utils/promise';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
@@ -6,7 +7,7 @@ import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUt
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
-import type { OverlayType } from './overlayComponent';
+import type { IOverlayComp, OverlayType } from './overlayComponent';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
 
 const overlayCompTypeOptionalMethods = ['refresh'];
@@ -205,34 +206,41 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.doShowOverlay(NoRowsOverlayDef);
     }
 
-    public showExportOverlay(heavyOperation: () => void, onFinished: Promise<void>) {
+    public async showExportOverlay(heavyOperation: () => void) {
         const gos = this.gos;
-        if (!this.eWrapper || gos.get('activeOverlay') || gos.get('loading') || this.isDisabled(ExportingOverlayDef)) {
+        if (
+            !this.eWrapper ||
+            gos.get('activeOverlay') ||
+            gos.get('loading') ||
+            this.isDisabled(ExportingOverlayDef) ||
+            (this.userForcedNoRows && this.currentDef === NoRowsOverlayDef)
+        ) {
             heavyOperation();
-            return () => {};
+            return;
         }
 
-        const shownAt = Date.now();
-
-        this.doShowOverlay(ExportingOverlayDef);
-
-        setTimeout(() => {
+        // wait until the wrapper has mounted the overlay component
+        const desiredDef = this.getDesiredDefWithOverride(ExportingOverlayDef);
+        if (!desiredDef) {
             heavyOperation();
-        });
+            return;
+        }
 
-        onFinished.then(() => {
-            const elapsed = Date.now() - shownAt;
-            const remaining = Math.max(0, 300 - elapsed);
-            if (remaining > 0) {
-                setTimeout(() => this.hideExportOverlay(), remaining);
-            } else {
-                this.hideExportOverlay();
-            }
-        });
-    }
+        await this.doShowOverlay(desiredDef);
 
-    private hideExportOverlay(): void {
-        if (this.currentDef === ExportingOverlayDef) {
+        // ensure the overlay has a chance to be painted
+        await new Promise<void>((resolve) => setTimeout(() => resolve()));
+
+        const shownAt = Date.now();
+        // start the heavy operation (allow sync or promise)
+        heavyOperation();
+
+        // We apply a minimum show time of 300ms to avoid fast exports having a flicker of the overlay
+        const elapsed = Date.now() - shownAt;
+        const remaining = Math.max(0, 300 - elapsed);
+        if (remaining > 0) {
+            setTimeout(() => this.doHideOverlay(), remaining);
+        } else {
             this.doHideOverlay();
         }
     }
@@ -303,32 +311,9 @@ export class OverlayService extends BeanStub implements NamedBean {
             this.currentDef = null;
             return false;
         }
-        const gos = this.gos;
 
         // Active overlay should take priority over loading=true
-        let desiredDef = getActiveOverlayDef(gos.get('activeOverlay'));
-        if (!desiredDef) {
-            desiredDef = this.getOverlayDef();
-            if (desiredDef && this.isDisabled(desiredDef)) {
-                desiredDef = null;
-            }
-        }
-
-        if (desiredDef !== null && desiredDef !== CustomOverlayDef) {
-            // Check if we need to change overlay based on the overlayComponent prop
-            const overlayComponent = gos.get('overlayComponent') || gos.get('overlayComponentSelector');
-            if (overlayComponent) {
-                // userComponentFactory will warn if component missing
-                const compDetails = this.beans.userCompFactory.getCompDetailsFromGridOptions(
-                    { name: 'overlayComponent', optionalMethods: ['refresh'] },
-                    undefined,
-                    this.makeCompParams(false, desiredDef.paramsKey, desiredDef.overlayType)
-                );
-                if (compDetails) {
-                    desiredDef = { ...desiredDef, overriddenComp: compDetails };
-                }
-            }
-        }
+        const desiredDef = this.getDesiredDefWithOverride();
 
         const currentDef = this.currentDef;
         const shouldReload = desiredDef === CustomOverlayDef && activeOverlayChanged;
@@ -353,6 +338,34 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         return false;
+    }
+
+    private getDesiredDefWithOverride(defaultDef?: OverlayDef) {
+        const { gos } = this;
+        let desiredDef = getActiveOverlayDef(gos.get('activeOverlay'));
+        if (!desiredDef) {
+            desiredDef = defaultDef ?? this.getOverlayDef();
+            if (desiredDef && this.isDisabled(desiredDef)) {
+                desiredDef = null;
+            }
+        }
+
+        if (desiredDef !== null && desiredDef !== CustomOverlayDef) {
+            // Check if we need to change overlay based on the overlayComponent prop
+            const overlayComponent = gos.get('overlayComponent') || gos.get('overlayComponentSelector');
+            if (overlayComponent) {
+                // userComponentFactory will warn if component missing
+                const compDetails = this.beans.userCompFactory.getCompDetailsFromGridOptions(
+                    { name: 'overlayComponent', optionalMethods: ['refresh'] },
+                    undefined,
+                    this.makeCompParams(false, desiredDef.paramsKey, desiredDef.overlayType)
+                );
+                if (compDetails) {
+                    desiredDef = { ...desiredDef, overriddenComp: compDetails };
+                }
+            }
+        }
+        return desiredDef;
     }
 
     private getOverlayDef(): OverlayDef | null {
@@ -398,7 +411,7 @@ export class OverlayService extends BeanStub implements NamedBean {
      * This single function replaces the previous three helpers and handles
      * param selection and wrapper class choice for loading / no-rows and custom overlays.
      */
-    private doShowOverlay(componentDef: OverlayDef): void {
+    private doShowOverlay(componentDef: OverlayDef): AgPromise<IOverlayComp | undefined> {
         const { gos, beans } = this;
 
         this.currentDef = componentDef;
@@ -428,9 +441,13 @@ export class OverlayService extends BeanStub implements NamedBean {
             );
 
         const promise = compDetails?.newAgStackInstance() ?? null;
-        this.eWrapper?.showOverlay(promise, componentDef.wrapperCls, exclusive);
+        const mountedPromise: AgPromise<IOverlayComp | undefined> = this.eWrapper
+            ? this.eWrapper.showOverlay(promise, componentDef.wrapperCls, exclusive)
+            : AgPromise.resolve();
         this.eWrapper?.refreshWrapperPadding();
         this.setExclusive(exclusive);
+
+        return mountedPromise;
     }
 
     private makeCompParams(

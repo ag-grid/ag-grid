@@ -261,10 +261,6 @@ export class ExcelCreator
             return;
         }
 
-        let res: (value: void | PromiseLike<void>) => void;
-        const onFinished = new Promise<void>((resolve) => {
-            res = resolve;
-        });
         const exportFunc = () => {
             const mergedParams = this.getMergedParams(userParams);
             const data = this.getData(mergedParams);
@@ -276,23 +272,19 @@ export class ExcelCreator
                 mimeType: mergedParams.mimeType,
             };
 
-            this.packageCompressedFile(exportParams)
-                .then((packageFile) => {
-                    if (packageFile) {
-                        const { fileName } = mergedParams;
-                        const providedFileName =
-                            typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
+            this.packageCompressedFile(exportParams).then((packageFile) => {
+                if (packageFile) {
+                    const { fileName } = mergedParams;
+                    const providedFileName =
+                        typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
 
-                        _downloadFile(this.getFileName(providedFileName), packageFile);
-                    }
-                })
-                .finally(() => {
-                    res();
-                });
+                    _downloadFile(this.getFileName(providedFileName), packageFile);
+                }
+            });
         };
         const { overlays } = this.beans;
         if (overlays) {
-            overlays.showExportOverlay(exportFunc, onFinished);
+            overlays.showExportOverlay(exportFunc);
         } else {
             exportFunc();
         }
