@@ -1,7 +1,7 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import React from 'react';
 
-import { FRAMEWORK_CONFIGS, CODE_EXAMPLES } from '../types';
+import { CODE_EXAMPLES, FRAMEWORK_CONFIGS } from '../types';
 import styles from './FeaturesSection.module.scss';
 import AdvancedFeatures from './tabs/AdvancedFeatures';
 import BasicFeatures from './tabs/BasicFeatures';
@@ -41,6 +41,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ framework }) => {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
+                            id={`feature-tab-${tab.title.toLowerCase()}`}
                             className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=${config.analyticsPrefix}-${tab.title.toLowerCase()}-tab`}
                             onClick={() => handleTabClick(index)}
                         >
