@@ -823,7 +823,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Defaults:
      *
      * - `['asc', 'desc', null]` if no sort type is specified,
-     * - `['asc', 'desc', null, { type: 'absolute', direction: 'asc', }, { type: 'absolute', direction: 'desc' }]` if sort or initialSort have type: 'absolute'
+     * - `[{ type: 'absolute', direction: 'asc', }, { type: 'absolute', direction: 'desc' }, null]` if sort or initialSort have type: 'absolute'
      */
     sortingOrder?: (SortDirection | SortDef)[];
     /**
