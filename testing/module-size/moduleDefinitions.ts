@@ -41,7 +41,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowSelectionModule: 35.73,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
-    SelectEditorModule: 81.4,
+    SelectEditorModule: 83.87,
     TextEditorModule: 68.96,
     TextFilterModule: 124,
     TooltipModule: 25.06,
