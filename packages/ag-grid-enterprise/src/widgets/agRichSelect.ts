@@ -370,7 +370,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.listComponent?.setIsLoading();
         valueList.then((values) => {
-            this.setValueListInternal({ ...params, valueList: values });
+            if (values) {
+                this.setValueListInternal({ ...params, valueList: values });
+            }
         });
     }
 
