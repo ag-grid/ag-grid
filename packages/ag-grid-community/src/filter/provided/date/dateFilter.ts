@@ -110,9 +110,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    private validateInputs(position: number, fromTo: 'from' | 'to'): void {
+    private validateInputs(position: number, isFrom = false): void {
         const { dateConditionFromComps, dateConditionToComps, beans } = this;
-        const isFrom = fromTo === 'from';
         const from = dateConditionFromComps[position];
         const to = dateConditionToComps[position];
 
@@ -132,13 +131,13 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             beans: { userCompFactory, context, gos },
             params,
         } = this;
-        const validationFn = () => this.validateInputs(position, fromTo);
+        const validationFn = () => this.validateInputs(position, fromTo === 'from');
         // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
         // Chrome/Safari, however, need to be debounced, otherwise they will reset the date input cursor when
         // reporting validity.
-        // For example, when typing "2000", when we get to "200", that is a valid year, which
-        // triggers validation, and the final keystroke of "0" will instead be interpreted as
-        // the first keystroke of a new year.
+        // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
+        // (even though a HTML date should be four digits per the spec), which triggers validation, and the
+        // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
         const debouncedValidation = _isBrowserFirefox() ? validationFn : _debounce(this, validationFn, 500);
         const dateCompWrapper = new DateCompWrapper(
             context,
