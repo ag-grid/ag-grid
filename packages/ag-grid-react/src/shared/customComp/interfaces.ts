@@ -16,6 +16,7 @@ import type {
     ICellRendererParams,
     IDetailCellRendererParams,
     IDragAndDropImageParams,
+    IExportingOverlayParams,
     IFilter,
     IFloatingFilterParams,
     IGroupCellRendererParams,
@@ -132,10 +133,14 @@ export type CustomOverlayProps<TData = any, TContext = any> = IOverlayParams<TDa
 export interface CustomLoadingOverlayProps<TData = any, TContext = any>
     extends ILoadingOverlayParams<TData, TContext> {}
 
+/** Props provided to custom exporting overlay component */
+export interface CustomExportingOverlayProps<TData = any, TContext = any>
+    extends IExportingOverlayParams<TData, TContext> {}
+
 /** Props provided to custom no-rows overlay component */
 export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
 
-/** Props provided to custom no--matching-rows overlay component */
+/** Props provided to custom no-matching-rows overlay component */
 export interface CustomNoMatchingRowsOverlayProps<TData = any, TContext = any>
     extends INoMatchingRowsOverlayParams<TData, TContext> {}
 

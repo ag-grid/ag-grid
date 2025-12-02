@@ -764,6 +764,7 @@ export {
 export {
     OverlayType,
     ILoadingOverlayParams,
+    IExportingOverlayParams,
     INoRowsOverlayParams,
     INoMatchingRowsOverlayParams,
     IOverlay,

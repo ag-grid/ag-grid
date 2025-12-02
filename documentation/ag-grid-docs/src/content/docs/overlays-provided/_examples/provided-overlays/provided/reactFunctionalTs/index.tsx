@@ -1,7 +1,13 @@
 import React, { StrictMode, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, ModuleRegistry, TextFilterModule, ValidationModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ModuleRegistry,
+    TextFilterModule,
+    ValidationModule,
+} from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -10,6 +16,7 @@ import './styles.css';
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
+    CsvExportModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -55,6 +62,7 @@ const GridExample = () => {
                     Set Non Matching Filter
                 </button>
                 <button onClick={() => gridRef.current?.api.setFilterModel(null)}>Clear Filter</button>
+                <button onClick={() => gridRef.current?.api.exportDataAsCsv(null)}>Export CSV</button>
             </div>
 
             <div style={{ height: '100%' }}>

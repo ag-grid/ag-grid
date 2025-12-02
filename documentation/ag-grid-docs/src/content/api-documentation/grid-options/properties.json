@@ -871,7 +871,7 @@
         "loading": {
             "more": {
                 "name": "Loading Overlay",
-                "url": "./overlays-provided/#loading-overlay"
+                "url": "./overlays-provided/#loading"
             }
         },
         "overlayComponent": {
@@ -901,13 +901,13 @@
         "activeOverlay": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays-custom/"
+                "url": "./overlays-active/"
             }
         },
         "activeOverlayParams": {
             "more": {
                 "name": "Active Overlay",
-                "url": "./overlays-custom/"
+                "url": "./overlays-active/"
             }
         },
         "overlayLoadingTemplate": {

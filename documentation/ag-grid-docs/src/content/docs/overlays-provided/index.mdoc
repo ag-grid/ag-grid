@@ -16,21 +16,28 @@ The loading overlay is displayed when the grid property `loading` is set to `tru
 
 ## No Rows
 
-When `rowData` is empty array `[]`, the grid automatically displays the no-rows overlay. (Client Side Row Model only)
+When `rowData` is empty array `[]`, the grid automatically displays the no-rows overlay. 
 
 
 ## No Matching Rows
 
-The no-matching-rows overlay is displayed when no rows match the current filter criteria. (Client Side Row Model only)
+The no-matching-rows overlay is displayed when no rows match the current filter criteria. 
+
+
+## Exporting
+
+The exporting overlay is displayed when data is being exported to CSV / Excel.
+
 
 ## Example
 
 The following example demonstrates the loading, no rows and no matching rows overlays.
 
 - Toggle the loading state to show/hide the loading overlay. 
-- Note that the loading overlay takes precedence over the other overlays if they are shown at the same time.
+- Note that the loading overlay takes precedence over the other provided overlays if they are shown at the same time.
 - Clear the row data to show the no rows overlay.
 - Set Row Data and then Set Non Matching Filter to show the no matching rows overlay.    
+- Export the data to CSV
 
 {% gridExampleRunner title="Provided Overlays" name="provided-overlays"  exampleHeight=300 /%}
 

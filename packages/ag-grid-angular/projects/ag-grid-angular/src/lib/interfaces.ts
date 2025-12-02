@@ -12,6 +12,8 @@ import type {
     IDateParams,
     IDragAndDropImage,
     IDragAndDropImageParams,
+    IExportingOverlay,
+    IExportingOverlayParams,
     IFilter,
     IFilterParams,
     IFloatingFilter,
@@ -90,6 +92,9 @@ export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<IL
 export interface IOverlayAngularComp extends AgFrameworkComponent<IOverlayParams>, IOverlay {}
 
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {}
+export interface IExportingOverlayAngularComp
+    extends AgFrameworkComponent<IExportingOverlayParams>,
+        IExportingOverlay {}
 
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams>, INoRowsOverlay {}
 export interface INoMatchingRowsOverlayAngularComp

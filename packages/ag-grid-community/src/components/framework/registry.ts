@@ -89,8 +89,7 @@ export class Registry
 
     public getUserComponent(
         propertyName: string,
-        name: string,
-        canBeDisabled: boolean
+        name: string
     ): { componentFromFramework: boolean; component: any; params?: any; processParams?: ProcessParamsFunc } | null {
         const createResult = (
             component: any,
@@ -120,18 +119,10 @@ export class Registry
             return createResult(jsComponent, isFwkComp);
         }
 
-        if (canBeDisabled && jsComponent === false) {
-            return null;
-        }
-
         const defaultComponent = this.agGridDefaults[name as UserComponentName];
         if (defaultComponent) {
             const overrides = this.agGridDefaultOverrides[name as UserComponentName];
             return createResult(defaultComponent, false, overrides?.params, overrides?.processParams);
-        }
-
-        if (canBeDisabled && jsComponent === undefined) {
-            return null;
         }
 
         this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);

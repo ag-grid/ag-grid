@@ -1001,17 +1001,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
-     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
      *
-     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public loadingOverlayComponent: any = undefined;
     /** Customise the parameters provided to the loading overlay component.
      *
-     *     **Prefer using `overlayComponentParams` instead.**
+     * -     **Prefer using `overlayComponentParams`**
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
@@ -1022,31 +1022,31 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      *
-     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no-rows overlay component.
      *
-     *     **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** Customise the parameters provided to the no-rows overlay component.
      *
-     *     *     **Prefer using `overlayComponentParams` instead.**
+     * -     **Prefer using `overlayComponentParams`**
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      *
-     *     **Prefer `suppressOverlays=['noRows']`instead.**
+     * -     **Prefer `suppressOverlays=['noRows']`**
      *
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
-    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`.
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
      */
     @Input() public suppressOverlays: OverlayType[] | undefined = undefined;
-    /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
+    /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
      * @initial
      */
     @Input() public overlayComponent: any = undefined;
@@ -1069,7 +1069,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default undefined
      */
     @Input() public activeOverlay: any = undefined;
-    /** Custom parameters supplied to the `activeOverlay` component alongside the standard `IOverlayParams`.
+    /** Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`.
      */
     @Input() public activeOverlayParams: any = undefined;
     /** Set whether pagination is enabled.

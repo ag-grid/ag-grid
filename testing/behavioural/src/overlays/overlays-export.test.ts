@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 
-import { ClientSideRowModelModule, CsvExportModule, IOverlayParams, OverlaySelectorFunc } from 'ag-grid-community';
+import type { IOverlayParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
@@ -18,9 +19,9 @@ describe('ag-grid export overlay', () => {
     const originalCompressionStream = (window as any).CompressionStream;
     const originalBlobArrayBuffer = (Blob.prototype as any).arrayBuffer;
 
-    function hasLoadingOverlay() {
-        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
-    }
+    // function hasLoadingOverlay() {
+    //     return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
+    // }
 
     function hasNoRowsOverlay() {
         return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'));
@@ -66,7 +67,7 @@ describe('ag-grid export overlay', () => {
             return new Event(type, { bubbles: init?.bubbles, cancelable: init?.cancelable });
         });
         // Mock CompressionStream to a pass-through TransformStream (if available)
-        (window as any).CompressionStream = jest.fn((format: string) => {
+        (window as any).CompressionStream = jest.fn((_format: string) => {
             if (typeof (global as any).TransformStream === 'function') {
                 return new (global as any).TransformStream({
                     transform(chunk: any, controller: any) {
@@ -146,6 +147,29 @@ describe('ag-grid export overlay', () => {
             await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
             await waitFor(() => {
                 expect(document.querySelector('.my-custom-loading-overlay')).toBeFalsy();
+            });
+        });
+
+        test('csv export suppressed via suppressOverlays', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
+                suppressOverlays: ['exporting'],
+            });
+
+            // Initially no overlay should be shown
+            expect(hasExportingOverlay()).toBeFalsy();
+
+            // When CSV export starts, loading overlay should be shown
+            api.exportDataAsCsv();
+            await waitFor(() => {
+                expect(hasExportingOverlay()).toBeFalsy();
+            });
+
+            await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
+            await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
+            await waitFor(() => {
+                expect(hasExportingOverlay()).toBeFalsy();
             });
         });
 
@@ -233,6 +257,33 @@ describe('ag-grid export overlay', () => {
             await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
 
             expect(document.querySelector('.my-active-overlay')).toBeTruthy();
+        });
+
+        test('csv export shows the export overlay and reverts to no rows if that was shown before', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [],
+            });
+
+            // Initially no rows overlay should be shown
+            expect(hasNoRowsOverlay).toBeTruthy();
+
+            // When CSV export starts, loading overlay should be shown
+            api.exportDataAsCsv();
+            await waitFor(() => {
+                expect(hasExportingOverlay()).toBeTruthy();
+                expect(hasExportingOverlayWrapper()).toBeTruthy();
+                expect(hasNoRowsOverlay()).toBeFalsy();
+            });
+
+            await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalled());
+            await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled());
+
+            await waitFor(() => {
+                expect(hasExportingOverlay()).toBeFalsy();
+                expect(hasExportingOverlayWrapper()).toBeFalsy();
+                expect(hasNoRowsOverlay()).toBeTruthy();
+            });
         });
     });
 

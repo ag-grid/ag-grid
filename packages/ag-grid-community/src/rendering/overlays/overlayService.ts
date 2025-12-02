@@ -239,9 +239,9 @@ export class OverlayService extends BeanStub implements NamedBean {
         const elapsed = Date.now() - shownAt;
         const remaining = Math.max(0, 300 - elapsed);
         if (remaining > 0) {
-            setTimeout(() => this.doHideOverlay(), remaining);
+            setTimeout(() => this.updateOverlay(false), remaining);
         } else {
-            this.doHideOverlay();
+            this.updateOverlay(false);
         }
     }
 
@@ -297,7 +297,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 changedProps.has('overlayComponentParams') ||
                 (paramsKey && changedProps.has(paramsKey))
             ) {
-                const overlayCompType = !activeOverlayParamsChanged ? currentDef.overlayType : undefined;
+                const overlayCompType = activeOverlayParamsChanged ? undefined : currentDef.overlayType;
                 activeOverlay.refresh?.(
                     this.makeCompParams(currentDef.id === 'activeOverlay', paramsKey, overlayCompType)
                 );
@@ -436,8 +436,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 componentDef.comp,
                 componentDef === CustomOverlayDef ? undefined : componentDef.id,
                 this.makeCompParams(componentDef.id === 'activeOverlay', legacyParamsKey, componentDef.overlayType),
-                false,
-                true
+                false
             );
 
         const promise = compDetails?.newAgStackInstance() ?? null;
@@ -494,13 +493,9 @@ export class OverlayService extends BeanStub implements NamedBean {
     private isDisabled(def: OverlayDef): boolean {
         const { gos } = this;
 
-        if (def.overlayType) {
-            const viaSuppressOverlays = (gos.get('suppressOverlays') ?? []).includes(def.overlayType);
-            if (viaSuppressOverlays) {
-                return true;
-            }
-        }
-
-        return def.isSuppressed?.(gos) === true;
+        return (
+            (def.overlayType && gos.get('suppressOverlays')?.includes(def.overlayType)) ||
+            def.isSuppressed?.(gos) === true
+        );
     }
 }

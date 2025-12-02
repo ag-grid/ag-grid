@@ -1,6 +1,7 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CsvExportModule,
     ModuleRegistry,
     TextFilterModule,
     ValidationModule,
@@ -10,6 +11,7 @@ import {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     TextFilterModule,
+    CsvExportModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -50,6 +52,10 @@ function onBtnSetFilter() {
 
 function onBtnClearFilter() {
     gridApi!.setFilterModel(null);
+}
+
+function onCsvExport() {
+    gridApi!.exportDataAsCsv();
 }
 
 // setup the grid after the page has finished loading

@@ -961,19 +961,19 @@ export interface GridOptions<TData = any> {
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
      *
-     * **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
      *
-     * **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
      *
-     * **Prefer using `overlayComponentParams` instead.**
+     * - **Prefer using `overlayComponentParams`**
      */
     loadingOverlayComponentParams?: any;
     /**
@@ -987,25 +987,25 @@ export interface GridOptions<TData = any> {
     /**
      * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
      *
-     * **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     overlayNoRowsTemplate?: string;
     /**
      * Provide a custom no-rows overlay component.
      *
-     * **Prefer using `overlayComponent` / `overlayComponentSelector` instead.**
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no-rows overlay component.
      *
-     * * **Prefer using `overlayComponentParams` instead.**
+     * - **Prefer using `overlayComponentParams`**
      */
     noRowsOverlayComponentParams?: any;
     /**
      * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
      *
-     * **Prefer `suppressOverlays=['noRows']`instead.**
+     * - **Prefer `suppressOverlays=['noRows']`**
      *
      * @default false
      * @initial
@@ -1013,12 +1013,12 @@ export interface GridOptions<TData = any> {
     suppressNoRowsOverlay?: boolean;
 
     /**
-     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`.
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
      */
     suppressOverlays?: OverlayType[];
 
     /**
-     * Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows etc).
+     * Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
      * @initial
      */
     overlayComponent?: any;
@@ -1049,7 +1049,7 @@ export interface GridOptions<TData = any> {
     activeOverlay?: any;
 
     /**
-     * Custom parameters supplied to the `activeOverlay` component alongside the standard `IOverlayParams`.
+     * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`.
      */
     activeOverlayParams?: any;
 

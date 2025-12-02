@@ -816,8 +816,18 @@
                 "url": "./overlays/"
             }
         },
-        "showNoRowsOverlay": {},
-        "hideOverlay": {}
+        "showNoRowsOverlay": {
+            "page": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        },
+        "hideOverlay": {
+            "page": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        }
     },
     "clipboard": {
         "meta": {
