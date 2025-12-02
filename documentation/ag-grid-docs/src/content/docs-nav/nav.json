@@ -1438,8 +1438,8 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Custom Overlays",
-                                    "path": "overlays-custom"
+                                    "title": "Active Overlay",
+                                    "path": "overlays-active"
                                 }
                             ]
                         }

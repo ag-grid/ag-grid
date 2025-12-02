@@ -1,12 +1,12 @@
 ---
-title: "Custom Overlays"
+title: "Active Overlay"
 ---
 
-Custom overlays are triggered by the application regardless of the state of the grid. They can re-use the built-in overlay components or provide completely custom implementations.
+The active overlay can be controlled by the application regardless of the state of the grid. It can re-use the built-in overlay components or provide completely custom implementations.
 
 ## Application Overlays
 
-To display an overlay programmatically, independent of the state of the grid, set the `activeOverlay` grid option along with `activeOverlayParams` as required. To clear the overlay, reset `activeOverlay` to `undefined`.
+To display an overlay programmatically, independent of the state of the grid, set the `activeOverlay` / `activeOverlayParams` grid options. To clear the overlay, reset `activeOverlay` to `undefined`.
 
 The `activeOverlay` grid option accepts the following values:
 - A string key of one of the built-in overlays e.g `'agLoadingOverlay'`
