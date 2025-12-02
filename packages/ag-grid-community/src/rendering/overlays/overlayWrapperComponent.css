@@ -21,12 +21,15 @@
     text-align: center;
 }
 
-.ag-overlay-loading-wrapper {
+.ag-overlay-loading-wrapper,
+.ag-overlay-exporting-wrapper,
+.ag-overlay-modal-wrapper {
     /* prevent interaction with grid while it's loading */
     pointer-events: all;
 }
 
-.ag-overlay-loading-center {
+.ag-overlay-loading-center,
+.ag-overlay-exporting-center {
     border: solid var(--ag-border-width) var(--ag-border-color);
     background: var(--ag-background-color);
     border-radius: var(--ag-border-radius);

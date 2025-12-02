@@ -193,8 +193,8 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
 };
 
 function _absoluteValueTransformer(value: any): number | null {
-    if (value == null) {
-        return null;
+    if (!value) {
+        return value;
     }
     const numberValue = Number(value);
     return isNaN(numberValue) ? value : Math.abs(numberValue);

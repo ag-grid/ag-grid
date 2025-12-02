@@ -4,7 +4,12 @@ import { _getCellByPosition, _getRowNode } from '../../entities/positionUtils';
 import type { CellFocusClearedEvent, CellFocusedEvent, CommonCellFocusParams } from '../../events';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditRowPosition, StartEditWithPositionParams } from '../../interfaces/iEditService';
+import type {
+    EditPosition,
+    EditRowPosition,
+    EditSource,
+    StartEditWithPositionParams,
+} from '../../interfaces/iEditService';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { _getColId } from '../utils/controllers';
@@ -83,8 +88,8 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         };
     }
 
-    public override stop(cancel?: boolean, event?: Event | null): boolean {
-        super.stop(cancel, event);
+    public override stop(cancel?: boolean, event?: Event | null, source?: EditSource): boolean {
+        super.stop(cancel, event, source);
 
         this.rowNode = undefined;
         this.column = undefined;

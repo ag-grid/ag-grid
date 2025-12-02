@@ -23,11 +23,11 @@ export function _focusGridInnerElement(beans: BeanCollection, fromBottom?: boole
 }
 
 export function _isHeaderFocusSuppressed(beans: BeanCollection): boolean {
-    return beans.gos.get('suppressHeaderFocus') || !!beans.overlays?.isExclusive();
+    return beans.gos.get('suppressHeaderFocus') || !!beans.overlays?.exclusive;
 }
 
 export function _isCellFocusSuppressed(beans: BeanCollection): boolean {
-    return beans.gos.get('suppressCellFocus') || !!beans.overlays?.isExclusive();
+    return beans.gos.get('suppressCellFocus') || !!beans.overlays?.exclusive;
 }
 
 export function _focusNextGridCoreContainer(

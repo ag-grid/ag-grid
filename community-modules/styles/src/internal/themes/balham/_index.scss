@@ -106,7 +106,8 @@
         background-color: var(--ag-header-background-color);
     }
 
-    .ag-overlay-loading-center {
+    .ag-overlay-loading-center,
+    .ag-overlay-exporting-center {
         background-color: var(--ag-background-color);
         border: 1px solid var(--ag-border-color);
         color: var(--ag-foreground-color);

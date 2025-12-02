@@ -14,6 +14,7 @@ import type { ForEachNodeCallback, RowBounds, RowModelType } from '../interfaces
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { ChangedRowNodes } from './changedRowNodes';
@@ -585,6 +586,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public isRowsToRender(): boolean {
         return this.rowsToDisplay.length > 0;
+    }
+
+    public getOverlayType(): OverlayType | null {
+        if (this.isEmpty()) {
+            return 'noRows';
+        }
+
+        if (this.beans.filterManager?.isAnyFilterPresent() && this.getRowCount() === 0) {
+            return 'noMatchingRows';
+        }
+
+        return null;
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {

@@ -34,6 +34,8 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressPropertyNamesCheck: true,
     debug: true,
     dragAndDropImageComponent: true,
+    overlayComponent: true,
+    suppressOverlays: true,
     loadingOverlayComponent: true,
     suppressLoadingOverlay: true,
     noRowsOverlayComponent: true,

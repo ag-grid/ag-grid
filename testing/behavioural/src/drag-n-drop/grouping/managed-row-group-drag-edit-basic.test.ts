@@ -81,9 +81,9 @@ describe('drag refreshAfterGroupEdit multi-step interactions', () => {
             ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
             │ └── LEAF id:1 group:"A" value:"A1"
             ├─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
+            │ ├── LEAF id:2 group:"B" value:"A2"
             │ ├── LEAF id:3 group:"B" value:"B1"
-            │ ├── LEAF id:4 group:"B" value:"B2"
-            │ └── LEAF id:2 group:"B" value:"A2"
+            │ └── LEAF id:4 group:"B" value:"B2"
             └─┬ LEAF_GROUP id:row-group-group-C ag-Grid-AutoColumn:"C"
             · ├── LEAF id:5 group:"C" value:"C1"
             · └── LEAF id:6 group:"C" value:"C2"
@@ -426,8 +426,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
             │ └── LEAF id:1 group:"A" value:"A1"
             └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:3 group:"B" value:"B1"
-            · └── LEAF id:2 group:"B" value:"A2"
+            · ├── LEAF id:2 group:"B" value:"A2"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
         expect(api.getRowNode('2')?.data.group).toBe('B');
     });
@@ -560,8 +560,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             │ ├─┬ LEAF_GROUP id:row-group-continent-Europe-country-France ag-Grid-AutoColumn:"France"
             │ │ └── LEAF id:1 continent:"Europe" country:"France" city:"Paris"
             │ └─┬ LEAF_GROUP id:row-group-continent-Europe-country-Germany ag-Grid-AutoColumn:"Germany"
-            │ · ├── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
-            │ · └── LEAF id:2 continent:"Europe" country:"Germany" city:"Lyon"
+            │ · ├── LEAF id:2 continent:"Europe" country:"Germany" city:"Lyon"
+            │ · └── LEAF id:3 continent:"Europe" country:"Germany" city:"Berlin"
             └─┬ filler id:row-group-continent-Asia ag-Grid-AutoColumn:"Asia"
             · └─┬ LEAF_GROUP id:row-group-continent-Asia-country-Japan ag-Grid-AutoColumn:"Japan"
             · · └── LEAF id:4 continent:"Asia" country:"Japan" city:"Tokyo"
@@ -655,8 +655,8 @@ describe.each([false, true])('drag refreshAfterGroupEdit basics (suppress move %
             ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
             │ └── LEAF id:1 group:"A" value:"A1"
             └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:3 group:"B" value:"B1"
-            · └── LEAF id:2 group:"B" value:"A2"
+            · ├── LEAF id:2 group:"B" value:"A2"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');

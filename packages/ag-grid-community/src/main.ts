@@ -763,11 +763,29 @@ export {
 
 // overlays
 export {
-    ILoadingOverlayComp,
+    OverlayType,
     ILoadingOverlayParams,
-    ILoadingOverlay,
-} from './rendering/overlays/loadingOverlayComponent';
-export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
+    IExportingOverlayParams,
+    INoRowsOverlayParams,
+    INoMatchingRowsOverlayParams,
+    IOverlay,
+    IOverlayParams,
+    IOverlayComp,
+    LoadingOverlayUserParams,
+    ExportingOverlayUserParams,
+    NoRowsOverlayUserParams,
+    NoMatchingRowsOverlayUserParams,
+    OverlayComponentUserParams,
+    OverlaySelectorFunc,
+    OverlaySelectorResult,
+} from './rendering/overlays/overlayComponent';
+export { ILoadingOverlayComp, ILoadingOverlay } from './rendering/overlays/loadingOverlayComponent';
+export { IExportingOverlayComp, IExportingOverlay } from './rendering/overlays/exportingOverlayComponent';
+export { INoRowsOverlayComp, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
+export {
+    INoMatchingRowsOverlayComp,
+    INoMatchingRowsOverlay,
+} from './rendering/overlays/noMatchingRowsOverlayComponent';
 export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 
 // features

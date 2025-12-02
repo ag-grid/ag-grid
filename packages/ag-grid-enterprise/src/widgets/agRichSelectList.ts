@@ -133,10 +133,20 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         _setDisplayed(eStateComp, false);
     }
 
+    private shouldBeVisible() {
+        if (this.loadingState === STATE_NO_RESULTS) {
+            return !!this.params.allowNoResultsCopy;
+        }
+        return this.loadingState !== STATE_READY_FOR_INPUT;
+    }
+
     public toggleVisibility(forceVisible?: boolean) {
         const eListGui = this.getGui();
-        const visible = forceVisible !== undefined ? forceVisible : this.loadingState !== STATE_READY_FOR_INPUT;
-        _setDisplayed(eListGui, visible);
+        if (forceVisible === undefined) {
+            _setDisplayed(eListGui, this.shouldBeVisible());
+        } else {
+            _setDisplayed(eListGui, forceVisible);
+        }
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {

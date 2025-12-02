@@ -75,7 +75,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 afterMenuDestroyed: this.afterMenuDestroyed.bind(this),
                 onVisibleChanged: this.dispatchVisibleChangedEvent.bind(this),
                 // overlay was displayed
-                shouldBlockMenuOpen: () => !!this.beans.overlays?.isExclusive(),
+                shouldBlockMenuOpen: () => !!this.beans.overlays?.exclusive,
             })
         );
     }

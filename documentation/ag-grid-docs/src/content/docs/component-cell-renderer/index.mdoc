@@ -146,7 +146,7 @@ const [columnDefs] = useState([
         field: 'year',
         cellRenderer: props => {
             // put the value in bold
-            return <>Value is <b>{params.value}</b></>;
+            return <>Value is <b>{props.value}</b></>;
         }
     }
 ]);

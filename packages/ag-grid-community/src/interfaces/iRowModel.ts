@@ -1,4 +1,5 @@
 import type { RowNode } from '../entities/rowNode';
+import type { OverlayType } from '../rendering/overlays/overlayComponent';
 
 export interface RowBounds {
     rowTop: number;
@@ -45,6 +46,8 @@ export interface IRowModel {
     /** Returns true if no rows (either no rows at all, or the rows are filtered out). This is what the grid
      * uses to know if there are rows to render or not. */
     isRowsToRender(): boolean;
+
+    getOverlayType(): OverlayType | null;
 
     /** Returns all rows in range that should be selected. If there is a gap in range (non ClientSideRowModel) then
      *  then no rows should be returned  */
