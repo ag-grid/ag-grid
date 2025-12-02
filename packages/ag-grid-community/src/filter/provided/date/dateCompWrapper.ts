@@ -114,6 +114,7 @@ export class DateCompWrapper {
 
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
             // so we need to call `reportValidity`.
+            // In some browsers, this needs to be debounced or it will interrupt user inputs.
             if (isInvalid) {
                 if (defer) {
                     this.debouncedReport(eInput);

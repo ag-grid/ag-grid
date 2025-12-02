@@ -118,9 +118,18 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const toDate = to.getDate();
         const localeKey = getValidityMessageKey(fromDate, toDate, isFrom);
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
+
+        // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
+        // Chrome/Safari, however, need to be debounced, otherwise they will reset the date input cursor when
+        // reporting validity.
+        // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
+        // (even though a HTML date should be four digits per the spec), which triggers validation, and the
+        // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
         const isBrowserFirefox = _isBrowserFirefox();
+
         (isFrom ? from : to).setCustomValidity(message, !isBrowserFirefox); // Set validity error state for target input
         (isFrom ? to : from).setCustomValidity('', !isBrowserFirefox); // Reset validity error state for other input
+
         if (message.length > 0) {
             beans.ariaAnnounce.announceValue(message, 'dateFilter');
         }
@@ -131,12 +140,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             beans: { userCompFactory, context, gos },
             params,
         } = this;
-        // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
-        // Chrome/Safari, however, need to be debounced, otherwise they will reset the date input cursor when
-        // reporting validity.
-        // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
-        // (even though a HTML date should be four digits per the spec), which triggers validation, and the
-        // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
@@ -144,7 +147,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
                     this.validateInputs(position, fromTo === 'from');
-                    // debouncedValidation();
                     this.onUiChanged();
                 },
                 filterParams: params as any,
