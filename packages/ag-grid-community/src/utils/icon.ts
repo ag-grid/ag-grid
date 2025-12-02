@@ -46,7 +46,7 @@ export type IconName =
     | 'colorPicker' // deprecated v33
     | 'groupLoading'
     | 'overlayLoading'
-    | 'exportLoading'
+    | 'overlayExporting'
     | 'menu'
     | 'legacyMenu'
     | 'loadingMenuItems'

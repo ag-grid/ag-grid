@@ -36,7 +36,7 @@ export class ExportingOverlayComponent
 
         this.setTemplate(ExportingOverlayElement);
 
-        const eExportingIcon = _createIconNoSpan('exportLoading', beans, null);
+        const eExportingIcon = _createIconNoSpan('overlayExporting', beans, null);
         if (eExportingIcon) {
             this.eExportingIcon.appendChild(eExportingIcon);
         }

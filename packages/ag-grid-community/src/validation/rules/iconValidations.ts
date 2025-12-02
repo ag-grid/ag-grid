@@ -128,7 +128,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     colorPicker: 'CommunityCore',
     groupLoading: 'LoadingCellRenderer',
     overlayLoading: 'Overlay',
-    exportLoading: 'Overlay',
+    overlayExporting: 'Overlay',
     menuAlt: 'ColumnHeaderComp',
     menuPin: 'MenuCore',
     menuValue: 'MenuCore',

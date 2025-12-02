@@ -29,7 +29,7 @@ export const OverlayModule: _ModuleWithApi<_OverlayGridApi> = {
     icons: {
         // rotating spinner shown by the loading overlay
         overlayLoading: 'loading',
-        exportLoading: 'loading',
+        overlayExporting: 'loading',
     },
     beans: [OverlayService],
 };
