@@ -53,6 +53,7 @@ export class FilterPanelService
                 }
                 updateFilterStates();
             },
+            dataTypesInferred: updateFilterStates,
             filterChanged: updateFilterStates,
             filterDestroyed: onFilterDestroyed,
             filterHandlerDestroyed: onFilterDestroyed,
