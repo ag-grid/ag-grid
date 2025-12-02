@@ -25,8 +25,10 @@ const ENTERPRISE_FEATURES: FeatureData[] = [
                 detail: (
                     <>
                         Integrate your LLM with AG Grid to let users{' '}
-                        <a href={urlWithBaseUrl('./react-data-grid/ai-toolkit/')}>control grid state via natural language</a>.
-                        Filter, sort, group, and manipulate data using conversational queries.
+                        <a href={urlWithBaseUrl('./react-data-grid/ai-toolkit/')}>
+                            control grid state via natural language
+                        </a>
+                        . Filter, sort, group, and manipulate data using conversational queries.
                     </>
                 ),
             },
@@ -34,8 +36,8 @@ const ENTERPRISE_FEATURES: FeatureData[] = [
                 heading: 'Structured Schema Generation',
                 detail: (
                     <>
-                        Use <code>getStructuredSchema()</code> to generate LLM-compatible schemas. Works with ChatGPT, Gemini,
-                        and any LLM supporting structured outputs.
+                        Use <code>getStructuredSchema()</code> to generate LLM-compatible schemas. Works with ChatGPT,
+                        Gemini, and any LLM supporting structured outputs.
                     </>
                 ),
             },
@@ -43,8 +45,8 @@ const ENTERPRISE_FEATURES: FeatureData[] = [
                 heading: 'Full State Manipulation',
                 detail: (
                     <>
-                        Apply LLM responses directly to the grid with <code>setState()</code>. Supports filtering, sorting,
-                        aggregation, pivoting, row grouping, and column visibility.
+                        Apply LLM responses directly to the grid with <code>setState()</code>. Supports filtering,
+                        sorting, aggregation, pivoting, row grouping, and column visibility.
                     </>
                 ),
             },
@@ -67,8 +69,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 detail: (
                     <>
                         Handle millions of rows by{' '}
-                        <a href={urlWithBaseUrl('./react-data-grid/server-side-model/')}>loading data on-demand</a> as users
-                        scroll. Perfect for large datasets that cannot fit in browser memory.
+                        <a href={urlWithBaseUrl('./react-data-grid/server-side-model/')}>loading data on-demand</a> as
+                        users scroll. Perfect for large datasets that cannot fit in browser memory.
                     </>
                 ),
             },
@@ -78,8 +80,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                     <>
                         Perform <a href={urlWithBaseUrl('./react-data-grid/server-side-model-sorting/')}>sorting</a>,{' '}
                         <a href={urlWithBaseUrl('./react-data-grid/server-side-model-filtering/')}>filtering</a>, and{' '}
-                        <a href={urlWithBaseUrl('./react-data-grid/server-side-model-grouping/')}>grouping</a> on your server
-                        for optimal performance.
+                        <a href={urlWithBaseUrl('./react-data-grid/server-side-model-grouping/')}>grouping</a> on your
+                        server for optimal performance.
                     </>
                 ),
             },
@@ -87,8 +89,9 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'Infinite Scrolling',
                 detail: (
                     <>
-                        Combine with <a href={urlWithBaseUrl('./react-data-grid/infinite-scrolling/')}>infinite scrolling</a>{' '}
-                        for seamless data loading. Reduces memory footprint and improves initial load times.
+                        Combine with{' '}
+                        <a href={urlWithBaseUrl('./react-data-grid/infinite-scrolling/')}>infinite scrolling</a> for
+                        seamless data loading. Reduces memory footprint and improves initial load times.
                     </>
                 ),
             },
@@ -120,8 +123,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'Multi-Level Grouping',
                 detail: (
                     <>
-                        <a href={urlWithBaseUrl('./react-data-grid/grouping/')}>Group rows</a> by one or more columns to create
-                        hierarchical data views. Users can expand and collapse groups interactively.
+                        <a href={urlWithBaseUrl('./react-data-grid/grouping/')}>Group rows</a> by one or more columns to
+                        create hierarchical data views. Users can expand and collapse groups interactively.
                     </>
                 ),
             },
@@ -129,8 +132,9 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'Automatic Aggregations',
                 detail: (
                     <>
-                        Calculate <a href={urlWithBaseUrl('./react-data-grid/aggregation/')}>aggregations</a> automatically
-                        with built-in functions (sum, avg, count, min, max) or create custom aggregation functions.
+                        Calculate <a href={urlWithBaseUrl('./react-data-grid/aggregation/')}>aggregations</a>{' '}
+                        automatically with built-in functions (sum, avg, count, min, max) or create custom aggregation
+                        functions.
                     </>
                 ),
             },
@@ -138,8 +142,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'Drag & Drop Grouping',
                 detail: (
                     <>
-                        Enable <a href={urlWithBaseUrl('./react-data-grid/grouping-group-panel/')}>row group panel</a> to let
-                        users drag columns to group data dynamically without code changes.
+                        Enable <a href={urlWithBaseUrl('./react-data-grid/grouping-group-panel/')}>row group panel</a>{' '}
+                        to let users drag columns to group data dynamically without code changes.
                     </>
                 ),
             },
@@ -169,7 +173,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 detail: (
                     <>
                         Display <a href={urlWithBaseUrl('./react-data-grid/master-detail/')}>hierarchical data</a> with
-                        expandable rows. Each detail row contains a fully featured grid with its own columns and features.
+                        expandable rows. Each detail row contains a fully featured grid with its own columns and
+                        features.
                     </>
                 ),
             },
@@ -178,7 +183,9 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 detail: (
                     <>
                         Use{' '}
-                        <a href={urlWithBaseUrl('./react-data-grid/master-detail-custom-detail/')}>custom detail renderers</a>{' '}
+                        <a href={urlWithBaseUrl('./react-data-grid/master-detail-custom-detail/')}>
+                            custom detail renderers
+                        </a>{' '}
                         to display any content in the detail section - forms, charts, or custom components.
                     </>
                 ),
@@ -187,8 +194,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'Lazy Loading Details',
                 detail: (
                     <>
-                        Load detail data on-demand when rows are expanded. Independent configuration for each detail grid
-                        including columns, sorting, and filtering.
+                        Load detail data on-demand when rows are expanded. Independent configuration for each detail
+                        grid including columns, sorting, and filtering.
                     </>
                 ),
             },
@@ -221,8 +228,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'User-Created Charts',
                 detail: (
                     <>
-                        Let users create <a href={urlWithBaseUrl('./react-data-grid/integrated-charts/')}>charts</a> directly
-                        from grid data with right-click or cell selection. Powered by AG Charts.
+                        Let users create <a href={urlWithBaseUrl('./react-data-grid/integrated-charts/')}>charts</a>{' '}
+                        directly from grid data with right-click or cell selection. Powered by AG Charts.
                     </>
                 ),
             },
@@ -231,8 +238,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 detail: (
                     <>
                         Create charts via API with{' '}
-                        <a href={urlWithBaseUrl('./react-data-grid/integrated-charts-api/')}>createRangeChart()</a>. Full
-                        control over chart type, data range, and customisation.
+                        <a href={urlWithBaseUrl('./react-data-grid/integrated-charts-api/')}>createRangeChart()</a>.
+                        Full control over chart type, data range, and customisation.
                     </>
                 ),
             },
@@ -240,7 +247,8 @@ gridApi.setState(response.gridState, response.propertiesToIgnore);`,
                 heading: 'Chart Customisation',
                 detail: (
                     <>
-                        Built-in <a href={urlWithBaseUrl('./react-data-grid/integrated-charts-customisation/')}>chart menus</a>{' '}
+                        Built-in{' '}
+                        <a href={urlWithBaseUrl('./react-data-grid/integrated-charts-customisation/')}>chart menus</a>{' '}
                         let users change chart types, colors, labels, and more without code changes.
                     </>
                 ),
@@ -288,6 +296,7 @@ const EnterpriseFeatures: React.FC = () => {
                 {ENTERPRISE_FEATURES.map((feature, index) => (
                     <button
                         key={feature.id}
+                        id={`feature-tab-${feature.title.toLowerCase()}`}
                         className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=enterprise-${feature.id}-tab`}
                         onClick={() => handleTabClick(index)}
                     >

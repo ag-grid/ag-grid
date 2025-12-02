@@ -1,9 +1,9 @@
+import { TrialButton } from '@components/trial-licence-modal/TrialButton';
 import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { TrialButton } from '@components/trial-licence-modal/TrialButton';
 import styles from './EnterpriseFeatures.module.scss';
 
 interface FeatureData {
@@ -377,6 +377,7 @@ export const EnterpriseFeaturesContent: React.FC = () => {
             <div className={styles.tabContainer}>
                 {ENTERPRISE_FEATURES.map((feature, index) => (
                     <button
+                        id={`feature-tab-${feature.title.toLowerCase()}`}
                         key={feature.id}
                         className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=enterprise-${feature.id}-tab`}
                         onClick={() => handleTabClick(index)}

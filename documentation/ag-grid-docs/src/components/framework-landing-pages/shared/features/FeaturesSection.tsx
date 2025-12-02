@@ -42,6 +42,7 @@ const FeaturesSection: React.FC<FeaturesSectionProps> = ({ framework }) => {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
+                            id={`feature-tab-${tab.title.toLowerCase()}`}
                             className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=${config.analyticsPrefix}-${tab.title.toLowerCase()}-tab`}
                             onClick={() => handleTabClick(index)}
                         >
