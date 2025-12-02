@@ -296,7 +296,7 @@ const EnterpriseFeatures: React.FC = () => {
                 {ENTERPRISE_FEATURES.map((feature, index) => (
                     <button
                         key={feature.id}
-                        id={`feature-tab-${feature.title.toLowerCase()}`}
+                        id={`feature-tab-${feature.title.toLowerCase().replaceAll(' ', '-')}`}
                         className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=enterprise-${feature.id}-tab`}
                         onClick={() => handleTabClick(index)}
                     >
