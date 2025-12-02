@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { RowDataTransaction } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -43,8 +43,8 @@ describe('ag-grid tree transactions', () => {
             · · · └── D LEAF id:d ag-Grid-AutoColumn:"D"
         `);
 
-        api.applyTransaction({ remove: [rowC] });
-        api.applyTransaction({ remove: [rowD] });
+        applyTransactionChecked(api, { remove: [rowC] });
+        applyTransactionChecked(api, { remove: [rowD] });
 
         const gridRows = new GridRows(api, '');
         await gridRows.check(`
@@ -89,14 +89,14 @@ describe('ag-grid tree transactions', () => {
                 └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction({ remove: [rowB, rowC] });
+            applyTransactionChecked(api, { remove: [rowB, rowC] });
 
             await new GridRows(api, 'Transaction[0]').check(`
                 ROOT id:ROOT_NODE_ID
                 └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction({ add: [rowC, rowB] });
+            applyTransactionChecked(api, { add: [rowC, rowB] });
 
             await new GridRows(api, 'finalSync').check(`
                 ROOT id:ROOT_NODE_ID
@@ -133,7 +133,7 @@ describe('ag-grid tree transactions', () => {
                 └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction({
+            applyTransactionChecked(api, {
                 remove: [rowB, rowC],
                 add: [rowC, rowB],
             });
@@ -226,16 +226,16 @@ describe('ag-grid tree transactions', () => {
         if (mode === 'async') {
             await executeTransactionsAsync(transactions, api);
         } else if (mode === 'together') {
-            api.applyTransaction({ ...transactions[0], ...transactions[1] });
+            applyTransactionChecked(api, { ...transactions[0], ...transactions[1] });
         } else {
-            api.applyTransaction(transactions[0]);
+            applyTransactionChecked(api, transactions[0]);
 
             await new GridRows(api, 'Transaction[0]').check(`
                 ROOT id:ROOT_NODE_ID
                 └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction(transactions[1]);
+            applyTransactionChecked(api, transactions[1]);
         }
 
         await new GridRows(api, 'final' + mode).check(`
@@ -287,9 +287,9 @@ describe('ag-grid tree transactions', () => {
         if (mode === 'async') {
             await executeTransactionsAsync(transactions1, api);
         } else if (mode === 'together') {
-            api.applyTransaction({ ...transactions1[0], ...transactions1[1] });
+            applyTransactionChecked(api, { ...transactions1[0], ...transactions1[1] });
         } else {
-            api.applyTransaction(transactions1[0]);
+            applyTransactionChecked(api, transactions1[0]);
 
             await new GridRows(api, 'Transaction1[0]').check(`
                 ROOT id:ROOT_NODE_ID
@@ -299,7 +299,7 @@ describe('ag-grid tree transactions', () => {
                 └── F LEAF id:f ag-Grid-AutoColumn:"F"
             `);
 
-            api.applyTransaction(transactions1[1]);
+            applyTransactionChecked(api, transactions1[1]);
         }
 
         await new GridRows(api, 'Transactions1 ' + mode).check(`
@@ -319,16 +319,16 @@ describe('ag-grid tree transactions', () => {
         if (mode === 'async') {
             await executeTransactionsAsync(transactions2, api);
         } else if (mode === 'together') {
-            api.applyTransaction({ ...transactions2[0], ...transactions2[1] });
+            applyTransactionChecked(api, { ...transactions2[0], ...transactions2[1] });
         } else {
-            api.applyTransaction(transactions2[0]);
+            applyTransactionChecked(api, transactions2[0]);
 
             await new GridRows(api, 'Transaction2[0]').check(`
                 ROOT id:ROOT_NODE_ID
                 └── F LEAF id:f ag-Grid-AutoColumn:"F"
             `);
 
-            api.applyTransaction(transactions2[1]);
+            applyTransactionChecked(api, transactions2[1]);
         }
 
         await new GridRows(api, 'Transactions2 ' + mode).check(`

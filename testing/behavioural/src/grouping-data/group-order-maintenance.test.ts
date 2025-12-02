@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 describe('group order maintenance', () => {
     const gridsManager = new TestGridsManager({
@@ -44,7 +44,7 @@ describe('group order maintenance', () => {
         `);
 
         // Add a new row that creates a new group (France)
-        api.applyTransaction({ add: [{ id: '4', country: 'France', athlete: 'F1' }] });
+        applyTransactionChecked(api, { add: [{ id: '4', country: 'France', athlete: 'F1' }] });
 
         // Expect the new group to be appended at the end (Ireland, Italy, France)
         await new GridRows(api, 'after add France', gridRowsOptions).check(`
@@ -89,7 +89,7 @@ describe('group order maintenance', () => {
         `);
 
         // Update a leaf inside existing group (Ireland), do not move group
-        api.applyTransaction({ update: [{ id: '2', country: 'Ireland', athlete: 'I2-upd' }] });
+        applyTransactionChecked(api, { update: [{ id: '2', country: 'Ireland', athlete: 'I2-upd' }] });
 
         // Group order should be unchanged
         await new GridRows(api, 'after update', gridRowsOptions).check(`
@@ -133,7 +133,7 @@ describe('group order maintenance', () => {
             · └── LEAF athlete:"F1"
         `);
 
-        api.applyTransaction({ update: [{ id: '2', country: 'Ireland', athlete: 'I2-upd' }] });
+        applyTransactionChecked(api, { update: [{ id: '2', country: 'Ireland', athlete: 'I2-upd' }] });
 
         // Group order should remain the same even when groupMaintainOrder is false
         await new GridRows(api, 'after update', gridRowsOptions).check(`
@@ -250,8 +250,7 @@ describe('group order maintenance', () => {
         `);
     });
 
-    // todo disabling it so CI is green and QA can start doing QA. Re-enable before release with a fix pls
-    test.skip('toggle from group sort to leaf sort preserves last group order', async () => {
+    test('toggle from group sort to leaf sort preserves last group order', async () => {
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'Z' },
             { id: '2', country: 'Italy', athlete: 'A' },
@@ -333,7 +332,7 @@ describe('group order maintenance', () => {
 
         // Clear filter and add a new country; new group must append after prior order (Ire, Ita, Fra, then new Spain)
         api.setGridOption('quickFilterText', undefined);
-        api.applyTransaction({ add: [{ id: '4', country: 'Spain', athlete: 'S1' }] });
+        applyTransactionChecked(api, { add: [{ id: '4', country: 'Spain', athlete: 'S1' }] });
 
         await new GridRows(api, 'after add Spain', gridRowsOptions).check(`
                 ROOT
@@ -376,7 +375,7 @@ describe('group order maintenance', () => {
         `);
 
         // Remove the middle group (Italy)
-        api.applyTransaction({ remove: [{ id: '2', country: 'Italy', athlete: 'It1' }] });
+        applyTransactionChecked(api, { remove: [{ id: '2', country: 'Italy', athlete: 'It1' }] });
 
         await new GridRows(api, 'after remove Italy', gridRowsOptions).check(`
             ROOT
@@ -387,7 +386,7 @@ describe('group order maintenance', () => {
         `);
 
         // Add a new group (Spain) - should append at end
-        api.applyTransaction({ add: [{ id: '4', country: 'Spain', athlete: 'S1' }] });
+        applyTransactionChecked(api, { add: [{ id: '4', country: 'Spain', athlete: 'S1' }] });
 
         await new GridRows(api, 'after add Spain', gridRowsOptions).check(`
             ROOT

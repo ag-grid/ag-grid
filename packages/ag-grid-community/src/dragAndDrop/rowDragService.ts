@@ -72,4 +72,10 @@ export class RowDragService extends BeanStub implements NamedBean {
         );
         return rowDragComp;
     }
+
+    public cancelRowDrag(): void {
+        if (this.rowDragFeature?.lastDraggingEvent) {
+            this.beans.dragSvc?.cancelDrag();
+        }
+    }
 }

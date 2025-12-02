@@ -77,26 +77,7 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'gold', sort: 'desc' }],
         });
 
-        await new GridRows(api, 'sort by gold desc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP 
-            │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            └─┬ LEAF_GROUP
-            · ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
-            · └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-        `);
-
-        // Multi-column sort: sport asc, then gold desc
-        api.applyColumnState({
-            state: [
-                { colId: 'sport', sort: 'asc' },
-                { colId: 'gold', sort: 'desc' },
-            ],
-        });
-
-        await new GridRows(api, 'multi-column sort', gridRowsOptions).check(`
+        await new GridRows(api, 'sort by sport asc + gold desc', gridRowsOptions).check(`
             ROOT
             ├─┬ LEAF_GROUP
             │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
@@ -105,6 +86,25 @@ describe('ag-grid grouping sorting', () => {
             └─┬ LEAF_GROUP
             · ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
             · └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
+        `);
+
+        // Multi-column sort: sport asc, then gold desc
+        api.applyColumnState({
+            state: [
+                { colId: 'gold', sort: 'asc' },
+                { colId: 'sport', sort: 'desc' },
+            ],
+        });
+
+        await new GridRows(api, 'multi-column sort', gridRowsOptions).check(`
+            ROOT
+            ├─┬ LEAF_GROUP
+            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
+            │ └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
+            └─┬ LEAF_GROUP
+            · ├── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
+            · └── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
     });
 
@@ -355,8 +355,8 @@ describe('ag-grid grouping sorting', () => {
             ROOT
             ├─┬ filler
             │ ├─┬ LEAF_GROUP
-            │ │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ │ └── LEAF athlete:"John Smith" sport:"Sailing" gold:1
+            │ │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
+            │ │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
             │ └─┬ LEAF_GROUP
             │ · └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
             └─┬ filler

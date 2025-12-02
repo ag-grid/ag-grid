@@ -4,7 +4,14 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot } from '../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    getRowsSnapshot,
+    setRowDataChecked,
+} from '../../test-utils';
 import type { GridRowsOptions, RowSnapshot } from '../../test-utils';
 import { simpleHierarchyRowsSnapshot } from './simpleHierarchyRowsSnapshot';
 
@@ -64,17 +71,17 @@ describe('ag-grid tree data', () => {
         expect(hasLoadingOverlay()).toBe(true);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
 
-        api.setGridOption('rowData', rowData);
+        setRowDataChecked(api, rowData);
 
         expect(hasLoadingOverlay()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         await asyncSetTimeout(10);
 
@@ -252,7 +259,7 @@ describe('ag-grid tree data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'a', orgHierarchy: ['A'] },
             { id: 'b', orgHierarchy: ['A', 'B'] },
             { id: 'd', orgHierarchy: ['C', 'D'] },
@@ -304,14 +311,14 @@ describe('ag-grid tree data', () => {
         expect(rowDataUpdated).toBe(0);
         expect(modelUpdated).toBe(0);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: 'a', orgHierarchy: ['A'] },
                 { id: 'b', orgHierarchy: ['A', 'B'] },
             ],
         });
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: 'd', orgHierarchy: ['C', 'D'] },
                 { id: 'h', orgHierarchy: ['E', 'F', 'G', 'H'] },

@@ -3,7 +3,13 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    cachedJSONObjects,
+    setRowDataChecked,
+} from '../test-utils';
 
 describe('ag-grid initialGroupOrderComparator', () => {
     const gridsManager = new TestGridsManager({
@@ -232,7 +238,7 @@ describe('ag-grid initialGroupOrderComparator', () => {
             getRowId: (params) => params.data.id,
         });
 
-        api.setGridOption('rowData', getSampleData());
+        setRowDataChecked(api, getSampleData());
 
         expect(state.called).toBe(true);
 
@@ -301,7 +307,7 @@ describe('ag-grid initialGroupOrderComparator', () => {
             · └── LEAF id:2 country:"Ireland" athlete:"Jane"
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: getSampleData().slice(2),
             update: [{ id: '1', country: 'Spain', athlete: 'Alberto' }],
         });

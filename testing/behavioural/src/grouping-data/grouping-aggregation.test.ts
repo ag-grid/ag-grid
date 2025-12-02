@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -70,7 +70,7 @@ describe('ag-grid grouping aggregation', () => {
             · └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '1', country: 'Ireland', sport: 'Swimming', gold: 12, silver: 7 }],
             add: [
                 { id: '8', country: 'United Kingdom', sport: 'Rowing', gold: 4, silver: 4 },
@@ -250,7 +250,7 @@ describe('ag-grid grouping aggregation', () => {
             · └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"Total B" scores:"Avg: 90.67" metadata:"Min Priority: 1"
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '2', category: 'A', scores: [82, 94, 88], metadata: { priority: 3 } }],
             add: [{ id: '4', category: 'C', scores: [70, 74, 78], metadata: { priority: 2 } }],
         });

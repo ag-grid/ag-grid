@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
@@ -85,6 +87,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Drafts'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();
@@ -144,6 +147,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Plans'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         await dispatcher.finish();
         await asyncSetTimeout(0);
@@ -202,6 +206,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Design'));
         await dispatcher.move(targetId, { yOffsetPercent: 0.05 });
         await dispatcher.finish();
 
@@ -263,6 +268,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Plans'));
         await dispatcher.move(targetId, { yOffsetPercent: 0.05 });
         await dispatcher.finish();
 
@@ -332,6 +338,7 @@ describe.each([false, true])('tree data drag basics (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Projects'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();

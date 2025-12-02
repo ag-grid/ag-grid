@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const defaultGridRowsOptions: GridRowsOptions = {};
@@ -43,7 +43,7 @@ describe('ag-grid hierarchical tree data reset', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const transactionResult = api.applyTransaction({
+        const transactionResult = applyTransactionChecked(api, {
             add: [{ id: 'F', children: [{ id: 'G' }] }],
             remove: [{ id: 'A' }],
             update: [{ id: 'C', children: [{ id: 'D' }] }],

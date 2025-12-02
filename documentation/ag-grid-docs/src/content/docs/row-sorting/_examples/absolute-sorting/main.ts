@@ -11,7 +11,6 @@ const columnDefs: ColDef[] = [
     { field: 'year', maxWidth: 90 },
     {
         field: 'rankingChange',
-        sortable: true,
         sort: { direction: 'asc', type: 'absolute' },
         sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
     },
@@ -23,7 +22,6 @@ const gridOptions: GridOptions<any> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        unSortIcon: true,
     },
 
     columnDefs: columnDefs,
@@ -40,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             gridApi!.setGridOption(
                 'rowData',
                 data.map((item) => {
-                    return { ...item, rankingChange: Math.floor(Math.random() * 201) - 100 };
+                    return { ...item, rankingChange: Math.floor(window.agRandom() * 10 - 5) };
                 })
             )
         );

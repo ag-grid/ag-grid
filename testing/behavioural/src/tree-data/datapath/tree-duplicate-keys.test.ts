@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -60,7 +60,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'KtTkR5g-0', orgHierarchy: ['A'] },
             { id: 'X80CJzw-1', orgHierarchy: ['B'] },
         ]);
@@ -111,7 +111,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: rowData[1].id, orgHierarchy: ['A', 'B', 'C'] }],
         });
 
@@ -167,7 +167,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'UzWrPgX-0', orgHierarchy: ['A', 'X'] },
             { id: 'q7lpQ9A-1', orgHierarchy: ['A', 'B', 'C'] },
             { id: 'zIJkvFA-2', orgHierarchy: ['A', 'B'] },
@@ -212,7 +212,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: rowData[0].id, orgHierarchy: ['A', 'C'] },
                 { id: rowData[1].id, orgHierarchy: ['A', 'B'] },
@@ -259,7 +259,7 @@ describe('ag-grid tree duplicate keys', () => {
 
         expect(consoleWarnSpy).toHaveBeenCalled();
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'xRow-2', orgHierarchy: ['A', 'B'] },
             { id: 'xRow-1', orgHierarchy: ['A', 'B'] },
             { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
@@ -273,7 +273,7 @@ describe('ag-grid tree duplicate keys', () => {
             · └── B LEAF id:xRow-2
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'xRow-3', orgHierarchy: ['A', 'B'] },
             { id: 'xRow-4', orgHierarchy: ['A', 'B'] },
             { id: 'xRow-0', orgHierarchy: ['A', 'B'] },
@@ -288,7 +288,7 @@ describe('ag-grid tree duplicate keys', () => {
             · └── C LEAF id:xRow-2 ag-Grid-AutoColumn:"C"
         `);
 
-        api.setGridOption('rowData', [
+        setRowDataChecked(api, [
             { id: 'xRow-2', orgHierarchy: ['A', 'C'] },
             { id: 'xRow-1', orgHierarchy: ['A', 'C'] },
             { id: 'xRow-3', orgHierarchy: ['A', 'C'] },

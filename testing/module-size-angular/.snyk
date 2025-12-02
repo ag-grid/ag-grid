@@ -32,4 +32,9 @@ ignore:
               reason: Only used for dev server
               expires: 2025-12-08T12:00:00.000Z
               created: 2025-11-27T11:45:00.007Z
+    SNYK-JS-ANGULARCOMMON-14135651:
+        - '@angular/common':
+              reason: Only used for testing
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-12-01T09:55:00.007Z
 patch: {}

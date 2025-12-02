@@ -176,8 +176,8 @@ export function _getColumnStateFromColDef(colDef: ColDef, colId: string): Column
 
 export function _getSortDefFromColDef(colDef: ColDef) {
     const { sort, initialSort } = colDef;
-    const sortIsValid = _isSortDefValid(sort, false) || _isSortDirectionValid(sort, false);
-    const initialSortIsValid = _isSortDefValid(initialSort, false) || _isSortDirectionValid(initialSort, false);
+    const sortIsValid = _isSortDefValid(sort) || _isSortDirectionValid(sort);
+    const initialSortIsValid = _isSortDefValid(initialSort) || _isSortDirectionValid(initialSort);
 
     if (sortIsValid) {
         return _getSortDefFromInput(sort);

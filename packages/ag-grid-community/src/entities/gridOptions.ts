@@ -1391,6 +1391,7 @@ export interface GridOptions<TData = any> {
     autoGroupColumnDef?: AutoGroupColumnDef<TData>;
     /**
      * When `true`, preserves the current group order when sorting on non-group columns.
+     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
      * @default false
      * @agModule `RowGroupingModule`
      */

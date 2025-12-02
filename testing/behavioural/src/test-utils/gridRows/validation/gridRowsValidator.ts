@@ -84,6 +84,9 @@ export class GridRowsValidator {
         if (root.key) {
             rowErrors.add('Root node has key ' + root.key);
         }
+        if (root.destroyed) {
+            rowErrors.add('Root node is destroyed');
+        }
         if (root.rowIndex !== null) {
             rowErrors.add('Root node has rowIndex ' + root.rowIndex);
         }
@@ -187,6 +190,10 @@ export class GridRowsValidator {
         this.validatedRows.add(row);
 
         const rowErrors = this.errors.get(row);
+
+        if (row.destroyed) {
+            rowErrors.add('Row ' + rowIdAndIndexToString(row) + ' is destroyed');
+        }
 
         if (gridRows.isInRowNodes(row)) {
             if (row.rowIndex !== null && !gridRows.isRowDisplayed(row)) {

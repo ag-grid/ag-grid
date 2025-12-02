@@ -405,8 +405,8 @@ export abstract class AbstractHeaderCellCtrl<
         if (!eGui) {
             this.reAttemptToFocus = true;
         } else {
-            eGui.focus();
             this.lastFocusEvent = event || null;
+            eGui.focus();
         }
 
         return true;

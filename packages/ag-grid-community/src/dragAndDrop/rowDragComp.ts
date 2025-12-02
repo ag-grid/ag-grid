@@ -1,3 +1,4 @@
+import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
@@ -148,16 +149,6 @@ export class RowDragComp extends Component {
         };
     }
 
-    private getRowDragText(column?: AgColumn) {
-        if (column) {
-            const colDef = column.getColDef();
-            if (colDef.rowDragText) {
-                return colDef.rowDragText;
-            }
-        }
-        return this.gos.get('rowDragText');
-    }
-
     private addDragSource(dragStartPixels: number = 4): void {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) {
@@ -185,25 +176,34 @@ export class RowDragComp extends Component {
         this.dragSource = {
             type: DragSourceType.RowDrag,
             eElement: eGui,
-            dragItemName: (draggingEvent) => {
-                const dragItem = draggingEvent?.dragItem || this.getDragItem();
-                const dragItemCount = (draggingEvent?.dropTarget?.rows.length ?? dragItem.rowNodes?.length) || 1;
-
-                const rowDragText = this.getRowDragText(this.column);
-                if (rowDragText) {
-                    return rowDragText(dragItem as IRowDragItem, dragItemCount);
-                }
-
-                return dragItemCount === 1
-                    ? this.cellValueFn()
-                    : `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
-            },
+            dragItemName: (draggingEvent) => this.getDragItemName(draggingEvent, translate),
             getDragItem: () => this.getDragItem(),
             dragStartPixels,
             dragSourceDomDataKey: this.gos.getDomDataKey(),
         };
 
         this.beans.dragAndDrop!.addDragSource(this.dragSource, true);
+    }
+
+    private getDragItemName(draggingEvent: RowDraggingEvent | null | undefined, translate: LocaleTextFunc): string {
+        const dragItem = draggingEvent?.dragItem || this.getDragItem();
+        const dragItemCount = (draggingEvent?.dropTarget?.rows.length ?? dragItem.rowNodes?.length) || 1;
+
+        const rowDragTextGetter = this.column?.getColDef()?.rowDragText ?? this.gos.get('rowDragText');
+        if (rowDragTextGetter) {
+            return rowDragTextGetter(dragItem as IRowDragItem, dragItemCount);
+        }
+
+        if (dragItemCount !== 1) {
+            return `${dragItemCount} ${translate('rowDragRows', 'rows')}`;
+        }
+
+        const value = this.cellValueFn();
+        if (value) {
+            return value;
+        }
+
+        return `1 ${translate('rowDragRow', 'rows')}`;
     }
 
     public override destroy(): void {

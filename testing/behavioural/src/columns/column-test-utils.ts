@@ -22,7 +22,7 @@ export function getAutoGroupColumnIds(
             colDefs.forEach((colDef) => {
                 if ('children' in colDef) {
                     const children = (colDef as ColGroupDef).children;
-                    result.concat(getAutoGroupColumnIds(children, groupDisplayType, pivotMode));
+                    result.push(...getAutoGroupColumnIds(children, groupDisplayType, pivotMode));
                 } else if (colDef.rowGroup) {
                     result.push(`${GROUP_AUTO_COLUMN_ID}-${colDef.colId}`);
                 }
@@ -33,11 +33,11 @@ export function getAutoGroupColumnIds(
     return [GROUP_AUTO_COLUMN_ID];
 }
 
-export function getColumnOrderFromState(gridApi: GridApi) {
+export function getColumnOrderFromState(gridApi: GridApi): string[] {
     return gridApi.getColumnState().map((colState) => colState.colId);
 }
 
-export function getColumnOrder(gridApi: GridApi, viewport: 'all' | 'left' | 'center' | 'right') {
+export function getColumnOrder(gridApi: GridApi, viewport: 'all' | 'left' | 'center' | 'right'): string[] {
     let columns: Column[];
     switch (viewport) {
         case 'all':

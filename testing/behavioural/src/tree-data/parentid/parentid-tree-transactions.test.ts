@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -58,7 +58,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a]);
 
-        api.applyTransaction(transactions[0]);
+        applyTransactionChecked(api, transactions[0]);
         gridRows = new GridRows(api, 'Transaction 0');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -68,7 +68,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1a, row2]);
 
-        api.applyTransaction(transactions[1]);
+        applyTransactionChecked(api, transactions[1]);
         gridRows = new GridRows(api, 'Transaction 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -80,7 +80,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row1b, row2, row3, row4]);
 
-        api.applyTransaction(transactions[2]);
+        applyTransactionChecked(api, transactions[2]);
         gridRows = new GridRows(api, 'Transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -92,7 +92,7 @@ describe('ag-grid tree transactions', () => {
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toEqual([row0, row2b, row3, row4, row5a]);
 
-        api.applyTransaction(transactions[3]);
+        applyTransactionChecked(api, transactions[3]);
         gridRows = new GridRows(api, 'final');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID

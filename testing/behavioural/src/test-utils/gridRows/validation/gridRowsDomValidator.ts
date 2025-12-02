@@ -247,6 +247,10 @@ class GridRowDomValidator {
             valueText = String(groupDataValue ?? fallback ?? '').trim();
         }
 
+        if (!valueText) {
+            valueText = this.getBlankGroupLabel(row) ?? '';
+        }
+
         const childCountText = this.getChildCountText(row, this.isGroupCountSuppressed(column, false));
         if (valueText) {
             return this.combineGroupValue(valueText, childCountText);
@@ -261,7 +265,10 @@ class GridRowDomValidator {
     }
 
     private getGroupRowFallbackText(row: RowNode<any>): string {
-        const valueText = String(row.key ?? '').trim();
+        let valueText = String(row.key ?? '').trim();
+        if (!valueText) {
+            valueText = this.getBlankGroupLabel(row) ?? '';
+        }
         const childCount = row.allChildrenCount ?? 0;
         const childCountText = childCount ? `(${childCount})` : '';
         return valueText && childCountText ? `${valueText} ${childCountText}` : valueText || childCountText;
@@ -307,6 +314,19 @@ class GridRowDomValidator {
 
     private combineGroupValue(valueText: string, childCountText: string): string {
         return valueText ? (childCountText ? `${valueText} ${childCountText}` : valueText) : childCountText;
+    }
+
+    private getBlankGroupLabel(row: RowNode<any>): string | undefined {
+        if (!row.group) {
+            return undefined;
+        }
+
+        const key = row.key;
+        if (key === undefined || key === null) {
+            return '(Blanks)';
+        }
+
+        return String(key).trim() === '' ? '(Blanks)' : undefined;
     }
 
     private validateCheckboxCell(

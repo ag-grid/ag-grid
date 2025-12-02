@@ -1,5 +1,6 @@
 import type { GridApi, RowDragCancelEvent, RowDragEndEvent, RowDragEvent, RowDragMoveEvent } from 'ag-grid-community';
 
+import { DestroyedRowNodesChecker } from '../grid-test-utils';
 import type { RowElementReference } from '../gridRows/gridHtmlRows';
 import { getGridOwnerDocument, getRowHtmlElement } from '../gridRows/gridHtmlRows';
 import { mockGridLayout } from '../polyfills/mockGridLayout';
@@ -44,6 +45,7 @@ export class RowDragDispatcher {
     private readonly api: GridApi;
     private readonly eventType: DragInteractionType;
     private readonly listeners: RowDragListeners;
+    private destroyedNodeChecker: DestroyedRowNodesChecker | null = null;
 
     private settlePromise: Promise<void> | undefined = undefined;
     private resolveSettle: (() => void) | undefined = undefined;
@@ -88,6 +90,8 @@ export class RowDragDispatcher {
         if (!dragHandle) {
             throw new Error('Row drag handle not found');
         }
+
+        this.destroyedNodeChecker = new DestroyedRowNodesChecker(this.api);
 
         const gridElement = TestGridsManager.getHTMLElement(this.api);
         const dropContainer =
@@ -136,15 +140,22 @@ export class RowDragDispatcher {
 
         if (stepX === undefined || stepY === undefined) {
             const rect = targetElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
             if (options.center) {
-                stepX ??= rect.left + rect.width / 2;
-                stepY ??= rect.top + rect.height / 2;
-            } else {
+                stepX ??= centerX;
+                stepY ??= centerY;
+            }
+
+            if (!options.center || options.yOffsetPercent !== undefined) {
                 const yOffsetPercent = options.yOffsetPercent ?? 0.5;
                 const computedPoint = computeStepPoint(rect, yOffsetPercent, dispatcher.currentY);
                 stepX ??= computedPoint.x;
                 stepY ??= computedPoint.y;
             }
+
+            stepX ??= centerX;
+            stepY ??= centerY;
         }
 
         await dispatcher.movePointer(targetElement, options.clientX ?? stepX, options.clientY ?? stepY);
@@ -213,6 +224,15 @@ export class RowDragDispatcher {
         }
 
         this.finished = true;
+
+        this.destroyedNodeChecker?.check();
+        this.destroyedNodeChecker = null;
+    }
+
+    public getDragGhostLabel(): string | null {
+        const ownerDocument = getGridOwnerDocument(this.api);
+        const labelElement = ownerDocument.querySelector('.ag-dnd-ghost-label');
+        return labelElement?.textContent ?? null;
     }
 
     private attachListeners(): void {

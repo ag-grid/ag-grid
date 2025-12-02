@@ -104,7 +104,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
         return;
     }
 
-    if (!column.isCellEditable(rowNode)) {
+    if (!editSvc?.isCellEditable({ rowNode, column }, 'api')) {
         return;
     }
 

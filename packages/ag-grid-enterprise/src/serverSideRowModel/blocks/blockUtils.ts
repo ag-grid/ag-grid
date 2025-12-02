@@ -84,16 +84,15 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
-
-        // if this has a footer, destroy that too
-        if (rowNode.sibling && !rowNode.footer) {
-            this.destroyRowNode(rowNode.sibling, false);
+        const sibling = rowNode.sibling;
+        if (sibling && rowNode.footer) {
+            this.destroyRowNode(sibling, false);
         }
 
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
-        rowNode.clearRowTopAndRowIndex();
+        rowNode._destroy(true);
         if (rowNode.id != null) {
             this.nodeManager.removeNode(rowNode);
         }

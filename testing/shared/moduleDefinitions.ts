@@ -38,7 +38,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
     RowDragModule: 18.85,
-    RowSelectionModule: 34.59,
+    RowSelectionModule: 35.73,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
     SelectEditorModule: 81.4,
@@ -70,7 +70,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MenuModule: 165,
     MultiFilterModule: 150.24,
     NewFiltersToolPanelModule: 175.32,
-    PivotModule: 109,
+    PivotModule: 112.4,
     RangeSelectionModule: 59,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
@@ -82,7 +82,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,
-    TreeDataModule: 92.54,
+    TreeDataModule: 95.42,
     ViewportRowModelModule: 29.19,
 };
 

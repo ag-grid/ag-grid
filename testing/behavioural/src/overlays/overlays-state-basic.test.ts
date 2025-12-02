@@ -3,7 +3,7 @@ import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { TestGridsManager, applyTransactionChecked, isAgHtmlElementVisible, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({
@@ -89,7 +89,7 @@ describe('ag-grid overlays state', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
             expect(hasLoadingOverlay()).toBeTruthy();
 
-            api.setGridOption('rowData', [{}, {}]);
+            setRowDataChecked(api, [{}, {}]);
             expect(hasLoadingOverlay()).toBeFalsy();
         });
 
@@ -97,7 +97,7 @@ describe('ag-grid overlays state', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
             expect(hasLoadingOverlay()).toBeTruthy();
 
-            api.applyTransaction({
+            applyTransactionChecked(api, {
                 add: [{}, {}],
             });
             expect(hasLoadingOverlay()).toBeFalsy();
@@ -107,7 +107,7 @@ describe('ag-grid overlays state', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasNoRowsOverlay()).toBeTruthy();
         });
 
@@ -115,7 +115,7 @@ describe('ag-grid overlays state', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.applyTransaction({
+            applyTransactionChecked(api, {
                 add: [],
             });
             expect(hasLoadingOverlay()).toBeFalsy();
@@ -133,15 +133,15 @@ describe('ag-grid overlays state', () => {
                 expect(hasNoRowsOverlay()).toBeFalsy();
                 expect(hasLoadingOverlay()).toBeTruthy();
 
-                api.setGridOption('rowData', []);
+                setRowDataChecked(api, []);
                 expect(hasNoRowsOverlay()).toBeFalsy();
                 expect(hasLoadingOverlay()).toBeFalsy();
 
-                api.applyTransaction({ add: [] });
+                applyTransactionChecked(api, { add: [] });
                 expect(hasNoRowsOverlay()).toBeFalsy();
                 expect(hasLoadingOverlay()).toBeFalsy();
 
-                api.setGridOption('rowData', [{}]);
+                setRowDataChecked(api, [{}]);
                 expect(hasNoRowsOverlay()).toBeFalsy();
                 expect(hasLoadingOverlay()).toBeFalsy();
             });
@@ -163,11 +163,11 @@ describe('ag-grid overlays state', () => {
                 expect(hasLoadingOverlay()).toBeFalsy();
                 expect(hasNoRowsOverlay()).toBeTruthy();
 
-                api.setGridOption('rowData', []);
+                setRowDataChecked(api, []);
                 expect(hasLoadingOverlay()).toBeFalsy();
                 expect(hasNoRowsOverlay()).toBeTruthy();
 
-                api.setGridOption('rowData', [{}]);
+                setRowDataChecked(api, [{}]);
                 expect(hasNoRowsOverlay()).toBeFalsy();
                 expect(hasLoadingOverlay()).toBeFalsy();
             });
@@ -177,24 +177,24 @@ describe('ag-grid overlays state', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs });
             expect(hasLoadingOverlay()).toBeTruthy();
 
-            api.setGridOption('rowData', [{ athlete: 'Michael Phelps', country: 'US' }]);
+            setRowDataChecked(api, [{ athlete: 'Michael Phelps', country: 'US' }]);
             expect(hasLoadingOverlay()).toBeFalsy();
 
             api.setGridOption('columnDefs', undefined);
             expect(hasLoadingOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', undefined);
+            setRowDataChecked(api, undefined);
             expect(hasLoadingOverlay()).toBeFalsy();
 
             api.setGridOption('columnDefs', columnDefs);
             expect(hasLoadingOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeTruthy();
             expect(hasCustomOverlayWrapper()).toBeFalsy();
 
-            api.setGridOption('rowData', [{ athlete: 'Michael Phelps', country: 'US' }]);
+            setRowDataChecked(api, [{ athlete: 'Michael Phelps', country: 'US' }]);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
             expect(hasCustomOverlayWrapper()).toBeFalsy();
@@ -245,11 +245,11 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', undefined);
+            setRowDataChecked(api, undefined);
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
@@ -264,7 +264,7 @@ describe('ag-grid overlays state', () => {
 
             api = gridsManager.createGrid('myGrid', { columnDefs, loading: true });
 
-            api.setGridOption('rowData', [{}]);
+            setRowDataChecked(api, [{}]);
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
@@ -272,7 +272,7 @@ describe('ag-grid overlays state', () => {
 
             api = gridsManager.createGrid('myGrid', { columnDefs, loading: true });
 
-            api.applyTransaction({ add: [{}] });
+            applyTransactionChecked(api, { add: [{}] });
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
             expect(hasCustomOverlayWrapper()).toBeFalsy();
@@ -324,10 +324,10 @@ describe('ag-grid overlays state', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, loading: false });
             expect(hasNoRowsOverlay()).toBeTruthy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasNoRowsOverlay()).toBeTruthy();
 
-            api.setGridOption('rowData', undefined);
+            setRowDataChecked(api, undefined);
             expect(hasNoRowsOverlay()).toBeTruthy();
         });
 
@@ -369,7 +369,7 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeTruthy();
 
-            api.setGridOption('rowData', [{}, {}]);
+            setRowDataChecked(api, [{}, {}]);
             expect(hasLoadingOverlay()).toBeFalsy();
 
             api.setGridOption('loading', true);
@@ -393,7 +393,7 @@ describe('ag-grid overlays state', () => {
             api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(hasNoRowsOverlay()).toBeTruthy();
 
-            api.setGridOption('rowData', [{}, {}]);
+            setRowDataChecked(api, [{}, {}]);
             expect(hasLoadingOverlay()).toBeFalsy();
 
             api.setGridOption('loading', true);
@@ -417,7 +417,7 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeTruthy();
 
@@ -442,11 +442,11 @@ describe('ag-grid overlays state', () => {
             expect(hasNoRowsOverlay()).toBeTruthy();
 
             api.setGridOption('loading', true);
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', [{}]);
+            setRowDataChecked(api, [{}]);
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
@@ -566,11 +566,11 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
 
-            api.setGridOption('rowData', [{}]);
+            setRowDataChecked(api, [{}]);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
@@ -586,7 +586,7 @@ describe('ag-grid overlays state', () => {
             expect(hasNoRowsOverlay()).toBeTruthy();
             expect(hasCustomOverlayWrapper()).toBeFalsy();
 
-            api.setGridOption('rowData', []);
+            setRowDataChecked(api, []);
             expect(hasNoRowsOverlay()).toBeFalsy();
             expect(hasCustomOverlayWrapper()).toBeFalsy();
 

@@ -269,6 +269,7 @@ export { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProp
 export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
 export { WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
 export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
+export { IconValue as _IconValue } from './agStack/interfaces/iIcon';
 export { ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
 export { IPopupService as _IPopupService } from './agStack/interfaces/iPopupService';
 export {

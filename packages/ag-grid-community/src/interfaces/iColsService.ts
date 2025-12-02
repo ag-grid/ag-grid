@@ -10,10 +10,10 @@ export type ColumnProcessor = (column: AgColumn, added: boolean, source: ColumnE
 export type ColumnProcessors = Record<ColumnProcessorKeys, ColumnProcessor>;
 
 export type ColumnOrdering = {
-    enableProp: 'rowGroup' | 'pivot';
-    initialEnableProp: 'initialRowGroup' | 'initialPivot';
-    indexProp: 'rowGroupIndex' | 'pivotIndex';
-    initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex';
+    enableProp: 'rowGroup' | 'pivot' | 'aggFunc';
+    initialEnableProp: 'initialRowGroup' | 'initialPivot' | 'initialAggFunc';
+    indexProp: 'rowGroupIndex' | 'pivotIndex' | 'valueIndex';
+    initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex' | 'initialValueIndex';
 };
 
 export type ColumnExtractors = {
@@ -44,7 +44,7 @@ export interface IColsService {
             key1: U,
             key2?: S
         ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
-        rowIndex?: { [key: string]: number } | null
+        indexMap?: { [key: string]: number } | null
     ): void;
 
     sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void;

@@ -205,7 +205,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
                 rowNodes[index].setRowHeight(rowNode.rowHeight);
 
                 // clean up the old row
-                rowNode.clearRowTopAndRowIndex();
+                rowNode._destroy(true);
             }
             this.setDataAndId(rowNodes[index], data, this.startRow + index);
         });
@@ -214,11 +214,13 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
     }
 
     public override destroy(): void {
-        for (const rowNode of this.rowNodes) {
+        const rowNodes = this.rowNodes;
+        for (let i = 0, len = rowNodes.length; i < len; i++) {
             // this is needed, so row render knows to fade out the row, otherwise it
             // sees row top is present, and thinks the row should be shown.
-            rowNode.clearRowTopAndRowIndex();
+            rowNodes[i]._destroy(false);
         }
+        rowNodes.length = 0;
         super.destroy();
     }
 }

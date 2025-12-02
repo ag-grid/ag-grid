@@ -128,26 +128,23 @@ export function _setupEditor(
     }
 ): void {
     const { key, event, cellStartedEdit, silent } = params ?? {};
-    const cellCtrl = _getCellCtrl(beans, position)!;
+    const { editModelSvc, editSvc, gos, userCompFactory } = beans;
+
+    const cellCtrl = _getCellCtrl(beans, position);
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
     const isAllowFormula = position.column.isAllowFormula();
 
-    const previousEdit = beans.editModelSvc?.getEdit(position);
+    const previousEdit = editModelSvc?.getEdit(position);
 
-    let newValue = editorParams.value;
-
-    if (newValue === undefined) {
-        newValue = previousEdit?.sourceValue;
-    }
-
-    beans.editModelSvc?.setEdit(position, {
-        editorValue: getNormalisedFormula(beans, newValue, true, position.column),
-        state: 'editing',
-    });
+    const newValue = editorParams.value ?? previousEdit?.sourceValue;
 
     if (editorComp) {
+        editModelSvc?.setEdit(position, {
+            editorValue: getNormalisedFormula(beans, newValue, true, position.column),
+            state: 'editing',
+        });
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
         return;
@@ -155,32 +152,44 @@ export function _setupEditor(
 
     const colDef = position.column.getColDef();
     const compDetails = _getCellEditorDetails(
-        beans.userCompFactory,
+        userCompFactory,
         isAllowFormula ? { ...colDef, cellEditor: 'agTextCellEditor' } : colDef,
         editorParams
     );
 
+    if (!compDetails) {
+        return;
+    }
+
+    const { popupFromSelector, popupPositionFromSelector } = compDetails;
+
     // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-    const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
-    const popupLocation: 'over' | 'under' | undefined =
-        compDetails?.popupPositionFromSelector != null
-            ? compDetails.popupPositionFromSelector
-            : colDef.cellEditorPopupPosition;
+    const popup = popupFromSelector ?? !!colDef.cellEditorPopup;
+    const popupLocation: 'over' | 'under' | undefined = popupPositionFromSelector ?? colDef.cellEditorPopupPosition;
 
-    checkAndPreventDefault(compDetails!.params, event);
+    checkAndPreventDefault(compDetails.params, event);
 
-    if (cellCtrl) {
-        cellCtrl.editCompDetails = compDetails;
-        cellCtrl.onEditorAttachedFuncs.push(() => cellCtrl.rangeFeature?.unsetComp());
-        cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
-        cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
+    if (!cellCtrl) {
+        return;
+    }
 
-        const edit = beans.editModelSvc?.getEdit(position, true);
+    const { rangeFeature, rowCtrl, comp, onEditorAttachedFuncs } = cellCtrl;
 
-        if (!silent && !edit?.editorState?.cellStartedEditing) {
-            beans.editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
-            beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
-        }
+    editModelSvc?.setEdit(position, {
+        editorValue: getNormalisedFormula(beans, newValue, true, position.column),
+        state: 'editing',
+    });
+
+    cellCtrl.editCompDetails = compDetails;
+    onEditorAttachedFuncs.push(() => rangeFeature?.unsetComp());
+    comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
+    rowCtrl?.refreshRow({ suppressFlash: true });
+
+    const edit = editModelSvc?.getEdit(position, true);
+
+    if (!silent && !edit?.editorState?.cellStartedEditing) {
+        editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
+        editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
     }
 }
 
@@ -521,7 +530,7 @@ function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Rea
               value: latest.sourceValue,
           }
         : {
-              valueChanged: false,
+              valueChanged: _sourceAndPendingDiffer(latest),
               oldValue: latest.sourceValue,
               newValue: latest.pendingValue,
               value: latest.sourceValue,

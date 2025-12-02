@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping selection', () => {
     const gridsManager = new TestGridsManager({
@@ -80,7 +80,7 @@ describe('ag-grid grouping selection', () => {
         `);
 
         // Add a new item and verify selection state is maintained
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [{ id: '10', country: 'Ireland', athlete: "Pat O'Brien", sport: 'Rugby' }],
         });
 
