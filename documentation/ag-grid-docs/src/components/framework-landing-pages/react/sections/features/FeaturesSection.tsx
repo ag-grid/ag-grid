@@ -31,7 +31,7 @@ const FeaturesSection: React.FC = () => {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
-                            id={`feature-tab-${tab.title.toLowerCase()}`}
+                            id={`feature-tab-${tab.title.toLowerCase().replaceAll(' ', '-')}`}
                             className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=react-table--tab`}
                             onClick={() => handleTabClick(index)}
                         >
