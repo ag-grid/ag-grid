@@ -77,7 +77,12 @@ export class NumberFilter extends SimpleFilter<
     public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
         const result = super.refresh(legacyNewParams);
 
-        this.refreshInputValidation();
+        const newState = (legacyNewParams as unknown as NumberFilterDisplayParams).state;
+        const oldState = this.state;
+
+        if (newState.model !== oldState.model || !this.areStatesEqual(newState.state, oldState.state)) {
+            this.refreshInputValidation();
+        }
 
         return result;
     }
