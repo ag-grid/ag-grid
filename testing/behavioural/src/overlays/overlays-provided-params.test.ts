@@ -1,4 +1,3 @@
-import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
@@ -11,14 +10,6 @@ describe('ag-grid overlays state', () => {
     });
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     let consoleWarnSpy: MockInstance;
-
-    function hasLoadingOverlay() {
-        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
-    }
-
-    function hasNoRowsOverlay() {
-        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'));
-    }
 
     function hasLoadingOverlayWrapper() {
         return isAgHtmlElementVisible('.ag-overlay-loading-wrapper');
