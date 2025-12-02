@@ -18,6 +18,8 @@ test.agExample(import.meta, () => {
         test.eachFramework('Example', async ({ agIdFor, page, remoteGrid }) => {
             const remoteApi = remoteGrid(page, '1');
 
+            await remoteApi.setGridOption('animateRows', false); // This is needed or duplicate test ids appear due to animation timing
+
             await remoteApi.setGridOption('columnDefs', [
                 { field: 'athlete' },
                 { field: 'countryObject', headerName: 'Country' },
