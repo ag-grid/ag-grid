@@ -1,5 +1,4 @@
 import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
-import { _normalizeSortType } from 'ag-grid-community';
 import {
     BeanStub,
     _addGridCommonParams,
@@ -7,6 +6,7 @@ import {
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
     _normalizeSortDirection,
+    _normalizeSortType,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
