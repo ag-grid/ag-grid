@@ -953,7 +953,7 @@ export interface GridOptions<TData = any> {
      * Show or hide the loading overlay.
      * - `true`: the loading overlay is shown.
      * - `false`: the loading overlay is hidden.
-     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided.
+     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
     loading?: boolean;

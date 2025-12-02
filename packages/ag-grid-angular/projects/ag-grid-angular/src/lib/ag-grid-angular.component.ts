@@ -995,7 +995,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Show or hide the loading overlay.
      * - `true`: the loading overlay is shown.
      * - `false`: the loading overlay is hidden.
-     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided.
+     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
      * @default undefined
      */
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
