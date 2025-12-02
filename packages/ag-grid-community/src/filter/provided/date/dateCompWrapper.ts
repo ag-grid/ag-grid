@@ -1,5 +1,6 @@
 import { _setAriaInvalid } from '../../../agStack/utils/aria';
 import { _setDisplayed } from '../../../agStack/utils/dom';
+import { _debounce } from '../../../agStack/utils/function';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';
@@ -16,6 +17,7 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
+    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, 500);
 
     constructor(
         private readonly context: Context,
@@ -103,7 +105,7 @@ export class DateCompWrapper {
         this.dateComp?.refresh?.(params);
     }
 
-    public setCustomValidity(message: string): void {
+    public setCustomValidity(message: string, defer = false): void {
         const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
@@ -113,7 +115,11 @@ export class DateCompWrapper {
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
             // so we need to call `reportValidity`.
             if (isInvalid) {
-                eInput.reportValidity();
+                if (defer) {
+                    this.debouncedReport(eInput);
+                } else {
+                    eInput.reportValidity();
+                }
             }
 
             _setAriaInvalid(eInput, isInvalid);
@@ -123,4 +129,8 @@ export class DateCompWrapper {
     public getValidity(): ValidityState | undefined {
         return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
     }
+}
+
+function reportValidity(eInput: HTMLInputElement) {
+    eInput.reportValidity();
 }
