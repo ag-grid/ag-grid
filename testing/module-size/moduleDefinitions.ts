@@ -24,7 +24,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     DragAndDropModule: 1,
     EventApiModule: 2.64,
     ExternalFilterModule: 12.67,
-    GridStateModule: 14.7,
+    GridStateModule: 15.84,
     HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 18,
     LargeTextEditorModule: 67.8,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
-    AllEnterpriseModule: 1569,
+    AllEnterpriseModule: 1574.12,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
     CellSelectionModule: 59,
