@@ -17,7 +17,7 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition } from '../../interfaces/iEditService';
+import type { EditPosition, EditSource } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
@@ -441,7 +441,7 @@ export function _destroyEditors(
     }
 }
 
-type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };
+type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean; source?: EditSource };
 
 export function _destroyEditor(
     beans: BeanCollection,
@@ -472,11 +472,17 @@ export function _destroyEditor(
             editModelSvc?.setEdit(position, { state: 'changed' });
             const args = enableGroupEditing
                 ? groupEditOverrides(params, edit)
-                : {
-                      valueChanged: false,
-                      newValue: undefined,
-                      oldValue: edit.sourceValue,
-                  };
+                : params?.source === 'renderer'
+                  ? {
+                        valueChanged: edit.pendingValue !== edit.sourceValue,
+                        newValue: edit.pendingValue,
+                        oldValue: edit.sourceValue,
+                    }
+                  : {
+                        valueChanged: false,
+                        newValue: undefined,
+                        oldValue: edit.sourceValue,
+                    };
             dispatchEditingStopped(beans, position, args, params);
         }
 
