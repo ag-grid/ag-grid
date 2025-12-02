@@ -771,6 +771,7 @@ export {
     IOverlayParams,
     IOverlayComp,
     LoadingOverlayUserParams,
+    ExportingOverlayUserParams,
     NoRowsOverlayUserParams,
     NoMatchingRowsOverlayUserParams,
     OverlayComponentUserParams,

@@ -4,7 +4,7 @@ import { Component } from '../../widgets/component';
 
 export type OverlayType = 'loading' | 'noRows' | 'noMatchingRows' | 'exporting';
 
-export interface ProvidedOverlayUserParams {
+interface ProvidedOverlayUserParams {
     /**
      * Override the default text of the provided overlay.
      */
