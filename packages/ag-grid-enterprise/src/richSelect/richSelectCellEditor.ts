@@ -261,9 +261,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 richSelect.showPicker();
             }
 
-            if (!this.isAsync) {
-                this.processEventKey(eventKey);
-            }
+            this.processEventKey(eventKey);
         });
     }
 
