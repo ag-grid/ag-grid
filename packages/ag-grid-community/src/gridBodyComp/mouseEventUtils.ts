@@ -4,13 +4,14 @@ import { _isDomLayout } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import { _getCellCtrlForEventTarget } from '../rendering/renderUtils';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getCellPositionForEvent(
     gos: GridOptionsService,
     event: MouseEvent | KeyboardEvent | Touch
 ): CellPosition | null {
     return _getCellCtrlForEventTarget(gos, event.target)?.getFocusedCellPosition() ?? null;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getNormalisedMousePosition(
     beans: BeanCollection,
     event: MouseEvent | { x: number; y: number }

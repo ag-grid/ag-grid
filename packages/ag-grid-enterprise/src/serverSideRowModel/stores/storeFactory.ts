@@ -1,28 +1,28 @@
 import type {
-    BeanCollection,
-    ColumnModel,
     GetServerSideGroupLevelParamsParams,
     IColsService,
-    NamedBean,
     RowAutoHeightService,
     RowNode,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
+    _BeanCollection,
+    _ColumnModel,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { _BeanStub, _warn } from 'ag-grid-community';
 
 import type { SSRMParams } from '../serverSideRowModel';
 import { LazyStore } from './lazy/lazyStore';
 
-export class StoreFactory extends BeanStub implements NamedBean {
+export class StoreFactory extends _BeanStub implements _NamedBean {
     beanName = 'ssrmStoreFactory' as const;
 
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private rowGroupColsSvc?: IColsService;
     private pivotColsSvc?: IColsService;
     private rowAutoHeight?: RowAutoHeightService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
         this.rowGroupColsSvc = beans.rowGroupColsSvc;
         this.pivotColsSvc = beans.pivotColsSvc;

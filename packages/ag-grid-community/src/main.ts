@@ -5,37 +5,31 @@ export {
     _createColumnTree,
     _createColumnTreeWithIds,
 } from './columns/columnFactoryUtils';
-export type { ColumnGroupService } from './columns/columnGroups/columnGroupService';
-export type { ColumnModel } from './columns/columnModel';
+export type { ColumnModel as _ColumnModel } from './columns/columnModel';
 export { ColumnCollections as _ColumnCollections } from './columns/columnModel';
-export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
-export { BaseColsService } from './columns/baseColsService';
+export { BaseColsService as _BaseColsService } from './columns/baseColsService';
 export {
     ColumnState,
     ColumnStateParams,
     ApplyColumnStateParams,
     _resetColumnState,
     _applyColumnState,
-    _getColumnState,
 } from './columns/columnStateUtils';
-export type { ColumnMoveService } from './columnMove/columnMoveService';
-export type { ColumnNameService } from './columns/columnNameService';
-export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
-export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
-export { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
-export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
-export { ColumnKeyCreator } from './columns/columnKeyCreator';
-export type { VisibleColsService } from './columns/visibleColsService';
-export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
+export type { ColumnNameService as _ColumnNameService } from './columns/columnNameService';
+export { IAggColumnNameService as _IAggColumnNameService } from './interfaces/iAggColumnNameService';
+export { IShowRowGroupColsService as _IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsValueService as _IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
+export { IPivotResultColsService as _IPivotResultColsService } from './interfaces/iPivotResultColsService';
+export type { VisibleColsService as _VisibleColsService } from './columns/visibleColsService';
 export {
     GROUP_AUTO_COLUMN_ID,
     SELECTION_COLUMN_ID,
     ROW_NUMBERS_COLUMN_ID,
     GROUP_HIERARCHY_COLUMN_ID_PREFIX,
-    isRowNumberCol,
-    isColumnSelectionCol,
-    isColumnGroupAutoCol,
-    isSpecialCol,
+    _isRowNumberCol,
+    _isColumnSelectionCol,
+    _isColumnGroupAutoCol,
+    _isSpecialCol,
     _destroyColumnTree,
     _getColumnsFromTree,
     _areColIdsEqual,
@@ -45,7 +39,6 @@ export {
     _getColumnStateFromColDef,
     _getSortDefFromColDef,
 } from './columns/columnUtils';
-export type { SelectionColService } from './columns/selectionColService';
 export {
     AutoSizeStrategy,
     SizeColumnsToFitGridColumnLimits,
@@ -58,15 +51,19 @@ export {
     ISizeColumnsToContentParams,
     ISizeAllColumnsToContentParams,
 } from './interfaces/autoSize';
-export { IRenderStatusService } from './interfaces/renderStatusService';
+export { IRenderStatusService as _IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
-export { ComponentSelector, AgComponentSelectorType, ComponentEvent } from './widgets/component';
+export {
+    ComponentSelector as _ComponentSelector,
+    AgComponentSelectorType as _AgComponentSelectorType,
+    ComponentEvent as _ComponentEvent,
+} from './widgets/component';
 
-export type { Registry } from './components/framework/registry';
-export { UserCompDetails, ComponentType } from './interfaces/iUserCompDetails';
-export type { UserComponentFactory } from './components/framework/userComponentFactory';
+export type { Registry as _Registry } from './components/framework/registry';
+export { UserCompDetails as _UserCompDetails, ComponentType as _ComponentType } from './interfaces/iUserCompDetails';
+export type { UserComponentFactory as _UserComponentFactory } from './components/framework/userComponentFactory';
 export {
     _getFilterDetails,
     _getFloatingFilterCompDetails,
@@ -77,10 +74,15 @@ export {
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 
 // context
-export { BeanStub } from './context/beanStub';
-export { Bean, NamedBean } from './context/bean';
-export type { Context } from './context/context';
-export { BeanName, SingletonBean, BeanCollection, StatusPanelComponentName } from './context/context';
+export { BeanStub as _BeanStub } from './context/beanStub';
+export { Bean as _Bean, NamedBean as _NamedBean } from './context/bean';
+export type { Context as _Context } from './context/context';
+export {
+    BeanName as _BeanName,
+    SingletonBean as _SingletonBean,
+    BeanCollection as _BeanCollection,
+    StatusPanelComponentName,
+} from './context/context';
 
 // AG Stack (public)
 export { VisibleChangedEvent, RefPlaceholder, AgBaseComponent, _isComponent } from './agStack/interfaces/agComponent';
@@ -386,7 +388,7 @@ export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeServ
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
 export {
     AgColumn,
-    isColumn,
+    isColumn as _isColumn,
     _getSortDefFromInput,
     _isSortDirectionValid,
     _isSortTypeValid,
@@ -394,8 +396,11 @@ export {
     _normalizeSortDirection,
     _normalizeSortType,
 } from './entities/agColumn';
-export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
-export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
+export { AgColumnGroup, isColumnGroup as _isColumnGroup } from './entities/agColumnGroup';
+export {
+    AgProvidedColumnGroup,
+    isProvidedColumnGroup as _isProvidedColumnGroup,
+} from './entities/agProvidedColumnGroup';
 export {
     RowNode,
     ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP,

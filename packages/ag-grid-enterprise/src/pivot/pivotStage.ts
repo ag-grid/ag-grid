@@ -1,18 +1,18 @@
 import type {
     AgColumn,
-    BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
-    ColumnModel,
     GridOptions,
     IColsService,
-    IPivotResultColsService,
-    NamedBean,
     RowNode,
     ValueService,
+    _BeanCollection,
+    _ColumnModel,
+    _IPivotResultColsService,
     _IRowNodePivotStage,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _missing } from 'ag-grid-community';
+import { _BeanStub, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -24,7 +24,7 @@ const mapToObject = (map: Map<string, any>): Record<string, any> => {
     return obj;
 };
 
-export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotStage {
+export class PivotStage extends _BeanStub implements _NamedBean, _IRowNodePivotStage {
     beanName = 'pivotStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'pivot';
@@ -36,14 +36,14 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
     ];
 
     private valueSvc: ValueService;
-    private colModel: ColumnModel;
-    private pivotResultCols: IPivotResultColsService;
+    private colModel: _ColumnModel;
+    private pivotResultCols: _IPivotResultColsService;
     private rowGroupColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
     private pivotColsSvc?: IColsService;
     private pivotColDefSvc: PivotColDefService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.pivotResultCols = beans.pivotResultCols!;

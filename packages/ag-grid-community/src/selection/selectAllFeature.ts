@@ -1,7 +1,7 @@
 import { _getAriaCheckboxStateName, _setAriaRole } from '../agStack/utils/aria';
 import { _getActiveDomElement } from '../agStack/utils/document';
 import { AgCheckbox } from '../agStack/widgets/agCheckbox';
-import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
+import { _isColumnGroupAutoCol, _isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -238,8 +238,8 @@ export function isCheckboxSelection({ gos, selectionColSvc }: BeanCollection, co
     const newHeaderCheckbox = typeof rowSelection === 'object';
     if (newHeaderCheckbox) {
         // new selection config
-        const isSelectionCol = isColumnSelectionCol(column);
-        const isAutoCol = isColumnGroupAutoCol(column);
+        const isSelectionCol = _isColumnSelectionCol(column);
+        const isAutoCol = _isColumnGroupAutoCol(column);
         // default to displaying header checkbox in the selection column
         const location = _getCheckboxLocation(rowSelection);
         if (

@@ -1,13 +1,13 @@
-import type { BeanCollection, CellRange, CellRangeParams } from 'ag-grid-community';
+import type { CellRange, CellRangeParams, _BeanCollection } from 'ag-grid-community';
 
-export function getCellRanges(beans: BeanCollection): CellRange[] | null {
+export function getCellRanges(beans: _BeanCollection): CellRange[] | null {
     return beans.rangeSvc?.getCellRanges() ?? null;
 }
 
-export function addCellRange(beans: BeanCollection, params: CellRangeParams): void {
+export function addCellRange(beans: _BeanCollection, params: CellRangeParams): void {
     beans.rangeSvc?.addCellRange(params);
 }
 
-export function clearRangeSelection(beans: BeanCollection): void {
+export function clearRangeSelection(beans: _BeanCollection): void {
     beans.rangeSvc?.removeAllCellRanges();
 }

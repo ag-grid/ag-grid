@@ -1,12 +1,12 @@
 import type {
-    BeanCollection,
     ElementParams,
     FilterAction,
     FilterButtonComp,
     FilterManager,
     ITooltipCtrl,
-    Registry,
     TooltipFeature,
+    _BeanCollection,
+    _Registry,
 } from 'ag-grid-community';
 import {
     AgFilterButtonSelector,
@@ -72,9 +72,9 @@ export class AdvancedFilterComp extends Component {
     private advancedFilter: AdvancedFilterService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
     private filterManager?: FilterManager;
-    private registry: Registry;
+    private registry: _Registry;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
         this.advancedFilter = beans.advancedFilter as AdvancedFilterService;
         this.filterManager = beans.filterManager;

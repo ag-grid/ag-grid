@@ -6,6 +6,7 @@ import { _areCellsEqual } from '../entities/positionUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Component } from '../widgets/component';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
     comp.addManagedElementListeners(eGui, {
         keydown: (e: KeyboardEvent) => {
@@ -20,19 +21,19 @@ export function _addFocusableContainerListener(beans: BeanCollection, comp: Comp
         },
     });
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _focusGridInnerElement(beans: BeanCollection, fromBottom?: boolean): boolean {
     return beans.ctrlsSvc.get('gridCtrl').focusInnerElement(fromBottom);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isHeaderFocusSuppressed(beans: BeanCollection): boolean {
     return beans.gos.get('suppressHeaderFocus') || !!beans.overlays?.exclusive;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isCellFocusSuppressed(beans: BeanCollection): boolean {
     return beans.gos.get('suppressCellFocus') || !!beans.overlays?.exclusive;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _focusNextGridCoreContainer(
     beans: BeanCollection,
     backwards: boolean,
@@ -49,7 +50,7 @@ export function _focusNextGridCoreContainer(
 
     return false;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _attemptToRestoreCellFocus(beans: BeanCollection, focusedCell: CellPosition | null): void {
     const focusSvc = beans.focusSvc;
     const currentFocusedCell = focusSvc.getFocusedCell();

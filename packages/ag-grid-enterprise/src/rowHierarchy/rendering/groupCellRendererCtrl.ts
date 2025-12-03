@@ -5,11 +5,11 @@ import type {
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     RowNode,
-    UserCompDetails,
+    _UserCompDetails,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     KeyCode,
+    _BeanStub,
     _createIconNoSpan,
     _getCellRendererDetails,
     _getCheckboxLocation,
@@ -25,7 +25,7 @@ import {
 
 import { _isHiddenParent } from '../rowHierarchyUtils';
 
-export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
+export class GroupCellRendererCtrl extends _BeanStub implements IGroupCellRendererCtrl {
     private params: GroupCellRendererParams;
 
     private node: RowNode; // the node this cell is rendering for
@@ -282,7 +282,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
      * 5. Inner renderer of the grouped column
      * 6. agFindCellRenderer for find results
      */
-    private getInnerCompDetails(): UserCompDetails | undefined {
+    private getInnerCompDetails(): _UserCompDetails | undefined {
         const { userCompFactory, findSvc } = this.beans;
         const params = this.params;
 
@@ -308,7 +308,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return undefined;
         }
 
-        const isGroupRowRenderer = (details: UserCompDetails | undefined) =>
+        const isGroupRowRenderer = (details: _UserCompDetails | undefined) =>
             details && details.componentClass == this.compClass;
 
         /**

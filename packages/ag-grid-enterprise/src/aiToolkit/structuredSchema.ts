@@ -1,5 +1,5 @@
 import { STRUCTURED_SCHEMA_FEATURES } from 'ag-grid-community';
-import type { BeanCollection, StructuredSchemaFeature, StructuredSchemaParams } from 'ag-grid-community';
+import type { StructuredSchemaFeature, StructuredSchemaParams, _BeanCollection } from 'ag-grid-community';
 
 import { buildAggregationFeatureSchema } from './features/aggregationFeatureSchema';
 import { buildColumnSizingFeatureSchema } from './features/columnSizingFeatureSchema';
@@ -14,7 +14,7 @@ import type { JSONSchema } from './schemaTypes';
 
 const StructuredSchemaBuilderMap: Record<
     StructuredSchemaFeature,
-    (beans: BeanCollection, params?: StructuredSchemaParams) => SchemaBuilder | undefined
+    (beans: _BeanCollection, params?: StructuredSchemaParams) => SchemaBuilder | undefined
 > = {
     aggregation: buildAggregationFeatureSchema,
     filter: buildFilterFeatureSchema,
@@ -25,7 +25,7 @@ const StructuredSchemaBuilderMap: Record<
     rowGroup: buildRowGroupFeatureSchema,
 } as const;
 
-export function getStructuredSchema(beans: BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
+export function getStructuredSchema(beans: _BeanCollection, params?: StructuredSchemaParams): JSONSchema | undefined {
     const allColumnIds = beans.colModel.getCols().map((col) => col.getColId());
 
     const features: Record<string, SchemaBuilder> = {};

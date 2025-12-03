@@ -1,4 +1,4 @@
-import type { AgComponentSelectorType, AgSelectParams, BeanCollection } from 'ag-grid-community';
+import type { AgSelectParams, _AgComponentSelectorType, _BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
@@ -33,7 +33,7 @@ function _capitalise(str: string): string {
 export class FontPanel extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
@@ -107,7 +107,7 @@ export class FontPanel extends Component {
         this.fontGroup.setEnabled(enabled);
     }
 
-    private getFamilySelectParams(): AgSelectParams<AgComponentSelectorType> {
+    private getFamilySelectParams(): AgSelectParams<_AgComponentSelectorType> {
         const families = [
             'Arial, sans-serif',
             'Aria Black, sans-serif',
@@ -161,7 +161,7 @@ export class FontPanel extends Component {
         );
     }
 
-    private getSizeSelectParams(): AgSelectParams<AgComponentSelectorType> {
+    private getSizeSelectParams(): AgSelectParams<_AgComponentSelectorType> {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
@@ -179,7 +179,7 @@ export class FontPanel extends Component {
         );
     }
 
-    private getWeightStyleSelectParams(): AgSelectParams<AgComponentSelectorType> {
+    private getWeightStyleSelectParams(): AgSelectParams<_AgComponentSelectorType> {
         const weight = this.getInitialFontValue('fontWeight') ?? 'normal';
         const style = this.getInitialFontValue('fontStyle') ?? 'normal';
 

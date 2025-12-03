@@ -1,9 +1,9 @@
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 import type { IRowNode, RowGroupBulkExpansionState } from 'ag-grid-community';
 
 import type { IExpansionStrategy } from './iExpansionStrategy';
 
-export class ExpandAllStrategy extends BeanStub implements IExpansionStrategy<RowGroupBulkExpansionState> {
+export class ExpandAllStrategy extends _BeanStub implements IExpansionStrategy<RowGroupBulkExpansionState> {
     name: string = 'expandAll';
 
     private allExpanded: boolean | undefined = undefined;

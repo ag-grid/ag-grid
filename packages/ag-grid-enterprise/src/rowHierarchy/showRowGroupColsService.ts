@@ -1,7 +1,7 @@
-import { BeanStub } from 'ag-grid-community';
-import type { AgColumn, IShowRowGroupColsService, NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
+import type { AgColumn, _IShowRowGroupColsService, _NamedBean } from 'ag-grid-community';
 
-export class ShowRowGroupColsService extends BeanStub implements NamedBean, IShowRowGroupColsService {
+export class ShowRowGroupColsService extends _BeanStub implements _NamedBean, _IShowRowGroupColsService {
     beanName = 'showRowGroupCols' as const;
 
     public readonly columns: AgColumn[] = [];

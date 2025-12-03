@@ -204,18 +204,22 @@ const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
         getRowCtrls: getBottomRowCtrls,
     },
 };
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowViewportClass(name: RowContainerName): `ag-${string}-viewport` {
     const options = _getRowContainerOptions(name);
     return `ag-${options.name}-viewport`;
 }
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowContainerClass(name: RowContainerName): `ag-${string}` {
     const options = _getRowContainerOptions(name);
     return options.container ?? `ag-${options.name}-container`;
 }
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowSpanContainerClass(name: RowContainerName): `ag-${string}-spanned-cells-container` {
     const options = _getRowContainerOptions(name);
     return `ag-${options.name}-spanned-cells-container`;
 }
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowContainerOptions(name: RowContainerName): RowContainerOptions {
     return ContainerCssClasses[name];
 }

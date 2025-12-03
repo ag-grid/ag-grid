@@ -3,13 +3,13 @@ import type {
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
-    NamedBean,
     RowNode,
     RowSelectionMode,
     SelectAllMode,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
     BaseSelectionService,
@@ -26,7 +26,7 @@ import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
 import type { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
-export class ServerSideSelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
+export class ServerSideSelectionService extends BaseSelectionService implements _NamedBean, ISelectionService {
     beanName = 'selectionSvc' as const;
 
     private selectionStrategy: ISelectionStrategy;

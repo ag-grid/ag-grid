@@ -1,6 +1,6 @@
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
-import { isRowNumberCol } from '../columns/columnUtils';
+import { _isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -85,7 +85,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        columnsToRemove = columnsToRemove.filter((col) => !isRowNumberCol(col));
+        columnsToRemove = columnsToRemove.filter((col) => !_isRowNumberCol(col));
         this.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 

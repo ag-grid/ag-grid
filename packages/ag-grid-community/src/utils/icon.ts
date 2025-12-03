@@ -127,7 +127,7 @@ export type IconName =
  * if not, then use the default icon from the theme.
  * Technically `iconName` could be any string, if using user-provided icons map.
  * However, in most cases we're providing a specific icon name, so better to have type-checking.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createIcon(iconName: IconName, beans: BeanCollection, column: AgColumn | null): Element {
     const iconContents = _createIconNoSpan(iconName, beans, column);
 
@@ -150,7 +150,7 @@ export function _createIcon(iconName: IconName, beans: BeanCollection, column: A
 /**
  * Technically `iconName` could be any string, if using user-provided icons map.
  * However, in most cases we're providing a specific icon name, so better to have type-checking.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createIconNoSpan(
     iconName: IconName,
     beans: BeanCollection,

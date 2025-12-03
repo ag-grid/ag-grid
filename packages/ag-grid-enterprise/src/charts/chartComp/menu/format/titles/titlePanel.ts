@@ -1,4 +1,4 @@
-import type { AgComponentSelectorType, AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
+import type { AgInputTextFieldParams, _AgComponentSelectorType, _BeanCollection } from 'ag-grid-community';
 import { AgInputTextField, Component } from 'ag-grid-community';
 
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
@@ -13,7 +13,7 @@ import { FontPanel } from '../fontPanel';
 export class TitlePanel extends Component {
     protected chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
@@ -59,7 +59,7 @@ export class TitlePanel extends Component {
         this.getGui().appendChild(this.fontPanel.getGui());
     }
 
-    protected getTextInputParams(): AgInputTextFieldParams<AgComponentSelectorType> {
+    protected getTextInputParams(): AgInputTextFieldParams<_AgComponentSelectorType> {
         return this.chartMenuUtils.addValueParams(`${this.key}.text`, {
             label: this.chartTranslation.translate('title'),
             labelAlignment: 'top',

@@ -1,5 +1,4 @@
 import type {
-    BeanCollection,
     FilterManager,
     IColsService,
     IRowModel,
@@ -10,8 +9,9 @@ import type {
     ISetNodesSelectedParams,
     RowNode,
     RowRangeSelectionContext,
+    _BeanCollection,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _warn } from 'ag-grid-community';
+import { _BeanStub, _error, _isMultiRowSelection, _warn } from 'ag-grid-community';
 
 import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -21,13 +21,13 @@ interface SelectionState {
     toggledNodes: Map<string, SelectionState>;
 }
 
-export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
+export class GroupSelectsChildrenStrategy extends _BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
     private rowGroupColsSvc?: IColsService;
     private filterManager?: FilterManager;
     private selectionSvc: ISelectionService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.rowModel = beans.rowModel;
         this.rowGroupColsSvc = beans.rowGroupColsSvc;
         this.filterManager = beans.filterManager;

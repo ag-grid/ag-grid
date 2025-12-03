@@ -2,29 +2,35 @@
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value
  * @returns {T | null}
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _makeNull<T>(value?: T): T | null {
     if (value == null || value === '') {
         return null;
     }
     return value;
 }
-
-export function _exists(value: string | null | undefined): value is string;
-export function _exists<T>(value: T): value is NonNullable<T>;
+/** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _exists(
+    value: string | null | undefined
+): value is string; /** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _exists<T>(
+    value: T
+): value is NonNullable<T>; /** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _exists(value: any): boolean {
     return value != null && value !== '';
 }
-
-export function _missing<T>(value: T | null | undefined): value is Exclude<undefined | null, T>;
+/** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _missing<T>(
+    value: T | null | undefined
+): value is Exclude<undefined | null, T>; /** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _missing(value: any): boolean {
     return !_exists(value);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _toStringOrNull(value: any): string | null {
     return value != null && typeof value.toString === 'function' ? value.toString() : null;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
     const val1Json = val1 ? JSON.stringify(val1) : null;
     const val2Json = val2 ? JSON.stringify(val2) : null;
@@ -36,7 +42,7 @@ export type DefaultComparatorOptions = {
     accentedCompare?: boolean;
     transform?: (val: any) => any;
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _defaultComparator(valueA: any, valueB: any, options: DefaultComparatorOptions = {}): number {
     if (options.transform) {
         valueA = options.transform(valueA);

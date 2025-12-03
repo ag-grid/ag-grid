@@ -2,33 +2,33 @@ import type {
     AgColumn,
     AgEvent,
     AgProvidedColumnGroup,
-    Bean,
     ColumnMenuTab,
-    ComponentEvent,
     ContainerType,
     DefaultMenuItem,
     IAfterGuiAttachedParams,
     IEventEmitter,
     IMenuFactory,
     MenuItemDef,
-    NamedBean,
     PopupEventParams,
+    _Bean,
+    _ComponentEvent,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
     AgPromise,
-    BeanStub,
     Component,
     FilterComp,
     RefPlaceholder,
+    _BeanStub,
     _createElement,
     _createIconNoSpan,
     _error,
     _focusInto,
+    _isColumn,
     _isColumnMenuAnchoringEnabled,
     _isLegacyMenuEnabled,
     _setColMenuVisible,
     _warn,
-    isColumn,
 } from 'ag-grid-community';
 
 import type { AgCloseMenuEvent } from '../agStack/agMenuItemComponent';
@@ -43,7 +43,7 @@ interface TabSelectedEvent extends AgEvent<'tabSelected'> {
     key: string;
 }
 
-interface EnterpriseColumnMenu extends Bean {
+interface EnterpriseColumnMenu extends _Bean {
     getGui(): HTMLElement;
     showTab?(tab: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
@@ -55,7 +55,7 @@ const TAB_GENERAL = 'generalMenuTab';
 const TAB_COLUMNS = 'columnsMenuTab';
 const TABS_DEFAULT: ColumnMenuTab[] = [TAB_GENERAL, TAB_FILTER, TAB_COLUMNS];
 
-export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
+export class EnterpriseMenuFactory extends _BeanStub implements _NamedBean, IMenuFactory {
     beanName = 'enterpriseMenuFactory' as const;
 
     private lastSelectedTab: string;
@@ -106,7 +106,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         column: AgColumn | undefined;
         columnGroup: AgProvidedColumnGroup | undefined;
     } {
-        const colIsColumn = columnOrGroup && isColumn(columnOrGroup);
+        const colIsColumn = columnOrGroup && _isColumn(columnOrGroup);
         const column = colIsColumn ? columnOrGroup : undefined;
         const columnGroup = colIsColumn ? undefined : columnOrGroup;
         return { column, columnGroup };
@@ -305,7 +305,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         restoreFocusParams: MenuRestoreFocusParams,
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
-    ): (EnterpriseColumnMenu & IEventEmitter<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
+    ): (EnterpriseColumnMenu & IEventEmitter<TabbedColumnMenuEvent | _ComponentEvent>) | undefined {
         if (_isLegacyMenuEnabled(this.gos)) {
             return this.createBean(
                 new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource)
@@ -366,7 +366,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 }
 
 type TabbedColumnMenuEvent = 'tabSelected' | 'and';
-class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements EnterpriseColumnMenu {
+class TabbedColumnMenu extends _BeanStub<TabbedColumnMenuEvent> implements EnterpriseColumnMenu {
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
     private mainMenuList: MenuList;

@@ -1,3 +1,4 @@
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
     if (event.altKey || event.ctrlKey || event.metaKey) {

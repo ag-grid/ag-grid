@@ -1,20 +1,20 @@
 import type {
     AgColumn,
-    BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
-    ColumnModel,
     GetGroupRowAggParams,
     GridOptions,
     IColsService,
-    IPivotResultColsService,
-    NamedBean,
     RowNode,
     ValueService,
     WithoutGridCommon,
+    _BeanCollection,
+    _ColumnModel,
+    _IPivotResultColsService,
     _IRowNodeAggregationStage,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
+import { _BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
 import { _aggregateValues } from './aggUtils';
 
@@ -28,7 +28,7 @@ interface AggregationDetails {
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
 
-export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAggregationStage {
+export class AggregationStage extends _BeanStub implements _NamedBean, _IRowNodeAggregationStage {
     beanName = 'aggStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'aggregate';
@@ -39,13 +39,13 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         'grandTotalRow',
     ];
 
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private valueSvc: ValueService;
     private pivotColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
-    private pivotResultCols?: IPivotResultColsService;
+    private pivotResultCols?: _IPivotResultColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
         this.pivotColsSvc = beans.pivotColsSvc;
         this.valueColsSvc = beans.valueColsSvc;

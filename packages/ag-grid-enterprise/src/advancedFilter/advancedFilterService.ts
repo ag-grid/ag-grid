@@ -1,17 +1,17 @@
 import type {
     AdvancedFilterModel,
-    BeanCollection,
-    ColumnModel,
     DataTypeService,
     FilterManager,
     FilterValueService,
     IAdvancedFilterService,
     IRowNode,
-    NamedBean,
     NewColumnsLoadedEvent,
     ValueService,
+    _BeanCollection,
+    _ColumnModel,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
+import { _BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -23,17 +23,17 @@ import type {
     FilterExpressionFunctionParams,
 } from './filterExpressionUtils';
 
-export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
+export class AdvancedFilterService extends _BeanStub implements _NamedBean, IAdvancedFilterService {
     beanName = 'advancedFilter' as const;
 
     private valueSvc: ValueService;
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private dataTypeSvc?: DataTypeService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
     private filterValueSvc: FilterValueService;
     private filterManager?: FilterManager;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.dataTypeSvc = beans.dataTypeSvc;

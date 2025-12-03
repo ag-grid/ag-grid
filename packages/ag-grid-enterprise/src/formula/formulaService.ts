@@ -1,13 +1,13 @@
 import type {
     AgColumn,
-    BeanCollection,
     FormulaFunctionParams,
     IFormulaService,
-    NamedBean,
     RowNode,
+    _BeanCollection,
     _ColumnCollections,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
+import { _BeanStub, _convertColumnEventSourceType, _isExpressionString, _warn } from 'ag-grid-community';
 
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
@@ -34,7 +34,7 @@ export class CellFormula {
         public readonly rowNode: RowNode,
         public readonly column: AgColumn,
         public formulaString: string,
-        private readonly beans: BeanCollection
+        private readonly beans: _BeanCollection
     ) {}
 
     public setFormulaString(next: string) {
@@ -91,7 +91,7 @@ interface FormulaFrame {
     ast: FormulaNode;
     unresolvedDepIterator: Generator<Addr>;
 }
-export class FormulaService extends BeanStub implements IFormulaService, NamedBean {
+export class FormulaService extends _BeanStub implements IFormulaService, _NamedBean {
     public readonly beanName = 'formula' as const;
 
     /** Cache: row -> (column -> CellFormula) */

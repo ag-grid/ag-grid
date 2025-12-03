@@ -3,12 +3,12 @@ import type {
     FormulaDataSourceParams,
     GetFormulaParams,
     IFormulaDataService,
-    NamedBean,
     SetFormulaParams,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _isExpressionString } from 'ag-grid-community';
+import { _BeanStub, _addGridCommonParams, _isExpressionString } from 'ag-grid-community';
 
-export class FormulaDataService extends BeanStub implements IFormulaDataService, NamedBean {
+export class FormulaDataService extends _BeanStub implements IFormulaDataService, _NamedBean {
     public readonly beanName = 'formulaDataSvc' as const;
 
     private dataSource?: FormulaDataSource;

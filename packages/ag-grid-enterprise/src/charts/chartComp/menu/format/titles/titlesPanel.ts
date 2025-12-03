@@ -1,4 +1,4 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -13,7 +13,7 @@ import { TitlePanel } from './titlePanel';
 export class TitlesPanel extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     private readonly titleGroup: GroupComponent = RefPlaceholder;

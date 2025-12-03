@@ -1,14 +1,14 @@
 import type {
     AgColumn,
-    BeanCollection,
-    IShowRowGroupColsService,
-    NamedBean,
     RowBounds,
     ValueService,
+    _BeanCollection,
+    _IShowRowGroupColsService,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     RowNode,
+    _BeanStub,
     _doOnce,
     _exists,
     _getGroupTotalRowCallback,
@@ -26,17 +26,17 @@ import type { StoreFactory } from '../stores/storeFactory';
 
 const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey';
 
-export class BlockUtils extends BeanStub implements NamedBean {
+export class BlockUtils extends _BeanStub implements _NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
     private valueSvc: ValueService;
-    private showRowGroupCols?: IShowRowGroupColsService;
+    private showRowGroupCols?: _IShowRowGroupColsService;
     private nodeManager: NodeManager;
     private expansionSvc?: ServerSideExpansionService;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.valueSvc = beans.valueSvc;
         this.showRowGroupCols = beans.showRowGroupCols;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;

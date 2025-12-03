@@ -1,5 +1,4 @@
 import type {
-    BeanCollection,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     LoadSuccessParams,
@@ -7,11 +6,12 @@ import type {
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { _getServerSideRowModel, _warn } from 'ag-grid-community';
 
 export function getServerSideSelectionState(
-    beans: BeanCollection
+    beans: _BeanCollection
 ): IServerSideSelectionState | IServerSideGroupSelectionState | null {
     return (beans.selectionSvc?.getSelectionState() ?? null) as
         | IServerSideSelectionState
@@ -20,21 +20,21 @@ export function getServerSideSelectionState(
 }
 
 export function setServerSideSelectionState(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     state: IServerSideSelectionState | IServerSideGroupSelectionState
 ) {
     beans.selectionSvc?.setSelectionState(state, 'api');
 }
 
 export function applyServerSideTransaction<TData = any>(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     transaction: ServerSideTransaction<TData>
 ): ServerSideTransactionResult<TData> | undefined {
     return beans.ssrmTxnManager?.applyTransaction(transaction);
 }
 
 export function applyServerSideRowData<TData = any>(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     params: { successParams: LoadSuccessParams<TData>; route?: string[]; startRow?: number }
 ): void {
     const startRow = params.startRow ?? 0;
@@ -48,25 +48,25 @@ export function applyServerSideRowData<TData = any>(
 }
 
 export function applyServerSideTransactionAsync<TData = any>(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     transaction: ServerSideTransaction<TData>,
     callback?: (res: ServerSideTransactionResult<TData>) => void
 ): void {
     return beans.ssrmTxnManager?.applyTransactionAsync(transaction, callback);
 }
 
-export function retryServerSideLoads(beans: BeanCollection): void {
+export function retryServerSideLoads(beans: _BeanCollection): void {
     _getServerSideRowModel(beans)?.retryLoads();
 }
 
-export function flushServerSideAsyncTransactions(beans: BeanCollection): void {
+export function flushServerSideAsyncTransactions(beans: _BeanCollection): void {
     return beans.ssrmTxnManager?.flushAsyncTransactions();
 }
 
-export function refreshServerSide(beans: BeanCollection, params?: RefreshServerSideParams): void {
+export function refreshServerSide(beans: _BeanCollection, params?: RefreshServerSideParams): void {
     _getServerSideRowModel(beans)?.refreshStore(params);
 }
 
-export function getServerSideGroupLevelState(beans: BeanCollection): ServerSideGroupLevelState[] {
+export function getServerSideGroupLevelState(beans: _BeanCollection): ServerSideGroupLevelState[] {
     return _getServerSideRowModel(beans)?.getStoreState() ?? [];
 }

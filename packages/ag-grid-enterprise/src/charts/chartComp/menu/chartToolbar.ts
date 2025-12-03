@@ -1,4 +1,4 @@
-import type { BeanCollection, ChartToolbarMenuItemOptions, IconName } from 'ag-grid-community';
+import type { ChartToolbarMenuItemOptions, IconName, _BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder, _clearElement, _createElement, _createIconNoSpan } from 'ag-grid-community';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
@@ -12,7 +12,7 @@ interface ChartToolbarButton {
 export class ChartToolbar extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

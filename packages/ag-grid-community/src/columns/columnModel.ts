@@ -19,9 +19,9 @@ import {
     _convertColumnEventSourceType,
     _destroyColumnTree,
     _getColumnsFromTree,
-    isColumnGroupAutoCol,
-    isColumnSelectionCol,
-    isRowNumberCol,
+    _isColumnGroupAutoCol,
+    _isColumnSelectionCol,
+    _isRowNumberCol,
 } from './columnUtils';
 
 export type Maybe<T> = T | null | undefined;
@@ -292,14 +292,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const valueColumns = valueColsSvc?.columns;
 
         const res = cols.list.filter((col) => {
-            const isAutoGroupCol = isColumnGroupAutoCol(col);
+            const isAutoGroupCol = _isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
                 return (
                     isAutoGroupCol ||
                     isValueCol ||
-                    (showSelectionColumn && isColumnSelectionCol(col)) ||
-                    (showRowNumbers && isRowNumberCol(col))
+                    (showSelectionColumn && _isColumnSelectionCol(col)) ||
+                    (showRowNumbers && _isRowNumberCol(col))
                 );
             } else {
                 // keep col if a) it's auto-group or b) it's visible

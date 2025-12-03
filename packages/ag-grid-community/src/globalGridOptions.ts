@@ -83,7 +83,7 @@ export function provideGlobalGridOptions(
     GlobalGridOptions.gridOptions = gridOptions;
     GlobalGridOptions.mergeStrategy = mergeStrategy;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
     return GlobalGridOptions.gridOptions?.[gridOption];
 }

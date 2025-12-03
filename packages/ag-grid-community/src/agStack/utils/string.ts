@@ -15,16 +15,16 @@ const HTML_ESCAPES: { [id: string]: string } = {
  * Calls toString() twice, in case value is an object, where user provides a toString() method.
  * The first call to toString() returns back something other than a string (eg a number to render)
  */
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _toString(toEscape?: string | null): string | null {
     return toEscape?.toString().toString() ?? null;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _escapeString(toEscape?: string | null): string | null {
     // in react we don't need to escape html characters, as it's done by the framework
     return _toString(toEscape)?.replace(reUnescapedHtml, (chr) => HTML_ESCAPES[chr]) ?? null;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isExpressionString(value: unknown): value is `=${string}` {
     return typeof value === 'string' && value.startsWith('=') && value.length > 1;
 }

@@ -1,11 +1,11 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     FocusableContainer,
     GridOptionsService,
     GridOptionsWithDefaults,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { _STOP_PROPAGATION_CALLBACKS, _focusNextGridCoreContainer } from 'ag-grid-community';
 
@@ -14,15 +14,15 @@ import { AgDialog } from '../agStack/agDialog';
 import type { PanelPostProcessPopupParams } from './panel';
 
 interface DialogOptions
-    extends AgDialogOptions<BeanCollection, GridOptionsWithDefaults, AgEventTypeParams, PanelPostProcessPopupParams> {}
+    extends AgDialogOptions<_BeanCollection, GridOptionsWithDefaults, AgEventTypeParams, PanelPostProcessPopupParams> {}
 
-export const DIALOG_CALLBACKS: AgDialogCallbacks<BeanCollection, Dialog> = {
+export const DIALOG_CALLBACKS: AgDialogCallbacks<_BeanCollection, Dialog> = {
     stopPropagationCallbacks: _STOP_PROPAGATION_CALLBACKS,
-    focusNextContainer: (beans: BeanCollection, backwards: boolean) => {
+    focusNextContainer: (beans: _BeanCollection, backwards: boolean) => {
         return _focusNextGridCoreContainer(beans, backwards);
     },
 
-    configureFocusableContainer: (beans: BeanCollection, dialog: Dialog) => {
+    configureFocusableContainer: (beans: _BeanCollection, dialog: Dialog) => {
         const gridCtrl = beans.ctrlsSvc.get('gridCtrl');
         gridCtrl.addFocusableContainer(dialog);
         dialog.addDestroyFunc(() => gridCtrl.removeFocusableContainer(dialog));
@@ -31,12 +31,12 @@ export const DIALOG_CALLBACKS: AgDialogCallbacks<BeanCollection, Dialog> = {
 
 export class Dialog
     extends AgDialog<
-        BeanCollection,
+        _BeanCollection,
         GridOptionsWithDefaults,
         AgEventTypeParams,
         AgGridCommon<any, any>,
         GridOptionsService,
-        AgComponentSelectorType,
+        _AgComponentSelectorType,
         DialogOptions
     >
     implements FocusableContainer

@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions, Params } from 'ag-grid-community';
-import { ClientSideRowModelModule, PinnedRowModule, isColumnSelectionCol } from 'ag-grid-community';
+import { ClientSideRowModelModule, PinnedRowModule, _isColumnSelectionCol } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import {
@@ -1385,7 +1385,7 @@ describe('Row Selection Grid Options', () => {
                     'ag-Grid-SelectionColumn'
                 );
                 const colState1 = api.getColumnState();
-                expect(isColumnSelectionCol(colState1[0].colId)).toBeTruthy();
+                expect(_isColumnSelectionCol(colState1[0].colId)).toBeTruthy();
 
                 api.setGridOption('rowSelection', {
                     mode: 'multiRow',
@@ -1397,7 +1397,7 @@ describe('Row Selection Grid Options', () => {
                     'ag-Grid-AutoColumn'
                 );
                 const colState2 = api.getColumnState();
-                expect(isColumnSelectionCol(colState2[0].colId)).toBeFalsy();
+                expect(_isColumnSelectionCol(colState2[0].colId)).toBeFalsy();
 
                 api.setGridOption('rowSelection', {
                     mode: 'multiRow',
@@ -1409,7 +1409,7 @@ describe('Row Selection Grid Options', () => {
                     'ag-Grid-SelectionColumn'
                 );
                 const colState3 = api.getColumnState();
-                expect(isColumnSelectionCol(colState3[0].colId)).toBeTruthy();
+                expect(_isColumnSelectionCol(colState3[0].colId)).toBeTruthy();
             });
 
             test('clicking checkbox does nothing if row selection not enabled', async () => {

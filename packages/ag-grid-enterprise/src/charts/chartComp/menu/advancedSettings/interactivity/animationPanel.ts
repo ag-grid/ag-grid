@@ -1,4 +1,4 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 import { AgInputNumberFieldSelector, Component } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -9,7 +9,7 @@ import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 export class AnimationPanel extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

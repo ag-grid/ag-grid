@@ -1,10 +1,10 @@
 import type { AgColumn, IClientSideRowModel, RowNode } from 'ag-grid-community';
-import { AgPromise, BeanStub, _makeNull } from 'ag-grid-community';
+import { AgPromise, _BeanStub, _makeNull } from 'ag-grid-community';
 
 import { processDataPath } from './setFilterUtils';
 
 /** @param V type of value in the Set Filter */
-export class ClientSideValuesExtractor<V> extends BeanStub {
+export class ClientSideValuesExtractor<V> extends _BeanStub {
     constructor(
         private readonly createKey: (value: V | null | undefined, node?: RowNode) => string | null,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,

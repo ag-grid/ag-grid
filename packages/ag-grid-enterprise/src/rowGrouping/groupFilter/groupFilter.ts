@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    BeanCollection,
     ElementParams,
     FilterDisplayParams,
     FilterWrapperParams,
@@ -8,6 +7,7 @@ import type {
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
+    _BeanCollection,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -69,7 +69,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         super(GroupFilterElement);
     }
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.groupFilterSvc = beans.groupFilter as GroupFilterService;
     }
 

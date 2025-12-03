@@ -174,6 +174,7 @@ const OTHER_GRID_OPTIONS: GridOptionKey[] = ['theme', 'rowSelection'];
 // Used by Angular to support the user setting these
 // as plain HTML attributes and us correctly mapping that to true
 // These are all of type boolean | something else
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export const _BOOLEAN_MIXED_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'cellSelection',
     'sideBar',
@@ -409,6 +410,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
 // Vue Runtime prop changes
 // example generation
 // We define as a callback to help with tree shaking (esbuild)
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export const _GET_ALL_GRID_OPTIONS: () => GridOptionKey[] = () => [
     ...ARRAY_GRID_OPTIONS,
     ...OBJECT_GRID_OPTIONS,

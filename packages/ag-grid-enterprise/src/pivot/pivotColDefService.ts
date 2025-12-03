@@ -1,15 +1,15 @@
 import type {
     AgColumn,
-    BeanCollection,
     ColDef,
     ColGroupDef,
-    ColumnModel,
-    ColumnNameService,
     IColsService,
     IPivotColDefService,
-    NamedBean,
+    _BeanCollection,
+    _ColumnModel,
+    _ColumnNameService,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
@@ -37,15 +37,15 @@ const convertToHeaderNameComparator =
     (comparator: (valueA: string, valueB: string) => number) => (a: ColGroupDef | ColDef, b: ColGroupDef | ColDef) =>
         comparator(a.headerName!, b.headerName!);
 
-export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
+export class PivotColDefService extends _BeanStub implements _NamedBean, IPivotColDefService {
     beanName = 'pivotColDefSvc' as const;
 
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private pivotColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
-    private colNames: ColumnNameService;
+    private colNames: _ColumnNameService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
         this.pivotColsSvc = beans.pivotColsSvc;
         this.valueColsSvc = beans.valueColsSvc;

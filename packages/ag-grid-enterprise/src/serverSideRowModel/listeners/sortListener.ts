@@ -1,17 +1,23 @@
-import type { BeanCollection, NamedBean, SortModelItem, SortService, StoreRefreshAfterParams } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
+import type {
+    SortModelItem,
+    SortService,
+    StoreRefreshAfterParams,
+    _BeanCollection,
+    _NamedBean,
+} from 'ag-grid-community';
+import { _BeanStub, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ListenerUtils } from './listenerUtils';
 
-export class SortListener extends BeanStub implements NamedBean {
+export class SortListener extends _BeanStub implements _NamedBean {
     beanName = 'ssrmSortSvc' as const;
 
     private sortSvc: SortService;
     private serverSideRowModel: ServerSideRowModel;
     private listenerUtils: ListenerUtils;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.sortSvc = beans.sortSvc!;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.listenerUtils = beans.ssrmListenerUtils as ListenerUtils;

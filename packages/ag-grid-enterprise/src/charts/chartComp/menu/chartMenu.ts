@@ -1,8 +1,8 @@
 import type {
-    BeanCollection,
     ChartToolPanelMenuOptions,
     ChartToolbarMenuItemOptions,
     IconName,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { AgPromise, Component, _warn } from 'ag-grid-community';
 
@@ -27,7 +27,7 @@ export class ChartMenu extends Component {
     private chartMenuSvc: ChartMenuService;
     private chartMenuListFactory: ChartMenuListFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.chartMenuSvc = beans.chartMenuSvc as ChartMenuService;
         this.chartMenuListFactory = beans.chartMenuListFactory as ChartMenuListFactory;
     }

@@ -2,10 +2,10 @@ import type {
     AbstractColDef,
     AgColumn,
     AgProvidedColumnGroup,
-    BeanCollection,
-    ColumnModel,
-    ComponentSelector,
     FiltersToolPanelState,
+    _BeanCollection,
+    _ColumnModel,
+    _ComponentSelector,
 } from 'ag-grid-community';
 import {
     Component,
@@ -13,10 +13,10 @@ import {
     _clearElement,
     _exists,
     _getActiveDomElement,
+    _isProvidedColumnGroup,
     _mergeDeep,
     _setAriaLabel,
     _warn,
-    isProvidedColumnGroup,
 } from 'ag-grid-community';
 
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
@@ -28,9 +28,9 @@ import { ToolPanelFilterGroupComp } from './toolPanelFilterGroupComp';
 
 type AgFiltersToolPanelListEvent = 'filterExpanded' | 'groupExpanded';
 export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEvent> {
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
     }
 
@@ -171,7 +171,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
         return tree
             .map((child) => {
-                if (isProvidedColumnGroup(child)) {
+                if (_isProvidedColumnGroup(child)) {
                     return this.recursivelyAddFilterGroupComps(child, depth, expansionState)?.flatMap((a) => a) ?? [];
                 }
 
@@ -267,7 +267,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     private filtersExistInChildren(tree: (AgColumn | AgProvidedColumnGroup)[]): boolean {
         return tree.some((child) => {
-            if (isProvidedColumnGroup(child)) {
+            if (_isProvidedColumnGroup(child)) {
                 return this.filtersExistInChildren(child.getChildren());
             }
 
@@ -565,7 +565,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 }
 
-export const AgFiltersToolPanelListSelector: ComponentSelector = {
+export const AgFiltersToolPanelListSelector: _ComponentSelector = {
     selector: 'AG-FILTERS-TOOL-PANEL-LIST',
     component: AgFiltersToolPanelList,
 };

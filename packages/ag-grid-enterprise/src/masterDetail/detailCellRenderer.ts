@@ -1,6 +1,4 @@
 import type {
-    BeanCollection,
-    Context,
     ElementParams,
     GridApi,
     GridOptions,
@@ -8,6 +6,8 @@ import type {
     ICellRenderer,
     IDetailCellRenderer,
     IDetailCellRendererParams,
+    _BeanCollection,
+    _Context,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _getGridRegisteredModules, _missing, _warn, createGrid } from 'ag-grid-community';
 
@@ -27,9 +27,9 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private detailApi?: GridApi;
     private params: IDetailCellRendererParams;
     private ctrl?: DetailCellRendererCtrl;
-    private context: Context;
+    private context: _Context;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.context = beans.context;
     }
 

@@ -68,7 +68,7 @@ export type AgComponentSelector<
     component: { new (params?: any): TComponent };
     selector: TComponentSelectorType;
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isComponent<TBeanCollection>(item: any): item is AgBaseComponent<TBeanCollection> {
     return typeof (item as AgBaseComponent<TBeanCollection>)?.getGui === 'function';
 }

@@ -131,7 +131,7 @@ function _isDisplayedAfterFilterCSRM(node: RowNode): boolean {
     return false;
 }
 
-/** Expect to be passed the source node, not the pinned node */
+/** Expect to be passed the source node, not the pinned node * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _shouldHidePinnedRows(beans: BeanCollection, node: RowNode): boolean {
     const { gos, rowModel, filterManager } = beans;
 

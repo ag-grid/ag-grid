@@ -1,8 +1,8 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 
 import { s } from '../schemaBuilder';
 
-export const buildRowGroupFeatureSchema = (beans: BeanCollection) => {
+export const buildRowGroupFeatureSchema = (beans: _BeanCollection) => {
     const columns = beans.colModel.getCols();
     const groupableColumns = columns.filter((col) => col.isAllowRowGroup());
 

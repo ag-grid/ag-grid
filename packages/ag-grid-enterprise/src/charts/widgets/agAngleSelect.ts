@@ -1,14 +1,14 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
     AgLabelParams,
-    BeanCollection,
     DragListenerParams,
     DragService,
     GridInputNumberField,
     GridOptionsService,
     GridOptionsWithDefaults,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 import {
     AgAbstractLabel,
@@ -26,18 +26,18 @@ interface AgAngleSelectParams extends AgLabelParams {
 
 type AgAngleSelectEvent = 'fieldValueChanged';
 export class AgAngleSelect extends AgAbstractLabel<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     AgAngleSelectParams,
     AgAngleSelectEvent
 > {
     protected dragSvc?: DragService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.dragSvc = beans.dragSvc;
     }
 

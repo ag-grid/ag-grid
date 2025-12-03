@@ -18,7 +18,7 @@ export function getDebounceMs(params: IProvidedFilterParams, debounceDefault: nu
 
     return debounceMs ?? debounceDefault;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isUseApplyButton(params: FilterWrapperParams): boolean {
     return (params.buttons?.indexOf('apply') ?? -1) >= 0;
 }

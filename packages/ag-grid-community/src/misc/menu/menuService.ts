@@ -187,7 +187,7 @@ export class MenuService extends BeanStub implements NamedBean {
         }
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setColMenuVisible(column: AgColumn, visible: boolean, source: ColumnEventType): void {
     if (column.menuVisible !== visible) {
         column.menuVisible = visible;

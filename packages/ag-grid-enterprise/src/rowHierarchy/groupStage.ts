@@ -2,17 +2,17 @@ import type {
     ClientSideRowModelStage,
     GridOptions,
     IClientSideRowModel,
-    NamedBean,
     NestedDataGetter,
     RefreshModelParams,
     RowNode,
     _IRowNodeGroupStage,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 
-export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeGroupStage {
+export class GroupStage<TData> extends _BeanStub implements _NamedBean, _IRowNodeGroupStage {
     beanName = 'groupStage' as const;
 
     public step: ClientSideRowModelStage = 'group';

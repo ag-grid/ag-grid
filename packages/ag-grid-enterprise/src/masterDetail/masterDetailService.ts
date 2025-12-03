@@ -1,16 +1,16 @@
 import type {
-    BeanName,
     DetailGridInfo,
     IMasterDetailService,
-    NamedBean,
     RefreshModelParams,
     RowCtrl,
     RowNodeDataChangedEvent,
+    _BeanName,
     _ChangedRowNodes,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     RowNode,
+    _BeanStub,
     _exists,
     _getClientSideRowModel,
     _isClientSideRowModel,
@@ -20,8 +20,8 @@ import {
 
 import { _getRowDefaultExpanded } from '../rowHierarchy/rowHierarchyUtils';
 
-export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
-    beanName: BeanName = 'masterDetailSvc' as const;
+export class MasterDetailService extends _BeanStub implements _NamedBean, IMasterDetailService {
+    beanName: _BeanName = 'masterDetailSvc' as const;
 
     public store: { [id: string]: DetailGridInfo | undefined } = {};
     private enabled: boolean;

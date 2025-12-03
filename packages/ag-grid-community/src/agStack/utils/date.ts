@@ -9,7 +9,7 @@ const DATE_TIME_SEPARATOR_REGEXP = new RegExp(`[${DATE_TIME_SEPARATOR} ]`);
  */
 const DATE_TIME_REGEXP = new RegExp(`^\\d{4}-\\d{2}-\\d{2}(${DATE_TIME_SEPARATOR}\\d{2}:\\d{2}:\\d{2}\\D?)?`);
 
-function _padStartWidthZeros(value: number, totalStringSize: number): string {
+function padStartWidthZeros(value: number, totalStringSize: number): string {
     return value.toString().padStart(totalStringSize, '0');
 }
 
@@ -19,22 +19,23 @@ function _padStartWidthZeros(value: number, totalStringSize: number): string {
  * @param date The date to serialise
  * @param includeTime Whether to include the time in the serialised string
  * @param separator The separator to use between date and time parts (default 'T')
+ *
+ * @AG_Grid_Internal Not for general use, may change without warning.
  */
-
 export function _serialiseDate(date: Date | null, includeTime = true, separator = DATE_TIME_SEPARATOR): string | null {
     if (!date) {
         return null;
     }
 
     let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()]
-        .map((part) => _padStartWidthZeros(part, 2))
+        .map((part) => padStartWidthZeros(part, 2))
         .join('-');
 
     if (includeTime) {
         serialised +=
             separator +
             [date.getHours(), date.getMinutes(), date.getSeconds()]
-                .map((part) => _padStartWidthZeros(part, 2))
+                .map((part) => padStartWidthZeros(part, 2))
                 .join(':');
     }
 
@@ -46,6 +47,8 @@ export function _serialiseDate(date: Date | null, includeTime = true, separator 
  * @param d The date to get the parts from
  * @param includeTime Whether to include the time in the returned array
  * @returns The date parts as an array of strings or null if the date is null or undefined
+ *
+ * @AG_Grid_Internal Not for general use, may change without warning.
  */
 export function _getDateParts(d: Date | null | undefined, includeTime: boolean = true): null | string[] {
     if (!d) {
@@ -56,14 +59,14 @@ export function _getDateParts(d: Date | null | undefined, includeTime: boolean =
         return [
             String(d.getFullYear()),
             String(d.getMonth() + 1),
-            _padStartWidthZeros(d.getDate(), 2),
-            _padStartWidthZeros(d.getHours(), 2),
-            `:${_padStartWidthZeros(d.getMinutes(), 2)}`,
-            `:${_padStartWidthZeros(d.getSeconds(), 2)}`,
+            padStartWidthZeros(d.getDate(), 2),
+            padStartWidthZeros(d.getHours(), 2),
+            `:${padStartWidthZeros(d.getMinutes(), 2)}`,
+            `:${padStartWidthZeros(d.getSeconds(), 2)}`,
         ];
     }
 
-    return [d.getFullYear(), d.getMonth() + 1, _padStartWidthZeros(d.getDate(), 2)].map(String);
+    return [d.getFullYear(), d.getMonth() + 1, padStartWidthZeros(d.getDate(), 2)].map(String);
 }
 
 const calculateOrdinal = (value: number) => {
@@ -82,6 +85,7 @@ const calculateOrdinal = (value: number) => {
     return 'th';
 };
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export const MONTHS = [
     'January',
     'February',
@@ -97,19 +101,21 @@ export const MONTHS = [
     'December',
 ];
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 /**
  * Serialises a Date to a string of format the defined format, does not include time.
  * @param date The date to serialise
  * @param format The string to format the date to, defaults to YYYY-MM-DD
- */
+ *
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _dateToFormattedString(date: Date, format?: string): string {
     if (format == null) {
         // returns YYYY-MM-DD, but is more efficient
         return _serialiseDate(date, false)!;
     }
-    const fullYear = _padStartWidthZeros(date.getFullYear(), 4);
+    const fullYear = padStartWidthZeros(date.getFullYear(), 4);
 
     const replace: { [key: string]: () => string } = {
         YYYY: () => fullYear.slice(fullYear.length - 4, fullYear.length),
@@ -117,11 +123,11 @@ export function _dateToFormattedString(date: Date, format?: string): string {
         Y: () => `${date.getFullYear()}`,
         MMMM: () => MONTHS[date.getMonth()],
         MMM: () => MONTHS[date.getMonth()].slice(0, 3),
-        MM: () => _padStartWidthZeros(date.getMonth() + 1, 2),
+        MM: () => padStartWidthZeros(date.getMonth() + 1, 2),
         Mo: () => `${date.getMonth() + 1}${calculateOrdinal(date.getMonth() + 1)}`,
         M: () => `${date.getMonth() + 1}`,
         Do: () => `${date.getDate()}${calculateOrdinal(date.getDate())}`,
-        DD: () => _padStartWidthZeros(date.getDate(), 2),
+        DD: () => padStartWidthZeros(date.getDate(), 2),
         D: () => `${date.getDate()}`,
         dddd: () => DAYS[date.getDay()],
         ddd: () => DAYS[date.getDay()].slice(0, 3),
@@ -140,12 +146,13 @@ export function _dateToFormattedString(date: Date, format?: string): string {
 
 /**
  * Helper function to check if a date is valid. Use isValidDateTime() to check if a date is valid and has time parts.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isValidDate(value?: string | null, bailIfInvalidTime = false): boolean {
     return !!_parseDateTimeFromString(value, bailIfInvalidTime);
 }
 
 // check if dateTime is a valid date and has time parts
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isValidDateTime(value?: string | null): boolean {
     return _isValidDate(value, true);
 }
@@ -157,7 +164,7 @@ export function _isValidDateTime(value?: string | null): boolean {
  * Per MDN:
  *   When the time zone offset is absent, **date-only** forms are interpreted as a UTC time and **date-time** forms are interpreted as a local time.
  *   The interpretation as a UTC time is due to a historical spec error that was not consistent with ISO 8601 but could not be changed due to web compatibility.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _parseDateTimeFromString(
     value?: string | null,
     bailIfInvalidTime = false,

@@ -5,13 +5,13 @@ import type {
     FilterHandlerParams,
     IFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { _BeanStub, _warn } from 'ag-grid-community';
 
 import type { GroupFilterService } from './groupFilterService';
 
 type GroupFilterHandlerEventType = 'sourceColumnsChanged' | 'selectedColumnChanged' | 'destroyed';
 export class GroupFilterHandler
-    extends BeanStub<GroupFilterHandlerEventType>
+    extends _BeanStub<GroupFilterHandlerEventType>
     implements FilterHandler<any, any, null, IFilterParams>
 {
     private params: FilterHandlerParams<any, any, null, IFilterParams<any, any>>;

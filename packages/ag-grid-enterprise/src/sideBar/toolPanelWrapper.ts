@@ -1,25 +1,25 @@
 import type {
-    ComponentType,
     ElementParams,
     IToolPanelComp,
     IToolPanelParams,
     ToolPanelDef,
-    UserCompDetails,
-    UserComponentFactory,
+    _ComponentType,
+    _UserCompDetails,
+    _UserComponentFactory,
 } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
 function getToolPanelCompDetails(
-    userCompFactory: UserComponentFactory,
+    userCompFactory: _UserComponentFactory,
     toolPanelDef: ToolPanelDef,
     params: IToolPanelParams
-): UserCompDetails<IToolPanelComp> | undefined {
+): _UserCompDetails<IToolPanelComp> | undefined {
     return userCompFactory.getCompDetails(toolPanelDef, ToolPanelComponent, undefined, params, true);
 }
 
-const ToolPanelComponent: ComponentType = {
+const ToolPanelComponent: _ComponentType = {
     name: 'toolPanel',
     optionalMethods: ['refresh', 'getState'],
 };

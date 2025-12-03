@@ -3,7 +3,9 @@ import { _requestAnimationFrame } from './dom';
 
 const doOnceSet = new Set<string>();
 
-/** If the key was passed before, then doesn't execute the func */
+/** If the key was passed before, then doesn't execute the func
+ * @AG_Grid_Internal Not for general use, may change without warning.
+ */
 export const _doOnce = (func: () => void, key: string) => {
     if (!doOnceSet.has(key)) {
         doOnceSet.add(key);
@@ -31,6 +33,7 @@ const batchedCallsRaf: BatchedCalls = {
 /*
  * Batch calls to execute after the next macro task (mode = setTimeout) / or in the next requestAnimationFrame.
  * @param {Function} func The function to be batched
+ * @AG_Grid_Internal Not for general use, may change without warning.
  */
 export function _batchCall(func: () => void): void;
 export function _batchCall(func: () => void, mode: 'raf', beans: UtilBeanCollection): void;
@@ -69,7 +72,7 @@ export function _batchCall(
  * @param {Function} func The function to be debounced
  * @param {number} delay The time in ms to debounce
  * @returns {Function} The debounced function
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _debounce<TArgs extends any[], TContext>(
     bean: { isAlive(): boolean },
     func: (this: TContext, ...args: TArgs) => void,
@@ -97,7 +100,7 @@ export function _debounce<TArgs extends any[], TContext>(
  * @param {Function} func The function to be throttled
  * @param {number} wait The time in ms to throttle
  * @returns {Function} The throttled function
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _throttle(func: (...args: any[]) => void, wait: number): (...args: any[]) => void {
     let previousCall = 0;
 
@@ -115,7 +118,7 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
         func.apply(context, args);
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _waitUntil(
     bean: { addDestroyFunc(func: () => void): void },
     condition: () => boolean,

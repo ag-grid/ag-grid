@@ -1,13 +1,13 @@
 import { _STOP_PROPAGATION_CALLBACKS } from 'ag-grid-community';
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     Component,
-    ComponentEvent,
     GridOptionsService,
     GridOptionsWithDefaults,
+    _AgComponentSelectorType,
+    _BeanCollection,
+    _ComponentEvent,
 } from 'ag-grid-community';
 
 import type { VirtualListParams } from '../agStack/agVirtualList';
@@ -16,14 +16,14 @@ import { AgVirtualList } from '../agStack/agVirtualList';
 export class VirtualList<
     C extends Component<any> = Component<any>,
     V = any,
-    TEventType extends string = ComponentEvent,
+    TEventType extends string = _ComponentEvent,
 > extends AgVirtualList<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     C,
     V,
     TEventType

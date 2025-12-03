@@ -17,7 +17,7 @@ import type {
     MultiFilterParams,
     ProvidedFilterModel,
     RowNode,
-    UserCompDetails,
+    _UserCompDetails,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -399,7 +399,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
         displayParams: FilterDisplayParams,
         index: number,
         initialModelForFilter: any,
-        getCompDetails: () => UserCompDetails | null,
+        getCompDetails: () => _UserCompDetails | null,
         getHandler: () => FilterHandler,
         onModelChange: (model: any, additionalEventAttributes?: any) => void
     ): (filter: IFilterComp<any> | null) => FilterWrapperComp {

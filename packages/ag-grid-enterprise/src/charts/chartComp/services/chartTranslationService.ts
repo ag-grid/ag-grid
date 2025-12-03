@@ -1,5 +1,5 @@
-import type { NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { _NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 export type ChartTranslationKey = keyof typeof DEFAULT_CHART_TRANSLATIONS;
 
@@ -294,7 +294,7 @@ const DEFAULT_CHART_TRANSLATIONS = {
     avg: 'Average',
 };
 
-export class ChartTranslationService extends BeanStub implements NamedBean {
+export class ChartTranslationService extends _BeanStub implements _NamedBean {
     beanName = 'chartTranslation' as const;
 
     public translate(toTranslate: ChartTranslationKey): string {

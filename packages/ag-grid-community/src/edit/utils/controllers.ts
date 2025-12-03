@@ -26,7 +26,7 @@ type ResolveCellControllerType = {
 };
 
 type ResolveControllerType = ResolveRowControllerType & ResolveCellControllerType;
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerType = {}): RowCtrl | undefined {
     const { rowIndex, rowId, rowCtrl, rowPinned } = inputs;
 
@@ -47,7 +47,7 @@ export function _getRowCtrl(beans: BeanCollection, inputs: ResolveRowControllerT
 
     return rowRenderer.getRowCtrls(rowNode ? [rowNode] : [])?.[0];
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getCellCtrl(beans: BeanCollection, inputs: ResolveControllerType = {}): CellCtrl | undefined {
     const { cellCtrl, colId, columnId, column } = inputs;
 
@@ -86,7 +86,7 @@ function _stopEditing(beans: BeanCollection): void {
         editSvc?.stopEditing(undefined, { source: 'api' });
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addStopEditingWhenGridLosesFocus(
     bean: BeanStub,
     beans: BeanCollection,
@@ -129,7 +129,7 @@ export function _addStopEditingWhenGridLosesFocus(
         bean.addManagedElementListeners(viewport, { focusout: focusOutListener });
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getColId(column?: Column | string | null): string | undefined {
     if (!column) {
         return undefined;

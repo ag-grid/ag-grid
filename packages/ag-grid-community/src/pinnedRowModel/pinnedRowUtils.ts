@@ -2,13 +2,13 @@ import type { RowNode } from '../entities/rowNode';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
-/** Whether the given node is pinned manually to the top or bottom container */
+/** Whether the given node is pinned manually to the top or bottom container * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isManualPinnedRow(rowNode: RowNode): boolean {
     // `rowPinned` is only truthy for rows actually in the pinned containers.
     // `pinnedSibling` is only defined when the row has been pinned manually.
     return !!(rowNode.rowPinned && rowNode.pinnedSibling);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getNodesInRangeForSelection(
     rowModel: IPinnedRowModel,
     float: NonNullable<RowPinnedType>,

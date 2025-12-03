@@ -1,5 +1,5 @@
 import type { AgEvent } from 'ag-grid-community';
-import { BeanStub, DragSourceType } from 'ag-grid-community';
+import { DragSourceType, _BeanStub } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../../features/virtualListDragFeature';
@@ -13,7 +13,7 @@ export interface AdvancedFilterBuilderDragStartedEvent extends AgEvent<'advanced
 }
 
 type AdvancedFilterBuilderDragFeatureEvent = 'advancedFilterBuilderDragStarted' | 'advancedFilterBuilderDragEnded';
-export class AdvancedFilterBuilderDragFeature extends BeanStub<AdvancedFilterBuilderDragFeatureEvent> {
+export class AdvancedFilterBuilderDragFeature extends _BeanStub<AdvancedFilterBuilderDragFeatureEvent> {
     constructor(
         private readonly comp: AdvancedFilterBuilderComp,
         private readonly virtualList: VirtualList

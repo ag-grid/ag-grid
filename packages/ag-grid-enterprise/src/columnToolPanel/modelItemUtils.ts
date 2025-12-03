@@ -1,10 +1,10 @@
-import type { AgColumn, BeanCollection, ColumnEventType, ColumnState, IAggFunc } from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, ColumnState, IAggFunc, _BeanCollection } from 'ag-grid-community';
 import { _applyColumnState } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
 
 export function selectAllChildren(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     colTree: ColumnModelItem[],
     selectAllChecked: boolean,
     eventType: ColumnEventType
@@ -14,7 +14,7 @@ export function selectAllChildren(
 }
 
 export function setAllColumns(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     cols: AgColumn[],
     selectAllChecked: boolean,
     eventType: ColumnEventType
@@ -47,7 +47,12 @@ function extractAllLeafColumns(allItems: ColumnModelItem[]): AgColumn[] {
     return res;
 }
 
-function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: boolean, eventType: ColumnEventType): void {
+function setAllVisible(
+    beans: _BeanCollection,
+    columns: AgColumn[],
+    visible: boolean,
+    eventType: ColumnEventType
+): void {
     const colStateItems: ColumnState[] = [];
 
     for (const col of columns) {
@@ -67,12 +72,12 @@ function setAllVisible(beans: BeanCollection, columns: AgColumn[], visible: bool
     }
 }
 
-function setAllPivot(beans: BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
+function setAllPivot(beans: _BeanCollection, columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
     setAllPivotActive(beans, columns, value, eventType);
 }
 
 function setAllPivotActive(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     columns: AgColumn[],
     value: boolean,
     eventType: ColumnEventType
@@ -127,7 +132,7 @@ function setAllPivotActive(
 }
 
 export function updateColumns(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     params: {
         columns: AgColumn[];
         visibleState?: { [key: string]: boolean };

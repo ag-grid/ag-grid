@@ -22,7 +22,7 @@ function _iterateObject<T>(
         callback(key, object[key]);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
     if (!_exists(source)) {
         return;

@@ -6,12 +6,12 @@ import type {
     IColsService,
     LocaleTextFunc,
     MenuItemDef,
-    NamedBean,
     RowNode,
     SortDef,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _createIconNoSpan,
     _exists,
     _getRowNode,
@@ -65,7 +65,7 @@ const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
     },
 };
 
-export class MenuItemMapper extends BeanStub implements NamedBean {
+export class MenuItemMapper extends _BeanStub implements _NamedBean {
     beanName = 'menuItemMapper' as const;
 
     public mapWithStockItems(

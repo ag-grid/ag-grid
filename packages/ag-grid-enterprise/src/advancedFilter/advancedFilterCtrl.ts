@@ -1,5 +1,5 @@
-import type { BeanCollection, CtrlsService, Environment, IAdvancedFilterCtrl, PopupService } from 'ag-grid-community';
-import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from 'ag-grid-community';
+import type { CtrlsService, Environment, IAdvancedFilterCtrl, PopupService, _BeanCollection } from 'ag-grid-community';
+import { _BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from 'ag-grid-community';
 
 import { Dialog } from '../widgets/dialog';
 import { AdvancedFilterComp } from './advancedFilterComp';
@@ -8,13 +8,13 @@ import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
 type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
-export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
+export class AdvancedFilterCtrl extends _BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
     private ctrlsSvc: CtrlsService;
     private popupSvc: PopupService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
     private environment: Environment;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.popupSvc = beans.popupSvc!;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;

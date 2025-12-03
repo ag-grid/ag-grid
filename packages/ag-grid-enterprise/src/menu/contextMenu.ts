@@ -1,9 +1,7 @@
 import type {
     AgColumn,
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     CellCtrl,
     CellPosition,
     DefaultMenuItem,
@@ -14,14 +12,16 @@ import type {
     IMenuActionParams,
     MenuItemDef,
     MouseShowContextMenuParams,
-    NamedBean,
     RowCtrl,
     RowNode,
     TouchShowContextMenuParam,
     WithoutGridCommon,
+    _AgComponentSelectorType,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _addGridCommonParams,
     _attemptToRestoreCellFocus,
     _exists,
@@ -36,16 +36,16 @@ import type { MenuUtils } from './menuUtils';
 
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
+export class ContextMenuService extends _BeanStub implements _NamedBean, IContextMenuService {
     beanName = 'contextMenuSvc' as const;
 
     private menu: AgContextMenuService<
-        BeanCollection,
+        _BeanCollection,
         GridOptionsWithDefaults,
         AgEventTypeParams,
         AgGridCommon<any, any>,
         GridOptionsService,
-        AgComponentSelectorType,
+        _AgComponentSelectorType,
         IMenuActionParams,
         DefaultMenuItem
     >;
@@ -55,12 +55,12 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     postConstruct(): void {
         this.menu = this.createManagedBean(
             new AgContextMenuService<
-                BeanCollection,
+                _BeanCollection,
                 GridOptionsWithDefaults,
                 AgEventTypeParams,
                 AgGridCommon<any, any>,
                 GridOptionsService,
-                AgComponentSelectorType,
+                _AgComponentSelectorType,
                 IMenuActionParams,
                 DefaultMenuItem
             >({

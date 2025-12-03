@@ -1,7 +1,7 @@
-import type { AgColumn, ColumnEventType, IGroupFilterService, NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { AgColumn, ColumnEventType, IGroupFilterService, _NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
-export class GroupFilterService extends BeanStub implements NamedBean, IGroupFilterService {
+export class GroupFilterService extends _BeanStub implements _NamedBean, IGroupFilterService {
     readonly beanName = 'groupFilter' as const;
 
     public postConstruct(): void {

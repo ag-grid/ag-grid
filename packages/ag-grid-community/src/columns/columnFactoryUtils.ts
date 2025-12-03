@@ -24,7 +24,7 @@ const depthFirstCallback = (child: AgColumn | AgProvidedColumnGroup, parent: AgP
 /**
  * A performant approach to _createColumnTree where the function assumes all defs have an ID.
  * Used for Pivoting.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createColumnTreeWithIds(
     beans: BeanCollection,
     defs: (ColDef | ColGroupDef)[] | null | undefined = null,
@@ -91,7 +91,7 @@ export function _createColumnTreeWithIds(
         treeDepth: maxDepth,
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createColumnTree(
     beans: BeanCollection,
     defs: (ColDef | ColGroupDef)[] | null | undefined = null,
@@ -156,7 +156,7 @@ function extractExistingTreeData(existingTree?: (AgColumn | AgProvidedColumnGrou
 
     return { existingCols, existingGroups, existingColKeys };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _recursivelyCreateColumns(
     beans: BeanCollection,
     defs: (ColDef | ColGroupDef)[] | null,
@@ -266,7 +266,7 @@ export function updateSomeColumnState(
         colFlex?.setColFlex(column, flex);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _updateColumnState(
     beans: BeanCollection,
     column: AgColumn,
@@ -338,7 +338,7 @@ function findExistingColumn(
     }
     return undefined;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addColumnDefaultAndTypes(
     beans: BeanCollection,
     colDef: ColDef,

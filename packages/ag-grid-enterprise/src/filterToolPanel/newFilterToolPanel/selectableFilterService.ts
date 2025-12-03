@@ -2,13 +2,13 @@ import type {
     AgColumn,
     IFilterDef,
     ISelectableFilterService,
-    NamedBean,
     SelectableFilterDef,
     SelectableFilterParams,
     ValueGetterFunc,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _addGridCommonParams,
     _getDefaultSimpleFilter,
     _getFilterParamsForDataType,
@@ -23,8 +23,8 @@ type SimpleFilterType = 'agTextColumnFilter' | 'agNumberColumnFilter' | 'agDateC
 type ProvidedFilterType = SimpleFilterType | 'agSetColumnFilter' | 'agMultiColumnFilter';
 
 export class SelectableFilterService
-    extends BeanStub<'selectedFilterChanged'>
-    implements ISelectableFilterService, NamedBean
+    extends _BeanStub<'selectedFilterChanged'>
+    implements ISelectableFilterService, _NamedBean
 {
     readonly beanName = 'selectableFilter' as const;
 

@@ -1,11 +1,11 @@
-import type { ColumnModel, DataTypeService, IRowNode, ValueService } from 'ag-grid-community';
+import type { DataTypeService, IRowNode, ValueService, _ColumnModel } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 
 export interface FilterExpressionParserParams {
     expression: string;
-    colModel: ColumnModel;
+    colModel: _ColumnModel;
     dataTypeSvc?: DataTypeService;
     valueSvc: ValueService;
     advFilterExpSvc: AdvancedFilterExpressionService;

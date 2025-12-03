@@ -1,5 +1,5 @@
-import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _findNextFocusableElement } from 'ag-grid-community';
+import type { AgColumn, ColumnChooserParams, HeaderPosition, _NamedBean } from 'ag-grid-community';
+import { _BeanStub, _addGridCommonParams, _findNextFocusableElement } from 'ag-grid-community';
 
 import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
 import { Dialog } from '../widgets/dialog';
@@ -12,14 +12,14 @@ interface ShowColumnChooserParams {
     headerPosition?: HeaderPosition | null;
 }
 
-export class ColumnChooserFactory extends BeanStub implements NamedBean {
+export class ColumnChooserFactory extends _BeanStub implements _NamedBean {
     beanName = 'colChooserFactory' as const;
 
     private activeColumnChooser: AgPrimaryCols | undefined;
     private activeColumnChooserDialog: Dialog | undefined;
 
     public createColumnSelectPanel(
-        parent: BeanStub<any>,
+        parent: _BeanStub<any>,
         column?: AgColumn | null,
         draggable?: boolean,
         params?: ColumnChooserParams

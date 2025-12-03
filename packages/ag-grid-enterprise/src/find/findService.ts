@@ -10,20 +10,20 @@ import type {
     IClientSideRowModel,
     IFindService,
     IRowNode,
-    NamedBean,
     RowNode,
     RowPinnedType,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _addGridCommonParams,
     _debounce,
     _isClientSideRowModel,
     _isFullWidthGroupRow,
+    _isSpecialCol,
     _jsonEquals,
     _missing,
     _toString,
-    isSpecialCol,
 } from 'ag-grid-community';
 
 import {
@@ -76,7 +76,7 @@ type Matches = Map<IRowNode, CellMatch[]>;
 /** column and corresponding number of matches in the cell for that column. `null` column is full width. */
 type CellMatch = [Column | null, number];
 
-export class FindService extends BeanStub implements NamedBean, IFindService {
+export class FindService extends _BeanStub implements _NamedBean, IFindService {
     beanName = 'findSvc' as const;
 
     /**
@@ -473,7 +473,7 @@ export class FindService extends BeanStub implements NamedBean, IFindService {
                 node.parent?.getFirstChild() === node &&
                 !node.parent?.expanded;
             for (const column of allCols) {
-                if (isSpecialCol(column)) {
+                if (_isSpecialCol(column)) {
                     continue;
                 }
                 const cellSpan = rowSpanSvc?.getCellSpan(column, node);

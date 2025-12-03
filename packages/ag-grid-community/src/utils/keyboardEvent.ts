@@ -12,7 +12,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
  * @param {Column} column
  * @param {boolean} editing
  * @returns {boolean}
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isUserSuppressingKeyboardEvent(
     gos: GridOptionsService,
     keyboardEvent: KeyboardEvent,

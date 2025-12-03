@@ -1,14 +1,15 @@
 import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import { _exists } from './generic';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRootNode(beans: UtilBeanCollection): Document | ShadowRoot {
     return beans.eRootDiv.getRootNode() as Document | ShadowRoot;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getActiveDomElement(beans: UtilBeanCollection): Element | null {
     return _getRootNode(beans).activeElement;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getDocument(beans: UtilBeanCollection): Document {
     // if user is providing document, we use the users one,
     // otherwise we use the document on the global namespace.
@@ -27,18 +28,18 @@ export function _getDocument(beans: UtilBeanCollection): Document {
 
     return document;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isNothingFocused(beans: UtilBeanCollection): boolean {
     const activeEl = _getActiveDomElement(beans);
 
     return activeEl === null || activeEl === _getDocument(beans).body;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getWindow(beans: UtilBeanCollection) {
     const eDocument = _getDocument(beans);
     return eDocument.defaultView || window;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoot {
     let rootNode: Document | ShadowRoot | HTMLElement | null = null;
     let targetEl: HTMLElement | ShadowRoot | null = null;
@@ -66,12 +67,12 @@ export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoo
 
     return targetEl;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getBodyWidth(beans: UtilBeanCollection): number {
     const body = _getPageBody(beans) as HTMLElement;
     return body?.clientWidth ?? (window.innerWidth || -1);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getBodyHeight(beans: UtilBeanCollection): number {
     const body = _getPageBody(beans) as HTMLElement;
     return body?.clientHeight ?? (window.innerHeight || -1);

@@ -1,7 +1,7 @@
 import type { RowCtrl, RowGroupOpenedEvent, RowNode } from 'ag-grid-community';
-import { BeanStub, _createGlobalRowEvent, _setAriaExpanded } from 'ag-grid-community';
+import { _BeanStub, _createGlobalRowEvent, _setAriaExpanded } from 'ag-grid-community';
 
-export abstract class BaseExpansionService extends BeanStub {
+export abstract class BaseExpansionService extends _BeanStub {
     protected abstract dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void;
 
     public addExpandedCss(classes: string[], rowNode: RowNode): void {

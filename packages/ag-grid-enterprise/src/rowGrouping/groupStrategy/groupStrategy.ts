@@ -6,7 +6,7 @@ import type {
     RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _csrmFirstLeaf, _warn } from 'ag-grid-community';
+import { RowNode, _BeanStub, _csrmFirstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
@@ -15,7 +15,7 @@ import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
 import { sortGroupChildren } from './sortGroupChildren';
 
-export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
+export class GroupStrategy extends _BeanStub implements IRowGroupingStrategy {
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
     // rowNode.childrenAfterGroup: RowNode[] = the direct children of this group

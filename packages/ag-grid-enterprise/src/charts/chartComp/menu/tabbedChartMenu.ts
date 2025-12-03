@@ -1,4 +1,4 @@
-import type { BeanCollection, ChartToolPanelMenuOptions } from 'ag-grid-community';
+import type { ChartToolPanelMenuOptions, _BeanCollection } from 'ag-grid-community';
 import { AgPromise, Component, _createElement } from 'ag-grid-community';
 
 import { AgTabbedLayout } from '../../../agStack/agTabbedLayout';
@@ -16,7 +16,7 @@ type TabbedChartMenuEvent = 'closed';
 export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

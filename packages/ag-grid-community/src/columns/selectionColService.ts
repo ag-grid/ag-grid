@@ -18,8 +18,8 @@ import {
     _convertColumnEventSourceType,
     _destroyColumnTree,
     _getColumnStateFromColDef,
+    _isColumnSelectionCol,
     _updateColsMap,
-    isColumnSelectionCol,
 } from './columnUtils';
 
 export class SelectionColService extends BeanStub implements NamedBean, IColumnCollectionService {
@@ -85,7 +85,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
                 return null;
             }
             // we use colId, and not instance, to remove old selectionCols
-            const colsFiltered = cols.filter((col) => !isColumnSelectionCol(col));
+            const colsFiltered = cols.filter((col) => !_isColumnSelectionCol(col));
             return [...list, ...colsFiltered];
         };
 

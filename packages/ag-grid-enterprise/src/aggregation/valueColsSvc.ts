@@ -6,11 +6,11 @@ import type {
     ColumnStateParams,
     IAggFunc,
     IColsService,
-    NamedBean,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-community';
+import { _BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-community';
 
-export class ValueColsSvc extends BaseColsService implements NamedBean, IColsService {
+export class ValueColsSvc extends _BaseColsService implements _NamedBean, IColsService {
     beanName = 'valueColsSvc' as const;
     eventName = 'columnValueChanged' as const;
 

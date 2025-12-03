@@ -1,8 +1,8 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 
 import { s } from '../schemaBuilder';
 
-export const buildPivotFeatureSchema = (beans: BeanCollection) => {
+export const buildPivotFeatureSchema = (beans: _BeanCollection) => {
     const columns = beans.colModel.getCols();
     const pivotableColumnIds = columns.filter((col) => col.isAllowPivot()).map((col) => col.getColId());
 

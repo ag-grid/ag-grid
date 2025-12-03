@@ -2,19 +2,19 @@ import type {
     AbstractColDef,
     AgColumn,
     AgProvidedColumnGroup,
-    BeanCollection,
     ColDef,
     ColGroupDef,
     ColKey,
     ColumnEventType,
-    ColumnModel,
-    IPivotResultColsService,
-    NamedBean,
-    VisibleColsService,
+    _BeanCollection,
     _ColumnCollections,
+    _ColumnModel,
+    _IPivotResultColsService,
+    _NamedBean,
+    _VisibleColsService,
 } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _areEqual,
     _createColumnTree,
     _createColumnTreeWithIds,
@@ -23,13 +23,13 @@ import {
     _getColumnsFromTree,
 } from 'ag-grid-community';
 
-export class PivotResultColsService extends BeanStub implements NamedBean, IPivotResultColsService {
+export class PivotResultColsService extends _BeanStub implements _NamedBean, _IPivotResultColsService {
     beanName = 'pivotResultCols' as const;
 
-    private colModel: ColumnModel;
-    private visibleCols: VisibleColsService;
+    private colModel: _ColumnModel;
+    private visibleCols: _VisibleColsService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
     }

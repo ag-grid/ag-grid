@@ -1,7 +1,7 @@
 import { _removeFromArray } from '../agStack/utils/array';
 import { _getInnerWidth } from '../agStack/utils/dom';
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
-import { _columnsMatch, getWidthOfColsInList, isRowNumberCol, isSpecialCol } from '../columns/columnUtils';
+import { _columnsMatch, _isRowNumberCol, _isSpecialCol, getWidthOfColsInList } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -85,7 +85,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // We exclude all pinned columns here, we only want columns in the main viewport to be scaled up
             const colKeys = params.colKeys.filter((col) => {
                 const allowAutoSize = !colModel.getCol(col)?.getColDef().suppressAutoSize;
-                return allowAutoSize && !isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
+                return allowAutoSize && !_isRowNumberCol(col) && !isLeftCol(col) && !isRightCol(col);
             });
 
             this.sizeColumnsToFit(availableGridWidth, params.source, true, {
@@ -169,7 +169,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 const updatedColumns: AgColumn[] = [];
 
                 for (const key of colKeys) {
-                    if (!key || isSpecialCol(key)) {
+                    if (!key || _isSpecialCol(key)) {
                         continue;
                     }
                     const column = colModel.getCol(key);

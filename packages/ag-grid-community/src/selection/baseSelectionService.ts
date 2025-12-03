@@ -1,6 +1,6 @@
 import { _setAriaSelected } from '../agStack/utils/aria';
 import { _getActiveDomElement } from '../agStack/utils/document';
-import { isColumnSelectionCol } from '../columns/columnUtils';
+import { _isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IsRowSelectable } from '../entities/gridOptions';
@@ -251,7 +251,7 @@ export abstract class BaseSelectionService extends BeanStub {
         const so = this.gos.get('rowSelection');
 
         if (so && typeof so !== 'string') {
-            const checkbox = isColumnSelectionCol(column) && _getCheckboxes(so);
+            const checkbox = _isColumnSelectionCol(column) && _getCheckboxes(so);
             return column.isColumnFunc(rowNode, checkbox);
         } else {
             return column.isColumnFunc(rowNode, column.colDef.checkboxSelection);

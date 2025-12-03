@@ -1,11 +1,11 @@
 import type { ChartType, Component } from 'ag-grid-community';
-import { BeanStub, _removeFromParent } from 'ag-grid-community';
+import { _BeanStub, _removeFromParent } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 
-export class ChartPanelFeature extends BeanStub {
+export class ChartPanelFeature extends _BeanStub {
     private chartType: ChartType;
     private isGrouping: boolean;
     private panels: Component[] = [];

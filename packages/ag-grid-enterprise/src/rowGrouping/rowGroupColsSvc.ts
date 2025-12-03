@@ -5,11 +5,11 @@ import type {
     ColumnEventType,
     ColumnStateParams,
     IColsService,
-    NamedBean,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
+import { _BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
-export class RowGroupColsSvc extends BaseColsService implements NamedBean, IColsService {
+export class RowGroupColsSvc extends _BaseColsService implements _NamedBean, IColsService {
     beanName = 'rowGroupColsSvc' as const;
     eventName = 'columnRowGroupChanged' as const;
 

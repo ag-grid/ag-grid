@@ -1,10 +1,10 @@
 import type {
-    BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
     ITooltipCtrl,
-    Registry,
     TooltipFeature,
+    _BeanCollection,
+    _Registry,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _setAriaLabel, _setAriaLevel } from 'ag-grid-community';
 
@@ -46,9 +46,9 @@ const ItemAddElement: ElementParams = {
 };
 export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBuilderEvents> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
-    private registry: Registry;
+    private registry: _Registry;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
         this.registry = beans.registry;
     }

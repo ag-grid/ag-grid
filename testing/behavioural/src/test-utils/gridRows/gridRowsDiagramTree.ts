@@ -1,5 +1,5 @@
 import type { Column, RowNode } from 'ag-grid-community';
-import { isRowNumberCol } from 'ag-grid-community';
+import { _isRowNumberCol } from 'ag-grid-community';
 
 import { optionalEscapeString, rowIdAndIndexToString, rowIdToString } from '../grid-test-utils';
 import type { GridRows } from './gridRows';
@@ -322,7 +322,7 @@ export class GridRowsDiagramTree {
             const omitUndefined = gridRows.options.ignoreUndefinedCells ?? true;
             for (const column of columns) {
                 const columnId = column.getColId();
-                if (row === rootRowNode && isRowNumberCol(columnId)) {
+                if (row === rootRowNode && _isRowNumberCol(columnId)) {
                     continue;
                 }
 
@@ -339,7 +339,7 @@ export class GridRowsDiagramTree {
                     }
                 }
 
-                const diagramColumnId = isRowNumberCol(columnId) ? 'row-number' : columnId;
+                const diagramColumnId = _isRowNumberCol(columnId) ? 'row-number' : columnId;
                 if (value !== undefined || formattedValue) {
                     result += ' ' + diagramColumnId + ':' + JSON.stringify(formattedValue || value);
                 } else if (!omitUndefined && row.data != null) {

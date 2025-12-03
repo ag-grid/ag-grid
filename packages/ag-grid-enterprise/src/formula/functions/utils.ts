@@ -1,4 +1,4 @@
-import type { BeanCollection, FormulaParam, RangeParam, ValueParam } from 'ag-grid-community';
+import type { FormulaParam, RangeParam, ValueParam, _BeanCollection } from 'ag-grid-community';
 
 import { colIdFromIndex, colIndexFromId, rowIdFromIndex, rowIndexFromId } from '../ast/serializer';
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
@@ -199,7 +199,7 @@ export function criteriaToPredicate(criteria: unknown): (cell: unknown) => boole
     return REGEX_COMPARE_VALUES.bind(null, symbol ?? '=', regexp);
 }
 
-const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef) => {
+const shiftColRef = (beans: _BeanCollection, delta: number, ref?: CellRef) => {
     if (!ref || delta === 0 || ref.absolute) {
         return;
     }
@@ -224,7 +224,7 @@ const shiftColRef = (beans: BeanCollection, delta: number, ref?: CellRef) => {
     }
 };
 
-const shiftRowRef = (beans: BeanCollection, rowDelta: number, ref?: CellRef, unsafe?: boolean) => {
+const shiftRowRef = (beans: _BeanCollection, rowDelta: number, ref?: CellRef, unsafe?: boolean) => {
     if (!ref || rowDelta === 0 || ref.absolute) {
         return;
     }
@@ -264,7 +264,7 @@ const isCellOperand = (
 
 // Traverse the AST and apply shifts to any cell references
 export const shiftNode = (
-    beans: BeanCollection,
+    beans: _BeanCollection,
     node: FormulaNode,
     rowDelta: number,
     columnDelta: number,

@@ -1,6 +1,6 @@
 import type { AgColorType } from 'ag-charts-types';
 
-import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
+import type { ChartGroupsDef, ChartType, _BeanCollection } from 'ag-grid-community';
 import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
@@ -149,7 +149,7 @@ const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
 export class MiniChartsContainer extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

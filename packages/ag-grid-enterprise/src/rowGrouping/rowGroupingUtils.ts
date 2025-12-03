@@ -1,8 +1,8 @@
-import type { AgColumn, BeanCollection, ColumnModel, RowNode } from 'ag-grid-community';
+import type { AgColumn, RowNode, _BeanCollection, _ColumnModel } from 'ag-grid-community';
 
 export function setRowNodeGroupValue(
     rowNode: RowNode,
-    colModel: ColumnModel,
+    colModel: _ColumnModel,
     colKey: string | AgColumn,
     newValue: any
 ): void {
@@ -25,7 +25,7 @@ export function setRowNodeGroupValue(
     rowNode.dispatchCellChangedEvent(column, newValue, oldValue);
 }
 
-export function setRowNodeGroup(rowNode: RowNode, beans: BeanCollection, group: boolean): void {
+export function setRowNodeGroup(rowNode: RowNode, beans: _BeanCollection, group: boolean): void {
     if (rowNode.group === group) {
         return;
     }
@@ -41,7 +41,7 @@ export function setRowNodeGroup(rowNode: RowNode, beans: BeanCollection, group: 
     rowNode.dispatchRowEvent('groupChanged');
 }
 
-export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: BeanCollection): boolean {
+export function isRowGroupColLocked(column: AgColumn | undefined | null, beans: _BeanCollection): boolean {
     const { gos, rowGroupColsSvc } = beans;
 
     if (!rowGroupColsSvc || !column) {

@@ -1,12 +1,12 @@
 import { ProvidedFilter } from 'ag-grid-community';
 import type {
     AgColumn,
-    BeanCollection,
     FilterDisplayParams,
     IMultiFilterDef,
     IMultiFilterModel,
     IMultiFilterParams,
     SharedFilterUi,
+    _BeanCollection,
 } from 'ag-grid-community';
 
 export function getMultiFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -59,7 +59,7 @@ export function getFilterModelForIndex<TModel = any>(model: IMultiFilterModel | 
 }
 
 export function updateGetValue(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     column: AgColumn,
     filterDef: IMultiFilterDef,
     existingGetValue: FilterDisplayParams['getValue']

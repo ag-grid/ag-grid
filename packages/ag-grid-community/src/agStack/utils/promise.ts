@@ -1,7 +1,8 @@
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isPromise<T>(fn: any): fn is Promise<T> {
     return typeof fn.then === 'function';
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _wrapInterval(action: any, timeout?: any): AgPromise<number> {
     return new AgPromise((resolve) => {
         resolve(window.setInterval(action, timeout));

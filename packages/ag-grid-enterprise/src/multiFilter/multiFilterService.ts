@@ -5,9 +5,9 @@ import type {
     IMultiFilterService,
     ValueGetterFunc,
 } from 'ag-grid-community';
-import { BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
+import { _BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
 
-export class MultiFilterService extends BeanStub implements IMultiFilterService {
+export class MultiFilterService extends _BeanStub implements IMultiFilterService {
     readonly beanName = 'multiFilter' as const;
 
     public getParamsForDataType(

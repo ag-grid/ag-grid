@@ -1,15 +1,15 @@
 import type {
     AgColumn,
-    BeanCollection,
     ColDef,
     HeaderValueGetterParams,
     IRowNode,
     ValueGetterParams,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { _MONTHS, _getDateParts, _parseDateTimeFromString } from 'ag-grid-community';
 
 const getDate = (
-    { valueSvc, dataTypeSvc }: BeanCollection,
+    { valueSvc, dataTypeSvc }: _BeanCollection,
     sourceCol: AgColumn,
     node: IRowNode | null
 ): Date | null => {
@@ -26,7 +26,7 @@ const getDate = (
 };
 
 export const getDatePartValueGetter =
-    (beans: BeanCollection, col: AgColumn, index: number, map?: (part: string) => string) =>
+    (beans: _BeanCollection, col: AgColumn, index: number, map?: (part: string) => string) =>
     (params: ValueGetterParams) => {
         const date = getDate(beans, col, params.node);
         const parts = _getDateParts(date);
@@ -37,7 +37,7 @@ export const getDatePartValueGetter =
     };
 
 export const getHeaderValueGetter =
-    ({ colNames }: BeanCollection, col: AgColumn, part: string) =>
+    ({ colNames }: _BeanCollection, col: AgColumn, part: string) =>
     (params: HeaderValueGetterParams) => {
         const sourceName = colNames.getDisplayNameForColumn(col, params.location);
         if (sourceName) {

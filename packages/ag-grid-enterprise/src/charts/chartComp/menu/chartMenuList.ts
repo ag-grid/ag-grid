@@ -1,17 +1,17 @@
 import type {
-    BeanCollection,
     ContainerType,
     DefaultChartMenuItem,
     IAfterGuiAttachedParams,
     IconName,
     MenuItemDef,
-    NamedBean,
     PopupService,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     Component,
     RefPlaceholder,
+    _BeanStub,
     _addGridCommonParams,
     _createIconNoSpan,
     _focusInto,
@@ -24,14 +24,14 @@ import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
 
-export class ChartMenuListFactory extends BeanStub implements NamedBean {
+export class ChartMenuListFactory extends _BeanStub implements _NamedBean {
     beanName = 'chartMenuListFactory' as const;
 
     private popupSvc: PopupService;
     private chartMenuSvc: ChartMenuService;
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.popupSvc = beans.popupSvc!;
         this.chartMenuSvc = beans.chartMenuSvc as ChartMenuService;
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;

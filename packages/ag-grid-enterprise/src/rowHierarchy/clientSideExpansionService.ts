@@ -3,10 +3,10 @@ import type {
     IClientSideRowModel,
     IExpansionService,
     IRowNode,
-    NamedBean,
     RowGroupExpansionState,
     RowGroupOpenedEvent,
     RowNode,
+    _NamedBean,
 } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
@@ -14,7 +14,7 @@ import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService
     extends BaseExpansionService
-    implements NamedBean, IExpansionService<RowGroupExpansionState>
+    implements _NamedBean, IExpansionService<RowGroupExpansionState>
 {
     beanName = 'expansionSvc' as const;
 

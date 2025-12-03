@@ -1,15 +1,15 @@
 import type {
-    Bean,
-    BeanCollection,
     GridOptions,
     GridOptionsService,
     IRowNode,
     NestedDataGetter,
     RefreshModelParams,
     RowNode,
+    _Bean,
+    _BeanCollection,
 } from 'ag-grid-community';
 
-export interface IRowGroupingStrategy<TData = any> extends Bean {
+export interface IRowGroupingStrategy<TData = any> extends _Bean {
     /** Getter for grid option treeDataChildrenField, only not null for tree nested data. */
     readonly nestedDataGetter?: NestedDataGetter<TData> | null;
 
@@ -62,7 +62,7 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
 }
 
 export const _getRowDefaultExpanded = (
-    beans: BeanCollection,
+    beans: _BeanCollection,
     rowNode: IRowNode,
     level: number,
     group = rowNode.group

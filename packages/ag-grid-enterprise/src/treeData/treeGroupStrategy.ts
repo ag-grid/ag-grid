@@ -5,7 +5,7 @@ import type {
     RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
+import { RowNode, _BeanStub, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
@@ -46,7 +46,7 @@ const PATH_KEY_SEPARATOR_LEN = 3;
 
 type ParentIdGetter<TData> = ((data: TData) => string | null | undefined) | null;
 
-export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGroupingStrategy<TData> {
+export class TreeGroupStrategy<TData = any> extends _BeanStub implements IRowGroupingStrategy<TData> {
     public nestedDataGetter: NestedDataGetter<TData> | null = null;
     private parentIdGetter: ParentIdGetter<TData> = null;
 

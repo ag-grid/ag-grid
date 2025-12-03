@@ -9,7 +9,7 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { type GroupAssignment, REGION_LIST, getAssignments } from './data';
+import { GroupAssignment, REGION_LIST, getAssignments } from './data';
 
 ModuleRegistry.registerModules([
     RowGroupingModule,

@@ -1,15 +1,15 @@
 import type {
-    BeanCollection,
     ChartGroupsDef,
     ChartType,
     IChartService,
     LocaleTextFunc,
     MenuItemDef,
-    NamedBean,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _warn } from 'ag-grid-community';
+import { _BeanStub, _createIconNoSpan, _warn } from 'ag-grid-community';
 
-export class ChartMenuItemMapper extends BeanStub implements NamedBean {
+export class ChartMenuItemMapper extends _BeanStub implements _NamedBean {
     beanName = 'chartMenuItemMapper' as const;
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | null {
@@ -194,7 +194,7 @@ type PivotMenuOptionName =
 
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly chartSvc: IChartService,
         private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}
@@ -428,7 +428,7 @@ type RangeMenuOptionName =
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly chartSvc: IChartService,
         private readonly getLocaleTextFunc: () => LocaleTextFunc
     ) {}

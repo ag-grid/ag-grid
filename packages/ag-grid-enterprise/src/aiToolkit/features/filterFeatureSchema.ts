@@ -1,4 +1,4 @@
-import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
+import type { StructuredSchemaParams, _BeanCollection } from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
@@ -16,7 +16,7 @@ const MultiFilterKey = 'agMultiColumnFilter';
 
 const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, DateFilterKey];
 
-export const buildFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
+export const buildFilterFeatureSchema = (beans: _BeanCollection, params?: StructuredSchemaParams) => {
     const { advancedFilter } = beans;
 
     if (advancedFilter?.isEnabled()) {
@@ -26,7 +26,7 @@ export const buildFilterFeatureSchema = (beans: BeanCollection, params?: Structu
     }
 };
 
-const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
+const buildColumnFilterFeatureSchema = (beans: _BeanCollection, params?: StructuredSchemaParams) => {
     const { gos, colFilter, colModel } = beans;
 
     if (!colFilter) {

@@ -1,4 +1,4 @@
-import type { BeanCollection, ColumnModel, CtrlsService, ElementParams, FocusService } from 'ag-grid-community';
+import type { CtrlsService, ElementParams, FocusService, _BeanCollection, _ColumnModel } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -22,11 +22,11 @@ const AdvancedFilterHeaderElement: ElementParams = {
     role: 'row',
 };
 export class AdvancedFilterHeaderComp extends Component {
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private focusSvc: FocusService;
     private ctrlsSvc: CtrlsService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.colModel = beans.colModel;
         this.focusSvc = beans.focusSvc;
         this.ctrlsSvc = beans.ctrlsSvc;

@@ -1,11 +1,11 @@
 import type {
     ClientSideRowModelStage,
     GridOptions,
-    NamedBean,
     RowNode,
     _IRowNodeFlattenStage,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../aggregation/footerUtils';
 import type { FlattenDetails } from './flattenUtils';
@@ -16,7 +16,7 @@ import {
     _shouldRowBeRendered,
 } from './flattenUtils';
 
-export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, NamedBean {
+export class FlattenStage extends _BeanStub implements _IRowNodeFlattenStage, _NamedBean {
     beanName = 'flattenStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'map';

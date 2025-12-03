@@ -1,11 +1,11 @@
 import type { ChartType, SeriesChartType } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { _BeanStub, _warn } from 'ag-grid-community';
 
 import type { ChartDataModel, ColState } from './chartDataModel';
 
 const SUPPORTED_COMBO_CHART_TYPES = new Set(['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea']);
 
-export class ComboChartModel extends BeanStub {
+export class ComboChartModel extends _BeanStub {
     public seriesChartTypes: SeriesChartType[];
     public savedCustomSeriesChartTypes: SeriesChartType[];
 

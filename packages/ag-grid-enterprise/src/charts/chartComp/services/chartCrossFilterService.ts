@@ -2,18 +2,18 @@ import type {
     FilterModel,
     IMultiFilterModel,
     IProvidedFilter,
-    NamedBean,
     SetFilterModel,
     SetFilterModelValue,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { _BeanStub, _warn } from 'ag-grid-community';
 
 import type { MultiFilter } from '../../../multiFilter/multiFilter';
 import type { MultiFilterUi } from '../../../multiFilter/multiFilterUi';
 import type { SetFilter } from '../../../setFilter/setFilter';
 import type { SetFilterHandler } from '../../../setFilter/setFilterHandler';
 
-export class ChartCrossFilterService extends BeanStub implements NamedBean {
+export class ChartCrossFilterService extends _BeanStub implements _NamedBean {
     beanName = 'chartCrossFilterSvc' as const;
 
     public filter(event: any, reset: boolean = false): void {

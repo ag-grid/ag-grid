@@ -1,25 +1,25 @@
-import type { BeanCollection, IClipboardCopyParams, IClipboardCopyRowsParams } from 'ag-grid-community';
+import type { IClipboardCopyParams, IClipboardCopyRowsParams, _BeanCollection } from 'ag-grid-community';
 
-export function copyToClipboard(beans: BeanCollection, params?: IClipboardCopyParams) {
+export function copyToClipboard(beans: _BeanCollection, params?: IClipboardCopyParams) {
     beans.clipboardSvc?.copyToClipboard(params);
 }
 
-export function cutToClipboard(beans: BeanCollection, params?: IClipboardCopyParams) {
+export function cutToClipboard(beans: _BeanCollection, params?: IClipboardCopyParams) {
     beans.clipboardSvc?.cutToClipboard(params);
 }
 
-export function copySelectedRowsToClipboard(beans: BeanCollection, params?: IClipboardCopyRowsParams): void {
+export function copySelectedRowsToClipboard(beans: _BeanCollection, params?: IClipboardCopyRowsParams): void {
     beans.clipboardSvc?.copySelectedRowsToClipboard(params);
 }
 
-export function copySelectedRangeToClipboard(beans: BeanCollection, params?: IClipboardCopyParams): void {
+export function copySelectedRangeToClipboard(beans: _BeanCollection, params?: IClipboardCopyParams): void {
     beans.clipboardSvc?.copySelectedRangeToClipboard(params);
 }
 
-export function copySelectedRangeDown(beans: BeanCollection): void {
+export function copySelectedRangeDown(beans: _BeanCollection): void {
     beans.clipboardSvc?.copyRangeDown();
 }
 
-export function pasteFromClipboard(beans: BeanCollection): void {
+export function pasteFromClipboard(beans: _BeanCollection): void {
     beans.clipboardSvc?.pasteFromClipboard();
 }

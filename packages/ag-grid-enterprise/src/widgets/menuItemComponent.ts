@@ -1,13 +1,13 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
-    ComponentType,
     GridOptionsService,
     GridOptionsWithDefaults,
     IMenuActionParams,
     IMenuItemComp,
+    _AgComponentSelectorType,
+    _BeanCollection,
+    _ComponentType,
 } from 'ag-grid-community';
 import { AgPromise, _STOP_PROPAGATION_CALLBACKS, _addGridCommonParams, _warn } from 'ag-grid-community';
 
@@ -15,23 +15,23 @@ import type { AgMenuItemActivatedEvent, AgMenuItemCallbacks } from '../agStack/a
 import { AgMenuItemComponent } from '../agStack/agMenuItemComponent';
 import { _preserveRangesWhile } from '../misc/enterpriseDomUtils';
 
-const MenuItemComponentType: ComponentType<IMenuItemComp> = {
+const MenuItemComponentType: _ComponentType<IMenuItemComp> = {
     name: 'menuItem',
     optionalMethods: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
 };
 
 export interface MenuItemActivatedEvent
     extends AgMenuItemActivatedEvent<
-        BeanCollection,
+        _BeanCollection,
         GridOptionsWithDefaults,
         AgEventTypeParams,
         AgGridCommon<any, any>,
         GridOptionsService,
-        AgComponentSelectorType,
+        _AgComponentSelectorType,
         IMenuActionParams
     > {}
 
-export const MENU_ITEM_CALLBACKS: AgMenuItemCallbacks<BeanCollection, IMenuActionParams, AgGridCommon<any, any>> = {
+export const MENU_ITEM_CALLBACKS: AgMenuItemCallbacks<_BeanCollection, IMenuActionParams, AgGridCommon<any, any>> = {
     getMenuItemComp: (beans, def, params) => {
         const compDetails = beans.userCompFactory.getCompDetails(
             def,
@@ -54,12 +54,12 @@ export const MENU_ITEM_CALLBACKS: AgMenuItemCallbacks<BeanCollection, IMenuActio
 };
 
 export class MenuItemComponent extends AgMenuItemComponent<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     IMenuActionParams
 > {
     constructor() {

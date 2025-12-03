@@ -1,4 +1,4 @@
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 import type {
     IRowNode,
     IsServerSideGroupOpenByDefaultParams,
@@ -8,7 +8,7 @@ import type {
 
 import type { IExpansionStrategy } from './iExpansionStrategy';
 
-export class ExpandStrategy extends BeanStub implements IExpansionStrategy<RowGroupExpansionState> {
+export class ExpandStrategy extends _BeanStub implements IExpansionStrategy<RowGroupExpansionState> {
     name: string = 'expand';
 
     private expanded: Set<string> = new Set();

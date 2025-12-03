@@ -9,7 +9,7 @@ import type {
     IFloatingFilterParams,
     IMultiFilterModel,
     MultiFilterParams,
-    UserCompDetails,
+    _UserCompDetails,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -34,7 +34,7 @@ const MultiFloatingFilterElement: ElementParams = {
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter | MultiFilterUi> {
     private floatingFilters: IFloatingFilterComp[] = [];
-    private compDetailsList: UserCompDetails[] = [];
+    private compDetailsList: _UserCompDetails[] = [];
     private params: IFloatingFilterParams<MultiFilter | MultiFilterUi>;
 
     constructor() {
@@ -48,7 +48,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         return this.setParams(compDetailsList);
     }
 
-    private setParams(compDetailsList: UserCompDetails[]): AgPromise<void> {
+    private setParams(compDetailsList: _UserCompDetails[]): AgPromise<void> {
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
         compDetailsList.forEach((compDetails) => {
@@ -117,10 +117,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private getCompDetailsList(params: IFloatingFilterParams<MultiFilter | MultiFilterUi>): {
-        compDetailsList: UserCompDetails[];
+        compDetailsList: _UserCompDetails[];
         floatingFilterParamsList: IFloatingFilterParams<IFilter>[];
     } {
-        const compDetailsList: UserCompDetails[] = [];
+        const compDetailsList: _UserCompDetails[] = [];
         const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
         const filterParams = params.filterParams as MultiFilterParams;
         const currentParentModel = params.currentParentModel;
@@ -211,7 +211,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
+    private getCompDetails(
+        filterDef: IFilterDef,
+        params: IFloatingFilterParams<IFilter>
+    ): _UserCompDetails | undefined {
         const { colFilter, frameworkOverrides, userCompFactory } = this.beans;
         const defaultComponentName =
             _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () =>

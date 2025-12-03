@@ -1,9 +1,15 @@
-import type { Column, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
+import type { Column, GridOptions, IFooterService, IRowNode, RowNode, _NamedBean } from 'ag-grid-community';
+import {
+    _BeanStub,
+    _addGridCommonParams,
+    _getGrandTotalRow,
+    _getGroupTotalRowCallback,
+    _warn,
+} from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
 
-export class FooterService extends BeanStub implements NamedBean, IFooterService {
+export class FooterService extends _BeanStub implements _NamedBean, IFooterService {
     beanName = 'footerSvc' as const;
 
     public addTotalRows(

@@ -1,6 +1,6 @@
-import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
+import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, _NamedBean } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _addGridCommonParams,
     _getGrandTotalRow,
     _isClientSideRowModel,
@@ -14,7 +14,7 @@ import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _removeRepeatsFromArray } from './menuItemMapper';
 
-export class ColumnMenuFactory extends BeanStub implements NamedBean {
+export class ColumnMenuFactory extends _BeanStub implements _NamedBean {
     beanName = 'colMenuFactory' as const;
 
     public createMenu(

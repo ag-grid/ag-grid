@@ -1,11 +1,11 @@
 import type {
     BaseCellDataType,
-    BeanCollection,
     ElementParams,
     FieldValueEvent,
     GridInputDateField,
     GridInputTextField,
     WithoutGridCommon,
+    _BeanCollection,
 } from 'ag-grid-community';
 import {
     AgInputDateField,
@@ -66,7 +66,7 @@ const InputPillElement: ElementParams = {
 export class InputPillComp extends Component<InputPillCompEvent> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
     }
 

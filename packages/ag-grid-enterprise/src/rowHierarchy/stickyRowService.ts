@@ -1,13 +1,13 @@
-import type { IStickyRowService, NamedBean, RowCtrl, RowNode } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _isGroupRowsSticky, _isServerSideRowModel } from 'ag-grid-community';
+import type { IStickyRowService, RowCtrl, RowNode, _NamedBean } from 'ag-grid-community';
+import { _BeanStub, _isClientSideRowModel, _isGroupRowsSticky, _isServerSideRowModel } from 'ag-grid-community';
 
 import { StickyRowFeature } from './stickyRowFeature';
 
-export class StickyRowService extends BeanStub implements NamedBean, IStickyRowService {
+export class StickyRowService extends _BeanStub implements _NamedBean, IStickyRowService {
     beanName = 'stickyRowSvc' as const;
 
     public createStickyRowFeature(
-        ctrl: BeanStub,
+        ctrl: _BeanStub,
         createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
         destroyRowCtrls: (rowCtrlsMap: Record<string, RowCtrl> | null | undefined, animate: boolean) => void
     ): StickyRowFeature | undefined {

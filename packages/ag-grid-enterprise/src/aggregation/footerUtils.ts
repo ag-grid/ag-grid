@@ -1,7 +1,7 @@
-import type { BeanCollection, RowNode } from 'ag-grid-community';
+import type { RowNode, _BeanCollection } from 'ag-grid-community';
 import { _createRowNodeSibling } from 'ag-grid-community';
 
-export function _createRowNodeFooter(rowNode: RowNode, beans: BeanCollection): void {
+export function _createRowNodeFooter(rowNode: RowNode, beans: _BeanCollection): void {
     // only create footer node once, otherwise we have daemons and
     // the animate screws up with the daemons hanging around
     if (rowNode.sibling) {

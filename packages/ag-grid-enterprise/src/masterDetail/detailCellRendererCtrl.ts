@@ -1,7 +1,6 @@
 import type {
     AgEventTypeParams,
     AgModuleName,
-    BeanCollection,
     DetailGridInfo,
     Environment,
     FullWidthRowFocusedEvent,
@@ -14,10 +13,11 @@ import type {
     ModuleName,
     RowNode,
     RowSelectedEvent,
+    _BeanCollection,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
+import { _BeanStub, _addGridCommonParams, _focusInto, _isSameRow, _missing, _warn } from 'ag-grid-community';
 
-export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
+export class DetailCellRendererCtrl extends _BeanStub implements IDetailCellRendererCtrl {
     private params: IDetailCellRendererParams;
 
     private comp: IDetailCellRenderer;
@@ -28,7 +28,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
     private environment: Environment;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.environment = beans.environment;
     }
 

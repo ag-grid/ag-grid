@@ -6,7 +6,6 @@ import type {
 } from 'ag-charts-types';
 
 import type {
-    BeanCollection,
     ChartModel,
     ChartToolPanelName,
     ChartType,
@@ -18,6 +17,7 @@ import type {
     SeriesChartType,
     SortModelItem,
     UpdateChartParams,
+    _BeanCollection,
 } from 'ag-grid-community';
 import {
     Component,
@@ -91,7 +91,7 @@ export class GridChartComp extends Component {
     private enterpriseChartProxyFactory?: EnterpriseChartProxyFactory;
     private environment: Environment;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.crossFilterService = beans.chartCrossFilterSvc as ChartCrossFilterService;
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
         this.chartMenuSvc = beans.chartMenuSvc as ChartMenuService;

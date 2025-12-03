@@ -1,11 +1,11 @@
 import type {
     AgColumn,
-    BeanCollection,
     CellCtrl,
     GridOptionsService,
     ICellComp,
     ICellRangeFeature,
     IRangeService,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { CellRangeType, _isSameRow, _last, _missing, _setAriaSelected } from 'ag-grid-community';
 
@@ -55,7 +55,7 @@ export class CellRangeFeature implements ICellRangeFeature {
     private selectionHandle: AgFillHandle | AgRangeHandle | null | undefined;
 
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly cellCtrl: CellCtrl
     ) {
         // We know these are defined otherwise the feature wouldn't be registered

@@ -1,4 +1,4 @@
-import type { BeanCollection, ComponentSelector, ElementParams } from 'ag-grid-community';
+import type { ElementParams, _BeanCollection, _ComponentSelector } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
@@ -12,7 +12,7 @@ const WatermarkElement: ElementParams = {
 class AgWatermark extends Component {
     licenseManager: LicenseManager;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.licenseManager = beans.licenseManager as LicenseManager;
     }
 
@@ -40,7 +40,7 @@ class AgWatermark extends Component {
     }
 }
 
-export const AgWatermarkSelector: ComponentSelector<Component> = {
+export const AgWatermarkSelector: _ComponentSelector<Component> = {
     selector: 'AG-WATERMARK',
     component: AgWatermark,
 };

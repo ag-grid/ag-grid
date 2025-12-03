@@ -99,7 +99,7 @@ export function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplay
     createdFilterUi.promise = promise;
     return promise;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _refreshHandlerAndUi(
     getFilterUi: () => AgPromise<{ filter: FilterDisplayComp; filterParams: FilterDisplayParams } | undefined>,
     handler: FilterHandler,
@@ -118,7 +118,7 @@ export function _refreshHandlerAndUi(
         }
     });
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _refreshFilterUi(
     filter: FilterDisplayComp | null | undefined,
     filterParams: FilterDisplayParams,
@@ -157,7 +157,7 @@ export function getAndRefreshFilterUi(
         });
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _updateFilterModel(params: {
     action: FilterAction;
     filterParams?: FilterWrapperParams;
@@ -227,7 +227,7 @@ export function _updateFilterModel(params: {
         getAndRefreshFilterUi(getFilterUi, getModel, getState, { fromAction: action });
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getFilterModel<TModel = any>(model: FilterModel, colId: string): TModel | null {
     return model[colId] ?? null;
 }

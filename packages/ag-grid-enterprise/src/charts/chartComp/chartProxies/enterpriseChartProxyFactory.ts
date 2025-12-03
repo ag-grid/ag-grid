@@ -1,5 +1,5 @@
-import type { BeanName, NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { _BeanName, _NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 import { HistogramChartProxy } from './cartesian/histogramChartProxy';
 import { WaterfallChartProxy } from './cartesian/waterfallChartProxy';
@@ -11,8 +11,8 @@ import { HeatmapChartProxy } from './specialized/heatmapChartProxy';
 import { BoxPlotChartProxy } from './statistical/boxPlotChartProxy';
 import { RangeChartProxy } from './statistical/rangeChartProxy';
 
-export class EnterpriseChartProxyFactory extends BeanStub implements NamedBean {
-    beanName: BeanName = 'enterpriseChartProxyFactory';
+export class EnterpriseChartProxyFactory extends _BeanStub implements _NamedBean {
+    beanName: _BeanName = 'enterpriseChartProxyFactory';
 
     public createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy | undefined {
         switch (chartProxyParams.chartType) {

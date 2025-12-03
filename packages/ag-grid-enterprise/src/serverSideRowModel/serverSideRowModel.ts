@@ -1,19 +1,14 @@
 import type {
     AdvancedFilterModel,
     AgColumn,
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
     ColumnVO,
     FilterManager,
     FilterModel,
     IColsService,
     IPivotColDefService,
-    IPivotResultColsService,
     IServerSideDatasource,
     IServerSideRowModel,
     LoadSuccessParams,
-    NamedBean,
     OverlayType,
     RefreshServerSideParams,
     RowBounds,
@@ -23,10 +18,15 @@ import type {
     SortModelItem,
     SortService,
     StoreRefreshAfterParams,
+    _BeanCollection,
+    _ColumnModel,
+    _ColumnNameService,
+    _IPivotResultColsService,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     RowNode,
+    _BeanStub,
     _debounce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
@@ -52,12 +52,12 @@ export interface SSRMParams {
     datasource?: IServerSideDatasource;
 }
 
-export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
+export class ServerSideRowModel extends _BeanStub implements _NamedBean, IServerSideRowModel {
     beanName = 'rowModel' as const;
 
-    private colModel: ColumnModel;
-    private colNames: ColumnNameService;
-    private pivotResultCols?: IPivotResultColsService;
+    private colModel: _ColumnModel;
+    private colNames: _ColumnNameService;
+    private pivotResultCols?: _IPivotResultColsService;
     private rowGroupColsSvc?: IColsService;
     private pivotColsSvc?: IColsService;
     private valueColsSvc?: IColsService;
@@ -68,7 +68,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private storeFactory: StoreFactory;
     private pivotColDefSvc?: IPivotColDefService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.pivotResultCols = beans.pivotResultCols;

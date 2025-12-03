@@ -9,7 +9,7 @@ type EventPosition = {
     rowNode: IRowNode;
     column: Column<any>;
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createCellEvent<T extends AgEventType>(
     beans: BeanCollection,
     domEvent: Event | null,

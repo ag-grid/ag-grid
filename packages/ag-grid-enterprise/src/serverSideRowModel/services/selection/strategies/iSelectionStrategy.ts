@@ -1,14 +1,14 @@
 import type {
-    Bean,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
     SelectAllMode,
     SelectionEventSourceType,
+    _Bean,
 } from 'ag-grid-community';
 
-export interface ISelectionStrategy extends Bean {
+export interface ISelectionStrategy extends _Bean {
     getSelectedState(): IServerSideSelectionState | IServerSideGroupSelectionState;
     setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
     setNodesSelected(params: ISetNodesSelectedParams): number;

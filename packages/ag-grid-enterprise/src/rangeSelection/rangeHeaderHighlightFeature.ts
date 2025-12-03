@@ -1,7 +1,7 @@
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 import type { AgColumn, AgColumnGroup, IHeaderCellComp } from 'ag-grid-community';
 
-export class RangeHeaderHighlightFeature extends BeanStub {
+export class RangeHeaderHighlightFeature extends _BeanStub {
     private readonly columnMap: Map<AgColumn, boolean> = new Map();
     private isActive: boolean = false;
     constructor(

@@ -1,9 +1,7 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
     AgPromise,
-    BeanCollection,
     ElementParams,
     FieldPickerValueSelectedEvent,
     GridInputTextField,
@@ -13,13 +11,15 @@ import type {
     ICellRendererComp,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
-    Registry,
     RichSelectListRowSelectedEvent,
     RichSelectParams,
     TooltipFeature,
-    UserCompDetails,
-    UserComponentFactory,
     WithoutGridCommon,
+    _AgComponentSelectorType,
+    _BeanCollection,
+    _Registry,
+    _UserCompDetails,
+    _UserComponentFactory,
 } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
@@ -74,23 +74,23 @@ const AgRichSelectElement: ElementParams = {
     ],
 };
 export class AgRichSelect<TValue = any> extends AgPickerField<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     TValue[] | TValue,
     RichSelectParams<TValue>,
     AgRichSelectEvent,
     AgRichSelectList<TValue, AgRichSelectEvent>
 > {
-    private userCompFactory: UserComponentFactory;
+    private userCompFactory: _UserComponentFactory;
     private ariaAnnounce?: IAriaAnnouncementService;
-    private registry: Registry;
+    private registry: _Registry;
     private readonly onSearchCallbackDebounced;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
         this.ariaAnnounce = beans.ariaAnnounce;
         this.registry = beans.registry;
@@ -246,7 +246,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             this.eDeselect.classList.toggle('ag-hidden', isEmpty);
         }
 
-        let userCompDetails: UserCompDetails | undefined;
+        let userCompDetails: _UserCompDetails | undefined;
 
         if (multiSelect && !suppressMultiSelectPillRenderer) {
             this.createOrUpdatePillContainer(eDisplayField);

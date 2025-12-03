@@ -1,10 +1,10 @@
-import type { AbstractColDef, AgColumn, ColDef, ColumnModel } from 'ag-grid-community';
-import { AgProvidedColumnGroup, _warn, isProvidedColumnGroup } from 'ag-grid-community';
+import type { AbstractColDef, AgColumn, ColDef, _ColumnModel } from 'ag-grid-community';
+import { AgProvidedColumnGroup, _isProvidedColumnGroup, _warn } from 'ag-grid-community';
 
 import { isColGroupDef, mergeLeafPathTrees } from './sideBarUtils';
 
 export function toolPanelCreateColumnTree(
-    colModel: ColumnModel,
+    colModel: _ColumnModel,
     colDefs: AbstractColDef[]
 ): (AgColumn | AgProvidedColumnGroup)[] {
     const invalidColIds: AbstractColDef[] = [];
@@ -56,7 +56,7 @@ export function toolPanelCreateColumnTree(
 }
 
 export function syncLayoutWithGrid(
-    colModel: ColumnModel,
+    colModel: _ColumnModel,
     syncLayoutCallback: (colDefs: AbstractColDef[]) => void
 ): void {
     // extract ordered list of leaf path trees (column group hierarchy for each individual leaf column)
@@ -69,13 +69,13 @@ export function syncLayoutWithGrid(
     syncLayoutCallback(mergedColumnTrees);
 }
 
-function getLeafPathTrees(colModel: ColumnModel): AbstractColDef[] {
+function getLeafPathTrees(colModel: _ColumnModel): AbstractColDef[] {
     // leaf tree paths are obtained by walking up the tree starting at a column until we reach the top level group.
     const getLeafPathTree = (node: AgColumn | AgProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
         let leafPathTree: AbstractColDef;
 
         // build up tree in reverse order
-        if (isProvidedColumnGroup(node)) {
+        if (_isProvidedColumnGroup(node)) {
             if (node.isPadding()) {
                 // skip over padding groups
                 leafPathTree = childDef;

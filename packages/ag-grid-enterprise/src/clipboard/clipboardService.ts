@@ -10,16 +10,16 @@ import type {
     IClipboardCopyRowsParams,
     IClipboardService,
     IRangeService,
-    NamedBean,
     ProcessCellForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
     RowPosition,
     WithoutGridCommon,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     ChangedPath,
+    _BeanStub,
     _createCellId,
     _exists,
     _getActiveDomElement,
@@ -27,12 +27,12 @@ import {
     _getRowBelow,
     _getRowNode,
     _isClientSideRowModel,
+    _isColumnSelectionCol,
     _isSameRow,
+    _isSpecialCol,
     _last,
     _removeFromArray,
     _warn,
-    isColumnSelectionCol,
-    isSpecialCol,
 } from 'ag-grid-community';
 
 interface RowCallback {
@@ -135,7 +135,7 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
     return data;
 }
 
-export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
+export class ClipboardService extends _BeanStub implements _NamedBean, IClipboardService {
     beanName = 'clipboardSvc' as const;
 
     private clientSideRowModel: IClientSideRowModel | null = null;
@@ -407,7 +407,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             // remove the selection column (paste into selection is not supported)
             // this columns should be removed from the paste operation but not
             // from the range itself.
-            const selectionColIdx = columns.findIndex(isColumnSelectionCol);
+            const selectionColIdx = columns.findIndex(_isColumnSelectionCol);
             if (selectionColIdx !== -1) {
                 columns.splice(selectionColIdx, 1);
             }
@@ -453,7 +453,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { visibleCols } = this.beans;
 
         // first, skip row numbers column and selection column
-        while (currentColumn && isSpecialCol(currentColumn)) {
+        while (currentColumn && _isSpecialCol(currentColumn)) {
             currentColumn = visibleCols.getColAfter(currentColumn);
         }
 

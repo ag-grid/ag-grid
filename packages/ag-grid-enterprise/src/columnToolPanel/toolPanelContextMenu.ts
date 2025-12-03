@@ -1,5 +1,5 @@
 import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-grid-community';
-import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, _createIconNoSpan, _focusInto, _isColumn, _isProvidedColumnGroup } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
@@ -42,7 +42,7 @@ export class ToolPanelContextMenu extends Component {
         this.initializeProperties(column);
 
         let displayName: string | null;
-        if (isColumn(column)) {
+        if (_isColumn(column)) {
             displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
         } else {
             displayName = colNames.getDisplayNameForProvidedColumnGroup(null, column, 'columnToolPanel');
@@ -67,7 +67,7 @@ export class ToolPanelContextMenu extends Component {
 
     private initializeProperties(column: AgColumn | AgProvidedColumnGroup): void {
         let columns: AgColumn[];
-        if (isProvidedColumnGroup(column)) {
+        if (_isProvidedColumnGroup(column)) {
             columns = column.getLeafColumns();
         } else {
             columns = [column];

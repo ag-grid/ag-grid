@@ -10,7 +10,7 @@ import type {
 } from 'ag-grid-community';
 import {
     AgPromise,
-    BeanStub,
+    _BeanStub,
     _addGridCommonParams,
     _defaultComparator,
     _error,
@@ -35,7 +35,7 @@ interface SetValueModelParams<TValue> {
     usingComplexObjects?: boolean;
 }
 
-export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
+export class SetValueModel<TValue> extends _BeanStub<SetValueModelEvent> {
     /** Values can be loaded asynchronously, so wait on this promise if you need to ensure values have been loaded. */
     public allKeys: AgPromise<(string | null)[]>;
 

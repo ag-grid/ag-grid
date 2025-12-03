@@ -1,14 +1,14 @@
 import type {
     AgCheckboxParams,
-    AgComponentSelectorType,
     AgFieldParams,
     AgInputNumberFieldParams,
     AgSelectParams,
     AgToggleButtonParams,
-    BeanCollection,
     ListOption,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 import type { AgSliderParams } from '../../../agStack/agSlider';
 import type { ColorPickerParams } from '../../widgets/colorPicker';
@@ -16,10 +16,10 @@ import type { ChartOptionsProxy } from '../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { FontPanelParams } from './format/fontPanel';
 
-export class ChartMenuParamsFactory extends BeanStub {
+export class ChartMenuParamsFactory extends _BeanStub {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
@@ -57,8 +57,8 @@ export class ChartMenuParamsFactory extends BeanStub {
             min?: number;
             max?: number;
         }
-    ): AgInputNumberFieldParams<AgComponentSelectorType> {
-        return this.addValueParams<AgInputNumberFieldParams<AgComponentSelectorType>>(
+    ): AgInputNumberFieldParams<_AgComponentSelectorType> {
+        return this.addValueParams<AgInputNumberFieldParams<_AgComponentSelectorType>>(
             expression,
             {
                 label: this.chartTranslation.translate(labelKey),
@@ -118,9 +118,9 @@ export class ChartMenuParamsFactory extends BeanStub {
             readOnly?: boolean;
             passive?: boolean;
         }
-    ): AgCheckboxParams<AgComponentSelectorType> {
+    ): AgCheckboxParams<_AgComponentSelectorType> {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
-        const params: AgCheckboxParams<AgComponentSelectorType> = {
+        const params: AgCheckboxParams<_AgComponentSelectorType> = {
             label: this.chartTranslation.translate(labelKey),
             value,
             readOnly: options?.readOnly,
@@ -139,9 +139,9 @@ export class ChartMenuParamsFactory extends BeanStub {
             readOnly?: boolean;
             passive?: boolean;
         }
-    ): AgToggleButtonParams<AgComponentSelectorType> {
+    ): AgToggleButtonParams<_AgComponentSelectorType> {
         const value = this.chartOptionsProxy.getValue<boolean>(expression);
-        const params: AgCheckboxParams<AgComponentSelectorType> = {
+        const params: AgCheckboxParams<_AgComponentSelectorType> = {
             label: this.chartTranslation.translate(labelKey),
             labelAlignment: 'left',
             labelWidth: 'flex',
@@ -160,7 +160,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         expression: string,
         labelKey: ChartTranslationKey,
         dropdownOptions: Array<ListOption>
-    ): AgSelectParams<AgComponentSelectorType> {
+    ): AgSelectParams<_AgComponentSelectorType> {
         return this.getDefaultSelectParamsWithoutValueParams(
             labelKey,
             dropdownOptions,
@@ -176,7 +176,7 @@ export class ChartMenuParamsFactory extends BeanStub {
         options: Array<ListOption>,
         value: any,
         onValueChange: (value: any) => void
-    ): AgSelectParams<AgComponentSelectorType> {
+    ): AgSelectParams<_AgComponentSelectorType> {
         return {
             label: this.chartTranslation.translate(labelKey),
             labelAlignment: 'top',

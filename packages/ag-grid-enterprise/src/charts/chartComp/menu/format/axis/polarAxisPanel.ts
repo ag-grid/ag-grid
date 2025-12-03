@@ -1,4 +1,4 @@
-import type { BeanCollection, GridSelect, ListOption } from 'ag-grid-community';
+import type { GridSelect, ListOption, _BeanCollection } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -20,7 +20,7 @@ export class PolarAxisPanel extends Component {
 
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     constructor(private readonly options: FormatPanelOptions) {

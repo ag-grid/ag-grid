@@ -30,7 +30,7 @@ export const _isEventSupported = (() => {
 
     return eventChecker;
 })();
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isElementInEventPath(element: HTMLElement, event: Event): boolean {
     if (!event || !element) {
         return false;
@@ -73,7 +73,7 @@ function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
     // If this is an AG Grid event build the path ourselves
     return _createEventPath(eventNoType);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void) {
     const passive = getPassiveStateForEvent(event);
 
@@ -106,7 +106,7 @@ const getPassiveStateForEvent = (event: string): boolean | undefined => {
  * @param {MouseEvent | TouchEvent} e2
  * @param {number} pixelCount
  * @returns {boolean}
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
     // by default, we wait 4 pixels before starting the drag
     if (pixelCount === 0) {
@@ -138,11 +138,11 @@ export const _getFirstActiveTouch = (touch: Touch, touchList: TouchList): Touch 
 
 // walks the path of the event, and returns true if this instance is the first one that it finds. if doing things like
 // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
-// getting executed on many grids at the same time.
+// getting executed on many grids at the same time./** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isEventFromThisInstance(beans: UtilBeanCollection, event: UIEvent): boolean {
     return beans.gos.isElementInThisInstance(event.target as HTMLElement);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _anchorElementToMouseMoveEvent(
     element: HTMLElement,
     mouseMoveEvent: MouseEvent | Touch,

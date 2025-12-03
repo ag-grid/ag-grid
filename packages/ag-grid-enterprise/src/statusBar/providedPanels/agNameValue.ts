@@ -1,4 +1,4 @@
-import type { ComponentSelector, ElementParams, IStatusPanelValueFormatterParams } from 'ag-grid-community';
+import type { ElementParams, IStatusPanelValueFormatterParams, _ComponentSelector } from 'ag-grid-community';
 import { Component, RefPlaceholder, _addGridCommonParams } from 'ag-grid-community';
 
 const AgNameValueElement: ElementParams = {
@@ -34,7 +34,7 @@ export class AgNameValue extends Component {
         );
     }
 }
-export const AgNameValueSelector: ComponentSelector = {
+export const AgNameValueSelector: _ComponentSelector = {
     selector: 'AG-NAME-VALUE',
     component: AgNameValue,
 };

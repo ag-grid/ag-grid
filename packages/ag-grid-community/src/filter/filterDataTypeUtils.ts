@@ -185,7 +185,7 @@ const setFilterParamsForEachDataType: FilterParamsDefMap = {
     }),
     text: () => undefined,
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getFilterParamsForDataType(
     filter: string,
     existingFilterParams: any,
@@ -236,7 +236,7 @@ const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
     object: 'agTextColumnFloatingFilter',
     text: 'agTextColumnFloatingFilter',
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getDefaultSimpleFilter(cellDataType?: BaseCellDataType, isFloating: boolean = false): string {
     const filterSet = isFloating ? defaultFloatingFilters : defaultFilters;
     return filterSet[cellDataType ?? 'text'];

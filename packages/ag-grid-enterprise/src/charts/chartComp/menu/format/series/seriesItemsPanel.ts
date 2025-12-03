@@ -1,4 +1,4 @@
-import type { AgComponentSelectorType, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
+import type { AgSelectParams, ListOption, _AgComponentSelectorType, _BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -19,7 +19,7 @@ export class SeriesItemsPanel extends Component {
 
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     private readonly activePanels: Component<any>[] = [];
@@ -53,7 +53,7 @@ export class SeriesItemsPanel extends Component {
         this.initSeriesControls();
     }
 
-    private getSeriesItemsParams(): AgSelectParams<AgComponentSelectorType> {
+    private getSeriesItemsParams(): AgSelectParams<_AgComponentSelectorType> {
         const options: ListOption<SeriesItemType>[] = [
             { value: 'positive', text: this.chartTranslation.translate('seriesItemPositive') },
             { value: 'negative', text: this.chartTranslation.translate('seriesItemNegative') },

@@ -1,15 +1,15 @@
 import type {
     AgPromise,
-    BeanCollection,
     ElementParams,
     HighlightTooltipEventType,
     IRichCellEditorRendererParams,
     ITooltipCtrl,
-    Registry,
     RichSelectParams,
     TooltipFeature,
-    UserCompDetails,
-    UserComponentFactory,
+    _BeanCollection,
+    _Registry,
+    _UserCompDetails,
+    _UserComponentFactory,
 } from 'ag-grid-community';
 import {
     Component,
@@ -28,10 +28,10 @@ import { _bindCellRendererToHtmlElement } from './agRichSelect';
 
 const RichSelectRowElement: ElementParams = { tag: 'div', cls: 'ag-rich-select-row', role: 'presentation' };
 export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> {
-    private userCompFactory: UserComponentFactory;
-    private registry: Registry;
+    private userCompFactory: _UserComponentFactory;
+    private registry: _Registry;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
         this.registry = beans.registry;
     }
@@ -156,7 +156,7 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
-        let userCompDetails: UserCompDetails | undefined;
+        let userCompDetails: _UserCompDetails | undefined;
         const { cellRenderer, cellRendererParams } = this.params;
 
         if (cellRenderer) {

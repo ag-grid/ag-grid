@@ -1,4 +1,4 @@
-import type { ComponentSelector, ElementParams, GridCheckbox, GridInputTextField } from 'ag-grid-community';
+import type { ElementParams, GridCheckbox, GridInputTextField, _ComponentSelector } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgInputTextFieldSelector,
@@ -161,7 +161,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
     }
 }
 
-export const AgPrimaryColsHeaderSelector: ComponentSelector = {
+export const AgPrimaryColsHeaderSelector: _ComponentSelector = {
     selector: 'AG-PRIMARY-COLS-HEADER',
     component: AgPrimaryColsHeader,
 };

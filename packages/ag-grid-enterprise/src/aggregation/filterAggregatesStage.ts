@@ -1,16 +1,16 @@
 import type {
-    BeanCollection,
     ChangedPath,
     ClientSideRowModelStage,
     FilterManager,
     GridOptions,
-    NamedBean,
     RowNode,
+    _BeanCollection,
     _IRowNodeFilterAggregateStage,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
+import { _BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 
-export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
+export class FilterAggregatesStage extends _BeanStub implements _NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter_aggregates';
@@ -18,7 +18,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
 
     private filterManager?: FilterManager;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.filterManager = beans.filterManager;
     }
 

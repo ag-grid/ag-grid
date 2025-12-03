@@ -1,5 +1,5 @@
 import { _getClientSideRowModel } from 'ag-grid-community';
-import type { AgColumn, BeanCollection, ColumnModel } from 'ag-grid-community';
+import type { AgColumn, _BeanCollection, _ColumnModel } from 'ag-grid-community';
 
 import { getDefBySymbol } from './operators';
 import type { InfixOpDef } from './operators';
@@ -9,18 +9,18 @@ import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
 
 const isOperationNode = (n: FormulaNode): n is FormulaOperation => n.type === 'operation';
 
-function colLabelFromId(beans: BeanCollection, colId: string): string | null {
+function colLabelFromId(beans: _BeanCollection, colId: string): string | null {
     const col = beans.colModel.getColById(colId);
     if (col) {
         return beans.formula?.getColRef(col) ?? null;
     }
     return null;
 }
-function colIdFromLabel(beans: BeanCollection, label: string): string | null {
+function colIdFromLabel(beans: _BeanCollection, label: string): string | null {
     return beans.formula?.getColByRef?.(label)?.colId ?? null;
 }
 
-export function colIndexFromId(colModel: ColumnModel, cols: AgColumn[], colId: string): number | null {
+export function colIndexFromId(colModel: _ColumnModel, cols: AgColumn[], colId: string): number | null {
     const col = colModel.getColById(colId);
 
     if (!col) {
@@ -35,14 +35,14 @@ export function colIdFromIndex(cols: AgColumn[], idx: number): string | null {
     return col ? col.getId() ?? null : null;
 }
 
-export function rowIndexFromId(beans: BeanCollection, rowId: string): number | null {
+export function rowIndexFromId(beans: _BeanCollection, rowId: string): number | null {
     const row = beans.rowModel?.getRowNode?.(rowId);
     if (row?.formulaRowIndex != null) {
         return row.formulaRowIndex + 1; // convert 0-based to 1-based
     }
     return null;
 }
-export function rowIdFromIndex(beans: BeanCollection, idx: number): string | null {
+export function rowIdFromIndex(beans: _BeanCollection, idx: number): string | null {
     return _getClientSideRowModel(beans)?.getFormulaRow?.(idx - 1)?.id ?? null;
 }
 
@@ -53,7 +53,7 @@ function quoteString(s: string): string {
     return `"${s}"`;
 }
 
-function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
+function columnValueForREF(beans: _BeanCollection, ref: CellRef): string {
     const looksLetters = /^[A-Za-z]+$/.test(ref.id);
     if (ref.absolute) {
         if (looksLetters) {
@@ -75,7 +75,7 @@ function columnValueForREF(beans: BeanCollection, ref: CellRef): string {
     }
 }
 
-function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
+function rowValueForREF(beans: _BeanCollection, ref: CellRef): string {
     const { id, absolute } = ref;
     if (absolute) {
         // when absolute, the reference id is the index
@@ -93,7 +93,7 @@ function rowValueForREF(beans: BeanCollection, ref: CellRef): string {
     return id;
 }
 
-function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
+function columnLabelForA1(beans: _BeanCollection, ref: CellRef): string {
     // if absolute, already storing col label
     if (ref.absolute) {
         return ref.id;
@@ -106,7 +106,7 @@ function columnLabelForA1(beans: BeanCollection, ref: CellRef): string {
     throw `Cannot map column id '${ref.id}' to A1 label`;
 }
 
-function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
+function rowIndexForA1(beans: _BeanCollection, ref: CellRef): number {
     // if absolute, already storing 1-based row index
     if (ref.absolute) {
         const idx = Number(ref.id);
@@ -122,7 +122,7 @@ function rowIndexForA1(beans: BeanCollection, ref: CellRef): number {
     throw `Cannot map row id '${ref.id}' to A1 index`;
 }
 
-function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): string {
+function serializeCellA1(beans: _BeanCollection, cell: Cell, unsafe: boolean): string {
     const a = (abs: boolean, x: string | number) => (abs ? '$' : '') + String(x);
 
     const col1 = unsafe ? cell.column.id : columnLabelForA1(beans, cell.column);
@@ -137,7 +137,7 @@ function serializeCellA1(beans: BeanCollection, cell: Cell, unsafe: boolean): st
     return startRef;
 }
 
-function serializeCellREF(beans: BeanCollection, cell: Cell): string {
+function serializeCellREF(beans: _BeanCollection, cell: Cell): string {
     const colPart = (r: CellRef) => `COLUMN(${quoteString(columnValueForREF(beans, r))}${r.absolute ? ',true' : ''})`;
     const rowPart = (r: CellRef) => `ROW(${quoteString(rowValueForREF(beans, r))}${r.absolute ? ',true' : ''})`;
 
@@ -237,7 +237,7 @@ function needsParensForUnaryMinus(rhs: FormulaNode): boolean {
  * useRefFormat = false -> A1 ($A$1:$B2)
  */
 export function serializeFormula(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     root: FormulaNode,
     useRefFormat: boolean,
     unsafe: boolean

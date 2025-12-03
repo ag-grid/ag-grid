@@ -1,13 +1,13 @@
 import type {
-    BeanCollection,
     DragAndDropService,
     ElementParams,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
     GridDragSource,
     ITooltipCtrl,
-    Registry,
     TooltipFeature,
+    _BeanCollection,
+    _Registry,
 } from 'ag-grid-community';
 import {
     DragSourceType,
@@ -94,9 +94,9 @@ const AdvancedFilterBuilderItemElement: ElementParams = {
 export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBuilderEvents> {
     private dragAndDrop: DragAndDropService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
-    private registry: Registry;
+    private registry: _Registry;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.dragAndDrop = beans.dragAndDrop!;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
         this.registry = beans.registry;

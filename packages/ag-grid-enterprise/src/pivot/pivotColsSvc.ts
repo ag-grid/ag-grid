@@ -1,7 +1,7 @@
-import type { AgColumn, ColDef, ColumnEventType, ColumnStateParams, IColsService, NamedBean } from 'ag-grid-community';
-import { BaseColsService, _removeFromArray } from 'ag-grid-community';
+import type { AgColumn, ColDef, ColumnEventType, ColumnStateParams, IColsService, _NamedBean } from 'ag-grid-community';
+import { _BaseColsService, _removeFromArray } from 'ag-grid-community';
 
-export class PivotColsSvc extends BaseColsService implements NamedBean, IColsService {
+export class PivotColsSvc extends _BaseColsService implements _NamedBean, IColsService {
     beanName = 'pivotColsSvc' as const;
     eventName = 'columnPivotChanged' as const;
     override columnProcessors = {

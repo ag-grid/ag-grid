@@ -1,20 +1,20 @@
 import type {
     AgColumn,
     AgColumnGroup,
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
     RowNode,
     ValueService,
+    _BeanCollection,
+    _ColumnModel,
+    _ColumnNameService,
 } from 'ag-grid-community';
-import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
+import { _BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 
-export class ChartColumnService extends BeanStub {
-    private colModel: ColumnModel;
-    private colNames: ColumnNameService;
+export class ChartColumnService extends _BeanStub {
+    private colModel: _ColumnModel;
+    private colNames: _ColumnNameService;
     private valueSvc: ValueService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.valueSvc = beans.valueSvc;

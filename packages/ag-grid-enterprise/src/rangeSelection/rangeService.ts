@@ -1,7 +1,6 @@
 import type {
     AgColumn,
     AgColumnGroup,
-    BeanCollection,
     CellCtrl,
     CellNavigationService,
     CellPosition,
@@ -9,7 +8,6 @@ import type {
     CellRangeBoundaryParams,
     CellRangeParams,
     ClearCellRangeParams,
-    ColumnModel,
     CtrlsService,
     DragService,
     GridOptionsService,
@@ -17,16 +15,18 @@ import type {
     IHeaderCellComp,
     IRangeService,
     IRowModel,
-    NamedBean,
     PartialCellRange,
     RowPinnedType,
     RowPosition,
     ValueService,
-    VisibleColsService,
+    _BeanCollection,
+    _ColumnModel,
+    _NamedBean,
+    _VisibleColsService,
 } from 'ag-grid-community';
 import {
     AutoScrollService,
-    BeanStub,
+    _BeanStub,
     _areCellsEqual,
     _areEqual,
     _exists,
@@ -44,6 +44,7 @@ import {
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
+    _isRowNumberCol,
     _isRowNumbers,
     _isSameRow,
     _isUsingNewCellSelectionAPI,
@@ -53,7 +54,6 @@ import {
     _removeAllFromArray,
     _removeFromArray,
     _warn,
-    isRowNumberCol,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -71,19 +71,19 @@ interface ColumnRangeSelectionContext {
     root?: AgColumn;
 }
 
-export class RangeService extends BeanStub implements NamedBean, IRangeService {
+export class RangeService extends _BeanStub implements _NamedBean, IRangeService {
     beanName = 'rangeSvc' as const;
 
     private rowModel: IRowModel;
     private dragSvc: DragService;
-    private colModel: ColumnModel;
-    private visibleCols: VisibleColsService;
+    private colModel: _ColumnModel;
+    private visibleCols: _VisibleColsService;
     private cellNavigation: CellNavigationService;
     private ctrlsSvc: CtrlsService;
     private valueSvc: ValueService;
     private selectionMode: SelectionMode;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.rowModel = beans.rowModel;
         this.dragSvc = beans.dragSvc!;
         this.colModel = beans.colModel;
@@ -388,7 +388,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public handleCellMouseDown(event: MouseEvent, cell: CellPosition): void {
         const { beans } = this;
 
-        const isRowNumber = isRowNumberCol(cell.column);
+        const isRowNumber = _isRowNumberCol(cell.column);
         if (isRowNumber) {
             event.preventDefault();
         }
@@ -470,7 +470,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const isRowNumbersEnabled = _isRowNumbers(beans);
         if (isRowNumbersEnabled) {
-            const allColumnsRange = isRowNumberCol(cell.column);
+            const allColumnsRange = _isRowNumberCol(cell.column);
             this.setSelectionMode(allColumnsRange);
         }
 
@@ -623,7 +623,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         const cellRange = _last(this.cellRanges);
 
-        this.setSelectionMode(isRowNumberCol(cellPosition.column));
+        this.setSelectionMode(_isRowNumberCol(cellPosition.column));
         this.updateRangeRowBoundary({ cellRange, boundary: 'end', cellPosition });
     }
 
@@ -1108,7 +1108,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public createRangeHighlightFeature(
-        compBean: BeanStub,
+        compBean: _BeanStub,
         column: AgColumn<any> | AgColumnGroup,
         headerComp: IHeaderCellComp
     ): void {
@@ -1345,7 +1345,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
     }
 
-    public createDragListenerFeature(eContainer: HTMLElement): BeanStub {
+    public createDragListenerFeature(eContainer: HTMLElement): _BeanStub {
         return new DragListenerFeature(eContainer);
     }
 
@@ -1353,7 +1353,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         return new CellRangeFeature(this.beans, ctrl);
     }
 
-    public createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub {
+    public createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): _BeanStub {
         return new HeaderGroupCellMouseListenerFeature(column, eGui);
     }
 
@@ -1491,7 +1491,7 @@ function rowMin(rows: RowPosition[]): RowPosition | undefined {
 }
 
 function shouldSkipCurrentColumn(currentColumn: AgColumn): boolean {
-    return isRowNumberCol(currentColumn);
+    return _isRowNumberCol(currentColumn);
 }
 
 function isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {

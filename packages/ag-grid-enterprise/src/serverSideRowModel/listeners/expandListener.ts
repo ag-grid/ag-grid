@@ -1,9 +1,9 @@
-import type { NamedBean } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
+import type { _NamedBean } from 'ag-grid-community';
+import { _BeanStub, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
 
-export class ExpandListener extends BeanStub implements NamedBean {
+export class ExpandListener extends _BeanStub implements _NamedBean {
     beanName = 'ssrmExpandListener' as const;
 
     public postConstruct(): void {

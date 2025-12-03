@@ -1,4 +1,4 @@
-import type { AgEvent, ComponentSelector, ElementParams, ToolPanelDef } from 'ag-grid-community';
+import type { AgEvent, ElementParams, ToolPanelDef, _ComponentSelector } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -73,7 +73,7 @@ export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     }
 }
 
-export const AgSideBarButtonsSelector: ComponentSelector = {
+export const AgSideBarButtonsSelector: _ComponentSelector = {
     selector: 'AG-SIDE-BAR-BUTTONS',
     component: AgSideBarButtons,
 };

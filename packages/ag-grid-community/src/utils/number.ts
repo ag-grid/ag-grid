@@ -6,7 +6,7 @@ import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
  * from: http://blog.tompawlak.org/number-currency-formatting-javascript
  * @param {number} value
  * @returns {string}
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _formatNumberCommas(value: number | null, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';

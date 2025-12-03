@@ -1,4 +1,4 @@
-import type { BeanCollection, ChartType, GridCheckbox, GridSelect, SeriesChartType } from 'ag-grid-community';
+import type { ChartType, GridCheckbox, GridSelect, SeriesChartType, _BeanCollection } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
@@ -11,7 +11,7 @@ import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
 export class SeriesChartTypePanel extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

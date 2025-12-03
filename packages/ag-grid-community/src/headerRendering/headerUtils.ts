@@ -4,6 +4,7 @@ import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function getHeaderRowCount(colModel: ColumnModel): number {
     if (!colModel.cols) {
         return -1;
@@ -73,6 +74,7 @@ export function getHeaderHeight(beans: BeanCollection): number {
     return beans.gos.get('headerHeight') ?? beans.environment.getDefaultHeaderHeight();
 }
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function getFloatingFiltersHeight(beans: BeanCollection): number {
     return beans.gos.get('floatingFiltersHeight') ?? getHeaderHeight(beans);
 }

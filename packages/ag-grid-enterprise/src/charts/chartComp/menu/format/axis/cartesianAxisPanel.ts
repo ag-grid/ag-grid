@@ -1,12 +1,12 @@
 import type { AgCartesianAxisOptions } from 'ag-charts-types';
 
 import type {
-    AgComponentSelectorType,
     AgSelectParams,
-    BeanCollection,
     GridCheckbox,
     GridSelect,
     ListOption,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 import {
     AgCheckbox,
@@ -50,7 +50,7 @@ export class CartesianAxisPanel extends Component {
     private readonly chartOptionsService: ChartOptionsService;
     private readonly chartController: ChartController;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     private readonly chartOptionsSeriesProxy: ChartOptionsProxy;
@@ -167,7 +167,7 @@ export class CartesianAxisPanel extends Component {
     private getAxisTypeSelectParams(
         chartAxisOptions: ChartMenuParamsFactory,
         chartAxisAppliedThemeOverrides: ChartOptionsProxy
-    ): AgSelectParams<AgComponentSelectorType> {
+    ): AgSelectParams<_AgComponentSelectorType> {
         const chartOptions = chartAxisOptions.getChartOptions();
         const axisTypeSelectOptions = this.getAxisTypeSelectOptions();
         const params = chartAxisOptions.getDefaultSelectParams('type', 'axisType', axisTypeSelectOptions);
@@ -251,7 +251,7 @@ export class CartesianAxisPanel extends Component {
 
     private getAxisPositionSelectParams(
         chartAxisOptions: ChartMenuParamsFactory
-    ): AgSelectParams<AgComponentSelectorType> | null {
+    ): AgSelectParams<_AgComponentSelectorType> | null {
         const axisPositionSelectOptions = ((chartType, axisType) => {
             // Some chart types do not support configuring the axis position
             if (chartType === 'heatmap') {
@@ -280,7 +280,7 @@ export class CartesianAxisPanel extends Component {
 
     private getAxisTimeFormatSelectParams(
         chartAxisOptions: ChartMenuParamsFactory
-    ): AgSelectParams<AgComponentSelectorType> | null {
+    ): AgSelectParams<_AgComponentSelectorType> | null {
         if (!this.isCategoryAxis()) {
             return null;
         }

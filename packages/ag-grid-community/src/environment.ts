@@ -56,7 +56,7 @@ const PINNED_BORDER_WIDTH: CssVariable<CssChangeKeys> = {
     defaultValue: 1,
     border: true,
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
     for (const module of modules.sort((a, b) => a.moduleName.localeCompare(b.moduleName))) {
         const moduleCss = module.css;

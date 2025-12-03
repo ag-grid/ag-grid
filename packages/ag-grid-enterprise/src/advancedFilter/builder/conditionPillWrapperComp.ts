@@ -1,9 +1,9 @@
 import type {
     AgColumn,
     BaseCellDataType,
-    BeanCollection,
     BooleanAdvancedFilterModel,
     ColumnAdvancedFilterModel,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { Component, _exists, _removeFromParent, _toStringOrNull } from 'ag-grid-community';
 
@@ -20,7 +20,7 @@ import type { SelectPillComp } from './selectPillComp';
 export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEvents> {
     private advFilterExpSvc: AdvancedFilterExpressionService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
     }
 

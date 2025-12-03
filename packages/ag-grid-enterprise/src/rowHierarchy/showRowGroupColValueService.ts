@@ -1,10 +1,10 @@
-import type { AgColumn, IRowNode, IShowRowGroupColsValueService, NamedBean, RowNode } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { AgColumn, IRowNode, RowNode, _IShowRowGroupColsValueService, _NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 /**
  * Containers helper functions specific to row group col values.
  */
-export class ShowRowGroupColValueService extends BeanStub implements NamedBean, IShowRowGroupColsValueService {
+export class ShowRowGroupColValueService extends _BeanStub implements _NamedBean, _IShowRowGroupColsValueService {
     beanName = 'showRowGroupColValueSvc' as const;
 
     /**

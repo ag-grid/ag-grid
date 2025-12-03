@@ -22,11 +22,11 @@ export interface ITooltipCtrlParams {
 }
 
 export interface ITooltipCtrl extends TooltipCtrl<TooltipLocation, ITooltipCtrlParams> {}
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isShowTooltipWhenTruncated(gos: GridOptionsService): boolean {
     return gos.get('tooltipShowMode') === 'whenTruncated';
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getShouldDisplayTooltip(
     gos: GridOptionsService,
     getElement: () => HTMLElement | undefined

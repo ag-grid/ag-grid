@@ -10,7 +10,7 @@ let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
 let maxDivHeight: number;
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isBrowserSafari(): boolean {
     if (isSafari === undefined) {
         isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -31,7 +31,7 @@ export function _isBrowserSafari(): boolean {
 
 //     return isChrome;
 // }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isBrowserFirefox(): boolean {
     if (isFirefox === undefined) {
         isFirefox = /(firefox)/i.test(navigator.userAgent);
@@ -39,7 +39,7 @@ export function _isBrowserFirefox(): boolean {
 
     return isFirefox;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isMacOsUserAgent(): boolean {
     if (isMacOs === undefined) {
         isMacOs = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
@@ -47,7 +47,7 @@ export function _isMacOsUserAgent(): boolean {
 
     return isMacOs;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isIOSUserAgent(): boolean {
     if (isIOS === undefined) {
         isIOS =
@@ -57,7 +57,7 @@ export function _isIOSUserAgent(): boolean {
 
     return isIOS;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getTabIndex(el: HTMLElement | null): string | null {
     if (!el) {
         return null;
@@ -72,7 +72,7 @@ export function _getTabIndex(el: HTMLElement | null): string | null {
 
     return numberTabIndex.toString();
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getMaxDivHeight(): number {
     if (maxDivHeight !== undefined) {
         return maxDivHeight;
@@ -103,7 +103,7 @@ export function _getMaxDivHeight(): number {
     maxDivHeight = res;
     return res;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getScrollbarWidth(): number | null {
     if (browserScrollbarWidth == null) {
         initScrollbarWidthAndVisibility();
@@ -140,7 +140,7 @@ function initScrollbarWidthAndVisibility(): void {
         invisibleScrollbar = width === 0;
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isInvisibleScrollbar(): boolean {
     if (invisibleScrollbar == null) {
         initScrollbarWidthAndVisibility();

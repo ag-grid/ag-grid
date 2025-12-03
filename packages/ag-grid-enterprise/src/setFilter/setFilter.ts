@@ -1,7 +1,6 @@
 import type {
     AgColumn,
     AgPromise,
-    ComponentSelector,
     ElementParams,
     FilterDisplayParams,
     GridInputTextField,
@@ -14,6 +13,7 @@ import type {
     SetFilterParams,
     SetFilterUi,
     TextFormatter,
+    _ComponentSelector,
 } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
@@ -225,7 +225,7 @@ export class SetFilter<V = string>
             ],
         };
     }
-    protected getAgComponents(): ComponentSelector[] {
+    protected getAgComponents(): _ComponentSelector[] {
         return [AgInputTextFieldSelector];
     }
 

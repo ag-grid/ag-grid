@@ -3,7 +3,7 @@ import type {
     GroupCellRendererParams,
     ICellRendererComp,
     IGroupCellRenderer,
-    UserCompDetails,
+    _UserCompDetails,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from 'ag-grid-community';
 
@@ -56,7 +56,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
     }
 
-    private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
+    private setRenderDetails(compDetails: _UserCompDetails | undefined, valueToDisplay: any): void {
         if (compDetails) {
             compDetails.newAgStackInstance().then((comp) => {
                 if (!comp) {

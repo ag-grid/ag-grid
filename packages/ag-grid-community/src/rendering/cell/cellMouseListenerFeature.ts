@@ -1,6 +1,6 @@
 import { _isBrowserSafari } from '../../agStack/utils/browser';
 import { _isElementChildOfClass, _isFocusableFormField } from '../../agStack/utils/dom';
-import { isRowNumberCol } from '../../columns/columnUtils';
+import { _isRowNumberCol } from '../../columns/columnUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -182,7 +182,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const hasRanges = rangeSvc && !rangeSvc.isEmpty();
         const containsWidget = this.containsWidget(target);
 
-        const isRowNumberColumn = isRowNumberCol(column);
+        const isRowNumberColumn = _isRowNumberCol(column);
 
         if (rowNumbersSvc && isRowNumberColumn && !rowNumbersSvc.handleMouseDownOnCell(cellPosition, mouseEvent)) {
             return;

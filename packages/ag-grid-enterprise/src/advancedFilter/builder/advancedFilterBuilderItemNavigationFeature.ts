@@ -1,13 +1,13 @@
 import type { Component } from 'ag-grid-community';
 import {
-    BeanStub,
     KeyCode,
+    _BeanStub,
     _getActiveDomElement,
     _isStopPropagationForAgGrid,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
-export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
+export class AdvancedFilterBuilderItemNavigationFeature extends _BeanStub {
     constructor(
         private readonly eGui: HTMLElement,
         private readonly focusWrapper: HTMLElement,

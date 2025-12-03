@@ -1,4 +1,4 @@
-import type { BeanCollection, GridSelect, GridToggleButton, IChartService } from 'ag-grid-community';
+import type { GridSelect, GridToggleButton, IChartService, _BeanCollection } from 'ag-grid-community';
 import { AgSelect, AgToggleButton, Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
@@ -17,7 +17,7 @@ export class ChartSpecificDataPanel extends Component {
     private chartTranslation: ChartTranslationService;
     private chartSvc: IChartService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
         this.chartSvc = beans.chartSvc!;
     }

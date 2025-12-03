@@ -9,11 +9,12 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createCellId(cellPosition: CellPosition): string {
     const { rowIndex, rowPinned, column } = cellPosition;
     return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _areCellsEqual(cellA: CellPosition, cellB: CellPosition): boolean {
     const colsMatch = cellA.column === cellB.column;
     const floatingMatch = cellA.rowPinned === cellB.rowPinned;
@@ -23,7 +24,7 @@ export function _areCellsEqual(cellA: CellPosition, cellB: CellPosition): boolea
 
 /**
  * True if `rowA` appears before `rowB`
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isRowBefore(rowA: RowPosition, rowB: RowPosition): boolean {
     switch (rowA.rowPinned) {
         case 'top':
@@ -47,7 +48,7 @@ export function _isRowBefore(rowA: RowPosition, rowB: RowPosition): boolean {
     }
     return rowA.rowIndex < rowB.rowIndex;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isSameRow(rowA: RowPosition | undefined, rowB: RowPosition | undefined): boolean {
     // if both missing
     if (!rowA && !rowB) {
@@ -60,7 +61,7 @@ export function _isSameRow(rowA: RowPosition | undefined, rowB: RowPosition | un
     // otherwise compare (use == to compare rowPinned because it can be null or undefined)
     return rowA.rowIndex === rowB.rowIndex && rowA.rowPinned == rowB.rowPinned;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getFirstRow(beans: BeanCollection): RowPosition | null {
     let rowIndex = 0;
     let rowPinned: RowPinnedType;
@@ -78,7 +79,7 @@ export function _getFirstRow(beans: BeanCollection): RowPosition | null {
 
     return rowPinned === undefined ? null : { rowIndex, rowPinned };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getLastRow(beans: BeanCollection): RowPosition | null {
     let rowIndex;
     let rowPinned: RowPinnedType = null;
@@ -100,7 +101,7 @@ export function _getLastRow(beans: BeanCollection): RowPosition | null {
 
     return rowIndex === undefined ? null : { rowIndex, rowPinned };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowNode(beans: BeanCollection, gridRow: RowPosition): RowNode | undefined {
     switch (gridRow.rowPinned) {
         case 'top':
@@ -111,7 +112,7 @@ export function _getRowNode(beans: BeanCollection, gridRow: RowPosition): RowNod
             return beans.rowModel.getRow(gridRow.rowIndex);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosition): CellCtrl | null {
     // if spanned, return cell ctrl from spanned renderer
     const spannedCellCtrl = beans.spannedRowRenderer?.getCellByPosition(cellPosition);
@@ -126,7 +127,7 @@ export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosi
 
     return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: RowPinnedType): RowNode | undefined {
     const { rowModel: rm, pinnedRowModel: prm } = beans;
 
@@ -147,7 +148,7 @@ export function _getRowById(beans: BeanCollection, rowId: string, rowPinned?: Ro
 /**
  * Gets the row position above the given row position. Considers pinned and sticky rows for navigation.
  * RowModel.getRow() is expensive, so it is only called if `checkSticky` is true.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition, checkSticky = false): RowPosition | null {
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;
@@ -172,7 +173,7 @@ export function _getRowAbove(beans: BeanCollection, rowPosition: RowPosition, ch
     }
     return { rowIndex: index - 1, rowPinned: pinned };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getAbsoluteRowIndex(beans: BeanCollection, rowPosition: RowPosition): number {
     const { pinnedRowModel, rowModel } = beans;
     const pinnedTopRowCount = pinnedRowModel?.getPinnedTopRowCount() ?? 0;
@@ -193,7 +194,7 @@ export function _getAbsoluteRowIndex(beans: BeanCollection, rowPosition: RowPosi
 /**
  * Returns the row position below the given row position. Considers pinned and sticky rows for navigation.
  * RowModel.getRow() is expensive, so it is only called if `checkSticky` is true.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition, checkSticky = false): RowPosition | null {
     const { rowIndex: index, rowPinned: pinned } = rowPosition;
     const { pageBounds, pinnedRowModel, rowModel } = beans;

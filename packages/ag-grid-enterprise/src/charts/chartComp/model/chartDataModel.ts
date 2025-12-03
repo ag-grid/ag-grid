@@ -3,7 +3,6 @@ import type { AgCartesianAxisType } from 'ag-charts-types';
 import type {
     AgColumn,
     AgColumnGroup,
-    BeanCollection,
     CellRange,
     ChartType,
     IAggFunc,
@@ -13,8 +12,9 @@ import type {
     SeriesGroupType,
     SortModelItem,
     SortOption,
+    _BeanCollection,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, _normalizeSortType, isColumnGroupAutoCol } from 'ag-grid-community';
+import { CellRangeType, _BeanStub, _isColumnGroupAutoCol, _normalizeSortType } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -50,11 +50,11 @@ export interface ChartModelParams {
 
 export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
-export class ChartDataModel extends BeanStub {
+export class ChartDataModel extends _BeanStub {
     private rangeSvc: IRangeService;
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.rangeSvc = beans.rangeSvc!;
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
@@ -391,7 +391,7 @@ export class ChartDataModel extends BeanStub {
         const groupingActive = usingTreeData || (rowGroupCols && rowGroupCols.length > 0);
 
         dimensionCols.forEach((column) => {
-            const autoGroup = isColumnGroupAutoCol(column);
+            const autoGroup = _isColumnGroupAutoCol(column);
 
             const selected =
                 this.crossFiltering && this.aggFunc

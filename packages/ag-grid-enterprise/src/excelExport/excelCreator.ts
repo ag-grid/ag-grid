@@ -7,7 +7,7 @@ import type {
     ExcelRow,
     ExcelStyle,
     IExcelCreator,
-    NamedBean,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
     BaseCreator,
@@ -246,7 +246,7 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 
 export class ExcelCreator
     extends BaseCreator<ExcelRow[], ExcelSerializingSession, ExcelExportParams>
-    implements NamedBean, IExcelCreator
+    implements _NamedBean, IExcelCreator
 {
     beanName = 'excelCreator' as const;
 

@@ -5,7 +5,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _isUsingNewRowSelectionAPI, _warn } from 'ag-grid-community';
+import { _BeanStub, _error, _isMultiRowSelection, _isUsingNewRowSelectionAPI, _warn } from 'ag-grid-community';
 
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -16,7 +16,7 @@ interface SelectedState {
     toggledNodes: Set<string>;
 }
 
-export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
+export class DefaultStrategy extends _BeanStub implements ISelectionStrategy {
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
 
     /**

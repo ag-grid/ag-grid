@@ -1,19 +1,19 @@
 import type {
-    BeanCollection,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     LoadSuccessParams,
-    NamedBean,
     RowNode,
     RowRenderer,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
+import { _BeanStub, _addGridCommonParams, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
 import type { LazyStore } from './lazyStore';
 
-export class LazyBlockLoadingService extends BeanStub implements NamedBean {
+export class LazyBlockLoadingService extends _BeanStub implements _NamedBean {
     beanName = 'lazyBlockLoadingSvc' as const;
 
     private outboundRequests: number = 0;
@@ -22,7 +22,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private rowRenderer: RowRenderer;
     private rowModel: ServerSideRowModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
         this.rowModel = beans.rowModel as ServerSideRowModel;
     }

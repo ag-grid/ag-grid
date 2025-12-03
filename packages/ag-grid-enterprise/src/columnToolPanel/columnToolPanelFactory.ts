@@ -1,13 +1,13 @@
-import type { BeanName, Component, NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { Component, _BeanName, _NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { PivotModePanel } from './pivotModePanel';
 
-export class ColumnToolPanelFactory extends BeanStub implements NamedBean {
-    beanName: BeanName = 'colToolPanelFactory';
+export class ColumnToolPanelFactory extends _BeanStub implements _NamedBean {
+    beanName: _BeanName = 'colToolPanelFactory';
 
     public setPanelVisible<C extends RowGroupDropZonePanel | ValuesDropZonePanel | PivotDropZonePanel | PivotModePanel>(
         existingPanel: C | undefined,

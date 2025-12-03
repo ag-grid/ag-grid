@@ -1,5 +1,4 @@
 import type {
-    ComponentSelector,
     ElementParams,
     ISideBar,
     IToolPanel,
@@ -7,6 +6,7 @@ import type {
     SideBarDef,
     SideBarState,
     ToolPanelDef,
+    _ComponentSelector,
 } from 'ag-grid-community';
 import {
     Component,
@@ -521,7 +521,7 @@ function isFilterPanel(toolPanel: any): boolean {
     return toolPanel === 'agFiltersToolPanel' || toolPanel === 'agNewFiltersToolPanel';
 }
 
-export const AgSideBarSelector: ComponentSelector<Component> = {
+export const AgSideBarSelector: _ComponentSelector<Component> = {
     selector: 'AG-SIDE-BAR',
     component: AgSideBar,
 };

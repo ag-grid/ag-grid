@@ -8,7 +8,7 @@ import { _getWindow } from './document';
  * @param {HTMLElement} element The element to receive the class
  * @param {string} elementClass The class to be assigned to the element
  * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
     const parent = element.parentElement;
     let sibling = parent && (parent.firstChild as HTMLElement);
@@ -26,7 +26,7 @@ export function _radioCssClass(element: HTMLElement, elementClass: string | null
 
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
 export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isFocusableFormField(element: Element | null): boolean {
     if (!element) {
         return false;
@@ -41,7 +41,7 @@ export function _isFocusableFormField(element: Element | null): boolean {
     }
     return _isVisible(element);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
@@ -49,7 +49,7 @@ export function _setDisplayed(element: Element, displayed: boolean, options: { s
         _setAriaHidden(element, !displayed);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setVisible(element: HTMLElement, visible: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const { skipAriaHidden } = options;
     element.classList.toggle('ag-invisible', !visible);
@@ -57,7 +57,7 @@ export function _setVisible(element: HTMLElement, visible: boolean, options: { s
         _setAriaHidden(element, !visible);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
     const addOrRemoveDisabledAttribute = disabled
@@ -71,7 +71,7 @@ export function _setDisabled(element: HTMLElement, disabled: boolean) {
         addOrRemoveDisabledAttribute(input as HTMLElement);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isElementChildOfClass(
     element: HTMLElement | null,
     cls: string,
@@ -101,7 +101,7 @@ export function _isElementChildOfClass(
 // returns back sizes as doubles instead of strings. similar to
 // getBoundingClientRect, however getBoundingClientRect does not:
 // a) work with fractions (eg browser is zooming)
-// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values
+// b) has CSS transitions applied (eg CSS scale, browser zoom), which we don't want, we want the un-transitioned values/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getElementSize(el: HTMLElement): {
     height: number;
     width: number;
@@ -156,7 +156,7 @@ export function _getElementSize(el: HTMLElement): {
         boxSizing,
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getInnerHeight(el: HTMLElement): number {
     const size = _getElementSize(el);
 
@@ -166,7 +166,7 @@ export function _getInnerHeight(el: HTMLElement): number {
 
     return size.height;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getInnerWidth(el: HTMLElement): number {
     const size = _getElementSize(el);
 
@@ -176,19 +176,19 @@ export function _getInnerWidth(el: HTMLElement): number {
 
     return size.width;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getAbsoluteHeight(el: HTMLElement): number {
     const { height, marginBottom, marginTop } = _getElementSize(el);
 
     return Math.floor(height + marginBottom + marginTop);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getAbsoluteWidth(el: HTMLElement): number {
     const { width, marginLeft, marginRight } = _getElementSize(el);
 
     return Math.floor(width + marginLeft + marginRight);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getElementRectWithOffset(el: HTMLElement): {
     top: number;
     left: number;
@@ -205,7 +205,7 @@ export function _getElementRectWithOffset(el: HTMLElement): {
         bottom: offsetElementRect.bottom + (borderBottomWidth || 0),
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
     let scrollLeft = element.scrollLeft;
 
@@ -215,30 +215,30 @@ export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
 
     return scrollLeft;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
     if (rtl) {
         value *= -1;
     }
     element.scrollLeft = value;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _clearElement(el: HTMLElement | null | undefined): void {
     while (el?.firstChild) {
         el.firstChild.remove();
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _removeFromParent(node: Element | null | undefined): void {
     if (node?.parentNode) {
         node.remove();
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isInDOM(element: Element): element is HTMLElement {
     return !!(element as HTMLElement).offsetParent;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isVisible(element: Element) {
     if (element.checkVisibility) {
         return element.checkVisibility({ checkVisibilityCSS: true });
@@ -252,7 +252,7 @@ export function _isVisible(element: Element) {
  * NOTE: Prefer _createElement
  * @param {string} template
  * @returns {HTMLElement}
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _loadTemplate(template: string | undefined | null): HTMLElement {
     const tempDiv = document.createElement('div');
     // eslint-disable-next-line no-restricted-properties -- no other way to parse custom HTML strings from the user
@@ -260,7 +260,7 @@ export function _loadTemplate(template: string | undefined | null): HTMLElement 
 
     return tempDiv.firstChild as HTMLElement;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {
@@ -283,7 +283,7 @@ export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eC
         eContainer.insertAdjacentElement('afterbegin', eChild);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
     for (let i = 0; i < orderedChildren.length; i++) {
         const correctCellAtIndex = orderedChildren[i];
@@ -303,7 +303,7 @@ export function _setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTM
 function _camelCaseToHyphenated(camelCase: string): string {
     return camelCase.replace(/[A-Z]/g, (s) => `-${s.toLocaleLowerCase()}`);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addStylesToElement(
     eElement: any,
     styles:
@@ -332,7 +332,7 @@ export function _addStylesToElement(
         eElement.style.setProperty(parsedKey, parsedValue, priority);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isElementOverflowingCallback(getElement: () => HTMLElement | undefined): () => boolean {
     return () => {
         const element = getElement();
@@ -343,15 +343,15 @@ export function _isElementOverflowingCallback(getElement: () => HTMLElement | un
         return _isHorizontalScrollShowing(element) || _isVerticalScrollShowing(element);
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isVerticalScrollShowing(element: HTMLElement): boolean {
     return element.clientHeight < element.scrollHeight;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setElementWidth(element: HTMLElement, width: string | number) {
     if (width === 'flex') {
         element.style.removeProperty('width');
@@ -362,29 +362,29 @@ export function _setElementWidth(element: HTMLElement, width: string | number) {
         _setFixedWidth(element, width);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setFixedWidth(element: HTMLElement, width: string | number) {
     width = _formatSize(width);
     element.style.width = width;
     element.style.maxWidth = width;
     element.style.minWidth = width;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setFixedHeight(element: HTMLElement, height: string | number) {
     height = _formatSize(height);
     element.style.height = height;
     element.style.maxHeight = height;
     element.style.minHeight = height;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _formatSize(size: number | string) {
     return typeof size === 'number' ? `${size}px` : size;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isNodeOrElement(o: any): o is Node | Element {
     return o instanceof Node || o instanceof HTMLElement;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _addOrRemoveAttribute(element: HTMLElement, name: string, value: string | number | null | undefined) {
     if (value == null || value === '') {
         element.removeAttribute(name);
@@ -392,7 +392,7 @@ export function _addOrRemoveAttribute(element: HTMLElement, name: string, value:
         element.setAttribute(name, value.toString());
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _observeResize(
     beans: UtilBeanCollection,
     element: HTMLElement,
@@ -404,7 +404,7 @@ export function _observeResize(
     resizeObserver?.observe(element);
     return () => resizeObserver?.disconnect();
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _requestAnimationFrame(beans: UtilBeanCollection, callback: any) {
     const win = _getWindow(beans);
 
@@ -482,6 +482,8 @@ function getWhitespaceNode() {
     whitespaceNode ??= document.createTextNode(' ');
     return whitespaceNode.cloneNode();
 }
+
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _createAgElement<T extends HTMLElement = HTMLElement, TComponentSelector extends string = string>(
     params: AgElementParams<TComponentSelector>
 ): T {

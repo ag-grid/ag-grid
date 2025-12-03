@@ -51,7 +51,7 @@ export const getCellEditorInstances = <TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
 ): ICellEditor[] => getCellEditorInstanceMap(beans, params).map((res) => res.editor);
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setupEditors(
     beans: BeanCollection,
     editingCells: Required<EditPosition>[],
@@ -106,7 +106,7 @@ export function _setupEditors(
         );
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _sourceAndPendingDiffer({
     pendingValue,
     sourceValue,
@@ -116,7 +116,7 @@ export function _sourceAndPendingDiffer({
     }
     return pendingValue !== sourceValue;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setupEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
@@ -286,7 +286,7 @@ function _createEditorParams(
         },
     });
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boolean): void {
     const { editModelSvc } = beans;
     editModelSvc?.getEditMap().forEach((editRow, rowNode) => {
@@ -302,7 +302,7 @@ export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boo
         });
     });
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
     const editor = cellCtrl.comp?.getCellEditor();
     if (!editor?.refresh) {
@@ -332,7 +332,7 @@ function checkAndPreventDefault(
 
     return params;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _syncFromEditors(
     beans: BeanCollection,
     params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
@@ -359,7 +359,7 @@ export function _syncFromEditors(
         _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _syncFromEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
@@ -426,7 +426,7 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
         pendingValue: getNormalisedFormula(beans, edit?.editorValue, false, position.column),
     });
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _destroyEditors(
     beans: BeanCollection,
     edits?: Required<EditPosition>[],
@@ -442,7 +442,7 @@ export function _destroyEditors(
 }
 
 type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean; source?: EditSource };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _destroyEditor(
     beans: BeanCollection,
     position: Required<EditPosition>,
@@ -595,7 +595,7 @@ function _hasValidationRules(beans: BeanCollection): boolean {
 
     return columnsHaveRules || getFullRowEditValidationErrors || editorsHaveRules;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _populateModelValidationErrors(beans: BeanCollection, force?: boolean): void {
     if (!(force || _hasValidationRules(beans))) {
         return;
@@ -725,7 +725,7 @@ const _generateRowValidationErrors = (beans: BeanCollection): EditRowValidationM
 
     return rowValidationModel;
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _validateEdit(beans: BeanCollection): ICellEditorValidationError[] | null {
     _populateModelValidationErrors(beans, true);
 

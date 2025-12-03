@@ -1,6 +1,6 @@
 import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-types';
 
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -16,7 +16,7 @@ export class PaddingPanel extends Component {
 
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     constructor(

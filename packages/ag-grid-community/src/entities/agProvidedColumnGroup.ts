@@ -4,6 +4,7 @@ import type { AgColumn } from './agColumn';
 import { getNextColInstanceId, isColumn } from './agColumn';
 import type { ColGroupDef } from './colDef';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function isProvidedColumnGroup(col: Column | ProvidedColumnGroup | string | null): col is AgProvidedColumnGroup {
     return col instanceof AgProvidedColumnGroup;
 }

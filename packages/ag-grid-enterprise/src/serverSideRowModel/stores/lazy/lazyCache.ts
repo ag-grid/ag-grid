@@ -1,6 +1,4 @@
 import type {
-    BeanCollection,
-    ColumnModel,
     FocusService,
     GetRowIdParams,
     IRowNode,
@@ -11,8 +9,10 @@ import type {
     ServerSideGroupLevelParams,
     SortService,
     WithoutGridCommon,
+    _BeanCollection,
+    _ColumnModel,
 } from 'ag-grid-community';
-import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
+import { _BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
 import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
@@ -30,7 +30,7 @@ interface LazyStoreNode {
 
 const DEFAULT_BLOCK_SIZE = 100;
 
-export class LazyCache extends BeanStub {
+export class LazyCache extends _BeanStub {
     private rowRenderer: RowRenderer;
     private blockUtils: BlockUtils;
     private focusSvc: FocusService;
@@ -39,9 +39,9 @@ export class LazyCache extends BeanStub {
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
     private lazyBlockLoadingSvc: LazyBlockLoadingService;
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.focusSvc = beans.focusSvc;

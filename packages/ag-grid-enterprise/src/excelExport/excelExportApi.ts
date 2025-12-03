@@ -1,7 +1,7 @@
-import type { BeanCollection, ExcelExportMultipleSheetParams, ExcelExportParams } from 'ag-grid-community';
+import type { ExcelExportMultipleSheetParams, ExcelExportParams, _BeanCollection } from 'ag-grid-community';
 import { _warn } from 'ag-grid-community';
 
-function assertNotExcelMultiSheet(beans: BeanCollection): boolean {
+function assertNotExcelMultiSheet(beans: _BeanCollection): boolean {
     if (beans.excelCreator?.getFactoryMode() === 'MULTI_SHEET') {
         _warn(161);
         return false;
@@ -9,31 +9,31 @@ function assertNotExcelMultiSheet(beans: BeanCollection): boolean {
     return true;
 }
 
-export function getDataAsExcel(beans: BeanCollection, params?: ExcelExportParams): string | Blob | undefined {
+export function getDataAsExcel(beans: _BeanCollection, params?: ExcelExportParams): string | Blob | undefined {
     if (assertNotExcelMultiSheet(beans)) {
         return beans.excelCreator?.getDataAsExcel(params);
     }
     return undefined;
 }
 
-export function exportDataAsExcel(beans: BeanCollection, params?: ExcelExportParams): void {
+export function exportDataAsExcel(beans: _BeanCollection, params?: ExcelExportParams): void {
     if (assertNotExcelMultiSheet(beans)) {
         beans.excelCreator?.exportDataAsExcel(params);
     }
 }
-export function getSheetDataForExcel(beans: BeanCollection, params?: ExcelExportParams): string | undefined {
+export function getSheetDataForExcel(beans: _BeanCollection, params?: ExcelExportParams): string | undefined {
     beans.excelCreator?.setFactoryMode('MULTI_SHEET');
 
     return beans.excelCreator?.getSheetDataForExcel(params);
 }
 
 export function getMultipleSheetsAsExcel(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     params: ExcelExportMultipleSheetParams
 ): Blob | undefined {
     return beans.excelCreator?.getMultipleSheetsAsExcel(params);
 }
 
-export function exportMultipleSheetsAsExcel(beans: BeanCollection, params: ExcelExportMultipleSheetParams): void {
+export function exportMultipleSheetsAsExcel(beans: _BeanCollection, params: ExcelExportMultipleSheetParams): void {
     beans.excelCreator?.exportMultipleSheetsAsExcel(params);
 }

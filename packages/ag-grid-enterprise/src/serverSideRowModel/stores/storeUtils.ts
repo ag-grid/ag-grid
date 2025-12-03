@@ -1,25 +1,25 @@
 import type {
-    BeanCollection,
-    ColumnModel,
     ColumnVO,
-    NamedBean,
     RowNode,
     StoreRefreshAfterParams,
+    _BeanCollection,
+    _ColumnModel,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
+import { _BeanStub, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { LazyStore } from './lazy/lazyStore';
 import type { StoreFactory } from './storeFactory';
 
-export class StoreUtils extends BeanStub implements NamedBean {
+export class StoreUtils extends _BeanStub implements _NamedBean {
     beanName = 'ssrmStoreUtils' as const;
 
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;

@@ -1,9 +1,9 @@
 import type {
-    BeanCollection,
     ChartDataPanel as ChartDataPanelType,
     ChartType,
     GridToggleButton,
     IChartService,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { AgToggleButton, Component, _getDocument, _setDisplayed, _warn } from 'ag-grid-community';
 
@@ -30,7 +30,7 @@ export class ChartDataPanel extends Component {
     protected chartTranslation: ChartTranslationService;
     private chartSvc: IChartService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
         this.chartSvc = beans.chartSvc!;
     }

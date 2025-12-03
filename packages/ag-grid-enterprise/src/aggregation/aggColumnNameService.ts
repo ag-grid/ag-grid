@@ -1,7 +1,7 @@
-import type { AgColumn, IAggColumnNameService, IAggFunc, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists } from 'ag-grid-community';
+import type { AgColumn, IAggFunc, _IAggColumnNameService, _NamedBean } from 'ag-grid-community';
+import { _BeanStub, _exists } from 'ag-grid-community';
 
-export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
+export class AggColumnNameService extends _BeanStub implements _NamedBean, _IAggColumnNameService {
     beanName = 'aggColNameSvc' as const;
 
     public getHeaderName(column: AgColumn, headerName: string | null): string | null {

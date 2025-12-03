@@ -1,16 +1,16 @@
 import type {
     AgColumn,
     BaseCellDataType,
-    BeanCollection,
     ColumnAdvancedFilterModel,
-    ColumnModel,
-    ColumnNameService,
     DataTypeService,
     JoinAdvancedFilterModel,
-    NamedBean,
     ValueService,
+    _BeanCollection,
+    _ColumnModel,
+    _ColumnNameService,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-grid-community';
+import { _BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-grid-community';
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
@@ -27,12 +27,12 @@ import {
     TextFilterExpressionOperators,
 } from './filterExpressionOperators';
 
-export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
+export class AdvancedFilterExpressionService extends _BeanStub implements _NamedBean {
     beanName = 'advFilterExpSvc' as const;
 
     private valueSvc: ValueService;
-    private colModel: ColumnModel;
-    private colNames: ColumnNameService;
+    private colModel: _ColumnModel;
+    private colNames: _ColumnNameService;
     private dataTypeSvc?: DataTypeService;
 
     private readonly filterOperandGetters: Record<BaseCellDataType, (model: any) => string | null> = {
@@ -88,7 +88,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         text: (operand) => operand,
     };
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;

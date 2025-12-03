@@ -1,12 +1,12 @@
 import type {
-    BeanCollection,
     IServerSideTransactionManager,
-    NamedBean,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, ServerSideTransactionResultStatus, _isServerSideRowModel } from 'ag-grid-community';
+import { ServerSideTransactionResultStatus, _BeanStub, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from './serverSideRowModel';
 import type { ServerSideSelectionService } from './services/serverSideSelectionService';
@@ -16,14 +16,14 @@ interface AsyncTransactionWrapper {
     callback?: (result: ServerSideTransactionResult) => void;
 }
 
-export class TransactionManager extends BeanStub implements NamedBean, IServerSideTransactionManager {
+export class TransactionManager extends _BeanStub implements _NamedBean, IServerSideTransactionManager {
     beanName = 'ssrmTxnManager' as const;
 
     private valueCache?: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
     private selectionSvc?: ServerSideSelectionService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.valueCache = beans.valueCache;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.selectionSvc = beans.selectionSvc as ServerSideSelectionService;

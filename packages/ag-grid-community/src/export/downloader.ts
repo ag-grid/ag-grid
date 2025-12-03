@@ -1,5 +1,6 @@
 import { _warn } from '../validation/logging';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _downloadFile(fileName: string, content: Blob) {
     const win = document.defaultView || window;
 

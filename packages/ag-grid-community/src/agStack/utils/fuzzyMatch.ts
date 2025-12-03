@@ -1,6 +1,6 @@
 /**
  * This function provides fuzzy matching suggestions based on the input value and a list of all suggestions.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _fuzzySuggestions(params: {
     inputValue: string;
     allSuggestions: string[];
@@ -46,7 +46,7 @@ export function _fuzzySuggestions(params: {
 /**
  * This uses Levenshtein Distance to match strings.
  * Lower values mean more similar strings.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
     // Always use the shorter string for columns to reduce space
     if (inputText.length < suggestion.length) {

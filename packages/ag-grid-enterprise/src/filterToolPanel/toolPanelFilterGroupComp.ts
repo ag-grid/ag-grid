@@ -12,7 +12,7 @@ import {
     _clearElement,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
-    isProvidedColumnGroup,
+    _isProvidedColumnGroup,
 } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
@@ -118,7 +118,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public isColumnGroup(): boolean {
-        return isProvidedColumnGroup(this.columnGroup);
+        return _isProvidedColumnGroup(this.columnGroup);
     }
 
     public isExpanded(): boolean {
@@ -177,7 +177,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumns(): AgColumn[] {
-        if (isProvidedColumnGroup(this.columnGroup)) {
+        if (_isProvidedColumnGroup(this.columnGroup)) {
             return this.columnGroup.getLeafColumns();
         }
 
@@ -189,7 +189,7 @@ export class ToolPanelFilterGroupComp extends Component {
             this.addManagedListeners(column, { filterChanged: () => this.refreshFilterClass() });
         }
 
-        if (!isProvidedColumnGroup(this.columnGroup)) {
+        if (!_isProvidedColumnGroup(this.columnGroup)) {
             this.addManagedEventListeners({ filterOpened: this.onFilterOpened.bind(this) });
         }
     }
@@ -228,7 +228,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     private setGroupTitle() {
         const columnGroup = this.columnGroup;
-        const filterGroupName = isProvidedColumnGroup(columnGroup)
+        const filterGroupName = _isProvidedColumnGroup(columnGroup)
             ? this.getColumnGroupName(columnGroup)
             : this.getColumnName(columnGroup);
         this.filterGroupName = filterGroupName;

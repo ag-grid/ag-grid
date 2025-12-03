@@ -9,7 +9,7 @@ const editHighlightFn = (edit?: EditValue, includeEditing: boolean = false) => {
         return _sourceAndPendingDiffer(edit) || (includeEditing && edit.state === 'editing');
     }
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _hasEdits(
     beans: BeanCollection,
     position: EditPosition,
@@ -41,7 +41,7 @@ const nodeHasLeafEdit = (
         }
     }
 };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): boolean | undefined {
     const { column, rowNode } = position;
 
@@ -52,7 +52,7 @@ export function _hasLeafEdits(beans: BeanCollection, position: EditPosition): bo
 
     return nodeHasLeafEdit(rowNode?.childrenAfterGroup as RowNode[] | null | undefined, beans.editModelSvc, column);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _hasPinnedEdits(beans: BeanCollection, { rowNode, column }: EditPosition): boolean | undefined {
     rowNode = (rowNode as RowNode).pinnedSibling;
     if (!rowNode) {

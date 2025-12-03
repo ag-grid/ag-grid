@@ -4,7 +4,7 @@ import { _addOrRemoveAttribute, _requestAnimationFrame } from '../../agStack/uti
 import { _findFocusableElements } from '../../agStack/utils/focus';
 import { _makeNull } from '../../agStack/utils/generic';
 import { AgPromise } from '../../agStack/utils/promise';
-import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
+import { _isColumnSelectionCol, _isRowNumberCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -174,7 +174,7 @@ export class CellCtrl extends BeanStub {
             this.rangeFeature = rangeSvc.createCellRangeFeature(this);
         }
 
-        if (isRowNumberCol(this.column)) {
+        if (_isRowNumberCol(this.column)) {
             this.rowResizeFeature = this.beans.rowNumbersSvc!.createRowNumbersRowResizerFeature(this);
         }
     }
@@ -372,7 +372,7 @@ export class CellCtrl extends BeanStub {
 
         if (isSsrmLoading || this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            if (!isSsrmLoading || isRowNumberCol(column)) {
+            if (!isSsrmLoading || _isRowNumberCol(column)) {
                 compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
             } else {
                 compDetails = _getLoadingCellRendererDetails(userCompFactory, colDef, params);
@@ -457,7 +457,7 @@ export class CellCtrl extends BeanStub {
     private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
         const { rowSelection, groupDisplayType } = this.beans.gridOptions;
         const checkboxLocation = _getCheckboxLocation(rowSelection);
-        const isSelectionColumn = isColumnSelectionCol(this.column);
+        const isSelectionColumn = _isColumnSelectionCol(this.column);
 
         // Specific check for custom group display type here because we assume one of the non-selection
         // columns will have `showRowGroup != null` and so in this case we will be rendering the checkbox
@@ -836,7 +836,7 @@ export class CellCtrl extends BeanStub {
         if (!element) {
             return;
         }
-        if (isRowNumberCol(this.column)) {
+        if (_isRowNumberCol(this.column)) {
             suppressCellFocus = true;
         }
         _addOrRemoveAttribute(element, 'tabindex', suppressCellFocus ? undefined : -1);

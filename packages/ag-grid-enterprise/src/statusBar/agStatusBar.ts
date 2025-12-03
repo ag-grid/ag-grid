@@ -1,15 +1,15 @@
 import type {
-    BeanCollection,
-    ComponentSelector,
-    ComponentType,
     ElementParams,
     IStatusPanelComp,
     IStatusPanelParams,
     RowModelType,
     StatusPanelComponentName,
     StatusPanelDef,
-    UserCompDetails,
-    UserComponentFactory,
+    _BeanCollection,
+    _ComponentSelector,
+    _ComponentType,
+    _UserCompDetails,
+    _UserComponentFactory,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -25,14 +25,14 @@ import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
 import type { StatusBarService } from './statusBarService';
 
 function getStatusPanelCompDetails(
-    userCompFactory: UserComponentFactory,
+    userCompFactory: _UserComponentFactory,
     def: StatusPanelDef,
     params: IStatusPanelParams
-): UserCompDetails<IStatusPanelComp> | undefined {
+): _UserCompDetails<IStatusPanelComp> | undefined {
     return userCompFactory.getCompDetails(def, StatusPanelComponent, undefined, params, true);
 }
 
-const StatusPanelComponent: ComponentType = {
+const StatusPanelComponent: _ComponentType = {
     name: 'statusPanel',
     optionalMethods: ['refresh'],
 };
@@ -70,12 +70,12 @@ const AgStatusBarElement: ElementParams = {
     ],
 };
 class AgStatusBar extends Component {
-    private userCompFactory: UserComponentFactory;
+    private userCompFactory: _UserComponentFactory;
     private statusBarSvc: StatusBarService;
     private updateQueued: boolean = false;
     private panelsPromise: AgPromise<(void | null)[]> = AgPromise.resolve();
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.userCompFactory = beans.userCompFactory;
         this.statusBarSvc = beans.statusBarSvc as StatusBarService;
     }
@@ -267,7 +267,7 @@ class AgStatusBar extends Component {
     }
 }
 
-export const AgStatusBarSelector: ComponentSelector = {
+export const AgStatusBarSelector: _ComponentSelector = {
     selector: 'AG-STATUS-BAR',
     component: AgStatusBar,
 };

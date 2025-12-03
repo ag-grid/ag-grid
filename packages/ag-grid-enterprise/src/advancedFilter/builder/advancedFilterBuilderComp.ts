@@ -1,6 +1,5 @@
 import type {
     AdvancedFilterModel,
-    BeanCollection,
     ColumnAdvancedFilterModel,
     ElementParams,
     FilterAction,
@@ -8,6 +7,7 @@ import type {
     FilterManager,
     IAdvancedFilterBuilderParams,
     JoinAdvancedFilterModel,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
 
@@ -53,7 +53,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private advancedFilter: AdvancedFilterService;
     private advFilterExpSvc: AdvancedFilterExpressionService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.filterManager = beans.filterManager;
         this.advancedFilter = beans.advancedFilter as AdvancedFilterService;
         this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;

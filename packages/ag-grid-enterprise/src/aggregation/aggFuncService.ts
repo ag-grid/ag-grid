@@ -1,5 +1,5 @@
-import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists, _last } from 'ag-grid-community';
+import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, _NamedBean } from 'ag-grid-community';
+import { _BeanStub, _exists, _last } from 'ag-grid-community';
 
 const defaultAggFuncNames = {
     sum: 'Sum',
@@ -12,7 +12,7 @@ const defaultAggFuncNames = {
 } as const;
 type DefaultAggFuncName = keyof typeof defaultAggFuncNames;
 
-export class AggFuncService extends BeanStub implements NamedBean, IAggFuncService {
+export class AggFuncService extends _BeanStub implements _NamedBean, IAggFuncService {
     beanName = 'aggFuncSvc' as const;
 
     private aggFuncsMap: { [key in string]: IAggFunc } = {};

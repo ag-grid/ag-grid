@@ -1,6 +1,6 @@
 import type { Group, Scene } from 'ag-charts-types/scene';
 
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 import { Component, _error } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../../../agChartsExports';
@@ -11,7 +11,7 @@ const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
 export abstract class MiniChart extends Component {
     private chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

@@ -1,24 +1,24 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     GridOptionsService,
     GridOptionsWithDefaults,
     IMenuActionParams,
     WithoutGridCommon,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 
 import { AgMenuList } from '../agStack/agMenuList';
 import { MENU_ITEM_CALLBACKS } from './menuItemComponent';
 
 export class MenuList extends AgMenuList<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     IMenuActionParams
 > {
     constructor(

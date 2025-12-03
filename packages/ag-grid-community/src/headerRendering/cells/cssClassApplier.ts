@@ -12,7 +12,7 @@ import type { IAbstractHeaderCellComp } from './abstractCell/abstractHeaderCellC
 
 const CSS_FIRST_COLUMN = 'ag-column-first';
 const CSS_LAST_COLUMN = 'ag-column-last';
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getHeaderClassesFromColDef(
     abstractColDef: AbstractColDef | null,
     gos: GridOptionsService,
@@ -25,7 +25,7 @@ export function _getHeaderClassesFromColDef(
 
     return getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gos, column, columnGroup);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getToolPanelClassesFromColDef(
     abstractColDef: AbstractColDef | null,
     gos: GridOptionsService,

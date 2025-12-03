@@ -9,7 +9,7 @@ import type {
     IMultiFilterModel,
     IMultiFilterParams,
 } from 'ag-grid-community';
-import { BeanStub, _removeFromArray, _warn } from 'ag-grid-community';
+import { _BeanStub, _removeFromArray, _warn } from 'ag-grid-community';
 
 import {
     forEachReverse,
@@ -25,7 +25,7 @@ interface HandlerWrapper {
 }
 
 export class MultiFilterHandler
-    extends BeanStub
+    extends _BeanStub
     implements FilterHandler<any, any, IMultiFilterModel, IMultiFilterParams>, IMultiFilterHandler
 {
     /** Used to get the filter type for filter models. */

@@ -13,7 +13,7 @@ import type {
     ValueFormatterParams,
 } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _addGridCommonParams,
     _debounce,
     _error,
@@ -31,7 +31,7 @@ import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
 type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
 
 export class SetFilterHandler<TValue = string>
-    extends BeanStub<SetFilterHandlerEventType>
+    extends _BeanStub<SetFilterHandlerEventType>
     implements FilterHandler<any, any, SetFilterModel, ISetFilterParams<any, TValue>>, ISetFilterHandler<TValue>
 {
     /** Used to get the filter type for filter models. */

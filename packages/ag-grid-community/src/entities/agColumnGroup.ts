@@ -18,6 +18,7 @@ export function createUniqueColumnGroupId(groupId: string, instanceId: number): 
     return (groupId + '_' + instanceId) as HeaderColumnId;
 }
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function isColumnGroup(col: Column | ColumnGroup | string): col is AgColumnGroup {
     return col instanceof AgColumnGroup;
 }

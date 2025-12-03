@@ -27,7 +27,7 @@ import {
 } from './columnEventUtils';
 import { updateSomeColumnState } from './columnFactoryUtils';
 import type { ColumnCollections, ColumnModel } from './columnModel';
-import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory, isColumnSelectionCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, _isColumnSelectionCol, getValueFactory } from './columnUtils';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -69,7 +69,7 @@ export interface ApplyColumnStateParams {
     /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnStateParams;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _applyColumnState(
     beans: BeanCollection,
     params: ApplyColumnStateParams,
@@ -195,7 +195,7 @@ export function _applyColumnState(
                 continue;
             }
 
-            if (isColumnSelectionCol(colId)) {
+            if (_isColumnSelectionCol(colId)) {
                 selectionColStates.push(state);
                 unmatchedAndAutoStates.push(state);
                 continue;
@@ -281,7 +281,7 @@ export function _applyColumnState(
 
     return unmatchedCount === 0; // Successful if no states unaccounted for
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos } = beans;
 
@@ -341,7 +341,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
  * calculates what events to fire between column state changes. gets used when:
  * a) apply column state
  * b) apply new column definitions (so changes from old cols)
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, source: ColumnEventType): () => void {
     const { rowGroupColsSvc, pivotColsSvc, valueColsSvc, colModel, sortSvc, eventSvc } = beans;
     const startState = {
@@ -460,7 +460,7 @@ export function _compareColumnStatesAndDispatchEvents(beans: BeanCollection, sou
         normaliseColumnMovedEventForColumnState(columnStateBefore, colStateAfter, source, colModel, eventSvc);
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getColumnState(beans: BeanCollection): ColumnState[] {
     const { colModel, rowGroupColsSvc, pivotColsSvc } = beans;
     const primaryCols = colModel.getColDefCols();

@@ -3,15 +3,15 @@ import type {
     ColKey,
     GridOptions,
     IGroupHierarchyColService,
-    NamedBean,
     PropertyChangedEvent,
     PropertyValueChangedEvent,
     _ColumnCollections,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
     AgColumn,
-    BeanStub,
     GROUP_HIERARCHY_COLUMN_ID_PREFIX,
+    _BeanStub,
     _addColumnDefaultAndTypes,
     _areColIdsEqual,
     _columnsMatch,
@@ -27,7 +27,7 @@ import {
     numericalMonthToNamedMonth,
 } from './groupHierarchyUtils';
 
-export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
+export class GroupHierarchyColService extends _BeanStub implements _NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
 
     public columns: _ColumnCollections | null = null;

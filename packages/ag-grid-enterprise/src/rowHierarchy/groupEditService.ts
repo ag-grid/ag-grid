@@ -8,8 +8,8 @@ import type {
     _RowsDrop,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     ChangedPath,
+    _BeanStub,
     _ChangedRowNodes,
     _csrmFirstLeaf,
     _csrmReorderAllLeafs,
@@ -18,7 +18,7 @@ import {
     _prevOrNextDisplayedRow,
 } from 'ag-grid-community';
 
-export class GroupEditService extends BeanStub implements _IGroupEditService {
+export class GroupEditService extends _BeanStub implements _IGroupEditService {
     public beanName = 'groupEditSvc' as const;
 
     private pendingEditRefresh: _ChangedRowNodes | null = null;

@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    BeanCollection,
     IColsService,
     IRowNode,
     ISelectionService,
@@ -15,10 +14,11 @@ import type {
     ServerSideTransactionResult,
     StoreRefreshAfterParams,
     WithoutGridCommon,
+    _BeanCollection,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     ServerSideTransactionResultStatus,
+    _BeanStub,
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
@@ -31,13 +31,13 @@ import type { SSRMParams } from '../../serverSideRowModel';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
-export class LazyStore extends BeanStub implements IServerSideStore {
+export class LazyStore extends _BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
     private selectionSvc?: ISelectionService;
     private rowGroupColsSvc?: IColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
         this.selectionSvc = beans.selectionSvc;

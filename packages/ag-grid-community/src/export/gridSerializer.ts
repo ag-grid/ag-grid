@@ -1,6 +1,6 @@
 import { _last } from '../agStack/utils/array';
 import type { ColumnModel } from '../columns/columnModel';
-import { isColumnGroupAutoCol, isColumnSelectionCol, isRowNumberCol } from '../columns/columnUtils';
+import { _isColumnGroupAutoCol, _isColumnSelectionCol, _isRowNumberCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
@@ -351,11 +351,11 @@ export class GridSerializer extends BeanStub implements NamedBean {
         const isPivotMode = colModel.isPivotMode();
 
         const filterSpecialColumns = (col: AgColumn) => {
-            if (isColumnSelectionCol(col)) {
+            if (_isColumnSelectionCol(col)) {
                 return false;
             }
 
-            return !isRowNumberCol(col) || exportRowNumbers;
+            return !_isRowNumberCol(col) || exportRowNumbers;
         };
 
         if (columnKeys?.length) {
@@ -374,7 +374,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         columnsToExport = columnsToExport.filter(
             (column) =>
-                filterSpecialColumns(column) && (skipRowGroups && !isTreeData ? !isColumnGroupAutoCol(column) : true)
+                filterSpecialColumns(column) && (skipRowGroups && !isTreeData ? !_isColumnGroupAutoCol(column) : true)
         );
 
         return columnsToExport;

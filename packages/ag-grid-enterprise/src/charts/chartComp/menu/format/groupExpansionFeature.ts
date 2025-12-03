@@ -1,9 +1,9 @@
-import { BeanStub } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 
 // handles single group expansion
-export class GroupExpansionFeature extends BeanStub {
+export class GroupExpansionFeature extends _BeanStub {
     private id: number = 0;
     private readonly groupComponents: Map<number, GroupComponent> = new Map();
     private expandedGroupComponent?: number;

@@ -1,5 +1,5 @@
 import { _getClientSideRowModel } from 'ag-grid-community';
-import type { AgColumn, BeanCollection, FormulaParam, RangeParam, RowNode } from 'ag-grid-community';
+import type { AgColumn, FormulaParam, RangeParam, RowNode, _BeanCollection } from 'ag-grid-community';
 
 import type { Cell, CellRef, FormulaNode } from '../ast/utils';
 import { FormulaError } from '../ast/utils';
@@ -17,7 +17,7 @@ function isRangeCell(cell: Cell): boolean {
 type CellAddress = { row: RowNode; column: AgColumn };
 
 /** Resolve a Cell to concrete grid objects, honouring absolute vs relative semantics. */
-function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | null {
+function resolveRefToAddress(beans: _BeanCollection, cell: Cell): CellAddress | null {
     const { row, column } = cell;
 
     const rowNode = row.absolute
@@ -33,7 +33,7 @@ function resolveRefToAddress(beans: BeanCollection, cell: Cell): CellAddress | n
 }
 
 export function evalAst(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     node: FormulaNode,
     getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
     caller: { row: RowNode; column: AgColumn }
@@ -66,7 +66,7 @@ export function evalAst(
 }
 
 function operandToArg(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     node: FormulaNode,
     getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
     caller: { row: RowNode; column: AgColumn }
@@ -102,7 +102,7 @@ class ParamsIterator implements Iterator<FormulaParam> {
     private readonly res: IteratorResult<FormulaParam> = { done: false, value: undefined as unknown as FormulaParam };
 
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly operandNodes: FormulaNode[],
         private readonly getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
         private readonly caller: { row: RowNode; column: AgColumn }
@@ -131,7 +131,7 @@ class ValuesIterator implements Iterator<unknown> {
     private readonly res: IteratorResult<unknown> = { done: false, value: undefined };
 
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly operandNodes: FormulaNode[],
         private readonly getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
         private readonly caller: { row: RowNode; column: AgColumn }
@@ -179,7 +179,7 @@ class ValuesIterator implements Iterator<unknown> {
  * - flatArgs: flattens ranges on the fly into ValueArg values
  */
 function makeArgIterables(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     operandNodes: FormulaNode[],
     getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown,
     caller: { row: RowNode; column: AgColumn }
@@ -197,7 +197,7 @@ function makeArgIterables(
     return { args, values };
 }
 
-function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
+function resolveRowIndex(beans: _BeanCollection, ref: CellRef): number {
     if (ref.absolute) {
         const n = Number(ref.id) - 1;
         if (!Number.isFinite(n) || n < 0) {
@@ -212,7 +212,7 @@ function resolveRowIndex(beans: BeanCollection, ref: CellRef): number {
     return node.formulaRowIndex;
 }
 
-function resolveCol(beans: BeanCollection, ref: CellRef): AgColumn {
+function resolveCol(beans: _BeanCollection, ref: CellRef): AgColumn {
     if (ref.absolute) {
         const col = beans.formula?.getColByRef(ref.id);
         if (!col) {
@@ -239,7 +239,7 @@ class RangeValuesIterator implements Iterator<unknown> {
     private readonly res: IteratorResult<unknown> = { done: false, value: undefined };
 
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly rowStartIndex: number,
         private readonly rowEndIndex: number,
         private readonly colStart: AgColumn,
@@ -301,7 +301,7 @@ class RangeValuesIterator implements Iterator<unknown> {
 }
 
 function buildRangeArgLazy(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     cell: Cell,
     getCellValue: (addr: { row: RowNode; column: AgColumn }) => unknown
 ): RangeParam {
@@ -327,7 +327,7 @@ function buildRangeArgLazy(
 
 export type Addr = { row: RowNode; column: AgColumn };
 
-function getColRangeIndices(beans: BeanCollection, c1: AgColumn, c2: AgColumn): [number, number] | null {
+function getColRangeIndices(beans: _BeanCollection, c1: AgColumn, c2: AgColumn): [number, number] | null {
     const allColumns = beans.colModel.getCols() ?? [];
 
     let startColIndex: number | null = null;
@@ -358,7 +358,7 @@ function getColRangeIndices(beans: BeanCollection, c1: AgColumn, c2: AgColumn): 
 
 /** Yields every address in a rectangular range (row/col inclusive), one-by-one. */
 function* rangeAddrs(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     rowStartIndex: number,
     rowEndIndex: number,
     startColumn: AgColumn,
@@ -388,7 +388,7 @@ function* rangeAddrs(
  * Skips primitives, non-formula cells, cached formula cells, and already-done cells.
  */
 export function* unresolvedDeps(
-    beans: BeanCollection,
+    beans: _BeanCollection,
     root: FormulaNode,
     ensureFormulaCache: (row: RowNode, col: AgColumn) => CellFormula | null
 ): Generator<Addr> {

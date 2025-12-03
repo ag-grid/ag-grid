@@ -1,4 +1,10 @@
-import type { AgColumn, AgEventTypeParams, BeanCollection, GridOptionsWithDefaults, IRowNode } from 'ag-grid-community';
+import type {
+    AgColumn,
+    AgEventTypeParams,
+    GridOptionsWithDefaults,
+    IRowNode,
+    _BeanCollection,
+} from 'ag-grid-community';
 
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from '../agStack/agPanel';
 
@@ -8,4 +14,4 @@ export interface PanelPostProcessPopupParams extends AgPanelPostProcessPopupPara
 }
 
 export interface PanelOptions
-    extends AgPanelOptions<BeanCollection, GridOptionsWithDefaults, AgEventTypeParams, PanelPostProcessPopupParams> {}
+    extends AgPanelOptions<_BeanCollection, GridOptionsWithDefaults, AgEventTypeParams, PanelPostProcessPopupParams> {}

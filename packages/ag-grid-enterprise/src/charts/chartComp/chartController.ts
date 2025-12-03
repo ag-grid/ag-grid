@@ -1,7 +1,6 @@
 import type { AgCartesianAxisType, AgChartThemeOverrides, AgChartThemePalette, IChartTheme } from 'ag-charts-types';
 
 import type {
-    BeanCollection,
     CellRange,
     CellRangeParams,
     ChartModel,
@@ -15,8 +14,9 @@ import type {
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
+    _BeanCollection,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { _BeanStub, _warn } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../agChartsExports';
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
@@ -41,11 +41,11 @@ type ChartControllerEvent =
     | 'chartTypeChanged'
     | 'chartSeriesChartTypeChanged'
     | 'chartLinkedChanged';
-export class ChartController extends BeanStub<ChartControllerEvent> {
+export class ChartController extends _BeanStub<ChartControllerEvent> {
     private rangeSvc: IRangeService;
     private agChartsExports: AgChartsExports;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.rangeSvc = beans.rangeSvc!;
         this.agChartsExports = beans.agChartsExports as AgChartsExports;
     }

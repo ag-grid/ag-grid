@@ -34,7 +34,7 @@ const V_KEYCODE = 86;
 const D_KEYCODE = 68;
 const Z_KEYCODE = 90;
 const Y_KEYCODE = 89;
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
     const { keyCode } = keyboardEvent;
     let code: string;

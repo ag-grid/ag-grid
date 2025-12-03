@@ -1,11 +1,11 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     ContainerType,
     GridOptionsService,
     GridOptionsWithDefaults,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../agStack/agGroupComponent';
@@ -16,43 +16,43 @@ import type { AgTabbedItem } from '../agStack/iTabbedLayout';
 import type { PanelOptions } from './panel';
 
 export type GridSlider = AgSlider<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType
+    _AgComponentSelectorType
 >;
 
 export type GridPanel = AgPanel<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     PanelOptions
 >;
 
 export type TabbedLayout = AgTabbedLayout<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType,
+    _AgComponentSelectorType,
     ContainerType
 >;
 
 export type TabbedItem = AgTabbedItem<ContainerType>;
 
 export type GroupComponent = AgGroupComponent<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType
+    _AgComponentSelectorType
 >;
 
-export type GroupComponentParams = AgGroupComponentParams<BeanCollection>;
+export type GroupComponentParams = AgGroupComponentParams<_BeanCollection>;

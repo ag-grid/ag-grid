@@ -1,12 +1,12 @@
 import { RowNode, _exists, _getRowHeightForNode } from 'ag-grid-community';
 import type {
-    BeanCollection,
     GridApi,
     IExpansionService,
-    NamedBean,
     RowGroupBulkExpansionState,
     RowGroupExpansionState,
     RowGroupOpenedEvent,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
@@ -24,7 +24,7 @@ import type { IExpansionStrategy } from './expansion/strategies/iExpansionStrate
  */
 export class ServerSideExpansionService
     extends BaseExpansionService
-    implements NamedBean, IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>
+    implements _NamedBean, IExpansionService<RowGroupExpansionState | RowGroupBulkExpansionState>
 {
     beanName = 'expansionSvc' as const;
 
@@ -32,7 +32,7 @@ export class ServerSideExpansionService
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }

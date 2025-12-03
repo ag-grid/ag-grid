@@ -1,4 +1,4 @@
-import type { AgComponentSelectorType, AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
+import type { AgInputTextFieldParams, _AgComponentSelectorType, _BeanCollection } from 'ag-grid-community';
 
 import type { AgSliderParams } from '../../../../../agStack/agSlider';
 import type { ChartMenuService } from '../../../services/chartMenuService';
@@ -7,7 +7,7 @@ import { TitlePanel } from './titlePanel';
 export class ChartTitlePanel extends TitlePanel {
     private chartMenuSvc: ChartMenuService;
 
-    public override wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: _BeanCollection): void {
         super.wireBeans(beans);
         this.chartMenuSvc = beans.chartMenuSvc as ChartMenuService;
     }
@@ -25,7 +25,7 @@ export class ChartTitlePanel extends TitlePanel {
         });
     }
 
-    protected override getTextInputParams(): AgInputTextFieldParams<AgComponentSelectorType> {
+    protected override getTextInputParams(): AgInputTextFieldParams<_AgComponentSelectorType> {
         const params = super.getTextInputParams();
         if (this.shouldOverrideTextWithPlaceholder(params.value)) {
             params.value = this.titlePlaceholder;

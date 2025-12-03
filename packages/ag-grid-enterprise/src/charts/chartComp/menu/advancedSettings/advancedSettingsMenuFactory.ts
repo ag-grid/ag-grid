@@ -1,12 +1,12 @@
-import type { NamedBean } from 'ag-grid-community';
-import { BeanStub, TabGuardComp, _findFocusableElements, _findNextFocusableElement } from 'ag-grid-community';
+import type { _NamedBean } from 'ag-grid-community';
+import { TabGuardComp, _BeanStub, _findFocusableElements, _findNextFocusableElement } from 'ag-grid-community';
 
 import { Dialog } from '../../../../widgets/dialog';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
 
-export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
+export class AdvancedSettingsMenuFactory extends _BeanStub implements _NamedBean {
     beanName = 'advSettingsMenuFactory' as const;
 
     private activeMenu?: AdvancedSettingsMenu;

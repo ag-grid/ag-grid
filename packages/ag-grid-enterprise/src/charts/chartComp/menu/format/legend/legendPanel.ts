@@ -1,4 +1,4 @@
-import type { BeanCollection, GridSelect } from 'ag-grid-community';
+import type { GridSelect, _BeanCollection } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -20,7 +20,7 @@ export class LegendPanel extends Component {
     private chartTranslation: ChartTranslationService;
     private readonly chartController: ChartController;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
     private readonly legendGroup: GroupComponent = RefPlaceholder;

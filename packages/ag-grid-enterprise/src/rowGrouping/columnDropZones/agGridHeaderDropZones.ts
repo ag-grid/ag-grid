@@ -1,4 +1,4 @@
-import type { ComponentSelector } from 'ag-grid-community';
+import type { _ComponentSelector } from 'ag-grid-community';
 import { Component, _createElement } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from './pivotDropZonePanel';
@@ -95,7 +95,7 @@ class AgGridHeaderDropZones extends Component {
     }
 }
 
-export const AgGridHeaderDropZonesSelector: ComponentSelector = {
+export const AgGridHeaderDropZonesSelector: _ComponentSelector = {
     selector: 'AG-GRID-HEADER-DROP-ZONES',
     component: AgGridHeaderDropZones,
 };

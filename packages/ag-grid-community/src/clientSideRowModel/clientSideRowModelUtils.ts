@@ -1,6 +1,7 @@
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from '../interfaces/iRowNode';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export const _csrmFirstLeaf = (node: IRowNode): RowNode | undefined => {
     let childrenAfterGroup = node.childrenAfterGroup;
     while (childrenAfterGroup?.length) {
@@ -19,6 +20,7 @@ export const _csrmFirstLeaf = (node: IRowNode): RowNode | undefined => {
  * @param targetPositionIdx The target index, where the rows will be moved
  * @param lastAffectedLeafIndex The last index of the rows to move
  * @returns True if the order of the rows changed, false otherwise
+ * @AG_Grid_Internal Not for general use, may change without warning.
  */
 export const _csrmReorderAllLeafs = (
     allLeafs: RowNode[] | null | undefined,

@@ -1,6 +1,5 @@
 import type {
     AgEvent,
-    ComponentSelector,
     DragAndDropIcon,
     DragItem,
     DragSourceType,
@@ -9,6 +8,7 @@ import type {
     GridDragSource,
     ITooltipCtrl,
     TooltipFeature,
+    _ComponentSelector,
 } from 'ag-grid-community';
 import {
     Component,
@@ -56,7 +56,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         private readonly ghost: boolean,
         private readonly horizontal: boolean,
         protected template?: ElementParams,
-        protected agComponents?: ComponentSelector[]
+        protected agComponents?: _ComponentSelector[]
     ) {
         super();
     }

@@ -1,4 +1,4 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
@@ -12,7 +12,7 @@ export class AxisTicksPanel extends Component {
     private chartTranslation: ChartTranslationService;
     private readonly axisTicksSizeSlider: GridSlider = RefPlaceholder;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 

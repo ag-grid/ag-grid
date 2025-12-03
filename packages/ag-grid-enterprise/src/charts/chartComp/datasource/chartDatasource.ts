@@ -1,11 +1,8 @@
 import type {
     AgColumn,
     AgColumnGroup,
-    BeanCollection,
-    ColumnModel,
     IAggFunc,
     IClientSideRowModel,
-    IPivotResultColsService,
     IRowModel,
     PartialCellRange,
     RowNode,
@@ -13,10 +10,13 @@ import type {
     SortOption,
     SortService,
     ValueService,
+    _BeanCollection,
+    _ColumnModel,
+    _IPivotResultColsService,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     GROUP_AUTO_COLUMN_ID,
+    _BeanStub,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _last,
@@ -55,15 +55,15 @@ export interface ChartValueWrapper<T = any> {
     toString: () => string;
 }
 
-export class ChartDatasource extends BeanStub {
+export class ChartDatasource extends _BeanStub {
     private gridRowModel: IRowModel;
-    private pivotResultCols?: IPivotResultColsService;
+    private pivotResultCols?: _IPivotResultColsService;
     private valueSvc: ValueService;
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.sortSvc = beans.sortSvc;
         this.gridRowModel = beans.rowModel;
         this.colModel = beans.colModel;

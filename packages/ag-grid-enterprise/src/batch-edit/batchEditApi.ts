@@ -1,7 +1,7 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 import { _isClientSideRowModel, _warn } from 'ag-grid-community';
 
-export function startBatchEdit({ editSvc, gos, rowModel }: BeanCollection): void {
+export function startBatchEdit({ editSvc, gos, rowModel }: _BeanCollection): void {
     if (!editSvc?.isBatchEditing()) {
         if (!_isClientSideRowModel(gos, rowModel)) {
             _warn(289, { rowModelType: gos.get('rowModelType') });
@@ -12,7 +12,7 @@ export function startBatchEdit({ editSvc, gos, rowModel }: BeanCollection): void
     }
 }
 
-export function cancelBatchEdit({ editSvc }: BeanCollection): void {
+export function cancelBatchEdit({ editSvc }: _BeanCollection): void {
     if (!editSvc?.isBatchEditing()) {
         return;
     }
@@ -21,7 +21,7 @@ export function cancelBatchEdit({ editSvc }: BeanCollection): void {
     editSvc?.setBatchEditing(false);
 }
 
-export function commitBatchEdit({ editSvc }: BeanCollection): void {
+export function commitBatchEdit({ editSvc }: _BeanCollection): void {
     if (!editSvc?.isBatchEditing()) {
         return;
     }
@@ -30,6 +30,6 @@ export function commitBatchEdit({ editSvc }: BeanCollection): void {
     editSvc?.setBatchEditing(false);
 }
 
-export function isBatchEditing(beans: BeanCollection): boolean {
+export function isBatchEditing(beans: _BeanCollection): boolean {
     return beans.editSvc?.isBatchEditing() ?? false;
 }

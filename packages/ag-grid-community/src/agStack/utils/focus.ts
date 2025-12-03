@@ -40,7 +40,7 @@ function toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): voi
 
     keyboardModeActive = isKeyboardEvent;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _registerKeyboardFocusEvents(beans: UtilBeanCollection): () => void {
     const eDocument = _getDocument(beans);
     addKeyboardModeEvents(eDocument);
@@ -51,11 +51,11 @@ export function _registerKeyboardFocusEvents(beans: UtilBeanCollection): () => v
         removeKeyboardModeEvents(eDocument);
     };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isKeyboardMode(): boolean {
     return keyboardModeActive;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _findFocusableElements(
     rootNode: HTMLElement,
     exclude?: string | null,
@@ -86,7 +86,7 @@ export function _findFocusableElements(
     const diff = (a: HTMLElement[], b: HTMLElement[]) => a.filter((element) => b.indexOf(element) === -1);
     return diff(nodes, excludeNodes);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _focusInto(
     rootNode: HTMLElement,
     up = false,
@@ -107,7 +107,7 @@ export function _focusInto(
 
     return false;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _findNextFocusableElement(
     beans: UtilBeanCollection,
     rootNode: HTMLElement,
@@ -132,7 +132,7 @@ export function _findNextFocusableElement(
 
     return focusable[nextIndex];
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _findTabbableParent(node: HTMLElement | null, limit: number = 5): HTMLElement | null {
     let counter = 0;
 

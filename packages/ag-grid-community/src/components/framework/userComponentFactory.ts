@@ -20,7 +20,7 @@ function doesImplementIComponent(candidate: any): boolean {
     }
     return candidate.prototype && 'getGui' in candidate.prototype;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getUserCompKeys<TDefinition>(
     frameworkOverrides: IFrameworkOverrides,
     defObject: TDefinition,

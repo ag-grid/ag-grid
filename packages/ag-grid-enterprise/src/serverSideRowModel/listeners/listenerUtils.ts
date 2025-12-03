@@ -1,13 +1,13 @@
-import type { BeanCollection, IColsService, IPivotResultColsService, NamedBean } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { IColsService, _BeanCollection, _IPivotResultColsService, _NamedBean } from 'ag-grid-community';
+import { _BeanStub } from 'ag-grid-community';
 
-export class ListenerUtils extends BeanStub implements NamedBean {
+export class ListenerUtils extends _BeanStub implements _NamedBean {
     beanName = 'ssrmListenerUtils' as const;
 
-    private pivotResultCols?: IPivotResultColsService;
+    private pivotResultCols?: _IPivotResultColsService;
     private valueColsSvc?: IColsService;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.pivotResultCols = beans.pivotResultCols;
         this.valueColsSvc = beans.valueColsSvc;
     }

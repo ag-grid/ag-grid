@@ -95,7 +95,7 @@ export function convertColumnState(
 function _removeEmptyValues<T>(array: T[]): T[] {
     return array.filter((a) => a != undefined);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _convertColumnGroupState(
     columnGroupState: { groupId: string; open: boolean }[]
 ): ColumnGroupState | undefined {

@@ -2,7 +2,6 @@ import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types
 
 import type {
     BaseCreateChartParams,
-    BeanCollection,
     CellRangeParams,
     ChartDownloadParams,
     ChartModel,
@@ -17,16 +16,17 @@ import type {
     IAggFunc,
     IChartService,
     IRangeService,
-    NamedBean,
     OpenChartToolPanelParams,
     PartialCellRange,
     SeriesChartType,
     SeriesGroupType,
     SortModelItem,
     UpdateChartParams,
-    VisibleColsService,
+    _BeanCollection,
+    _NamedBean,
+    _VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _focusInto, _warn } from 'ag-grid-community';
+import { _BeanStub, _focusInto, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { AgChartsExports } from './agChartsExports';
@@ -56,14 +56,14 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     useGroupColumnAsCategory?: boolean;
 }
 
-export class ChartService extends BeanStub implements NamedBean, IChartService {
+export class ChartService extends _BeanStub implements _NamedBean, IChartService {
     beanName = 'chartSvc' as const;
 
-    private visibleCols: VisibleColsService;
+    private visibleCols: _VisibleColsService;
     private agChartsExports: AgChartsExports;
     private rangeSvc?: IRangeService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.rangeSvc = beans.rangeSvc;
         this.agChartsExports = beans.agChartsExports as AgChartsExports;

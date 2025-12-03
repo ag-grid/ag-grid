@@ -1,12 +1,12 @@
 import type {
     AgComponentPopupPositionParams,
     AgEvent,
-    BeanCollection,
-    ComponentSelector,
     ElementParams,
     GridInputTextField,
     PopupPositionParams,
     PopupService,
+    _BeanCollection,
+    _ComponentSelector,
 } from 'ag-grid-community';
 import {
     AgInputTextFieldSelector,
@@ -59,7 +59,7 @@ const AgAutocompleteElement: ElementParams = {
 export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private popupSvc: PopupService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.popupSvc = beans.popupSvc!;
     }
 
@@ -378,7 +378,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     }
 }
 
-export const AgAutocompleteSelector: ComponentSelector = {
+export const AgAutocompleteSelector: _ComponentSelector = {
     selector: 'AG-AUTOCOMPLETE',
     component: AgAutocomplete,
 };

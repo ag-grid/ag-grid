@@ -18,12 +18,12 @@ import {
     _getRowBelow,
     _getRowNode,
     _isRowBefore,
+    _isRowNumberCol,
     _isSameRow,
     _last,
     _stopPropagationForAgGrid,
     _toStringOrNull,
     _warn,
-    isRowNumberCol,
 } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
@@ -135,7 +135,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     protected override shouldSkipCell(cell: CellPosition): boolean {
-        return isRowNumberCol(cell.column);
+        return _isRowNumberCol(cell.column);
     }
 
     protected onDrag(_: MouseEvent) {

@@ -18,7 +18,8 @@ export const SELECTION_COLUMN_ID = 'ag-Grid-SelectionColumn';
 export const ROW_NUMBERS_COLUMN_ID = 'ag-Grid-RowNumbersColumn';
 export const GROUP_HIERARCHY_COLUMN_ID_PREFIX = 'ag-Grid-HierarchyColumn';
 
-// Possible candidate for reuse (alot of recursive traversal duplication)
+// Possible candidate for reuse (a lot of recursive traversal duplication)
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
     const result: AgColumn[] = [];
 
@@ -41,7 +42,7 @@ export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGro
 export function getWidthOfColsInList(columnList: AgColumn[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _destroyColumnTree(
     beans: BeanCollection,
     oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
@@ -69,24 +70,27 @@ export function _destroyColumnTree(
     const colsToDestroy = Object.values(oldObjectsById).filter((item) => item != null);
     beans.context.destroyBeans(colsToDestroy);
 }
-
-export function isColumnGroupAutoCol(col: AgColumn): boolean {
+/** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _isColumnGroupAutoCol(col: AgColumn): boolean {
     const colId = col.getId();
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
 
-export function isColumnSelectionCol(col: ColKey): boolean {
+/** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _isColumnSelectionCol(col: ColKey): boolean {
     const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
     return id?.startsWith(SELECTION_COLUMN_ID) ?? false;
 }
 
-export function isRowNumberCol(col: ColKey): boolean {
+/** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _isRowNumberCol(col: ColKey): boolean {
     const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
     return id?.startsWith(ROW_NUMBERS_COLUMN_ID) ?? false;
 }
 
-export function isSpecialCol(col: ColKey): boolean {
-    return isColumnSelectionCol(col) || isRowNumberCol(col);
+/** @AG_Grid_Internal Not for general use, may change without warning. */
+export function _isSpecialCol(col: ColKey): boolean {
+    return _isColumnSelectionCol(col) || _isRowNumberCol(col);
 }
 
 export function convertColumnTypes(type: string | string[]): string[] {
@@ -99,23 +103,23 @@ export function convertColumnTypes(type: string | string[]): string[] {
     }
     return typeKeys;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
     return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _updateColsMap(cols: ColumnCollections): void {
     cols.map = {};
     for (const col of cols.list) {
         cols.map[col.getId()] = col;
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _convertColumnEventSourceType(source: AgPropertyChangedSource): ColumnEventType {
     // unfortunately they do not match so need to perform conversion
     return source === 'optionsUpdated' ? 'gridOptionsChanged' : source;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
     const columnMatches = column === key;
     const colDefMatches = column.getColDef() === key;
@@ -158,7 +162,7 @@ export const getValueFactory =
 
         return obj;
     };
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getColumnStateFromColDef(colDef: ColDef, colId: string): ColumnState {
     const state: ColumnState = {
         ...colDef,
@@ -173,7 +177,7 @@ export function _getColumnStateFromColDef(colDef: ColDef, colId: string): Column
 
     return state;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getSortDefFromColDef(colDef: ColDef) {
     const { sort, initialSort } = colDef;
     const sortIsValid = _isSortDefValid(sort) || _isSortDirectionValid(sort);

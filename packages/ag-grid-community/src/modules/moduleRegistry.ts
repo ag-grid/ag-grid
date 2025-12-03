@@ -46,7 +46,7 @@ function runVersionChecks(module: Module) {
         _errorOnce(`${result.message}`);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _registerModule(module: Module, gridId: string | undefined, isInternalRegistration = false): void {
     if (!isInternalRegistration) {
         userHasRegistered = true;
@@ -80,21 +80,21 @@ export function _registerModule(module: Module, gridId: string | undefined, isIn
         }
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _unRegisterGridModules(gridId: string): void {
     delete gridModulesMap[gridId];
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isModuleRegistered(moduleName: ModuleName, gridId: string, rowModel: RowModelType): boolean {
     const isRegisteredForRowModel = (model: RowModelType | 'all') =>
         !!globalModulesMap[model]?.[moduleName] || !!gridModulesMap[gridId]?.[model]?.[moduleName];
     return isRegisteredForRowModel(rowModel) || isRegisteredForRowModel('all');
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _areModulesGridScoped(): boolean {
     return areGridScopedModules;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getRegisteredModules(gridId: string, rowModel: RowModelType): Module[] {
     const gridModules = gridModulesMap[gridId] ?? {};
     return [
@@ -104,26 +104,26 @@ export function _getRegisteredModules(gridId: string, rowModel: RowModelType): M
         ...Object.values(gridModules[rowModel] ?? {}),
     ];
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getAllRegisteredModules(): Set<Module> {
     return new Set(allRegisteredModules);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getGridRegisteredModules(gridId: string, rowModel: RowModelType): Module[] {
     const gridModules = gridModulesMap[gridId] ?? {};
     return [...Object.values(gridModules['all'] ?? {}), ...Object.values(gridModules[rowModel] ?? {})];
 }
 
-/** Internal logic to track if the user has registered modules so that we can give an optimised error message. */
+/** Internal logic to track if the user has registered modules so that we can give an optimised error message. * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _hasUserRegistered(): boolean {
     return userHasRegistered;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isUmd(): boolean {
     return isUmd;
 }
 
-/** Internal use to provide clear error messages for UMD users. */
+/** Internal use to provide clear error messages for UMD users. * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _setUmd(): void {
     isUmd = true;
 }

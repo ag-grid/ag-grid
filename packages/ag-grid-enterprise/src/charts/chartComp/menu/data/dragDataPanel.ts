@@ -1,9 +1,9 @@
 import type {
-    AgComponentSelectorType,
     AgSelectParams,
-    BeanCollection,
     GridSelect,
     ListOption,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { AgSelect, Component } from 'ag-grid-community';
 
@@ -18,7 +18,7 @@ import type { ChartTranslationKey, ChartTranslationService } from '../../service
 export abstract class DragDataPanel extends Component {
     protected chartTranslation: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
@@ -61,7 +61,7 @@ export abstract class DragDataPanel extends Component {
             );
             this.groupComp.addItem(this.valuePillSelect);
         } else {
-            const params: AgSelectParams<AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
+            const params: AgSelectParams<_AgComponentSelectorType, ColState> = this.createValueSelectParams(columns);
             params.onValueChange = (updatedColState: ColState) => {
                 for (const col of columns) {
                     col.selected = false;

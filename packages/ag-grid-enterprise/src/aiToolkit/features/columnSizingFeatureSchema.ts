@@ -1,8 +1,8 @@
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 
 import { s } from '../schemaBuilder';
 
-export const buildColumnSizingFeatureSchema = (beans: BeanCollection) => {
+export const buildColumnSizingFeatureSchema = (beans: _BeanCollection) => {
     const columns = beans.colModel.getCols();
     const resizableColumns = columns.filter((col) => col.isResizable());
 

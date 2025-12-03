@@ -3,14 +3,14 @@ import type {
     ColKey,
     ColumnEventType,
     IColumnCollectionService,
-    NamedBean,
     PropertyValueChangedEvent,
     _ColumnCollections,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
     AgColumn,
-    BeanStub,
     GROUP_AUTO_COLUMN_ID,
+    _BeanStub,
     _addColumnDefaultAndTypes,
     _applyColumnState,
     _areColIdsEqual,
@@ -18,6 +18,7 @@ import {
     _convertColumnEventSourceType,
     _destroyColumnTree,
     _getColumnStateFromColDef,
+    _isColumnGroupAutoCol,
     _isColumnsSortingCoupledToGroup,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
@@ -25,10 +26,9 @@ import {
     _missing,
     _updateColsMap,
     _warn,
-    isColumnGroupAutoCol,
 } from 'ag-grid-community';
 
-export class AutoColService extends BeanStub implements NamedBean, IColumnCollectionService {
+export class AutoColService extends _BeanStub implements _NamedBean, IColumnCollectionService {
     beanName = 'autoColSvc' as const;
 
     /** Group auto columns */
@@ -118,7 +118,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
                 return null;
             }
             // we use colId, and not instance, to remove old autoGroupCols
-            const colsFiltered = cols.filter((col) => !isColumnGroupAutoCol(col));
+            const colsFiltered = cols.filter((col) => !_isColumnGroupAutoCol(col));
             return [...list, ...colsFiltered];
         };
 

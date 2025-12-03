@@ -47,6 +47,7 @@ export function getNextColInstanceId(): ColumnInstanceId {
     return instanceIdSequence++ as ColumnInstanceId;
 }
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col is AgColumn {
     return col instanceof AgColumn;
 }
@@ -811,22 +812,22 @@ export class AgColumn<TValue = any>
  *
  * If input is already a valid SortDef, we pluck the direction and type from it.
  * Otherwise, we normalise the direction and type from input.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getSortDefFromInput(input?: unknown): SortDef {
     if (_isSortDefValid(input)) {
         return { direction: input.direction, type: input.type };
     }
     return { direction: _normalizeSortDirection(input), type: _normalizeSortType(input) };
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isSortDirectionValid(maybeSortDir: unknown): maybeSortDir is SortDirection {
     return maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
     return maybeSortType === 'default' || maybeSortType === 'absolute';
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {
     if (!maybeSortDef || typeof maybeSortDef !== 'object') {
         return false;
@@ -835,7 +836,7 @@ export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef 
     const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
     return _isSortTypeValid(maybeSortDefT.type) && _isSortDirectionValid(maybeSortDefT.direction);
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2: SortDef | null | undefined): boolean {
     if (!sortDef1) {
         return sortDef2 ? sortDef2.direction === null : true;
@@ -846,11 +847,11 @@ export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2
 
     return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
     return _isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
     return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
 }

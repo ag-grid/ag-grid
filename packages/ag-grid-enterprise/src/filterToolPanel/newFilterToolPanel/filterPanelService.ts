@@ -1,6 +1,5 @@
 import type {
     AgColumn,
-    BeanCollection,
     FilterAction,
     FilterDestroyedEvent,
     FilterHandler,
@@ -9,12 +8,13 @@ import type {
     FilterPanelSummaryState,
     IFilterPanelService,
     IToolPanelNewFiltersCompParams,
-    NamedBean,
     NewFiltersToolPanelFilterState,
     NewFiltersToolPanelState,
     SelectableFilterDef,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, FilterComp } from 'ag-grid-community';
+import { FilterComp, _BeanStub } from 'ag-grid-community';
 
 interface StateWrapper {
     state: FilterPanelFilterState;
@@ -24,8 +24,8 @@ interface StateWrapper {
 }
 
 export class FilterPanelService
-    extends BeanStub<'filterPanelStateChanged' | 'filterPanelStatesChanged'>
-    implements IFilterPanelService, NamedBean
+    extends _BeanStub<'filterPanelStateChanged' | 'filterPanelStatesChanged'>
+    implements IFilterPanelService, _NamedBean
 {
     readonly beanName = 'filterPanelSvc' as const;
 
@@ -405,6 +405,6 @@ export class FilterPanelService
     }
 }
 
-function getDisplayName(beans: BeanCollection, column: AgColumn): string {
+function getDisplayName(beans: _BeanCollection, column: AgColumn): string {
     return beans.colNames.getDisplayNameForColumn(column, 'filterToolPanel') ?? column.getColId();
 }

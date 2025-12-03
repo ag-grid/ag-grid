@@ -11,7 +11,7 @@ import type {
 } from 'ag-charts-types';
 
 import type { ChartType } from 'ag-grid-community';
-import { BeanStub, _error } from 'ag-grid-community';
+import { _BeanStub, _error } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { AgChartActual, AgChartAxisType } from '../utils/integration';
@@ -42,7 +42,7 @@ const POLAR_AXIS_TYPES: AgPolarAxisType[] = ['angle-category', 'angle-number', '
 
 const VALID_AXIS_TYPES: (AgCartesianAxisType | AgPolarAxisType)[] = [...CARTESIAN_AXIS_TYPES, ...POLAR_AXIS_TYPES];
 
-export class ChartOptionsService extends BeanStub {
+export class ChartOptionsService extends _BeanStub {
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {

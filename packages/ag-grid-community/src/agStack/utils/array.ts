@@ -1,6 +1,10 @@
-/** An array that is always empty and that cannot be modified */
+/**
+ * An array that is always empty and that cannot be modified
+ *
+ * @AG_Grid_Internal Not for general use, may change without warning.
+ */
 export const _EmptyArray = Object.freeze([]) as unknown as any[];
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
@@ -10,7 +14,7 @@ export function _last(arr: any): any {
 
     return arr[arr.length - 1];
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _areEqual<T>(
     a: readonly T[] | null | undefined,
     b: readonly T[] | null | undefined,
@@ -39,7 +43,7 @@ export function _areEqual<T>(
  * Utility that uses the fastest looping approach to apply a callback to each element of the array
  * https://jsperf.app/for-for-of-for-in-foreach-comparison
  * If callback returns true, exit early.
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
     if (!array) {
         return;
@@ -50,7 +54,7 @@ export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boole
         }
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _removeFromArray<T>(array: T[], object: T): void {
     const index = array.indexOf(object);
 
@@ -63,7 +67,7 @@ export function _removeFromArray<T>(array: T[], object: T): void {
  * O(N+M) way to remove M elements from an array of size N. Better than calling _removeFromArray in a loop
  *
  * Note: this implementation removes _any_ instances of the `elementsToRemove`
- */
+ * @AG_Grid_Internal Not for general use, may change without warning. */
 export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[]): void {
     let i = 0;
     let j = 0;
@@ -83,6 +87,7 @@ export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[
 }
 
 // should consider refactoring the callers to create a new array rather than mutating the original, which is expensive
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
     // first take out items from the array
     for (let i = 0; i < objectsToMove.length; i++) {
@@ -95,7 +100,7 @@ export function _moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number)
         array.splice(toIndex, 0, objectsToMove[i]);
     }
 }
-
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _flatten<T>(arrays: Array<T[]>): T[] {
     // Currently the fastest way to flatten an array according to https://jsbench.me/adlib26t2y/2
     return ([] as T[]).concat.apply([], arrays);

@@ -1,8 +1,8 @@
 import {
     AgColumn,
-    BeanStub,
     KeyCode,
     ROW_NUMBERS_COLUMN_ID,
+    _BeanStub,
     _addGridCommonParams,
     _applyColumnState,
     _areColIdsEqual,
@@ -14,11 +14,11 @@ import {
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
+    _isRowNumberCol,
     _isRowNumbers,
     _selectAllCells,
     _setAriaLabel,
     _updateColsMap,
-    isRowNumberCol,
 } from 'ag-grid-community';
 import type {
     CellClassParams,
@@ -27,7 +27,6 @@ import type {
     ColDef,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
-    NamedBean,
     PropertyValueChangedEvent,
     RowNode,
     RowNumbersOptions,
@@ -36,11 +35,12 @@ import type {
     ValueGetterParams,
     _ColumnCollections,
     _HeaderComp,
+    _NamedBean,
 } from 'ag-grid-community';
 
 import { RowNumbersRowResizeFeature, _isRowNumbersResizerEnabled } from './rowNumbersRowResizeFeature';
 
-export class RowNumbersService extends BeanStub implements NamedBean, IRowNumbersService {
+export class RowNumbersService extends _BeanStub implements _NamedBean, IRowNumbersService {
     beanName = 'rowNumbersSvc' as const;
 
     public columns: _ColumnCollections | null;
@@ -122,7 +122,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
                 return null;
             }
             // we use colId, and not instance, to remove old rowNumbersCols
-            const colsFiltered = cols.filter((col) => !isRowNumberCol(col));
+            const colsFiltered = cols.filter((col) => !_isRowNumberCol(col));
             return [...list, ...colsFiltered];
         };
 
@@ -162,7 +162,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public getColumn(): AgColumn | null {
-        return this.columns?.list.find(isRowNumberCol) ?? null;
+        return this.columns?.list.find(_isRowNumberCol) ?? null;
     }
 
     public getColumns(): AgColumn[] | null {
@@ -172,7 +172,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     public setupForHeader(comp: _HeaderComp): void {
         const { column, eGridHeader } = comp.params;
 
-        if (!isRowNumberCol(column)) {
+        if (!_isRowNumberCol(column)) {
             return;
         }
 
@@ -456,7 +456,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             columns = pinnedCols;
         }
 
-        const column = columns.find((col) => !isRowNumberCol(col));
+        const column = columns.find((col) => !_isRowNumberCol(col));
 
         if (!column) {
             return;

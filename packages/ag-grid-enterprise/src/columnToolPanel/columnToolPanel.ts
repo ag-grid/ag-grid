@@ -1,5 +1,4 @@
 import type {
-    BeanCollection,
     ColDef,
     ColGroupDef,
     ColumnToolPanelState,
@@ -7,6 +6,7 @@ import type {
     IToolPanelColumnCompParams,
     IToolPanelComp,
     IToolPanelParams,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { Component, _addGridCommonParams, _clearElement, _last } from 'ag-grid-community';
 
@@ -40,7 +40,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.registerCSS(columnToolPanelCSS);
     }
 
-    public wireBeans(beans: BeanCollection): void {
+    public wireBeans(beans: _BeanCollection): void {
         this.colToolPanelFactory = beans.colToolPanelFactory as ColumnToolPanelFactory;
     }
 

@@ -1,6 +1,6 @@
-import type { AgColumn, HeaderPosition, NamedBean, PopupEventParams } from 'ag-grid-community';
+import type { AgColumn, HeaderPosition, PopupEventParams, _NamedBean } from 'ag-grid-community';
 import {
-    BeanStub,
+    _BeanStub,
     _findTabbableParent,
     _getActiveDomElement,
     _isNothingFocused,
@@ -17,7 +17,7 @@ export interface MenuRestoreFocusParams {
     eventSource?: HTMLElement;
 }
 
-export class MenuUtils extends BeanStub implements NamedBean {
+export class MenuUtils extends _BeanStub implements _NamedBean {
     beanName = 'menuUtils' as const;
 
     public restoreFocusOnClose(

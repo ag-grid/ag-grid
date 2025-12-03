@@ -1,9 +1,9 @@
-import type { BaseCellDataType, BeanCollection } from 'ag-grid-community';
+import type { BaseCellDataType, _BeanCollection } from 'ag-grid-community';
 
 import { s } from '../schemaBuilder';
 import type { JSONSchema } from '../schemaTypes';
 
-export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: BeanCollection) => {
+export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc }: _BeanCollection) => {
     if (!dataTypeSvc) {
         return;
     }

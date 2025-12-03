@@ -9,6 +9,7 @@ import { paramValueToCss } from './themeTypeUtils';
 import type { WithParamTypes } from './themeTypes';
 import { paramToVariableName } from './themeUtils';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     if (!(theme instanceof ThemeImpl)) {
         throw new Error('theme is not an object created by createTheme');

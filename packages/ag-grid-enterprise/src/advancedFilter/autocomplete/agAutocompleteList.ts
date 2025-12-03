@@ -1,12 +1,12 @@
 import type {
-    AgComponentSelectorType,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     Component,
     ElementParams,
     GridOptionsService,
     GridOptionsWithDefaults,
+    _AgComponentSelectorType,
+    _BeanCollection,
 } from 'ag-grid-community';
 import { AgPopupComponent, KeyCode, RefPlaceholder, _exists, _fuzzySuggestions } from 'ag-grid-community';
 
@@ -26,12 +26,12 @@ const AgAutocompleteListElement: ElementParams = {
     ],
 };
 export class AgAutocompleteList extends AgPopupComponent<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
     GridOptionsService,
-    AgComponentSelectorType
+    _AgComponentSelectorType
 > {
     private readonly eList: HTMLElement = RefPlaceholder;
 

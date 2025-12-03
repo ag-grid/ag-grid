@@ -1,21 +1,21 @@
 import type {
     IRowModel,
     IViewportDatasource,
-    NamedBean,
     OverlayType,
     RowBounds,
     RowModelType,
+    _NamedBean,
 } from 'ag-grid-community';
 import {
-    BeanStub,
     RowNode,
+    _BeanStub,
     _addGridCommonParams,
     _getRowHeightAsNumber,
     _getRowIdCallback,
     _warn,
 } from 'ag-grid-community';
 
-export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
+export class ViewportRowModel extends _BeanStub implements _NamedBean, IRowModel {
     beanName = 'rowModel' as const;
 
     // rowRenderer tells us these

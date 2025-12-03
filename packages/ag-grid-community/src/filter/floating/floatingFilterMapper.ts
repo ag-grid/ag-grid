@@ -2,6 +2,7 @@ import { _getFilterCompKeys } from '../../components/framework/userCompUtils';
 import type { IFilterDef } from '../../interfaces/iFilter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 
+/** @AG_Grid_Internal Not for general use, may change without warning. */
 export function _getDefaultFloatingFilterType(
     frameworkOverrides: IFrameworkOverrides,
     def: IFilterDef,

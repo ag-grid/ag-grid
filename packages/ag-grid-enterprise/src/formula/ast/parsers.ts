@@ -1,5 +1,5 @@
 import { _getClientSideRowModel, _isExpressionString } from 'ag-grid-community';
-import type { BeanCollection } from 'ag-grid-community';
+import type { _BeanCollection } from 'ag-grid-community';
 
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { OperatorDef } from './operators';
@@ -21,7 +21,7 @@ import { FormulaParseError } from './utils';
  *  parseOperand(beans, 'A1')      // => { column:{...}, row:{...} }
  */
 const parseOperand = (
-    beans: BeanCollection,
+    beans: _BeanCollection,
     operand: string,
     unsafe: boolean
 ): string | number | boolean | Cell | null => {
@@ -271,7 +271,7 @@ function pickOpDefForContext(symbol: string, prevToken: string | undefined): Ope
  * @example
  * parseExpression(beans, 'SUM(1, 2+3)') // => { type:"operation", operation:"SUM", operands:[...]}
  */
-function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): FormulaNode {
+function parseExpression(beans: _BeanCollection, expr: string, unsafe: boolean): FormulaNode {
     const tokens = tokenize(expr);
 
     const output: FormulaNode[] = [];
@@ -476,7 +476,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
  * @example
  * parseFormula(beans, '=1+2') // => operation("+", [1,2])
  */
-export const parseFormula = (beans: BeanCollection, formula: string, unsafe: boolean = false): FormulaNode => {
+export const parseFormula = (beans: _BeanCollection, formula: string, unsafe: boolean = false): FormulaNode => {
     if (!_isExpressionString(formula)) {
         throw new FormulaParseError('Formulas must begin with =', 0, 1);
     }

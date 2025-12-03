@@ -1,9 +1,9 @@
-import type { BeanCollection, CellCtrl, IRowNumbersRowResizeFeature, RowNode } from 'ag-grid-community';
+import type { CellCtrl, IRowNumbersRowResizeFeature, RowNode, _BeanCollection } from 'ag-grid-community';
 import { _isRowNumbers, _removeFromParent, _warn } from 'ag-grid-community';
 
 import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 
-export function _isRowNumbersResizerEnabled(beans: BeanCollection): boolean {
+export function _isRowNumbersResizerEnabled(beans: _BeanCollection): boolean {
     const rowNumbers = _isRowNumbers(beans);
 
     return !(!rowNumbers || typeof rowNumbers !== 'object' || !rowNumbers.enableRowResizer);
@@ -13,7 +13,7 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
     private rowResizer: AgRowNumbersRowResizer | undefined;
 
     constructor(
-        private readonly beans: BeanCollection,
+        private readonly beans: _BeanCollection,
         private readonly cellCtrl: CellCtrl
     ) {}
 

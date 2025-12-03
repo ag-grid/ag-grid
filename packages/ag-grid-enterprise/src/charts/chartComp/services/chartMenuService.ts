@@ -1,13 +1,13 @@
 import type {
-    BeanCollection,
     ChartToolPanelMenuOptions,
     ChartToolPanelName,
     ChartToolbarMenuItemOptions,
     GetChartToolbarItemsParams,
-    NamedBean,
     WithoutGridCommon,
+    _BeanCollection,
+    _NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { _BeanStub, _warn } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { AdvancedSettingsMenuFactory } from '../menu/advancedSettings/advancedSettingsMenuFactory';
@@ -26,12 +26,12 @@ export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: Chart
     format: 'chartFormat',
 };
 
-export class ChartMenuService extends BeanStub implements NamedBean {
+export class ChartMenuService extends _BeanStub implements _NamedBean {
     beanName = 'chartMenuSvc' as const;
 
     private advSettingsMenuFactory?: AdvancedSettingsMenuFactory;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.advSettingsMenuFactory = beans.advSettingsMenuFactory as AdvancedSettingsMenuFactory;
     }
 

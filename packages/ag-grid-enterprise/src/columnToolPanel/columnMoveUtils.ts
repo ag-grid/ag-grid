@@ -1,25 +1,25 @@
 import type {
     AgColumn,
     AgProvidedColumnGroup,
-    BeanCollection,
     ColumnPanelItemDragStartEvent,
     GridOptionsService,
+    _BeanCollection,
 } from 'ag-grid-community';
-import { isProvidedColumnGroup } from 'ag-grid-community';
+import { _isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] => {
-    if (isProvidedColumnGroup(column)) {
+    if (_isProvidedColumnGroup(column)) {
         return column.getLeafColumns();
     }
     return column ? [column] : [];
 };
 
 const getMoveTargetIndex = (
-    beans: BeanCollection,
+    beans: _BeanCollection,
     currentColumns: AgColumn[] | null,
     lastHoveredColumn: AgColumn,
     isBefore: boolean
@@ -52,7 +52,7 @@ const getMoveDiff = (allColumns: AgColumn[], currentColumns: AgColumn[] | null, 
     return 0;
 };
 
-export const isMoveBlocked = (gos: GridOptionsService, beans: BeanCollection, currentColumns: AgColumn[]): boolean => {
+export const isMoveBlocked = (gos: GridOptionsService, beans: _BeanCollection, currentColumns: AgColumn[]): boolean => {
     const preventMoving = gos.get('suppressMovableColumns') || beans.colModel.isPivotMode();
 
     if (preventMoving) {
@@ -65,7 +65,7 @@ export const isMoveBlocked = (gos: GridOptionsService, beans: BeanCollection, cu
 };
 
 export const moveItem = (
-    beans: BeanCollection,
+    beans: _BeanCollection,
     currentColumns: AgColumn[],
     lastHoveredListItem: VirtualListDragItem<ToolPanelColumnGroupComp | ToolPanelColumnComp> | null
 ): void => {

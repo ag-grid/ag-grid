@@ -2,23 +2,23 @@ import type {
     AbstractColDef,
     AgColumn,
     AgProvidedColumnGroup,
-    BeanCollection,
     ColGroupDef,
     ColumnEventType,
-    ColumnModel,
     ColumnPanelItemDragEndEvent,
     ColumnPanelItemDragStartEvent,
     ColumnToolPanelState,
-    ComponentSelector,
+    _BeanCollection,
+    _ColumnModel,
+    _ComponentSelector,
 } from 'ag-grid-community';
 import {
     Component,
     DragSourceType,
     _exists,
+    _isProvidedColumnGroup,
     _setAriaLabel,
     _setAriaLevel,
     _warn,
-    isProvidedColumnGroup,
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
@@ -50,9 +50,9 @@ const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
 export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
-    private colModel: ColumnModel;
+    private colModel: _ColumnModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public wireBeans(beans: _BeanCollection) {
         this.colModel = beans.colModel;
     }
 
@@ -356,7 +356,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             parentList: ColumnModelItem[]
         ): void => {
             for (const child of tree) {
-                if (isProvidedColumnGroup(child)) {
+                if (_isProvidedColumnGroup(child)) {
                     createGroupItem(child, depth, parentList);
                 } else {
                     createColumnItem(child, depth, parentList);
@@ -670,7 +670,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 }
 
-export const AgPrimaryColsListSelector: ComponentSelector = {
+export const AgPrimaryColsListSelector: _ComponentSelector = {
     selector: 'AG-PRIMARY-COLS-LIST',
     component: AgPrimaryColsList,
 };

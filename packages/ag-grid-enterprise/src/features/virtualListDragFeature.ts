@@ -2,11 +2,11 @@ import type {
     AgEvent,
     AgEventTypeParams,
     AgGridCommon,
-    BeanCollection,
     Component,
     DragSourceType,
     GridOptionsService,
     GridOptionsWithDefaults,
+    _BeanCollection,
 } from 'ag-grid-community';
 
 import { AgVirtualListDragFeature } from '../agStack/agVirtualListDragFeature';
@@ -18,7 +18,7 @@ export class VirtualListDragFeature<
     TDragStartEvent extends AgEvent,
     TDragEndEvent extends AgEvent,
 > extends AgVirtualListDragFeature<
-    BeanCollection,
+    _BeanCollection,
     GridOptionsWithDefaults,
     AgEventTypeParams,
     AgGridCommon<any, any>,
