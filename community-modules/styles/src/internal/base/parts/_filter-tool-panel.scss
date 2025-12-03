@@ -74,6 +74,10 @@
                 margin-left: var(--ag-grid-size),
             )
         );
+
+        &:not(.ag-filter-active) {
+            display: none;
+        }
     }
 
     .ag-set-filter-group-icons {

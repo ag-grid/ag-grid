@@ -31,6 +31,19 @@
 .ag-filter-toolpanel-group-instance-header-icon,
 .ag-filter-toolpanel-instance-header-icon {
     margin-left: var(--ag-spacing);
+
+    &:not(.ag-filter-active) {
+        display: none;
+    }
+
+    &.ag-filter-active {
+        background-image: unset;
+        outline: unset;
+    }
+
+    &.ag-filter-active .ag-icon-filter {
+        color: var(--ag-icon-color);
+    }
 }
 
 .ag-filter-toolpanel-search {
