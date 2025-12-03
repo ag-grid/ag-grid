@@ -253,14 +253,13 @@ const gridOptions = {
         { field: 'subtotal', allowFormula: true },
         { field: 'total', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params) => String(params.data.id),
     formulaDataSource: {
         getFormula: ({ column, rowNode }) => {
-            const key = `${rowNode.id}-${column.getColId()}`;
-            return formulaStore.get(key);
+            return formulaStore.get(formulaKey(rowNode.id, column.getColId()));
         },
         setFormula: ({ column, rowNode, formula }) => {
-            const key = `${rowNode.id}-${column.getColId()}`;
+            const key = formulaKey(rowNode.id, column.getColId());
             if (formula === undefined) {
                 formulaStore.delete(key);
             } else {
