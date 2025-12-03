@@ -2,7 +2,7 @@ import type {
     ChangedPath,
     GridOptions,
     NestedDataGetter,
-    StageExecuteParams,
+    RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _EmptyArray, _removeFromArray, _warn } from 'ag-grid-community';
@@ -121,14 +121,12 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return groupData;
     }
 
-    public execute(params: StageExecuteParams<TData>): boolean {
+    public execute(rootNode: RowNode<TData>, params: RefreshModelParams<TData>): boolean {
         if (this.fullReload) {
             this.reset();
         }
 
         const { changedRowNodes, changedPath } = params;
-
-        const rootNode = params.rowNode;
 
         const activeChangedPath = changedPath?.active ? changedPath : undefined;
         const fullReload = this.fullReload || (!changedRowNodes && !activeChangedPath);
@@ -137,17 +135,17 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         if (fullReload || hasUpdates) {
             this.fullReload = false;
             if (this.parentIdGetter) {
-                this.loadSelfRef(params, fullReload);
+                this.loadSelfRef(rootNode, fullReload);
             } else if (this.nestedDataGetter) {
-                this.loadNested(params, fullReload);
+                this.loadNested(rootNode, changedRowNodes, fullReload);
             } else {
-                this.loadDataPath(params, fullReload);
+                this.loadDataPath(rootNode, fullReload);
             }
         }
 
         const parentsChanged = this.initRowsParents(rootNode);
 
-        this.destroyFillerRows();
+        this.destroyFillerRows(!!params.animate);
 
         this.initRowsChildrenSize(rootNode);
 
@@ -240,13 +238,13 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
         return parentsChanged;
     }
 
-    private destroyFillerRows(): void {
+    private destroyFillerRows(animate: boolean): void {
         const nonLeafsById = this.nonLeafsById;
         if (nonLeafsById) {
             for (const node of nonLeafsById.values()) {
                 if (node.treeParent === null || (node.treeNodeFlags & MASK_CHILDREN_LEN) === 0) {
                     nonLeafsById.delete(node.id!); // This filler node is unused
-                    node._destroy(true);
+                    node._destroy(animate);
                     this.hideRow(node);
                 }
             }
@@ -439,7 +437,11 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Load the tree structure for nested groups, aka children property */
-    private loadNested({ rowNode: rootNode, changedRowNodes }: StageExecuteParams<TData>, fullReload: boolean): void {
+    private loadNested(
+        rootNode: RowNode<TData>,
+        changedRowNodes: _ChangedRowNodes<TData> | undefined,
+        fullReload: boolean
+    ): void {
         if (!fullReload && changedRowNodes) {
             for (const row of changedRowNodes.adds) {
                 row.key = row.id!; // Just set the key = id in the new nodes
@@ -458,7 +460,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Load the tree structure for self-referencing data, aka parentId field */
-    private loadSelfRef({ rowNode: rootNode }: StageExecuteParams<TData>, reload: boolean): void {
+    private loadSelfRef(rootNode: RowNode<TData>, reload: boolean): void {
         const allLeafs = rootNode._leafs!;
         const allLeafsLen = allLeafs.length;
         const gos = this.gos;
@@ -507,7 +509,7 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     }
 
     /** Load the tree structure for data paths, aka getDataPath callback */
-    private loadDataPath({ rowNode: rootNode }: StageExecuteParams<TData>, fullReload: boolean): void {
+    private loadDataPath(rootNode: RowNode<TData>, fullReload: boolean): void {
         const getDataPath = this.gos.get('getDataPath');
         if (!getDataPath) {
             this.loadFlattened(rootNode);

@@ -3,7 +3,7 @@ import type {
     ChangedPath,
     GridOptions,
     IRowNode,
-    StageExecuteParams,
+    RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _csrmFirstLeaf, _warn } from 'ag-grid-community';
@@ -21,6 +21,7 @@ interface GroupingDetails {
     rootNode: RowNode;
     groupCols: GroupColumn[];
     groupAllowUnbalanced: boolean;
+    animate: boolean;
 }
 
 export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
@@ -31,7 +32,12 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
     private prevGroupCols: GroupColumn[] | null = null;
+    private checkGroupCols: boolean = false;
     public readonly nonLeafsById = new Map<string, RowNode>();
+
+    public invalidateGroupCols(): void {
+        this.checkGroupCols = true;
+    }
 
     public override destroy(): void {
         super.destroy();
@@ -78,8 +84,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return groupData;
     }
 
-    public execute(params: StageExecuteParams): void {
-        const details = this.createGroupingDetails(params);
+    public execute(rootNode: RowNode, params: RefreshModelParams): void {
+        const details = this.createGroupingDetails(rootNode, params);
 
         if (details) {
             const changedRowNodes = params.changedRowNodes;
@@ -92,7 +98,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const changedPath = params.changedPath!;
         this.positionLeafsAndGroups(changedPath);
-        this.orderGroups(params.rowNode);
+        this.orderGroups(rootNode);
 
         this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
@@ -136,26 +142,32 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }, false);
     }
 
-    private createGroupingDetails(params: StageExecuteParams): GroupingDetails | null {
-        const { rowNode, changedPath } = params;
-
+    private createGroupingDetails(rootNode: RowNode, params: RefreshModelParams): GroupingDetails | null {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
         const cols = rowGroupColsSvc?.columns;
         let groupCols = this.prevGroupCols;
-        if (!groupCols || params.afterColumnsChanged) {
+        const afterColumnsChanged = params.afterColumnsChanged;
+        if (afterColumnsChanged || !groupCols || this.checkGroupCols) {
+            this.checkGroupCols = false;
             if (groupCols && !groupColumnsChanged(groupCols, cols)) {
-                return null; // no change to grouping
+                if (afterColumnsChanged) {
+                    return null; // no change to grouping
+                }
+            } else {
+                // Group columns changed.
+                params.animate = false; // if grouping columns change, we don't animate the regrouping
+                this.prevGroupCols = groupCols = makeGroupColumns(cols);
             }
-            this.prevGroupCols = groupCols = makeGroupColumns(cols);
         }
 
         return {
             groupCols,
-            rootNode: rowNode,
+            rootNode,
             pivotMode: colModel.isPivotMode(),
             // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath!,
+            changedPath: params.changedPath!,
             groupAllowUnbalanced: gos.get('groupAllowUnbalanced'),
+            animate: !!params.animate,
         };
     }
 
@@ -206,7 +218,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         if (parentsWithRemovals.size) {
             batchedRemove(parentsWithRemovals);
-            this.removeEmptyGroups(parentsWithRemovals);
+            this.removeEmptyGroups(parentsWithRemovals, details.animate);
         }
 
         if (reordered) {
@@ -314,7 +326,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
     }
 
-    private removeEmptyGroups(parents: Set<RowNode | null>): void {
+    private removeEmptyGroups(parents: Set<RowNode | null>, animate: boolean): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
@@ -350,7 +362,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     }
                     possibleEmptyGroups[idx] = parent;
                     groupsById.delete(pointer.id!);
-                    pointer._destroy(true);
+                    pointer._destroy(animate);
                     pointer = parent;
                 }
             }

@@ -1,4 +1,4 @@
-import type { GridOptions } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -8,6 +8,7 @@ import {
     TestGridsManager,
     applyTransactionChecked,
     asyncSetTimeout,
+    cachedJSONObjects,
     getRowsSnapshot,
     setRowDataChecked,
 } from '../test-utils';
@@ -586,6 +587,95 @@ describe('ag-grid grouping simple data', () => {
             · │ └── LEAF id:3 country:"Italy" year:"2000" athlete:"Donald Knuth"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:"2001"
             · · └── LEAF id:4 country:"Italy" year:"2001" athlete:"Marvin Minsky"
+        `);
+    });
+
+    test('updateGridOptions simultaneously updates rowData and grouping columns', async () => {
+        const rowData0 = [
+            { id: '0', country: 'France', year: '2000', athlete: 'Noether' },
+            { id: '1', country: 'France', year: '2001', athlete: 'Germain' },
+        ];
+
+        const columns0: ColDef[] = [
+            { colId: 'athlete', field: 'athlete' },
+            { colId: 'country', field: 'country' },
+            { colId: 'year', field: 'year' },
+        ];
+
+        const rowData1 = [
+            { id: '0', country: 'Ireland', year: '2000', athlete: 'John Von Neumann' },
+            { id: '1', country: 'France', year: '2001', athlete: 'Germain' },
+            { id: '2', country: 'Italy', year: '2000', athlete: 'Donald Knuth' },
+        ];
+
+        const columns1: ColDef[] = [
+            { colId: 'athlete', field: 'athlete' },
+            { colId: 'country', field: 'country', rowGroup: true },
+            { colId: 'year', field: 'year' },
+        ];
+
+        const rowData2 = [
+            { id: '0', country: 'Ireland', year: '2000', athlete: 'John Von Neumann' },
+            { id: '1', country: 'France', year: '2001', athlete: 'Germain' },
+            { id: '2', country: 'France', year: '2003', athlete: 'Donald Knuth' },
+        ];
+
+        const columns2: ColDef[] = [
+            { colId: 'athlete', field: 'athlete' },
+            { colId: 'country', field: 'country', rowGroup: true },
+            { colId: 'year', field: 'year', rowGroup: true },
+        ];
+
+        const api = gridsManager.createGrid('update-options', {
+            animateRows: false,
+            getRowId: (params) => params.data.id,
+            groupDefaultExpanded: -1,
+        });
+
+        api.updateGridOptions({
+            rowData: cachedJSONObjects.array(rowData0),
+            columnDefs: cachedJSONObjects.array(columns0),
+        });
+
+        let gridRows = new GridRows(api, 'update rowData + grouping');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 athlete:"Noether" country:"France" year:"2000"
+            └── LEAF id:1 athlete:"Germain" country:"France" year:"2001"
+        `);
+
+        api.updateGridOptions({
+            rowData: cachedJSONObjects.array(rowData1),
+            columnDefs: cachedJSONObjects.array(columns1),
+        });
+
+        gridRows = new GridRows(api, 'update rowData + grouping 1');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:0 athlete:"John Von Neumann" country:"Ireland" year:"2000"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:1 athlete:"Germain" country:"France" year:"2001"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:2 athlete:"Donald Knuth" country:"Italy" year:"2000"
+        `);
+
+        api.updateGridOptions({
+            rowData: cachedJSONObjects.array(rowData2),
+            columnDefs: cachedJSONObjects.array(columns2),
+        });
+
+        gridRows = new GridRows(api, 'update rowData + grouping 2');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:"2000"
+            │ · └── LEAF id:0 athlete:"John Von Neumann" country:"Ireland" year:"2000"
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├─┬ LEAF_GROUP id:row-group-country-France-year-2001 ag-Grid-AutoColumn:"2001"
+            · │ └── LEAF id:1 athlete:"Germain" country:"France" year:"2001"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2003 ag-Grid-AutoColumn:"2003"
+            · · └── LEAF id:2 athlete:"Donald Knuth" country:"France" year:"2003"
         `);
     });
 
