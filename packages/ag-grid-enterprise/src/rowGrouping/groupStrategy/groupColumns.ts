@@ -8,12 +8,13 @@ export interface GroupColumn {
     valueGetter: ColDef['valueGetter'];
 }
 
-export const makeGroupColumns = (columns: AgColumn[] | null | undefined): GroupColumn[] => {
+export const makeGroupColumns = (columns: AgColumn[] | null | undefined, result: GroupColumn[]): void => {
     if (!columns) {
-        return [];
+        result.length = 0;
+        return;
     }
     const len = columns.length;
-    const result = new Array<GroupColumn>(len);
+    result.length = len;
     for (let i = 0; i < len; i++) {
         const col = columns[i];
         const colDef = col.getColDef();
@@ -25,7 +26,6 @@ export const makeGroupColumns = (columns: AgColumn[] | null | undefined): GroupC
             valueGetter: colDef.valueGetter,
         };
     }
-    return result;
 };
 
 export const groupColumnsChanged = (groupColumns: GroupColumn[], columns: AgColumn[] | null | undefined) => {

@@ -6,7 +6,7 @@ import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
@@ -40,33 +40,24 @@ export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     }
 };
 
-export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
+export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage {
     beanName = 'sortStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'sort';
     public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
-    public execute(params: StageExecuteParams): void {
+    public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
         const sortOptions = this.beans.sortSvc!.getSortOptions();
 
-        const deltaSort =
+        const useDeltaSort =
             sortOptions.length > 0 &&
-            !!params.changedRowNodes &&
+            !!changedRowNodes &&
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
             this.gos.get('deltaSort');
 
-        this.sort(sortOptions, deltaSort, params.changedRowNodes, params.changedPath);
-    }
-
-    private sort(
-        sortOptions: SortOption[],
-        useDeltaSort: boolean,
-        changedRowNodes: ChangedRowNodes | undefined,
-        changedPath: ChangedPath | undefined
-    ): void {
         const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = this.beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());

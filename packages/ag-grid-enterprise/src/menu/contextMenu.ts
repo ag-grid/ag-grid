@@ -23,12 +23,10 @@ import type {
 import {
     BeanStub,
     _addGridCommonParams,
-    _areCellsEqual,
+    _attemptToRestoreCellFocus,
     _exists,
     _getGrandTotalRow,
     _isIOSUserAgent,
-    _isKeyboardMode,
-    _isNothingFocused,
 } from 'ag-grid-community';
 
 import { AgContextMenuService } from '../agStack/agContextMenuService';
@@ -255,22 +253,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
     private afterMenuDestroyed(): void {
         const { beans, focusedCell } = this;
-        const focusSvc = beans.focusSvc;
-        const currentFocusedCell = focusSvc.getFocusedCell();
-
-        if (currentFocusedCell && focusedCell && _areCellsEqual(currentFocusedCell, focusedCell)) {
-            const { rowIndex, rowPinned, column } = focusedCell;
-
-            if (_isNothingFocused(beans)) {
-                focusSvc.setFocusedCell({
-                    rowIndex,
-                    column,
-                    rowPinned,
-                    forceBrowserFocus: true,
-                    preventScrollOnBrowserFocus: !_isKeyboardMode(),
-                });
-            }
-        }
+        _attemptToRestoreCellFocus(beans, focusedCell);
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, source: 'api' | 'ui'): void {

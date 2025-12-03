@@ -188,12 +188,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         useRefFormat?: boolean;
     }): string {
         const { value, rowDelta = 0, columnDelta = 0, useRefFormat = true } = params;
-        const unsafe = !useRefFormat;
-        const ast = parseFormula(this.beans, value, unsafe);
-        shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
+        try {
+            const unsafe = !useRefFormat;
+            const ast = parseFormula(this.beans, value, unsafe);
+            shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
 
-        // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
+            // Serialize back to a formula string (REF format)
+            return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
+        } catch {
+            return value;
+        }
     }
 
     private setupFunctions() {

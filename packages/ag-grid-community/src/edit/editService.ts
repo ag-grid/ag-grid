@@ -71,7 +71,7 @@ type StopContext = {
 type StopOutcome = { edits: EditMap; res: boolean };
 
 // these are event sources for setDataValue that will not cause the editors to close
-const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc', 'renderer']);
 
 const INTERNAL_EDITOR_SOURCES = new Set(['ui', 'api']);
 

@@ -74,7 +74,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     RangeSelectionModule: 62.84,
     RichSelectModule: 132.51,
     RowNumbersModule: 32.03,
-    RowGroupingModule: 95.74,
+    RowGroupingModule: 98.79,
     RowGroupingPanelModule: 73.57,
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,

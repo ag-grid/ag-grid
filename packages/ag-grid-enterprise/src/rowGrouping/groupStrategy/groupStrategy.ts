@@ -3,7 +3,7 @@ import type {
     ChangedPath,
     GridOptions,
     IRowNode,
-    StageExecuteParams,
+    RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _csrmFirstLeaf, _warn } from 'ag-grid-community';
@@ -15,14 +15,6 @@ import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
 import { sortGroupChildren } from './sortGroupChildren';
 
-interface GroupingDetails {
-    pivotMode: boolean;
-    changedPath: ChangedPath;
-    rootNode: RowNode;
-    groupCols: GroupColumn[];
-    groupAllowUnbalanced: boolean;
-}
-
 export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -30,11 +22,19 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     // rowNode.childrenMapped: string=>RowNode = children mapped by group key (when groups) or an empty map if leaf group (this is then used by pivot)
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
-    private prevGroupCols: GroupColumn[] | null = null;
+    private readonly groupCols: GroupColumn[] = [];
     public readonly nonLeafsById = new Map<string, RowNode>();
+    private checkGroupCols: boolean = true;
+    private pivotMode: boolean = false;
+    private groupEmpty: boolean = false;
+
+    public invalidateGroupCols(): void {
+        this.checkGroupCols = true;
+    }
 
     public override destroy(): void {
         super.destroy();
+        this.groupCols.length = 0;
         this.nonLeafsById.clear();
     }
 
@@ -64,7 +64,10 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const leafNode = _csrmFirstLeaf(node);
         const rowGroupColId = rowGroupCol.getId();
-        const groupDisplayCols = showRowGroupCols!.columns;
+        if (!showRowGroupCols) {
+            return groupData;
+        }
+        const groupDisplayCols = showRowGroupCols.columns;
         for (let i = 0, len = groupDisplayCols.length; i < len; ++i) {
             const col = groupDisplayCols[i];
             // group nodes created without a rowGroupColumn still display in the group column
@@ -78,21 +81,19 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return groupData;
     }
 
-    public execute(params: StageExecuteParams): void {
-        const details = this.createGroupingDetails(params);
-
-        if (details) {
+    public execute(rootNode: RowNode, params: RefreshModelParams): void {
+        const changedPath = params.changedPath!;
+        if (this.initRefresh(params)) {
             const changedRowNodes = params.changedRowNodes;
             if (changedRowNodes) {
-                this.handleDeltaUpdate(details, changedRowNodes);
+                this.handleDeltaUpdate(rootNode, changedPath, changedRowNodes, !!params.animate);
             } else {
-                this.shotgunResetEverything(details);
+                this.shotgunResetEverything(rootNode);
             }
         }
 
-        const changedPath = params.changedPath!;
         this.positionLeafsAndGroups(changedPath);
-        this.orderGroups(params.rowNode);
+        this.orderGroups(rootNode);
 
         this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
@@ -136,35 +137,37 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }, false);
     }
 
-    private createGroupingDetails(params: StageExecuteParams): GroupingDetails | null {
-        const { rowNode, changedPath } = params;
-
+    private initRefresh(params: RefreshModelParams): boolean {
         const { rowGroupColsSvc, colModel, gos } = this.beans;
+        const pivotMode = colModel.isPivotMode();
+        this.pivotMode = pivotMode;
+        this.groupEmpty = pivotMode || !gos.get('groupAllowUnbalanced');
         const cols = rowGroupColsSvc?.columns;
-        let groupCols = this.prevGroupCols;
-        if (!groupCols || params.afterColumnsChanged) {
+        const groupCols = this.groupCols;
+        const afterColumnsChanged = params.afterColumnsChanged;
+        if (afterColumnsChanged || !groupCols || this.checkGroupCols) {
+            this.checkGroupCols = false;
             if (groupCols && !groupColumnsChanged(groupCols, cols)) {
-                return null; // no change to grouping
+                if (afterColumnsChanged) {
+                    return false; // no change to grouping
+                }
+            } else {
+                // Group columns changed.
+                params.animate = false; // if grouping columns change, we don't animate the regrouping
+                makeGroupColumns(cols, this.groupCols);
             }
-            this.prevGroupCols = groupCols = makeGroupColumns(cols);
         }
 
-        return {
-            groupCols,
-            rootNode: rowNode,
-            pivotMode: colModel.isPivotMode(),
-            // if no transaction and not immutable row data set, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath!,
-            groupAllowUnbalanced: gos.get('groupAllowUnbalanced'),
-        };
+        return true;
     }
 
     private handleDeltaUpdate(
-        details: GroupingDetails,
-        { removals, updates, adds, reordered }: _ChangedRowNodes
+        rootNode: RowNode,
+        changedPath: ChangedPath,
+        { removals, updates, adds, reordered }: _ChangedRowNodes,
+        animate: boolean
     ): void {
         const parentsWithRemovals = new Set<RowNode | null>();
-        const changedPath = details.changedPath;
 
         let activeChangedPath: ChangedPath | null = changedPath;
         if (!activeChangedPath.active) {
@@ -185,42 +188,42 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // we add even if parent has not changed, as the data could have changed, or aggregations will be wrong
             activeChangedPath?.addParentNode(oldParent);
 
-            if (this.moveNodeInWrongPath(rowNode, details)) {
+            if (this.moveNodeInWrongPath(rootNode, rowNode)) {
                 parentsWithRemovals.add(oldParent);
-                const newParent = rowNode.parent!;
+                const newParent = rowNode.parent;
                 activeChangedPath?.addParentNode(newParent);
 
-                reordered ||= (newParent.childrenAfterGroup?.length ?? 0) > 1; // Order may be wrong after move
+                reordered ||= (newParent?.childrenAfterGroup?.length ?? 0) > 1; // Order may be wrong after move
             }
         }
 
         if (adds.size) {
             for (const rowNode of adds) {
-                this.insertOneNode(rowNode, details);
-                const newParent = rowNode.parent!;
+                this.insertOneNode(rootNode, rowNode);
+                const newParent = rowNode.parent;
                 activeChangedPath?.addParentNode(newParent);
 
-                reordered ||= (newParent.childrenAfterGroup?.length ?? 0) > 1; // Order may be wrong after add
+                reordered ||= (newParent?.childrenAfterGroup?.length ?? 0) > 1; // Order may be wrong after add
             }
         }
 
         if (parentsWithRemovals.size) {
             batchedRemove(parentsWithRemovals);
-            this.removeEmptyGroups(parentsWithRemovals);
+            this.removeEmptyGroups(parentsWithRemovals, animate);
         }
 
         if (reordered) {
-            this.sortChildren(details);
+            this.sortChildren(changedPath);
         }
     }
 
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
-    private sortChildren(details: GroupingDetails): void {
-        details.changedPath.forEachChangedNodeDepthFirst(
+    private sortChildren(changedPath: ChangedPath): void {
+        changedPath.forEachChangedNodeDepthFirst(
             (node) => {
                 const didSort = sortGroupChildren(node.childrenAfterGroup);
-                if (didSort) {
-                    details.changedPath.addParentNode(node);
+                if (didSort && changedPath.active) {
+                    changedPath.addParentNode(node);
                 }
             },
             false,
@@ -255,14 +258,17 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         recursiveSort(rootNode);
     }
 
-    private moveNodeInWrongPath(childNode: RowNode, details: GroupingDetails): boolean {
+    private moveNodeInWrongPath(rootNode: RowNode, childNode: RowNode): boolean {
         const { valueSvc } = this.beans;
-        const { groupCols, pivotMode, groupAllowUnbalanced } = details;
-        const createGroupForEmpty = pivotMode || !groupAllowUnbalanced;
+        const createGroupForEmpty = this.groupEmpty;
 
         let ancestor: RowNode | null = childNode.parent;
         let changed = false;
 
+        const groupCols = this.groupCols;
+        if (!groupCols) {
+            return false;
+        }
         for (let idx = groupCols.length - 1; idx >= 0; --idx) {
             const { col } = groupCols[idx];
             let key = valueSvc.getKeyForNode(col, childNode);
@@ -287,7 +293,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         // trigger a full refresh so any columns showing the group key update immediately
         this.removeFromParent(childNode);
-        this.insertOneNode(childNode, details);
+        this.insertOneNode(rootNode, childNode);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
         // refreshed into the gui.
@@ -314,7 +320,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         return !!rowNode.group && (rowNode.childrenAfterGroup?.length ?? 0) === 0;
     }
 
-    private removeEmptyGroups(parents: Set<RowNode | null>): void {
+    private removeEmptyGroups(parents: Set<RowNode | null>, animate: boolean): void {
         // we do this multiple times, as when we remove groups, that means the parent of just removed
         // group can then be empty. to get around this, if we remove, then we check everything again for
         // newly emptied groups. the max number of times this will execute is the depth of the group tree.
@@ -350,7 +356,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                     }
                     possibleEmptyGroups[idx] = parent;
                     groupsById.delete(pointer.id!);
-                    pointer._destroy(true);
+                    pointer._destroy(animate);
                     pointer = parent;
                 }
             }
@@ -410,15 +416,14 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
     }
 
-    private shotgunResetEverything(details: GroupingDetails): void {
+    private shotgunResetEverything(rootNode: RowNode): void {
         // groups are about to get disposed, so need to deselect any that are selected
         this.beans.selectionSvc?.filterFromSelection?.((node) => !node.group);
 
-        const rootNode: RowNode = details.rootNode;
         this.nonLeafsById.clear();
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
-        rootNode.leafGroup = details.groupCols.length === 0;
+        rootNode.leafGroup = !this.groupCols?.length;
 
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
@@ -433,22 +438,24 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const allLeafs = rootNode._leafs!;
         for (let i = 0, len = allLeafs.length; i < len; ++i) {
-            this.insertOneNode(allLeafs[i], details);
+            this.insertOneNode(rootNode, allLeafs[i]);
         }
     }
 
-    private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
-        let parentGroup = details.rootNode;
-        const valueSvc = this.beans.valueSvc;
-        const { groupCols, pivotMode, groupAllowUnbalanced } = details;
-        const createGroupForEmpty = pivotMode || !groupAllowUnbalanced;
+    private insertOneNode(rootNode: RowNode, childNode: RowNode): void {
+        let parentGroup = rootNode;
+        const { beans, pivotMode, groupCols, groupEmpty } = this;
+        const valueSvc = beans.valueSvc;
+        if (!groupCols) {
+            return;
+        }
         const len = groupCols.length;
         for (let i = 0; i < len; ++i) {
             const groupCol = groupCols[i];
             const col = groupCol.col;
             let key = valueSvc.getKeyForNode(col, childNode);
             if (key == null || key === '') {
-                if (!createGroupForEmpty) {
+                if (!groupEmpty) {
                     continue;
                 }
                 key = '';

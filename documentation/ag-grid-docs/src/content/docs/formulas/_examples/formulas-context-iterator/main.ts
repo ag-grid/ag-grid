@@ -1,5 +1,6 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
+    CellApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
@@ -14,6 +15,7 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     ClientSideRowModelModule,
     FormulaModule,
+    CellApiModule,
     NumberEditorModule,
     TextEditorModule,
     TooltipModule,
@@ -23,21 +25,29 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<any>;
 
 const rowData = [
-    { rid: '1', A: 1, B: 2 },
-    { rid: '2', A: 2, B: 2 },
+    { rid: 'r1', gold: 1, silver: 2 },
+    { rid: 'r2', gold: 2, silver: 2 },
     {
-        rid: '3',
-        A: 1,
-        B: 2,
-        C: '="Result of \'=COUNTEQ(A1:B3,2)\' is "&COUNTEQ(REF(COLUMN("0"),ROW("1"),COLUMN("1"),ROW("3")),2)',
+        rid: 'r3',
+        gold: 1,
+        silver: 2,
+        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r3")),2)',
     },
 ];
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'A', colId: '0', width: 150 },
-        { field: 'B', colId: '1', width: 150 },
-        { field: 'C', colId: '2', flex: 1, allowFormula: true },
+        { field: 'gold', colId: 'c0', width: 100 },
+        { field: 'silver', colId: 'c1', width: 100 },
+        { field: 'result', colId: 'c2', width: 100, allowFormula: true },
+        {
+            field: 'formula',
+            colId: '3',
+            flex: 1,
+            editable: false,
+            allowFormula: false,
+            valueGetter: (params) => params.getValue('c2'),
+        },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {

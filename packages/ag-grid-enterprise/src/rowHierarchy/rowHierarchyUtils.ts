@@ -5,8 +5,8 @@ import type {
     GridOptionsService,
     IRowNode,
     NestedDataGetter,
+    RefreshModelParams,
     RowNode,
-    StageExecuteParams,
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
@@ -20,13 +20,16 @@ export interface IRowGroupingStrategy<TData = any> extends Bean {
 
     onShowRowGroupColsSetChanged(): void;
 
-    execute(params: StageExecuteParams<TData>): boolean | undefined | void;
+    execute(rootNode: RowNode<TData>, params: RefreshModelParams<TData>): boolean | undefined | void;
 
     /** Used to lazily compute and store groupData for a row node */
     loadGroupData(node: RowNode<TData>): Record<string, any> | null;
 
     /** Clears any cached group/filler nodes maintained by the strategy. */
     clearNonLeafs(): void;
+
+    /** Called when row group columns changes */
+    invalidateGroupCols?(): void;
 }
 
 /**

@@ -33,41 +33,6 @@ Certain features do not work in conjunction with formulas:
 - [Master Detail](./master-detail/)
 - [Server-Side Row Model](./server-side-model/), [Infinite Row Model](./infinite-scrolling/), and [Viewport Row Model](./viewport/)
 
-## Formula Data Source
-
-Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep raw data clean, or persist formulas separately (e.g. to local storage or your own API).
-
-{% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'product' },
-        { field: 'price' },
-        { field: 'quantity' },
-        { field: 'subtotal', allowFormula: true },
-        { field: 'total', allowFormula: true },
-    ],
-    getRowId: (params) => String(params.data.rid),
-    formulaDataSource: {
-        getFormula: ({ column, rowNode }) => {
-            const key = `${rowNode.id}-${column.getColId()}`;
-            return formulaStore.get(key);
-        },
-        setFormula: ({ column, rowNode, formula }) => {
-            const key = `${rowNode.id}-${column.getColId()}`;
-            if (formula === undefined) {
-                formulaStore.delete(key);
-            } else {
-                formulaStore.set(key, formula);
-            }
-        },
-    },
-};
-```
-
-{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
-
 ## Formula Syntax
 
 Formulas are a text string that starts with an equals sign (`=`) and can contain references to other cells, functions, operators, and constants.
@@ -117,23 +82,9 @@ As cell formulas are not immediately parsed when the grid opens, we suggest usin
 
 ### Mathematical Operations
 
-Formulas can be used to construct a Mathematical expression using cell references, constants, functions, and operators and respect the standard order of operations (PEMDAS/BODMAS).
+Formulas can be used to construct mathematical expressions using cell references, constants, functions, and operators. These expressions respect the standard order of operations (PEMDAS/BODMAS).
 
-The following Mathematical operations are supported in formulas:
-| Symbol | Description |
-| ------ | ----------- |
-| `+` | Addition, can be used to add two numbers, or add days to a Date |
-| `-` | Subtraction, can be used to subtract two numbers, or subtract days from a Date |
-| `*` | Multiplication, can be used to multiply two numbers |
-| `/` | Division, can be used to divide two numbers |
-| `^` | Exponentiation, can be used to raise a number to a power |
-| `&` | Concatenation, can be used to join two strings |
-| `=` | Equal to, can be used to compare two values |
-| `<>` | Not equal to, can be used to compare two values |
-| `>` | Greater than, can be used to compare two values |
-| `<` | Less than, can be used to compare two values |
-| `>=` | Greater than or equal to, can be used to compare two values |
-| `<=` | Less than or equal to, can be used to compare two values |
+The full list of available operators can be found below in [List of Mathematical Operators](#list-of-mathematical-operators).
 
 ### Functions
 Formulas can use functions to perform calculations on values. Functions are a string of letters followed by parentheses containing the function arguments.
@@ -141,60 +92,13 @@ Functions can take multiple arguments, which can be constants, cell references, 
 
 Examples of functions:
 - `=SUM(A1, 2)` returns the sum of the value in cell A1 and the constant value 2.
-- `=AVG(A1:A10)` returns the average of every cell value in the range A1 to A10. (e.g A1, A2, A3, ..., A10)
+- `=AVERAGE(A1:A10)` returns the average of every cell value in the range A1 to A10. (e.g A1, A2, A3, ..., A10)
 - `=CONCAT(A1, " ", B1)` returns the concatenation of the value in cell A1, a space, and the value in cell B1.
 - `=IF(A1 > 10, "High", "Low")` returns "High" if the value in cell A1 is greater than 10, otherwise returns "Low".
-- `=SUM(AVG(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
+- `=SUM(AVERAGE(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
 - `=TODAY()` returns a date object representing the current date.
 
-
-The following functions are built into the grid by default:
-
-Numeric:
-| Function | Description |
-| -------- | ----------- |
-| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
-| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
-| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
-| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
-| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
-| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
-| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
-| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
-| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
-| `PERCENT(arg1, arg2)` | Returns the percentage of the first argument relative to the second argument. |
-| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
-| `RAND()` | Returns a random number between 0 and 1. |
-
-Date:
-| Function | Description |
-| -------- | ----------- |
-| `NOW()` | Returns a date object representing the current date and time. |
-| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
-
-Text:
-| Function | Description |
-| -------- | ----------- |
-| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
-
-Logical:
-| Function | Description |
-| -------- | ----------- |
-| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
-| `EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
-| `NOT_EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
-| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
-| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
-| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
-| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
-
-Counting:
-| Function | Description |
-| -------- | ----------- |
-| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. |
-| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
-| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
-| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
+The full list of functions that are provided by the grid can be found below in [List of Functions](#list-of-functions).
 
 ### Cell Ranges
 Cell ranges are used to refer to a rectangular block of cells in the grid and are symbolised by the top-left cell reference followed by a colon (`:`) and the bottom-right cell reference.
@@ -204,20 +108,22 @@ For example, the range `A1:B2` refers to the cells in column A and B, and rows 1
 
 Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
 
-The following snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
+The following example and snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
 
-It uses the params.values iterator to simplify navigating all of the values, including those provided in ranges by flattening
+It uses the `params.values` iterator to simplify navigating all of the values, including those provided in ranges by flattening
 them into one iterable.
 
 A user could then use this function in a formula such as:
 - `=CUSTOMSUM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
 - `=CUSTOMSUM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
 
+In the example below we have added a "Formula" column to allow easy visualisation of the formulas that have been entered in the "Totals" column.
+
 {% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=200 /%}
 
 In this snippet below, observe how the function uses the `params.values` iterator for navigating the values provided to the function, 
 which provides all of the values from the ranges and constants in one simple iterable, meaning any input such as `=CUSTOMSUM(A1:B2, 2)` will
- be streamed as `1 (A1) -> 1 (A2) -> 1 (B1) -> 1 (B2) -> 2` for the function to process.
+ be streamed as `1 (A1) -> 1 (A2) -> 1 (B1) -> 2 (B2) -> 2` for the function to process.
 
 
 ```{% frameworkTransform=true %}
@@ -284,14 +190,16 @@ const gridOptions = {
 
 ### Complex Custom Functions
 
-Some custom functions may need explicit context about the ranges provided to them. For example, the COUNTIF function needs the first argument to be a range,
+Some custom functions may need explicit context about the ranges provided to them. For example, the `COUNTIF` function needs the first argument to be a range,
 and the second argument to be a criteria to apply to that range. If the `params.values` iterator was used, the range values would be flattened and hard to
 distinguish from the criteria.
 
 The grid provides an alternative iterator `params.args` which provides wrapped arguments as they were provided to the function, without any flattening or transformation.
 This means that ranges are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
 
-The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
+The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
+
+Note that we have added a "Formula" column to allow easy visualisation of the formulas that have been entered in the "Result" column.
 
 {% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=200 /%}
 
@@ -333,3 +241,133 @@ const gridOptions = {
     },
 }
 ```
+
+## Formula Data Source
+
+Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep row data clean, or persist formulas separately (e.g. to local storage or your own API).
+
+The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'product' },
+        { field: 'price' },
+        { field: 'quantity' },
+        { field: 'subtotal', allowFormula: true },
+        { field: 'total', allowFormula: true },
+    ],
+    getRowId: (params) => String(params.data.id),
+    formulaDataSource: {
+        getFormula: ({ column, rowNode }) => {
+            return formulaStore.get(formulaKey(rowNode.id, column.getColId()));
+        },
+        setFormula: ({ column, rowNode, formula }) => {
+            const key = formulaKey(rowNode.id, column.getColId());
+            if (formula === undefined) {
+                formulaStore.delete(key);
+            } else {
+                formulaStore.set(key, formula);
+            }
+        },
+    },
+};
+```
+
+{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
+
+Enter formulas in the "Subtotal" and/or "Total" columns and then use the provided buttons to visualise the row data and formula store.
+
+A user provided datasource should provide the following interface:
+
+{% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
+
+## Exporting from Grids containing Formulas
+
+When performing a [CSV Export](./csv-export), the grid will export the evaluated values of any formulas in the grid. 
+
+When performing an [Excel Export](./excel-export), the grid will export the formulas themselves, which should then be evaluated as normal when opening the exported file in Excel.
+
+## API Reference
+
+### List of Mathematical Operators
+
+| Symbol | Description |
+| ------ | ----------- |
+| `+` | Addition, can be used to add two numbers, or add days to a Date |
+| `-` | Subtraction, can be used to subtract two numbers, or subtract days from a Date |
+| `*` | Multiplication, can be used to multiply two numbers |
+| `/` | Division, can be used to divide two numbers |
+| `^` | Exponentiation, can be used to raise a number to a power |
+| `&` | Concatenation, can be used to join two strings |
+| `=` | Equal to, can be used to compare two values |
+| `<>` | Not equal to, can be used to compare two values |
+| `>` | Greater than, can be used to compare two values |
+| `<` | Less than, can be used to compare two values |
+| `>=` | Greater than or equal to, can be used to compare two values |
+| `<=` | Less than or equal to, can be used to compare two values |
+
+### List of Functions
+
+#### Numeric Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
+| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
+| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
+| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
+| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
+| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
+| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
+| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
+| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
+| `PERCENT(arg1)` | Returns value of its argument as a decimal percentage. |
+| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
+| `RAND()` | Returns a random number between 0 and 1. |
+
+#### Date Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `NOW()` | Returns a date object representing the current date and time. |
+| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
+
+#### Text Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
+
+#### Logical Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
+| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
+| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
+| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
+| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
+| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
+| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
+
+#### Counting Functions
+
+| Function | Description |
+| -------- | ----------- |
+| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. |
+| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
+| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
+| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
+
+### Error Codes
+
+| Error | Description |
+| -------- | ----------- |
+| `#REF!` | Formula contains invalid cell reference |
+| `#NAME?` | Formula contains invalid operation |
+| `#CIRCREF!` | Formula contains circular reference |
+| `#PARSE!` | Could not parse formula value |
+| `#VALUE!` | Formula contains value of the wrong type (e.g. non-numeric arguments to functions) |
+| `#DIV/0!` | Formula results in a division by zero |
+| `#ERROR!` | Formula contains some other kind of error |

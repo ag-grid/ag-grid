@@ -280,6 +280,7 @@ export const TrialLicenceFormOriginal: FunctionComponent = ({ submitUrl }: Props
 
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
                 <button
+                    id="submit-trial-licence"
                     className={styles.submit}
                     type="submit"
                     disabled={hasFormError || formState === 'loading' || formState === 'success'}

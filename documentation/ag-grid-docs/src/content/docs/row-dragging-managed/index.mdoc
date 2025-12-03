@@ -19,9 +19,10 @@ The logic for managed dragging is simple and has the following constraints:
 * Does not work if [Pagination](./row-pagination/) is enabled.
 * Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
 * Does not work when filtering is applied. This is because a filter removes rows making it impossible to know the 'real' order of rows when some are missing.
-* Does not work when row grouping or pivot is active. This is because moving rows between groups would require a knowledge of the underlying data which only your application knows.
 
 These constraints can be bypassed by using [Unmanaged Row Dragging](./row-dragging-unmanaged).
+
+See also [Row Dragging with Row Groups](./grouping-row-dragging/) for Grouping, that supports both managed and unmanaged row dragging.
 
 See also [Row Dragging with Tree Data](./tree-data-row-dragging) for Tree Data, that supports both managed and unmanaged row dragging.
 
