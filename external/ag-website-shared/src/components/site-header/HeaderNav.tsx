@@ -7,6 +7,7 @@ import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
+import GithubSlugger from 'github-slugger';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 
@@ -55,6 +56,7 @@ const HeaderLinks = ({
     toggleIsOpen?: () => void;
 }) => {
     const framework = useFrameworkFromStore();
+    const slugger = new GithubSlugger();
 
     return (
         <ul className={classnames(styles.navItemList, 'list-style-none')}>
@@ -74,6 +76,7 @@ const HeaderLinks = ({
                 return (
                     <li key={title.toLocaleLowerCase()} className={linkClasses}>
                         <a
+                            id={`${slugger.slug(title)}-nav`}
                             className={styles.navLink}
                             href={href}
                             onClick={() => {

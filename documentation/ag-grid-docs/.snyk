@@ -7,32 +7,32 @@ ignore:
               reason: >-
                   Used by gif-frames, and that is only run during build with gif images
                   that are in our control
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-05T14:36:23.503Z
         - gif-frames@1.0.1 > save-pixels-jpeg-js-upgrade@2.3.4-jpeg-js-upgrade.0 > jpeg-js@0.4.0:
               reason: >-
                   Used by gif-frames, and that is only run during build with gif images
                   that are in our control
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-05T14:36:23.503Z
     SNYK-JS-VITE-9653016:
         - vitest@2.1.9 > vite@5.4.11:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
         - vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.11:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
     SNYK-JS-FORMDATA-10841150:
         - gif-frames@1.0.1 > get-pixels-frame-info-update@3.3.2 > request@2.88.2 > form-data@2.3.3:
               reason: >-
                   Gif frames is only used for building the website so form-data is not exposed outside
                   of development and CI
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-07-22T10:35:00.007Z
 patch: {}

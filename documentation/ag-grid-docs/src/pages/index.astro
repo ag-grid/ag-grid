@@ -118,6 +118,7 @@ const frameworksData = [
 
             <div class={styles.heroLinks}>
                 <a
+                    id="demos-cta"
                     class:list={[
                         'button-tertiary',
                         styles.heroSectioncta1,
@@ -126,7 +127,11 @@ const frameworksData = [
                     href={urlWithBaseUrl('./example')}>See demos <Icon name="chevronRight" /></a
                 >
 
-                <a class="button-tertiary" href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance">
+                <a
+                    id="github-cta"
+                    class="button-tertiary"
+                    href="https://github.com/ag-grid/ag-grid-demos/tree/main/finance"
+                >
                     <Icon name="github" svgClasses={styles.githubIcon} />
                     <span>View on GitHub</span>
                 </a>
@@ -149,6 +154,7 @@ const frameworksData = [
         subHeading="Handle millions of rows, and thousands of updates per second out of the box, without compromising on performance"
         ctaTitle="Get Started For Free"
         ctaUrl="./getting-started"
+        ctaId="get-started-for-free"
         isFramework
         showBackgroundGradient
         client:load
@@ -168,6 +174,7 @@ const frameworksData = [
         subHeading="Customise your Data Grid styles with our Theming API and extend functionality with your own custom components."
         ctaTitle="Create a Custom Theme"
         ctaUrl={urlWithBaseUrl('/theme-builder/')}
+        ctaId="theme-builder-cta"
     >
         <ThemeBuilderHomepage gridHeight={261} client:visible />
     </LandingPageSection>
@@ -180,6 +187,7 @@ const frameworksData = [
         subHeadingHtml="<p>Let your users visualise data with charts directly from the Grid. Powered by AG Charts: our <a href='https://www.ag-grid.com/charts/'> JavaScript Charting Library</a></p>"
         ctaTitle="Explore Integrated Charts"
         ctaUrl="./integrated-charts/"
+        ctaId="integrated-charting-cta"
         isFramework
         showBackgroundGradient
         client:load
@@ -199,6 +207,7 @@ const frameworksData = [
         subHeading="AG Grid can be found in almost every industry, from Finance and AI, to Databases and Aerospace:"
         ctaTitle="Browse Our Showcase"
         ctaUrl={urlWithBaseUrl('/community/showcase/')}
+        ctaId="showcase-cta"
     >
         <Showcase client:load />
     </LandingPageSection>
@@ -211,6 +220,7 @@ const frameworksData = [
         subHeading="With minor releases every 6 weeks, and major releases every 6 months, stay up to date with all of the newest features and improvements to AG Grid Data Grids."
         ctaTitle="See Whats New"
         ctaUrl={urlWithBaseUrl('/whats-new/')}
+        ctaId="whats-new-cta"
         showBackgroundGradient
     >
         <div class={styles.latestNewsVersions}>

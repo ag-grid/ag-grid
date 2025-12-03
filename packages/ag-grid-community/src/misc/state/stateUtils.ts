@@ -43,7 +43,6 @@ export function convertColumnState(
             rowGroup,
             rowGroupIndex,
             aggFunc,
-            valueIndex,
             pivot,
             pivotIndex,
             pinned,
@@ -59,7 +58,7 @@ export function convertColumnState(
             groupColIds[rowGroupIndex ?? 0] = colId;
         }
         if (typeof aggFunc === 'string') {
-            aggregationColumns[valueIndex ?? 0] = { colId, aggFunc };
+            aggregationColumns.push({ colId, aggFunc });
         }
         if (pivot) {
             pivotColIds[pivotIndex ?? 0] = colId;

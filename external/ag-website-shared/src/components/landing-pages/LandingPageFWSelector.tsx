@@ -19,7 +19,7 @@ export function LandingPageFWSelector({ data }) {
                     : urlWithPrefix({ url: './getting-started', framework: framework.name });
 
                 return (
-                    <a href={href} key={framework.name} className={styles.option}>
+                    <a id={`get-started-${framework.name}`} href={href} key={framework.name} className={styles.option}>
                         <img src={urlWithBaseUrl(`/${fwLogos}${framework.name}.svg`)} alt={alt} />
 
                         <span>

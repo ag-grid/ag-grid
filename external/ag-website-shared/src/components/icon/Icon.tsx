@@ -159,12 +159,12 @@ export const ICON_MAP = {
 
 export type IconName = keyof typeof ICON_MAP;
 
-type Props = { name: IconName; svgClasses?: string; onClick?: () => void };
+type Props = { id?: string; name: IconName; svgClasses?: string; onClick?: () => void };
 
-export const Icon = ({ name, svgClasses, onClick }: Props) => {
+export const Icon = ({ id, name, svgClasses, onClick }: Props) => {
     const IconSvg = ICON_MAP[name];
 
     return IconSvg ? (
-        <IconSvg size="32" className={classNames(styles.icon, 'icon', svgClasses)} onClick={onClick} />
+        <IconSvg id={id} size="32" className={classNames(styles.icon, 'icon', svgClasses)} onClick={onClick} />
     ) : null;
 };

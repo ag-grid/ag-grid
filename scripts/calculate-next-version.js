@@ -30,5 +30,5 @@ const [tag = 'beta', dateStr, timeStr] = oldSuffix?.split('.') ?? [];
 
 const h = now.getUTCHours();
 const m = now.getUTCMinutes();
-const time = `${h}${m < 10 ? '0' : ''}${m}`;
-console.log(`${semverPart}-${tag}.${todayStr}.${time}`);
+const time = `${h === 0 ? '' : h}${m === 0 ? '' : m}`;
+console.log(`${semverPart}-${tag}.${todayStr}${time === '' ? '' : `.${time}`}`);
