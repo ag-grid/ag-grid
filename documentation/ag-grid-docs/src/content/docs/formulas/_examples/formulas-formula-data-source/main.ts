@@ -1,4 +1,4 @@
-import type { ColDef, GetRowIdFunc, GridOptions, ValueFormatterFunc } from 'ag-grid-community';
+import type { ColDef, GetRowIdFunc, GridApi, GridOptions, ValueFormatterFunc } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([
 ]);
 
 type RowData = {
-    id: number;
+    id: string;
     product: string;
     price: number;
     quantity: number;
@@ -26,14 +26,21 @@ type RowData = {
     total?: string | number;
 };
 
+let gridApi: GridApi<RowData>;
+
 function seeRowData() {
-    rowData.forEach((rec) => {
-        console.log(rec);
-    });
+    gridApi.forEachNode((node) =>
+        console.log(`Row ${node.rowIndex}, ID: ${node.id}, Data: ${JSON.stringify(node.data)}`)
+    );
 }
 
 function seeFormulas() {
-    formulaStore.forEach((value, formula) => console.log(value, formula));
+    if (formulaStore.size === 0) {
+        console.log('No formulas in store');
+    } else {
+        console.log('Stored formulas:');
+        formulaStore.forEach((value, key) => console.log(`Key: ${key}, Formula: ${value}`));
+    }
 }
 
 const currencyFormatter: ValueFormatterFunc<RowData> = ({ value }) => `$ ${Number(value ?? 0).toFixed(2)}`;
@@ -52,9 +59,9 @@ const columnDefs: ColDef<RowData>[] = [
 ];
 
 const rowData: RowData[] = [
-    { id: 1, product: 'Apples', price: 1.2, quantity: 5 },
-    { id: 2, product: 'Oranges', price: 0.8, quantity: 8 },
-    { id: 3, product: 'Bananas', price: 0.6, quantity: 10 },
+    { id: 'a_01', product: 'Apples', price: 1.2, quantity: 5 },
+    { id: 'o_02', product: 'Oranges', price: 0.8, quantity: 8 },
+    { id: 'b_03', product: 'Bananas', price: 0.6, quantity: 10 },
 ];
 
 const gridOptions: GridOptions<RowData> = {
@@ -83,5 +90,5 @@ const gridOptions: GridOptions<RowData> = {
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    createGrid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

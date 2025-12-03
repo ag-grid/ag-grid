@@ -110,7 +110,7 @@ Custom functions can be provided to formulas by providing the `gridOption` prope
 
 The following snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
 
-It uses the params.values iterator to simplify navigating all of the values, including those provided in ranges by flattening
+It uses the `params.values` iterator to simplify navigating all of the values, including those provided in ranges by flattening
 them into one iterable.
 
 A user could then use this function in a formula such as:
@@ -271,6 +271,8 @@ const gridOptions = {
 ```
 
 {% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
+
+Enter formulas in the "Subtotal" and/or "Total" columns and then use the provided buttons to visualise the row data and formula store.
 
 A user provided datasource should provide the following interface:
 
