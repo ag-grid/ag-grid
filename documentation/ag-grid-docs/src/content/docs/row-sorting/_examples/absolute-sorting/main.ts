@@ -12,7 +12,6 @@ const columnDefs: ColDef[] = [
     {
         field: 'rankingChange',
         sort: { direction: 'asc', type: 'absolute' },
-        sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
     },
 ];
 
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
             gridApi!.setGridOption(
                 'rowData',
                 data.map((item) => {
-                    return { ...item, rankingChange: Math.floor(window.agRandom() * 10 - 5) };
+                    return { ...item, rankingChange: Math.round(window.agRandom() * 10) - 5 };
                 })
             )
         );

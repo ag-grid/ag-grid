@@ -21,7 +21,7 @@
     },
     {
         "question": "Can I use my own components with AG Grid?",
-        "answer": "Yes, you can add your own components to [cells](./component-cell-renderer/) and [headers](./column-headers/#selecting-components), and replace things like [filters](./component-filter/), [overlays](./overlays/#customisation), and [tooltips](./tooltips/#custom-component) with your own functionality if you want to."
+        "answer": "Yes, you can add your own components to [cells](./component-cell-renderer/) and [headers](./column-headers/#selecting-components), and replace things like [filters](./component-filter/), [overlays](./overlays-overview), and [tooltips](./tooltips/#custom-component) with your own functionality if you want to."
     },
     {
         "question": "How is AG Grid different from Tanstacks' React Table",

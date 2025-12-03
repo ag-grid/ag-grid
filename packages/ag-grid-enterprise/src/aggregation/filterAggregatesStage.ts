@@ -1,16 +1,16 @@
 import type {
     BeanCollection,
+    ChangedPath,
     ClientSideRowModelStage,
     FilterManager,
     GridOptions,
-    IRowNodeStage,
     NamedBean,
     RowNode,
-    StageExecuteParams,
+    _IRowNodeFilterAggregateStage,
 } from 'ag-grid-community';
 import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 
-export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
+export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowNodeFilterAggregateStage {
     beanName = 'filterAggStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter_aggregates';
@@ -22,7 +22,7 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
         this.filterManager = beans.filterManager;
     }
 
-    public execute(params: StageExecuteParams): void {
+    public execute(changedPath: ChangedPath): void {
         const isPivotMode = this.beans.colModel.isPivotMode();
         const isAggFilterActive =
             this.filterManager?.isAggregateFilterPresent() || this.filterManager?.isAggregateQuickFilterPresent();
@@ -39,8 +39,6 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
         const applyFilterToNode =
             _getGroupAggFiltering(this.gos) ||
             (isPivotMode ? defaultSecondaryColumnPredicate : defaultPrimaryColumnPredicate);
-
-        const { changedPath } = params;
 
         const preserveChildren = (node: RowNode, recursive = false) => {
             if (node.childrenAfterFilter) {

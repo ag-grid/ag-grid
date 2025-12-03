@@ -126,9 +126,10 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private onCheckboxChanged(isSelected?: boolean): void {
         const { params } = this;
         const { column, node, value } = params;
+        const { editSvc } = this.beans;
 
         // prep edit state
-        this.beans?.editSvc?.setEditingCells(
+        editSvc?.setEditingCells(
             [
                 {
                     column: column!,
@@ -147,13 +148,17 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         const valueChanged = node.setDataValue(column!, isSelected, 'renderer');
 
         // stop editing
-        this.beans.editSvc?.stopEditing(
-            {
-                rowNode: node,
-                column,
-            },
-            { source: this.beans.editSvc?.isBatchEditing() ? 'ui' : 'api' }
-        );
+        if (editSvc) {
+            editSvc.committing = true;
+            editSvc.stopEditing(
+                {
+                    rowNode: node,
+                    column,
+                },
+                { source: editSvc.isBatchEditing() ? 'ui' : 'renderer' }
+            );
+            editSvc.committing = false;
+        }
 
         if (!valueChanged) {
             // need to reset to original

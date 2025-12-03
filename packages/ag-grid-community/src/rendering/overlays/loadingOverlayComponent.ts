@@ -2,13 +2,17 @@ import { RefPlaceholder } from '../../agStack/interfaces/agComponent';
 import { _makeNull } from '../../agStack/utils/generic';
 import type { ElementParams } from '../../utils/element';
 import { _createIconNoSpan } from '../../utils/icon';
-import type { IOverlay, IOverlayComp, IOverlayParams } from './overlayComponent';
+import type {
+    ILoadingOverlayParams,
+    IOverlay,
+    IOverlayComp,
+    IOverlayParams,
+    OverlayComponentUserParams,
+} from './overlayComponent';
 import { OverlayComponent } from './overlayComponent';
 
-export interface ILoadingOverlayParams<TData = any, TContext = any> extends IOverlayParams<TData, TContext> {}
-
 export interface ILoadingOverlay<TData = any, TContext = any>
-    extends IOverlay<TData, TContext, ILoadingOverlayParams> {}
+    extends IOverlay<TData, TContext, ILoadingOverlayParams<TData, TContext>> {}
 
 export interface ILoadingOverlayComp<TData = any, TContext = any>
     extends IOverlayComp<TData, TContext, ILoadingOverlayParams<TData, TContext>> {}
@@ -22,26 +26,26 @@ const LoadingOverlayElement: ElementParams = {
     ],
 };
 export class LoadingOverlayComponent
-    extends OverlayComponent<any, any, ILoadingOverlayParams>
+    extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements ILoadingOverlayComp<any, any>
 {
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
-    public init(): void {
-        const customTemplate = _makeNull(this.gos.get('overlayLoadingTemplate')?.trim());
+    public init(params: IOverlayParams & OverlayComponentUserParams): void {
+        const { beans, gos } = this;
+        const customTemplate = _makeNull(gos.get('overlayLoadingTemplate')?.trim());
 
         this.setTemplate(customTemplate ?? LoadingOverlayElement);
 
         if (!customTemplate) {
-            const eLoadingIcon = _createIconNoSpan('overlayLoading', this.beans, null);
+            const eLoadingIcon = _createIconNoSpan('overlayLoading', beans, null);
             if (eLoadingIcon) {
                 this.eLoadingIcon.appendChild(eLoadingIcon);
             }
-            const localeTextFunc = this.getLocaleTextFunc();
-            const loadingText = localeTextFunc('loadingOoo', 'Loading...');
+            const loadingText = params.loading?.overlayText ?? this.getLocaleTextFunc()('loadingOoo', 'Loading...');
             this.eLoadingText.textContent = loadingText;
-            this.beans.ariaAnnounce.announceValue(loadingText, 'overlay');
+            beans.ariaAnnounce.announceValue(loadingText, 'overlay');
         }
     }
 }

@@ -462,7 +462,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusFirstHeader(): boolean {
-        if (this.overlays?.isExclusive() && this.focusOverlay()) {
+        if (this.overlays?.exclusive && this.focusOverlay()) {
             return true;
         }
 
@@ -480,7 +480,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
-        if (this.overlays?.isExclusive() && this.focusOverlay(true)) {
+        if (this.overlays?.exclusive && this.focusOverlay(true)) {
             return true;
         }
 
@@ -525,7 +525,7 @@ export class FocusService extends BeanStub implements NamedBean {
         event?: KeyboardEvent;
     }): boolean {
         const { backwards = false, canFocusOverlay = true, event } = params;
-        if (this.overlays?.isExclusive()) {
+        if (this.overlays?.exclusive) {
             return canFocusOverlay && this.focusOverlay(backwards);
         }
 

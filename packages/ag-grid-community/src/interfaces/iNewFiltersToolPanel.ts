@@ -88,7 +88,7 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     clear(): void;
 }
 
-export interface ISelectableFilterService {
+export interface ISelectableFilterService extends IEventEmitter<'selectedFilterChanged'> {
     getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined;
     isSelectable(filterDef: IFilterDef): boolean;
     getFilterDef(column: AgColumn, filterDef: IFilterDef): IFilterDef;
@@ -98,4 +98,6 @@ export interface ISelectableFilterService {
     ): { filterDefs: SelectableFilterDef[]; activeFilterDef: SelectableFilterDef } | undefined;
     setActive(colId: string, filterDefs: SelectableFilterDef[], activeFilterDef: SelectableFilterDef): void;
     clearActive(colId: string): void;
+    getState(): { [colId: string]: number };
+    setState(state: { [colId: string]: number }): void;
 }

@@ -8,12 +8,11 @@ import type {
     GridOptions,
     IColsService,
     IPivotResultColsService,
-    IRowNodeStage,
     NamedBean,
     RowNode,
-    StageExecuteParams,
     ValueService,
     WithoutGridCommon,
+    _IRowNodeAggregationStage,
 } from 'ag-grid-community';
 import { BeanStub, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
@@ -29,7 +28,7 @@ interface AggregationDetails {
     userAggFunc: ((params: WithoutGridCommon<GetGroupRowAggParams<any, any>>) => any) | undefined;
 }
 
-export class AggregationStage extends BeanStub implements NamedBean, IRowNodeStage {
+export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAggregationStage {
     beanName = 'aggStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'aggregate';
@@ -56,7 +55,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     // it's possible to recompute the aggregate without doing the other parts
     // + api.refreshClientSideRowModel('aggregate')
-    public execute(params: StageExecuteParams): any {
+    public execute(changedPath: ChangedPath): any {
         // if changed path is active, it means we came from a) change detection or b) transaction update.
         // for both of these, if no value columns are present, it means there is nothing to aggregate now
         // and there is no cleanup to be done (as value columns don't change between transactions or change
@@ -64,16 +63,16 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         // case we need to clean up agg data from before.
         const noValueColumns = !this.valueColsSvc?.columns?.length;
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
-        if (noValueColumns && noUserAgg && params.changedPath?.active) {
+        if (noValueColumns && noUserAgg && changedPath?.active) {
             return;
         }
 
-        const aggDetails = this.createAggDetails(params);
+        const aggDetails = this.createAggDetails(changedPath);
 
         this.recursivelyCreateAggData(aggDetails);
     }
 
-    private createAggDetails(params: StageExecuteParams): AggregationDetails {
+    private createAggDetails(changedPath: ChangedPath): AggregationDetails {
         const pivotActive = this.colModel.isPivotActive();
 
         const measureColumns = this.valueColsSvc?.columns;
@@ -82,7 +81,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),
             groupIncludeTotalFooter: !!_getGrandTotalRow(this.gos),
-            changedPath: params.changedPath!,
+            changedPath,
             valueColumns: measureColumns ?? [],
             pivotColumns: pivotColumns,
             filteredOnly: !this.isSuppressAggFilteredOnly(),

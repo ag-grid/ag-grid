@@ -818,8 +818,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialSortIndex?: number;
     /**
-     * Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `(SortDef | SortDirection)[]`.
-     * @default ['asc', 'desc', null]
+     * An array defining the order in which sorting occurs (if sorting is enabled) with any of the following in any order `(SortDef | SortDirection)[]`.
+     * <br /><br />
+     * Defaults:
+     *
+     * - `['asc', 'desc', null]` if no sort type is specified,
+     * - `[{ type: 'absolute', direction: 'asc', }, { type: 'absolute', direction: 'desc' }, null]` if sort or initialSort have type: 'absolute'
      */
     sortingOrder?: (SortDirection | SortDef)[];
     /**

@@ -14,6 +14,7 @@ import type {
     IServerSideRowModel,
     LoadSuccessParams,
     NamedBean,
+    OverlayType,
     RefreshServerSideParams,
     RowBounds,
     RowModelType,
@@ -535,6 +536,15 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public isEmpty(): boolean {
         return false;
+    }
+
+    public getOverlayType(): OverlayType | null {
+        // server side does not use the loading overlay as it has its own mechanism
+        const rootStore = this.getRootStore();
+        if (rootStore?.getDisplayIndexEnd() === 0) {
+            return this.filterManager?.isAnyFilterPresent() ? 'noMatchingRows' : 'noRows';
+        }
+        return null;
     }
 
     public isRowsToRender(): boolean {

@@ -288,7 +288,7 @@ export class StateService extends BeanStub implements NamedBean {
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
 
-        const { gos, colFilter } = this.beans;
+        const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
             filterChanged: updateFilterState,
             rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
@@ -314,6 +314,11 @@ export class StateService extends BeanStub implements NamedBean {
         if (colFilter) {
             this.addManagedListeners(colFilter, {
                 filterStateChanged: updateFilterState,
+            });
+        }
+        if (selectableFilter) {
+            this.addManagedListeners(selectableFilter, {
+                selectedFilterChanged: updateFilterState,
             });
         }
     }
@@ -619,25 +624,29 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getFilterState(): FilterState | undefined {
-        const filterManager = this.beans.filterManager;
+        const { filterManager, selectableFilter } = this.beans;
         let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        return filterModel || advancedFilterModel || columnFilterState
-            ? { filterModel, columnFilterState, advancedFilterModel }
+        const selectableFilters = selectableFilter?.getState();
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
 
     private setFilterState(filterState?: FilterState): void {
-        const filterManager = this.beans.filterManager;
-        const { filterModel, columnFilterState, advancedFilterModel } = filterState ?? {
+        const { filterManager, selectableFilter } = this.beans;
+        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
             columnFilterState: null,
             advancedFilterModel: null,
         };
+        if (selectableFilters !== undefined) {
+            selectableFilter?.setState(selectableFilters ?? {});
+        }
         if (filterModel !== undefined || columnFilterState !== undefined) {
             filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
         }

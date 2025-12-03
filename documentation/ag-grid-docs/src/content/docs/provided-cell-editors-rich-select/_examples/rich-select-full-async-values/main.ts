@@ -31,9 +31,11 @@ function getRandomNumber(min: number, max: number) {
 function getValueFromServer(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
     const search = params.search?.toLowerCase() ?? '';
     return new Promise((resolve) => {
+        console.log(`Grid requested \`${search}\` from server.`);
         setTimeout(() => {
-            console.log(`Grid requested \`${search}\` from server.`);
-            resolve(languages.filter((l) => l.toLowerCase().includes(search)));
+            const entries = languages.filter((l) => l.toLowerCase().includes(search));
+            console.log(`Server response for \`${search}\`: ${entries.length} hit${entries.length === 1 ? '' : 's'}.`);
+            resolve(entries);
         }, 1000);
     });
 }

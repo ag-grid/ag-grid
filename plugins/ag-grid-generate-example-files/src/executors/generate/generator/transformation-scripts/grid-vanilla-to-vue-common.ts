@@ -45,6 +45,8 @@ export const OVERRIDABLE_AG_COMPONENTS = [
     'agSkeletonCellRenderer',
     'agLoadingOverlay',
     'agNoRowsOverlay',
+    'overlayComponent',
+    'activeOverlay',
     'agTextCellEditor',
     'agDetailCellRenderer',
 ];

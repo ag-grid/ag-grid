@@ -52,6 +52,11 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 }
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
+const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
+    { type: 'absolute', direction: 'asc' },
+    { type: 'absolute', direction: 'desc' },
+    null,
+];
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -444,14 +449,38 @@ export class AgColumn<TValue = any>
         return this.sortDef;
     }
 
+    private getColDefAllowedSortTypes(): SortType[] {
+        const res: SortType[] = [];
+        const { sort, initialSort } = this.colDef;
+        const colDefSortType = (sort as SortDef)?.type;
+        const colDefInitialSortType = (initialSort as SortDef)?.type;
+        if (colDefSortType) {
+            res.push(colDefSortType);
+        }
+        if (colDefInitialSortType) {
+            res.push(colDefInitialSortType);
+        }
+        return res;
+    }
+
     public getSortingOrder() {
-        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? DEFAULT_SORTING_ORDER).map(
+        const defaultSortingOrder = this.getColDefAllowedSortTypes().includes('absolute')
+            ? DEFAULT_ABSOLUTE_SORTING_ORDER
+            : DEFAULT_SORTING_ORDER;
+
+        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? defaultSortingOrder).map(
             (objOrDirection: unknown) => _getSortDefFromInput(objOrDirection)
         );
     }
 
     public getAvailableSortTypes() {
-        return new Set(this.getSortingOrder().map((so) => so.type));
+        const explicitSortTypesFromSortingOrder = this.getSortingOrder().reduce<string[]>((acc, so) => {
+            if (so.direction) {
+                acc.push(so.type);
+            }
+            return acc;
+        }, this.getColDefAllowedSortTypes());
+        return new Set(explicitSortTypesFromSortingOrder);
     }
 
     get wasSortExplicitlyRemoved(): boolean {
