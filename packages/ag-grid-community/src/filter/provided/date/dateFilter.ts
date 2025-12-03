@@ -46,6 +46,17 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         this.dateConditionFromComps[0].afterGuiAttached(params);
     }
 
+    protected override shouldKeepInvalidInputState(): boolean {
+        // We deliberately keep invalid input state for inRange filters when not in Firefox
+        // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
+        // in Firefox but not in Chrome/Safari)
+        return (
+            !_isBrowserFirefox() &&
+            this.hasInvalidInputs() &&
+            this.getConditionTypes().some((type) => type === 'inRange')
+        );
+    }
+
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
         super.commonUpdateSimpleParams(params);
 

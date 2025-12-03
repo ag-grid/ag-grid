@@ -1,3 +1,4 @@
+import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _makeNull } from '../../../agStack/utils/generic';
 import { AgInputNumberField } from '../../../agStack/widgets/agInputNumberField';
 import { AgInputTextField } from '../../../agStack/widgets/agInputTextField';
@@ -39,6 +40,17 @@ export class NumberFilter extends SimpleFilter<
 
         // Refresh validation
         this.refreshInputValidation();
+    }
+
+    protected override shouldKeepInvalidInputState(): boolean {
+        // We deliberately keep invalid input state for inRange filters when not in Firefox
+        // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
+        // in Firefox but not in Chrome/Safari)
+        return (
+            !_isBrowserFirefox() &&
+            this.hasInvalidInputs() &&
+            this.getConditionTypes().some((type) => type === 'inRange')
+        );
     }
 
     private refreshInputValidation(): void {
