@@ -20,6 +20,7 @@ import type {
 } from '../interfaces/iColumn';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
+import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
@@ -451,9 +452,24 @@ export class AgColumn<TValue = any>
 
     private getColDefAllowedSortTypes(): SortType[] {
         const res: SortType[] = [];
-        const { sort, initialSort } = this.colDef;
-        const colDefSortType = (sort as SortDef)?.type;
-        const colDefInitialSortType = (initialSort as SortDef)?.type;
+        const { colMenuFactory } = this.beans;
+        const { sort, initialSort, mainMenuItems } = this.colDef;
+
+        if (Array.isArray(mainMenuItems) && mainMenuItems.length && colMenuFactory) {
+            // eslint-disable-next-line sonarjs/no-ignored-return
+            flattenMenuItems(mainMenuItems).find((k) => {
+                if (k === 'sortAbsoluteAscending' || k === 'sortAbsoluteDescending') {
+                    res.push('absolute');
+                    return true;
+                }
+            });
+        } else {
+            _warn(298);
+        }
+        const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
+        const colDefInitialSortType =
+            initialSort === null ? initialSort : _normalizeSortType((initialSort as SortDef)?.type);
+
         if (colDefSortType) {
             res.push(colDefSortType);
         }
@@ -853,4 +869,27 @@ export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirect
 
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
     return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
+}
+
+/**
+ * Returns a flat set of provided menu items names
+ */
+export function flattenMenuItems(columnMainMenuItems: (DefaultMenuItem | MenuItemDef)[]) {
+    const mapper = (arr: string[], item: DefaultMenuItem | MenuItemDef) => {
+        if (typeof item === 'string') {
+            arr.push(item);
+        }
+        if (typeof item === 'object') {
+            if (item.subMenu) {
+                // eslint-disable-next-line sonarjs/no-ignored-return
+                item.subMenu.reduce(mapper, arr);
+            } else {
+                arr.push(item.name);
+            }
+        }
+
+        return arr;
+    };
+
+    return columnMainMenuItems.reduce(mapper, []);
 }

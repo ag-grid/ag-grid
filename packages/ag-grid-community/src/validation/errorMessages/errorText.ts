@@ -729,6 +729,8 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
+    298: () =>
+        `Providing \`mainMenuItems\` as a function and using non-default sort options is not supported. Please set \`sort\`, \`initialSort\`, or \`sortingOrder\` for non-default sorting to work correctly.`,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
