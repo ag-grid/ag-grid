@@ -1,13 +1,13 @@
-import { get } from 'http';
-
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
+    NumberFilterModule,
     RowDragModule,
     RowSelectionModule,
     TextEditorModule,
+    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -23,7 +23,9 @@ ModuleRegistry.registerModules([
     RowDragModule,
     RowSelectionModule,
     TextEditorModule,
+    TextFilterModule,
     NumberEditorModule,
+    NumberFilterModule,
     BatchEditModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);

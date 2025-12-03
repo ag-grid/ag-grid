@@ -4,6 +4,7 @@ import {
     ModuleRegistry,
     SelectEditorModule,
     TextEditorModule,
+    TextFilterModule,
     ValidationModule,
     createGrid,
 } from 'ag-grid-community';
@@ -15,6 +16,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     ClientSideRowModelModule,
     TextEditorModule,
+    TextFilterModule,
     SelectEditorModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
