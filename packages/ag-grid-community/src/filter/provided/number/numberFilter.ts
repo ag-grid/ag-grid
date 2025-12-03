@@ -49,10 +49,6 @@ export class NumberFilter extends SimpleFilter<
         }
     }
 
-    protected override areStatesEqual(stateA: any, stateB: any): boolean {
-        return (stateA ?? false) === (stateB ?? false);
-    }
-
     private refreshInputPairValidation(
         from: GridInputNumberField | GridInputTextField,
         to: GridInputNumberField | GridInputTextField,
@@ -71,7 +67,15 @@ export class NumberFilter extends SimpleFilter<
     }
 
     protected override getState() {
+        // State represents non-model related UI state, so we make this equivalent to the validity state of the inputs
+        // so that changes in validity state cause updates to the UI (see `ProvidedFilter.refresh`).
         return this.hasInvalidInputs();
+    }
+
+    protected override areStatesEqual(stateA: any, stateB: any): boolean {
+        // For DateFilter, the state is just a boolean of whether or not any inputs are invalid.
+        // As such, `undefined` should be identical to `false`
+        return (stateA ?? false) === (stateB ?? false);
     }
 
     public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
