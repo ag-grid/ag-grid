@@ -872,7 +872,7 @@ export function _normalizeSortType(sortTypeLike?: unknown): SortType {
 /**
  * Returns a flat set of provided menu items names
  */
-export function flattenMenuItems(columnMainMenuItems: (DefaultMenuItem | MenuItemDef)[]) {
+function flattenMenuItems(columnMainMenuItems: (DefaultMenuItem | MenuItemDef)[]) {
     const mapper = (arr: string[], item: DefaultMenuItem | MenuItemDef) => {
         if (typeof item === 'string') {
             arr.push(item);
