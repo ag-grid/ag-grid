@@ -92,10 +92,10 @@ Functions can take multiple arguments, which can be constants, cell references, 
 
 Examples of functions:
 - `=SUM(A1, 2)` returns the sum of the value in cell A1 and the constant value 2.
-- `=AVG(A1:A10)` returns the average of every cell value in the range A1 to A10. (e.g A1, A2, A3, ..., A10)
+- `=AVERAGE(A1:A10)` returns the average of every cell value in the range A1 to A10. (e.g A1, A2, A3, ..., A10)
 - `=CONCAT(A1, " ", B1)` returns the concatenation of the value in cell A1, a space, and the value in cell B1.
 - `=IF(A1 > 10, "High", "Low")` returns "High" if the value in cell A1 is greater than 10, otherwise returns "Low".
-- `=SUM(AVG(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
+- `=SUM(AVERAGE(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
 - `=TODAY()` returns a date object representing the current date.
 
 The full list of functions that are provided by the grid can be found below in [List of Functions](#list-of-functions).
