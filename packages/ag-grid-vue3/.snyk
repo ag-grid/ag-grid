@@ -6,6 +6,6 @@ ignore:
         - '@vue/test-utils@2.4.6 > js-beautify@1.15.4 > glob@10.4.5':
               reason: >-
                   Glob is only used for testing and we control what files are passed in
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-11-20T10:29:00.007Z
 patch: {}
