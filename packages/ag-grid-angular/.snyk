@@ -50,4 +50,9 @@ ignore:
               reason: Only used for build and testing
               expires: 2025-12-08T12:00:00.000Z
               created: 2025-12-01T09:55:00.007Z
+    SNYK-JS-ANGULARCOMPILER-14157154:
+        - '@angular/compiler@18.2.14':
+              reason: Only used for building files we control
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-12-03T12:11:00.007Z
 patch: {}
