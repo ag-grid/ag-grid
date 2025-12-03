@@ -23,21 +23,23 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<any>;
 
 const rowData = [
-    { rid: '1', gold: 1, silver: 1, totals: '="Result of \'=CUSTOMSUM(A1:B1)\' is "&CUSTOMSUM(A1:B1)' },
-    { rid: '2', gold: 1, silver: 2, totals: '="Result of \'=CUSTOMSUM(A2:B2)\' is "&CUSTOMSUM(A2:B2)' },
-    {
-        rid: '3',
-        gold: 1,
-        silver: 1,
-        totals: '="Result of \'=CUSTOMSUM(A1:B3, B1)\' is "&CUSTOMSUM(A1:B3, B1)',
-    },
+    { rid: '1', gold: 1, silver: 1, totals: '=CUSTOMSUM(A1:B1)' },
+    { rid: '2', gold: 1, silver: 2, totals: '=CUSTOMSUM(A2:B2)' },
+    { rid: '3', gold: 1, silver: 1, totals: '=CUSTOMSUM(A1:B3, B1)' },
 ];
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'gold', colId: '0', width: 150 },
-        { field: 'silver', colId: '1', width: 150 },
-        { field: 'totals', colId: '2', flex: 1, cellDataType: 'text', allowFormula: true },
+        { field: 'gold', colId: 'c0', width: 100 },
+        { field: 'silver', colId: 'c1', width: 100 },
+        { field: 'totals', colId: 'c2', width: 100, cellDataType: 'text', allowFormula: true },
+        {
+            field: 'formula',
+            colId: 'c3',
+            flex: 1,
+            allowFormula: false,
+            valueGetter: (params) => params.getValue('c2'),
+        },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
