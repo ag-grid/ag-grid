@@ -282,6 +282,12 @@ A user provided datasource should provide the following interface:
 
 {% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
 
+## Exporting from Grids containing Formulas
+
+When performing a [CSV Export](./csv-export), the grid will export the evaluated values of any formulas in the grid. 
+
+When performing an [Excel Export](./excel-export), the grid will export the formulas themselves, which should then be evaluated as normal when opening the exported file in Excel.
+
 ## API Reference
 
 ### List of Mathematical Operators
