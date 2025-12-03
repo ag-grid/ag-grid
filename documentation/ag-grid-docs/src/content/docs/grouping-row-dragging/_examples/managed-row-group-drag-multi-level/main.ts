@@ -13,7 +13,8 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { type IAthlete, getAthletesData } from './data';
+import type { IAthlete } from './data';
+import { getAthletesData } from './data';
 
 let gridApi: GridApi<IAthlete>;
 
