@@ -253,11 +253,7 @@ export class BaseDragService<
             }
         };
 
-        const dragPreventEventDefault = (e: TouchEvent) => {
-            if (this.dragging) {
-                preventEventDefault(e);
-            }
-        };
+        const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
 
         this.initDrag(
             pointerDrag,
@@ -311,11 +307,7 @@ export class BaseDragService<
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
         const touchCancelEvent = (e: TouchEvent) => this.onTouchCancel(e);
-        const dragPreventEventDefault = (e: TouchEvent) => {
-            if (this.dragging) {
-                preventEventDefault(e);
-            }
-        };
+        const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
 
         const rootNode = _getRootNode(beans);
         const target = touchEvent.target ?? params.eElement;
@@ -332,6 +324,13 @@ export class BaseDragService<
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
             this.onMove(touchDrag.start);
+        }
+    }
+
+    /** preventEventDefault on the event while dragging only and if the event is cancellable */
+    private draggingPreventDefault(e: Event): void {
+        if (this.dragging) {
+            preventEventDefault(e);
         }
     }
 
@@ -417,9 +416,7 @@ export class BaseDragService<
         const touch = _getFirstActiveTouch(drag.start as Touch, touchEvent.touches);
         if (touch) {
             this.onMove(touch);
-            if (this.dragging) {
-                touchEvent.preventDefault();
-            }
+            this.draggingPreventDefault(touchEvent);
         }
     }
 
