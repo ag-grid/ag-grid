@@ -17,7 +17,7 @@ import type {
 } from '../../interfaces/iCellEditor';
 import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
-import type { EditPosition, EditSource } from '../../interfaces/iEditService';
+import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import { EditCellValidationModel, EditRowValidationModel } from '../editModelService';
@@ -441,7 +441,7 @@ export function _destroyEditors(
     }
 }
 
-type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean; source?: EditSource };
+type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };
 
 export function _destroyEditor(
     beans: BeanCollection,

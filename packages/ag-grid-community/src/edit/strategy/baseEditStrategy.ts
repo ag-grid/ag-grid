@@ -126,7 +126,7 @@ export abstract class BaseEditStrategy extends BeanStub {
         preventNavigation?: boolean
     ): boolean | null;
 
-    public stop(cancel?: boolean, event?: Event | null, source?: EditSource): boolean {
+    public stop(cancel?: boolean, event?: Event | null): boolean {
         const editingCells = this.model.getEditPositions();
 
         const results: EditValidationResult = { all: [], pass: [], fail: [] };
@@ -147,7 +147,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         if (cancel) {
             for (const cell of editingCells) {
-                _destroyEditor(this.beans, cell, { cancel, source });
+                _destroyEditor(this.beans, cell, { cancel });
                 this.model.stop(cell);
             }
         } else {
@@ -155,7 +155,7 @@ export abstract class BaseEditStrategy extends BeanStub {
 
             if (actions.destroy.length > 0) {
                 for (const cell of actions.destroy) {
-                    _destroyEditor(this.beans, cell, { event, cancel, source });
+                    _destroyEditor(this.beans, cell, { event, cancel });
                     this.model.stop(cell);
                 }
             }

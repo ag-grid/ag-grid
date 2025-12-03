@@ -87,13 +87,7 @@ const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
 const STOP_EDIT_SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(STOP_EDIT_SOURCE_TRANSFORM));
 
 // These are sources that we treat as API-originated so we presume API behaviour.
-const SET_DATA_SOURCE_AS_API: Set<string | undefined> = new Set([
-    'paste',
-    'rangeSvc',
-    'cellClear',
-    'redo',
-    'undo',
-]);
+const SET_DATA_SOURCE_AS_API: Set<string | undefined> = new Set(['paste', 'rangeSvc', 'cellClear', 'redo', 'undo']);
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
@@ -388,7 +382,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const freshEdits = model.getEditMap();
         const editsToDelete = this.processEdits(freshEdits, cancel, source);
 
-        this.strategy?.stop(cancel, event, source);
+        this.strategy?.stop(cancel, event);
 
         this.clearValidationIfNoOpenEditors();
 
