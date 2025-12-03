@@ -7,12 +7,14 @@ import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/Land
 import FeaturesSection from '../components/framework-landing-pages/react/sections/features/FeaturesSection';
 import Showcase from '../components/framework-landing-pages/react/sections/showcase/Showcase';
 import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
+import GithubSlugger from 'github-slugger';
 
 import InstallText from '@components/framework-landing-pages/InstallTextReact';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
+const slugger = new GithubSlugger();
 const { data: faqData } = (await getEntry('faqs', 'react-landing-page')) as CollectionEntry<'faqs'>;
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: examples } = (await getEntry('reactLandingPage', 'examples')) as CollectionEntry<'reactLandingPage'>;
@@ -134,14 +136,14 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
 
                         <div class={styles.examplesSectionCardCta}>
                             <a
-                                id={`examples-live-demo-cta-${card.title.replaceAll(' ', '-').toLowerCase()}`}
+                                id={`examples-live-demo-cta-${slugger.slug(card.title)}`}
                                 href={urlWithBaseUrl(card.demo)}
                                 target="_blank"
                             >
                                 Live Demo
                             </a>
                             <a
-                                id={`examples-docs-cta-${card.title.replaceAll(' ', '-').toLowerCase()}`}
+                                id={`examples-docs-cta-${slugger.slug(card.title)}`}
                                 href={urlWithBaseUrl(card.docs)}
                                 target="_blank"
                             >

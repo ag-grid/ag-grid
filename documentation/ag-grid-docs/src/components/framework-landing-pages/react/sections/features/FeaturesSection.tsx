@@ -1,4 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import GithubSlugger from 'github-slugger';
 import React from 'react';
 
 import styles from './FeaturesSection.module.scss';
@@ -7,6 +8,7 @@ import BasicFeatures from './tabs/basicfeatures/BasicFeatures';
 import CustomFeatures from './tabs/customfeatures/CustomFeatures';
 
 const FeaturesSection: React.FC = () => {
+    const slugger = new GithubSlugger();
     const [activeTab, setActiveTab] = React.useState(0);
     const tabs = [
         { title: 'Build', component: <BasicFeatures /> },
@@ -31,7 +33,7 @@ const FeaturesSection: React.FC = () => {
                     {tabs.map((tab, index) => (
                         <button
                             key={index}
-                            id={`feature-tab-${tab.title.toLowerCase().replaceAll(' ', '-')}`}
+                            id={`feature-tab-${slugger.slug(tab.title)}-nav`}
                             className={`${activeTab === index ? styles.activeTab : styles.tab} plausible-event-name=react-table--tab`}
                             onClick={() => handleTabClick(index)}
                         >
