@@ -25,8 +25,7 @@ export type EditSource =
     | 'fillHandle'
     | 'cellClear'
     | 'edit'
-    | 'bulk'
-    | 'renderer';
+    | 'bulk';
 
 export interface StartEditWithPositionParams extends StartEditParams {
     position: Required<EditPosition>;
