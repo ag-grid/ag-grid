@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions, Module, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community';
+import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 
