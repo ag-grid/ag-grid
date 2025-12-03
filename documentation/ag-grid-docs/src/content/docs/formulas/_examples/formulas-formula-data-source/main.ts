@@ -1,4 +1,4 @@
-import type { ColDef, GetRowIdParams, GridOptions } from 'ag-grid-community';
+import type { ColDef, GetRowIdFunc, GridOptions, ValueFormatterFunc } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -36,8 +36,8 @@ function seeFormulas() {
     formulaStore.forEach((value, formula) => console.log(value, formula));
 }
 
-const valueFormatter = ({ value }: { value: number }) => `$ ${Number(value ?? 0).toFixed(2)}`;
-const getRowId = (params: GetRowIdParams) => String(params.data.id);
+const valueFormatter: ValueFormatterFunc<RowData> = ({ value }) => `$ ${Number(value ?? 0).toFixed(2)}`;
+const getRowId: GetRowIdFunc<RowData> = (params) => String(params.data.id);
 
 // Simple in-memory store to keep formulas outside rowData
 const formulaStore = new Map<string, string>();

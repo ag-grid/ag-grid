@@ -23,21 +23,21 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi<any>;
 
 const rowData = [
-    { rid: '1', A: 1, B: 2 },
-    { rid: '2', A: 2, B: 2 },
+    { rid: '1', gold: 1, silver: 2 },
+    { rid: '2', gold: 2, silver: 2 },
     {
         rid: '3',
-        A: 1,
-        B: 2,
-        C: '="Result of \'=COUNTEQ(A1:B3,2)\' is "&COUNTEQ(REF(COLUMN("0"),ROW("1"),COLUMN("1"),ROW("3")),2)',
+        gold: 1,
+        silver: 2,
+        result: '="Result of \'=COUNTEQ(A1:B3,2)\' is "&COUNTEQ(REF(COLUMN("0"),ROW("1"),COLUMN("1"),ROW("3")),2)',
     },
 ];
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'A', colId: '0', width: 150 },
-        { field: 'B', colId: '1', width: 150 },
-        { field: 'C', colId: '2', flex: 1, allowFormula: true },
+        { field: 'gold', colId: '0', width: 150 },
+        { field: 'silver', colId: '1', width: 150 },
+        { field: 'result', colId: '2', flex: 1, allowFormula: true },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
