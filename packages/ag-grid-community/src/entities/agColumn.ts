@@ -463,8 +463,6 @@ export class AgColumn<TValue = any>
                     return true;
                 }
             });
-        } else {
-            _warn(298);
         }
         const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
         const colDefInitialSortType =
