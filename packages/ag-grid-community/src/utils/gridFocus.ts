@@ -3,7 +3,7 @@ import { _isNothingFocused } from '../agStack/utils/document';
 import { _findNextFocusableElement, _isKeyboardMode } from '../agStack/utils/focus';
 import type { BeanCollection } from '../context/context';
 import { _areCellsEqual } from '../entities/positionUtils';
-import { CellPosition } from '../interfaces/iCellPosition';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Component } from '../widgets/component';
 
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
