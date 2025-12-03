@@ -41,7 +41,7 @@ export class StateService extends BeanStub implements NamedBean {
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
     private suppressEvents = true;
-    private readonly queuedUpdateSources: Set<keyof GridState | 'gridInitializing' | 'api'> = new Set();
+    private readonly queuedUpdateSources = new Set<keyof GridState | 'gridInitializing' | 'api'>();
     private readonly dispatchStateUpdateEventDebounced = _debounce(
         this,
         () => this.dispatchQueuedStateUpdateEvents(),
@@ -73,7 +73,7 @@ export class StateService extends BeanStub implements NamedBean {
     );
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
-    private readonly staleStateKeys: Set<keyof GridState> = new Set();
+    private readonly staleStateKeys = new Set<keyof GridState>();
 
     public postConstruct(): void {
         const { gos, ctrlsSvc, colDelayRenderSvc } = this.beans;
@@ -147,7 +147,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const source = 'api';
 
-        const ignoreSet = propertiesToIgnore ? new Set(propertiesToIgnore) : undefined;
+        const ignoreSet = propertiesToIgnore && new Set(propertiesToIgnore);
 
         this.setGridReadyState(state, source, ignoreSet);
 
@@ -288,7 +288,7 @@ export class StateService extends BeanStub implements NamedBean {
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
 
-        const { gos, colFilter } = this.beans;
+        const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
             filterChanged: updateFilterState,
             rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
@@ -314,6 +314,11 @@ export class StateService extends BeanStub implements NamedBean {
         if (colFilter) {
             this.addManagedListeners(colFilter, {
                 filterStateChanged: updateFilterState,
+            });
+        }
+        if (selectableFilter) {
+            this.addManagedListeners(selectableFilter, {
+                selectedFilterChanged: updateFilterState,
             });
         }
     }
@@ -454,8 +459,10 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
         if (shouldSetAggregationState) {
-            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }) => {
-                getColumnState(colId).aggFunc = aggFunc;
+            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }, valueIndex) => {
+                const columnState = getColumnState(colId);
+                columnState.aggFunc = aggFunc;
+                columnState.valueIndex = valueIndex;
             });
         }
         if (shouldSetAggregationState || !partialColumnState) {
@@ -617,25 +624,29 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getFilterState(): FilterState | undefined {
-        const filterManager = this.beans.filterManager;
+        const { filterManager, selectableFilter } = this.beans;
         let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        return filterModel || advancedFilterModel || columnFilterState
-            ? { filterModel, columnFilterState, advancedFilterModel }
+        const selectableFilters = selectableFilter?.getState();
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
 
     private setFilterState(filterState?: FilterState): void {
-        const filterManager = this.beans.filterManager;
-        const { filterModel, columnFilterState, advancedFilterModel } = filterState ?? {
+        const { filterManager, selectableFilter } = this.beans;
+        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
             columnFilterState: null,
             advancedFilterModel: null,
         };
+        if (selectableFilters !== undefined) {
+            selectableFilter?.setState(selectableFilters ?? {});
+        }
         if (filterModel !== undefined || columnFilterState !== undefined) {
             filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
         }
@@ -863,14 +874,10 @@ export class StateService extends BeanStub implements NamedBean {
 
     private updateColumnState(features: (keyof GridState)[]): void {
         const newColumnState = this.getColumnState();
-        let hasChanged = false;
         const cachedState = this.cachedState;
-        for (const key of Object.keys(newColumnState) as (keyof GridState)[]) {
-            const value = (newColumnState as any)[key];
-            if (!_jsonEquals(value, cachedState[key])) {
-                hasChanged = true;
-            }
-        }
+        const hasChanged = Object.keys(newColumnState).some(
+            (key: keyof typeof newColumnState) => !_jsonEquals(newColumnState[key], cachedState[key])
+        );
 
         this.cachedState = {
             ...cachedState,

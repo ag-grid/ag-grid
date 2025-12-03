@@ -1,0 +1,26 @@
+---
+title: "Overlays"
+---
+
+Overlays are used for displaying messages over the top of the grid.
+The grid automatically displays one of the provided overlays based on the current state of the grid. Custom overlays can be shown on demand by the application.
+
+The following example shows the grid provided loading overlay when `loading=true`.
+
+{% gridExampleRunner title="Loading overlay" name="loading-overlay"  exampleHeight=260 /%}
+
+## Grid Provided Overlays
+
+The grid provides the following overlays that will be shown automatically based on grid state (unless disabled):
+- [Loading](./overlays-provided/#loading) - shown when data is loading
+- [No Rows](./overlays-provided/#no-rows) - shown when there are no rows to display
+- [No Matching Rows](./overlays-provided/#no-matching-rows) - shown when no rows match the current filter
+- [Exporting](./overlays-provided/#exporting) - shown when data is exporting to CSV / Excel
+
+For details about the provided overlays and how to customise them see: [Provided Overlays](./overlays-provided). 
+
+## Active Overlay
+
+Applications can provide their own custom overlay and control when they are displayed. This enables full control over the content and timing of overlays shown over the grid.
+
+For details about custom overlays see: [Active Overlay](./overlays-active).

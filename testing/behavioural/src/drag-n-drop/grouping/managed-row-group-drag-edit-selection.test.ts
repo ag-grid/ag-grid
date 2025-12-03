@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import {
     ClientSideRowModelModule,
     RowDragModule,
@@ -89,6 +91,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const firstDrag = new RowDragDispatcher({ api, eventType });
         await firstDrag.start('2');
+        await waitFor(() => expect(firstDrag.getDragGhostLabel()).toBe('A2'));
         await firstDrag.move('3', { yOffsetPercent: 0.1 });
         await firstDrag.finish();
 
@@ -116,6 +119,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
         gridRows = new GridRows(api, 'before committed move');
         const secondDrag = new RowDragDispatcher({ api, eventType });
         await secondDrag.start('2');
+        await waitFor(() => expect(secondDrag.getDragGhostLabel()).toBe('A2'));
         await secondDrag.move('3', { yOffsetPercent: 0.1 });
         await secondDrag.finish();
 
@@ -127,8 +131,8 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
             ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
             │ └── LEAF id:1 group:"A" value:"A1"
             └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:3 group:"B" value:"B1"
-            · └── LEAF id:2 group:"B" value:"A2"
+            · ├── LEAF id:2 group:"B" value:"A2"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
 
         expect(api.getRowNode('2')?.data.group).toBe('B');
@@ -184,6 +188,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
         await dispatcher.start('1');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 rows'));
         await dispatcher.move('4', { yOffsetPercent: 0.8 });
         await dispatcher.finish();
 
@@ -262,6 +267,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
         await dispatcher.start('r-1');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 rows'));
         await dispatcher.move('r-4', { yOffsetPercent: 0.7 });
         await dispatcher.finish();
 
@@ -368,6 +374,7 @@ describe.each(DRAG_NO_MOVE_INTERACTION_CASES)('drag groups selection flows noMov
 
         const dispatcher = new RowDragDispatcher({ api, eventType });
         await dispatcher.start('a1');
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 rows'));
         await dispatcher.move('row-group-level1-Gamma', { yOffsetPercent: 0.5 });
         await dispatcher.finish();
 

@@ -186,8 +186,6 @@ describe('row drag state persistence', () => {
             return result;
         };
 
-        // TODO: we could just use rootNode allLeafChildren but due to the sorting not being consistent
-        // with grouping, we are using the recursive collection. We can remove this once AG-13321 is fixed
         const persistedRowData = collectRowData(api);
 
         // TODO: this seems a pre-existing bug, the initial expand state for groups seems to

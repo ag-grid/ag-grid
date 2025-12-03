@@ -36,7 +36,7 @@ function seeFormulas() {
     formulaStore.forEach((value, formula) => console.log(value, formula));
 }
 
-const valueFormatter = ({ value }: { value: number }) => `$ ${Number(value ?? 0).toFixed(2)}`;
+const currencyFormatter = ({ value }: { value: number }) => `$ ${Number(value ?? 0).toFixed(2)}`;
 const getRowId = (params: GetRowIdParams) => String(params.data.id);
 
 // Simple in-memory store to keep formulas outside rowData
@@ -45,10 +45,10 @@ const formulaKey = (rowId: string, colId: string) => `${rowId}-${colId}`;
 
 const columnDefs: ColDef<RowData>[] = [
     { field: 'product' },
-    { field: 'price', valueFormatter },
+    { field: 'price', valueFormatter: currencyFormatter },
     { field: 'quantity', maxWidth: 120 },
-    { field: 'subtotal', allowFormula: true, valueFormatter },
-    { field: 'total', allowFormula: true, valueFormatter },
+    { field: 'subtotal', allowFormula: true, valueFormatter: currencyFormatter },
+    { field: 'total', allowFormula: true, valueFormatter: currencyFormatter },
 ];
 
 const rowData: RowData[] = [

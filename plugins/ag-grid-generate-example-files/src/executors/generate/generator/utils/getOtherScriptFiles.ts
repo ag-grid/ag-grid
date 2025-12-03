@@ -199,7 +199,7 @@ export const getUseFetchJsonFile = (internalFramework: InternalFramework) => {
  */
 export const useFetchJson = (url, limit) => {
     const [data, setData] = useState();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -224,7 +224,7 @@ export const useFetchJson = (url, limit) => {
  */
 export const useFetchJson = <T,>(url:string, limit?: number) => {
     const [data, setData] = useState<T[]>();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);

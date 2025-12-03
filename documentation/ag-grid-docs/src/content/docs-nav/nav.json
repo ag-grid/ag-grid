@@ -1429,7 +1429,19 @@
                         {
                             "type": "item",
                             "title": "Overlays",
-                            "path": "overlays"
+                            "path": "overlays-overview",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Provided Overlays",
+                                    "path": "overlays-provided"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Active Overlay",
+                                    "path": "overlays-active"
+                                }
+                            ]
                         }
                     ]
                 },

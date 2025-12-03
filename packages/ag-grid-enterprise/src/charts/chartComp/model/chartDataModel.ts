@@ -14,7 +14,7 @@ import type {
     SortModelItem,
     SortOption,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, isColumnGroupAutoCol } from 'ag-grid-community';
+import { BeanStub, CellRangeType, _normalizeSortType, isColumnGroupAutoCol } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -654,7 +654,7 @@ export class ChartDataModel extends BeanStub {
                 sortOptions.push({
                     sort,
                     column,
-                    type: column.getSortDef().type ?? null,
+                    type: _normalizeSortType(column.getSortDef()?.type),
                 });
             }
         });

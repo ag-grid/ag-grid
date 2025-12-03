@@ -1,4 +1,11 @@
-import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
+import type {
+    IRowModel,
+    IViewportDatasource,
+    NamedBean,
+    OverlayType,
+    RowBounds,
+    RowModelType,
+} from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
@@ -258,6 +265,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public isEmpty(): boolean {
         return this.rowCount > 0;
+    }
+    public getOverlayType(): OverlayType | null {
+        // not supported for the viewport row model
+        return null;
     }
 
     public isRowsToRender(): boolean {

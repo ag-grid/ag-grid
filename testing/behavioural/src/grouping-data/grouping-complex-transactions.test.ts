@@ -199,8 +199,8 @@ describe('ag-grid grouping complex transactions', () => {
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
             └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
-            · ├── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
-            · └── LEAF id:a country:"Italy" athlete:"John Smith" sport:"Sailing"
+            · ├── LEAF id:a country:"Italy" athlete:"John Smith" sport:"Sailing"
+            · └── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Move both Jane and Mario to a new country

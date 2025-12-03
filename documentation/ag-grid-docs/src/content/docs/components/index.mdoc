@@ -39,7 +39,7 @@ The full list of component types you can provide in the grid are as follows:
 * [Date Component](./filter-date/#custom-selection-component): To customise the date selection component in the date filter.
 * [Menu Item Component](./component-menu-item/): To customise the items within grid menus.
 * [Loading Component](./component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
-* [Overlay Component](./overlays/): To customise loading and no rows overlay components.
+* [Overlay Component](./overlays-overview/): To customise loading and no rows overlay components or provide a custom overlay.
 * [Status Bar Component](./status-bar/): For custom status bar components.
 * [Tool Panel Component](./component-tool-panel/): For custom tool panel components.
 * [Tooltip Component](./tooltips/): For custom cell tooltip components.
@@ -260,8 +260,8 @@ The below table gives a summary of the components, where they are configured and
 | Detail Cell Component          | Grid Option               | detailCellRenderer{% br /%}detailCellRendererParams        |
 | Full Width Cell Component      | Grid Option               | fullWidthCellRenderer{% br /%}fullWidthCellRendererParams        |
 | Loading Cell Component         | Grid Option{%br /%}Column Definition               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
-| Loading Overlay                | Grid Option               | loadingOverlayComponent{% br /%}loadingOverlayComponentParams       |
-| No Rows Overlay                | Grid Option               | noRowsOverlayComponent{% br /%}noRowsOverlayComponentParams        |
+| Overlay Component              | Grid Option               | overlayComponent{% br /%}overlayComponentParams{% br /%}overlayComponentSelector        |
+| Active Overlay                 | Grid Option               | activeOverlay{% br /%}activeOverlayParams        |
 | Drag and Drop Image            | Grid Option               | dragAndDropImageComponent{% br /%}dragAndDropImageComponentParams        |
 | Status Bar Component           | Grid Option -> Status Bar | statusPanel{% br /%}statusPanelParams          |
 | Tool Panel                     | Grid Option -> Side Bar   | toolPanel{% br /%}toolPanelParams            |
@@ -315,6 +315,8 @@ The grid comes with pre-registered components that can be used. Each component p
 | - | - |
 | agLoadingOverlay | Loading overlay |
 | agNoRowsOverlay | No rows overlay |
+| agNoMatchingRowsOverlay | No matching rows overlay |
+| agExportingOverlay| Exporting overlay |
 
 | Cell Editors | |
 | - | - |

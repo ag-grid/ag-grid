@@ -261,25 +261,33 @@ export class ExcelCreator
             return;
         }
 
-        const mergedParams = this.getMergedParams(userParams);
-        const data = this.getData(mergedParams);
+        const exportFunc = () => {
+            const mergedParams = this.getMergedParams(userParams);
+            const data = this.getData(mergedParams);
 
-        const exportParams: ExcelExportMultipleSheetParams = {
-            data: [data],
-            fontSize: mergedParams.fontSize,
-            author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
+            const exportParams: ExcelExportMultipleSheetParams = {
+                data: [data],
+                fontSize: mergedParams.fontSize,
+                author: mergedParams.author,
+                mimeType: mergedParams.mimeType,
+            };
+
+            this.packageCompressedFile(exportParams).then((packageFile) => {
+                if (packageFile) {
+                    const { fileName } = mergedParams;
+                    const providedFileName =
+                        typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
+
+                    _downloadFile(this.getFileName(providedFileName), packageFile);
+                }
+            });
         };
-
-        this.packageCompressedFile(exportParams).then((packageFile) => {
-            if (packageFile) {
-                const { fileName } = mergedParams;
-                const providedFileName =
-                    typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
-
-                _downloadFile(this.getFileName(providedFileName), packageFile);
-            }
-        });
+        const { overlays } = this.beans;
+        if (overlays) {
+            overlays.showExportOverlay(exportFunc);
+        } else {
+            exportFunc();
+        }
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {

@@ -10,7 +10,15 @@ import type {
     RowNode,
     SortDef,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _exists, _getRowNode, _resetColumnState, _warn } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _exists,
+    _getRowNode,
+    _normalizeSortType,
+    _resetColumnState,
+    _warn,
+} from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
@@ -53,7 +61,7 @@ const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
     },
     sortUnSort: {
         fallback: 'Clear Sort',
-        getSortDef: (column: AgColumn) => ({ type: column.getSortDef().type, direction: null }),
+        getSortDef: (column: AgColumn) => ({ type: _normalizeSortType(column.getSortDef()?.type), direction: null }),
     },
 };
 

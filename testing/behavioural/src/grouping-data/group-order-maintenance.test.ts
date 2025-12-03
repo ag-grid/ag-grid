@@ -250,8 +250,7 @@ describe('group order maintenance', () => {
         `);
     });
 
-    // todo disabling it so CI is green and QA can start doing QA. Re-enable before release with a fix pls
-    test.skip('toggle from group sort to leaf sort preserves last group order', async () => {
+    test('toggle from group sort to leaf sort preserves last group order', async () => {
         const rowData = [
             { id: '1', country: 'Ireland', athlete: 'Z' },
             { id: '2', country: 'Italy', athlete: 'A' },

@@ -475,8 +475,8 @@ describe('ag-grid grouping with transactions', () => {
             · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
-            · · ├── LEAF id:4 name:"Marvin Minsky the second" country:"Italy" year:2001
-            · · └── LEAF id:2 name:"Alan Turing" country:"Italy" year:2001
+            · · ├── LEAF id:2 name:"Alan Turing" country:"Italy" year:2001
+            · · └── LEAF id:4 name:"Marvin Minsky the second" country:"Italy" year:2001
         `);
     });
 });

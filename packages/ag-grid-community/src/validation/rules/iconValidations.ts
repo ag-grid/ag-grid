@@ -1,5 +1,6 @@
+import type { IconValue } from '../../agStack/interfaces/iIcon';
 import type { ValidationModuleName } from '../../interfaces/iModule';
-import type { IconName, IconValue } from '../../utils/icon';
+import type { IconName } from '../../utils/icon';
 
 export const ICON_VALUES: Record<IconValue, 1> = {
     expanded: 1,
@@ -127,6 +128,7 @@ export const ICON_MODULES: Record<IconName, ValidationModuleName | ValidationMod
     colorPicker: 'CommunityCore',
     groupLoading: 'LoadingCellRenderer',
     overlayLoading: 'Overlay',
+    overlayExporting: 'Overlay',
     menuAlt: 'ColumnHeaderComp',
     menuPin: 'MenuCore',
     menuValue: 'MenuCore',

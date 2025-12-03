@@ -91,8 +91,10 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'rowClassRules',
     'detailCellRendererParams',
     'loadingCellRendererParams',
+    'overlayComponentParams',
     'loadingOverlayComponentParams',
     'noRowsOverlayComponentParams',
+    'activeOverlayParams',
     'popupParent',
     'themeStyleContainer',
     'statusBar',
@@ -125,6 +127,7 @@ const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'chartThemes',
     'rowClass',
     'paginationPageSizeSelector',
+    'suppressOverlays',
 ];
 
 // Used in validations to check type of number inputs
@@ -343,8 +346,11 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'dragAndDropImageComponent',
     'fullWidthCellRenderer',
     'loadingCellRenderer',
+    'overlayComponent',
     'loadingOverlayComponent',
     'noRowsOverlayComponent',
+    'overlayComponentSelector',
+    'activeOverlay',
     'detailCellRenderer',
     'quickFilterParser',
     'quickFilterMatcher',

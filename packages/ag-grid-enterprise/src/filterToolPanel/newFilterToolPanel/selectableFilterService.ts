@@ -22,11 +22,23 @@ type SimpleFilterType = 'agTextColumnFilter' | 'agNumberColumnFilter' | 'agDateC
 
 type ProvidedFilterType = SimpleFilterType | 'agSetColumnFilter' | 'agMultiColumnFilter';
 
-export class SelectableFilterService extends BeanStub implements ISelectableFilterService, NamedBean {
+export class SelectableFilterService
+    extends BeanStub<'selectedFilterChanged'>
+    implements ISelectableFilterService, NamedBean
+{
     readonly beanName = 'selectableFilter' as const;
 
     private readonly selectedFilters: Map<string, number> = new Map();
     private readonly valueGetters: Map<string, string | ValueGetterFunc> = new Map();
+
+    public postConstruct(): void {
+        const { gos, selectedFilters } = this;
+        // the filter panel gets initialised before filter state is applied, so set defaults early
+        const initialState = gos.get('initialState')?.filter?.selectableFilters ?? {};
+        for (const colId of Object.keys(initialState)) {
+            selectedFilters.set(colId, initialState[colId]);
+        }
+    }
 
     public getFilterValueGetter(colId: string): string | ValueGetterFunc | undefined {
         return this.valueGetters.get(colId);
@@ -42,7 +54,8 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
 
     public getDefs(
         column: AgColumn,
-        filterDef: IFilterDef
+        filterDef: IFilterDef,
+        overrideIndex?: number
     ): { filterDefs: SelectableFilterDef[]; activeFilterDef: SelectableFilterDef } | undefined {
         if (!this.isSelectable(filterDef)) {
             return undefined;
@@ -115,6 +128,7 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         const filterDefs = (filters ?? this.getDefaultFilters(column)).map(updateDef);
 
         let index =
+            overrideIndex ?? // provided override
             this.selectedFilters.get(column.getColId()) ?? // UI selected value
             defaultFilterIndex ?? // col def value
             (!filters && _isSetFilterByDefault(gos) ? 1 : 0); // if using defaults, then respect set filter by default setting, else choose first
@@ -128,7 +142,12 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         return { filterDefs, activeFilterDef };
     }
 
-    public setActive(colId: string, filterDefs: SelectableFilterDef[], activeFilterDef: SelectableFilterDef): void {
+    public setActive(
+        colId: string,
+        filterDefs: SelectableFilterDef[],
+        activeFilterDef: SelectableFilterDef,
+        silent?: boolean
+    ): void {
         const index = filterDefs.indexOf(activeFilterDef);
         if (index < 0) {
             return;
@@ -141,19 +160,51 @@ export class SelectableFilterService extends BeanStub implements ISelectableFilt
         } else {
             valueGetters.delete(colId);
         }
+        if (!silent) {
+            this.onChange();
+        }
     }
 
     public clearActive(colId: string): void {
         const { selectedFilters, valueGetters } = this;
         selectedFilters.delete(colId);
         valueGetters.delete(colId);
+        this.onChange();
+    }
+
+    public getState(): { [colId: string]: number } {
+        return Object.fromEntries(this.selectedFilters);
+    }
+
+    public setState(state: { [colId: string]: number }): void {
+        this.clearAll();
+        const colModel = this.beans.colModel;
+        for (const colId of Object.keys(state)) {
+            const column = colModel.getColDefCol(colId);
+            if (column) {
+                const defs = this.getDefs(column, column.colDef, state[colId]);
+                if (defs) {
+                    this.setActive(colId, defs.filterDefs, defs.activeFilterDef, true);
+                }
+            }
+        }
     }
 
     public override destroy(): void {
+        this.clearAll();
+        super.destroy();
+    }
+
+    private clearAll(): void {
         const { selectedFilters, valueGetters } = this;
         selectedFilters.clear();
         valueGetters.clear();
-        super.destroy();
+    }
+
+    private onChange(): void {
+        this.dispatchLocalEvent({
+            type: 'selectedFilterChanged',
+        });
     }
 
     private getDefaultFilters(column: AgColumn): SelectableFilterDef[] {

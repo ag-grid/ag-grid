@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/dom';
+
 import { ClientSideRowModelModule, RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
@@ -91,6 +93,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('2 rows'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.35 });
         await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();
@@ -158,6 +161,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
         let expandedBeforeDrop = false;
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Tasks'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.6 });
         const insertDelayTarget = getRowHtmlElement(api, targetRowId);
         if (!insertDelayTarget) {
@@ -235,6 +239,7 @@ describe.each([false, true])('tree drag multi flows (suppress move %s)', (suppre
 
         const dispatcher = new RowDragDispatcher({ api });
         await dispatcher.start(sourceRowId);
+        await waitFor(() => expect(dispatcher.getDragGhostLabel()).toBe('Incoming'));
         await dispatcher.move(targetRowId, { yOffsetPercent: 0.4 });
         await dispatcher.move(targetRowId, { center: true });
         await dispatcher.finish();

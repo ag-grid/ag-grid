@@ -24,7 +24,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     DragAndDropModule: 1,
     EventApiModule: 2.64,
     ExternalFilterModule: 12.67,
-    GridStateModule: 14.7,
+    GridStateModule: 15.84,
     HighlightChangesModule: 5.09,
     InfiniteRowModelModule: 18,
     LargeTextEditorModule: 67.8,
@@ -41,7 +41,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RowSelectionModule: 35.73,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
-    SelectEditorModule: 81.4,
+    SelectEditorModule: 83.87,
     TextEditorModule: 68.96,
     TextFilterModule: 124,
     TooltipModule: 25.06,
@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
-    AllEnterpriseModule: 1569,
+    AllEnterpriseModule: 1575,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
     CellSelectionModule: 59,
@@ -70,11 +70,11 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     MenuModule: 166.7,
     MultiFilterModule: 150.56,
     NewFiltersToolPanelModule: 175.32,
-    PivotModule: 109,
+    PivotModule: 112.4,
     RangeSelectionModule: 59,
     RichSelectModule: 128.55,
     RowNumbersModule: 32.03,
-    RowGroupingModule: 95.74,
+    RowGroupingModule: 98.79,
     RowGroupingPanelModule: 73.57,
     ServerSideRowModelApiModule: 20.53,
     ServerSideRowModelModule: 160.58,
@@ -82,7 +82,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     SideBarModule: 35.16,
     SparklinesModule: 22.06,
     StatusBarModule: 29.09,
-    TreeDataModule: 92.54,
+    TreeDataModule: 95.42,
     ViewportRowModelModule: 29.19,
 };
 
@@ -136,7 +136,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 516 };
+export const baseModule = { modules: [], expectedSize: 520 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

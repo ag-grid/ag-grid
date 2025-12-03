@@ -1,6 +1,7 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
 import type { AgColumn } from '../entities/agColumn';
+import { _normalizeSortDirection, _normalizeSortType } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
@@ -117,31 +118,40 @@ export class SortIndicatorComp extends Component {
     private updateIcons(): void {
         const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
-        const isAbsoluteSort = sortDirection?.type === 'absolute';
-        const isAscending = sortDirection?.direction === 'asc';
-        const isDescending = sortDirection?.direction === 'desc';
+        const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+        const type = _normalizeSortType(sortDef?.type);
+        const direction = _normalizeSortDirection(sortDef?.direction);
+        const allowedSortTypes = column.getAvailableSortTypes();
+        const isDefaultSortAllowed = allowedSortTypes.has('default');
+        const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+        const isAbsoluteSort = type === 'absolute';
+        const isDefaultSort = type === 'default';
+        const isAscending = direction === 'asc';
+        const isDescending = direction === 'desc';
 
         if (eSortAsc) {
-            _setDisplayed(eSortAsc, isAscending && !isAbsoluteSort, { skipAriaHidden: true });
+            _setDisplayed(eSortAsc, isAscending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
         }
 
         if (eSortDesc) {
-            _setDisplayed(eSortDesc, isDescending && !isAbsoluteSort, { skipAriaHidden: true });
+            _setDisplayed(eSortDesc, isDescending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
         }
 
         if (eSortNone) {
             const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.get('unSortIcon');
-            const isNone = sortDirection?.direction == null;
-            _setDisplayed(eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
+            _setDisplayed(eSortNone, !alwaysHideNoSort && !direction, { skipAriaHidden: true });
         }
 
         if (eSortAbsoluteAsc) {
-            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort, { skipAriaHidden: true });
+            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort && isAbsoluteSortAllowed, {
+                skipAriaHidden: true,
+            });
         }
 
         if (eSortAbsoluteDesc) {
-            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort, { skipAriaHidden: true });
+            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort && isAbsoluteSortAllowed, {
+                skipAriaHidden: true,
+            });
         }
     }
 

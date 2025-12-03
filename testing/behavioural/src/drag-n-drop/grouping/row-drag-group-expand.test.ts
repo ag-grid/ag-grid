@@ -110,8 +110,8 @@ describe('row drag nudger group expansion', () => {
             ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A"
             │ └── LEAF id:1 group:"A" value:"A1"
             └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:3 group:"B" value:"B1"
-            · └── LEAF id:2 group:"B" value:"A2"
+            · ├── LEAF id:2 group:"B" value:"A2"
+            · └── LEAF id:3 group:"B" value:"B1"
         `);
     });
 

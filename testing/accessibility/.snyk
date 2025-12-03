@@ -1,0 +1,10 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+    SNYK-JS-ANGULARCOMMON-14135651:
+        - '@angular/common':
+              reason: Only used for testing
+              expires: 2025-12-08T12:00:00.000Z
+              created: 2025-12-01T09:55:00.007Z
+patch: {}
