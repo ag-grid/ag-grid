@@ -316,7 +316,7 @@ A user provided datasource should provide the following interface:
 | `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
 | `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
 | `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
-| `PERCENT(arg1, arg2)` | Returns the percentage of the first argument relative to the second argument. |
+| `PERCENT(arg1)` | Returns value of its argument as a decimal percentage. |
 | `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
 | `RAND()` | Returns a random number between 0 and 1. |
 
@@ -338,8 +338,8 @@ A user provided datasource should provide the following interface:
 | Function | Description |
 | -------- | ----------- |
 | `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
-| `EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
-| `NOT_EQUALS(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
+| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
+| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
 | `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
 | `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
 | `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
