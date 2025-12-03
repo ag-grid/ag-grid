@@ -97,7 +97,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
     }
 
     public execute(params: RefreshModelParams<TData>): boolean | undefined {
-        const rootNode = this.beans.rowModel.rootNode;
+        const beans = this.beans;
+        const rootNode = beans.rowModel.rootNode;
         if (!rootNode) {
             return false;
         }
@@ -107,7 +108,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
         this.nested = nested;
         if (needReset) {
             this.needReset = false;
-            this.beans.rowDragSvc?.cancelRowDrag();
+            beans.rowDragSvc?.cancelRowDrag();
+            params.animate = false; // resetting grouping / treeData, so no animation
             resetGrouping(rootNode, !nested);
         }
         return strategy ? strategy.execute(rootNode, params) || needReset : undefined;
