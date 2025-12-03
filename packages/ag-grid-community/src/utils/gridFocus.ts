@@ -1,6 +1,9 @@
 import { KeyCode } from '../agStack/constants/keyCode';
-import { _findNextFocusableElement } from '../agStack/utils/focus';
+import { _isNothingFocused } from '../agStack/utils/document';
+import { _findNextFocusableElement, _isKeyboardMode } from '../agStack/utils/focus';
 import type { BeanCollection } from '../context/context';
+import { _areCellsEqual } from '../entities/positionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Component } from '../widgets/component';
 
 export function _addFocusableContainerListener(beans: BeanCollection, comp: Component, eGui: HTMLElement): void {
@@ -45,4 +48,23 @@ export function _focusNextGridCoreContainer(
     }
 
     return false;
+}
+
+export function _attemptToRestoreCellFocus(beans: BeanCollection, focusedCell: CellPosition | null): void {
+    const focusSvc = beans.focusSvc;
+    const currentFocusedCell = focusSvc.getFocusedCell();
+
+    if (currentFocusedCell && focusedCell && _areCellsEqual(currentFocusedCell, focusedCell)) {
+        const { rowIndex, rowPinned, column } = focusedCell;
+
+        if (_isNothingFocused(beans)) {
+            focusSvc.setFocusedCell({
+                rowIndex,
+                column,
+                rowPinned,
+                forceBrowserFocus: true,
+                preventScrollOnBrowserFocus: !_isKeyboardMode(),
+            });
+        }
+    }
 }

@@ -321,7 +321,7 @@ describe('ag-grid hierarchical tree data', () => {
     });
 
     test('ag-grid hierarchical override tree data is insensitive to updateGridOptions object order', async () => {
-        // see https://ag-grid.atlassian.net/browse/AG-13089 - Order of grouped property listener changed is not deterministic
+        // see https://ag-grid.atlassian.net/browse/AG-13089 and https://ag-grid.atlassian.net/browse/AG-13498 - Order of grouped property listener changed is not deterministic
         const rowData0 = [
             { x: 'A', children: [{ x: 'B' }] },
             { x: 'C', children: [{ x: 'D' }] },

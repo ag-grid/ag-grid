@@ -4,7 +4,9 @@ import { BeanStub } from '../../context/beanStub';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { GridOptionsService } from '../../gridOptionsService';
 import { _addGridCommonParams, _isClientSideRowModel } from '../../gridOptionsUtils';
+import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _attemptToRestoreCellFocus } from '../../utils/gridFocus';
 import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import type { IOverlayComp, OverlayType } from './overlayComponent';
@@ -117,6 +119,8 @@ export class OverlayService extends BeanStub implements NamedBean {
     private currentDef: OverlayDef | null = null;
     private showInitialOverlay: boolean = true;
     private userForcedNoRows: boolean = false;
+    private exportsInProgress: number = 0;
+    private focusedCell: CellPosition | null;
 
     private newColumnsLoadedCleanup: (() => void) | null = null;
     public postConstruct(): void {
@@ -205,9 +209,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
     }
-
     public async showExportOverlay(heavyOperation: () => void) {
-        const gos = this.gos;
+        const { gos, beans } = this;
         if (
             !this.eWrapper ||
             gos.get('activeOverlay') ||
@@ -226,6 +229,11 @@ export class OverlayService extends BeanStub implements NamedBean {
             return;
         }
 
+        // Make sure if multiple export calls are run we don't clear until the last one.
+        this.exportsInProgress++;
+        // Aim to restore cell focus after it is lost due to the overlay
+        this.focusedCell = beans.focusSvc.getFocusedCell();
+
         await this.doShowOverlay(desiredDef);
 
         // ensure the overlay has a chance to be painted
@@ -233,15 +241,27 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         const shownAt = Date.now();
         // start the heavy operation (allow sync or promise)
-        heavyOperation();
+        try {
+            heavyOperation();
+        } finally {
+            // We apply a minimum show time of 300ms to avoid fast exports having a flicker of the overlay
+            const elapsed = Date.now() - shownAt;
+            const remaining = Math.max(0, 300 - elapsed);
 
-        // We apply a minimum show time of 300ms to avoid fast exports having a flicker of the overlay
-        const elapsed = Date.now() - shownAt;
-        const remaining = Math.max(0, 300 - elapsed);
-        if (remaining > 0) {
-            setTimeout(() => this.updateOverlay(false), remaining);
-        } else {
-            this.updateOverlay(false);
+            const clearExportOverlay = () => {
+                this.exportsInProgress--;
+                if (this.exportsInProgress === 0) {
+                    this.updateOverlay(false);
+                    _attemptToRestoreCellFocus(beans, this.focusedCell);
+                    this.focusedCell = null;
+                }
+            };
+
+            if (remaining > 0) {
+                setTimeout(() => clearExportOverlay(), remaining);
+            } else {
+                clearExportOverlay();
+            }
         }
     }
 

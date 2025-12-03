@@ -30,7 +30,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { RowDropHighlightService } from '../dragAndDrop/rowDropHighlightService';
 import type { GridOptions } from '../entities/gridOptions';
-import type { RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
 import type { GridSerializer } from '../export/gridSerializer';
@@ -75,7 +74,15 @@ import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type {
+    IRowNodeAggregationStage,
+    IRowNodeFilterAggregateStage,
+    IRowNodeFilterStage,
+    IRowNodeFlattenStage,
+    IRowNodeGroupStage,
+    IRowNodePivotStage,
+    IRowNodeSortStage,
+} from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
@@ -323,13 +330,13 @@ interface CoreBeanCollection
     ssrmTxnManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;
     advancedFilter: IAdvancedFilterService;
-    filterStage?: IRowNodeStage;
-    sortStage?: IRowNodeStage;
-    flattenStage?: IRowNodeStage<RowNode[]>;
-    groupStage?: IRowGroupStage<boolean>;
-    aggStage?: IRowNodeStage;
-    pivotStage?: IRowNodeStage;
-    filterAggStage?: IRowNodeStage;
+    filterStage?: IRowNodeFilterStage;
+    sortStage?: IRowNodeSortStage;
+    flattenStage?: IRowNodeFlattenStage;
+    groupStage?: IRowNodeGroupStage;
+    aggStage?: IRowNodeAggregationStage;
+    pivotStage?: IRowNodePivotStage;
+    filterAggStage?: IRowNodeFilterAggregateStage;
     rowNodeSorter?: RowNodeSorter;
     pivotColDefSvc?: IPivotColDefService;
     chartSvc?: IChartService;

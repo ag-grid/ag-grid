@@ -143,7 +143,9 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         processChildren(rootNode, rowData, 0);
 
         const changed =
-            this.deleteUnusedNodes(processedNodes, changedRowNodes, nodesToUnselect) || reorder || adds.size > 0;
+            this.deleteUnusedNodes(processedNodes, changedRowNodes, nodesToUnselect, !!params.animate) ||
+            reorder ||
+            adds.size > 0;
 
         if (changed) {
             const allLeafs = (rootNode._leafs ??= []);
@@ -163,13 +165,14 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     private deleteUnusedNodes(
         processedNodes: Set<RowNode<TData>>,
         { removals }: ChangedRowNodes<TData>,
-        nodesToUnselect: RowNode<TData>[]
+        nodesToUnselect: RowNode<TData>[],
+        animate: boolean
     ): boolean {
         const allLeafs = this.rootNode._leafs!;
         for (let i = 0, len = allLeafs.length; i < len; i++) {
             const node = allLeafs[i];
             if (!processedNodes.has(node)) {
-                if (this.destroyNode(node)) {
+                if (this.destroyNode(node, animate)) {
                     removals.push(node);
                     if (node.isSelected()) {
                         nodesToUnselect.push(node);
@@ -182,7 +185,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
 
     public updateRowData(
         rowDataTran: RowDataTransaction<TData>,
-        changedRowNodes: ChangedRowNodes<TData>
+        changedRowNodes: ChangedRowNodes<TData>,
+        animate: boolean
     ): RowNodeTransaction<TData> {
         this.dispatchRowDataUpdateStarted(rowDataTran.add);
         if (this.beans.groupStage?.getNestedDataGetter()) {
@@ -191,7 +195,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         }
         const nodesToUnselect: RowNode[] = [];
         const getRowIdFunc = _getRowIdCallback(this.gos);
-        const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect);
+        const remove = this.executeRemove(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect, animate);
         const update = this.executeUpdate(getRowIdFunc, rowDataTran, changedRowNodes, nodesToUnselect);
         const add = this.executeAdd(rowDataTran, changedRowNodes);
         this.deselect(nodesToUnselect);
@@ -202,7 +206,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
         getRowIdFunc: GetRowIdFunc<TData> | undefined,
         { remove }: RowDataTransaction,
         { adds, updates, removals }: ChangedRowNodes<TData>,
-        nodesToUnselect: RowNode<TData>[]
+        nodesToUnselect: RowNode<TData>[],
+        animate: boolean
     ): RowNode<TData>[] {
         const allLeafs = this.rootNode._leafs;
         const allLeafsLen = allLeafs?.length;
@@ -227,7 +232,7 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
                 filterEndIdx = sourceRowIndex;
             }
             removedResult[removeCount++] = rowNode;
-            if (!this.destroyNode(rowNode)) {
+            if (!this.destroyNode(rowNode, animate)) {
                 continue;
             }
             if (rowNode.isSelected()) {
@@ -347,8 +352,8 @@ export class ClientSideNodeManager<TData = any> extends BeanStub {
     }
 
     /** Called when a node needs to be deleted */
-    private destroyNode(node: RowNode<TData>): boolean {
-        if (!node._destroy(true)) {
+    private destroyNode(node: RowNode<TData>, animate: boolean): boolean {
+        if (!node._destroy(animate)) {
             return false;
         }
         const id = node.id!;

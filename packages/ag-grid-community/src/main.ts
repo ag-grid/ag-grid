@@ -1263,7 +1263,14 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export type { IRowNodeStage, IRowGroupStage, StageExecuteParams, NestedDataGetter } from './interfaces/iRowNodeStage';
+export type {
+    IRowNodeGroupStage as _IRowNodeGroupStage,
+    IRowNodePivotStage as _IRowNodePivotStage,
+    IRowNodeAggregationStage as _IRowNodeAggregationStage,
+    IRowNodeFilterAggregateStage as _IRowNodeFilterAggregateStage,
+    IRowNodeFlattenStage as _IRowNodeFlattenStage,
+    NestedDataGetter,
+} from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -1319,7 +1326,12 @@ export { _warn, _error, _errMsg, _logPreInitWarn, _preInitErrMsg } from './valid
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
-export { _addFocusableContainerListener, _focusGridInnerElement, _focusNextGridCoreContainer } from './utils/gridFocus';
+export {
+    _addFocusableContainerListener,
+    _attemptToRestoreCellFocus,
+    _focusGridInnerElement,
+    _focusNextGridCoreContainer,
+} from './utils/gridFocus';
 
 // charts
 export * from './interfaces/iChartOptions';
