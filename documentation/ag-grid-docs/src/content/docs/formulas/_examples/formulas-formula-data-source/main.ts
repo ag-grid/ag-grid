@@ -3,6 +3,7 @@ import {
     ClientSideRowModelModule,
     ModuleRegistry,
     NumberEditorModule,
+    RowApiModule,
     TextEditorModule,
     ValidationModule,
     createGrid,
@@ -11,6 +12,7 @@ import { FormulaModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    RowApiModule,
     FormulaModule,
     NumberEditorModule,
     TextEditorModule,
