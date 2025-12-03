@@ -240,9 +240,9 @@ const gridOptions = {
 
 ## Formula Data Source
 
-Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep raw data clean, or persist formulas separately (e.g. to local storage or your own API).
+Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep row data clean, or persist formulas separately (e.g. to local storage or your own API).
 
-{% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
+The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -271,6 +271,10 @@ const gridOptions = {
 ```
 
 {% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
+
+A user provided datasource should provide the following interface:
+
+{% interfaceDocumentation interfaceName="FormulaDataSource" config={ "description": "" } /%}
 
 ## API Reference
 
