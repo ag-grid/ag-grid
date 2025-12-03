@@ -6,14 +6,15 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const columnDefs: ColDef[] = [
+const columnDefs = [
     { field: 'athlete', minWidth: 150 },
     { field: 'year', maxWidth: 90 },
     {
         field: 'rankingChange',
         sort: { direction: 'asc', type: 'absolute' },
+        sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
     },
-];
+] satisfies ColDef[];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -23,7 +24,7 @@ const gridOptions: GridOptions<any> = {
         minWidth: 100,
     },
 
-    columnDefs: columnDefs,
+    columnDefs,
 };
 
 // setup the grid after the page has finished loading
