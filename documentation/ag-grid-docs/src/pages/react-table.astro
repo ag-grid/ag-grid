@@ -133,10 +133,18 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
                         </div>
 
                         <div class={styles.examplesSectionCardCta}>
-                            <a href={urlWithBaseUrl(card.demo)} target="_blank">
+                            <a
+                                id={`examples-live-demo-cta-${card.title.replaceAll(' ', '-').toLowerCase()}`}
+                                href={urlWithBaseUrl(card.demo)}
+                                target="_blank"
+                            >
                                 Live Demo
                             </a>
-                            <a href={urlWithBaseUrl(card.docs)} target="_blank">
+                            <a
+                                id={`examples-docs-cta-${card.title.replaceAll(' ', '-').toLowerCase()}`}
+                                href={urlWithBaseUrl(card.docs)}
+                                target="_blank"
+                            >
                                 Docs
                             </a>
                         </div>
