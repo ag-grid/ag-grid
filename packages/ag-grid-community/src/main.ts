@@ -1263,7 +1263,14 @@ export {
     MouseShowContextMenuParams,
     TouchShowContextMenuParam,
 } from './interfaces/iContextMenu';
-export type { IRowNodeStage, IRowGroupStage, StageExecuteParams, NestedDataGetter } from './interfaces/iRowNodeStage';
+export type {
+    IRowNodeGroupStage as _IRowNodeGroupStage,
+    IRowNodePivotStage as _IRowNodePivotStage,
+    IRowNodeAggregationStage as _IRowNodeAggregationStage,
+    IRowNodeFilterAggregateStage as _IRowNodeFilterAggregateStage,
+    IRowNodeFlattenStage as _IRowNodeFlattenStage,
+    NestedDataGetter,
+} from './interfaces/iRowNodeStage';
 export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';

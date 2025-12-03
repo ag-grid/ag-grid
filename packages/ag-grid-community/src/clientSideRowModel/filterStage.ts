@@ -5,7 +5,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
-import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import type { IRowNodeFilterStage } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
 
 export function updateRowNodeAfterFilter(rowNode: RowNode): void {
@@ -15,7 +15,7 @@ export function updateRowNodeAfterFilter(rowNode: RowNode): void {
     }
 }
 
-export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
+export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedBean {
     beanName = 'filterStage' as const;
 
     public readonly step: ClientSideRowModelStage = 'filter';
@@ -27,12 +27,7 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
         this.filterManager = beans.filterManager;
     }
 
-    public execute(params: StageExecuteParams): void {
-        const { changedPath } = params;
-        this.filter(changedPath!);
-    }
-
-    private filter(changedPath: ChangedPath): void {
+    public execute(changedPath: ChangedPath): void {
         const filterActive: boolean = !!this.filterManager?.isChildFilterPresent();
         if (this.beans.formula?.active) {
             this.softFilter(filterActive, changedPath);

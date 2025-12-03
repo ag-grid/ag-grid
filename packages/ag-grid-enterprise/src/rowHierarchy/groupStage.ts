@@ -2,17 +2,17 @@ import type {
     ClientSideRowModelStage,
     GridOptions,
     IClientSideRowModel,
-    IRowGroupStage,
     NamedBean,
     NestedDataGetter,
+    RefreshModelParams,
     RowNode,
-    StageExecuteParams,
+    _IRowNodeGroupStage,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from './rowHierarchyUtils';
 
-export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupStage {
+export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeGroupStage {
     beanName = 'groupStage' as const;
 
     public step: ClientSideRowModelStage = 'group';
@@ -42,6 +42,10 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         this.addManagedEventListeners({
             showRowGroupColsSetChanged: () => this.strategy?.onShowRowGroupColsSetChanged(),
         });
+    }
+
+    public invalidateGroupCols(): void {
+        this.strategy?.invalidateGroupCols?.();
     }
 
     public override destroy(): void {
@@ -92,17 +96,23 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, IRowGroupS
         return result;
     }
 
-    public execute(params: StageExecuteParams<TData>): boolean | undefined {
+    public execute(params: RefreshModelParams<TData>): boolean | undefined {
+        const beans = this.beans;
+        const rootNode = beans.rowModel.rootNode;
+        if (!rootNode) {
+            return false;
+        }
         const strategy = this.getStrategy();
         const nested = !!strategy?.nestedDataGetter;
         const needReset = this.needReset;
         this.nested = nested;
         if (needReset) {
             this.needReset = false;
-            this.beans.rowDragSvc?.cancelRowDrag();
-            resetGrouping(params.rowNode, !nested);
+            beans.rowDragSvc?.cancelRowDrag();
+            params.animate = false; // resetting grouping / treeData, so no animation
+            resetGrouping(rootNode, !nested);
         }
-        return strategy ? strategy.execute(params) || needReset : undefined;
+        return strategy ? strategy.execute(rootNode, params) || needReset : undefined;
     }
 
     public loadLeafs(node: RowNode): RowNode[] | null {
