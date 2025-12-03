@@ -1319,7 +1319,12 @@ export { _warn, _error, _errMsg, _logPreInitWarn, _preInitErrMsg } from './valid
 export { _createIcon, _createIconNoSpan, IconName } from './utils/icon';
 export { _formatNumberCommas } from './utils/number';
 export { _mergeDeep } from './utils/mergeDeep';
-export { _addFocusableContainerListener, _focusGridInnerElement, _focusNextGridCoreContainer } from './utils/gridFocus';
+export {
+    _addFocusableContainerListener,
+    _attemptToRestoreCellFocus,
+    _focusGridInnerElement,
+    _focusNextGridCoreContainer,
+} from './utils/gridFocus';
 
 // charts
 export * from './interfaces/iChartOptions';
