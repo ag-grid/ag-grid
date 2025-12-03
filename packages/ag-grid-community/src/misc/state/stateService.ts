@@ -41,7 +41,7 @@ export class StateService extends BeanStub implements NamedBean {
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
     private suppressEvents = true;
-    private readonly queuedUpdateSources = new Set<keyof GridState | 'gridInitializing' | 'api'>();
+    private readonly queuedUpdateSources: Set<keyof GridState | 'gridInitializing' | 'api'> = new Set();
     private readonly dispatchStateUpdateEventDebounced = _debounce(
         this,
         () => this.dispatchQueuedStateUpdateEvents(),
@@ -73,7 +73,7 @@ export class StateService extends BeanStub implements NamedBean {
     );
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
-    private readonly staleStateKeys = new Set<keyof GridState>();
+    private readonly staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
         const { gos, ctrlsSvc, colDelayRenderSvc } = this.beans;
@@ -147,7 +147,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         const source = 'api';
 
-        const ignoreSet = propertiesToIgnore && new Set(propertiesToIgnore);
+        const ignoreSet = propertiesToIgnore ? new Set(propertiesToIgnore) : undefined;
 
         this.setGridReadyState(state, source, ignoreSet);
 
@@ -459,10 +459,8 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
         if (shouldSetAggregationState) {
-            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }, valueIndex) => {
-                const columnState = getColumnState(colId);
-                columnState.aggFunc = aggFunc;
-                columnState.valueIndex = valueIndex;
+            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }) => {
+                getColumnState(colId).aggFunc = aggFunc;
             });
         }
         if (shouldSetAggregationState || !partialColumnState) {
@@ -874,10 +872,14 @@ export class StateService extends BeanStub implements NamedBean {
 
     private updateColumnState(features: (keyof GridState)[]): void {
         const newColumnState = this.getColumnState();
+        let hasChanged = false;
         const cachedState = this.cachedState;
-        const hasChanged = Object.keys(newColumnState).some(
-            (key: keyof typeof newColumnState) => !_jsonEquals(newColumnState[key], cachedState[key])
-        );
+        for (const key of Object.keys(newColumnState) as (keyof GridState)[]) {
+            const value = (newColumnState as any)[key];
+            if (!_jsonEquals(value, cachedState[key])) {
+                hasChanged = true;
+            }
+        }
 
         this.cachedState = {
             ...cachedState,
