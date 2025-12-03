@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions, Module } from 'ag-grid-community';
+import type { GridOptions, Module, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout, cachedJSONObjects } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
 
@@ -170,6 +170,114 @@ describe('ag-grid formulas general behaviour', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ops row-number:"1" A:5 B:2 C:"Hi" add:7 subtract:3 multiply:10 divide:2.5 exponent:25 concat:"Hi there" equal:false notEqual:true greaterThan:true lessThan:false greaterThanOrEqual:true lessThanOrEqual:false
         `);
+    });
+
+    test('value getters run once per row when formulas are enabled', async () => {
+        const formatCurrency = ({ value }: ValueFormatterParams) => `$ ${Number(value ?? 0).toFixed(2)}`;
+        const subtotalCalls: Array<{ id: number; price: number; quantity: number }> = [];
+        const subtotalGetter = (params: ValueGetterParams) => {
+            const id = Number(params.data?.id ?? NaN);
+            const price = Number(params.data?.price ?? 0);
+            const quantity = Number(params.data?.quantity ?? 0);
+            subtotalCalls.push({ id, price, quantity });
+            return price * quantity;
+        };
+
+        const rowData = [
+            { id: 1, product: 'Apples', price: 1.2, quantity: 5 },
+            { id: 2, product: 'Oranges', price: 0.8, quantity: 8 },
+            { id: 3, product: 'Bananas', price: 0.6, quantity: 10 },
+        ];
+
+        const api = await gridsManager.createGridAndWait('formulas-value-getter-once', {
+            columnDefs: cachedJSONObjects.array([
+                { field: 'product' },
+                { field: 'price', valueFormatter: formatCurrency },
+                { field: 'quantity', maxWidth: 120 },
+                {
+                    field: 'subtotal',
+                    valueFormatter: formatCurrency,
+                    valueGetter: subtotalGetter,
+                },
+                { field: 'total', allowFormula: true, valueFormatter: formatCurrency },
+                { field: 'total2', allowFormula: true, valueFormatter: formatCurrency },
+            ]),
+            defaultColDef: {
+                editable: true,
+                flex: 1,
+            },
+            getRowId: (params) => `${params.data.id}`,
+            rowData,
+        });
+
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        let gridRows = new GridRows(api, 'initial');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:value-a1 value:2
+            ├── LEAF id:value-a2 value:4
+            ├── LEAF id:value-a3 value:6
+            ├── LEAF id:value-a4 value:8
+            ├── LEAF id:sum-a1-a4 value:20
+            ├── LEAF id:sumif-a-range-gt-4 value:14
+            ├── LEAF id:sumif-high-category-a-values value:12
+            ├── LEAF id:sumif-high-category-b-values value:60
+            ├── LEAF id:minus-a3-minus-a1 value:4
+            ├── LEAF id:multiply-a1-a2-times-2 value:16
+            ├── LEAF id:divide-a3-by-a2 value:1.5
+            ├── LEAF id:min-a1-a4 value:2
+            ├── LEAF id:max-a1-a4 value:8
+            ├── LEAF id:average-a1-a4 value:5
+            ├── LEAF id:median-a1-a4 value:5
+            ├── LEAF id:percent-b2 value:0.2
+            ├── LEAF id:power-b2-squared value:400
+            └── LEAF id:rand-fixed value:0.123
+        `);
+
+        const sortedCalls1 = subtotalCalls.sort((a, b) => a.id - b.id);
+        subtotalCalls.length = 0; // clear calls
+
+        api.setGridOption(
+            'columnDefs',
+            cachedJSONObjects.array([
+                { field: 'product' },
+                { field: 'price', valueFormatter: formatCurrency },
+                { field: 'quantity', maxWidth: 120 },
+                {
+                    field: 'subtotal',
+                    valueFormatter: formatCurrency,
+                    valueGetter: subtotalGetter,
+                },
+                { field: 'total', allowFormula: false, valueFormatter: formatCurrency },
+                { field: 'total2', allowFormula: true, valueFormatter: formatCurrency },
+            ])
+        );
+
+        gridRows = new GridRows(api, 'update total2 column');
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:value-a1 value:2
+            ├── LEAF id:value-a2 value:4
+            ├── LEAF id:value-a3 value:6
+            ├── LEAF id:value-a4 value:8
+            ├── LEAF id:sum-a1-a4 value:20
+            ├── LEAF id:sumif-a-range-gt-4 value:14
+            ├── LEAF id:sumif-high-category-a-values value:12
+            ├── LEAF id:sumif-high-category-b-values value:60
+            ├── LEAF id:minus-a3-minus-a1 value:4
+            ├── LEAF id:multiply-a1-a2-times-2 value:16
+            ├── LEAF id:divide-a3-by-a2 value:1.5
+            ├── LEAF id:min-a1-a4 value:2
+            ├── LEAF id:max-a1-a4 value:8
+            ├── LEAF id:average-a1-a4 value:5
+            ├── LEAF id:median-a1-a4 value:5
+            ├── LEAF id:percent-b2 value:0.2
+            ├── LEAF id:power-b2-squared value:400
+            └── LEAF id:rand-fixed value:0.123
+        `);
+
+        expect(sortedCalls1).toEqual(rowData.map(({ id, price, quantity }) => ({ id, price, quantity })));
     });
 
     test('numeric helpers and documented formulas evaluate across rows', async () => {

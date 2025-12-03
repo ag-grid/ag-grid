@@ -9,7 +9,13 @@ This page focuses on grouping-specific configuration; see the [Row Dragging](./r
 
 ## Managed Row Dragging Requirements
 
-[Managed Row Dragging](./row-dragging-managed/) can now update grouped data automatically. The grid moves the dragged rows or groups and updates the underlying row data for you.
+[Managed Row Dragging](./row-dragging-managed/) can update grouped data automatically.
+The grid moves the dragged rows or groups and updates the underlying row data.
+
+In this example, users can drag entire region or country branches as well as individual leaves.
+
+{% gridExampleRunner title="Managed Row Drag Across Regions" name="managed-row-group-drag-multi-level" /%}
+
 When using it with grouping, keep the following in mind:
 
 * `getRowId` is required to uniquely identify rows.
@@ -21,24 +27,6 @@ When using it with grouping, keep the following in mind:
 * Managed drag works only with [Client-Side Row Model](./row-models/#client-side).
 
 See [Row Grouping Edit](./grouping-edit/) for more on editing grouped data and `refreshAfterGroupEdit`.
-
-### Single-Level Groups
-
-This scenario enables row dragging with row grouping and editing of grouped data.
-
-{% gridExampleRunner title="Managed Row Drag Between Teams" name="managed-row-group-drag-single-level"  /%}
-
-Key configuration points:
-
-* `rowDragManaged`, `refreshAfterGroupEdit`, and `getRowId` allow the grid to update the data and regroup the rows automatically.
-* `suppressMoveWhenRowDragging` keeps the grid stable while users hover over other groups.
-* Drag handles are only rendered on the `task` column so group rows are not draggable.
-
-### Multi-Level Groups
-
-In this example, users can drag entire region or country branches as well as individual leaves.
-
-{% gridExampleRunner title="Managed Row Drag Across Regions" name="managed-row-group-drag-multi-level" /%}
 
 ## API Reference
 
