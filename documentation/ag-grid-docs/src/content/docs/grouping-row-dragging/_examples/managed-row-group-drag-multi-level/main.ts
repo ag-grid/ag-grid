@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
 const gridOptions: GridOptions<IAthlete> = {
     columnDefs: [
         { field: 'country', width: 120, rowGroup: true, editable: true },
-        { field: 'year', width: 90, type: 'numberColumn', rowGroup: true, editable: true },
+        { field: 'year', width: 90, rowGroup: true, editable: true },
         { field: 'athlete', minWidth: 150 },
         { field: 'age', minWidth: 50, filter: 'agNumberColumnFilter' },
         { field: 'date', width: 110 },

@@ -28,12 +28,8 @@ const gridOptions: GridOptions<GroupAssignment> = {
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: { values: REGION_LIST },
-            minWidth: 140,
         },
-        { field: 'pod', minWidth: 140 },
-        { field: 'owner', minWidth: 140 },
-        { headerName: 'Backlog', field: 'backlog', width: 130 },
-        { field: 'focus', flex: 1, editable: true },
+        { field: 'owner' },
     ],
     defaultColDef: {
         sortable: true,
@@ -41,7 +37,6 @@ const gridOptions: GridOptions<GroupAssignment> = {
         filter: true,
     },
     autoGroupColumnDef: {
-        headerName: 'Region / Pod',
         minWidth: 220,
     },
     rowData: getAssignments(),

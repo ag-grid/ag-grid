@@ -1172,13 +1172,13 @@
                         },
                         {
                             "type": "item",
-                            "title": "Grouping Edit",
+                            "title": "Editing Groups",
                             "path": "grouping-edit",
                             "isEnterprise": true
                         },
                         {
                             "type": "item",
-                            "title": "Grouping Row Dragging",
+                            "title": "Row Dragging",
                             "path": "grouping-row-dragging",
                             "isEnterprise": true
                         }
