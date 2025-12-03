@@ -78,6 +78,15 @@
         &:not(.ag-filter-active) {
             display: none;
         }
+
+        &.ag-filter-active {
+            background-image: unset;
+            outline: unset;
+        }
+
+        &.ag-filter-active .ag-icon-filter {
+            color: var(--ag-icon-color);
+        }
     }
 
     .ag-set-filter-group-icons {
