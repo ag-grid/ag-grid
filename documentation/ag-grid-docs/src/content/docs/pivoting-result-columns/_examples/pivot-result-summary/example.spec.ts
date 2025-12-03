@@ -147,7 +147,7 @@ test.agExample(import.meta, () => {
                         newValue: 1234,
                         oldValue: 7,
                         value: 7,
-                        valueChanged: false,
+                        valueChanged: true,
                     },
                 ],
             ],
@@ -187,7 +187,7 @@ test.agExample(import.meta, () => {
                         newValue: 1234,
                         oldValue: 7,
                         value: 7,
-                        valueChanged: false,
+                        valueChanged: true,
                     },
                 ],
                 [

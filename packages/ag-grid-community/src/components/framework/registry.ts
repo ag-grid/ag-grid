@@ -126,7 +126,6 @@ export class Registry
         }
 
         this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
-
         return null;
     }
 

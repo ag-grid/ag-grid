@@ -202,8 +202,17 @@ export async function executeTransactionsAsync<TData = any>(
     return results;
 }
 
-export function isAgHtmlElementVisible(element: Element | null | undefined): boolean {
-    let current = element;
+export function isAgHtmlElementVisible(element: Element | string | null | undefined): boolean {
+    if (!element) {
+        return false;
+    }
+    if (typeof element === 'string') {
+        element = document.querySelector(element);
+        if (!element) {
+            return false;
+        }
+    }
+    let current: Element | null = element;
     while (current && current.role !== 'row') {
         const classList = current.classList;
         if (classList.contains('ag-hidden') || classList.contains('ag-invisible')) {

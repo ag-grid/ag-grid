@@ -16,6 +16,7 @@ import type {
     ICellRendererParams,
     IDetailCellRendererParams,
     IDragAndDropImageParams,
+    IExportingOverlayParams,
     IFilter,
     IFloatingFilterParams,
     IGroupCellRendererParams,
@@ -23,7 +24,9 @@ import type {
     IHeaderParams,
     ILoadingCellRendererParams,
     ILoadingOverlayParams,
+    INoMatchingRowsOverlayParams,
     INoRowsOverlayParams,
+    IOverlayParams,
     IStatusPanelParams,
     ITooltipParams,
     SharedFilterUi,
@@ -123,12 +126,23 @@ export interface CustomDragAndDropImageProps<TData = any, TContext = any>
 export interface CustomInnerHeaderProps<TData = any, TContext = any> extends IHeaderParams<TData, TContext> {}
 export interface CustomInnerHeaderGroupProps<TData = any, TContext = any> extends IHeaderGroupParams<TData, TContext> {}
 
+/** Props provided to custom overlay components */
+export type CustomOverlayProps<TData = any, TContext = any> = IOverlayParams<TData, TContext>;
+
 /** Props provided to custom loading overlay component */
 export interface CustomLoadingOverlayProps<TData = any, TContext = any>
     extends ILoadingOverlayParams<TData, TContext> {}
 
+/** Props provided to custom exporting overlay component */
+export interface CustomExportingOverlayProps<TData = any, TContext = any>
+    extends IExportingOverlayParams<TData, TContext> {}
+
 /** Props provided to custom no-rows overlay component */
 export interface CustomNoRowsOverlayProps<TData = any, TContext = any> extends INoRowsOverlayParams<TData, TContext> {}
+
+/** Props provided to custom no-matching-rows overlay component */
+export interface CustomNoMatchingRowsOverlayProps<TData = any, TContext = any>
+    extends INoMatchingRowsOverlayParams<TData, TContext> {}
 
 /** Props provided to custom status panel components */
 export interface CustomStatusPanelProps<TData = any, TContext = any> extends IStatusPanelParams<TData, TContext> {}

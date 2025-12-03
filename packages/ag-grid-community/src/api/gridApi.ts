@@ -210,14 +210,22 @@ export interface _RowSelectionGridApi<TData = any> {
 export interface _OverlayGridApi {
     /**
      * Show the 'loading' overlay.
-     * @deprecated v32 `showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).
+     * @deprecated v32 `showLoadingOverlay` is deprecated. Use the grid option "loading"=true or setGridOption("loading", true) instead.
      */
     showLoadingOverlay(): void;
 
-    /** Show the no-rows overlay. If `suppressNoRowsOverlay` is set, or if `loading` is true, this will not do anything. */
+    /**
+     * Show the no-rows overlay. If `loading` is true, this will not do anything.
+     *
+     *  - **Prefer  `setGridOption('activeOverlay, 'agNoRowsOverlay')` .**
+     */
     showNoRowsOverlay(): void;
 
-    /** Hide the no-rows overlay if it is showing. */
+    /**
+     * Hide the no-rows overlay if it is showing.
+     *
+     * - **Prefer  `setGridOption('activeOverlay, undefined)` .**
+     */
     hideOverlay(): void;
 }
 

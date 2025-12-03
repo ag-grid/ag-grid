@@ -139,7 +139,11 @@ In this example, the column `rankingChange` uses the following sort definition:
 const gridOptions = {
     columnDefs: [
         // ... other columns 
-        { field: 'rankingChange', sort: { type: 'absolute', direction: 'asc' } },
+        {
+            field: 'rankingChange',
+            sort: { direction: 'asc', type: 'absolute' },
+            sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
+        },
     ],
 };
 ```

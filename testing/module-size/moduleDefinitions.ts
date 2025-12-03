@@ -51,7 +51,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 223.75,
-    AllEnterpriseModule: 1574.12,
+    AllEnterpriseModule: 1575,
     AiToolkitModule: 19.41,
     BatchEditModule: 84.54,
     CellSelectionModule: 59,
@@ -136,7 +136,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 516 };
+export const baseModule = { modules: [], expectedSize: 520 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,

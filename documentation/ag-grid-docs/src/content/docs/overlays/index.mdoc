@@ -4,6 +4,10 @@ title: "Overlays"
 
 Overlays are used for displaying messages over the top of the grid. There are two built-in overlays: loading and no-rows.
 
+{% warning %}
+This page documents the legacy approach to handling overlays. For the latest documentation, see [Overlays Overview](./overlays-overview/).
+{% /warning %}
+
 ## Loading overlay
 
 {% metaTag tags=["showLoadingOverlay"] /%}
@@ -19,6 +23,10 @@ The loading overlay takes precedence over the no-rows overlay and is not depende
 ## No rows overlay
 
 When `rowData` is set to an empty array `[]`, the grid automatically displays the no-rows overlay. The no-rows overlay can also be programmatically shown / hidden via the grid API.
+
+{% warning %}
+It is recommended to use the [Active Overlay](./overlays-active/) to manually display an overlay.
+{% /warning %}
 
 {% apiDocumentation source="grid-api/api.json" section="overlays" names=["showNoRowsOverlay", "hideOverlay"] /%}
 

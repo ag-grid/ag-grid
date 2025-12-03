@@ -1,8 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager, applyTransactionChecked, setRowDataChecked } from '../test-utils';
+import { TestGridsManager, applyTransactionChecked, isAgHtmlElementVisible, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({
@@ -12,11 +13,32 @@ describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance;
 
     function hasLoadingOverlay() {
-        return !!document.querySelector('.ag-overlay-loading-center');
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-loading-center'));
     }
 
     function hasNoRowsOverlay() {
-        return !!document.querySelector('.ag-overlay-no-rows-center');
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'));
+    }
+
+    function hasLoadingOverlayWrapper() {
+        return isAgHtmlElementVisible('.ag-overlay-loading-wrapper');
+    }
+
+    function hasNoRowsOverlayWrapper() {
+        return isAgHtmlElementVisible('.ag-overlay-no-rows-wrapper');
+    }
+
+    function hasCustomOverlayWrapper() {
+        return isAgHtmlElementVisible('.ag-overlay-modal-wrapper');
+    }
+
+    function getOverlayWrapperPadding(): number {
+        const wrapper = document.querySelector<HTMLElement>('.ag-overlay-wrapper');
+        if (!wrapper) {
+            return 0;
+        }
+        const padding = wrapper.style.getPropertyValue('padding-top');
+        return padding ? Number.parseFloat(padding) : 0;
     }
 
     beforeEach(() => {
@@ -27,6 +49,9 @@ describe('ag-grid overlays state', () => {
     afterEach(() => {
         gridsManager.reset();
         consoleWarnSpy.mockRestore();
+        expect(hasNoRowsOverlayWrapper()).toBeFalsy();
+        expect(hasLoadingOverlayWrapper()).toBeFalsy();
+        expect(hasCustomOverlayWrapper()).toBeFalsy();
     });
 
     describe('deprecation warnings', () => {
@@ -126,12 +151,17 @@ describe('ag-grid overlays state', () => {
             test('should not show loading overlay with initial empty rows', () => {
                 gridsManager.createGrid('myGrid', { columnDefs, suppressLoadingOverlay: true, rowData: [] });
                 expect(hasLoadingOverlay()).toBeFalsy();
+                expect(hasNoRowsOverlay()).toBeTruthy();
             });
 
             test('should show no-rows overlay', () => {
-                const api = gridsManager.createGrid('myGrid', { columnDefs, suppressLoadingOverlay: true });
-                expect(hasNoRowsOverlay()).toBeTruthy();
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    suppressLoadingOverlay: true,
+                });
+
                 expect(hasLoadingOverlay()).toBeFalsy();
+                expect(hasNoRowsOverlay()).toBeTruthy();
 
                 setRowDataChecked(api, []);
                 expect(hasLoadingOverlay()).toBeFalsy();
@@ -162,10 +192,12 @@ describe('ag-grid overlays state', () => {
             setRowDataChecked(api, []);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
             setRowDataChecked(api, [{ athlete: 'Michael Phelps', country: 'US' }]);
             expect(hasLoadingOverlay()).toBeFalsy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
         });
 
         test('it behaves correctly also when columns are set after rows', () => {
@@ -174,9 +206,11 @@ describe('ag-grid overlays state', () => {
 
             api.setGridOption('columnDefs', columnDefs);
             expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
             api.setGridOption('columnDefs', undefined);
             expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
         });
     });
 
@@ -185,6 +219,25 @@ describe('ag-grid overlays state', () => {
             gridsManager.createGrid('myGrid', { columnDefs, loading: true });
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+
+        test('loading = true has precedence over rowData=[]', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, loading: true });
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('rowData', []);
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', columnDefs); // to force a refresh
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
         });
 
         test('When rowData=null/undefined or empty array, no rows overlay is not displayed', () => {
@@ -222,6 +275,7 @@ describe('ag-grid overlays state', () => {
             applyTransactionChecked(api, { add: [{}] });
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
         });
 
         test('loading=true has higher priority than suppressLoadingOverlay', () => {
@@ -321,12 +375,14 @@ describe('ag-grid overlays state', () => {
             api.setGridOption('loading', true);
             expect(hasLoadingOverlay()).toBeTruthy();
             expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
             api.setGridOption('loading', undefined); // undefined is coerced to false
             expect(hasLoadingOverlay()).toBeFalsy();
 
             api.setGridOption('loading', false);
             expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
         });
 
         test('initial empty rows, loading true has priority', () => {
@@ -396,6 +452,54 @@ describe('ag-grid overlays state', () => {
 
             api.setGridOption('loading', false);
             expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+        });
+    });
+
+    // If the user has called api.showNoRowsOverlay(), we respect that choice and do not show the provided overlays until
+    // the user calls api.hideOverlay()
+    describe('user shows no rows overlay manually', () => {
+        test('loading true has priority over user action', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs });
+            expect(hasLoadingOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.setGridOption('loading', true);
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setGridOption('loading', false);
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.hideOverlay();
+
+            // No overlay should be shown
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+
+            api.setGridOption('columnDefs', columnDefs); // to force a refresh which triggers overlay logic to run
+
+            // This is potentially not what the user would expect but this is where the activeOverlay feature will work
+            // a lot cleaner for them if they want to take control of overlays.
+            expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
+
+        test('manual hide priority over user action', () => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [{}] });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            api.showNoRowsOverlay();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.hideOverlay();
+
             expect(hasNoRowsOverlay()).toBeFalsy();
         });
     });
@@ -476,18 +580,62 @@ describe('ag-grid overlays state', () => {
         test('it gets applied next time the no-rows is shown and cannot be used to hide the current no-rows overlay (partially reactive)', () => {
             const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [] });
             expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
             api.setGridOption('suppressNoRowsOverlay', true);
             expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
             setRowDataChecked(api, []);
             expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
             api.setGridOption('suppressNoRowsOverlay', false);
             expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
 
-            setRowDataChecked(api, []);
+            api.setGridOption('rowData', []);
             expect(hasNoRowsOverlay()).toBeTruthy();
+            expect(hasCustomOverlayWrapper()).toBeFalsy();
+        });
+    });
+
+    describe('overlay wrapper padding', () => {
+        test('no rows overlay applies header padding when first shown', async () => {
+            const headerHeight = 64;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'Michael Phelps', sport: 'Swimming', age: 23 }],
+                headerHeight,
+            });
+
+            expect(getOverlayWrapperPadding()).toBe(0);
+
+            api.setGridOption('rowData', []);
+
+            await waitFor(() => expect(hasNoRowsOverlay()).toBeTruthy());
+            await waitFor(() => expect(getOverlayWrapperPadding()).toBe(headerHeight));
+        });
+
+        test('no rows overlay applies header padding after loading overlay', async () => {
+            const headerHeight = 72;
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                loading: true,
+                headerHeight,
+            });
+
+            await waitFor(() => expect(hasLoadingOverlay()).toBeTruthy());
+            expect(getOverlayWrapperPadding()).toBe(0);
+
+            api.setGridOption('rowData', []);
+            await waitFor(() => expect(hasLoadingOverlay()).toBeTruthy());
+            expect(getOverlayWrapperPadding()).toBe(0);
+
+            api.setGridOption('loading', false);
+
+            await waitFor(() => expect(hasNoRowsOverlay()).toBeTruthy());
+            await waitFor(() => expect(getOverlayWrapperPadding()).toBe(headerHeight));
         });
     });
 });
