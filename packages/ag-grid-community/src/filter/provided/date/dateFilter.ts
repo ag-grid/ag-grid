@@ -46,31 +46,6 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         this.dateConditionFromComps[0].afterGuiAttached(params);
     }
 
-    public override afterGuiDetached(): void {
-        super.afterGuiDetached();
-
-        this.clearInvalidInputs();
-    }
-
-    private clearInvalidInputs(): void {
-        // Browser behavioural difference between Firefox and Chrome/Safari:
-        // When users enter incomplete dates in a filter input, then close the filter and re-open it, FF will clear the input, while the other browsers won't
-        // As such, when we have invalid inputs for the `inRange` filter, we want to mimic this behaviour:
-        // In FF we will clear any inputs that are invalid. In other browsers, we do nothing (which effectively keeps the input state)
-        if (_isBrowserFirefox()) {
-            for (const comp of this.dateConditionFromComps.concat(this.dateConditionToComps)) {
-                const isInputValid = comp.getValidity()?.valid ?? true;
-                if (!isInputValid) {
-                    comp.setDate(null);
-                }
-            }
-        }
-    }
-
-    protected override getState() {
-        return this.hasInvalidInputs();
-    }
-
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
         super.commonUpdateSimpleParams(params);
 
