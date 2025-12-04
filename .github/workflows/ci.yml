@@ -28,6 +28,11 @@ on:
         type: boolean
         default: false
         required: true
+      run_bundle_tests:
+        description: 'Force run package tests'
+        type: boolean
+        default: false
+        required: true
       nx_command:
         type: 'choice'
         required: true
@@ -244,7 +249,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
     needs: calc_matrix
-    if: ${{ needs.calc_matrix.result == 'success' && !inputs.skip_bundle_size }}
+    if: (needs.init.outputs.build_type == 'latest' && needs.calc_matrix.result == 'success' && !inputs.skip_bundle_size) || (needs.init.outputs.build_type == 'release' && inputs.run_bundle_tests)
     strategy:
       matrix: ${{ fromJson(needs.calc_matrix.outputs.bundle_test_matrix )}}
       fail-fast: false
