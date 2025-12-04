@@ -50,11 +50,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         // We deliberately keep invalid input state for inRange filters when not in Firefox
         // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
         // in Firefox but not in Chrome/Safari)
-        return (
-            !_isBrowserFirefox() &&
-            this.hasInvalidInputs() &&
-            this.getConditionTypes().some((type) => type === 'inRange')
-        );
+        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
     }
 
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
@@ -111,10 +107,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
         // (even though a HTML date should be four digits per the spec), which triggers validation, and the
         // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
-        const isBrowserFirefox = _isBrowserFirefox();
+        const shouldDebounceReport = _isBrowserFirefox();
 
-        (isFrom ? from : to).setCustomValidity(message, !isBrowserFirefox); // Set validity error state for target input
-        (isFrom ? to : from).setCustomValidity('', !isBrowserFirefox); // Reset validity error state for other input
+        (isFrom ? from : to).setCustomValidity(message, !shouldDebounceReport); // Set validity error state for target input
+        (isFrom ? to : from).setCustomValidity('', !shouldDebounceReport); // Reset validity error state for other input
 
         if (message.length > 0) {
             beans.ariaAnnounce.announceValue(message, 'dateFilter');

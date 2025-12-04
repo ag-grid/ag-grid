@@ -46,11 +46,7 @@ export class NumberFilter extends SimpleFilter<
         // We deliberately keep invalid input state for inRange filters when not in Firefox
         // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
         // in Firefox but not in Chrome/Safari)
-        return (
-            !_isBrowserFirefox() &&
-            this.hasInvalidInputs() &&
-            this.getConditionTypes().some((type) => type === 'inRange')
-        );
+        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
     }
 
     private refreshInputValidation(): void {
