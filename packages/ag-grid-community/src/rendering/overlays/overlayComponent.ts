@@ -45,15 +45,12 @@ export interface INoMatchingRowsOverlayParams<TData = any, TContext = any> exten
 /**
  * Parameters available to configure the provided overlays.
  */
-export type OverlayComponentUserParams = {
-    [K in OverlayType]?: K extends 'loading'
-        ? LoadingOverlayUserParams
-        : K extends 'noRows'
-          ? NoRowsOverlayUserParams
-          : K extends 'noMatchingRows'
-            ? NoMatchingRowsOverlayUserParams
-            : ExportingOverlayUserParams;
-};
+export interface OverlayComponentUserParams {
+    loading: LoadingOverlayUserParams;
+    noRows: NoRowsOverlayUserParams;
+    noMatchingRows: NoMatchingRowsOverlayUserParams;
+    exporting: ExportingOverlayUserParams;
+}
 
 export type IOverlayParams<TData = any, TContext = any> =
     | ILoadingOverlayParams<TData, TContext>

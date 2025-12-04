@@ -31,7 +31,7 @@ export class ExportingOverlayComponent
     private readonly eExportingIcon: HTMLElement = RefPlaceholder;
     private readonly eExportingText: HTMLElement = RefPlaceholder;
 
-    public init(params: IOverlayParams & OverlayComponentUserParams): void {
+    public init(params: IExportingOverlayParams & OverlayComponentUserParams): void {
         const { beans } = this;
 
         this.setTemplate(ExportingOverlayElement);

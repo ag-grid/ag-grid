@@ -50,7 +50,7 @@ The provided overlays can be customised to change their content or completely re
 
 Customise the text within the provided overlays via the `overlayComponentParams` grid option using the `OverlayComponentUserParams` interface.
 
-{% interfaceDocumentation interfaceName="OverlayComponentUserParams" config={"asCode":false } /%}
+{% interfaceDocumentation interfaceName="OverlayComponentUserParams" /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -58,7 +58,8 @@ const gridOptions = {
         loading: { overlayText: 'Please wait while your data is loading...' },
         noRows: { overlayText: 'This grid has no data!' },
         noMatchingRows: { overlayText: 'Current Filter Matches No Rows' },
-    } satisfies OverlayComponentUserParams,
+        exporting: { overlayText: 'Exporting your data...' },
+    }
 };
 ```
 

@@ -32,7 +32,7 @@ export class LoadingOverlayComponent
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eLoadingText: HTMLElement = RefPlaceholder;
 
-    public init(params: IOverlayParams & OverlayComponentUserParams): void {
+    public init(params: ILoadingOverlayParams & OverlayComponentUserParams): void {
         const { beans, gos } = this;
         const customTemplate = _makeNull(gos.get('overlayLoadingTemplate')?.trim());
 
