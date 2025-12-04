@@ -15,6 +15,7 @@ import { _parseDateTimeFromString } from 'ag-grid-community';
 
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { SERIES_HIGHLIGHT } from '../chartTheme';
 
 export abstract class CartesianChartProxy<
     TSeries extends
@@ -236,11 +237,7 @@ export abstract class CartesianChartProxy<
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {
         return {
             series: {
-                highlight: {
-                    unhighlightedSeries: {
-                        opacity: 1,
-                    },
-                },
+                highlight: SERIES_HIGHLIGHT,
             },
         };
     }

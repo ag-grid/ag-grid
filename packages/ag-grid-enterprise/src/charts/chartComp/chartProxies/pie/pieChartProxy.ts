@@ -8,6 +8,7 @@ import type {
 
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { SERIES_HIGHLIGHT } from '../chartTheme';
 
 interface DonutOffset {
     offsetAmount: number;
@@ -130,11 +131,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['pie' | 'donut'] {
         return {
             series: {
-                highlight: {
-                    unhighlightedSeries: {
-                        opacity: 1,
-                    },
-                },
+                highlight: SERIES_HIGHLIGHT,
             },
         };
     }

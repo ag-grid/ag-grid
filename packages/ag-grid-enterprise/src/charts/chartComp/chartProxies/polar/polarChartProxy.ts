@@ -9,6 +9,7 @@ import type { SeriesGroupType } from 'ag-grid-community';
 
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { SERIES_HIGHLIGHT } from '../chartTheme';
 
 export class PolarChartProxy extends ChartProxy<
     AgPolarChartOptions,
@@ -102,11 +103,7 @@ export class PolarChartProxy extends ChartProxy<
         | 'radial-bar'] {
         return {
             series: {
-                highlight: {
-                    unhighlightedSeries: {
-                        opacity: 1,
-                    },
-                },
+                highlight: SERIES_HIGHLIGHT,
             },
         };
     }

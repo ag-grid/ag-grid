@@ -1,4 +1,11 @@
-import type { AgChartTheme, AgChartThemeName, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
+import type {
+    AgBaseHighlightStyleOptions,
+    AgChartTheme,
+    AgChartThemeName,
+    AgChartThemeOverrides,
+    AgChartThemePalette,
+    AgMultiSeriesHighlightOptions,
+} from 'ag-charts-types';
 
 import { _warn } from 'ag-grid-community';
 
@@ -273,3 +280,15 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
 
     return customChartTheme as AgChartTheme;
 }
+
+export const SERIES_HIGHLIGHT: AgMultiSeriesHighlightOptions<AgBaseHighlightStyleOptions> = {
+    unhighlightedSeries: {
+        opacity: 1,
+    },
+    unhighlightedItem: {
+        opacity: 1,
+    },
+    highlightedItem: {
+        strokeWidth: 2,
+    },
+};
