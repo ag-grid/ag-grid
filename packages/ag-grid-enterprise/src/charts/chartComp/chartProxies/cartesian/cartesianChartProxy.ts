@@ -6,6 +6,7 @@ import type {
     AgCartesianSeriesOptions,
     AgChartTheme,
     AgChartThemeName,
+    AgChartThemeOverrides,
     AgLineSeriesOptions,
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
@@ -230,5 +231,17 @@ export abstract class CartesianChartProxy<
             return false;
         };
         return isHorizontal(theme);
+    }
+
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {
+        return {
+            series: {
+                highlight: {
+                    unhighlightedSeries: {
+                        opacity: 1,
+                    },
+                },
+            },
+        };
     }
 }

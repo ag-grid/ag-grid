@@ -1,4 +1,4 @@
-import type { AgCartesianAxisOptions } from 'ag-charts-types';
+import type { AgCartesianAxisOptions, AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { ChartType, SeriesChartType } from 'ag-grid-community';
 
@@ -47,7 +47,7 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         return axes;
     }
 
-    public getSeries(params: UpdateParams): any {
+    protected override getSeries(params: UpdateParams): any {
         const { fields, seriesChartTypes } = params;
         const [category] = params.categories;
 
@@ -84,5 +84,19 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         }
 
         return { primaryYKeys, secondaryYKeys };
+    }
+
+    protected override setSeriesChartThemeDefaults(overrides: AgChartThemeOverrides): void {
+        const seriesOverrides = this.getSeriesChartThemeDefaults();
+        if (!seriesOverrides) {
+            return;
+        }
+        const chartTypes = new Set<ChartType>();
+        for (const seriesChartType of this.chartProxyParams.seriesChartTypes) {
+            chartTypes.add(seriesChartType.chartType);
+        }
+        for (const chartType of chartTypes) {
+            overrides[getSeriesType(chartType) as 'line' | 'bar' | 'area'] = seriesOverrides;
+        }
     }
 }
