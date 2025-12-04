@@ -119,7 +119,7 @@ export class DateCompWrapper {
                 if (defer) {
                     this.debouncedReport(eInput);
                 } else {
-                    eInput.reportValidity();
+                    reportValidity(eInput);
                 }
             }
 
