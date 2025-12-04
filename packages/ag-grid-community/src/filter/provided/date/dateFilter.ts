@@ -44,6 +44,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         super.afterGuiAttached(params);
 
         this.dateConditionFromComps[0].afterGuiAttached(params);
+
+        this.refreshInputValidation();
     }
 
     protected override shouldKeepInvalidInputState(): boolean {
@@ -91,7 +93,13 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    private validateInputs(position: number, isFrom = false): void {
+    private refreshInputValidation(): void {
+        for (let i = 0; i < this.dateConditionFromComps.length; i++) {
+            this.refreshInputPairValidation(i, false, true);
+        }
+    }
+
+    private refreshInputPairValidation(position: number, isFrom = false, forceImmediate = false): void {
         const { dateConditionFromComps, dateConditionToComps, beans } = this;
         const from = dateConditionFromComps[position];
         const to = dateConditionToComps[position];
@@ -107,7 +115,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
         // (even though a HTML date should be four digits per the spec), which triggers validation, and the
         // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
-        const shouldDebounceReport = !_isBrowserFirefox();
+        const shouldDebounceReport = !_isBrowserFirefox() && !forceImmediate;
 
         (isFrom ? from : to).setCustomValidity(message, shouldDebounceReport); // Set validity error state for target input
         (isFrom ? to : from).setCustomValidity('', shouldDebounceReport); // Reset validity error state for other input
@@ -128,7 +136,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.validateInputs(position, fromTo === 'from');
+                    this.refreshInputPairValidation(position, fromTo === 'from');
                     this.onUiChanged();
                 },
                 filterParams: params as any,
