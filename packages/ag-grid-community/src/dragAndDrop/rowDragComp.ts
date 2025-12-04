@@ -82,11 +82,11 @@ export class RowDragComp extends Component {
         }
 
         const { beans, column, rowNode } = this;
-        const visibility = beans.rowDragSvc!.visibility;
-        const hideCompletely =
-            visibility === 'suppress' || (visibility === 'hidden' && !beans.dragAndDrop?.hasExternalDropZones());
+        const { gos, dragAndDrop, rowDragSvc } = beans;
+        const visibility = rowDragSvc?.visibility;
+        const hide = visibility === 'suppress' || (visibility === 'hidden' && !dragAndDrop?.hasExternalDropZones());
 
-        let displayed = !hideCompletely;
+        let displayed = !hide;
         let visible = displayed;
 
         if (displayed && !this.isCustomGui() && column) {
@@ -100,7 +100,7 @@ export class RowDragComp extends Component {
             }
         }
 
-        if (displayed && visible && rowNode.footer && beans.gos.get('rowDragManaged')) {
+        if (displayed && visible && rowNode.footer && gos.get('rowDragManaged')) {
             visible = false; // Footer rows in managed mode never show drag handles
             displayed = true;
         }
@@ -116,7 +116,7 @@ export class RowDragComp extends Component {
             this.setVisible(visible, SKIP_ARIA_HIDDEN);
         }
 
-        this.setDisabled(!visible || (visibility === 'disabled' && !beans.dragAndDrop?.hasExternalDropZones()));
+        this.setDisabled(!visible || (visibility === 'disabled' && !dragAndDrop?.hasExternalDropZones()));
 
         if (displayed) {
             this.setDisplayed(displayed, SKIP_ARIA_HIDDEN);
