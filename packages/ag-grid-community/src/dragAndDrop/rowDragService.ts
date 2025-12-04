@@ -31,7 +31,6 @@ export class RowDragService extends BeanStub implements NamedBean {
             newColumnsLoaded: refreshVisibility,
             columnRowGroupChanged: refreshVisibility,
             columnPivotModeChanged: refreshVisibility,
-            columnPivotChanged: refreshVisibility,
             sortChanged: refreshVisibility,
             filterChanged: refreshVisibility,
         });
@@ -111,7 +110,7 @@ export class RowDragService extends BeanStub implements NamedBean {
             return 'visible';
         }
 
-        const pivoting = beans.colModel.isPivotActive();
+        const pivoting = beans.colModel.isPivotMode();
 
         if ((pivoting || beans.rowGroupColsSvc?.columns?.length) && !gos.get('refreshAfterGroupEdit')) {
             return 'hidden';
