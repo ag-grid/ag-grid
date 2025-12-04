@@ -9,6 +9,7 @@ import {
     _createIconNoSpan,
     _setAriaExpanded,
     _setAriaLabel,
+    _setAriaRole,
     _setDisplayed,
 } from 'ag-grid-community';
 
@@ -70,6 +71,7 @@ export class ToolPanelFilterComp extends Component<ToolPanelFilterCompEvent> {
         // the aria-label should always be `ariaFilterActive`.
         const translate = this.getLocaleTextFunc();
         _setAriaLabel(eFilterIcon, translate('ariaFilterActive', 'Filter Active'));
+        _setAriaRole(eFilterIcon, 'img');
     }
 
     public setColumn(column: AgColumn): void {

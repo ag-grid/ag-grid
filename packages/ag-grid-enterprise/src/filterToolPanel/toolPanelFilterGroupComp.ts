@@ -13,6 +13,7 @@ import {
     _createIconNoSpan,
     _getShouldDisplayTooltip,
     _setAriaLabel,
+    _setAriaRole,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -154,6 +155,7 @@ export class ToolPanelFilterGroupComp extends Component {
             // the aria-label should always be `ariaFilterActive`.
             const translate = this.getLocaleTextFunc();
             _setAriaLabel(eIcon, translate('ariaFilterActive', 'Filter Active'));
+            _setAriaRole(eIcon, 'img');
         }
         this.filterGroupComp.addTitleBarWidget(eIcon);
     }
