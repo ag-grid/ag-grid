@@ -51,16 +51,16 @@ export function _fuzzySuggestions(params: {
  * {@link|https://github.com/ag-grid/ag-grid/issues/12473}
  */
 export function _getLevenshteinSimilarityDistance(source: string, target: string): number {
-    let inputLower = source.toLocaleLowerCase();
-    let targetLower = target.toLocaleLowerCase();
-    let swapTmp;
-
     const sourceLength = source.length;
     const targetLength = target.length;
 
     if (targetLength === 0) {
         return sourceLength ? sourceLength : 0;
     }
+
+    let inputLower = source.toLocaleLowerCase();
+    let targetLower = target.toLocaleLowerCase();
+    let swapTmp;
 
     // Always use the shorter string for columns to reduce space
     if (source.length < target.length) {
