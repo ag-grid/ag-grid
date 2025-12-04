@@ -81,7 +81,7 @@ export class RowDragComp extends Component {
             return; // Always visible row draggers do not refresh visibility
         }
 
-        const { beans } = this;
+        const { beans, column, rowNode } = this;
         const visibility = beans.rowDragSvc!.visibility;
         const hideCompletely =
             visibility === 'suppress' || (visibility === 'hidden' && !beans.dragAndDrop?.hasExternalDropZones());
@@ -89,30 +89,26 @@ export class RowDragComp extends Component {
         let displayed = !hideCompletely;
         let visible = displayed;
 
-        if (displayed) {
-            const column = this.column;
-            const customGui = this.isCustomGui();
-
-            if (!customGui && column) {
-                const rowDragProp = column.getColDef().rowDrag;
-                if (rowDragProp === false) {
-                    displayed = false;
-                } else {
-                    const shownSometimes = typeof rowDragProp === 'function';
-                    visible = column.isRowDrag(this.rowNode);
-                    displayed = shownSometimes || visible;
-                }
+        if (displayed && !this.isCustomGui() && column) {
+            const rowDragProp = column.getColDef().rowDrag;
+            if (rowDragProp === false) {
+                displayed = false;
+            } else {
+                const shownSometimes = typeof rowDragProp === 'function';
+                visible = column.isRowDrag(rowNode);
+                displayed = shownSometimes || visible;
             }
+        }
 
-            if (displayed && visible && this.rowNode.footer && beans.gos.get('rowDragManaged')) {
-                visible = false; // Footer rows in managed mode never show drag handles
-                displayed = true;
-            }
+        if (displayed && visible && rowNode.footer && beans.gos.get('rowDragManaged')) {
+            visible = false; // Footer rows in managed mode never show drag handles
+            displayed = true;
         }
 
         visible &&= displayed;
 
         // Those calls are ordered to avoid flicker when changing state
+
         if (!displayed) {
             this.setDisplayed(displayed, SKIP_ARIA_HIDDEN);
         }
