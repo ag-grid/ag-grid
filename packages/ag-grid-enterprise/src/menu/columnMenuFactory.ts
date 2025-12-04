@@ -1,11 +1,4 @@
-import type {
-    AgColumn,
-    AgProvidedColumnGroup,
-    DefaultMenuItem,
-    IColumnMenuFactory,
-    MenuItemDef,
-    NamedBean,
-} from 'ag-grid-community';
+import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, NamedBean } from 'ag-grid-community';
 import {
     BeanStub,
     _addGridCommonParams,
@@ -21,7 +14,7 @@ import { MenuList } from '../widgets/menuList';
 import type { MenuItemMapper } from './menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _removeRepeatsFromArray } from './menuItemMapper';
 
-export class ColumnMenuFactory extends BeanStub implements NamedBean, IColumnMenuFactory {
+export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'colMenuFactory' as const;
 
     public createMenu(
@@ -87,13 +80,6 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean, IColumnMen
         _removeRepeatsFromArray(result, MENU_ITEM_SEPARATOR);
 
         return result;
-    }
-
-    /**
-     * Returns a flat set of provided menu items names
-     */
-    public flattenMenuItems(columnMainMenuItems: (DefaultMenuItem | MenuItemDef)[]): string[] {
-        return columnMainMenuItems.reduce(menuItemsFlattener, []);
     }
 
     private getDefaultMenuOptions(column: AgColumn | null): DefaultMenuItem[] {
@@ -233,20 +219,4 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean, IColumnMen
 
         return result;
     }
-}
-
-function menuItemsFlattener(result: string[], item: DefaultMenuItem | MenuItemDef) {
-    if (typeof item === 'string') {
-        result.push(item);
-    }
-    if (typeof item === 'object') {
-        if (item.subMenu) {
-            // eslint-disable-next-line sonarjs/no-ignored-return
-            item.subMenu.reduce(menuItemsFlattener, result);
-        } else {
-            result.push(item.name);
-        }
-    }
-
-    return result;
 }

@@ -451,17 +451,8 @@ export class AgColumn<TValue = any>
 
     private getColDefAllowedSortTypes(): SortType[] {
         const res: SortType[] = [];
-        const { colMenuFactory } = this.beans;
-        const { sort, initialSort, mainMenuItems } = this.colDef;
+        const { sort, initialSort } = this.colDef;
 
-        if (Array.isArray(mainMenuItems) && mainMenuItems.length && colMenuFactory) {
-            for (const k of colMenuFactory.flattenMenuItems(mainMenuItems)) {
-                if (k === 'sortAbsoluteAscending' || k === 'sortAbsoluteDescending') {
-                    res.push('absolute');
-                    break;
-                }
-            }
-        }
         const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
         const colDefInitialSortType =
             initialSort === null ? initialSort : _normalizeSortType((initialSort as SortDef)?.type);

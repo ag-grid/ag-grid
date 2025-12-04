@@ -430,7 +430,6 @@ export {
     DraggingChangedEvent,
 } from './interfaces/iRowNode';
 
-export { IColumnMenuFactory } from './interfaces/iColumnMenuFactory';
 // filter
 export {
     IFilterDef,
