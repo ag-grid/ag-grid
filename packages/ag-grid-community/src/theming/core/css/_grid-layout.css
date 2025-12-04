@@ -70,7 +70,9 @@
             when there is a thick row border
           - subtract 2px to account for the 1px border around the cell
             */
-    --ag-internal-content-line-height: calc(min(var(--ag-row-height), var(--ag-line-height, 1000px)) - var(--ag-internal-row-border-width, 1px) - 2px);
+    --ag-internal-content-line-height: calc(
+        min(var(--ag-row-height), var(--ag-line-height, 1000px)) - var(--ag-internal-row-border-width, 1px) - 2px
+    );
 }
 
 .ag-row {
@@ -126,7 +128,7 @@
     position: absolute;
 }
 
-.ag-spanned-cell-wrapper>.ag-spanned-cell {
+.ag-spanned-cell-wrapper > .ag-spanned-cell {
     display: block;
     position: relative;
 }
@@ -141,7 +143,7 @@
     align-items: center;
     padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
 
-    >*:where(:not(.ag-cell-value, .ag-group-value)) {
+    > *:where(:not(.ag-cell-value, .ag-group-value)) {
         /* cell widgets like checkboxes don't respond to line-height, so set their
                height to vertically centre them */
         height: var(--ag-internal-content-line-height);
@@ -168,8 +170,10 @@
     }
 }
 
-.ag-row>.ag-cell-wrapper.ag-row-group {
-    padding-left: calc(var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level));
+.ag-row > .ag-cell-wrapper.ag-row-group {
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
 }
 
 .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
@@ -234,7 +238,10 @@
 .ag-row-highlight-indent::after {
     display: block;
     width: auto;
-    left: calc(2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) + var(--ag-row-highlight-level) * var(--ag-row-group-indent-size));
+    left: calc(
+        2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
+            var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
+    );
     right: 1px;
 }
 
@@ -288,7 +295,7 @@
 }
 
 /* Default the content position to relative so that it doesn't appear under the background */
-.ag-row.ag-full-width-row.ag-row-group>* {
+.ag-row.ag-full-width-row.ag-row-group > * {
     position: relative;
 }
 
@@ -315,14 +322,16 @@
 .ag-cell:not(.ag-cell-inline-editing),
 /* stylelint-disable-next-line no-descending-specificity */
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
-    padding-left: calc(var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level));
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
     padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
 }
 
 /* in full width rows, a cell renderer is rendered directly into a row with no
       cell in between, in which case we need to apply the padding to the cell
       renderer's wrapper. */
-.ag-row>.ag-cell-wrapper {
+.ag-row > .ag-cell-wrapper {
     padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
     padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
 }
@@ -339,7 +348,6 @@
 
 .ag-layout-auto-height,
 .ag-layout-print {
-
     .ag-center-cols-viewport,
     .ag-center-cols-container {
         min-height: 150px;

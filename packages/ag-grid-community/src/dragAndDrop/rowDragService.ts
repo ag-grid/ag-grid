@@ -11,11 +11,7 @@ export class RowDragService extends BeanStub implements NamedBean {
     beanName = 'rowDragSvc' as const;
 
     public rowDragFeature: RowDragFeature | null = null;
-    private _visibility: RowDragVisibility | undefined = undefined;
-
-    public get visibility(): RowDragVisibility {
-        return (this._visibility ??= this.computeVisibility());
-    }
+    public visibility: RowDragVisibility = 'hidden';
 
     public setupRowDrag(element: HTMLElement, ctrl: BeanStub): void {
         const rowDragFeature = ctrl.createManagedBean(new RowDragFeature(element));
@@ -39,6 +35,8 @@ export class RowDragService extends BeanStub implements NamedBean {
             sortChanged: refreshVisibility,
             filterChanged: refreshVisibility,
         });
+
+        this.visibility = this.computeVisibility();
     }
 
     public createRowDragComp(
@@ -135,17 +133,11 @@ export class RowDragService extends BeanStub implements NamedBean {
     }
 
     private refreshVisibility(): void {
-        const previousVisibility = this._visibility;
-        if (previousVisibility === undefined) {
-            return;
-        }
+        const previousVisibility = this.visibility;
         const newVisibility = this.computeVisibility();
-        if (previousVisibility === newVisibility) {
-            return;
+        if (previousVisibility !== newVisibility) {
+            this.visibility = newVisibility;
+            this.eventSvc?.dispatchEvent({ type: 'rowDragVisibilityChanged' });
         }
-        this._visibility = newVisibility;
-        this.eventSvc?.dispatchEvent({
-            type: 'rowDragVisibilityChanged',
-        });
     }
 }
