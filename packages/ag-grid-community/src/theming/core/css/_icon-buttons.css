@@ -26,11 +26,7 @@
     }
 }
 
-:where(
-    .ag-filter-active,
-    .ag-filter-toolpanel-group-instance-header-icon,
-    .ag-filter-toolpanel-instance-header-icon
-) {
+:where(.ag-filter-active, .ag-filter-toolpanel-group-instance-header-icon, .ag-filter-toolpanel-instance-header-icon) {
     position: relative;
 
     &::after {
