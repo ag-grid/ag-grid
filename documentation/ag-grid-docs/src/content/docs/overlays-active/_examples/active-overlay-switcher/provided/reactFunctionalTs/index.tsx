@@ -1,15 +1,10 @@
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import type { StatusOverlayParams } from './statusOverlay';
 import StatusOverlay from './statusOverlay';
 import './styles.css';
 
@@ -33,7 +28,7 @@ const rowData: IAthlete[] = [
     { athlete: 'Natalie Coughlin', country: 'United States' },
 ];
 
-const GridExample: React.FC = () => {
+const GridExample = () => {
     const components = useMemo(() => ({ statusOverlay: StatusOverlay }), []);
     const [activeOverlay, setActiveOverlay] = useState<string | undefined>();
     const [loading, setLoading] = useState<boolean | undefined>(undefined);

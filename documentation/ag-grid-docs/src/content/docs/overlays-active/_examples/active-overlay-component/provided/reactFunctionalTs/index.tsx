@@ -1,11 +1,7 @@
-import React, { StrictMode, useMemo, useState } from 'react';
+import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -44,7 +40,9 @@ const GridExample = () => {
             <div className="button-row">
                 <button onClick={() => setActiveOverlay(() => CustomOverlay)}>Show custom overlay</button>
                 <button onClick={() => setActiveOverlay(undefined)}>Hide custom overlay</button>
-                <button onClick={() => setActiveOverlayParams(prev => ({ count: prev.count + 1 }))}>Increment Param</button>
+                <button onClick={() => setActiveOverlayParams((prev) => ({ count: prev.count + 1 }))}>
+                    Increment Param
+                </button>
             </div>
 
             <div className="grid-wrapper">
