@@ -489,14 +489,10 @@
         }
     }
 
-    .ag-filter-active {
-        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 14%);
-        --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 28%);
-
+    .ag-filter-active,
+    .ag-filter-toolpanel-group-instance-header-icon,
+    .ag-filter-toolpanel-instance-header-icon {
         position: relative;
-        border-radius: 1px;
-        background-color: var(--ag-quartz-icon-active-color);
-        box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
 
         &::after {
             content: '';
@@ -508,6 +504,15 @@
             border-radius: 50%;
             background-color: var(--ag-active-color);
         }
+    }
+
+    .ag-filter-active {
+        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 14%);
+        --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 28%);
+
+        border-radius: 1px;
+        background-color: var(--ag-quartz-icon-active-color);
+        box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
 
         .ag-icon-filter {
             clip-path: path('M8,0C8,4.415 11.585,8 16,8L16,16L0,16L0,0L8,0Z');
