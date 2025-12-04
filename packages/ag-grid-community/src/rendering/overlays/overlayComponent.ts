@@ -46,9 +46,13 @@ export interface INoMatchingRowsOverlayParams<TData = any, TContext = any> exten
  * Parameters available to configure the provided overlays.
  */
 export interface OverlayComponentUserParams {
+    /** Parameters to customise the provided loading overlay. */
     loading?: LoadingOverlayUserParams;
+    /** Parameters to customise the provided no-rows overlay. */
     noRows?: NoRowsOverlayUserParams;
+    /** Parameters to customise the provided no-matching-rows overlay. */
     noMatchingRows?: NoMatchingRowsOverlayUserParams;
+    /** Parameters to customise the provided exporting overlay. */
     exporting?: ExportingOverlayUserParams;
 }
 
@@ -63,7 +67,9 @@ export interface IOverlay<
     TContext = any,
     TParams extends Readonly<IOverlayParams<TData, TContext>> = IOverlayParams<TData, TContext>,
 > {
-    // Gets called when the `overlayComponentParams` grid option is updated
+    /**
+     * Gets called when the `overlayComponentParams` grid option is updated
+     */
     refresh?(params: TParams): void;
 }
 

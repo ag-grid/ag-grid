@@ -10,22 +10,8 @@ export class CustomOverlay implements IOverlayComp {
         this.eGui = document.createElement('div');
         const overlay = document.createElement('div');
         overlay.className = 'overlay-center';
-        overlay.setAttribute('role', 'presentation');
-
-        if (params.overlayType === 'loading') {
-            const spinner = document.createElement('div');
-            spinner.setAttribute('role', 'presentation');
-            spinner.style.height = '100px';
-            spinner.style.width = '100px';
-            spinner.style.background =
-                'url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat';
-            spinner.style.margin = '0 auto';
-            overlay.appendChild(spinner);
-        }
 
         const message = document.createElement('div');
-        message.setAttribute('aria-live', 'polite');
-        message.setAttribute('aria-atomic', 'true');
 
         this.messageEl = message;
 
@@ -44,7 +30,7 @@ export class CustomOverlay implements IOverlayComp {
             return;
         }
 
-        let message = '';
+        let message = 'Default Message';
         if (params.overlayType === 'loading') {
             message = params.loadingMessage;
         } else if (params.overlayType === 'noRows') {
