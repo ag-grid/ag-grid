@@ -456,12 +456,12 @@ export class AgColumn<TValue = any>
         const { sort, initialSort, mainMenuItems } = this.colDef;
 
         if (Array.isArray(mainMenuItems) && mainMenuItems.length && colMenuFactory) {
-            colMenuFactory.flattenMenuItems(mainMenuItems).find((k) => {
+            for (const k of colMenuFactory.flattenMenuItems(mainMenuItems)) {
                 if (k === 'sortAbsoluteAscending' || k === 'sortAbsoluteDescending') {
                     res.push('absolute');
-                    return true;
+                    break;
                 }
-            });
+            }
         }
         const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
         const colDefInitialSortType =
