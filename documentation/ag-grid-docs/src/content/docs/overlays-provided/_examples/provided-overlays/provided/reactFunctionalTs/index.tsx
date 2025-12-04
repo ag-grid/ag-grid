@@ -62,7 +62,7 @@ const GridExample = () => {
                     Set Non Matching Filter
                 </button>
                 <button onClick={() => gridRef.current?.api.setFilterModel(null)}>Clear Filter</button>
-                <button onClick={() => gridRef.current?.api.exportDataAsCsv(null)}>Export CSV</button>
+                <button onClick={() => gridRef.current?.api.exportDataAsCsv()}>Export CSV</button>
             </div>
 
             <div style={{ height: '100%' }}>

@@ -1,9 +1,15 @@
-import type { AgPolarAxisOptions, AgPolarChartOptions, AgPolarSeriesOptions } from 'ag-charts-types';
+import type {
+    AgChartThemeOverrides,
+    AgPolarAxisOptions,
+    AgPolarChartOptions,
+    AgPolarSeriesOptions,
+} from 'ag-charts-types';
 
 import type { SeriesGroupType } from 'ag-grid-community';
 
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { SERIES_HIGHLIGHT } from '../chartTheme';
 
 export class PolarChartProxy extends ChartProxy<
     AgPolarChartOptions,
@@ -86,6 +92,19 @@ export class PolarChartProxy extends ChartProxy<
             grouped: seriesGroupType === 'grouped' || undefined,
             stacked: seriesGroupType !== 'grouped' || undefined,
             normalizedTo: seriesGroupType === 'normalized' ? 100 : undefined,
+        };
+    }
+
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[
+        | 'radar-line'
+        | 'radar-area'
+        | 'nightingale'
+        | 'radial-column'
+        | 'radial-bar'] {
+        return {
+            series: {
+                highlight: SERIES_HIGHLIGHT,
+            },
         };
     }
 }

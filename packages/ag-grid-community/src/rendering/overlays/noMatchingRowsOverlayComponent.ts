@@ -19,7 +19,7 @@ export class NoMatchingRowsOverlayComponent
     extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements INoMatchingRowsOverlayComp<any, any>
 {
-    public init(params: IOverlayParams & OverlayComponentUserParams): void {
+    public init(params: INoMatchingRowsOverlayParams & OverlayComponentUserParams): void {
         const { beans } = this;
 
         this.setTemplate(NoMatchingRowsOverlayElement);

@@ -2,13 +2,7 @@ import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    TextEditorModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import CustomNoRowsOverlay from './customNoRowsOverlay';
@@ -19,21 +13,13 @@ interface IAthlete {
     country: string;
 }
 
-const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150 },
-    { field: 'country', width: 120 },
-];
+const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }];
 
 const defaultColDef = {
-    editable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
 };
 
 ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);

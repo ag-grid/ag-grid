@@ -46,7 +46,10 @@ function onBtnSetRowData() {
 }
 
 function onBtnSetFilter() {
-    onBtnSetRowData();
+    gridApi!.setGridOption('rowData', [
+        { athlete: 'Michael Phelps', country: 'US' },
+        { athlete: 'Chris Hoy', country: 'UK' },
+    ]);
     gridApi!.setFilterModel({ country: { filterType: 'text', type: 'equals', filter: 'Spain' } });
 }
 

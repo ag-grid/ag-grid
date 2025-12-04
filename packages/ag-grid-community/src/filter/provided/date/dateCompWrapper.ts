@@ -1,6 +1,6 @@
 import { _setAriaInvalid } from '../../../agStack/utils/aria';
-import { _isBrowserFirefox } from '../../../agStack/utils/browser';
 import { _setDisplayed } from '../../../agStack/utils/dom';
+import { _debounce } from '../../../agStack/utils/function';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';
@@ -17,7 +17,7 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private validityTimeout: number | undefined = undefined;
+    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, 500);
 
     constructor(
         private readonly context: Context,
@@ -61,10 +61,6 @@ export class DateCompWrapper {
     public destroy(): void {
         this.alive = false;
         this.dateComp = this.context.destroyBean(this.dateComp);
-        if (this.validityTimeout) {
-            clearTimeout(this.validityTimeout);
-            this.validityTimeout = undefined;
-        }
     }
 
     public getDate(): Date | null {
@@ -109,7 +105,7 @@ export class DateCompWrapper {
         this.dateComp?.refresh?.(params);
     }
 
-    public setCustomValidity(message: string): void {
+    public setCustomValidity(message: string, defer = false): void {
         const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
@@ -118,19 +114,12 @@ export class DateCompWrapper {
 
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
             // so we need to call `reportValidity`.
+            // In some browsers, this needs to be debounced or it will interrupt user inputs.
             if (isInvalid) {
-                if (_isBrowserFirefox()) {
-                    // Report validity immediately because firefox handles it well, as opposed to...
-                    eInput.reportValidity();
+                if (defer) {
+                    this.debouncedReport(eInput);
                 } else {
-                    // ...other browsers, which reset the date input cursor when reporting validity, so we need to delay.
-                    // For example, when typing "2000", when we get to "200", that is a valid year, which
-                    // triggers validation, and the final keystroke of "0" will instead be interpreted as
-                    // the first keystroke of a new year.
-                    if (this.validityTimeout) {
-                        clearTimeout(this.validityTimeout);
-                    }
-                    this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
+                    reportValidity(eInput);
                 }
             }
 
@@ -141,4 +130,8 @@ export class DateCompWrapper {
     public getValidity(): ValidityState | undefined {
         return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
     }
+}
+
+function reportValidity(eInput: HTMLInputElement) {
+    eInput.reportValidity();
 }

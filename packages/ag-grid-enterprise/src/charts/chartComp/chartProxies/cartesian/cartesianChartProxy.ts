@@ -6,6 +6,7 @@ import type {
     AgCartesianSeriesOptions,
     AgChartTheme,
     AgChartThemeName,
+    AgChartThemeOverrides,
     AgLineSeriesOptions,
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
@@ -14,6 +15,7 @@ import { _parseDateTimeFromString } from 'ag-grid-community';
 
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { SERIES_HIGHLIGHT } from '../chartTheme';
 
 export abstract class CartesianChartProxy<
     TSeries extends
@@ -230,5 +232,13 @@ export abstract class CartesianChartProxy<
             return false;
         };
         return isHorizontal(theme);
+    }
+
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {
+        return {
+            series: {
+                highlight: SERIES_HIGHLIGHT,
+            },
+        };
     }
 }

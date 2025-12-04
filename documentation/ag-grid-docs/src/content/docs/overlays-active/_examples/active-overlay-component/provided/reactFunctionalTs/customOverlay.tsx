@@ -1,5 +1,11 @@
 import React from 'react';
 
-export const CustomOverlay: React.FC = () => {
-    return <div className="my-custom-overlay">Custom overlay</div>;
+import type { CustomOverlayProps } from 'ag-grid-react';
+
+export interface CustomParams {
+    count: number;
+}
+
+export const CustomOverlay = (props: CustomOverlayProps & CustomParams) => {
+    return <div className="my-custom-overlay">Custom Overlay: {props.count}</div>;
 };

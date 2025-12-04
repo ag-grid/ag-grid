@@ -10,12 +10,6 @@ type CustomOverlayParams = IOverlayParams & { loadingMessage: string; noRowsMess
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
         <div class="overlay-center" role="presentation">
-            @if (params()?.overlayType === 'loading') {
-                <div
-                    role="presentation"
-                    style="width: 100px; height: 100px; background: url(https://www.ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"
-                ></div>
-            }
             <div aria-live="polite" aria-atomic="true">{{ message() }}</div>
         </div>
     `,

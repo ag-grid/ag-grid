@@ -1,7 +1,6 @@
 import type { LocaleTextFunc } from '../agStack/interfaces/iLocaleService';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import type { AgEventType } from '../eventTypes';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { ElementParams } from '../utils/element';
 import { _createIconNoSpan } from '../utils/icon';
@@ -16,9 +15,12 @@ const RowDragElement: ElementParams = {
     attrs: { 'aria-hidden': 'true' },
 };
 
+const SKIP_ARIA_HIDDEN = { skipAriaHidden: true };
+
 export class RowDragComp extends Component {
     private dragSource: GridDragSource<RowDraggingEvent> | null = null;
     private mouseDownListener: (() => void) | undefined;
+    private disabled = false;
 
     constructor(
         private readonly cellValueFn: () => string,
@@ -51,10 +53,12 @@ export class RowDragComp extends Component {
     }
 
     private initCellDrag(): void {
-        const { beans, gos, rowNode } = this;
+        const { beans, rowNode } = this;
         const refreshVisibility = this.refreshVisibility.bind(this);
 
-        this.addManagedPropertyListener('suppressRowDrag', refreshVisibility);
+        this.addManagedListeners(beans.eventSvc, {
+            rowDragVisibilityChanged: refreshVisibility,
+        });
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListeners(rowNode, {
@@ -62,18 +66,7 @@ export class RowDragComp extends Component {
             cellChanged: refreshVisibility,
         });
 
-        this.addManagedListeners<AgEventType>(
-            beans.eventSvc,
-            // For managed row drag, we do not show the component if sort, filter or grouping is active
-            gos.get('rowDragManaged')
-                ? {
-                      sortChanged: refreshVisibility,
-                      filterChanged: refreshVisibility,
-                      columnRowGroupChanged: refreshVisibility,
-                      newColumnsLoaded: refreshVisibility,
-                  }
-                : { newColumnsLoaded: refreshVisibility }
-        );
+        this.refreshVisibility();
     }
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
@@ -88,43 +81,56 @@ export class RowDragComp extends Component {
             return; // Always visible row draggers do not refresh visibility
         }
 
-        const displayedOptions = { skipAriaHidden: true };
-        if (this.isNeverDisplayed()) {
-            this.setDisplayed(false, displayedOptions);
-            return;
+        const { beans, column, rowNode } = this;
+        const { gos, dragAndDrop, rowDragSvc } = beans;
+        const visibility = rowDragSvc?.visibility;
+        const hide = visibility === 'suppress' || (visibility === 'hidden' && !dragAndDrop?.hasExternalDropZones());
+
+        let displayed = !hide;
+        let visible = displayed;
+
+        if (displayed && !this.isCustomGui() && column) {
+            const rowDragProp = column.getColDef().rowDrag;
+            if (rowDragProp === false) {
+                displayed = false;
+            } else {
+                const shownSometimes = typeof rowDragProp === 'function';
+                visible = column.isRowDrag(rowNode);
+                displayed = shownSometimes || visible;
+            }
         }
 
-        const column = this.column;
-
-        // if shown sometimes, them some rows can have drag handle while other don't,
-        // so we use setVisible to keep the handles horizontally aligned (as _setVisible
-        // keeps the empty space, whereas setDisplayed looses the space)
-        let shownSometimes = typeof column?.getColDef().rowDrag === 'function';
-        let visible = !column || this.isCustomGui() || column.isRowDrag(this.rowNode);
-        if (visible && this.rowNode.footer && this.gos.get('rowDragManaged')) {
-            visible = false; // We hide footer rows in row drag managed mode
-            shownSometimes = true;
+        if (displayed && visible && rowNode.footer && gos.get('rowDragManaged')) {
+            visible = false; // Footer rows in managed mode never show drag handles
+            displayed = true;
         }
 
-        this.setDisplayed(shownSometimes || visible, displayedOptions);
-        this.setVisible(visible, displayedOptions);
+        visible &&= displayed;
+
+        // Those calls are ordered to avoid flicker when changing state
+
+        if (!displayed) {
+            this.setDisplayed(displayed, SKIP_ARIA_HIDDEN);
+        }
+        if (!visible) {
+            this.setVisible(visible, SKIP_ARIA_HIDDEN);
+        }
+
+        this.setDisabled(!visible || (visibility === 'disabled' && !dragAndDrop?.hasExternalDropZones()));
+
+        if (displayed) {
+            this.setDisplayed(displayed, SKIP_ARIA_HIDDEN);
+        }
+        if (visible) {
+            this.setVisible(visible, SKIP_ARIA_HIDDEN);
+        }
     }
 
-    private isNeverDisplayed(): boolean {
-        const { gos, beans } = this;
-        if (gos.get('suppressRowDrag')) {
-            return true; // Row dragging is suppressed
+    private setDisabled(disabled: boolean): void {
+        if (disabled !== this.disabled) {
+            this.disabled = disabled;
+            this.getGui()?.classList?.toggle('ag-drag-handle-disabled', disabled);
         }
-
-        if (
-            gos.get('rowDragManaged') &&
-            !!beans.rowDragSvc!.rowDragFeature?.shouldPreventRowMove() &&
-            !beans.dragAndDrop?.hasExternalDropZones()
-        ) {
-            return true; // Managed: only show if not prevented and not suppressed, or if there are external drop zones
-        }
-
-        return false;
     }
 
     private getSelectedNodes(): RowNode[] {

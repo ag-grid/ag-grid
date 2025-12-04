@@ -1,13 +1,7 @@
-import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import React, { StrictMode, useCallback, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    TextEditorModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
 import type { ColDef, IOverlayParams } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -15,8 +9,6 @@ import CustomLoadingOverlay from './customLoadingOverlay';
 import './styles.css';
 
 ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -26,18 +18,12 @@ interface IAthlete {
     country: string;
 }
 
-const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150 },
-    { field: 'country', width: 120 },
-];
+const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'country' }];
 
 const rowData: IAthlete[] = [];
 
 const defaultColDef: ColDef = {
-    editable: true,
     flex: 1,
-    minWidth: 100,
-    filter: true,
 };
 
 const GridExample = () => {

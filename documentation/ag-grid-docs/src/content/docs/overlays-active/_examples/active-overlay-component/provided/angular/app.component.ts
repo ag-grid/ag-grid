@@ -1,25 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import {
-    ClientSideRowModelModule,
-    ColDef,
-    ColGroupDef,
-    GridApi,
-    GridOptions,
-    GridReadyEvent,
-    ModuleRegistry,
-    TextEditorModule,
-    TextFilterModule,
-    ValidationModule,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 
 import { CustomOverlayComponent } from './custom-overlay.component';
 import './styles.css';
 
 ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -37,23 +25,22 @@ interface IAthlete {
         <div class="button-row">
             <button (click)="showActiveOverlay()">Show custom overlay</button>
             <button (click)="clearActiveOverlay()">Hide custom overlay</button>
+            <button (click)="incParam()">Increment Param</button>
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
             class="grid-wrapper"
             [columnDefs]="columnDefs"
             [rowData]="rowData"
-            [defaultColDef]="defaultColDef"
-            (gridReady)="onGridReady($event)"
+            [activeOverlay]="activeOverlay()"
+            [activeOverlayParams]="activeOverlayParams()"
         />
     </div>`,
 })
 export class AppComponent {
-    private gridApi!: GridApi<IAthlete>;
-
     columnDefs: ColDef[] = [
-        { field: 'athlete', width: 150 },
-        { field: 'country', width: 150 },
+        { field: 'athlete', flex: 1 },
+        { field: 'country', flex: 1 },
     ];
     rowData: IAthlete[] | null = [
         { athlete: 'Michael Phelps', country: 'United States' },
@@ -61,20 +48,18 @@ export class AppComponent {
         { athlete: 'Aleksey Nemov', country: 'Russia' },
         { athlete: 'Alicia Coutts', country: 'Australia' },
     ];
-    defaultColDef: ColDef = {
-        flex: 1,
-        minWidth: 120,
-    };
+
+    activeOverlay = signal<any>(CustomOverlayComponent);
+    activeOverlayParams = signal({ count: 1 });
 
     showActiveOverlay() {
-        this.gridApi.setGridOption('activeOverlay', CustomOverlayComponent);
+        this.activeOverlay.set(CustomOverlayComponent);
     }
 
     clearActiveOverlay() {
-        this.gridApi.setGridOption('activeOverlay', undefined);
+        this.activeOverlay.set(undefined);
     }
-
-    onGridReady(params: GridReadyEvent<IAthlete>) {
-        this.gridApi = params.api;
+    incParam() {
+        this.activeOverlayParams.update((prev) => ({ count: prev.count + 1 }));
     }
 }

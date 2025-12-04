@@ -12,6 +12,7 @@ const columnDefs: ColDef[] = [
     {
         field: 'rankingChange',
         sort: { direction: 'asc', type: 'absolute' },
+        sortingOrder: [{ direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }, null],
     },
 ];
 
@@ -23,7 +24,7 @@ const gridOptions: GridOptions<any> = {
         minWidth: 100,
     },
 
-    columnDefs: columnDefs,
+    columnDefs,
 };
 
 // setup the grid after the page has finished loading
@@ -31,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then((response) => response.json())
         .then((data: IOlympicData[]) =>
             gridApi!.setGridOption(

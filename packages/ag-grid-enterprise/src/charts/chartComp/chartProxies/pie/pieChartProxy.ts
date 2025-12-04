@@ -1,4 +1,5 @@
 import type {
+    AgChartThemeOverrides,
     AgDonutSeriesOptions,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -7,6 +8,7 @@ import type {
 
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { SERIES_HIGHLIGHT } from '../chartTheme';
 
 interface DonutOffset {
     offsetAmount: number;
@@ -124,5 +126,13 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     private getFields(params: UpdateParams): FieldDefinition[] {
         // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
+    }
+
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['pie' | 'donut'] {
+        return {
+            series: {
+                highlight: SERIES_HIGHLIGHT,
+            },
+        };
     }
 }

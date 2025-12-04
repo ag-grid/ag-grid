@@ -21,7 +21,7 @@ const gridOptions = {
 }
 ```
 
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=300 /%}
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
 When using formulas, the following features are enabled by default:
 - [Row Numbers](./row-numbers/)
@@ -98,11 +98,26 @@ Examples of functions:
 - `=SUM(AVERAGE(A1:B1), 2)` returns the sum of the average of the values in the range A1 to B1 and the constant value 2.
 - `=TODAY()` returns a date object representing the current date.
 
-The full list of functions that are provided by the grid can be found below in [List of Functions](#list-of-functions).
+The full list of functions that are provided by the grid can be found below in [List of Provided Functions](#list-of-provided-functions).
 
 ### Cell Ranges
 Cell ranges are used to refer to a rectangular block of cells in the grid and are symbolised by the top-left cell reference followed by a colon (`:`) and the bottom-right cell reference.
 For example, the range `A1:B2` refers to the cells in column A and B, and rows 1 and 2 (i.e. A1, A2, B1, B2).
+
+### Error Codes
+
+If a formula results in an error, users will see the following error codes in the corresponding cell.
+
+| Error | Description |
+| -------- | ----------- |
+| `#REF!` | Formula contains invalid cell reference |
+| `#NAME?` | Formula contains invalid operation |
+| `#CIRCREF!` | Formula contains circular reference |
+| `#PARSE!` | Could not parse formula value |
+| `#VALUE!` | Formula contains value of the wrong type (e.g. non-numeric arguments to functions) |
+| `#DIV/0!` | Formula results in a division by zero |
+| `#ERROR!` | Formula contains some other kind of error |
+
 
 ## Custom Functions
 
@@ -117,9 +132,7 @@ A user could then use this function in a formula such as:
 - `=CUSTOMSUM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
 - `=CUSTOMSUM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
 
-In the example below we have added a "Formula" column to allow easy visualisation of the formulas that have been entered in the "Totals" column.
-
-{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=200 /%}
+{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=390 /%}
 
 In this snippet below, observe how the function uses the `params.values` iterator for navigating the values provided to the function, 
 which provides all of the values from the ranges and constants in one simple iterable, meaning any input such as `=CUSTOMSUM(A1:B2, 2)` will
@@ -160,7 +173,7 @@ When a function (or a referenced cell) throws an error, the cell displays `#ERRO
 Errors will also propagate to any other cells that reference these cells in their formulas, as demonstrated in cell `D4`.
 {% /note %}
 
-{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=250 /%}
+{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=430 /%}
 
 
 The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
@@ -199,9 +212,7 @@ This means that ranges are provided as a `RangeParam` object, which is iterable 
 
 The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
 
-Note that we have added a "Formula" column to allow easy visualisation of the formulas that have been entered in the "Result" column.
-
-{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=200 /%}
+{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=390 /%}
 
 The following snippet demonstrates providing a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
 
@@ -248,6 +259,8 @@ Formulas can be stored outside of the grid's `rowData` by providing a `formulaDa
 
 The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
+In the example, the "Total" column contains editable formulas wich are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -274,9 +287,7 @@ const gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
-
-Enter formulas in the "Subtotal" and/or "Total" columns and then use the provided buttons to visualise the row data and formula store.
+{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=440 /%}
 
 A user provided datasource should provide the following interface:
 
@@ -288,9 +299,7 @@ When performing a [CSV Export](./csv-export), the grid will export the evaluated
 
 When performing an [Excel Export](./excel-export), the grid will export the formulas themselves, which should then be evaluated as normal when opening the exported file in Excel.
 
-## API Reference
-
-### List of Mathematical Operators
+## List of Mathematical Operators
 
 | Symbol | Description |
 | ------ | ----------- |
@@ -307,9 +316,9 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 | `>=` | Greater than or equal to, can be used to compare two values |
 | `<=` | Less than or equal to, can be used to compare two values |
 
-### List of Functions
+## List of Provided Functions
 
-#### Numeric Functions
+**Numeric Functions**
 
 | Function | Description |
 | -------- | ----------- |
@@ -326,20 +335,20 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 | `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
 | `RAND()` | Returns a random number between 0 and 1. |
 
-#### Date Functions
+**Date Functions**
 
 | Function | Description |
 | -------- | ----------- |
 | `NOW()` | Returns a date object representing the current date and time. |
 | `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
 
-#### Text Functions
+**Text Functions**
 
 | Function | Description |
 | -------- | ----------- |
 | `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
 
-#### Logical Functions
+**Logical Functions**
 
 | Function | Description |
 | -------- | ----------- |
@@ -351,7 +360,7 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 | `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
 | `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
 
-#### Counting Functions
+**Counting Functions**
 
 | Function | Description |
 | -------- | ----------- |
@@ -359,15 +368,3 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 | `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
 | `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
 | `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
-
-### Error Codes
-
-| Error | Description |
-| -------- | ----------- |
-| `#REF!` | Formula contains invalid cell reference |
-| `#NAME?` | Formula contains invalid operation |
-| `#CIRCREF!` | Formula contains circular reference |
-| `#PARSE!` | Could not parse formula value |
-| `#VALUE!` | Formula contains value of the wrong type (e.g. non-numeric arguments to functions) |
-| `#DIV/0!` | Formula results in a division by zero |
-| `#ERROR!` | Formula contains some other kind of error |

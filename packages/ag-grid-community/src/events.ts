@@ -190,6 +190,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
         showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
+        rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
     }
 >;
 
@@ -543,6 +544,8 @@ export interface RowDragCancelEvent<TData = any, TContext = any>
 export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
 
 export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragLeave'> {}
+
+// rowDragVisibilityChanged uses the base AgGlobalEvent
 
 export interface CutStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'cutStart', TData, TContext> {
     source: 'api' | 'ui' | 'contextMenu';

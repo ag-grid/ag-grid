@@ -104,6 +104,10 @@ export abstract class ProvidedFilter<
         this.setModelIntoUi(params.state.model, true).then(() => this.updateUiVisibility());
     }
 
+    protected areStatesEqual(stateA: any, stateB: any): boolean {
+        return stateA === stateB;
+    }
+
     public refresh(legacyNewParams: ProvidedFilterParams): boolean {
         const newParams = legacyNewParams as unknown as P;
         const oldParams = this.params;
@@ -122,8 +126,7 @@ export abstract class ProvidedFilter<
         if (
             additionalEventAttributes?.fromAction ||
             newState.model !== oldState.model ||
-            newState.state !== oldState.state ||
-            newState.valid !== oldState.valid
+            !this.areStatesEqual(newState.state, oldState.state)
         ) {
             this.setModelIntoUi(newState.model);
         }
@@ -251,12 +254,14 @@ export abstract class ProvidedFilter<
             valid: this.canApply(model),
         };
         this.state = state;
-        const params = this.params;
+
+        const { params, gos, eventSvc, applyActive } = this;
+
         params.onStateChange(state);
         params.onUiChange(this.getUiChangeEventParams());
 
-        if (!this.gos.get('enableFilterHandlers')) {
-            this.eventSvc.dispatchEvent({
+        if (!gos.get('enableFilterHandlers')) {
+            eventSvc.dispatchEvent({
                 type: 'filterModified',
                 column: params.column,
                 filterInstance: this,
@@ -268,7 +273,7 @@ export abstract class ProvidedFilter<
             return;
         }
 
-        apply ??= this.applyActive ? undefined : 'debounce';
+        apply ??= applyActive ? undefined : 'debounce';
         if (apply === 'immediately') {
             this.doApplyModel({ afterFloatingFilter, afterDataChange: false });
         } else if (apply === 'debounce') {

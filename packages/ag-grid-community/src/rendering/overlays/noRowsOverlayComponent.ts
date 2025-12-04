@@ -21,7 +21,7 @@ export class NoRowsOverlayComponent
     extends OverlayComponent<any, any, IOverlayParams & OverlayComponentUserParams>
     implements INoRowsOverlayComp<any, any>
 {
-    public init(params: IOverlayParams & OverlayComponentUserParams): void {
+    public init(params: INoRowsOverlayParams & OverlayComponentUserParams): void {
         const { beans, gos } = this;
         const customTemplate = _makeNull(gos.get('overlayNoRowsTemplate')?.trim());
 

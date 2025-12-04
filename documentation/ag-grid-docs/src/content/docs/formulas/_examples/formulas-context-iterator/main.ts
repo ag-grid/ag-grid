@@ -27,27 +27,24 @@ let gridApi: GridApi<any>;
 const rowData = [
     { rid: 'r1', gold: 1, silver: 2 },
     { rid: 'r2', gold: 2, silver: 2 },
+    { rid: 'r3', gold: 1, silver: 20 },
+    { rid: 'r4', gold: 3, silver: 2 },
+    { rid: 'r5', gold: 5, silver: 7 },
+    { rid: 'r6', gold: 2, silver: 2 },
+    { rid: 'r7', gold: 1, silver: 2 },
     {
-        rid: 'r3',
+        rid: 'r8',
         gold: 1,
         silver: 2,
-        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r3")),2)',
+        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r7")),2)',
     },
 ];
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'gold', colId: 'c0', width: 100 },
-        { field: 'silver', colId: 'c1', width: 100 },
-        { field: 'result', colId: 'c2', width: 100, allowFormula: true },
-        {
-            field: 'formula',
-            colId: '3',
-            flex: 1,
-            editable: false,
-            allowFormula: false,
-            valueGetter: (params) => params.getValue('c2'),
-        },
+        { field: 'gold', colId: 'c0' },
+        { field: 'silver', colId: 'c1' },
+        { field: 'result', colId: 'c2', allowFormula: true },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
@@ -57,6 +54,7 @@ const gridOptions: GridOptions<any> = {
     },
     defaultColDef: {
         editable: true,
+        flex: 1,
     },
     rowData,
     formulaFuncs: {

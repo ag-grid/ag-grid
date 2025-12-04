@@ -92,11 +92,11 @@
    is to ensure that the ag-body-vertical-content-no-gap class only hides the
    border of rows in the same grid, not in nested detail grids  */
 :where(
+
     /* there are either 3 or 4 elements between the body and the row as the
        center cols container has an extra layer of nesting than other containers */
     .ag-body-vertical-content-no-gap > div > div > div,
-    .ag-body-vertical-content-no-gap > div > div > div > div
-) > .ag-row-last {
+    .ag-body-vertical-content-no-gap > div > div > div > div)>.ag-row-last {
     border-bottom-color: transparent;
 }
 
@@ -199,6 +199,11 @@
 .ag-group-expanded,
 .ag-group-contracted {
     margin-right: var(--ag-cell-widget-spacing);
+}
+
+.ag-drag-handle-disabled {
+    opacity: 0.35;
+    pointer-events: none;
 }
 
 .ag-group-child-count {
@@ -311,8 +316,8 @@
 }
 
 .ag-cell:not(.ag-cell-inline-editing),
-    /* stylelint-disable-next-line no-descending-specificity */
-    .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+/* stylelint-disable-next-line no-descending-specificity */
+.ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
     );

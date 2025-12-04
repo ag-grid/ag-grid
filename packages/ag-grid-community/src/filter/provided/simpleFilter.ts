@@ -468,7 +468,7 @@ export abstract class SimpleFilter<
         return areAllConditionsUiComplete && this.getNumConditions() < this.maxNumConditions && !this.isReadOnly();
     }
 
-    private removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
+    protected removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
         if (startPosition >= this.getNumConditions()) {
             return;
         }
@@ -529,12 +529,16 @@ export abstract class SimpleFilter<
         }
     }
 
+    protected shouldKeepInvalidInputState(): boolean {
+        return false;
+    }
+
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
         const params = this.params;
 
-        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column)) {
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column) || this.shouldKeepInvalidInputState()) {
             return;
         }
 
@@ -709,7 +713,7 @@ export abstract class SimpleFilter<
             return false;
         }
 
-        if (this.hasInvalidInputs()) {
+        if (this.positionHasInvalidInputs(position)) {
             return false;
         }
 
@@ -861,6 +865,10 @@ export abstract class SimpleFilter<
     }
 
     protected hasInvalidInputs(): boolean {
+        return false;
+    }
+
+    protected positionHasInvalidInputs(_position: number): boolean {
         return false;
     }
 
