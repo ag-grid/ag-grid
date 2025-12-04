@@ -134,6 +134,7 @@ const _INTERNAL_EVENTS = [
     'scrollGapChanged',
     'columnHoverChanged',
     'flashCells',
+    'rowDragVisibilityChanged',
     'paginationPixelOffsetChanged',
     'displayedRowsChanged',
     'leftPinnedWidthChanged',

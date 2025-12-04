@@ -126,27 +126,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return 'notAllowed';
         }
 
-        if (this.gos.get('rowDragManaged') && this.shouldPreventRowMove()) {
+        if (this.beans.rowDragSvc!.visibility !== 'visible') {
             return 'notAllowed';
         }
 
         return 'move';
-    }
-
-    public shouldPreventRowMove(): boolean {
-        const { gos, rowGroupColsSvc, filterManager, sortSvc } = this.beans;
-        if (rowGroupColsSvc?.columns?.length && !gos.get('refreshAfterGroupEdit')) {
-            return true;
-        }
-        const isFilterPresent = filterManager?.isAnyFilterPresent();
-        if (isFilterPresent) {
-            return true;
-        }
-        const isSortActive = sortSvc?.isSortActive();
-        if (isSortActive) {
-            return true;
-        }
-        return false;
     }
 
     private getRowNodes(draggingEvent: RowDraggingEvent): RowNode[] {
@@ -297,7 +281,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         let allowed = true;
         if (
             rowDragManaged &&
-            (!rows.length || this.shouldPreventRowMove() || ((suppressMoveWhenRowDragging || !sameGrid) && !withinGrid))
+            (!rows.length ||
+                beans.rowDragSvc!.visibility !== 'visible' ||
+                ((suppressMoveWhenRowDragging || !sameGrid) && !withinGrid))
         ) {
             allowed = false;
         }
