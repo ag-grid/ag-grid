@@ -355,23 +355,24 @@ export abstract class BaseDragAndDropService<
     }
 
     public removeDropTarget(dropTarget: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>) {
-        let externalRemoved = 0;
         const container = dropTarget.getContainer();
-        for (let i = this.dropTargets.length - 1; i >= 0; --i) {
-            const target = this.dropTargets[i];
-            if (target.getContainer() !== container) {
-                continue;
+        const dropTargets = this.dropTargets;
+        let writeIndex = 0;
+        for (let readIndex = 0, len = dropTargets.length; readIndex < len; ++readIndex) {
+            const target = dropTargets[readIndex];
+            if (target.getContainer() === container) {
+                if (target.external) {
+                    --this.externalDropZoneCount;
+                }
+                continue; // removed
             }
 
-            if (target.external) {
-                externalRemoved++;
+            if (writeIndex !== readIndex) {
+                dropTargets[writeIndex] = target;
             }
-
-            this.dropTargets.splice(i, 1);
+            ++writeIndex;
         }
-        if (externalRemoved) {
-            this.externalDropZoneCount = Math.max(0, this.externalDropZoneCount - externalRemoved);
-        }
+        dropTargets.length = writeIndex;
     }
 
     public hasExternalDropZones(): boolean {
