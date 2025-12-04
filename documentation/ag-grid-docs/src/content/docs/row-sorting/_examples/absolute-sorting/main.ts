@@ -6,7 +6,7 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const columnDefs = [
+const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 150 },
     { field: 'year', maxWidth: 90 },
     {
@@ -14,7 +14,7 @@ const columnDefs = [
         sort: { direction: 'asc', type: 'absolute' },
         sortingOrder: [{ direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }, null],
     },
-] satisfies ColDef[];
+];
 
 let gridApi: GridApi<IOlympicData>;
 
