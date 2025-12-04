@@ -27,11 +27,16 @@ let gridApi: GridApi<any>;
 const rowData = [
     { rid: 'r1', gold: 1, silver: 2 },
     { rid: 'r2', gold: 2, silver: 2 },
+    { rid: 'r3', gold: 1, silver: 20 },
+    { rid: 'r4', gold: 3, silver: 2 },
+    { rid: 'r5', gold: 5, silver: 7 },
+    { rid: 'r6', gold: 2, silver: 2 },
+    { rid: 'r7', gold: 1, silver: 2 },
     {
-        rid: 'r3',
+        rid: 'r8',
         gold: 1,
         silver: 2,
-        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r3")),2)',
+        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r7")),2)',
     },
 ];
 

@@ -55,6 +55,11 @@ const formulaStore = new Map<string, string>([
     [formulaKey('a_01', 'total'), '=B1*C1'],
     [formulaKey('o_02', 'total'), '=B2*C2'],
     [formulaKey('b_03', 'total'), '=B3*C3'],
+    [formulaKey('g_04', 'total'), '=B4*C4'],
+    [formulaKey('p_05', 'total'), '=B5*C5'],
+    [formulaKey('p_06', 'total'), '=B6*C6'],
+    [formulaKey('m_07', 'total'), '=B7*C7'],
+    [formulaKey('s_08', 'total'), '=B8*C8'],
 ]);
 
 const columnDefs: ColDef<RowData>[] = [
@@ -67,7 +72,12 @@ const columnDefs: ColDef<RowData>[] = [
 const rowData: RowData[] = [
     { id: 'a_01', product: 'Apples', price: 1.2, quantity: 5 },
     { id: 'o_02', product: 'Oranges', price: 0.8, quantity: 8 },
-    { id: 'b_03', product: 'Bananas', price: 0.6, quantity: 10 },
+    { id: 'b_03', product: 'Bananas', price: 1.6, quantity: 1 },
+    { id: 'g_04', product: 'Grapes', price: 1, quantity: 2 },
+    { id: 'p_05', product: 'Plums', price: 0.4, quantity: 18 },
+    { id: 'p_06', product: 'Peaches', price: 1.6, quantity: 4 },
+    { id: 'm_07', product: 'Mangos', price: 2.2, quantity: 5 },
+    { id: 's_08', product: 'Strawberries', price: 0.8, quantity: 8 },
 ];
 
 const gridOptions: GridOptions<RowData> = {

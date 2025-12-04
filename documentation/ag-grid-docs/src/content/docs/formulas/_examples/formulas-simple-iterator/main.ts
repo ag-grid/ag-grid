@@ -22,12 +22,6 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<any>;
 
-const rowData = [
-    { rid: '1', gold: 1, silver: 1, totals: '=CUSTOMSUM(A1:B1)' },
-    { rid: '2', gold: 1, silver: 2, totals: '=CUSTOMSUM(A2:B2)' },
-    { rid: '3', gold: 1, silver: 1, totals: '=CUSTOMSUM(A1:B3, B1)' },
-];
-
 const gridOptions: GridOptions<any> = {
     columnDefs: [
         { field: 'gold', colId: 'c0' },
@@ -44,7 +38,6 @@ const gridOptions: GridOptions<any> = {
         flex: 1,
         editable: true,
     },
-    rowData,
     formulaFuncs: {
         CUSTOMSUM: {
             func: (params) => {
@@ -59,6 +52,16 @@ const gridOptions: GridOptions<any> = {
             },
         },
     },
+    rowData: [
+        { rid: '1', gold: 1, silver: 1, totals: '=CUSTOMSUM(A1:B1)' },
+        { rid: '2', gold: 1, silver: 2, totals: '=CUSTOMSUM(A2:B2)' },
+        { rid: '3', gold: 4, silver: 0, totals: '=CUSTOMSUM(A3:B3)' },
+        { rid: '4', gold: 0, silver: 0, totals: '=CUSTOMSUM(A4:B4)' },
+        { rid: '5', gold: 2, silver: 13, totals: '=CUSTOMSUM(A5:B5)' },
+        { rid: '6', gold: 0, silver: 1, totals: '=CUSTOMSUM(A6:B6)' },
+        { rid: '7', gold: 9, silver: 6, totals: '=CUSTOMSUM(A7:B7)' },
+        { rid: '8', gold: 0, silver: 11, totals: '=CUSTOMSUM(A1:B8, B1)' },
+    ],
 };
 
 // setup the grid after the page has finished loading

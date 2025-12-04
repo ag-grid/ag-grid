@@ -20,19 +20,6 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<any>;
 
-const rowData = [
-    { rid: '1', A: 1, B: 2, C: 3 },
-    { rid: '2', A: 4, B: 5, C: 6 },
-    { rid: '3', A: 7, B: 8, C: 9 },
-    {
-        rid: 4,
-        A: '=ERRORIFONE(REF(COLUMN("0"),ROW("1"),COLUMN("0"),ROW("3")))',
-        B: '=ERRORIFONE(REF(COLUMN("1"),ROW("1"),COLUMN("1"),ROW("3")))',
-        C: '=ERRORIFONE(REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("3")))',
-        D: '=CONCAT(REF(COLUMN("0"),ROW("4"),COLUMN("2"),ROW("4")))',
-    },
-];
-
 const gridOptions: GridOptions<any> = {
     columnDefs: [
         { field: 'A', colId: '0', headerName: 'Gold' },
@@ -52,7 +39,6 @@ const gridOptions: GridOptions<any> = {
         editable: true,
         flex: 1,
     },
-    rowData,
     formulaFuncs: {
         ERRORIFONE: {
             func: (params) => {
@@ -65,6 +51,23 @@ const gridOptions: GridOptions<any> = {
             },
         },
     },
+    rowData: [
+        { rid: 1, A: 1, B: 2, C: 3 },
+        { rid: 2, A: 4, B: 5, C: 6 },
+        { rid: 3, A: 2, B: 5, C: 2 },
+        { rid: 4, A: 7, B: 8, C: 9 },
+        { rid: 5, A: 0, B: 80, C: 10 },
+        { rid: 6, A: 0, B: 4, C: 7 },
+        { rid: 7, A: 7, B: 2, C: 2 },
+        { rid: 8, A: 1, B: 0, C: 2 },
+        {
+            rid: 9,
+            A: '=ERRORIFONE(REF(COLUMN("0"),ROW("1"),COLUMN("0"),ROW("3")))',
+            B: '=ERRORIFONE(REF(COLUMN("1"),ROW("1"),COLUMN("1"),ROW("3")))',
+            C: '=ERRORIFONE(REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("3")))',
+            D: '=CONCAT(REF(COLUMN("0"),ROW("4"),COLUMN("2"),ROW("4")))',
+        },
+    ],
 };
 
 // setup the grid after the page has finished loading

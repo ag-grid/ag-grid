@@ -21,7 +21,7 @@ const gridOptions = {
 }
 ```
 
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=300 /%}
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
 When using formulas, the following features are enabled by default:
 - [Row Numbers](./row-numbers/)
@@ -132,7 +132,7 @@ A user could then use this function in a formula such as:
 - `=CUSTOMSUM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
 - `=CUSTOMSUM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
 
-{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=200 /%}
+{% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=390 /%}
 
 In this snippet below, observe how the function uses the `params.values` iterator for navigating the values provided to the function, 
 which provides all of the values from the ranges and constants in one simple iterable, meaning any input such as `=CUSTOMSUM(A1:B2, 2)` will
@@ -173,7 +173,7 @@ When a function (or a referenced cell) throws an error, the cell displays `#ERRO
 Errors will also propagate to any other cells that reference these cells in their formulas, as demonstrated in cell `D4`.
 {% /note %}
 
-{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=250 /%}
+{% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=430 /%}
 
 
 The following snippet builds on our ADD function to throw an error if any of the provided arguments are not numbers, or when no arguments are provided.
@@ -212,7 +212,7 @@ This means that ranges are provided as a `RangeParam` object, which is iterable 
 
 The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
 
-{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=200 /%}
+{% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=390 /%}
 
 The following snippet demonstrates providing a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter.
 
@@ -287,7 +287,7 @@ const gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
+{% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=440 /%}
 
 A user provided datasource should provide the following interface:
 
