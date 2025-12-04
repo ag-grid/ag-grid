@@ -234,11 +234,15 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
     protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
-        this.forEachInput((element) => {
-            // Default validity state to true -> if theres no validity state, we assume everything is fine
-            const { valid = true } = element.getValidity() ?? {};
-            invalidInputs ||= !valid;
-        });
+        // Default validity state to true -> if theres no validity state, everything is fine
+        this.forEachInput((element) => (invalidInputs ||= !(element.getValidity()?.valid ?? true)));
+        return invalidInputs;
+    }
+
+    protected override positionHasInvalidInputs(position: number): boolean {
+        let invalidInputs = false;
+        // Default validity state to true -> if theres no validity state, everything is fine
+        this.forEachPositionInput(position, (element) => (invalidInputs ||= !(element.getValidity()?.valid ?? true)));
         return invalidInputs;
     }
 

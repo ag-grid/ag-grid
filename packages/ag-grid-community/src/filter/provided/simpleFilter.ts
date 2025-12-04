@@ -713,7 +713,7 @@ export abstract class SimpleFilter<
             return false;
         }
 
-        if (this.hasInvalidInputs()) {
+        if (this.positionHasInvalidInputs(position)) {
             return false;
         }
 
@@ -865,6 +865,10 @@ export abstract class SimpleFilter<
     }
 
     protected hasInvalidInputs(): boolean {
+        return false;
+    }
+
+    protected positionHasInvalidInputs(_position: number): boolean {
         return false;
     }
 

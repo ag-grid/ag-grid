@@ -210,9 +210,13 @@ export class NumberFilter extends SimpleFilter<
 
     protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
-        this.forEachInput((element) => {
-            invalidInputs ||= !element.getInputElement().validity.valid;
-        });
+        this.forEachInput((element) => (invalidInputs ||= !element.getInputElement().validity.valid));
+        return invalidInputs;
+    }
+
+    protected override positionHasInvalidInputs(position: number): boolean {
+        let invalidInputs = false;
+        this.forEachPositionInput(position, (element) => (invalidInputs ||= !element.getInputElement().validity.valid));
         return invalidInputs;
     }
 
