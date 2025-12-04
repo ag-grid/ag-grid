@@ -35,10 +35,10 @@ const rowData = [
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
-        { field: 'A', colId: '0', headerName: 'Check # of Golds (A1:A3)' },
-        { field: 'B', colId: '1', headerName: 'Check # of Silvers (B1:B3)' },
-        { field: 'C', colId: '2', headerName: 'Check # of Bronzes (C1:C3)' },
-        { field: 'D', colId: '3', headerName: 'Check All Columns' },
+        { field: 'A', colId: '0', headerName: 'Gold' },
+        { field: 'B', colId: '1', headerName: 'Silver' },
+        { field: 'C', colId: '2', headerName: 'Bronze' },
+        { field: 'D', colId: '3', headerName: 'Check Error Propagation' },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
