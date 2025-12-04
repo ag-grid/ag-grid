@@ -133,6 +133,14 @@
         "hideBlogPostLink": false
     },
     {
+        "version": "33.3.2",
+        "date": "4th June 2025"
+    },
+    {
+        "version": "33.3.1",
+        "date": "28th May 2025"
+    },
+    {
         "version": "33.3.0",
         "date": "13th May 2025",
         "landingPageHighlight": "Row Pinning, Row Height Resizing, Grand Total Row Pinning, Scroll Column Into View, Feature Highlights",
