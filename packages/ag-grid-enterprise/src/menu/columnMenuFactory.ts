@@ -93,23 +93,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean, IColumnMen
      * Returns a flat set of provided menu items names
      */
     public flattenMenuItems(columnMainMenuItems: (DefaultMenuItem | MenuItemDef)[]): string[] {
-        const mapper = (arr: string[], item: DefaultMenuItem | MenuItemDef) => {
-            if (typeof item === 'string') {
-                arr.push(item);
-            }
-            if (typeof item === 'object') {
-                if (item.subMenu) {
-                    // eslint-disable-next-line sonarjs/no-ignored-return
-                    item.subMenu.reduce(mapper, arr);
-                } else {
-                    arr.push(item.name);
-                }
-            }
-
-            return arr;
-        };
-
-        return columnMainMenuItems.reduce(mapper, []);
+        return columnMainMenuItems.reduce(menuItemsFlattener, []);
     }
 
     private getDefaultMenuOptions(column: AgColumn | null): DefaultMenuItem[] {
@@ -249,4 +233,20 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean, IColumnMen
 
         return result;
     }
+}
+
+function menuItemsFlattener(result: string[], item: DefaultMenuItem | MenuItemDef) {
+    if (typeof item === 'string') {
+        result.push(item);
+    }
+    if (typeof item === 'object') {
+        if (item.subMenu) {
+            // eslint-disable-next-line sonarjs/no-ignored-return
+            item.subMenu.reduce(menuItemsFlattener, result);
+        } else {
+            result.push(item.name);
+        }
+    }
+
+    return result;
 }
