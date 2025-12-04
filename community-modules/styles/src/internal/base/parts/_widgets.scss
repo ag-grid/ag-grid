@@ -167,12 +167,8 @@
     }
 
     .ag-drag-handle-disabled {
-        opacity: 0.5;
+        opacity: 0.35;
         pointer-events: none;
-
-        .ag-icon {
-            opacity: 0.5;
-        }
     }
 
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
