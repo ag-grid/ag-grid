@@ -217,14 +217,14 @@ export interface _OverlayGridApi {
     /**
      * Show the no-rows overlay. If `loading` is true, this will not do anything.
      *
-     *  - **Prefer  `setGridOption('activeOverlay, 'agNoRowsOverlay')` .**
+     *  - **Prefer  `setGridOption('activeOverlay', 'agNoRowsOverlay')` .**
      */
     showNoRowsOverlay(): void;
 
     /**
      * Hide the no-rows overlay if it is showing.
      *
-     * - **Prefer  `setGridOption('activeOverlay, undefined)` .**
+     * - **Prefer  `setGridOption('activeOverlay', undefined)` .**
      */
     hideOverlay(): void;
 }
