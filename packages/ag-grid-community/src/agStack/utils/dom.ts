@@ -428,7 +428,7 @@ type RoleType =
     | 'menu'
     | 'option'
     | 'presentation'
-    | 'role'
+    | 'group'
     | 'row'
     | 'rowgroup'
     | 'status'

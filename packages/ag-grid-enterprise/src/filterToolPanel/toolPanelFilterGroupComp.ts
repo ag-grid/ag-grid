@@ -12,6 +12,7 @@ import {
     _clearElement,
     _createIconNoSpan,
     _getShouldDisplayTooltip,
+    _setAriaLabel,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -149,6 +150,10 @@ export class ToolPanelFilterGroupComp extends Component {
         const eIcon = _createIconNoSpan(iconName, this.beans)!;
         if (eIcon) {
             eIcon.classList.add('ag-filter-toolpanel-group-instance-header-icon');
+            // as we only display the icons when the filter is active
+            // the aria-label should always be `ariaFilterActive`.
+            const translate = this.getLocaleTextFunc();
+            _setAriaLabel(eIcon, translate('ariaFilterActive', 'Filter Active'));
         }
         this.filterGroupComp.addTitleBarWidget(eIcon);
     }

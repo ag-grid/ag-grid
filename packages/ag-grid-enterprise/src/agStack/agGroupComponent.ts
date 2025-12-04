@@ -19,6 +19,7 @@ import {
     _isComponent,
     _removeFromParent,
     _setAriaExpanded,
+    _setAriaRole,
     _setDisplayed,
 } from 'ag-grid-community';
 
@@ -472,7 +473,7 @@ function getDefaultTitleBarTemplate<TBeanCollection, TComponentSelectorType exte
     return {
         tag: 'div',
         cls: `ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable`,
-        role: params.suppressKeyboardNavigation ? 'presentation' : 'role',
+        role: params.suppressKeyboardNavigation ? 'presentation' : 'group',
         children: [
             {
                 tag: 'span',
@@ -630,12 +631,15 @@ class DefaultTitleBar<
         if (disabled) {
             eGui.classList.add(TITLE_BAR_DISABLED_CLASS);
             eGui.removeAttribute('tabindex');
+            _setAriaRole(eGui, 'presentation');
         } else {
             eGui.classList.remove(TITLE_BAR_DISABLED_CLASS);
             if (typeof this.title === 'string' && !this.suppressKeyboardNavigation) {
-                eGui.setAttribute('tabindex', '0');
+                this.activateTabIndex([eGui]);
+                _setAriaRole(eGui, 'group');
             } else {
                 eGui.removeAttribute('tabindex');
+                _setAriaRole(eGui, 'presentation');
             }
         }
     }
