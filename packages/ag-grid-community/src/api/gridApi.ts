@@ -1846,7 +1846,9 @@ export interface _AdvancedFilterGridApi {
     getAdvancedFilterModel(): AdvancedFilterModel | null;
 
     /**
-     * Set the state of the Advanced Filter. Used for restoring Advanced Filter state
+     * Set the state of the Advanced Filter or used for restoring Advanced Filter state.
+     * If inferring cell data types, and row data is initially empty or yet to be set, the filter model will be applied asynchronously after row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition, or provide cell data types for every column.
      * @agModule `AdvancedFilterModule`
      */
     setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void;
