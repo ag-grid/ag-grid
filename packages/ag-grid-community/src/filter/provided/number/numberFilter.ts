@@ -89,10 +89,17 @@ export class NumberFilter extends SimpleFilter<
     public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
         const result = super.refresh(legacyNewParams);
 
-        const newState = (legacyNewParams as unknown as NumberFilterDisplayParams).state;
+        const { state: newState, additionalEventAttributes } = legacyNewParams as unknown as NumberFilterDisplayParams;
         const oldState = this.state;
 
-        if (newState.model !== oldState.model || !this.areStatesEqual(newState.state, oldState.state)) {
+        const fromAction = additionalEventAttributes?.fromAction;
+        const forceRefreshValidation = fromAction && fromAction != 'apply';
+
+        if (
+            forceRefreshValidation ||
+            newState.model !== oldState.model ||
+            !this.areStatesEqual(newState.state, oldState.state)
+        ) {
             this.refreshInputValidation();
         }
 
