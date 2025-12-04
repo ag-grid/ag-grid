@@ -4,19 +4,16 @@ import { createRoot } from 'react-dom/client';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
-    TextEditorModule,
-    TextFilterModule,
     ValidationModule,
 } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
+import type { CustomParams } from './customOverlay';
 import { CustomOverlay } from './customOverlay';
 import './styles.css';
 
 ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -27,8 +24,8 @@ interface IAthlete {
 }
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150 },
-    { field: 'country', width: 150 },
+    { field: 'athlete', flex: 1 },
+    { field: 'country', flex: 1 },
 ];
 
 const rowData: IAthlete[] = [
@@ -38,27 +35,24 @@ const rowData: IAthlete[] = [
     { athlete: 'Alicia Coutts', country: 'Australia' },
 ];
 
-const defaultColDef: ColDef = {
-    flex: 1,
-    minWidth: 120,
-};
-
-const GridExample: React.FC = () => {
-    const [activeOverlay, setActiveOverlay] = useState<any>();
+const GridExample = () => {
+    const [activeOverlay, setActiveOverlay] = useState<any>(() => CustomOverlay);
+    const [activeOverlayParams, setActiveOverlayParams] = useState<CustomParams>({ count: 1 });
 
     return (
         <div className="example-wrapper">
             <div className="button-row">
                 <button onClick={() => setActiveOverlay(() => CustomOverlay)}>Show custom overlay</button>
                 <button onClick={() => setActiveOverlay(undefined)}>Hide custom overlay</button>
+                <button onClick={() => setActiveOverlayParams(prev => ({ count: prev.count + 1 }))}>Increment Param</button>
             </div>
 
             <div className="grid-wrapper">
                 <AgGridReact<IAthlete>
                     rowData={rowData}
                     columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
                     activeOverlay={activeOverlay}
+                    activeOverlayParams={activeOverlayParams}
                 />
             </div>
         </div>

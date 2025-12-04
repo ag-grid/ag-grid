@@ -1,19 +1,10 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    ModuleRegistry,
-    TextEditorModule,
-    TextFilterModule,
-    ValidationModule,
-    createGrid,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 
 import { StatusOverlay } from './statusOverlay_typescript';
 
 ModuleRegistry.registerModules([
-    TextEditorModule,
-    TextFilterModule,
     ClientSideRowModelModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
@@ -24,8 +15,8 @@ interface IAthlete {
 }
 
 const columnDefs: ColDef<IAthlete>[] = [
-    { field: 'athlete', width: 150 },
-    { field: 'country', width: 150 },
+    { field: 'athlete', flex: 1 },
+    { field: 'country', flex: 1 },
 ];
 
 const rowData: IAthlete[] = [
@@ -37,10 +28,6 @@ let gridApi: GridApi<IAthlete>;
 let statusOverlayCounter = 0;
 
 const gridOptions: GridOptions<IAthlete> = {
-    defaultColDef: {
-        flex: 1,
-        minWidth: 120,
-    },
     columnDefs,
     rowData,
     components: {
