@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "34.3.1-beta.20251130.2036",
+  "version": "34.3.1-beta.20251203.16",
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",

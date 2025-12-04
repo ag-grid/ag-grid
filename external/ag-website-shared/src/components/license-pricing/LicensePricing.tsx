@@ -78,6 +78,12 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                     {licenseData.map((license, i) => {
                         const isCommunity = license.id === 'community';
+                        const ctaId =
+                            license.id === 'community'
+                                ? 'get-started'
+                                : license.id.includes('enterprise')
+                                  ? 'buy-now'
+                                  : 'bundle-buy-now';
 
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
@@ -96,6 +102,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     </span>
 
                                     <a
+                                        id={ctaId}
                                         className={classnames(
                                             styles.fwAction,
                                             isCommunity ? 'button-tertiary' : 'button'
@@ -172,7 +179,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
                         <div ref={contactSalesRef} className={styles.salesForm}>
                             <div className={styles.salesFormCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3 className="text-2xl">
                                     <span>Contact Our Sales Team</span>
                                 </h3>
 
@@ -199,7 +206,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.trialLicence}>
                             <div className={styles.trialLicenceCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3 className="text-2xl">
                                     <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
                                     <span>Enterprise Bundle Trial</span>
                                 </h3>
@@ -210,6 +217,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 </p>
 
                                 <a
+                                    id="request-trial-licence"
                                     className={classnames('button', styles.trialButton)}
                                     href={gridUrlWithPrefix({
                                         framework,
@@ -264,11 +272,17 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <p>
                                 Read our documentation on{' '}
                                 {defaultSelection === 'grid' ? (
-                                    <a href={gridUrlWithPrefix({ framework, url: './license-install' })}>
+                                    <a
+                                        id="licence-install-cta"
+                                        href={gridUrlWithPrefix({ framework, url: './license-install' })}
+                                    >
                                         Installing Your Licence Key
                                     </a>
                                 ) : (
-                                    <a href={chartsUrlWithPrefix({ framework, url: './license-install' })}>
+                                    <a
+                                        id="licence-install-cta"
+                                        href={chartsUrlWithPrefix({ framework, url: './license-install' })}
+                                    >
                                         Installing Your Licence Key
                                     </a>
                                 )}
@@ -278,6 +292,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.videoPrompt}>
                             <a
+                                id="licence-explainer-video-thumbnail"
                                 href="https://www.youtube.com/watch?v=VPr__OKxH50"
                                 target="_blank"
                                 className={styles.thumbnail}
@@ -291,7 +306,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <div>
                                 <h3>Which licences do I need?</h3>
                                 <p>
-                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
+                                    <a
+                                        id="licence-explainer-video-text"
+                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                        target="_blank"
+                                    >
                                         <span className="icon"></span>
                                         Watch our short explainer video
                                     </a>

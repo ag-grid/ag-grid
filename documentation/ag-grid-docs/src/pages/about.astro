@@ -331,10 +331,29 @@ const allCarouselImages = [...carouselImages, ...carouselImages];
 
                     <div>
                         <h3>Where to find us</h3>
+
                         <div class={styles.contactOffice}>
-                            <strong>AG Grid Ltd.</strong><br />
-                            10 Queen Street Place,<br /> London,<br /> EC4R 1AG
+                            70 Wilson St,<br /> London,<br /> EC2A 2DB <br />
+                            <div class={styles.officeButton}>
+                                <a
+                                    class="button-tertiary"
+                                    href="https://maps.app.goo.gl/LhvkucDnWtZ9z7rB8"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <Icon name="mapPin" />
+                                    <span>Visit our office</span>
+                                </a>
+                            </div>
                         </div>
+
+                        <div class={styles.contactOffice}>
+                            <br /><strong class={styles.strongAddress}
+                                >Registered Office (Legal and financial correspondence)</strong
+                            ><br />
+                            10 Queen Street Place,<br /> London,<br /> EC4R 1AG <br />
+                        </div>
+
                         <div class={styles.socialLinks}>
                             <a
                                 href="https://github.com/ag-grid/ag-grid"

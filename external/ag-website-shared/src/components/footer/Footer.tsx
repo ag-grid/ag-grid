@@ -4,6 +4,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { SiteLogo } from '@components/SiteLogo';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classNames from 'classnames';
+import GithubSlugger from 'github-slugger';
 
 import styles from './Footer.module.scss';
 
@@ -12,14 +13,20 @@ interface FooterProps {
     footerItems: FooterItem[];
 }
 
-const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) =>
-    footerItems.map(({ title, links }) => (
+const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) => {
+    const slugger = new GithubSlugger();
+
+    return footerItems.map(({ title, links }) => (
         <div key={title} className={styles.menuColumn}>
             <h2>{title}</h2>
             <ul className="list-style-none">
                 {links.map(({ name, url, newTab, iconName }: any) => (
                     <li key={`${title}_${name}`}>
-                        <a href={urlWithBaseUrl(url)} {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}>
+                        <a
+                            id={`${slugger.slug(name)}-nav`}
+                            href={urlWithBaseUrl(url)}
+                            {...(newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
+                        >
                             {iconName && <Icon name={iconName} />}
                             {name}
                         </a>
@@ -28,6 +35,7 @@ const MenuColumns = ({ footerItems }: { footerItems: FooterItem[] }) =>
             </ul>
         </div>
     ));
+};
 
 export const Footer = ({ showMicrosoftMessage, footerItems }: FooterProps) => {
     return (

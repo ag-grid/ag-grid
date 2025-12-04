@@ -21,18 +21,11 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
             this.setValueActive(false, column, source),
     } as const;
 
-    override columnOrdering = {
-        enableProp: 'aggFunc',
-        initialEnableProp: 'initialAggFunc',
-        indexProp: 'valueIndex',
-        initialIndexProp: 'initialValueIndex',
-    } as const;
-
     override columnExtractors = {
         setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) =>
             this.setColValueActive(col, flag, source),
-        getIndexFunc: (colDef: ColDef) => colDef.valueIndex,
-        getInitialIndexFunc: (colDef: ColDef) => colDef.initialValueIndex,
+        getIndexFunc: () => undefined,
+        getInitialIndexFunc: () => undefined,
         getValueFunc: (colDef: ColDef) => {
             const aggFunc = colDef.aggFunc;
             // null or empty string means clear
@@ -100,19 +93,16 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IColsSer
         getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
             key1: U,
             key2?: S
-        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
-        valueIndexMap: { [key: string]: number } | null
+        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined }
     ): void {
-        const { value1: aggFunc, value2: valueIndex } = getValue('aggFunc', 'valueIndex');
-        if (aggFunc !== undefined || valueIndex !== undefined) {
+        // noop
+        const aggFunc = getValue('aggFunc').value1;
+        if (aggFunc !== undefined) {
             if (typeof aggFunc === 'string') {
                 this.setColAggFunc(column, aggFunc);
                 if (!column.isValueActive()) {
                     this.setColValueActive(column, true, source);
                     this.modifyColumnsNoEventsCallbacks.addCol(column);
-                }
-                if (valueIndexMap && typeof valueIndex === 'number') {
-                    valueIndexMap[column.getId()] = valueIndex;
                 }
             } else {
                 if (_exists(aggFunc)) {

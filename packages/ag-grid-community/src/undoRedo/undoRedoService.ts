@@ -78,8 +78,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const isCellEditing = this.activeCellEdit !== null && _areCellsEqual(this.activeCellEdit, eventCell);
         const isRowEditing = this.activeRowEdit !== null && _isSameRow(this.activeRowEdit, eventCell);
 
-        const shouldCaptureAction =
-            isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction || event.source === 'renderer';
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
 
         if (!shouldCaptureAction) {
             return;

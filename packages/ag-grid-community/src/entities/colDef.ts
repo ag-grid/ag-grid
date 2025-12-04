@@ -729,20 +729,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
-     * Set this in columns you want to aggregate by to determine the order they appear in when pivoting.
-     *
-     * This property only takes effect when `enableStrictPivotColumnOrder` is enabled.
-     * @agModule `PivotModule`
-     */
-    valueIndex?: number;
-    /**
-     * Same as `valueIndex`, except only applied when creating a new column definition. Not applied when updating column definitions.
-     *
-     * This property only takes effect when `enableStrictPivotColumnOrder` is enabled.
-     * @agModule `PivotModule`
-     */
-    initialValueIndex?: number;
-    /**
      * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */

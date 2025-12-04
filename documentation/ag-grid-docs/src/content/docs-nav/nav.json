@@ -711,6 +711,18 @@
                         },
                         {
                             "type": "item",
+                            "title": "Formulas",
+                            "path": "formulas",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Find",
+                            "path": "find",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Styling Cells",
                             "path": "cell-styles"
                         },
@@ -743,18 +755,6 @@
                             "type": "item",
                             "title": "Cell Text Selection",
                             "path": "cell-text-selection"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Formulas",
-                            "path": "formulas",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Find",
-                            "path": "find",
-                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1168,6 +1168,18 @@
                             "type": "item",
                             "title": "Sorting",
                             "path": "grouping-sorting",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Editing Groups",
+                            "path": "grouping-edit",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Row Dragging",
+                            "path": "grouping-row-dragging",
                             "isEnterprise": true
                         }
                     ]

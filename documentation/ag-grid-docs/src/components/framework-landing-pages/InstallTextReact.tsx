@@ -20,7 +20,11 @@ const InstallText = () => {
                 $ npm install ag-grid-react
             </span>
             <span className={`plausible-event-name=react-table-copy-cta`} onClick={copyToClipboard}>
-                <Icon svgClasses={styles.copyToClipboardIcon} name={isCopied ? 'tick' : 'copy'} />
+                <Icon
+                    id="copy-install-code"
+                    svgClasses={styles.copyToClipboardIcon}
+                    name={isCopied ? 'tick' : 'copy'}
+                />
             </span>
         </>
     );

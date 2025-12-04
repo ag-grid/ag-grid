@@ -7,44 +7,44 @@ ignore:
               reason: >-
                   Used for typescript types and ReDOS could only apply on developer
                   machines
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-20T15:49:18.099Z
     SNYK-JS-VITE-9653016:
         - vitest@2.1.9 > vite@5.4.11:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
         - vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.11:
               reason: >-
                   Vitest is only used for development and we do not expose
                   the dev server to the network
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
     SNYK-JS-CROSSSPAWN-8303230:
         - '@swc/cli@0.3.14 > @mole-inc/bin-wrapper@8.0.1 > bin-check@4.1.0 > execa@0.7.0 > cross-spawn@5.1.0':
               reason: >-
                   SWC cli is only used during development so ReDoS would only affect
                   developer machines
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T15:10:07.411Z
     SNYK-JS-ESLINTPLUGINKIT-8340627:
         - eslint@9.14.0 > @eslint/plugin-kit@0.2.5:
               reason: >-
                   Only used for testing packages, so ReDos attack would only affect developer machines and CI
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-07-22T10:35:00.007Z
     SNYK-JS-ESLINTPLUGINKIT-10847878:
         - eslint@9.18.0 > @eslint/plugin-kit@0.2.5:
               reason: >-
                   Only used for testing packages, so ReDos attack would only affect developer machines and CI
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-07-22T10:35:00.007Z
     SNYK-JS-FORMDATA-10841150:
         - request@2.88.2 > form-data@2.3.3:
               reason: >-
                   Only used for building and getting changelog/pipeline data
-              expires: 2025-12-08T12:00:00.000Z
+              expires: 2026-06-08T00:00:00.000Z
               created: 2025-06-25T14:14:23.307Z
 patch: {}

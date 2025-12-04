@@ -1474,6 +1474,12 @@
                 "name": "Row Grouping - Expand All / Collapse All",
                 "url": "./server-side-model-grouping/#expand-all--collapse-all"
             }
+        },
+        "refreshAfterGroupEdit": {
+            "more": {
+                "name": "Row Grouping - Editing Groups",
+                "url": "./grouping-edit"
+            }
         }
     },
     "treeData": {

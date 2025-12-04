@@ -71,13 +71,12 @@ type StopContext = {
 type StopOutcome = { edits: EditMap; res: boolean };
 
 // these are event sources for setDataValue that will not cause the editors to close
-const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc', 'renderer']);
+const KEEP_EDITOR_SOURCES = new Set(['undo', 'redo', 'paste', 'bulk', 'rangeSvc']);
 
 const INTERNAL_EDITOR_SOURCES = new Set(['ui', 'api']);
 
 // stop editing sources that we treat as UI-originated so we follow standard processing.
 const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
-    renderer: 'api',
     paste: 'api',
     rangeSvc: 'api',
     fillHandle: 'api',
@@ -88,14 +87,7 @@ const STOP_EDIT_SOURCE_TRANSFORM: Record<string, EditSource> = {
 const STOP_EDIT_SOURCE_TRANSFORM_KEYS: Set<string> = new Set(Object.keys(STOP_EDIT_SOURCE_TRANSFORM));
 
 // These are sources that we treat as API-originated so we presume API behaviour.
-const SET_DATA_SOURCE_AS_API: Set<string | undefined> = new Set([
-    'paste',
-    'rangeSvc',
-    'renderer',
-    'cellClear',
-    'redo',
-    'undo',
-]);
+const SET_DATA_SOURCE_AS_API: Set<string | undefined> = new Set(['paste', 'rangeSvc', 'cellClear', 'redo', 'undo']);
 
 const CANCEL_PARAMS: StopEditParams = { cancel: true, source: 'api' };
 
@@ -390,7 +382,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         const freshEdits = model.getEditMap();
         const editsToDelete = this.processEdits(freshEdits, cancel, source);
 
-        this.strategy?.stop(cancel, event, source);
+        this.strategy?.stop(cancel, event);
 
         this.clearValidationIfNoOpenEditors();
 
