@@ -65,7 +65,7 @@ const gridOptions: GridOptions<any> = {
             A: '=ERRORIFONE(REF(COLUMN("0"),ROW("1"),COLUMN("0"),ROW("3")))',
             B: '=ERRORIFONE(REF(COLUMN("1"),ROW("1"),COLUMN("1"),ROW("3")))',
             C: '=ERRORIFONE(REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("3")))',
-            D: '=CONCAT(REF(COLUMN("0"),ROW("4"),COLUMN("2"),ROW("4")))',
+            D: '=CONCAT(REF(COLUMN("0"),ROW("9"),COLUMN("2"),ROW("9")))',
         },
     ],
 };

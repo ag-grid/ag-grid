@@ -36,7 +36,7 @@ const rowData = [
         rid: 'r8',
         gold: 1,
         silver: 2,
-        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r7")),2)',
+        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r8")),2)',
     },
 ];
 
