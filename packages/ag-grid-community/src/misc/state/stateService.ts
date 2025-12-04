@@ -310,6 +310,7 @@ export class StateService extends BeanStub implements NamedBean {
                     updateCachedState('pagination', this.getPaginationState());
                 }
             },
+            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
         if (colFilter) {
             this.addManagedListeners(colFilter, {
@@ -378,7 +379,6 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
-            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
     }
 
