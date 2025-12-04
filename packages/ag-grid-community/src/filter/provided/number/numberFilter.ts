@@ -200,6 +200,17 @@ export class NumberFilter extends SimpleFilter<
         return model;
     }
 
+    protected override removeConditionsAndOperators(startPosition: number, deleteCount?: number | undefined): void {
+        if (this.hasInvalidInputs()) {
+            // When there are invalid inputs (which currently can only be when there is an invalid range in the last condition)
+            // we don't want to remove those conditions, to prevent the condition from disappearing just as the user finishes
+            // editing it.
+            return;
+        }
+
+        return super.removeConditionsAndOperators(startPosition, deleteCount);
+    }
+
     protected getInputs(position: number): Tuple<GridInputTextField | GridInputNumberField> {
         const { eValuesFrom, eValuesTo } = this;
         if (position >= eValuesFrom.length) {
