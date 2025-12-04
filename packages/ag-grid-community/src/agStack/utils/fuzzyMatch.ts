@@ -48,6 +48,8 @@ export function _fuzzySuggestions(params: {
  * Lower values mean more similar strings.
  */
 export function _getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
+    const inputTextLower = inputText.toLocaleLowerCase();
+    const suggestionLower = suggestion.toLocaleLowerCase();
     // Always use the shorter string for columns to reduce space
     if (inputText.length < suggestion.length) {
         [inputText, suggestion] = [suggestion, inputText];
@@ -72,14 +74,16 @@ export function _getLevenshteinSimilarityDistance(inputText: string, suggestion:
         for (let j = 1; j <= targetLength; j++) {
             const sourceChar = inputText[i - 1];
             const targetChar = suggestion[j - 1];
+            const sourceCharLower = inputTextLower[i - 1];
+            const targetCharLower = suggestionLower[j - 1];
 
-            if (sourceChar.toLocaleLowerCase() === targetChar.toLocaleLowerCase()) {
+            if (sourceCharLower === targetCharLower) {
                 ++secondaryScore; // Favor case-insensitive matches;
                 if (sourceChar === targetChar) {
                     ++secondaryScore; // Favor exact matches
                 }
                 if (i > 1 && j > 1) {
-                    if (inputText[i - 2].toLocaleLowerCase() === suggestion[j - 2].toLocaleLowerCase()) {
+                    if (inputTextLower[i - 2] === suggestionLower[j - 2]) {
                         ++secondaryScore; // Favor case-insensitive consecutive matches
                         if (inputText[i - 2] === suggestion[j - 2]) {
                             ++secondaryScore; // Favor case-sensitive consecutive matches
