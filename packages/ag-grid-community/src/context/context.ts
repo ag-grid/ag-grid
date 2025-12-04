@@ -1,6 +1,7 @@
 import type { AgSingletonBeanClass } from '../agStack/core/agContext';
 import type { AgCoreBeanCollection } from '../agStack/interfaces/agCoreBeanCollection';
 import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
+import type { IColumnMenuFactory } from '../agStack/interfaces/iColumnMenuFactory';
 import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
@@ -371,6 +372,7 @@ interface CoreBeanCollection
     groupHierarchyColSvc?: IGroupHierarchyColService;
     formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
+    colMenuFactory?: IColumnMenuFactory;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -393,7 +395,6 @@ type UntypedBeanNames =
     | 'chartMenuSvc'
     | 'chartTranslation'
     | 'colChooserFactory'
-    | 'colMenuFactory'
     | 'colToolPanelFactory'
     | 'enterpriseChartProxyFactory'
     | 'lazyBlockLoadingSvc'

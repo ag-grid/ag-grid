@@ -456,8 +456,7 @@ export class AgColumn<TValue = any>
         const { sort, initialSort, mainMenuItems } = this.colDef;
 
         if (Array.isArray(mainMenuItems) && mainMenuItems.length && colMenuFactory) {
-            // eslint-disable-next-line sonarjs/no-ignored-return
-            flattenMenuItems(mainMenuItems).find((k) => {
+            colMenuFactory.flattenMenuItems(mainMenuItems).find((k) => {
                 if (k === 'sortAbsoluteAscending' || k === 'sortAbsoluteDescending') {
                     res.push('absolute');
                     return true;
@@ -867,27 +866,4 @@ export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirect
 
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
     return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
-}
-
-/**
- * Returns a flat set of provided menu items names
- */
-function flattenMenuItems(columnMainMenuItems: (DefaultMenuItem | MenuItemDef)[]) {
-    const mapper = (arr: string[], item: DefaultMenuItem | MenuItemDef) => {
-        if (typeof item === 'string') {
-            arr.push(item);
-        }
-        if (typeof item === 'object') {
-            if (item.subMenu) {
-                // eslint-disable-next-line sonarjs/no-ignored-return
-                item.subMenu.reduce(mapper, arr);
-            } else {
-                arr.push(item.name);
-            }
-        }
-
-        return arr;
-    };
-
-    return columnMainMenuItems.reduce(mapper, []);
 }
