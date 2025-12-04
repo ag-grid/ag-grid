@@ -33,13 +33,6 @@ const gridOptions: GridOptions<any> = {
         { field: 'gold', colId: 'c0', width: 100 },
         { field: 'silver', colId: 'c1', width: 100 },
         { field: 'totals', colId: 'c2', width: 100, cellDataType: 'text', allowFormula: true },
-        {
-            field: 'formula',
-            colId: 'c3',
-            flex: 1,
-            allowFormula: false,
-            valueGetter: (params) => params.getValue('c2'),
-        },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {

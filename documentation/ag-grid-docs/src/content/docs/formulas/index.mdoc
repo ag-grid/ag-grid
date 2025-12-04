@@ -132,8 +132,6 @@ A user could then use this function in a formula such as:
 - `=CUSTOMSUM(A1:B2, 2)` which would add all of the values in the range A1 to B2, and the constant 2.
 - `=CUSTOMSUM(1, 2, 3, 4)` which would add the constant values 1, 2, 3, and 4.
 
-In the example below we have added a "Formula" column to allow easy visualisation of the formulas that have been entered in the "Totals" column.
-
 {% gridExampleRunner title="Simple Iterator" name="formulas-simple-iterator" exampleHeight=200 /%}
 
 In this snippet below, observe how the function uses the `params.values` iterator for navigating the values provided to the function, 
@@ -213,8 +211,6 @@ The grid provides an alternative iterator `params.args` which provides wrapped a
 This means that ranges are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
 
 The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
-
-Note that we have added a "Formula" column to allow easy visualisation of the formulas that have been entered in the "Result" column.
 
 {% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=200 /%}
 

@@ -40,14 +40,6 @@ const gridOptions: GridOptions<any> = {
         { field: 'gold', colId: 'c0', width: 100 },
         { field: 'silver', colId: 'c1', width: 100 },
         { field: 'result', colId: 'c2', width: 100, allowFormula: true },
-        {
-            field: 'formula',
-            colId: '3',
-            flex: 1,
-            editable: false,
-            allowFormula: false,
-            valueGetter: (params) => params.getValue('c2'),
-        },
     ],
     getRowId: (params) => String(params.data.rid),
     cellSelection: {
