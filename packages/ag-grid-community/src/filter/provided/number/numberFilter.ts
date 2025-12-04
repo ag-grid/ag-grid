@@ -74,16 +74,16 @@ export class NumberFilter extends SimpleFilter<
         }
     }
 
-    protected override getState() {
+    protected override getState(): { isValid: boolean } {
         // State represents non-model related UI state, so we make this equivalent to the validity state of the inputs
         // so that changes in validity state cause updates to the UI (see `ProvidedFilter.refresh`).
-        return this.hasInvalidInputs();
+        return { isValid: this.hasInvalidInputs() };
     }
 
-    protected override areStatesEqual(stateA: any, stateB: any): boolean {
+    protected override areStatesEqual(stateA: { isValid: boolean }, stateB: { isValid: boolean }): boolean {
         // For DateFilter, the state is just a boolean of whether or not any inputs are invalid.
         // As such, `undefined` should be identical to `false`
-        return (stateA ?? false) === (stateB ?? false);
+        return (stateA.isValid ?? false) === (stateB.isValid ?? false);
     }
 
     public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
