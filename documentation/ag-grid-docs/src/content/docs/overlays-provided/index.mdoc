@@ -68,11 +68,11 @@ const gridOptions = {
 ### Custom Overlay Components
 
 {% if isFramework("javascript") %}
-To provided a custom component for the provided overlays implement one of the following interfaces: `ILoadingOverlayComp`, `INoRowsOverlayComp` or `INoMatchingRowsOverlayComp`.
+To provide a custom component for the provided overlays implement one of the following interfaces: `ILoadingOverlayComp`, `INoRowsOverlayComp` or `INoMatchingRowsOverlayComp`.
 {% /if %}
 
 {% if isFramework("angular") %}
-To provided a custom component for the provided overlays implement one of the following interfaces: `ILoadingOverlayAngularComp`, `INoRowsOverlayAngularComp` or `INoMatchingRowsOverlayAngularComp`.
+To provide a custom component for the provided overlays implement one of the following interfaces: `ILoadingOverlayAngularComp`, `INoRowsOverlayAngularComp` or `INoMatchingRowsOverlayAngularComp`.
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -102,7 +102,9 @@ Override the provided overlays by assigning a custom component to the matching k
 const gridOptions = {
     components: {
         agLoadingOverlay: CustomLoadingOverlay,
-        agNoRowsOverlay: CustomNoRowsOverlay
+        agNoRowsOverlay: CustomNoRowsOverlay,
+        agNoMatchingRowsOverlay: CustomNoMatchingRows,
+        agExportingOverlay: CustomExportingOverlay
     },
 };
 ```
@@ -112,7 +114,7 @@ const gridOptions = {
 
 Dynamically provide custom overlay components for each provided overlay via the `overlayComponentSelector(params)` callback. The `params.overlayType` property can be used to selectively override each overlay type. Custom parameters can be supplied via the `params` property alongside the custom `component`.
 
-Returning `undefined` from the selector will fallback to the overlay specified in `params.overlayType`.
+Returning `undefined` from the selector will fall back to the overlay specified in `params.overlayType`.
 
 The `component` property also accepts the string keys of components registered via the `components` map.
 

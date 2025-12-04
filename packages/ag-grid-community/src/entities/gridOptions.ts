@@ -1037,19 +1037,16 @@ export interface GridOptions<TData = any> {
     overlayComponentSelector?: OverlaySelectorFunc<TData>;
 
     /**
-     * Display a custom overlay on demand.
-     * Accepts:
-     * - A component class/function.
-     * - A string key from `components` map.
-     * - `null`/`undefined` to clear it.
-     *
-     * If set takes precedence over grid provided overlays.
-     * @default undefined
+     * Display an overlay on demand. If provided takes precedence over the grid provided overlays.
+     * - name of a provided overlay, i.e `agLoadingOverlay`, `agNoRowsOverlay`, `agNoMatchingRowsOverlay`, `agExportingOverlay`
+     * - component class/function.
+     * - key of a custom component registered in the `components` map.
+     * - `undefined` to clear.
      */
     activeOverlay?: any;
 
     /**
-     * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`.
+     * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
      */
     activeOverlayParams?: any;
 
