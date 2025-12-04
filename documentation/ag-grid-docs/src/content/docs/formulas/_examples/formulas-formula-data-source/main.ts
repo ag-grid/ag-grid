@@ -48,15 +48,19 @@ function seeFormulas() {
 const currencyFormatter: ValueFormatterFunc<RowData> = ({ value }) => `$ ${Number(value ?? 0).toFixed(2)}`;
 const getRowId: GetRowIdFunc<RowData> = (params) => String(params.data.id);
 
-// Simple in-memory store to keep formulas outside rowData
-const formulaStore = new Map<string, string>();
 const formulaKey = (rowId: string, colId: string) => `${rowId}-${colId}`;
+// Simple in-memory store to keep formulas outside rowData
+// .. initialise with some initial formulas
+const formulaStore = new Map<string, string>([
+    [formulaKey('a_01', 'total'), '=B1*C1'],
+    [formulaKey('o_02', 'total'), '=B2*C2'],
+    [formulaKey('b_03', 'total'), '=B3*C3'],
+]);
 
 const columnDefs: ColDef<RowData>[] = [
     { field: 'product' },
     { field: 'price', valueFormatter: currencyFormatter },
     { field: 'quantity', maxWidth: 120 },
-    { field: 'subtotal', allowFormula: true, valueFormatter: currencyFormatter },
     { field: 'total', allowFormula: true, valueFormatter: currencyFormatter },
 ];
 

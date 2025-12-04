@@ -263,6 +263,8 @@ Formulas can be stored outside of the grid's `rowData` by providing a `formulaDa
 
 The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
+In the example, the "Total" column contains editable formulas wich are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
+
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -290,8 +292,6 @@ const gridOptions = {
 ```
 
 {% gridExampleRunner title="Formula Data Source" name="formulas-formula-data-source" exampleHeight=300 /%}
-
-Enter formulas in the "Subtotal" and/or "Total" columns and then use the provided buttons to visualise the row data and formula store.
 
 A user provided datasource should provide the following interface:
 
