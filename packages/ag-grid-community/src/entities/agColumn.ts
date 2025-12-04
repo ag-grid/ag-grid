@@ -20,7 +20,6 @@ import type {
 } from '../interfaces/iColumn';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import { _mergeDeep } from '../utils/mergeDeep';
 import { _warn } from '../validation/logging';
 import type { AgColumnGroup } from './agColumnGroup';
