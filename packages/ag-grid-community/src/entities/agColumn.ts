@@ -452,8 +452,11 @@ export class AgColumn<TValue = any>
     private getColDefAllowedSortTypes(): SortType[] {
         const res: SortType[] = [];
         const { sort, initialSort } = this.colDef;
-        const colDefSortType = (sort as SortDef)?.type;
-        const colDefInitialSortType = (initialSort as SortDef)?.type;
+
+        const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
+        const colDefInitialSortType =
+            initialSort === null ? initialSort : _normalizeSortType((initialSort as SortDef)?.type);
+
         if (colDefSortType) {
             res.push(colDefSortType);
         }

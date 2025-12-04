@@ -221,7 +221,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     className={classnames('button', styles.trialButton)}
                                     href={gridUrlWithPrefix({
                                         framework,
-                                        url: './community-vs-enterprise/#request-an-enterprise-bundle-trial-licence',
+                                        url: './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence',
                                     })}
                                 >
                                     Get a trial license

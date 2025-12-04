@@ -115,7 +115,7 @@ will make it sort descending. Another click will remove the sort.
 
 It is possible to override this behaviour by providing your own `sortingOrder` on the `colDef`.
 
-## Example: Sorting Order
+### Example: Sorting Order
 
 The example below shows different combinations of sorting orders as follows:
 
@@ -127,12 +127,16 @@ The example below shows different combinations of sorting orders as follows:
 
 {% gridExampleRunner title="Sorting Order and Animation" name="sorting-order-and-animation" /%}
 
-## Example: Absolute Value Sorting
-The example below shows how to use a sort definition to allow sorting by absolute value.
+## Absolute Sorting
+Absolute Sorting enables sorting numeric values based on their magnitude, ignoring their sign. This can be used to rank values by their size ignoring if a value is positive or negative.
+
+### Example: Absolute Sorting
+
+The example below shows how to use a column definition to sort by absolute value.
 
 {% gridExampleRunner title="Absolute Value Sorting" name="absolute-sorting" /%}
 
-In this example, the column `rankingChange` uses the following sort definition:
+In this example, the column `rankingChange` uses the following column definition:
 
 ```{% frameworkTransform=true %}
 
@@ -142,13 +146,17 @@ const gridOptions = {
         {
             field: 'rankingChange',
             sort: { direction: 'asc', type: 'absolute' },
-            sortingOrder: [null, { direction: 'asc', type: 'absolute' }, { direction: 'desc', type: 'absolute' }],
+            sortingOrder: [
+                { direction: 'asc', type: 'absolute' }, 
+                { direction: 'desc', type: 'absolute' },
+                null, 
+            ],
         },
     ],
 };
 ```
 
-{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort"] /%}
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort", "sortingOrder"] /%}
 
 ## Sorting API
 

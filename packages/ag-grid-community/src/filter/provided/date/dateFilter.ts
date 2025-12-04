@@ -46,23 +46,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         this.dateConditionFromComps[0].afterGuiAttached(params);
     }
 
-    public override afterGuiDetached(): void {
-        this.clearInvalidInputs();
-    }
-
-    private clearInvalidInputs(): void {
-        // Browser behavioural difference between Firefox and Chrome/Safari:
-        // When users enter incomplete dates in a filter input, then close the filter and re-open it, FF will clear the input, while the other browsers won't
-        // As such, when we have invalid inputs for the `inRange` filter, we want to mimic this behaviour:
-        // In FF we will clear any inputs that are invalid. In other browsers, we do nothing (which effectively keeps the input state)
-        if (_isBrowserFirefox()) {
-            for (const comp of this.dateConditionFromComps.concat(this.dateConditionToComps)) {
-                const isInputValid = comp.getValidity()?.valid ?? true;
-                if (!isInputValid) {
-                    comp.setDate(null);
-                }
-            }
-        }
+    protected override shouldKeepInvalidInputState(): boolean {
+        // We deliberately keep invalid input state for inRange filters when not in Firefox
+        // to mimic the behaviour for incomplete date and datetime inputs (which are cleared
+        // in Firefox but not in Chrome/Safari)
+        return !_isBrowserFirefox() && this.hasInvalidInputs() && this.getConditionTypes().includes('inRange');
     }
 
     protected override commonUpdateSimpleParams(params: DateFilterDisplayParams): void {
@@ -103,9 +91,8 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
     }
 
-    private validateInputs(position: number, fromTo: 'from' | 'to'): void {
+    private validateInputs(position: number, isFrom = false): void {
         const { dateConditionFromComps, dateConditionToComps, beans } = this;
-        const isFrom = fromTo === 'from';
         const from = dateConditionFromComps[position];
         const to = dateConditionToComps[position];
 
@@ -113,8 +100,18 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const toDate = to.getDate();
         const localeKey = getValidityMessageKey(fromDate, toDate, isFrom);
         const message = localeKey ? this.translate(localeKey, [String(isFrom ? toDate : fromDate)]) : '';
-        (isFrom ? from : to).setCustomValidity(message); // Set validity error state for target input
-        (isFrom ? to : from).setCustomValidity(''); // Reset validity error state for other input
+
+        // FF seems to handle cursors/focus sufficiently well for the validation to be left as synchronous.
+        // Chrome/Safari, however, need to be debounced, otherwise they will reset the date input cursor when
+        // reporting validity.
+        // For example, when typing "2000", when we get to "200", that is interpreted as a valid year by Chrome
+        // (even though a HTML date should be four digits per the spec), which triggers validation, and the
+        // final keystroke of "0" will instead be interpreted as the first keystroke of a new year.
+        const shouldDebounceReport = !_isBrowserFirefox();
+
+        (isFrom ? from : to).setCustomValidity(message, shouldDebounceReport); // Set validity error state for target input
+        (isFrom ? to : from).setCustomValidity('', shouldDebounceReport); // Reset validity error state for other input
+
         if (message.length > 0) {
             beans.ariaAnnounce.announceValue(message, 'dateFilter');
         }
@@ -131,7 +128,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.validateInputs(position, fromTo);
+                    this.validateInputs(position, fromTo === 'from');
                     this.onUiChanged();
                 },
                 filterParams: params as any,
@@ -143,8 +140,23 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         return dateCompWrapper;
     }
 
+    protected override getState(): { isInvalid: boolean } {
+        // State represents non-model related UI state, so we make this equivalent to the validity state of the inputs
+        // so that changes in validity state cause updates to the UI (see `ProvidedFilter.refresh`).
+        return { isInvalid: this.hasInvalidInputs() };
+    }
+
+    protected override areStatesEqual(stateA?: { isInvalid: boolean }, stateB?: { isInvalid: boolean }): boolean {
+        // For DateFilter, the state is just a boolean of whether or not any inputs are invalid.
+        // As such, `undefined` should be identical to `false`
+        return (stateA?.isInvalid ?? false) === (stateB?.isInvalid ?? false);
+    }
+
     protected override setElementValue(element: DateCompWrapper, value: Date | null): void {
         element.setDate(value);
+        if (!value) {
+            element.setCustomValidity('');
+        }
     }
 
     protected override setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
@@ -218,11 +230,15 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
     protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
-        this.forEachInput((element) => {
-            // Default validity state to true -> if theres no validity state, we assume everything is fine
-            const { valid = true } = element.getValidity() ?? {};
-            invalidInputs ||= !valid;
-        });
+        // Default validity state to true -> if theres no validity state, everything is fine
+        this.forEachInput((element) => (invalidInputs ||= !(element.getValidity()?.valid ?? true)));
+        return invalidInputs;
+    }
+
+    protected override positionHasInvalidInputs(position: number): boolean {
+        let invalidInputs = false;
+        // Default validity state to true -> if theres no validity state, everything is fine
+        this.forEachPositionInput(position, (element) => (invalidInputs ||= !(element.getValidity()?.valid ?? true)));
         return invalidInputs;
     }
 
@@ -236,11 +252,11 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         }
 
         let valid = true;
-        this.forEachInput((element, index, elPosition, numberOfInputs) => {
-            if (elPosition !== position || !valid || index >= numberOfInputs) {
+        this.forEachPositionInput(position, (element, index, _pos, numberOfInputs) => {
+            if (!valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && this.isValidDateValue(element.getDate());
+            valid &&= this.isValidDateValue(element.getDate());
         });
 
         return valid;
@@ -272,6 +288,17 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             type,
             ...model,
         };
+    }
+
+    protected override removeConditionsAndOperators(startPosition: number, deleteCount?: number | undefined): void {
+        if (this.hasInvalidInputs()) {
+            // When there are invalid inputs (which currently can only be when there is an invalid range in the last condition)
+            // we don't want to remove those conditions, to prevent the condition from disappearing just as the user finishes
+            // editing it.
+            return;
+        }
+
+        return super.removeConditionsAndOperators(startPosition, deleteCount);
     }
 
     protected override resetPlaceholder(): void {
