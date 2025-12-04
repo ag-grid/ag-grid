@@ -82,12 +82,12 @@ export class RowDragComp extends Component {
         }
 
         const { beans } = this;
-        const serviceVisibility = beans.rowDragSvc?.visibility;
-        const hideCompletely = serviceVisibility === 'hidden' && !beans.dragAndDrop?.hasExternalDropZones();
+        const visibility = beans.rowDragSvc!.visibility;
+        const hideCompletely =
+            visibility === 'suppress' || (visibility === 'hidden' && !beans.dragAndDrop?.hasExternalDropZones());
 
         let displayed = !hideCompletely;
         let visible = displayed;
-        let disabled = serviceVisibility === 'disabled';
 
         if (displayed) {
             const column = this.column;
@@ -111,7 +111,6 @@ export class RowDragComp extends Component {
         }
 
         visible &&= displayed;
-        disabled ||= !visible;
 
         // Those calls are ordered to avoid flicker when changing state
         if (!displayed) {
@@ -120,7 +119,9 @@ export class RowDragComp extends Component {
         if (!visible) {
             this.setVisible(visible, SKIP_ARIA_HIDDEN);
         }
-        this.setDisabled(disabled);
+
+        this.setDisabled(!visible || (visibility === 'disabled' && !beans.dragAndDrop?.hasExternalDropZones()));
+
         if (displayed) {
             this.setDisplayed(displayed, SKIP_ARIA_HIDDEN);
         }

@@ -11,7 +11,7 @@ export class RowDragService extends BeanStub implements NamedBean {
     beanName = 'rowDragSvc' as const;
 
     public rowDragFeature: RowDragFeature | null = null;
-    public visibility: RowDragVisibility = 'hidden';
+    public visibility: RowDragVisibility = 'suppress';
 
     public setupRowDrag(element: HTMLElement, ctrl: BeanStub): void {
         const rowDragFeature = ctrl.createManagedBean(new RowDragFeature(element));
@@ -103,7 +103,7 @@ export class RowDragService extends BeanStub implements NamedBean {
         const gos = beans.gos;
 
         if (gos.get('suppressRowDrag')) {
-            return 'hidden';
+            return 'suppress';
         }
 
         const rowDragManaged = gos.get('rowDragManaged');

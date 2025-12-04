@@ -12,7 +12,7 @@ import type { DragItem } from '../interfaces/iDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { DragAndDropIcon, DragSourceType } from './dragAndDropService';
 
-export type RowDragVisibility = 'visible' | 'hidden' | 'disabled';
+export type RowDragVisibility = 'suppress' | 'visible' | 'hidden' | 'disabled';
 
 export type RowDropTargetPosition = 'above' | 'inside' | 'below' | 'none';
 
