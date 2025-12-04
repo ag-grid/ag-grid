@@ -295,8 +295,9 @@ export abstract class BaseDragAndDropService<
         mouseEvent: MouseEvent
     ): AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null {
         const validDropTargets: AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent>[] = [];
-        for (let i = 0, len = this.dropTargets.length; i < len; ++i) {
-            const target = this.dropTargets[i];
+        const dropTargets = this.dropTargets;
+        for (let i = 0, len = dropTargets.length; i < len; ++i) {
+            const target = dropTargets[i];
             if (this.isMouseOnDropTarget(mouseEvent, target)) {
                 validDropTargets.push(target);
             }
@@ -382,8 +383,9 @@ export abstract class BaseDragAndDropService<
     public findExternalZone(
         container: HTMLElement
     ): AgDropTarget<TDragSourceType, TDragItem, TDragAndDropIcon, TDraggingEvent> | null {
-        for (let i = 0, len = this.dropTargets.length; i < len; ++i) {
-            const zone = this.dropTargets[i];
+        const dropTargets = this.dropTargets;
+        for (let i = 0, len = dropTargets.length; i < len; ++i) {
+            const zone = dropTargets[i];
             if (zone.external && zone.getContainer() === container) {
                 return zone;
             }
