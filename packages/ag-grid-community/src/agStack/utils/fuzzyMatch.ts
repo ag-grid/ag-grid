@@ -53,7 +53,7 @@ export function _fuzzySuggestions(params: {
 export function _getLevenshteinSimilarityDistance(source: string, target: string): number {
     let inputLower = source.toLocaleLowerCase();
     let targetLower = target.toLocaleLowerCase();
-    let tmp;
+    let swapTmp;
 
     const sourceLength = source.length;
     const targetLength = target.length;
@@ -64,12 +64,12 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
 
     // Always use the shorter string for columns to reduce space
     if (source.length < target.length) {
-        tmp = targetLower;
+        swapTmp = targetLower;
         targetLower = inputLower;
-        inputLower = tmp;
-        tmp = target;
+        inputLower = swapTmp;
+        swapTmp = target;
         target = source;
-        source = tmp;
+        source = swapTmp;
     }
 
     // Typed arrays → faster and avoid realloc
@@ -136,9 +136,9 @@ export function _getLevenshteinSimilarityDistance(source: string, target: string
             currentRow[j] = previousRow[j - 1]; // No cost
         }
 
-        tmp = previousRow;
+        swapTmp = previousRow;
         previousRow = currentRow;
-        currentRow = tmp;
+        currentRow = swapTmp;
     }
 
     return previousRow[targetLength] / (secondaryScore + 1); // negatives divided by positives, ensure no division by zero
