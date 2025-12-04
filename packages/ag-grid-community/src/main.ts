@@ -253,7 +253,6 @@ export {
     AgComponent as _AgComponent,
     AgComponentEvent as _AgComponentEvent,
 } from './agStack/interfaces/agComponent';
-export { IColumnMenuFactory } from './agStack/interfaces/iColumnMenuFactory';
 export { AgSingletonBeanClass as _AgSingletonBeanClass, AgContext as _AgContext } from './agStack/core/agContext';
 export {
     BaseEnvironment as _BaseEnvironment,
@@ -431,6 +430,7 @@ export {
     DraggingChangedEvent,
 } from './interfaces/iRowNode';
 
+export { IColumnMenuFactory } from './interfaces/iColumnMenuFactory';
 // filter
 export {
     IFilterDef,

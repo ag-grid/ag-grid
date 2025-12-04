@@ -1,7 +1,6 @@
 import type { AgSingletonBeanClass } from '../agStack/core/agContext';
 import type { AgCoreBeanCollection } from '../agStack/interfaces/agCoreBeanCollection';
 import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
-import type { IColumnMenuFactory } from '../agStack/interfaces/iColumnMenuFactory';
 import type { ClassImp, IContext } from '../agStack/interfaces/iContext';
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
@@ -54,6 +53,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
+import type { IColumnMenuFactory } from '../interfaces/iColumnMenuFactory';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';

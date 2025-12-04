@@ -1,4 +1,4 @@
-import type { DefaultMenuItem, MenuItemDef } from '../../interfaces/menuItem';
+import type { DefaultMenuItem, MenuItemDef } from './menuItem';
 
 export interface IColumnMenuFactory {
     /**
