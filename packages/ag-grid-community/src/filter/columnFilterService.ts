@@ -1718,7 +1718,8 @@ export class ColumnFilterService
             () => _getFilterModel(this.model, colId),
             () => this.state.get(colId),
             (state) => this.updateState(column, state),
-            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
+            (model) =>
+                getFilterUi()?.filterParams?.onModelChange(model, { ...additionalEventAttributes, fromAction: action }),
             filterWrapper?.isHandler
                 ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
                 : undefined
