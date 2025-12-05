@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_DE = {
     searchOoo: 'Suchen...',
     blanks: '(Leer)',
     noMatches: 'Keine Übereinstimmungen',
+    typeToSearchOoo: 'Zum Suchen tippen...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_DE = {
     maxLengthValidation: 'Muss ${variable} Zeichen oder weniger sein.',
     minValueValidation: 'Muss größer oder gleich ${variable} sein',
     maxValueValidation: 'Muss kleiner oder gleich ${variable} sein',
+    strictMinValueValidation: 'Muss größer als ${variable} sein',
+    strictMaxValueValidation: 'Muss kleiner als ${variable} sein',
     invalidSelectionValidation: 'Ungültige Auswahl.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_DE = {
     loadingOoo: 'Wird geladen...',
     loadingError: 'FEHLER',
     noRowsToShow: 'Keine Zeilen zum Anzeigen',
+    noMatchingRows: 'Keine passenden Zeilen',
+    exportingOoo: 'Exportiere...',
     enabled: 'Aktiviert',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_DE = {
     chooseColumns: 'Spalten auswählen',
     sortAscending: 'Aufsteigend sortieren',
     sortDescending: 'Absteigend sortieren',
+    sortAbsoluteAscending: 'Absolut aufsteigend sortieren',
+    sortAbsoluteDescending: 'Absolut absteigend sortieren',
     sortUnSort: 'Sortierung aufheben',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -545,7 +552,7 @@ export const AG_GRID_LOCALE_DE = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
+    '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderList: 'Erweiterte Filter-Builder-Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbedingung',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_DE = {
     ariaChecked: 'geprüft',
     ariaColumn: 'Spalte',
     ariaColumnGroup: 'Spaltengruppe',
+    ariaFilterActive: 'Filter aktiv',
     ariaColumnFiltered: 'Spalte gefiltert',
     ariaColumnSelectAll: 'Alle Spalten ein-/ausblenden',
     ariaDateFilterInput: 'Datum-Filtereingang',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_DE = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' von ',
     ariaDropZoneColumnComponentSortAscending: 'aufsteigend',
     ariaDropZoneColumnComponentSortDescending: 'absteigend',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut aufsteigend',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut absteigend',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Spaltenmenü',
     ariaLabelColumnFilter: 'Spaltenfilter',

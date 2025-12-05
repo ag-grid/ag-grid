@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_KR = {
     searchOoo: '검색...',
     blanks: '(빈칸)',
     noMatches: '일치하는 항목이 없습니다',
+    typeToSearchOoo: '검색할 내용을 입력하세요...',
 
     // Number Filter & Text Filter
     filterOoo: '필터...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_KR = {
     maxDateValidation: '날짜는 ${variable} 이전이어야 합니다.',
     maxLengthValidation: '${variable}자 이내여야 합니다.',
     minValueValidation: '${variable}보다 크거나 같아야 합니다.',
-    maxValueValidation: '${variable}보다 작거나 같아야 합니다.',
+    maxValueValidation: '${variable} 이하이어야 합니다.',
+    strictMinValueValidation: '${variable} 보다 커야 합니다.',
+    strictMaxValueValidation: '${variable} 보다 작아야 합니다.',
     invalidSelectionValidation: '잘못된 선택입니다.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_KR = {
     loadingOoo: '로딩 중...',
     loadingError: '오류',
     noRowsToShow: '표시할 행이 없습니다',
+    noMatchingRows: '일치하는 행 없음',
+    exportingOoo: '내보내는 중...',
     enabled: '사용 중',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_KR = {
     chooseColumns: '열 선택',
     sortAscending: '오름차순 정렬',
     sortDescending: '내림차순 정렬',
+    sortAbsoluteAscending: '절대 오름차순 정렬',
+    sortAbsoluteDescending: '절대 내림차순 정렬',
     sortUnSort: '정렬 해제',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_KR = {
     ariaChecked: '선택됨',
     ariaColumn: '열',
     ariaColumnGroup: '열 그룹',
+    ariaFilterActive: '필터 활성화',
     ariaColumnFiltered: '열 필터링됨',
     ariaColumnSelectAll: '모든 열 가시성 전환',
     ariaDateFilterInput: '날짜 필터 입력',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_KR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' 의 ',
     ariaDropZoneColumnComponentSortAscending: '오름차순',
     ariaDropZoneColumnComponentSortDescending: '내림차순',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '절대 오름차순',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '절대 내림차순',
     ariaLabelDialog: '대화상자',
     ariaLabelColumnMenu: '컬럼 메뉴',
     ariaLabelColumnFilter: '컬럼 필터',

@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_IL = {
     searchOoo: 'חפש...',
     blanks: '(ריקים)',
     noMatches: 'אין התאמות',
+    typeToSearchOoo: 'הקלד לחיפוש...',
 
     // Number Filter & Text Filter
     filterOoo: 'סינון...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_IL = {
     maxLengthValidation: 'חייב להיות ${variable} תווים או פחות.',
     minValueValidation: 'חייב להיות גדול או שווה ל-${variable}',
     maxValueValidation: 'חייב להיות קטן או שווה ל-${variable}',
+    strictMinValueValidation: 'חייב להיות גדול מ-${variable}',
+    strictMaxValueValidation: 'חייב להיות קטן מ-${variable}',
     invalidSelectionValidation: 'בחירה לא חוקית.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_IL = {
     loadingOoo: 'טוען...',
     loadingError: 'שגיאה',
     noRowsToShow: 'אין שורות להציג',
+    noMatchingRows: 'אין שורות תואמות',
+    exportingOoo: 'מייצא...',
     enabled: 'מופעל',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_IL = {
     chooseColumns: 'בחר עמודות',
     sortAscending: 'מיין בסדר עולה',
     sortDescending: 'מיין בסדר יורד',
+    sortAbsoluteAscending: 'מיון עולה מוחלט',
+    sortAbsoluteDescending: 'מיון יורד מוחלט',
     sortUnSort: 'נקה מיון',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_IL = {
     ariaChecked: 'מסומן',
     ariaColumn: 'עמודה',
     ariaColumnGroup: 'קבוצת עמודות',
+    ariaFilterActive: 'מסנן פעיל',
     ariaColumnFiltered: 'עמודה מסוננת',
     ariaColumnSelectAll: 'החלפת נראות כל העמודות',
     ariaDateFilterInput: 'קלט סינון תאריך',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_IL = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' של ',
     ariaDropZoneColumnComponentSortAscending: 'עולה',
     ariaDropZoneColumnComponentSortDescending: 'יורד',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'עלייה מוחלטת',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'ירידה מוחלטת',
     ariaLabelDialog: 'דיאלוג',
     ariaLabelColumnMenu: 'תפריט עמודה',
     ariaLabelColumnFilter: 'מסנן עמודה',

@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_ES = {
     searchOoo: 'Buscar...',
     blanks: '(Vacíos)',
     noMatches: 'Sin coincidencias',
+    typeToSearchOoo: 'Escribe para buscar...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtro...',
@@ -129,7 +130,7 @@ export const AG_GRID_LOCALE_ES = {
     advancedFilterValidationInvalidDate: 'El valor no es una fecha válida',
     advancedFilterValidationMissingCondition: 'Falta la condición',
     advancedFilterValidationJoinOperatorMismatch:
-        'Los operadores de unión dentro de una condición deben ser los mismos',
+    'Los operadores de unión dentro de una condición deben ser los mismos',
     advancedFilterValidationInvalidJoinOperator: 'Operador de unión no encontrado',
     advancedFilterValidationMissingEndBracket: 'Falta paréntesis de cierre',
     advancedFilterValidationExtraEndBracket: 'Demasiados paréntesis de cierre',
@@ -161,6 +162,8 @@ export const AG_GRID_LOCALE_ES = {
     maxLengthValidation: 'Debe tener ${variable} caracteres o menos.',
     minValueValidation: 'Debe ser mayor o igual a ${variable}',
     maxValueValidation: 'Debe ser menor o igual a ${variable}',
+    strictMinValueValidation: 'Debe ser mayor que ${variable}',
+    strictMaxValueValidation: 'Debe ser menor que ${variable}',
     invalidSelectionValidation: 'Selección no válida.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -188,6 +191,8 @@ export const AG_GRID_LOCALE_ES = {
     loadingOoo: 'Cargando...',
     loadingError: 'ERR',
     noRowsToShow: 'No hay filas para mostrar',
+    noMatchingRows: 'Sin filas coincidentes',
+    exportingOoo: 'Exportando...',
     enabled: 'Habilitado',
 
     // Menu
@@ -229,6 +234,8 @@ export const AG_GRID_LOCALE_ES = {
     chooseColumns: 'Elegir columnas',
     sortAscending: 'Ordenar Ascendente',
     sortDescending: 'Ordenar Descendente',
+    sortAbsoluteAscending: 'Ordenar absolutamente ascendente',
+    sortAbsoluteDescending: 'Ordenar absolutamente descendente',
     sortUnSort: 'Limpiar Orden',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaChecked: 'seleccionado',
     ariaColumn: 'Columna',
     ariaColumnGroup: 'Grupo de Columnas',
+    ariaFilterActive: 'Filtro activo',
     ariaColumnFiltered: 'Columna Filtrada',
     ariaColumnSelectAll: 'Alternar visibilidad de todas las columnas',
     ariaDateFilterInput: 'Entrada de Filtro de Fecha',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_ES = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendente',
     ariaDropZoneColumnComponentSortDescending: 'descendente',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendente absoluto',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendente absoluto',
     ariaLabelDialog: 'Diálogo',
     ariaLabelColumnMenu: 'Menú de Columna',
     ariaLabelColumnFilter: 'Filtro de Columna',
@@ -633,7 +643,7 @@ export const AG_GRID_LOCALE_ES = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Campo de selección de columna del generador de filtro avanzado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Campo de selección de opción del generador de filtro avanzado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Campo de selección de operador de unión del generador de filtro avanzado',
+    'Campo de selección de operador de unión del generador de filtro avanzado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de columnas',

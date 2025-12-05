@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_SK = {
     searchOoo: 'Vyhľadávanie...',
     blanks: '(Prázdne)',
     noMatches: 'Žiadne zhody',
+    typeToSearchOoo: 'Zadajte text na vyhľadávanie...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_SK = {
     maxDateValidation: 'Dátum musí byť pred ${variable}',
     maxLengthValidation: 'Musí mať ${variable} znakov alebo menej.',
     minValueValidation: 'Musí byť väčšie alebo rovné ${variable}',
-    maxValueValidation: 'Musí byť menšie alebo rovné ${variable}',
+    maxValueValidation: 'Musí byť menej alebo rovné ${variable}',
+    strictMinValueValidation: 'Musí byť väčšie ako ${variable}',
+    strictMaxValueValidation: 'Musí byť menej ako ${variable}',
     invalidSelectionValidation: 'Neplatný výber.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_SK = {
     loadingOoo: 'Načítavam...',
     loadingError: 'CHYBA',
     noRowsToShow: 'Žiadne riadky na zobrazenie',
+    noMatchingRows: 'Žiadne zodpovedajúce riadky',
+    exportingOoo: 'Exportovanie...',
     enabled: 'Povolené',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_SK = {
     chooseColumns: 'Vyberte stĺpce',
     sortAscending: 'Zoradiť vzostupne',
     sortDescending: 'Zoradiť zostupne',
+    sortAbsoluteAscending: 'Zoradiť absolútne vzostupne',
+    sortAbsoluteDescending: 'Zoradiť absolútne zostupne',
     sortUnSort: 'Zrušiť zoradenie',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_SK = {
     ariaChecked: 'označené',
     ariaColumn: 'Stĺpec',
     ariaColumnGroup: 'Skupina Stĺpcov',
+    ariaFilterActive: 'Filtre sú aktívne',
     ariaColumnFiltered: 'Stĺpec Filtrovaný',
     ariaColumnSelectAll: 'Prepínať viditeľnosť všetkých stĺpcov',
     ariaDateFilterInput: 'Vstup Dátumového Filtra',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_SK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' z ',
     ariaDropZoneColumnComponentSortAscending: 'vzostupne',
     ariaDropZoneColumnComponentSortDescending: 'zostupne',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolútne vzostupne',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolútne zostupne',
     ariaLabelDialog: 'Dialóg',
     ariaLabelColumnMenu: 'Ponuka stĺpcov',
     ariaLabelColumnFilter: 'Filter stĺpcov',

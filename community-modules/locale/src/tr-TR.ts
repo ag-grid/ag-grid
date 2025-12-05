@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_TR = {
     searchOoo: 'Ara...',
     blanks: '(Boş)',
     noMatches: 'Eşleşme yok',
+    typeToSearchOoo: 'Aramak için yazın...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtre...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_TR = {
     maxDateValidation: 'Tarih ${variable} tarihinden önce olmalıdır',
     maxLengthValidation: 'En fazla ${variable} karakter olmalıdır.',
     minValueValidation: 'En az ${variable} veya daha büyük olmalıdır',
-    maxValueValidation: 'En fazla ${variable} veya daha küçük olmalıdır ',
+    maxValueValidation: '${variable}\' değerinden küçük veya eşit olmalıdı',
+    strictMinValueValidation: '${variable}\' değerinden büyük olmalıdı',
+    strictMaxValueValidation: '${variable}\' değerinden küçük olmalıdı',
     invalidSelectionValidation: 'Geçersiz seçim.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_TR = {
     loadingOoo: 'Yükleniyor...',
     loadingError: 'HATA',
     noRowsToShow: 'Gösterilecek Satır Yok',
+    noMatchingRows: 'Eşleşen Satır Yok',
+    exportingOoo: 'Dışa aktarılıyor...',
     enabled: 'Etkin',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_TR = {
     chooseColumns: 'Sütunları Seç',
     sortAscending: 'Artan Sıralı',
     sortDescending: 'Azalan Sıralı',
+    sortAbsoluteAscending: 'Mutlak Artan Sırala',
+    sortAbsoluteDescending: 'Mutlak Azalan Sırala',
     sortUnSort: 'Sıralamayı Temizle',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -545,7 +552,7 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
+    '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
     ariaAdvancedFilterBuilderList: 'Gelişmiş Filtre Oluşturucu Listesi',
     ariaAdvancedFilterBuilderFilterItem: 'Filtre Koşulu',
     ariaAdvancedFilterBuilderGroupItem: 'Filtre Grubu',
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_TR = {
     ariaChecked: 'işaretli',
     ariaColumn: 'Sütun',
     ariaColumnGroup: 'Sütun Grubu',
+    ariaFilterActive: 'Filtre Aktif',
     ariaColumnFiltered: 'Sütun Filtrelendi',
     ariaColumnSelectAll: 'Tüm Sütunların Görünürlüğünü Değiştir',
     ariaDateFilterInput: 'Tarih Filtre Girişi',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_TR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'artan',
     ariaDropZoneColumnComponentSortDescending: 'azalan',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'mutlak artan',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'mutlak azalan',
     ariaLabelDialog: 'Diyalog',
     ariaLabelColumnMenu: 'Sütun Menüsü',
     ariaLabelColumnFilter: 'Sütun Filtresi',

@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_EG = {
     searchOoo: 'بحث...',
     blanks: '(فارغ)',
     noMatches: 'لا توجد تطابقات',
+    typeToSearchOoo: 'اكتب للبحث...',
 
     // Number Filter & Text Filter
     filterOoo: 'تصفية...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_EG = {
     maxLengthValidation: 'يجب أن يكون ${variable} حرف أو أقل.',
     minValueValidation: 'يجب أن يكون أكبر من أو يساوي ${variable}',
     maxValueValidation: 'يجب أن يكون أقل من أو يساوي ${variable}',
+    strictMinValueValidation: 'يجب أن يكون أكبر من ${variable}',
+    strictMaxValueValidation: 'يجب أن يكون أقل من ${variable}',
     invalidSelectionValidation: 'اختيار غير صالح.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_EG = {
     loadingOoo: 'جارٍ التحميل...',
     loadingError: 'خطأ',
     noRowsToShow: 'لا توجد صفوف للعرض',
+    noMatchingRows: 'لا توجد صفوف متطابقة',
+    exportingOoo: 'جارٍ التصدير...',
     enabled: 'مُمكّن',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_EG = {
     chooseColumns: 'اختيار الأعمدة',
     sortAscending: 'ترتيب تصاعدي',
     sortDescending: 'ترتيب تنازلي',
+    sortAbsoluteAscending: 'ترتيب تصاعدي مطلق',
+    sortAbsoluteDescending: 'ترتيب تنازلي مطلق',
     sortUnSort: 'إلغاء الترتيب',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_EG = {
     ariaChecked: 'محدد',
     ariaColumn: 'العمود',
     ariaColumnGroup: 'مجموعة الأعمدة',
+    ariaFilterActive: 'ترشيح نشط',
     ariaColumnFiltered: 'العمود مفلتر',
     ariaColumnSelectAll: 'تبديل ظهور كل الأعمدة',
     ariaDateFilterInput: 'إدخال فلتر التاريخ',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_EG = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' من ',
     ariaDropZoneColumnComponentSortAscending: 'تصاعدي',
     ariaDropZoneColumnComponentSortDescending: 'تنازلي',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'تصاعدي مطلق',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'تنازلي مطلق',
     ariaLabelDialog: 'حوار',
     ariaLabelColumnMenu: 'قائمة الأعمدة',
     ariaLabelColumnFilter: 'تصفية العمود',

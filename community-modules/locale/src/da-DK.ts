@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_DK = {
     searchOoo: 'Søg...',
     blanks: '(Tomt)',
     noMatches: 'Ingen resultater',
+    typeToSearchOoo: 'Skriv for at søge...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_DK = {
     maxLengthValidation: 'Må ikke have flere end ${variable} tegn.',
     minValueValidation: 'Skal være større end eller lig med ${variable}',
     maxValueValidation: 'Skal være mindre end eller lig med ${variable}',
+    strictMinValueValidation: 'Skal være større end ${variable}',
+    strictMaxValueValidation: 'Skal være mindre end ${variable}',
     invalidSelectionValidation: 'Ugyldigt valg.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_DK = {
     loadingOoo: 'Indlæser...',
     loadingError: 'FEJL',
     noRowsToShow: 'Ingen rækker at vise',
+    noMatchingRows: 'Ingen matchende rækker',
+    exportingOoo: 'Eksporterer...',
     enabled: 'Aktiveret',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_DK = {
     chooseColumns: 'Vælg kolonner',
     sortAscending: 'Sorter Stigende',
     sortDescending: 'Sorter Faldende',
+    sortAbsoluteAscending: 'Sorter Absolut Stigende',
+    sortAbsoluteDescending: 'Sorter Absolut Faldende',
     sortUnSort: 'Ryd Sortering',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -545,7 +552,7 @@ export const AG_GRID_LOCALE_DK = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Tryk på ENTER for at redigere.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Niveau ${variable}. ${variable} Tryk på ENTER for at redigere.',
+    '${variable}. Niveau ${variable}. ${variable} Tryk på ENTER for at redigere.',
     ariaAdvancedFilterBuilderList: 'Avanceret Filter Builder Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbetingelse',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaChecked: 'markeret',
     ariaColumn: 'Kolonne',
     ariaColumnGroup: 'Kolonnegruppe',
+    ariaFilterActive: 'Filter Aktiv',
     ariaColumnFiltered: 'Kolonne Filtreret',
     ariaColumnSelectAll: 'Skift synlighed for alle kolonner',
     ariaDateFilterInput: 'Dato Filter Input',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_DK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'stigende',
     ariaDropZoneColumnComponentSortDescending: 'faldende',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigende',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut faldende',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Kolonnemenu',
     ariaLabelColumnFilter: 'Kolonnefilter',

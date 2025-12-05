@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_FI = {
     searchOoo: 'Haku...',
     blanks: '(Tyhjät)',
     noMatches: 'Ei osumia',
+    typeToSearchOoo: 'Kirjoita etsiäksesi...',
 
     // Number Filter & Text Filter
     filterOoo: 'Suodata...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_FI = {
     maxDateValidation: 'Päivämäärän on oltava ennen ${variable}',
     maxLengthValidation: 'Saa olla enintään ${variable} merkkiä.',
     minValueValidation: 'Täytyy olla suurempi tai yhtä suuri kuin ${variable}',
-    maxValueValidation: 'Täytyy olla pienempi tai yhtä suuri kuin ${variable}',
+    maxValueValidation: 'On oltava vähemmän tai yhtä suuri kuin ${variable}',
+    strictMinValueValidation: 'On oltava suurempi kuin ${variable}',
+    strictMaxValueValidation: 'On oltava vähemmän kuin ${variable}',
     invalidSelectionValidation: 'Virheellinen valinta.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_FI = {
     loadingOoo: 'Ladataan...',
     loadingError: 'VIRHE',
     noRowsToShow: 'Ei näytettäviä rivejä',
+    noMatchingRows: 'Ei vastaavia rivejä',
+    exportingOoo: 'Viedään...',
     enabled: 'Käytössä',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_FI = {
     chooseColumns: 'Valitse sarakkeet',
     sortAscending: 'Lajittele nousevasti',
     sortDescending: 'Lajittele laskevasti',
+    sortAbsoluteAscending: 'Lajittele ehdoton nouseva',
+    sortAbsoluteDescending: 'Lajittele ehdoton laskeva',
     sortUnSort: 'Tyhjennä lajittelu',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_FI = {
     ariaChecked: 'valittu',
     ariaColumn: 'Sarake',
     ariaColumnGroup: 'Sarakeryhmä',
+    ariaFilterActive: 'Suodatin aktiivinen',
     ariaColumnFiltered: 'Suodatettu sarake',
     ariaColumnSelectAll: 'Vaihda kaikkien sarakkeiden näkyvyys',
     ariaDateFilterInput: 'Päivämäärän suodattimen syöte',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_FI = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' kohta ',
     ariaDropZoneColumnComponentSortAscending: 'nouseva',
     ariaDropZoneColumnComponentSortDescending: 'laskeva',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluuttinen nouseva',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluuttinen laskeva',
     ariaLabelDialog: 'Dialogi',
     ariaLabelColumnMenu: 'Sarakkeen valikko',
     ariaLabelColumnFilter: 'Sarakkeen suodatin',

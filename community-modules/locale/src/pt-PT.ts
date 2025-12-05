@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_PT = {
     searchOoo: 'Pesquisar...',
     blanks: '(Em Branco)',
     noMatches: 'Sem correspondências',
+    typeToSearchOoo: 'Digite para buscar...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtrar...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_PT = {
     maxLengthValidation: 'Deve ter ${variable} caracteres ou menos.',
     minValueValidation: 'Deve ser maior ou igual a ${variable}',
     maxValueValidation: 'Deve ser menor ou igual a ${variable}',
+    strictMinValueValidation: 'Deve ser maior que ${variable}',
+    strictMaxValueValidation: 'Deve ser menor que ${variable}',
     invalidSelectionValidation: 'Seleção inválida.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_PT = {
     loadingOoo: 'Carregando...',
     loadingError: 'ERR',
     noRowsToShow: 'Sem linhas para mostrar',
+    noMatchingRows: 'Nenhuma linha correspondente',
+    exportingOoo: 'Exportando...',
     enabled: 'Ativado',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_PT = {
     chooseColumns: 'Escolher Colunas',
     sortAscending: 'Ordenar Ascendente',
     sortDescending: 'Ordenar Descendente',
+    sortAbsoluteAscending: 'Ordenar Absolutamente Ascendente',
+    sortAbsoluteDescending: 'Ordenar Absolutamente Descendente',
     sortUnSort: 'Limpar Ordenação',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_PT = {
     ariaChecked: 'marcado',
     ariaColumn: 'Coluna',
     ariaColumnGroup: 'Grupo de Colunas',
+    ariaFilterActive: 'Filtro Ativo',
     ariaColumnFiltered: 'Coluna Filtrada',
     ariaColumnSelectAll: 'Alternar visibilidade de todas as colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_PT = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendente',
     ariaDropZoneColumnComponentSortDescending: 'descendente',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendente absoluto',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendente absoluto',
     ariaLabelDialog: 'Diálogo',
     ariaLabelColumnMenu: 'Menu da Coluna',
     ariaLabelColumnFilter: 'Filtro da Coluna',

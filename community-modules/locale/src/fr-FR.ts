@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_FR = {
     searchOoo: 'Chercher...',
     blanks: '(Vides)',
     noMatches: 'Aucune correspondance',
+    typeToSearchOoo: 'Tapez pour rechercher...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtrer...',
@@ -129,7 +130,7 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationInvalidDate: "La valeur n'est pas une date valide",
     advancedFilterValidationMissingCondition: 'La condition est manquante',
     advancedFilterValidationJoinOperatorMismatch:
-        "Les opérateurs de jonction au sein d'une condition doivent être identiques",
+    "Les opérateurs de jonction au sein d'une condition doivent être identiques",
     advancedFilterValidationInvalidJoinOperator: 'Opérateur de jonction non trouvé',
     advancedFilterValidationMissingEndBracket: 'Guillemet de fin manquante',
     advancedFilterValidationExtraEndBracket: 'Trop de crochets de fin',
@@ -161,6 +162,8 @@ export const AG_GRID_LOCALE_FR = {
     maxLengthValidation: 'Doit contenir ${variable} caractères ou moins.',
     minValueValidation: 'Doit être supérieur ou égal à ${variable}',
     maxValueValidation: 'Doit être inférieur ou égal à ${variable}',
+    strictMinValueValidation: 'Doit être supérieur à ${variable}',
+    strictMaxValueValidation: 'Doit être inférieur à ${variable}',
     invalidSelectionValidation: 'Sélection invalide.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -188,6 +191,8 @@ export const AG_GRID_LOCALE_FR = {
     loadingOoo: 'Chargement...',
     loadingError: 'ERR',
     noRowsToShow: 'Aucune ligne à afficher',
+    noMatchingRows: 'Aucune ligne correspondante',
+    exportingOoo: 'Exportation...',
     enabled: 'Activé',
 
     // Menu
@@ -229,6 +234,8 @@ export const AG_GRID_LOCALE_FR = {
     chooseColumns: 'Choisir les colonnes',
     sortAscending: 'Trier par ordre croissant',
     sortDescending: 'Trier par ordre décroissant',
+    sortAbsoluteAscending: 'Trier par ordre croissant absolu',
+    sortAbsoluteDescending: 'Trier par ordre décroissant absolu',
     sortUnSort: 'Effacer le tri',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -546,7 +553,7 @@ export const AG_GRID_LOCALE_FR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Appuyez sur ENTER pour éditer.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTER pour éditer.',
+    '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTER pour éditer.',
     ariaAdvancedFilterBuilderList: 'Liste de cadre de filtre avancé',
     ariaAdvancedFilterBuilderFilterItem: 'Condition de filtre',
     ariaAdvancedFilterBuilderGroupItem: 'Groupe de filtre',
@@ -558,6 +565,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaChecked: 'coché',
     ariaColumn: 'Colonne',
     ariaColumnGroup: 'Groupe de colonnes',
+    ariaFilterActive: 'Filtre actif',
     ariaColumnFiltered: 'Colonne filtrée',
     ariaColumnSelectAll: 'Basculer la visibilité de toutes les colonnes',
     ariaDateFilterInput: 'Entrée de filtre de date',
@@ -611,6 +619,8 @@ export const AG_GRID_LOCALE_FR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'ascendant',
     ariaDropZoneColumnComponentSortDescending: 'descendant',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendant absolu',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendant absolu',
     ariaLabelDialog: 'Dialogue',
     ariaLabelColumnMenu: 'Menu de colonne',
     ariaLabelColumnFilter: 'Filtre de colonne',
@@ -634,7 +644,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Filtre avancé constructeur Sélectionnez le champ de colonne',
     ariaLabelAdvancedFilterBuilderOptionSelectField: "Filtre avancé constructeur Sélectionnez le champ d'option",
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        "Filtre avancé constructeur Sélectionnez le champ de l'opérateur de jointure",
+    "Filtre avancé constructeur Sélectionnez le champ de l'opérateur de jointure",
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Liste des colonnes',

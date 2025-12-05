@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_PK = {
     searchOoo: 'تلاش کریں...',
     blanks: '(خالی)',
     noMatches: 'کوئی مماثلت نہیں',
+    typeToSearchOoo: 'تلاش کے لئے ٹائپ کریں...',
 
     // Number Filter & Text Filter
     filterOoo: 'فلٹر...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_PK = {
     maxDateValidation: 'تاریخ ${variable} سے پہلے کی ہونی چاہیے',
     maxLengthValidation: '${variable} حروف یا کم ہونا چاہیے۔',
     minValueValidation: '${variable} کے برابر یا اس سے زیادہ ہونا چاہیے',
-    maxValueValidation: '${variable} کے برابر یا اس سے کم ہونا چاہیے',
+    maxValueValidation: '${variable} کے برابر یا کم ہونا چاہیے',
+    strictMinValueValidation: '${variable} سے زیادہ ہونا چاہیے',
+    strictMaxValueValidation: '${variable} سے کم ہونا چاہیے',
     invalidSelectionValidation: 'غلط انتخاب',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_PK = {
     loadingOoo: 'لوڈ ہو رہا ہے ...',
     loadingError: 'غلطی',
     noRowsToShow: 'دکھانے کے لیے کوئی قطار نہیں',
+    noMatchingRows: 'کوئی مماثل قطاریں نہیں',
+    exportingOoo: 'برآمد ہو رہا ہے...',
     enabled: 'فعال',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_PK = {
     chooseColumns: 'کالمز منتخب کریں',
     sortAscending: 'آروہیبھک ترتیب',
     sortDescending: 'زوال پذیر ترتیب',
+    sortAbsoluteAscending: 'مکمل ابجدی ترتیب میں ترتیب دیں',
+    sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaChecked: 'چیکڈ',
     ariaColumn: 'کالم',
     ariaColumnGroup: 'کالم گروپ',
+    ariaFilterActive: 'فلٹر فعال',
     ariaColumnFiltered: 'کالم فلٹرڈ',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_PK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' کا ',
     ariaDropZoneColumnComponentSortAscending: 'بڑھتے ہوئے ترتیب',
     ariaDropZoneColumnComponentSortDescending: 'گرتے ہوئے ترتیب',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'مکمل اوپر کی طرف',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'مکمل نیچے کی طرف',
     ariaLabelDialog: 'ڈائیلاگ',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',

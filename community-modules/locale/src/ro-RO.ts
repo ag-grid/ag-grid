@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_RO = {
     searchOoo: 'Căutare...',
     blanks: '(Goluri)',
     noMatches: 'Fără potriviri',
+    typeToSearchOoo: 'Tastează pentru a căuta...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtrează...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_RO = {
     maxLengthValidation: 'Trebuie să fie cel mult ${variable} caractere.',
     minValueValidation: 'Trebuie să fie mai mare sau egal cu ${variable}',
     maxValueValidation: 'Trebuie să fie mai mic sau egal cu ${variable}',
+    strictMinValueValidation: 'Trebuie să fie mai mare decât ${variable}',
+    strictMaxValueValidation: 'Trebuie să fie mai mic decât ${variable}',
     invalidSelectionValidation: 'Selecție invalidă.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_RO = {
     loadingOoo: 'Se încarcă...',
     loadingError: 'EROARE',
     noRowsToShow: 'Nicio rânduri de afișat',
+    noMatchingRows: 'Nicio rânduri potrivite',
+    exportingOoo: 'Se exportă...',
     enabled: 'Activat',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_RO = {
     chooseColumns: 'Alege Coloane',
     sortAscending: 'Sortare Ascendentă',
     sortDescending: 'Sortare Descendentă',
+    sortAbsoluteAscending: 'Sortează în ordine ascendentă absolută',
+    sortAbsoluteDescending: 'Sortează în ordine descendentă absolută',
     sortUnSort: 'Șterge Sortarea',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -545,7 +552,7 @@ export const AG_GRID_LOCALE_RO = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Apăsați ENTER pentru a edita.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
+    '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
     ariaAdvancedFilterBuilderList: 'Lista Constructorului de Filtre Avansate',
     ariaAdvancedFilterBuilderFilterItem: 'Condiție de Filtrare',
     ariaAdvancedFilterBuilderGroupItem: 'Grup de Filtre',
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaChecked: 'bifat',
     ariaColumn: 'Coloană',
     ariaColumnGroup: 'Grup de Coloane',
+    ariaFilterActive: 'Filtru activ',
     ariaColumnFiltered: 'Coloană Filtrată',
     ariaColumnSelectAll: 'Comută vizibilitatea tuturor coloanelor',
     ariaDateFilterInput: 'Intrare Filtru de Dată',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' din ',
     ariaDropZoneColumnComponentSortAscending: 'crescător',
     ariaDropZoneColumnComponentSortDescending: 'descrescător',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendent absolut',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendent absolut',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Meniu Coloană',
     ariaLabelColumnFilter: 'Filtru Coloană',
