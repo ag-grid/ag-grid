@@ -227,8 +227,17 @@ export abstract class ProvidedFilter<
     }
 
     private doApplyModel(additionalEventAttributes?: any): boolean {
-        const { params, state } = this;
-        const changed = !this.areModelsEqual(params.model, state.model);
+        const {
+            params,
+            state: { valid = true, model },
+        } = this;
+
+        // Don't apply invalid model
+        if (!valid) {
+            return false;
+        }
+
+        const changed = !this.areModelsEqual(params.model, model);
         if (changed) {
             params.onAction('apply', additionalEventAttributes);
         }
