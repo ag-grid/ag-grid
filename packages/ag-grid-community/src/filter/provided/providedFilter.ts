@@ -123,8 +123,10 @@ export abstract class ProvidedFilter<
         const oldState = this.state;
         this.state = newState;
 
+        const fromAction = additionalEventAttributes?.fromAction;
+
         if (
-            additionalEventAttributes?.fromAction ||
+            (fromAction && fromAction !== 'apply') ||
             newState.model !== oldState.model ||
             !this.areStatesEqual(newState.state, oldState.state)
         ) {
