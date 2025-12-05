@@ -50,6 +50,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             input: this.handleInput.bind(this, false),
             change: this.handleInput.bind(this, true),
             focusout: this.handleFocusOut.bind(this),
+            focusin: this.handleFocusIn.bind(this),
         });
     }
 
@@ -79,6 +80,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
             this.applyOnFocusOut = false;
             this.params.onDateChanged();
         }
+    }
+
+    private handleFocusIn(): void {
+        this.params.onFocusIn?.();
     }
 
     private setParams(params: IDateParams): void {

@@ -138,8 +138,13 @@ export class NumberFilter extends SimpleFilter<
             () =>
                 this.refreshInputPairValidation(from, to, isFrom);
 
-        from.onValueChange(getFieldChangedListener(from, to, true));
-        to.onValueChange(getFieldChangedListener(from, to, false));
+        const fromListener = getFieldChangedListener(from, to, true);
+        from.onValueChange(fromListener);
+        from.addGuiEventListener('focusin', fromListener);
+
+        const toListener = getFieldChangedListener(from, to, false);
+        to.onValueChange(toListener);
+        to.addGuiEventListener('focusin', toListener);
 
         return eCondition;
     }

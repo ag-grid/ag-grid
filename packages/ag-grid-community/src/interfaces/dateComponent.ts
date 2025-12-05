@@ -47,6 +47,8 @@ export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommo
 export interface IDateParams<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {
     /** Method for component to tell AG Grid that the date has changed. */
     onDateChanged: () => void;
+    /** Method for component to tell AG Grid that an input has been focussed. */
+    onFocusIn?: () => void;
 }
 
 export interface IDateComp extends IComponent<IDateParams>, IDate {}

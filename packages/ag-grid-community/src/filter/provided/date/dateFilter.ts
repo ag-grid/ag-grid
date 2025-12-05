@@ -130,15 +130,17 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             beans: { userCompFactory, context, gos },
             params,
         } = this;
+        const isFrom = fromTo === 'from';
         const dateCompWrapper = new DateCompWrapper(
             context,
             userCompFactory,
             params.colDef,
             _addGridCommonParams<IDateParams>(gos, {
                 onDateChanged: () => {
-                    this.refreshInputPairValidation(position, fromTo === 'from');
+                    this.refreshInputPairValidation(position, isFrom);
                     this.onUiChanged();
                 },
+                onFocusIn: () => this.refreshInputPairValidation(position, isFrom),
                 filterParams: params as any,
                 location: 'filter',
             }),
