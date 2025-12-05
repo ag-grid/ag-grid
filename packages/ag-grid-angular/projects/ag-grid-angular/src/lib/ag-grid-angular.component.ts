@@ -1817,10 +1817,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
      */
     @Input({ transform: booleanAttribute }) public loadThemeGoogleFonts: boolean | undefined = undefined;
-    /** The CSS layer that this theme should be rendered onto. If your
-     * application loads its styles into a CSS layer, use this to load the grid
-     * styles into a previous layer so that application styles can override grid
-     * styles.
+    /** The CSS layer that this theme should be rendered onto. When specified,
+     * grid CSS will be wrapped in a `@layer ${themeCssLayer} { ... }` block.
+     *
+     * NOTE: when specifying `themeCssLayer` we recommend setting
+     * `themeStyleContainer` to `document.body` to ensure that the grid CSS
+     * comes after your application CSS, allowing your application to set the
+     * order of layers.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
