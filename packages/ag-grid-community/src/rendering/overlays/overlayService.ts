@@ -311,16 +311,17 @@ export class OverlayService extends BeanStub implements NamedBean {
         const currOverlayComp = this.eWrapper?.activeOverlay;
         if (currOverlayComp && currentDef) {
             const activeOverlayParamsChanged = changedProps.has('activeOverlayParams');
-            if (activeOverlayParamsChanged && currentDef === CustomOverlayDef) {
-                currOverlayComp.refresh?.(this.makeCompParams(true));
-            }
-
-            const paramsKey = currentDef.paramsKey;
-            const otherParamsChanged =
-                changedProps.has('overlayComponentParams') || (paramsKey && changedProps.has(paramsKey));
-
-            if (otherParamsChanged) {
-                currOverlayComp.refresh?.(this.makeCompParams(false, paramsKey, currentDef.overlayType));
+            if (currentDef === CustomOverlayDef) {
+                // If its an activeOverlay update if the changes are in the activeOverlayParams
+                if (activeOverlayParamsChanged) {
+                    currOverlayComp.refresh?.(this.makeCompParams(true));
+                }
+            } else {
+                // Check for overlay component param or legacy provided param changes
+                const paramsKey = currentDef.paramsKey;
+                if (changedProps.has('overlayComponentParams') || (paramsKey && changedProps.has(paramsKey))) {
+                    currOverlayComp.refresh?.(this.makeCompParams(false, paramsKey, currentDef.overlayType));
+                }
             }
         }
     }
