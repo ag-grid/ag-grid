@@ -642,7 +642,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Selecionar Campo da Coluna no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Selecionar Campo de Opção no Construtor de Filtro Avançado',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
+    'Selecionar Campo do Operador de Junção no Construtor de Filtro Avançado',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista de Colunas',
@@ -685,10 +685,10 @@ export const AG_GRID_LOCALE_BR = {
     second: 'Segundo',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/AAAA',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/AAAA',
+    timeFormatSlashesDDMMYY: 'DD/MM/AA',
+    timeFormatSlashesMMDDYY: 'MM/DD/AA',
     timeFormatDotsDDMYY: 'DD.M.AA',
     timeFormatDotsMDDYY: 'M.DD.AA',
     timeFormatDashesYYYYMMDD: 'AAAA-MM-DD',

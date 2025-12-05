@@ -684,10 +684,10 @@ export const AG_GRID_LOCALE_SK = {
     second: 'Sekunda',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/RRRR',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/RRRR',
+    timeFormatSlashesDDMMYY: 'DD/MM/RR',
+    timeFormatSlashesMMDDYY: 'MM/DD/RR',
     timeFormatDotsDDMYY: 'DD.M.RR',
     timeFormatDotsMDDYY: 'M.DD.RR',
     timeFormatDashesYYYYMMDD: 'RRRR-MM-DD',

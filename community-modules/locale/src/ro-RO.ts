@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_RO = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Nivel ${variable}. Apăsați ENTER pentru a edita.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
+    '${variable}. Nivel ${variable}. ${variable} Apăsați ENTER pentru a edita.',
     ariaAdvancedFilterBuilderList: 'Lista Constructorului de Filtre Avansate',
     ariaAdvancedFilterBuilderFilterItem: 'Condiție de Filtrare',
     ariaAdvancedFilterBuilderGroupItem: 'Grup de Filtre',
@@ -685,14 +685,14 @@ export const AG_GRID_LOCALE_RO = {
     second: 'Secundă',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.M.YY',
-    timeFormatDotsMDDYY: 'M.DD.YY',
-    timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
-    timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
-    timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+    timeFormatSlashesDDMMYYYY: 'ZZ/LL/AAAA',
+    timeFormatSlashesMMDDYYYY: 'LL/ZZ/AAAA',
+    timeFormatSlashesDDMMYY: 'ZZ/LL/AA',
+    timeFormatSlashesMMDDYY: 'LL/ZZ/AA',
+    timeFormatDotsDDMYY: 'ZZ.L.AA',
+    timeFormatDotsMDDYY: 'L.ZZ.AA',
+    timeFormatDashesYYYYMMDD: 'AAAA-LL-ZZ',
+    timeFormatSpacesDDMMMMYYYY: 'ZZ LLLL AAAA',
+    timeFormatHHMMSS: 'OO:MM:SS',
+    timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
 };

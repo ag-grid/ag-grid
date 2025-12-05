@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_BG = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ниво ${variable}. Натиснете ENTER за редактиране',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ниво ${variable}. ${variable} Натиснете ENTER за редактиране.',
+    '${variable}. Ниво ${variable}. ${variable} Натиснете ENTER за редактиране.',
     ariaAdvancedFilterBuilderList: 'Разширен списък за създаване на филтри',
     ariaAdvancedFilterBuilderFilterItem: 'Условие за филтриране',
     ariaAdvancedFilterBuilderGroupItem: 'Група за филтриране',
@@ -643,7 +643,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Разширен конструктор на филтри - Избиране на поле за колона',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Разширен конструктор на филтри - Избиране на поле за опция',
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-        'Разширен конструктор на филтри - Избиране на оператор за иницииране',
+    'Разширен конструктор на филтри - Избиране на оператор за иницииране',
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Списък с колони',
@@ -693,7 +693,7 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatDotsDDMYY: 'ДД.М.ГГ',
     timeFormatDotsMDDYY: 'М.ДД.ГГ',
     timeFormatDashesYYYYMMDD: 'ГГГГ-ММ-ДД',
-    timeFormatSpacesDDMMMMYYYY: 'ДД МMMM ГГГГ',
+    timeFormatSpacesDDMMMMYYYY: 'ДД ММММ ГГГГ',
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
 };

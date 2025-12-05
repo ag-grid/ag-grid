@@ -684,10 +684,10 @@ export const AG_GRID_LOCALE_PT = {
     second: 'Segundo',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/AAAA',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/AAAA',
+    timeFormatSlashesDDMMYY: 'DD/MM/AA',
+    timeFormatSlashesMMDDYY: 'MM/DD/AA',
     timeFormatDotsDDMYY: 'DD.M.AA',
     timeFormatDotsMDDYY: 'M.DD.AA',
     timeFormatDashesYYYYMMDD: 'AAAA-MM-DD',

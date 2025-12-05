@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_DE = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Ebene ${variable}. Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
+    '${variable}. Ebene ${variable}. ${variable} Drücken Sie ENTER, um zu bearbeiten.',
     ariaAdvancedFilterBuilderList: 'Erweiterte Filter-Builder-Liste',
     ariaAdvancedFilterBuilderFilterItem: 'Filterbedingung',
     ariaAdvancedFilterBuilderGroupItem: 'Filtergruppe',
@@ -694,5 +694,5 @@ export const AG_GRID_LOCALE_DE = {
     timeFormatDashesYYYYMMDD: 'JJJJ-MM-TT',
     timeFormatSpacesDDMMMMYYYY: 'TT MMMM JJJJ',
     timeFormatHHMMSS: 'SS:MM:SS',
-    timeFormatHHMMSSAmPm: 'SS:MM:SS VM/NM',
+    timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
 };

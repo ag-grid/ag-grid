@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_HR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Razina ${variable}. Pritisnite ENTER za uređivanje.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Razina ${variable}. ${variable} Pritisnite ENTER za uređivanje.',
+    '${variable}. Razina ${variable}. ${variable} Pritisnite ENTER za uređivanje.',
     ariaAdvancedFilterBuilderList: 'Popis naprednog graditelja filtera',
     ariaAdvancedFilterBuilderFilterItem: 'Uvjet filtera',
     ariaAdvancedFilterBuilderGroupItem: 'Grupa filtera',
@@ -693,6 +693,6 @@ export const AG_GRID_LOCALE_HR = {
     timeFormatDotsMDDYY: 'M.DD.GG',
     timeFormatDashesYYYYMMDD: 'GGGG-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM GGGG',
-    timeFormatHHMMSS: 'SS:MM:VV',
-    timeFormatHHMMSSAmPm: 'SS:MM:VV AM/PM',
+    timeFormatHHMMSS: 'SS:MM:SS',
+    timeFormatHHMMSSAmPm: 'SS:MM:SS AM/PM',
 };

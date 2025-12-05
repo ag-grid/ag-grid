@@ -693,6 +693,6 @@ export const AG_GRID_LOCALE_TR = {
     timeFormatDotsMDDYY: 'A.GG.YY',
     timeFormatDashesYYYYMMDD: 'YYYY-AA-GG',
     timeFormatSpacesDDMMMMYYYY: 'GG AAAA YYYY',
-    timeFormatHHMMSS: 'SS:DD:SS',
-    timeFormatHHMMSSAmPm: 'SS:DD:SS ÖÖ/ÖS',
+    timeFormatHHMMSS: 'SS:DD:SN',
+    timeFormatHHMMSSAmPm: 'SS:DD:SN ÖÖ/ÖS',
 };

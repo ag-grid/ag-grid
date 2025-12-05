@@ -684,14 +684,14 @@ export const AG_GRID_LOCALE_NO = {
     second: 'Sekund',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.M.YY',
-    timeFormatDotsMDDYY: 'M.DD.YY',
-    timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
-    timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/ÅÅÅÅ',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/ÅÅÅÅ',
+    timeFormatSlashesDDMMYY: 'DD/MM/ÅÅ',
+    timeFormatSlashesMMDDYY: 'MM/DD/ÅÅ',
+    timeFormatDotsDDMYY: 'DD.M.ÅÅ',
+    timeFormatDotsMDDYY: 'M.DD.ÅÅ',
+    timeFormatDashesYYYYMMDD: 'ÅÅÅÅ-MM-DD',
+    timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 };

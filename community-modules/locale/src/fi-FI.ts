@@ -692,6 +692,6 @@ export const AG_GRID_LOCALE_FI = {
     timeFormatDotsMDDYY: 'K.PP.VV',
     timeFormatDashesYYYYMMDD: 'VVVV-KK-PP',
     timeFormatSpacesDDMMMMYYYY: 'PP KKKK VVVV',
-    timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+    timeFormatHHMMSS: 'TT:MM:SS',
+    timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 };

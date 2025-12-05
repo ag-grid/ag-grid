@@ -688,7 +688,7 @@ export const AG_GRID_LOCALE_KR = {
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
     timeFormatSlashesDDMMYY: 'DD/MM/YY',
     timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.MM.YY',
+    timeFormatDotsDDMYY: 'DD.M.YY',
     timeFormatDotsMDDYY: 'M.DD.YY',
     timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',

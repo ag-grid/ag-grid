@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_IR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. سطح ${variable}. کلید ENTER را فشار دهید تا ویرایش شود.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. سطح ${variable}. ${variable} کلید ENTER را فشار دهید تا ویرایش شود.',
+    '${variable}. سطح ${variable}. ${variable} کلید ENTER را فشار دهید تا ویرایش شود.',
     ariaAdvancedFilterBuilderList: 'لیست سازنده فیلتر پیشرفته',
     ariaAdvancedFilterBuilderFilterItem: 'شرط فیلتر',
     ariaAdvancedFilterBuilderGroupItem: 'گروه فیلتر',
@@ -694,5 +694,5 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatDashesYYYYMMDD: 'سال-ماه-روز',
     timeFormatSpacesDDMMMMYYYY: 'روز ماه سال',
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
-    timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه قبل/بعد از ظهر',
+    timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
 };

@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_UA = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Рівень ${variable}. Натисніть ENTER для редагування.',
     ariaAdvancedFilterBuilderItemValidation:
-        '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER для редагування.',
+    '${variable}. Рівень ${variable}. ${variable} Натисніть ENTER для редагування.',
     ariaAdvancedFilterBuilderList: 'Список розширеного фільтру',
     ariaAdvancedFilterBuilderFilterItem: 'Умова фільтру',
     ariaAdvancedFilterBuilderGroupItem: 'Група фільтрів',
@@ -694,5 +694,5 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatDashesYYYYMMDD: 'РРРР-ММ-ДД',
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ РРРР',
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
-    timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС ДП/ПП',
+    timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
 };

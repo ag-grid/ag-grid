@@ -693,5 +693,5 @@ export const AG_GRID_LOCALE_TW = {
     timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+    timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
 };
