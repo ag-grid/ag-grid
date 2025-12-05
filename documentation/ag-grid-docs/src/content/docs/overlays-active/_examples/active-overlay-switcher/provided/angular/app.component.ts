@@ -69,7 +69,7 @@ export class AppComponent {
     public readonly components = { statusOverlay: StatusOverlayComponent };
 
     public readonly activeOverlay = signal<string | undefined>(undefined);
-    public readonly loadingToggle = signal<boolean>(true);
+    public readonly loadingToggle = signal<boolean>(false);
     public readonly loading = computed(() => this.loadingToggle());
 
     public showNoRowsOverlay(): void {
