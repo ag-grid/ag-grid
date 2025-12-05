@@ -160,9 +160,9 @@ export const AG_GRID_LOCALE_TR = {
     maxDateValidation: 'Tarih ${variable} tarihinden önce olmalıdır',
     maxLengthValidation: 'En fazla ${variable} karakter olmalıdır.',
     minValueValidation: 'En az ${variable} veya daha büyük olmalıdır',
-    maxValueValidation: '${variable}\' değerinden küçük veya eşit olmalıdı',
-    strictMinValueValidation: '${variable}\' değerinden büyük olmalıdı',
-    strictMaxValueValidation: '${variable}\' değerinden küçük olmalıdı',
+    maxValueValidation: "${variable}' değerinden küçük veya eşit olmalıdı",
+    strictMinValueValidation: "${variable}' değerinden büyük olmalıdı",
+    strictMaxValueValidation: "${variable}' değerinden küçük olmalıdı",
     invalidSelectionValidation: 'Geçersiz seçim.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -552,7 +552,7 @@ export const AG_GRID_LOCALE_TR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Seviye ${variable}. Düzenlemek için ENTER tuşuna basın',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
+        '${variable}. Seviye ${variable}. ${variable} Düzenlemek için ENTER tuşuna basın.',
     ariaAdvancedFilterBuilderList: 'Gelişmiş Filtre Oluşturucu Listesi',
     ariaAdvancedFilterBuilderFilterItem: 'Filtre Koşulu',
     ariaAdvancedFilterBuilderGroupItem: 'Filtre Grubu',

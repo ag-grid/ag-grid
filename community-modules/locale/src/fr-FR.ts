@@ -130,7 +130,7 @@ export const AG_GRID_LOCALE_FR = {
     advancedFilterValidationInvalidDate: "La valeur n'est pas une date valide",
     advancedFilterValidationMissingCondition: 'La condition est manquante',
     advancedFilterValidationJoinOperatorMismatch:
-    "Les opérateurs de jonction au sein d'une condition doivent être identiques",
+        "Les opérateurs de jonction au sein d'une condition doivent être identiques",
     advancedFilterValidationInvalidJoinOperator: 'Opérateur de jonction non trouvé',
     advancedFilterValidationMissingEndBracket: 'Guillemet de fin manquante',
     advancedFilterValidationExtraEndBracket: 'Trop de crochets de fin',
@@ -553,7 +553,7 @@ export const AG_GRID_LOCALE_FR = {
     // ARIA
     ariaAdvancedFilterBuilderItem: '${variable}. Niveau ${variable}. Appuyez sur ENTER pour éditer.',
     ariaAdvancedFilterBuilderItemValidation:
-    '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTER pour éditer.',
+        '${variable}. Niveau ${variable}. ${variable} Appuyez sur ENTER pour éditer.',
     ariaAdvancedFilterBuilderList: 'Liste de cadre de filtre avancé',
     ariaAdvancedFilterBuilderFilterItem: 'Condition de filtre',
     ariaAdvancedFilterBuilderGroupItem: 'Groupe de filtre',
@@ -644,7 +644,7 @@ export const AG_GRID_LOCALE_FR = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Filtre avancé constructeur Sélectionnez le champ de colonne',
     ariaLabelAdvancedFilterBuilderOptionSelectField: "Filtre avancé constructeur Sélectionnez le champ d'option",
     ariaLabelAdvancedFilterBuilderJoinSelectField:
-    "Filtre avancé constructeur Sélectionnez le champ de l'opérateur de jointure",
+        "Filtre avancé constructeur Sélectionnez le champ de l'opérateur de jointure",
 
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Liste des colonnes',
