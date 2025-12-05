@@ -241,7 +241,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     protected override hasInvalidInputs(): boolean {
         let invalidInputs = false;
         // Default validity state to true -> if theres no validity state, everything is fine
-        this.forEachInput((element) => (invalidInputs ||= !(element.getValidity()?.valid ?? true)));
+        // ignore incomplete date values (getDate() == null)
+        this.forEachInput(
+            (element) => (invalidInputs ||= element.getDate() != null && !(element.getValidity()?.valid ?? true))
+        );
         return invalidInputs;
     }
 
