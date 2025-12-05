@@ -281,14 +281,21 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
     return customChartTheme as AgChartTheme;
 }
 
-export const SERIES_HIGHLIGHT: AgMultiSeriesHighlightOptions<AgBaseHighlightStyleOptions> = {
-    unhighlightedSeries: {
-        opacity: 1,
-    },
-    unhighlightedItem: {
-        opacity: 1,
-    },
-    highlightedItem: {
-        strokeWidth: 2,
-    },
-};
+export function getSeriesHighlight(
+    crossFiltering: boolean
+): AgMultiSeriesHighlightOptions<AgBaseHighlightStyleOptions> {
+    const highlight: AgMultiSeriesHighlightOptions<AgBaseHighlightStyleOptions> = {
+        unhighlightedSeries: {
+            opacity: 1,
+        },
+        highlightedItem: {
+            strokeWidth: 2,
+        },
+    };
+    if (!crossFiltering) {
+        highlight.unhighlightedItem = {
+            opacity: 1,
+        };
+    }
+    return highlight;
+}
