@@ -13,8 +13,8 @@ import {
 } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { IAthlete } from './data';
 import { getAthletesData } from './data';
+import type { IAthlete } from './types';
 
 let gridApi: GridApi<IAthlete>;
 
@@ -48,13 +48,11 @@ const gridOptions: GridOptions<IAthlete> = {
         filter: true,
     },
     autoGroupColumnDef: {
-        headerName: 'Region / Country',
         rowDrag: true,
         width: 250,
     },
     animateRows: true,
     groupDefaultExpanded: -1,
-    enableGroupEdit: true,
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     refreshAfterGroupEdit: true,

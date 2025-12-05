@@ -23,7 +23,7 @@ When using managed row dragging with grouping the following configuration is req
 * `getRowId` is required to uniquely identify rows.
 * `rowDragManaged=true` is needed to enable managed dragging.
 * `refreshAfterGroupEdit=true` is required so the grid re-evaluates the groups immediately after a drag changes the grouped column values.
-* `rowDrag=true` need to be set in a column or in the auto group column definitions.
+* `rowDrag=true` needs to be set in a column or in the auto group column definitions or the `rowDragEntireRow=true` in the grid options.
 * `suppressMoveWhenRowDragging=true` to avoid the performance penalty of rebuilding the whole hierarchy while dragging and to avoid the grid reordering rows mid-drag, which otherwise causes large visual jumps when parent branches move.
 * `BatchEditModule` is recommended, together with `TextEditorModule` (or your preferred editor modules) and to handle edit and batch edit events.
 * Managed drag works only with [Client-Side Row Model](./row-models/#client-side).
