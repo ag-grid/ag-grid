@@ -311,8 +311,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         const currOverlayComp = this.eWrapper?.activeOverlay;
         if (currOverlayComp && currentDef) {
             const activeOverlayParamsChanged = changedProps.has('activeOverlayParams');
-            if (activeOverlayParamsChanged && currentDef == CustomOverlayDef) {
-                currOverlayComp.refresh?.(this.makeCompParams(true, undefined, undefined));
+            if (activeOverlayParamsChanged && currentDef === CustomOverlayDef) {
+                currOverlayComp.refresh?.(this.makeCompParams(true));
             }
 
             const paramsKey = currentDef.paramsKey;
@@ -446,14 +446,13 @@ export class OverlayService extends BeanStub implements NamedBean {
                 );
             }
         }
-        if (!compDetails) {
-            compDetails = userCompFactory.getCompDetailsFromGridOptions(
-                componentDef.comp,
-                isProvidedOverlay ? componentDef.id : undefined,
-                this.makeCompParams(!isProvidedOverlay, legacyParamsKey, componentDef.overlayType),
-                false
-            );
-        }
+
+        compDetails ??= userCompFactory.getCompDetailsFromGridOptions(
+            componentDef.comp,
+            isProvidedOverlay ? componentDef.id : undefined,
+            this.makeCompParams(!isProvidedOverlay, legacyParamsKey, componentDef.overlayType),
+            false
+        );
 
         const promise = compDetails?.newAgStackInstance() ?? null;
         const mountedPromise: AgPromise<IOverlayComp | undefined> = this.eWrapper
