@@ -30,7 +30,7 @@ export const _injectGlobalCSS = (
     if (layer) {
         // Layer names need regular ident escaping except that they may contain periods
         // https://drafts.csswg.org/css-cascade-5/#layer-names
-        css = `@layer ${CSS.escape(layer).replace('\\.', '.')} { ${css} }`;
+        css = `@layer ${CSS.escape(layer).replaceAll('\\.', '.')} { ${css} }`;
     }
 
     let injections = injectionState.map.get(styleContainer);
