@@ -241,6 +241,7 @@ export class StateService extends BeanStub implements NamedBean {
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
             pagination: paginationState,
+            rowPinning,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -256,6 +257,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('pagination', paginationState)) {
             this.setPaginationState(paginationState, source);
+        }
+        if (shouldSetState('rowPinning', rowPinning)) {
+            this.setRowPinningState(rowPinning);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -334,7 +338,6 @@ export class StateService extends BeanStub implements NamedBean {
             cellSelection: cellSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-            rowPinning,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -347,9 +350,6 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('scroll', scrollState)) {
             this.setScrollState(scrollState);
-        }
-        if (shouldSetState('rowPinning', rowPinning)) {
-            this.setRowPinningState(rowPinning);
         }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
