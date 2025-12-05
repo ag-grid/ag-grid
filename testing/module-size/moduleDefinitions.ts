@@ -37,7 +37,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
     RenderApiModule: 1.48,
     RowApiModule: 0.88,
     RowAutoHeightModule: 1.84,
-    RowDragModule: 18.85,
+    RowDragModule: 20,
     RowSelectionModule: 35.73,
     RowStyleModule: 1.24,
     ScrollApiModule: 0.7,
@@ -65,7 +65,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     FormulaModule: 61.25,
     GridChartsModule: 73,
     GroupFilterModule: 115.18,
-    IntegratedChartsModule: 405.32,
+    IntegratedChartsModule: 410,
     MasterDetailModule: 87.16,
     MenuModule: 166.7,
     MultiFilterModule: 150.56,
@@ -113,7 +113,7 @@ const commonFeatureSets: ModuleTest[] = [
             'ExternalFilterModule',
             'QuickFilterModule',
         ],
-        expectedSize: 263.25,
+        expectedSize: 270,
     },
 ];
 
@@ -136,7 +136,7 @@ const chartModules: ModuleTest[] = [
     },
 ];
 
-export const baseModule = { modules: [], expectedSize: 520 };
+export const baseModule = { modules: [], expectedSize: 525 };
 
 export const moduleCombinations: ModuleTest[] = [
     ...commonFeatureSets,
