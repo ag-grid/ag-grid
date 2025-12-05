@@ -203,7 +203,7 @@
                     "link": "https://www.ag-grid.com/react-data-grid/formulas"
                 },
                 "community": false,
-                "enterprise": false,
+                "enterprise": true,
                 "chartsGrid": true
             },
             {
@@ -212,7 +212,7 @@
                     "link": "https://www.ag-grid.com/react-data-grid/find"
                 },
                 "community": false,
-                "enterprise": false,
+                "enterprise": true,
                 "chartsGrid": true
             }
         ]
