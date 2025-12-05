@@ -308,19 +308,19 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         const currentDef = this.currentDef;
-        const activeOverlay = this.eWrapper?.activeOverlay;
-        if (activeOverlay && currentDef) {
-            const paramsKey = currentDef.paramsKey;
+        const currOverlayComp = this.eWrapper?.activeOverlay;
+        if (currOverlayComp && currentDef) {
             const activeOverlayParamsChanged = changedProps.has('activeOverlayParams');
-            if (
-                activeOverlayParamsChanged ||
-                changedProps.has('overlayComponentParams') ||
-                (paramsKey && changedProps.has(paramsKey))
-            ) {
-                const overlayCompType = activeOverlayParamsChanged ? undefined : currentDef.overlayType;
-                activeOverlay.refresh?.(
-                    this.makeCompParams(currentDef.id === 'activeOverlay', paramsKey, overlayCompType)
-                );
+            if (activeOverlayParamsChanged && currentDef == CustomOverlayDef) {
+                currOverlayComp.refresh?.(this.makeCompParams(true, undefined, undefined));
+            }
+
+            const paramsKey = currentDef.paramsKey;
+            const otherParamsChanged =
+                changedProps.has('overlayComponentParams') || (paramsKey && changedProps.has(paramsKey));
+
+            if (otherParamsChanged) {
+                currOverlayComp.refresh?.(this.makeCompParams(false, paramsKey, currentDef.overlayType));
             }
         }
     }
@@ -367,22 +367,6 @@ export class OverlayService extends BeanStub implements NamedBean {
             desiredDef = defaultDef ?? this.getOverlayDef();
             if (desiredDef && this.isDisabled(desiredDef)) {
                 desiredDef = null;
-            }
-        }
-
-        if (desiredDef !== null && desiredDef !== CustomOverlayDef) {
-            // Check if we need to change overlay based on the overlayComponent prop
-            const overlayComponent = gos.get('overlayComponent') || gos.get('overlayComponentSelector');
-            if (overlayComponent) {
-                // userComponentFactory will warn if component missing
-                const compDetails = this.beans.userCompFactory.getCompDetailsFromGridOptions(
-                    { name: 'overlayComponent', optionalMethods: ['refresh'] },
-                    undefined,
-                    this.makeCompParams(false, desiredDef.paramsKey, desiredDef.overlayType)
-                );
-                if (compDetails) {
-                    desiredDef = { ...desiredDef, overriddenComp: compDetails };
-                }
             }
         }
         return desiredDef;
@@ -433,9 +417,10 @@ export class OverlayService extends BeanStub implements NamedBean {
      */
     private doShowOverlay(componentDef: OverlayDef): AgPromise<IOverlayComp | undefined> {
         const { gos, beans } = this;
+        const { userCompFactory } = beans;
 
         this.currentDef = componentDef;
-
+        const isProvidedOverlay = componentDef !== CustomOverlayDef;
         const exclusive = !!componentDef.exclusive;
         this.exclusive = exclusive;
 
@@ -450,14 +435,25 @@ export class OverlayService extends BeanStub implements NamedBean {
             legacyParamsKey = componentDef.paramsKey;
         }
 
-        const compDetails =
-            componentDef.overriddenComp ??
-            beans.userCompFactory.getCompDetailsFromGridOptions(
+        let compDetails = undefined;
+        if (isProvidedOverlay) {
+            // For provided overlays check if the user is providing overrides for them
+            if (gos.get('overlayComponent') || gos.get('overlayComponentSelector')) {
+                compDetails = userCompFactory.getCompDetailsFromGridOptions(
+                    { name: 'overlayComponent', optionalMethods: ['refresh'] },
+                    undefined,
+                    this.makeCompParams(false, componentDef.paramsKey, componentDef.overlayType)
+                );
+            }
+        }
+        if (!compDetails) {
+            compDetails = userCompFactory.getCompDetailsFromGridOptions(
                 componentDef.comp,
-                componentDef === CustomOverlayDef ? undefined : componentDef.id,
-                this.makeCompParams(componentDef.id === 'activeOverlay', legacyParamsKey, componentDef.overlayType),
+                isProvidedOverlay ? componentDef.id : undefined,
+                this.makeCompParams(!isProvidedOverlay, legacyParamsKey, componentDef.overlayType),
                 false
             );
+        }
 
         const promise = compDetails?.newAgStackInstance() ?? null;
         const mountedPromise: AgPromise<IOverlayComp | undefined> = this.eWrapper
