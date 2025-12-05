@@ -106,7 +106,7 @@ AG Grid is available in two versions: Community & Enterprise.
 | [Pagination](https://www.ag-grid.com/javascript-data-grid/row-pagination/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                 | ✅                | ✅                 |
 | [Server-Side Data](https://www.ag-grid.com/javascript-data-grid/server-side-model/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)        | ✅                | ✅ (Advanced)      |
 | [Custom Components](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) | ✅                | ✅                 |
-| [AI Toolkit](https://www.ag-grid.com/javascript-data-grid/ai-toolkit/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                     | ✅                | ✅ (Advanced)      |
+| [AI Toolkit](https://www.ag-grid.com/javascript-data-grid/ai-toolkit/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                     | ❌                | ✅                 |
 | [Integrated Charting](https://www.ag-grid.com/javascript-data-grid/integrated-charts/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)     | ❌                | ✅                 |
 | [Formulas](https://www.ag-grid.com/javascript-data-grid/formulas/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                         | ❌                | ✅                 |
 | [Find](https://www.ag-grid.com/javascript-data-grid/find/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)                                 | ❌                | ✅                 |
