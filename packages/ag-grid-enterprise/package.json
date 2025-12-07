@@ -113,7 +113,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-grid-community": "34.3.1-beta.20251207.2035"
+    "ag-grid-community": "34.3.1"
   },
   "optionalDependencies": {
     "ag-charts-community": "12.3.1-beta.20251207",
