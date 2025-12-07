@@ -42,7 +42,7 @@
     "build-only": "vite build"
   },
   "dependencies": {
-    "ag-grid-community": "34.3.1-beta.20251207.2035"
+    "ag-grid-community": "34.3.1"
   },
   "devDependencies": {
     "vue": "^3.5.0",
