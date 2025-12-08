@@ -819,7 +819,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.
      * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.
      *
-     * Return:
+     * Returns:
      *  - `0`  valueA is the same as valueB
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
