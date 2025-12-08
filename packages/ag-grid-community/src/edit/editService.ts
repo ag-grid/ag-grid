@@ -129,7 +129,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (hasCellValidation || hasRowValidation) {
                 this.stopEditing(undefined, CANCEL_PARAMS);
             } else if (this.isEditing()) {
-                if (this.isBatchEditing()) {
+                if (this.batch) {
                     _destroyEditors(beans, this.model.getEditPositions());
                 } else {
                     this.stopEditing(undefined, COMMIT_PARAMS);
@@ -263,7 +263,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.stopEditing(undefined, { source });
         }
 
-        if (res && this.isBatchEditing()) {
+        if (res && this.batch) {
             this.dispatchBatchEvent('batchEditingStarted', new Map());
         }
 
@@ -310,7 +310,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
     private prepareStopContext(position?: EditPosition, params?: StopEditParams): StopContext | null {
         const { event, cancel, source = 'ui', forceCancel, forceStop } = params || {};
 
-        if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.isBatchEditing()) {
+        if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste
             this.bulkRefresh(position);
             return null;
@@ -318,9 +318,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const treatAsSource: EditSource = this.committing ? STOP_EDIT_SOURCE_TRANSFORM[source] : source;
         const isEditingOrBatchWithEdits =
-            this.committing ||
-            this.isEditing(position) ||
-            (this.isBatchEditing() && this.model.hasEdits(position, CHECK_SIBLING));
+            this.committing || this.isEditing(position) || (this.batch && this.model.hasEdits(position, CHECK_SIBLING));
 
         if (!isEditingOrBatchWithEdits || !this.strategy || this.stopping) {
             return null;
@@ -369,6 +367,10 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
         }
 
         _syncFromEditors(this.beans, { persist: true });
+
+        if (this.batch) {
+            this.strategy?.cleanupEditors(position);
+        }
 
         return { res: false, edits: this.model.getEditMap() };
     }
@@ -432,7 +434,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
                 this.revertSingleCellEdit(cellCtrl!);
             }
 
-            if (this.isBatchEditing()) {
+            if (this.batch) {
                 this.strategy?.cleanupEditors();
             } else {
                 _destroyEditors(beans, model.getEditPositions(), { event, cancel: isEscape });
@@ -480,7 +482,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             rowRenderer.refreshRows({ rowNodes: Array.from(edits.keys()) });
         }
 
-        if (this.isBatchEditing()) {
+        if (this.batch) {
             if (formula) {
                 formula.refreshFormulas(true);
             } else {
@@ -877,7 +879,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             const { beans } = this;
 
             this.strategy ??= this.createStrategy();
-            const source = this.isBatchEditing() ? 'ui' : this.committing ? eventSource ?? 'api' : 'api';
+            const source = this.batch ? 'ui' : this.committing ? eventSource ?? 'api' : 'api';
 
             if (!eventSource || KEEP_EDITOR_SOURCES.has(eventSource)) {
                 // editApi or undoRedoApi apply change without involving the editor
