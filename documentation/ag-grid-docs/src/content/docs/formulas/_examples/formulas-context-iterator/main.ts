@@ -1,4 +1,4 @@
-import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFunctionParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellApiModule,
     ClientSideRowModelModule,
@@ -10,8 +10,6 @@ import {
     createGrid,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
-
-import type { FormulaFunctionParams } from '../../../../../../../../packages/ag-grid-community/src/interfaces/formulas';
 
 ModuleRegistry.registerModules([
     CellSelectionModule,
