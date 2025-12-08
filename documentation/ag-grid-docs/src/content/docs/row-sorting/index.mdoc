@@ -170,11 +170,10 @@ What sorting is applied is controlled via [Column State](./column-state/). The b
 
 ## Accented Sort
 
-By default sorting doesn't take into consideration locale-specific characters. If you need to make your sort
+By default, sorting doesn't take into consideration locale-specific characters. If you need to make your sort
 locale-specific you can configure this by setting the grid option `accentedSort = true`.
 
-Using this feature is more expensive; if you need to sort a very large amount of data, you might find that this
-causes the sort to be noticeably slower.
+Please note, accented sort is slower than default sort; the effect is more noticeable when sorting a large number of rows.
 
 The following example is configured to use this feature.
 
