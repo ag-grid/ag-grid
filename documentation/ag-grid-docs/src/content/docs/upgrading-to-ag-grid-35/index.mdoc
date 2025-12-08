@@ -8,7 +8,7 @@ Formulas, Row Group Dragging, Absolute Sorting, Column Selection, Filtering & Ex
 
 ## What's New
 
-AG Grid {% migrationVersion() %} adds important new features – [Formulas](./formulas), [Row Group Dragging](./grouping-row-dragging), [Absolue Sorting](./row-sorting/#absolute-sorting), [Column Selection](./cell-selection/#selecting-cells-via-column-headers), [Filtering & Export Overlays](./overlays-overview/), as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-35/).
+AG Grid {% migrationVersion() %} adds important new features – [Formulas](./formulas), [Row Group Dragging](./grouping-row-dragging), [Absolute Sorting](./row-sorting/#absolute-sorting), [Column Selection](./cell-selection/#selecting-cells-via-column-headers), [Filtering & Export Overlays](./overlays-overview/), as described in the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-35/).
 
 <!-- 
 Documentation to the highest patch release of the major/minor
@@ -24,7 +24,7 @@ Angular 17 support removed due to end of life.
 {% /if %}
 
 ### Typing change
-* `cellDataType` - removed from the columnTypes type as its value was always ignored.
+* `cellDataType` - removed from the `columnTypes` type as its value was always ignored.
 * `colId` - removed from the `autoGroupColumnDef` type as its value was always ignored. Use the `autoGroupColumnDef.context` to store any auto-group column specific data.
 
 ## Behaviour Changes
@@ -35,7 +35,7 @@ Angular 17 support removed due to end of life.
 ### Overlays
 * When filtering the grid and no results are returned a default “No matching rows” overlay will be displayed. You can suppress this by setting grid option `suppressOverlays=['noMatchingRows']`.
 * When exporting the grid (Excel/CSV) via the UI an overlay will be displayed with a default message “Exporting”. You can suppress this by setting grid option `suppressOverlays=['exporting']`.
-* When using SSRM and Infinite row models “No rows” and “No matching rows” overlays have been added. You can suppress this by setting grid option `suppressOverlays=['exporting','noMatchingRows']`.
+* When using SSRM and Infinite row models “No rows” and “No matching rows” overlays have been added. You can suppress this by setting grid option `suppressOverlays=['noRows','noMatchingRows']`.
 
 ### Column Filters 
 * The built-in Date, DateTime and Number filters validate in-range values, ensuring that the start value is smaller than the end value.
@@ -55,13 +55,13 @@ Angular 17 support removed due to end of life.
 ### Loading
 * Loading states across the grid now show a spinner alongside the text.
  
-### Overlays
+### Row Dragging
 * When sorting, filtering or pivoting in managed row dragging the row drag handle is shown as disabled instead of hidden.
 
 ## Removal of Deprecated APIs
-There are no decprecated API removals in AG Grid version {% migrationVersion() %}.
+There are no deprecated API removals in AG Grid version {% migrationVersion() %}.
 
 ## Deprecations
-There are no decprecations in AG Grid version {% migrationVersion() %}.
+There are no deprecations in AG Grid version {% migrationVersion() %}.
 
 {% changelogSection version=$migrationVersion /%}
