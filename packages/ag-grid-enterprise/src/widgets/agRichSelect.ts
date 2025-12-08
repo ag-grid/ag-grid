@@ -239,7 +239,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (allowTyping) {
             /**
-             * Suppress event in full async mode when item is selected to prevent redundant async filtering call for valid options. RTI-3169
+             * Suppress event in full async mode when item is selected to prevent redundant async filtering call for valid options.
              */
             this.eInput.setValue(initialInputValue ?? valueFormatted, !!fromPicker && !!onSearch);
             return;
