@@ -24,7 +24,7 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'gold', colId: 'c0' },
         { field: 'silver', colId: 'c1' },
