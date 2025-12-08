@@ -90,6 +90,11 @@ To **manually** run Value Change Detection to refresh all visible cells call [ap
 
 Aggregation change detection means rerunning [aggregations](./aggregation/) when a value changes. So for example, if you are grouping by a column and summing by a value, and one of those values change, then the summed value should also change.
 
+{% note %}
+If you want edited rows to jump to their new groups automatically, enable [Grouping Edit](./grouping-edit/) by setting the grid property `refreshAfterGroupEdit=true`.
+This property triggers the necessary regroup, sort and filter refresh after the edit and is our preferred approach when inline editing grouped columns.
+{% /note %}
+
 ### Example: Re-Aggregation of Groups
 
 The example below shows change detection impacting the result of groups. The grid is doing all the refresh by itself with no need for the client application explicitly requesting a refresh. Notice the following:
@@ -105,6 +110,21 @@ The example below shows change detection impacting the result of groups. The gri
 {% gridExampleRunner title="Change Detection with Groups" name="change-detection-groups"  exampleHeight=590 /%}
 
 Notice above that the group column is also editable (eg you can change one of the rows from group 'A' to group 'G'), however the row does **not** move into the correct group after this change is made. This is discussed below in the section [Change Detection and Sorting, Filtering, Grouping](#change-detection-and-sorting-filtering-grouping).
+
+### Refreshing Groups After Inline Edits
+
+By default the grid keeps the edited row in place until you manually refresh the client-side row model. This prevents jarring row movement while the user is typing, but it can look incorrect if group edits are infrequent and you expect the row to relocate immediately.
+
+`refreshAfterGroupEdit` flips that behaviour. When set to `true`, the grid automatically reruns grouping, sorting and filtering right after the edit is committed, so the row moves (or disappears) exactly where the new values place it.
+
+```ts
+const gridOptions = {
+    refreshAfterGroupEdit: true,
+    // other grid options
+};
+```
+
+See to the dedicated [Grouping Edit](./grouping-edit/) guide.
 
 ### Triggering Aggregation Change Detection
 
