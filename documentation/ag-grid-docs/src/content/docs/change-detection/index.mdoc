@@ -115,7 +115,7 @@ Notice above that the group column is also editable (eg you can change one of th
 
 By default the grid keeps the edited row in place until you manually refresh the client-side row model. This prevents jarring row movement while the user is typing, but it can look incorrect if group edits are infrequent and you expect the row to relocate immediately.
 
-`refreshAfterGroupEdit` flips that behaviour. When set to `true`, the grid automatically reruns grouping, sorting and filtering right after the edit is committed, so the row moves (or disappears) exactly where the new values place it.
+`refreshAfterGroupEdit` flips that behaviour. When set to `true`, the grid automatically reruns grouping, sorting and filtering after the edit is committed, so the row will move according to its new value.
 
 ```ts
 const gridOptions = {
