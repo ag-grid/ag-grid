@@ -41,9 +41,15 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
             modelUpdated: ({ keepRenderedRows }) => {
                 this.tryToEmptyQueues();
                 this.pinGrandTotalRow();
-                this.forContainers((container) => container.hide(shouldHide));
+
+                let visibilityChanged = false;
+                this.forContainers((container) => {
+                    visibilityChanged ||= container.hide(shouldHide);
+                });
+
                 const positionsChanged = this.refreshRowPositions();
-                if (!keepRenderedRows || positionsChanged) {
+
+                if (!keepRenderedRows || positionsChanged || visibilityChanged) {
                     this.dispatchRowPinnedEvents();
                 }
             },

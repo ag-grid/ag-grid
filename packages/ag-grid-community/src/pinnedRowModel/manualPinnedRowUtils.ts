@@ -92,11 +92,17 @@ export class PinnedRows {
         }
     }
 
-    public hide(shouldHide: (node: RowNode) => boolean): void {
+    public hide(shouldHide: (node: RowNode) => boolean): boolean {
         const { all, visible } = this;
+
+        const sizeBefore = visible.size;
         all.forEach((node) => (shouldHide(node) ? visible.delete(node) : visible.add(node)));
+        const changed = sizeBefore != visible.size;
+
         this.order = Array.from(visible);
         this.sort();
+
+        return changed;
     }
 
     public queue(id: string): void {
