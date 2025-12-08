@@ -62,9 +62,9 @@ const gridOptions: GridOptions<any> = {
         { rid: 8, A: 1, B: 0, C: 2 },
         {
             rid: 9,
-            A: '=ERRORIFONE(REF(COLUMN("0"),ROW("1"),COLUMN("0"),ROW("3")))',
-            B: '=ERRORIFONE(REF(COLUMN("1"),ROW("1"),COLUMN("1"),ROW("3")))',
-            C: '=ERRORIFONE(REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("3")))',
+            A: '=ERRORIFONE(REF(COLUMN("0"),ROW("1"),COLUMN("0"),ROW("8")))',
+            B: '=ERRORIFONE(REF(COLUMN("1"),ROW("1"),COLUMN("1"),ROW("8")))',
+            C: '=ERRORIFONE(REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("8")))',
             D: '=CONCAT(REF(COLUMN("0"),ROW("9"),COLUMN("2"),ROW("9")))',
         },
     ],

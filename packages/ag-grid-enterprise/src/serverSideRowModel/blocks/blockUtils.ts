@@ -85,7 +85,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             rowNode.childStore = null;
         }
         const sibling = rowNode.sibling;
-        if (sibling && rowNode.footer) {
+        if (sibling && !rowNode.footer) {
             this.destroyRowNode(sibling, false);
         }
 
