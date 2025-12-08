@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFunctionParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -18,16 +18,16 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'A', colId: '0', headerName: 'Gold' },
         { field: 'B', colId: '1', headerName: 'Silver' },
         { field: 'C', colId: '2', headerName: 'Bronze' },
         { field: 'D', colId: '3', headerName: 'Check Error Propagation' },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params: GetRowIdParams) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -41,7 +41,7 @@ const gridOptions: GridOptions<any> = {
     },
     formulaFuncs: {
         ERRORIFONE: {
-            func: (params) => {
+            func: (params: FormulaFunctionParams) => {
                 for (const value of params.values) {
                     if (String(value) === '1') {
                         throw "Error, discovered a '1' in params";

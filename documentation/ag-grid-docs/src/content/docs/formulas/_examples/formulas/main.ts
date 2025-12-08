@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
     ValidationModule,
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
 const valueFormatter = ({ value }: ValueFormatterParams) => `$ ${Number(value).toFixed(2)}`;
 const getRowId = (params: GetRowIdParams) => String(params.data.id);
@@ -31,7 +31,7 @@ const columnDefs: ColDef[] = [
     { field: 'total', valueFormatter: valueFormatter, allowFormula: true },
 ];
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs,
     getRowId,
     defaultColDef: {
