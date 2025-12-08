@@ -6,7 +6,7 @@ For organisations with multiple applications, you can create your own themes and
 
 ### Creating Themes From Scratch
 
-Most applications create themes by starting with a built-in theme like `themeQuartz` and using the `withParams` and `withPart` method to generate a customised version.
+Most applications create themes by starting with a built-in theme like `themeQuartz` and using the `withParams` and `withPart` methods to generate a customised version.
 
 The `createTheme` function creates a new theme containing core styles but no parts. If you're going to change most of the parts anyway, starting from a new theme will reduce the bundle size compared to starting with a built-in theme.
 
@@ -90,9 +90,3 @@ Additionally, the suffix is used by Typescript to infer the correct type for the
 Each grid on the page can have its own theme. In the example below, 3 themes are used by 4 grids. The bottom two grids share a theme (Balham) and use CSS custom properties to achieve different header colours:
 
 {% gridExampleRunner title="Multiple Grids" name="multiple-grids" /%}
-
-### Themed grids in Shadow DOM / Web Components
-
-When distributing themed grids, you may want to use [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) (or Web Components, which often use Shadow DOM under the hood) to isolate grid styles from the page.
-
-When using Shadow DOM, the grid inserts the compiled theme CSS into the shadow root rather than the main document. In most cases it can automatically detect the use of Shadow DOM. But there are edge cases, such as when a grid is initialized detached from the DOM, where it can't detect that it's going to be running in a Shadow DOM. In this case the grid will appear unstyled. Use the [`themeStyleContainer` grid option](./grid-options/#reference-theme-themeStyleContainer) to tell the grid where to insert styles.

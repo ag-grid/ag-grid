@@ -81,19 +81,3 @@ Browsers use the same mechanism - CSS - for controlling how elements work (e.g. 
 * Setting a component to `display: flex` and changing flex child layout properties like `align-items`, `align-self` and `flex-direction` is probably OK if you're trying to change how something looks on a small scale, e.g. to change the alignment of some text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
 
 * The style properties `position`, `overflow` and `pointer-events` are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break functionality now or in future minor releases.
-
-## CSS Layers
-
-[Layers](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) are a CSS feature that allow you to split your CSS into ordered layers so that rules in later layers always override rules in earlier layers, even if the selectors in earlier layers are more [specific](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity).
-
-By default the grid loads its styles without a layer, meaning that they will override all styles defined in a layer. If your application loads its styles into a CSS layer, you can load the grid styles into an earlier layer so that application styles can override grid styles.
-
-To set the layer that the grid styles are loaded into, use the `themeCssLayer` grid option. You may want to use [global grid options](./grid-interface/#global-grid-options) to set this on all grids in your app.
-
-{% note %}
-By default, grid styles are inserted at the start of the document head, making the grid layer the first in the document and causing _all_ other styles to override grid styles. If you are setting `themeCssLayer`, you probably also want to move the grid styles later in the document by setting `themeStyleContainer` to the document body. This will ensure that your application styles come before the grid styles, and allow them to declare an order to css layers using e.g. `@layer resets, grid, application;`.
-{% /note %}
-
-In the following example the header is colored red using styles in the `application` layer, which comes after the `grid` layer allowing it to override the default header colour:
-
-{% gridExampleRunner title="CSS Layers" name="css-layers"  exampleHeight=450 /%}
