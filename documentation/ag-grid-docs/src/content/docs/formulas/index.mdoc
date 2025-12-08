@@ -70,8 +70,10 @@ To instead always refer to the same position, use absolute references by prefixi
 - `=A$1` always refers to row 1, but the column can change.
 - `=$A1` always refers to column A, but the row can change.
 
+#### Long-Form References
 When saving cell references, the grid converts these into a long hand format using column and row IDs to ensure that changes in the source data allow the grid to continue to refer to the correct cells when the data changes without
 the grid being open.
+
 For example, if the column with ID `athlete` is in column A, and the row with ID `a` is in row 1, then the formula `=A1` becomes `=REF(COLUMN('athlete'), ROW('a'))`.
 When this is a static reference, for example $A$1, the long hand format uses A and 1 in place of IDs, but adds a true to indicate the value is absolute (e.g `=$A$1` becomes `=REF(COLUMN('a', true), ROW('1', true))`).
 
@@ -212,6 +214,7 @@ The grid provides an alternative iterator `params.args` which provides wrapped a
 This means that ranges are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
 
 The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
+In the example we use this function in the "Result" column to count the number of times the value "2" appears in the given range.
 
 {% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=390 /%}
 

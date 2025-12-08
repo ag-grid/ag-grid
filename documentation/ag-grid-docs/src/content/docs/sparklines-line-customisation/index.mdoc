@@ -27,7 +27,7 @@ sparklineOptions: {
     },
     marker: {
         itemStyler: (params) => {
-            if(params.highlighted) {
+            if (params.highlightState === 'highlighted-item') {
                 return {
                     size: 7
                 }
@@ -77,7 +77,7 @@ The markers are enabled by default but the size has been set to `0`px, making th
 
 The `size` property in the `marker.itemStyler` is `10`px, allowing the markers to become visible when in the highlighted state.
 
-These formats can be modified to your liking by setting the `marker.itemStyler` and `highlight` options as demonstated below.
+These formats can be modified to your liking by setting the `marker.itemStyler` option as demonstrated below.
 
 ```js
 sparklineOptions: {
@@ -90,7 +90,7 @@ sparklineOptions: {
         stroke: 'green',
         strokeWidth: 2,
         itemStyler: (params) => {
-            if(params.highlighted) {
+            if (params.highlightState === 'highlighted-item') {
                 return {
                     size: 10
                 }
