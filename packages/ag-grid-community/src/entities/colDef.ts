@@ -824,9 +824,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?:
-        | SortComparatorFn<TData, TValue>
-        | Partial<Record<NonNullable<SortType>, SortComparatorFn<TData, TValue>>>;
+    comparator?: SortComparatorFn<TData, TValue> | Partial<Record<SortType, SortComparatorFn<TData, TValue>>>;
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
