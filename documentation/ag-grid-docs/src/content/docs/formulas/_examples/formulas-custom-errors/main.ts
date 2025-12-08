@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi;
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'A', colId: '0', headerName: 'Gold' },
         { field: 'B', colId: '1', headerName: 'Silver' },

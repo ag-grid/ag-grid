@@ -42,7 +42,7 @@ const rowData = [
     },
 ];
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'gold', colId: 'c0' },
         { field: 'silver', colId: 'c1' },

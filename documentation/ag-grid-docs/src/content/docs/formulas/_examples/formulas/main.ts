@@ -31,7 +31,7 @@ const columnDefs: ColDef[] = [
     { field: 'total', valueFormatter: valueFormatter, allowFormula: true },
 ];
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs,
     getRowId,
     defaultColDef: {
