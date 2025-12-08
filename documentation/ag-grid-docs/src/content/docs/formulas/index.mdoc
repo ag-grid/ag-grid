@@ -6,7 +6,9 @@ Formula strings can be provided to cells in the grid, allowing for dynamic calcu
 
 ## Enabling Formulas
 
-To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids).
+To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids). In the example below, the values in columns Subtotal, Tax and Total are computed using formulas which can be modified by the end-user.
+
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -21,8 +23,6 @@ const gridOptions = {
     getRowId: (params) => String(params.data.rid),
 }
 ```
-
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
 When using formulas, the following features are enabled by default:
 - [Row Numbers](./row-numbers/)
@@ -263,7 +263,7 @@ Formulas can be stored outside of the grid's `rowData` by providing a `formulaDa
 
 The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
-In the example, the "Total" column contains editable formulas wich are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
+In the example, the "Total" column contains editable formulas which are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
