@@ -151,7 +151,7 @@ export const ICON_MAP = {
     tutorials: Tutorials,
     concepts: Concepts,
     alarm: CarbonIcon.Alarm,
-    terminal: CarbonIcon.Terminal,
+    pricingFeatures: CarbonIcon.CicsProgram,
     support: CarbonIcon.Chat,
     ...SOCIALS_ICON_MAP,
     ...CHARTS_ICON_MAP,
