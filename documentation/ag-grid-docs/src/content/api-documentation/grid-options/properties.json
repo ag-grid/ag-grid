@@ -2026,7 +2026,7 @@
         "themeCssLayer": {
             "more": {
                 "name": "CSS Layers",
-                "url": "./theming-css/#css-layers"
+                "url": "./theming/#css-layers"
             }
         },
         "styleNonce": {

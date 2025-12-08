@@ -18,6 +18,31 @@ The grid is styled using CSS. It ships with built-in styles that can create a ra
 
 Separately from theming, the grid supports using code to customise the appearance of individual columns, headers or cells by using [row styles](./row-styles/), [cell styles](./cell-styles/) or [custom renderers](./components/). Unlike theming, these methods allow you to change the appearance of elements depending on the data that they contain.
 
+## How the Theming API Works
+
+When you pass a theme object to a grid, the grid injects the required CSS into the DOM as it initialises. The CSS is inserted at the _start_ of the element specified in the [`themeStyleContainer` grid option](./grid-options/#reference-theme-themeStyleContainer), which defaults to `document.head`. This means that the grid's stylesheets will by default be the first in the document, allowing your application stylesheets to override them.
+
+### Themed grids in Shadow DOM / Web Components
+
+Grid themes support the use of [Shadow DOM](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM) (or Web Components, which often use Shadow DOM) to isolate grid styles from the page. Because of this isolation, grid styles must be inserted inside the Shadow DOM so that they can affect the grid.
+
+When the grid detects that it is running in Shadow DOM, `themeStyleContainer` will default to the grid's root element rather than the document head. Even so, we recommend always setting `themeStyleContainer` when using Shadow DOM, for two reasons:
+
+1. If you have multiple grids in one Shadow DOM, by default each grid creates a separate copy of the grid CSS styles, which adds to startup time and memory use. Setting each grid's `themeStyleContainer` to the same element within the Shadow DOM allows them all to share a single copy of the CSS.
+2. While the grid's automatic detection of Shadow DOM covers most cases, there are edge cases such as when a grid is initialized detached from the DOM, where it can't detect that it's going to be running in a Shadow DOM. Setting `themeStyleContainer` will ensure that styling always works correctly.
+
+### CSS Layers
+
+[Layers](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) are a CSS feature that allows you to split your CSS into ordered layers so that rules in later layers always override rules in earlier layers, even if the selectors in earlier layers are more [specific](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity).
+
+In an application using CSS layers, you typically want the order of layers to be: first the CSS resets and basic styles that set up the page, then the grid styles, and finally your application styles that apply custom styling to the grid. To achieve this:
+
+1. Specify the order of layers in your application stylesheet, e.g. `@layer resets, grid, application;`
+2. Set the `themeCssLayer` grid option to `"grid"`. This wraps the grid styles in `@layer grid { ... }`.
+3. Set the `themeStyleContainer` grid option to `document.body` to ensure that the grid styles load after your application styles
+
+Why insert styles into the document body? By default the grid inserts the styles at the _start_ of the head. When using `themeCssLayer: "grid"`, this positioning would cause the grid layer to be the first layer in the document. By the time your application stylesheets are loaded, it's too late to change the layer order: the grid layer is already first, so `@layer resets, grid, application;` has no effect. Setting `themeStyleContainer: document.body` causes the styles to be inserted at the beginning of the body. The effect is very similar to inserting them at the end of the head, except that they are guaranteed to appear after your application stylesheet.
+
 ## Legacy Themes
 
 Before v33, themes were applied by importing CSS files from our NPM packages, see [Legacy Themes](./theming-v32/) for more information.
