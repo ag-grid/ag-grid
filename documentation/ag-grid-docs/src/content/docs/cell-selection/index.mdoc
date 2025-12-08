@@ -59,15 +59,12 @@ The following example demonstrates single range cell selection:
 
 ## Selecting Cells via Column Headers
 
-Users can select all visible cells in a column by setting `cellSelection.enableColumnSelection` to `true` and then either clicking a column header.
+Users can select all visible cells in a column by setting `cellSelection.enableColumnSelection` to `true` and either clicking a column header, or pressing the {% kbd "↵ Enter" /%} key when the column header is focused.
 
-Normally, when selecting a column, all other ranges are cleared. If you wish to keep existing selections, hold {% kbd "^ Ctrl" /%} and then select a column header.
-
-Cells that have been selected via column selection may be de-selected by holding {% kbd "^ Ctrl" /%} and then clicking the column header.
-
-Users can extend the range of a column selection by holding {% kbd "⇧ Shift" /%} and then clicking on another column header.
-
-When interacting via the keyboard, users may press {% kbd "↵ Enter" /%} while a column header is focussed instead of clicking a column header.
+- By default, when selecting a column, all other ranges are cleared. If you wish to keep existing selections, hold {% kbd "^ Ctrl" /%} and then select a column header.
+- Cells that have been selected via column selection may be de-selected by holding {% kbd "^ Ctrl" /%} and then clicking the column header.
+- Users can extend the range of a column selection by holding {% kbd "⇧ Shift" /%} and then clicking on another column header.
+- When interacting via the keyboard, users may press {% kbd "↵ Enter" /%} while a column header is focussed instead of clicking a column header.
 
 This feature is illustrated in the example below, which uses the following configuration:
 
