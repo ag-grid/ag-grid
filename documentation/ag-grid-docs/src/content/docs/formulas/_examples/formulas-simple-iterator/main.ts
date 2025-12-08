@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions<any> = {
     columnDefs: [
@@ -28,7 +28,7 @@ const gridOptions: GridOptions<any> = {
         { field: 'silver', colId: 'c1' },
         { field: 'totals', colId: 'c2', cellDataType: 'text', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params: any) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -40,7 +40,7 @@ const gridOptions: GridOptions<any> = {
     },
     formulaFuncs: {
         CUSTOMSUM: {
-            func: (params) => {
+            func: (params: any) => {
                 let total = 0;
                 for (const value of params.values) {
                     const num = Number(value);

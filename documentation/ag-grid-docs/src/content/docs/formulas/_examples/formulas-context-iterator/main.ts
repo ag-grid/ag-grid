@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
 const rowData = [
     { rid: 'r1', gold: 1, silver: 2 },
@@ -46,7 +46,7 @@ const gridOptions: GridOptions<any> = {
         { field: 'silver', colId: 'c1' },
         { field: 'result', colId: 'c2', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params: any) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -59,8 +59,8 @@ const gridOptions: GridOptions<any> = {
     rowData,
     formulaFuncs: {
         COUNTEQ: {
-            func: (params) => {
-                const argsArr = Array.from(params.args);
+            func: (params: any) => {
+                const argsArr = Array.from(params.args) as { kind: string; value: string }[];
                 if (argsArr.length != 2) {
                     throw 'COUNTEQ requires exactly 2 arguments';
                 }
