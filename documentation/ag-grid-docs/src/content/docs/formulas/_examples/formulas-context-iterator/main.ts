@@ -60,7 +60,7 @@ const gridOptions: GridOptions = {
     formulaFuncs: {
         COUNTEQ: {
             func: (params: FormulaFunctionParams) => {
-                const argsArr = Array.from(params.args) as { kind: string; value: string }[];
+                const argsArr = Array.from(params.args);
                 if (argsArr.length != 2) {
                     throw 'COUNTEQ requires exactly 2 arguments';
                 }
