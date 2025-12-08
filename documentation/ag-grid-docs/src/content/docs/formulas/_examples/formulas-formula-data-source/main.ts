@@ -49,17 +49,22 @@ const currencyFormatter: ValueFormatterFunc<RowData> = ({ value }) => `$ ${Numbe
 const getRowId: GetRowIdFunc<RowData> = (params) => String(params.data.id);
 
 const formulaKey = (rowId: string, colId: string) => `${rowId}-${colId}`;
+
 // Simple in-memory store to keep formulas outside rowData
-// .. initialise with some initial formulas
+// .. initialise with some initial formulas.
+// .. Note: formulas in the grid are normalised into the long-hand format as shown below. As such, when using
+//          an external data store, formulas will be stored in this long-hand format. Users can and should continue
+//          to use the short-hand format.
+//          See https://ag-grid.com/javascript-data-grid/formulas/#long-form-references for more.
 const formulaStore = new Map<string, string>([
-    [formulaKey('a_01', 'total'), '=B1*C1'],
-    [formulaKey('o_02', 'total'), '=B2*C2'],
-    [formulaKey('b_03', 'total'), '=B3*C3'],
-    [formulaKey('g_04', 'total'), '=B4*C4'],
-    [formulaKey('p_05', 'total'), '=B5*C5'],
-    [formulaKey('p_06', 'total'), '=B6*C6'],
-    [formulaKey('m_07', 'total'), '=B7*C7'],
-    [formulaKey('s_08', 'total'), '=B8*C8'],
+    [formulaKey('a_01', 'total'), '=REF(COLUMN("price"),ROW("a_01"))*REF(COLUMN("quantity"),ROW("a_01"))'],
+    [formulaKey('o_02', 'total'), '=REF(COLUMN("price"),ROW("o_02"))*REF(COLUMN("quantity"),ROW("o_02"))'],
+    [formulaKey('b_03', 'total'), '=REF(COLUMN("price"),ROW("b_03"))*REF(COLUMN("quantity"),ROW("b_03"))'],
+    [formulaKey('g_04', 'total'), '=REF(COLUMN("price"),ROW("g_04"))*REF(COLUMN("quantity"),ROW("g_04"))'],
+    [formulaKey('p_05', 'total'), '=REF(COLUMN("price"),ROW("p_05"))*REF(COLUMN("quantity"),ROW("p_05"))'],
+    [formulaKey('p_06', 'total'), '=REF(COLUMN("price"),ROW("p_06"))*REF(COLUMN("quantity"),ROW("p_06"))'],
+    [formulaKey('m_07', 'total'), '=REF(COLUMN("price"),ROW("m_07"))*REF(COLUMN("quantity"),ROW("m_07"))'],
+    [formulaKey('s_08', 'total'), '=REF(COLUMN("price"),ROW("s_08"))*REF(COLUMN("quantity"),ROW("s_08"))'],
 ]);
 
 const columnDefs: ColDef<RowData>[] = [
