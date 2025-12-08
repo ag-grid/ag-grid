@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellApiModule,
     ClientSideRowModelModule,
@@ -10,6 +10,8 @@ import {
     createGrid,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
+
+import type { FormulaFunctionParams } from '../../../../../../../../packages/ag-grid-community/src/interfaces/formulas';
 
 ModuleRegistry.registerModules([
     CellSelectionModule,
@@ -46,7 +48,7 @@ const gridOptions: GridOptions<any> = {
         { field: 'silver', colId: 'c1' },
         { field: 'result', colId: 'c2', allowFormula: true },
     ],
-    getRowId: (params: any) => String(params.data.rid),
+    getRowId: (params: GetRowIdParams) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -59,7 +61,7 @@ const gridOptions: GridOptions<any> = {
     rowData,
     formulaFuncs: {
         COUNTEQ: {
-            func: (params: any) => {
+            func: (params: FormulaFunctionParams) => {
                 const argsArr = Array.from(params.args) as { kind: string; value: string }[];
                 if (argsArr.length != 2) {
                     throw 'COUNTEQ requires exactly 2 arguments';

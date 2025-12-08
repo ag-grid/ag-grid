@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -9,6 +9,8 @@ import {
     createGrid,
 } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
+
+import type { FormulaFunctionParams } from '../../../../../../../../packages/ag-grid-community/src/interfaces/formulas';
 
 ModuleRegistry.registerModules([
     CellSelectionModule,
@@ -28,7 +30,7 @@ const gridOptions: GridOptions<any> = {
         { field: 'silver', colId: 'c1' },
         { field: 'totals', colId: 'c2', cellDataType: 'text', allowFormula: true },
     ],
-    getRowId: (params: any) => String(params.data.rid),
+    getRowId: (params: GetRowIdParams) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -40,7 +42,7 @@ const gridOptions: GridOptions<any> = {
     },
     formulaFuncs: {
         CUSTOMSUM: {
-            func: (params: any) => {
+            func: (params: FormulaFunctionParams) => {
                 let total = 0;
                 for (const value of params.values) {
                     const num = Number(value);
