@@ -34,10 +34,6 @@ export const QUOTIENT = ({ values }: FormulaFunctionParams): number => {
     return na / nb;
 };
 
-// Backwards compatibility aliases for existing formulas that used MULTIPLY/DIVIDE.
-export const MULTIPLY = PRODUCT;
-export const DIVIDE = QUOTIENT;
-
 export const SUM = ({ values }: FormulaFunctionParams): number | Date => {
     let hasDates = false;
     let acc = 0;
