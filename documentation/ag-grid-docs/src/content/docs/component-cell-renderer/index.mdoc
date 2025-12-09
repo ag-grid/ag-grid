@@ -47,32 +47,16 @@ The grid comes with some built in Cell Components that cover some common cell re
 
 ## Custom Components
 
-{% if isFramework("angular") %}
-{% metaTag tags=["ICellRendererAngularComp"] /%}
-{% /if %}
+In order to render custom content in grid cells, you must first define a custom cell renderer, and then provide a reference to it to the grid via the [Column Definitions](./column-properties/#reference-styling-cellRenderer).
+
+### Creating Custom Components
 
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
 
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ICellRendererParams" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomCellRendererProps" /%}
-{% /if %}
-
-{% note %}
-Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
-{% /note %}
-
-{% partial file="./_renderer-function-javascript.mdoc" /%}
-{% partial file="./_renderer-function-angular.mdoc" /%}
-{% partial file="./_renderer-function-vue.mdoc" /%}
-
-### Selecting Components
+### Providing Custom Components
 
 The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:
 
@@ -175,7 +159,7 @@ const gridOptions = {
 ```
 {% /if %}
 
-### Dynamic Component Selection
+### Providing Custom Components Dynamically
 
 The `colDef.cellRendererSelector` function allows setting different Cell Components for different Rows within a Column.
 
@@ -245,15 +229,6 @@ The `Refresh Data` button triggers the cell components to refresh by randomising
 
 {% gridExampleRunner title="Custom Props" name="custom-props" /%}
 
-{% if isFramework("javascript") %}
-{% note %}
-You might be wondering how the grid knows if you have provided a Cell Renderer component class or
-a simple function, as JavaScript uses functions to implement classes. The answer is the grid looks
-for the `getGui()` method in the prototype of the function (a mandatory method in the cell renderer
-interface). If the `getGui()` method exists, it assumes a component, otherwise it assumes a function.
-{% /note %}
-{% /if %}
-
 ### Dynamic Tooltips
 
 When working with Custom Cell Renderers it is possible to register custom tooltips that are displayed dynamically by using the `setTooltip` method.
@@ -317,6 +292,10 @@ When using custom Cell Components, the custom Cell Component is responsible for 
 
 In order to handle focus in your custom cell component, implement [Custom Cell Component Keyboard Navigation](./keyboard-navigation/#custom-cell-component).
 
+{% note %}
+Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
+{% /note %}
+
 ### Handling Mouse Events
 
 By default when a cell is clicked on, the grid will perform actions including:
@@ -357,4 +336,18 @@ It is also possible to stop propagation on mouse events from within a custom cel
 
 {% if isFramework("react") %}
 To manually prevent the grid from handling mouse events, the "capture" versions of event handlers must be used, e.g. `onClickCapture` instead of `onClick`.
+{% /if %}
+
+### API Reference
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ICellRendererComp" /%}
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ICellRendererParams" /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomCellRendererProps" /%}
 {% /if %}
