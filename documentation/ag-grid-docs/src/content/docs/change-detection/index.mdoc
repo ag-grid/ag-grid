@@ -74,6 +74,7 @@ The following operations will **automatically** trigger change detection on all 
 1. Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).
 1. Using the `rowNode.setDataValue(col,value)` Row Node method.
 1. Using the `api.applyTransaction(transaction)` API method.
+1. Group value edited if `refreshAfterGroupEdit` grid option is set to `true`, (see [Grouping Edit](./grouping-edit/)).
 
 If you do not want change detection to be automatically done, then set the grid property
 `suppressChangeDetection=true`. This will stop the change detection process firing when the above events happen.
@@ -94,6 +95,13 @@ Aggregation change detection means rerunning [aggregations](./aggregation/) when
 If you want edited rows to jump to their new groups automatically, enable [Grouping Edit](./grouping-edit/) by setting the grid property `refreshAfterGroupEdit=true`.
 This property triggers the necessary regroup, sort and filter refresh after the edit and is our preferred approach when inline editing grouped columns.
 {% /note %}
+
+### Flashing Cells During Filter Updates
+
+By default, the grid does not flash cells when filtering is applied, even if the value in the aggregated cell has changed.
+To change this behaviour, set the grid property `allowShowChangeAfterFilter=true`.
+
+All examples on this page set `allowShowChangeAfterFilter` to `true` to clearly see value changes while experimenting with filters.
 
 ### Example: Re-Aggregation of Groups
 

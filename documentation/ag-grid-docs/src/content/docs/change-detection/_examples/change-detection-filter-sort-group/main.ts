@@ -67,6 +67,7 @@ const gridOptions: GridOptions = {
     rowData: getRowData(),
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
+    allowShowChangeAfterFilter: true,
     refreshAfterGroupEdit: true,
 };
 
