@@ -6,7 +6,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<button (click)="buttonClicked()">
+    template: `<button class="btn-simple" (click)="buttonClicked()">
         {{ 'Launch ' + company() + '!' }}
     </button>`,
 })
