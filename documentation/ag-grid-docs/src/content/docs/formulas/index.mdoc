@@ -126,6 +126,8 @@ If a formula results in an error, users will see the following error codes in th
 
 Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
 
+{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaFuncs"] /%}
+
 The following example and snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
 
 It uses the `params.values` iterator to simplify navigating all of the values, including those provided in ranges by flattening
@@ -260,6 +262,8 @@ const gridOptions = {
 ## Formula Data Source
 
 Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep row data clean, or persist formulas separately (e.g. to local storage or your own API).
+
+{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaDataSource"] /%}
 
 The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
