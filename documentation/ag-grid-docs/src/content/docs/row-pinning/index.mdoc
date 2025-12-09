@@ -17,7 +17,7 @@ const gridOptions = {
 
 ## Pinning Rows on First Render
 To have a row appear as pinned when the grid initially renders data, use the `isRowPinned` callback.
-Returning "top" or "bottom" from this callback will pin the row to the top or bottom respectively, and returning `null` or `undefined` will leave the row unpinned.
+Returning `'top'` or `'bottom'` from this callback will pin the row to the top or bottom respectively, and returning `null` or `undefined` will leave the row unpinned.
 As an example, the snippet below will pin all rows whose `country` field is `null` in the top container, and all the other rows will be unpinned.
 
 ```{% frameworkTransform=true %}
