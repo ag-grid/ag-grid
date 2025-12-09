@@ -804,7 +804,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialSortIndex?: number;
     /**
-     * An array defining the order in which sorting occurs (if sorting is enabled)`.
+     * An array defining the order in which sorting occurs (if sorting is enabled).
      * <br /><br />
      * Defaults:
      *
