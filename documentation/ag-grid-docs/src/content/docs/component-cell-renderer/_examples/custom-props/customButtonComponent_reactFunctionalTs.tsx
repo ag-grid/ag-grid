@@ -7,5 +7,9 @@ interface CustomButtonParams extends CustomCellRendererProps {
 }
 
 export default ({ onClick, data }: CustomButtonParams) => {
-    return <button onClick={onClick}>{data?.company ? `Launch ${data.company}!` : 'Launch!'}</button>;
+    return (
+        <button className="btn-simple" onClick={onClick}>
+            {data?.company ? `Launch ${data.company}!` : 'Launch!'}
+        </button>
+    );
 };

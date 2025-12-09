@@ -1,8 +1,6 @@
 {% if isFramework("react") %}
-The Component is provided `props` containing, amongst other things, the value to be rendered.
-{% /if %}
+A cell renderer is a normal React component, whose `props` contain, amongst other things, the value to be rendered. A full description of the props can be found below in the [API Reference](#api-reference).
 
-{% if isFramework("react") %}
 ```ts
 // this comp gets inserted into the Cell
 const CustomButtonComp = props => {
