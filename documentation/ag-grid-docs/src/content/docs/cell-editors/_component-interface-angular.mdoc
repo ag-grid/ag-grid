@@ -1,13 +1,11 @@
 {% if isFramework("angular") %}
 
-The interface for the cell editor component is as follows:
+To create a custom cell editor, implement the `ICellEditorAngularComp` interface, which defines two mandatory methods: 
+
+- `agInit(params: ICellEditorParams)` - called when the editor is initialised
+- `getValue()` - called by the grid to get the final value when editing is complete. 
+
+Full details of the `ICellEditorAngularComp` and `ICellEditorParams` interfaces are listed below under [API Reference](#api-reference).
 
 {% /if %}
 
-{% if isFramework("angular") %}
-{% interfaceDocumentation interfaceName="ICellEditorAngularComp" config={"asCode":true } /%}
-{% /if %}
-
-{% if isFramework("angular") %}
-The interface for the `params` argument passed to `agInit` is `ICellEditorParams`:
-{% /if %}

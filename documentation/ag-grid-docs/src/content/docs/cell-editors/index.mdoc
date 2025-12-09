@@ -20,13 +20,12 @@ The example below shows some Provided Editor Components and some Custom Editor C
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
 
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ICellEditorParams" config={"description": ""} /%}
-{% /if %}
 
 ## Selecting Components
 
 Cell Editor Components are configured using the `cellEditor` property of the [Column Definition](./column-definitions/).
+
+{% apiDocumentation source="column-properties/properties.json" section="editing" names=["cellEditor"] /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -52,6 +51,8 @@ See [Registering Custom Components](./components/#registering-custom-components)
 ## Dynamic Selection
 
 The `colDef.cellEditorSelector` function allows setting different Editor Components for different Rows within a Column.
+
+{% apiDocumentation source="column-properties/properties.json" section="editing" names=["cellEditorSelector"] /%}
 
 The `params` passed to `cellEditorSelector` are the same as those passed to the Editor Component. Typically the selector will use this to check the row's contents and choose an editor accordingly.
 
@@ -108,6 +109,17 @@ Here is a full example:
 
 {% gridExampleRunner title="Dynamic Editor Component" name="dynamic-editor-component"  exampleHeight=450 /%}
 
+## Custom Props
+
+The property `colDef.cellEditorParams` allows custom props to be passed to editors.
+
+{% apiDocumentation source="column-properties/properties.json" section="editing" names=["cellEditorParams"] /%}
+
+{% partial file="./_complementing-component-javascript.mdoc" /%}
+{% partial file="./_complementing-component-angular.mdoc" /%}
+{% partial file="./_complementing-component-react.mdoc" /%}
+{% partial file="./_complementing-component-vue.mdoc" /%}
+
 ## Dynamic Props
 
 The `colDef.cellEditorParams` function allows dynamic props independently of the Editor selection. For example you might have a 'City' column that has values based on the 'Country' column.
@@ -136,15 +148,6 @@ Below shows an example with dynamic props. The following can be noted:
 * Column **Address** uses the large text area editor.
 
 {% gridExampleRunner title="Dynamic Parameters" name="dynamic-parameters"  exampleHeight=520 /%}
-
-## Custom Props
-
-The property `colDef.cellEditorParams` allows custom props to be passed to editors.
-
-{% partial file="./_complementing-component-javascript.mdoc" /%}
-{% partial file="./_complementing-component-angular.mdoc" /%}
-{% partial file="./_complementing-component-react.mdoc" /%}
-{% partial file="./_complementing-component-vue.mdoc" /%}
 
 ## Popup Editor
 
@@ -271,3 +274,34 @@ The example below shows using `getCellEditorInstances`. The following can be not
 * The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
 {% gridExampleRunner title="Get Editor Instance" name="get-editor-instance" /%}
+
+## API Reference
+
+{% if isFramework("angular") %}
+### ICellEditorAngularComp
+
+{% interfaceDocumentation interfaceName="ICellEditorAngularComp" config={"description": "The ICellEditorAngularComp interface has the following methods:"} /%}
+{% /if %}
+
+{% if isFramework("vue") %}
+### ICellEditor
+
+{% interfaceDocumentation interfaceName="ICellEditor" config={"description": "The ICellEditor interface has the following methods:"} /%}
+{% /if %}
+
+
+{% if isFramework("javascript", "angular", "vue") %}
+### ICellEditorParams
+
+{% interfaceDocumentation interfaceName="ICellEditorParams" /%}
+{% /if %}
+
+
+{% if isFramework("react") %}
+### CustomCellEditorProps
+
+{% interfaceDocumentation interfaceName="CustomCellEditorProps"  /%}
+{% /if %}
+
+
+
