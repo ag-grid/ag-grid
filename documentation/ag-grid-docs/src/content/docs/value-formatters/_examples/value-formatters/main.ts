@@ -17,12 +17,9 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { headerName: 'A', field: 'a' },
-        { headerName: 'B', field: 'b' },
-        { headerName: '£A', field: 'a', valueFormatter: currencyFormatter },
-        { headerName: '£B', field: 'b', valueFormatter: currencyFormatter },
-        { headerName: '(A)', field: 'a', valueFormatter: bracketsFormatter },
-        { headerName: '(B)', field: 'b', valueFormatter: bracketsFormatter },
+        { headerName: 'Raw Value', field: 'a' },
+        { headerName: 'Currency Amount (£)', field: 'a', valueFormatter: currencyFormatter },
+        { headerName: 'Bracketed Value', field: 'a', valueFormatter: bracketsFormatter },
     ],
     defaultColDef: {
         flex: 1,
