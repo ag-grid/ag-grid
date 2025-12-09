@@ -1351,6 +1351,7 @@ export {
     RangeParam,
     ValueParam,
     FormulaFunctionParams,
+    FormulaFuncs,
     FormulaDataSource,
     FormulaDataSourceParams,
     GetFormulaParams,

@@ -103,7 +103,7 @@ import type {
     FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
     FormulaDataSource,
-    FormulaFunctionParams,
+    FormulaFuncs,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -1168,8 +1168,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `FormulaModule`
      */
-    @Input() public formulaFuncs: { [key: string]: { func: (params: FormulaFunctionParams) => any } } | undefined =
-        undefined;
+    @Input() public formulaFuncs: FormulaFuncs | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
