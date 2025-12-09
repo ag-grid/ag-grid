@@ -8,6 +8,7 @@ import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefi
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
@@ -222,7 +223,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 <a
                                     id="request-trial-licence"
                                     className={classnames('button', styles.trialButton)}
-                                    href={gridUrlWithPrefix({
+                                    href={urlWithPrefix({
                                         framework,
                                         url: './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence',
                                     })}
