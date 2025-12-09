@@ -1,6 +1,6 @@
 {% if isFramework("angular") %}
 
-To implement a custom cell editor implement the `ICellEditorAngularComp` interface that has two mandatory methods: 
+To create a custom cell editor, implement the `ICellEditorAngularComp` interface, which defines two mandatory methods: 
 
 - `agInit(params: ICellEditorParams)` - called when the editor is initialised
 - `getValue()` - called by the grid to get the final value when editing is complete. 
