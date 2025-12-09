@@ -187,7 +187,7 @@ If you are sure that a value change impacts that one column only, then you can s
 
 ## Example: Tree Path & Column Path Selection
 
-Consider the example below. When you edit a cell value under under the groups "Bottom" -> "Group B2" and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom". It will not recompute any aggregates for any other groups or for any other columns.
+Consider the example below. When you edit a cell value under the groups "Bottom" -> "Group B2" and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom". It will not recompute any aggregates for any other groups or for any other columns.
 
 The tree path selection (ie not updating anything in the group "Top") is always active in the grid and the column selection (only updating column "Column C") is active because of the grid property `aggregateOnlyChangedColumns=true`.
 
