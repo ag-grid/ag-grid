@@ -6,9 +6,3 @@
         cursor: pointer;
     }
 }
-
-:where(.ag-selection-checkbox) .ag-checkbox-input-wrapper.ag-disabled {
-    &::before {
-        pointer-events: none;
-    }
-}
