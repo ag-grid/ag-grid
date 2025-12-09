@@ -2,8 +2,17 @@
 title: "Provided Overlays"
 ---
 
-The grid shows overlays to communicate the grid's current state to the user. When data is loading or being exported and when there is no data or no rows match the current filter.
+The grid shows built-in overlays when data is loading or being exported and when there is no data or no rows match the current filter.
 
+The following example demonstrates all the provided overlays.
+
+- Toggle the loading state to show/hide the loading overlay. 
+- Note that the loading overlay takes precedence over the other provided overlays if they are shown at the same time.
+- Clear Row Data shows the no rows overlay.
+- Set Non Matching Filter sets row data and a non-matching filter to show the no matching rows overlay.    
+- Export CSV exports the data to CSV and shows the exporting overlay.
+
+{% gridExampleRunner title="Provided Overlays" name="provided-overlays"  exampleHeight=300 /%}
 
 ## Loading
 
@@ -27,20 +36,6 @@ The no-matching-rows overlay is displayed when the grid has rows but none of the
 ## Exporting
 
 The exporting overlay is displayed when data is being exported from the grid to CSV or Excel.
-
-
-## Example
-
-The following example demonstrates all the provided overlays.
-
-- Toggle the loading state to show/hide the loading overlay. 
-- Note that the loading overlay takes precedence over the other provided overlays if they are shown at the same time.
-- Clear the row data to show the no rows overlay.
-- Set Non Matching Filter, sets row data and a non matching filter to show the no matching rows overlay.    
-- Export the data to CSV
-
-{% gridExampleRunner title="Provided Overlays" name="provided-overlays"  exampleHeight=300 /%}
-
 
 ## Customisation
 

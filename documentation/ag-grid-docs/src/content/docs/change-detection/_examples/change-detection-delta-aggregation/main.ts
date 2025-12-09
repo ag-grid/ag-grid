@@ -44,7 +44,7 @@ const gridOptions: GridOptions = {
             headerName: 'Total',
             type: 'totalColumn',
             minWidth: 120,
-            // we use getValue() instead of data.a so that it gets the aggregated values at the group level
+            aggFunc: 'sum',
             valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")',
         },
     ],
