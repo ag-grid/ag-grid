@@ -1,7 +1,7 @@
 import { COUNT, COUNTA, COUNTBLANK, COUNTIF } from './counting/functions';
 import { NOW, TODAY } from './dates/functions';
 import { EQUALS, GT, GTE, IF, LT, LTE, MAX, MIN, NOT_EQUALS } from './logic/functions';
-import { AVERAGE, DIVIDE, MEDIAN, MINUS, MULTIPLY, PERCENT, POWER, RAND, SUM, SUMIF } from './numbers/functions';
+import { AVERAGE, DIVIDE, MEDIAN, MINUS, PERCENT, POWER, PRODUCT, RAND, SUM, SUMIF } from './numbers/functions';
 import { CONCAT } from './strings/functions';
 
 export default {
@@ -11,8 +11,7 @@ export default {
     TODAY,
 
     // arithmetic
-    // PRODUCT,
-    // MULTIPLY: PRODUCT,
+    PRODUCT,
     // DIVIDE,
     // DIV: DIVIDE,
     SUM,
@@ -50,7 +49,7 @@ export default {
     // operator aliases
     '+': SUM,
     '-': MINUS,
-    '*': MULTIPLY,
+    '*': PRODUCT,
     '/': DIVIDE,
     '^': POWER,
     '%': PERCENT,
