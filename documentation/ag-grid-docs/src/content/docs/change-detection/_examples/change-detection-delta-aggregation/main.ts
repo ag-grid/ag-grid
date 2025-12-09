@@ -44,7 +44,7 @@ const gridOptions: GridOptions = {
             headerName: 'Total',
             type: 'totalColumn',
             minWidth: 120,
-            // we use getValue() instead of data.a so that it gets the aggregated values at the group level
+            aggFunc: 'sum',
             valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")',
         },
     ],
@@ -88,6 +88,7 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
+    allowShowChangeAfterFilter: true,
     getRowId: (params: GetRowIdParams) => String(params.data.id),
     onGridReady: (params) => {
         params.api.setGridOption('rowData', createRowData());
