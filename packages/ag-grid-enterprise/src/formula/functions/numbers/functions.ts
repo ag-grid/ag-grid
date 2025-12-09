@@ -4,10 +4,10 @@ import { FormulaError } from '../../ast/utils';
 import { criteriaToPredicate, isRangeParam, isValueParam, iterableWithoutBlanks, take, takeBetween } from '../utils';
 import { coerceFiniteNumber, dateFromDays, isDateValue } from './utils';
 
-export const MULTIPLY = ({ values }: FormulaFunctionParams): number => {
+export const PRODUCT = ({ values }: FormulaFunctionParams): number => {
     let acc = 1;
     for (const v of iterableWithoutBlanks(values)) {
-        const n = coerceFiniteNumber('MULTIPLY', v);
+        const n = coerceFiniteNumber('PRODUCT', v);
         if (n == null) {
             continue;
         }
@@ -21,15 +21,15 @@ export const MULTIPLY = ({ values }: FormulaFunctionParams): number => {
     return acc;
 };
 
-export const DIVIDE = ({ values }: FormulaFunctionParams): number => {
-    const [a, b] = take(iterableWithoutBlanks(values), 'DIVIDE', 2);
-    const na = coerceFiniteNumber('DIV', a);
-    const nb = coerceFiniteNumber('DIV', b);
+export const QUOTIENT = ({ values }: FormulaFunctionParams): number => {
+    const [a, b] = take(iterableWithoutBlanks(values), 'QUOTIENT', 2);
+    const na = coerceFiniteNumber('QUOTIENT', a);
+    const nb = coerceFiniteNumber('QUOTIENT', b);
     if (na == null || nb == null) {
-        throw new FormulaError('DIV: non-numeric argument', '#VALUE!');
+        throw new FormulaError('QUOTIENT: non-numeric argument', '#VALUE!');
     }
     if (nb === 0) {
-        throw new FormulaError('DIV: division by zero', '#DIV/0!');
+        throw new FormulaError('QUOTIENT: division by zero', '#DIV/0!');
     }
     return na / nb;
 };

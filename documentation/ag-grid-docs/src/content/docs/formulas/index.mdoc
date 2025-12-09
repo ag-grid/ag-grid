@@ -324,51 +324,51 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 
 **Numeric Functions**
 
-| Function | Description |
-| -------- | ----------- |
-| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
-| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
-| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
-| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
-| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
-| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
-| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
-| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
-| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
-| `PERCENT(arg1)` | Returns value of its argument as a decimal percentage. |
-| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
-| `RAND()` | Returns a random number between 0 and 1. |
+| Function | Description | Supported in Excel |
+| -------- | ----------- | ------------------ |
+| `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. | Yes |
+| `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. | Yes |
+| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. | No (use `-`) |
+| `PRODUCT(arg1, arg2, ...)` | Returns the product of all arguments. | Yes |
+| `QUOTIENT(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. | Yes |
+| `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. | Yes |
+| `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. | Yes |
+| `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. | Yes |
+| `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. | Yes |
+| `PERCENT(arg1)` | Returns value of its argument as a decimal percentage. | No (use `/100` or the `%` operator) |
+| `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. | Yes |
+| `RAND()` | Returns a random number between 0 and 1. | Yes |
 
 **Date Functions**
 
-| Function | Description |
-| -------- | ----------- |
-| `NOW()` | Returns a date object representing the current date and time. |
-| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. |
+| Function | Description | Supported in Excel |
+| -------- | ----------- | ------------------ |
+| `NOW()` | Returns a date object representing the current date and time. | Yes |
+| `TODAY()` | Returns a date object representing the current date with the time set to 00:00:00. | Yes |
 
 **Text Functions**
 
-| Function | Description |
-| -------- | ----------- |
-| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
+| Function | Description | Supported in Excel |
+| -------- | ----------- | ------------------ |
+| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. | Yes |
 
 **Logical Functions**
 
-| Function | Description |
-| -------- | ----------- |
-| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
-| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
-| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
-| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
-| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
-| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
-| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
+| Function | Description | Supported in Excel |
+| -------- | ----------- | ------------------ |
+| `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. | Yes |
+| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. | No (use `=`) |
+| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. | No (use `<>`) |
+| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. | No (use `>`) |
+| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. | No (use `>=`) |
+| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. | No (use `<`) |
+| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. | No (use `<=`) |
 
 **Counting Functions**
 
-| Function | Description |
-| -------- | ----------- |
-| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. |
-| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. |
-| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. |
-| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. |
+| Function | Description | Supported in Excel |
+| -------- | ----------- | ------------------ |
+| `COUNT(arg1, arg2, ...)` | Returns the count of numeric values among the arguments. | Yes |
+| `COUNTA(arg1, arg2, ...)` | Returns the count of non-empty values among the arguments. | Yes |
+| `COUNTBLANK(arg1, arg2, ...)` | Returns the count of empty values among the arguments. | Yes |
+| `COUNTIF(range, criteria)` | Returns the count of values in the range that meet the criteria. | Yes |
