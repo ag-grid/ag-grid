@@ -22,11 +22,18 @@ export interface RangeParam extends Iterable<unknown> {
 
 export type FormulaParam = ValueParam | RangeParam;
 
+/** A map of 'function name' to 'function' for custom functions that are used for formulas */
+export type FormulaFuncs = { [key: string]: { func: (params: FormulaFunctionParams) => any } };
+
 export type FormulaFunctionParams = {
+    /** Row for this formula */
     row: IRowNode;
+    /** Column for this formula */
     column: AgColumn;
-    args: Iterable<FormulaParam>; // top level params iterator only
-    values: Iterable<unknown>; // flattens all ranges and top level params
+    /** Top level params iterator only. */
+    args: Iterable<FormulaParam>;
+    /** Flattens all ranges and top level params */
+    values: Iterable<unknown>;
 };
 
 export interface GetFormulaParams {

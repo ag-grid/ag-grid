@@ -5,6 +5,10 @@ enterprise: true
 
 Excel Export allows you to include Excel Formulas in the exported file. You can use formulas to translate any column Value Getters logic, so the column values are correctly computed locally in Excel.
 
+{% note %} 
+If you are using [Formulas](./formulas/) feature, formula expressions are exported into Excel automatically and you don't need to use the approach explained in this page. The following approach doesn’t take advantage of the Grid’s internal parser and relies on Excel for formula evaluation.
+{% /note %}
+
 ## Exporting formulas
 
 There are two ways to include formulas as part of the exported Excel file.

@@ -125,7 +125,7 @@ import type {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
-import type { FormulaDataSource, FormulaFunctionParams } from '../interfaces/formulas';
+import type { FormulaDataSource, FormulaFuncs } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
@@ -1172,7 +1172,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `FormulaModule`
      */
-    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } };
+    formulaFuncs?: FormulaFuncs;
 
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.

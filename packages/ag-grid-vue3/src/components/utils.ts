@@ -25,7 +25,7 @@ import type {
     FindOptions,
     FocusGridInnerElementParams,
     FormulaDataSource,
-    FormulaFunctionParams,
+    FormulaFuncs,
     GetChartMenuItems,
     GetChartToolbarItems,
     GetContextMenuItems,
@@ -988,7 +988,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `FormulaModule`
          */
-    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } },
+    formulaFuncs?: FormulaFuncs,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
