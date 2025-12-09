@@ -761,7 +761,12 @@
             }
         },
         "getSizesForCurrentTheme": {},
-
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "./row-height/#changing-row-height"
+            }
+        },
         "onRowHeightChanged": {
             "more": {
                 "name": "Changing Row Height",
