@@ -73,6 +73,15 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const importNamePattern = '\\b(' + symbolsImportedGridPackage.map(regExpEscape).join('|') + ')\\b';
         mainJs = mainJs.replace(new RegExp(importNamePattern, 'g'), 'agGrid.$&');
 
+        if (componentScriptFiles) {
+            for (const key in Object.keys(componentScriptFiles)) {
+                const compFile = componentScriptFiles[key];
+                if (compFile) {
+                    componentScriptFiles[key] = compFile.replace(new RegExp(importNamePattern, 'g'), 'agGrid.$&');
+                }
+            }
+        }
+
         // Javascript is packages only
         mainJs = removeModuleRegistration(mainJs);
 
