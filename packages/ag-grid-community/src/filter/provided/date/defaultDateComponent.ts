@@ -110,8 +110,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             inputElement.type = 'text';
         }
-        const parsedMinValidDate = grabDate(minValidDate, minValidYear, true);
-        const parsedMaxValidDate = grabDate(maxValidDate, maxValidYear, false);
+        const parsedMinValidDate = parseOrConstructDate(minValidDate, minValidYear, true);
+        const parsedMaxValidDate = parseOrConstructDate(maxValidDate, maxValidYear, false);
 
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
             _warn(87);
@@ -164,17 +164,17 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 }
 
-function grabDate(validationDate: unknown, validationYear: unknown, isMin: boolean): null | Date {
-    if (validationDate instanceof Date) {
-        return validationDate;
-    }
-    if (validationDate && validationYear) {
+function parseOrConstructDate(date: string | Date | undefined, year: number | undefined, isMin: boolean): null | Date {
+    if (date && year) {
         _warn(isMin ? 85 : 86);
     }
-    if (validationDate && typeof validationDate === 'string') {
-        return _parseDateTimeFromString(validationDate);
-    } else if (validationYear && typeof validationYear === 'number') {
-        return _parseDateTimeFromString(`${validationYear}-${isMin ? '01-01' : '12-31'}`);
+    if (date instanceof Date) {
+        return date;
+    }
+    if (date) {
+        return _parseDateTimeFromString(date);
+    } else if (year) {
+        return _parseDateTimeFromString(`${year}-${isMin ? '01-01' : '12-31'}`);
     }
     return null;
 }
