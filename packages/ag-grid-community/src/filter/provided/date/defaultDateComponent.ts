@@ -20,6 +20,8 @@ const DefaultDateElement: ElementParams = {
         },
     ],
 };
+const DATETIME_LOCAL_FORMAT = `YYYY-MM-DDTHH:mm`;
+
 export class DefaultDateComponent extends Component implements IDateComp {
     private readonly eDateInput: GridInputTextField = RefPlaceholder;
 
@@ -109,49 +111,20 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             inputElement.type = 'text';
         }
+        const parsedMinValidDate = grabDate(minValidDate, minValidYear, true);
+        const parsedMaxValidDate = grabDate(maxValidDate, maxValidYear, false);
 
-        if (minValidDate && minValidYear) {
-            _warn(85);
+        if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
+            _warn(87);
         }
+        const format = shouldUseDateTimeLocal ? DATETIME_LOCAL_FORMAT : undefined; // undefined === default format YYYY-MM-DD
 
-        if (maxValidDate && maxValidYear) {
-            _warn(86);
+        if (parsedMinValidDate) {
+            inputElement.min = _dateToFormattedString(parsedMinValidDate, format);
         }
-
-        if (minValidDate && maxValidDate) {
-            const [parsedMinValidDate, parsedMaxValidDate] = [minValidDate, maxValidDate].map((v) =>
-                v instanceof Date ? v : _parseDateTimeFromString(v)
-            );
-
-            if (
-                parsedMinValidDate &&
-                parsedMaxValidDate &&
-                parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()
-            ) {
-                _warn(87);
-            }
+        if (parsedMaxValidDate) {
+            inputElement.max = _dateToFormattedString(parsedMaxValidDate, format);
         }
-
-        if (minValidDate) {
-            if (minValidDate instanceof Date) {
-                inputElement.min = _dateToFormattedString(minValidDate);
-            } else {
-                inputElement.min = minValidDate;
-            }
-        } else if (minValidYear) {
-            inputElement.min = `${minValidYear}-01-01`;
-        }
-
-        if (maxValidDate) {
-            if (maxValidDate instanceof Date) {
-                inputElement.max = _dateToFormattedString(maxValidDate);
-            } else {
-                inputElement.max = maxValidDate;
-            }
-        } else if (maxValidYear) {
-            inputElement.max = `${maxValidYear}-12-31`;
-        }
-
         this.isApply = params.location === 'floatingFilter' && !!buttons?.includes('apply');
     }
 
@@ -191,4 +164,19 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
         return params?.filterParams?.browserDatePicker ?? true;
     }
+}
+
+function grabDate(validationDate: unknown, validationYear: unknown, isMin: boolean) {
+    if (validationDate instanceof Date) {
+        return validationDate;
+    }
+    if (validationDate && validationYear) {
+        _warn(isMin ? 85 : 86);
+    }
+    if (validationDate && typeof validationDate === 'string') {
+        return _parseDateTimeFromString(validationDate);
+    } else if (validationYear && typeof validationYear === 'number') {
+        return _parseDateTimeFromString(`${validationYear}-${isMin ? '01-01' : '12-31'}`);
+    }
+    return null;
 }
