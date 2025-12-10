@@ -30,79 +30,6 @@ describe('ag-grid tree data edit aggregation', () => {
         gridsManager.reset();
     });
 
-    const unFormatNumber = (value: unknown, decimals = 2): number => {
-        if (value === null || value === undefined || value === '') {
-            return 0;
-        }
-
-        const toFixedNumber = (num: number): number => parseFloat(num.toFixed(decimals));
-        const toNumber = (input: string): number | null => {
-            const parsed = Number(input);
-            return Number.isFinite(parsed) ? parsed : null;
-        };
-
-        const original = `${value}`;
-        const firstAttempt = toNumber(original.replace(/,/g, ''));
-        if (firstAttempt !== null) {
-            return toFixedNumber(firstAttempt);
-        }
-
-        const secondAttempt = toNumber(original.replace(/\./g, ''));
-        if (secondAttempt !== null) {
-            return toFixedNumber(secondAttempt);
-        }
-
-        return 0;
-    };
-
-    const sumFunctionWithQty = (params: IAggFuncParams<VehicleRow, number>): number => {
-        let result = 0;
-
-        for (const value of params.values ?? []) {
-            result += unFormatNumber(value);
-        }
-
-        if (params.data) {
-            const { type, qty } = params.data;
-            const qtyText = qty === undefined || qty === null ? '' : `${qty}`;
-            const shouldScale = (type === 'line' || type === 'paragraph') && qtyText !== '';
-            if (shouldScale) {
-                let parsedQty = unFormatNumber(qty, 3);
-                if (parsedQty === 0) {
-                    parsedQty = 1;
-                }
-                result = result * parsedQty;
-            }
-            params.data[params.colDef.field!] = result;
-        }
-
-        return result;
-    };
-
-    const propagateTotals = (params: ValueSetterParams<VehicleRow>): boolean => {
-        const data = params.data;
-        if (!data) {
-            return false;
-        }
-        const isSummaryRow = data.type === 'chapter' || data.type === 'paragraph' || data.type === 'line';
-        if (isSummaryRow) {
-            if (params.newValue != params.oldValue) {
-                const children = params.node?.childrenAfterGroup ?? [];
-                const numberOfChildren = children.length;
-                const pricePerChild = numberOfChildren ? unFormatNumber(params.newValue) / numberOfChildren : 0;
-                if (children.length > 0) {
-                    children.forEach((child) => child.setDataValue('total', pricePerChild));
-                }
-                data.total = unFormatNumber(params.newValue);
-                params.api.refreshClientSideRowModel('aggregate');
-            }
-            return true;
-        }
-        data.total = unFormatNumber(params.newValue);
-        data.price = data.total / (data.qty || 1);
-        return true;
-    };
-
     test('Aggregation triggering for parent item when using treeData with a valueSetter (AG-16104)', async () => {
         const rowData: VehicleRow[] = cachedJSONObjects.array([
             { id: '1', group: ['1'], type: 'chapter', model: 'Model Y' },
@@ -116,6 +43,79 @@ describe('ag-grid tree data edit aggregation', () => {
             { id: '9', group: ['1', '2', '7', '9'], type: 'sub_line', model: '500', qty: 3, price: 100, total: 300 },
             { id: '10', group: ['1', '2', '7', '10'], type: 'sub_line', model: 'Juke', qty: 2, price: 150, total: 300 },
         ]);
+
+        const unFormatNumber = (value: unknown, decimals = 2): number => {
+            if (value === null || value === undefined || value === '') {
+                return 0;
+            }
+
+            const toFixedNumber = (num: number): number => parseFloat(num.toFixed(decimals));
+            const toNumber = (input: string): number | null => {
+                const parsed = Number(input);
+                return Number.isFinite(parsed) ? parsed : null;
+            };
+
+            const original = `${value}`;
+            const firstAttempt = toNumber(original.replace(/,/g, ''));
+            if (firstAttempt !== null) {
+                return toFixedNumber(firstAttempt);
+            }
+
+            const secondAttempt = toNumber(original.replace(/\./g, ''));
+            if (secondAttempt !== null) {
+                return toFixedNumber(secondAttempt);
+            }
+
+            return 0;
+        };
+
+        const sumFunctionWithQty = (params: IAggFuncParams<VehicleRow, number>): number => {
+            let result = 0;
+
+            for (const value of params.values ?? []) {
+                result += unFormatNumber(value);
+            }
+
+            if (params.data) {
+                const { type, qty } = params.data;
+                const qtyText = qty === undefined || qty === null ? '' : `${qty}`;
+                const shouldScale = (type === 'line' || type === 'paragraph') && qtyText !== '';
+                if (shouldScale) {
+                    let parsedQty = unFormatNumber(qty, 3);
+                    if (parsedQty === 0) {
+                        parsedQty = 1;
+                    }
+                    result = result * parsedQty;
+                }
+                params.data[params.colDef.field!] = result;
+            }
+
+            return result;
+        };
+
+        const propagateTotals = (params: ValueSetterParams<VehicleRow>): boolean => {
+            const data = params.data;
+            if (!data) {
+                return false;
+            }
+            const isSummaryRow = data.type === 'chapter' || data.type === 'paragraph' || data.type === 'line';
+            if (isSummaryRow) {
+                if (params.newValue != params.oldValue) {
+                    const children = params.node?.childrenAfterGroup ?? [];
+                    const numberOfChildren = children.length;
+                    const pricePerChild = numberOfChildren ? unFormatNumber(params.newValue) / numberOfChildren : 0;
+                    if (children.length > 0) {
+                        children.forEach((child) => child.setDataValue('total', pricePerChild));
+                    }
+                    data.total = unFormatNumber(params.newValue);
+                    params.api.refreshClientSideRowModel('aggregate');
+                }
+                return true;
+            }
+            data.total = unFormatNumber(params.newValue);
+            data.price = data.total / (data.qty || 1);
+            return true;
+        };
 
         const gridOptions: GridOptions<VehicleRow> = {
             rowData,
