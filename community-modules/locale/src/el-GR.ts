@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_GR = {
     searchOoo: 'Αναζήτηση...',
     blanks: '(Κενά)',
     noMatches: 'Δεν βρέθηκαν αποτελέσματα',
+    typeToSearchOoo: 'Πληκτρολογήστε για αναζήτηση...',
 
     // Number Filter & Text Filter
     filterOoo: 'Φίλτρο...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_GR = {
     maxLengthValidation: 'Πρέπει να είναι ${variable} χαρακτήρες ή λιγότερο.',
     minValueValidation: 'Πρέπει να είναι μεγαλύτερο ή ίσο με ${variable}',
     maxValueValidation: 'Πρέπει να είναι μικρότερο ή ίσο με ${variable}',
+    strictMinValueValidation: 'Πρέπει να είναι μεγαλύτερο από ${variable}',
+    strictMaxValueValidation: 'Πρέπει να είναι μικρότερο από ${variable}',
     invalidSelectionValidation: 'Μη έγκυρη επιλογή.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_GR = {
     loadingOoo: 'Φόρτωση...',
     loadingError: 'ΣΦΑΛΜΑ',
     noRowsToShow: 'Δεν υπάρχουν γραμμές για εμφάνιση',
+    noMatchingRows: 'Δεν βρέθηκαν αντιστοιχίες',
+    exportingOoo: 'Εξαγωγή...',
     enabled: 'Ενεργοποιημένο',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_GR = {
     chooseColumns: 'Επιλογή Στηλών',
     sortAscending: 'Επιλογή Αύξουσας Ταξινόμησης',
     sortDescending: 'Επιλογή Φθίνουσας Ταξινόμησης',
+    sortAbsoluteAscending: '"Απόλυτη αύξουσα ταξινόμηση"',
+    sortAbsoluteDescending: '"Απόλυτη φθίνουσα ταξινόμηση"',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_GR = {
     ariaChecked: 'ελεγμένο',
     ariaColumn: 'Στήλη',
     ariaColumnGroup: 'Ομάδα Στήλης',
+    ariaFilterActive: 'Ενεργό Φίλτρο',
     ariaColumnFiltered: 'Φιλτραρισμένη Στήλη',
     ariaColumnSelectAll: 'Εναλλαγή Όλων των Ορατότητας Στηλών',
     ariaDateFilterInput: 'Εισαγωγή Φίλτρου Ημερομηνίας',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_GR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' από ',
     ariaDropZoneColumnComponentSortAscending: 'αύξουσα',
     ariaDropZoneColumnComponentSortDescending: 'φθίνουσα',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'απόλυτη αύξουσα σειρά',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'απόλυτη φθίνουσα σειρά',
     ariaLabelDialog: 'Διαλογή',
     ariaLabelColumnMenu: 'Μενού Στήλης',
     ariaLabelColumnFilter: 'Φίλτρο Στήλης',

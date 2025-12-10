@@ -123,8 +123,10 @@ export abstract class ProvidedFilter<
         const oldState = this.state;
         this.state = newState;
 
+        const fromAction = additionalEventAttributes?.fromAction;
+
         if (
-            additionalEventAttributes?.fromAction ||
+            (fromAction && fromAction !== 'apply') ||
             newState.model !== oldState.model ||
             !this.areStatesEqual(newState.state, oldState.state)
         ) {
@@ -225,8 +227,17 @@ export abstract class ProvidedFilter<
     }
 
     private doApplyModel(additionalEventAttributes?: any): boolean {
-        const { params, state } = this;
-        const changed = !this.areModelsEqual(params.model, state.model);
+        const {
+            params,
+            state: { valid = true, model },
+        } = this;
+
+        // Don't apply invalid model
+        if (!valid) {
+            return false;
+        }
+
+        const changed = !this.areModelsEqual(params.model, model);
         if (changed) {
             params.onAction('apply', additionalEventAttributes);
         }

@@ -42,6 +42,12 @@ export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommo
     filterParams: DateFilterParams;
 
     location?: 'filter' | 'floatingFilter';
+
+    /**
+     * Method for component to tell AG Grid that an input has been focussed.
+     * Used by the grid to refresh validation messages when moving between inputs in an "inRange" filter.
+     */
+    onFocusIn?: () => void;
 }
 
 export interface IDateParams<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {

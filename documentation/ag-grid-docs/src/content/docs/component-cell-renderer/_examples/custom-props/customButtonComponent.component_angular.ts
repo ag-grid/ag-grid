@@ -10,7 +10,7 @@ interface CustomButtonParams extends ICellRendererParams {
 @Component({
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `<button (click)="onClick()">
+    template: `<button class="btn-simple" (click)="onClick()">
         {{ 'Launch ' + company() + '!' }}
     </button>`,
 })

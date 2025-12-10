@@ -1101,7 +1101,16 @@
         },
         "suppressStickyTotalRow": {},
         "alwaysAggregateAtRootLevel": {},
-        "getGroupRowAgg": {},
+        "getGroupRowAgg": {}
+    },
+    "formulas": {
+        "meta": {
+            "displayName": "Formulas",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
         "formulaDataSource": {},
         "formulaFuncs": {}
     },
@@ -2026,7 +2035,7 @@
         "themeCssLayer": {
             "more": {
                 "name": "CSS Layers",
-                "url": "./theming-css/#css-layers"
+                "url": "./theming/#css-layers"
             }
         },
         "styleNonce": {

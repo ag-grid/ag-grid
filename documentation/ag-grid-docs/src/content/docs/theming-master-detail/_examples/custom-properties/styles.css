@@ -1,3 +1,6 @@
+body {
+    --ag-background-color: IndianRed;
+}
 .ag-details-grid {
-    --ag-background-color: #f004;
+    --ag-background-color: MediumSeaGreen;
 }

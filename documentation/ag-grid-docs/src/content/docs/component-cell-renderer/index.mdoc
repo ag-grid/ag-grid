@@ -47,32 +47,16 @@ The grid comes with some built in Cell Components that cover some common cell re
 
 ## Custom Components
 
-{% if isFramework("angular") %}
-{% metaTag tags=["ICellRendererAngularComp"] /%}
-{% /if %}
+To render custom content in a grid cell, first define the custom cell component and then configure the column definition to use the component via `cellRenderer` or `cellRendererSelector`, passing custom parameteres via `cellRendererParams` as required.
+
+### Creating Custom Components
 
 {% partial file="./_component-interface-angular.mdoc" /%}
 {% partial file="./_component-interface-javascript.mdoc" /%}
 {% partial file="./_component-interface-react.mdoc" /%}
 {% partial file="./_component-interface-vue.mdoc" /%}
 
-{% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ICellRendererParams" /%}
-{% /if %}
-
-{% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomCellRendererProps" /%}
-{% /if %}
-
-{% note %}
-Note that if [Row Selection](./row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the {% kbd "␣ Space" /%} key from triggering both row selection and toggling the checkbox.
-{% /note %}
-
-{% partial file="./_renderer-function-javascript.mdoc" /%}
-{% partial file="./_renderer-function-angular.mdoc" /%}
-{% partial file="./_renderer-function-vue.mdoc" /%}
-
-### Selecting Components
+### Providing Custom Components
 
 The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:
 
@@ -98,6 +82,8 @@ The Cell Component for a Column is set via `colDef.cellRenderer` and can be any 
 1. `Component`: Direct reference to a Cell Component.
 1. `Inlined Component`: An inlined Cell Component.
 {% /if %}
+
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellRenderer"] /%}
 
 The code snippet below demonstrates each of these method types.
 
@@ -175,13 +161,16 @@ const gridOptions = {
 ```
 {% /if %}
 
-### Dynamic Component Selection
+### Providing Custom Components Dynamically
 
 The `colDef.cellRendererSelector` function allows setting different Cell Components for different Rows within a Column.
 
 The `params` passed to `cellRendererSelector` are the same as those passed to the [Cell Renderer Component](./component-cell-renderer/). Typically the selector will use this to check the row's contents and choose a renderer accordingly.
 
 The result is an object with `component` and `params` to use instead of `cellRenderer` and `cellRendererParams`.
+
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellRendererSelector"] /%}
+
 
 This following shows the selector choosing between Mood and Gender Cell Renderers based on the row data.
 
@@ -198,42 +187,13 @@ The example below demonstrates the use of `cellRendererSelector` to dynamically 
 
 {% gridExampleRunner title="Dynamic Rendering Component" name="dynamic-rendering-component"  exampleHeight=335 /%}
 
-### Accessing Instances
-
-After the grid has created an instance of a Cell Component for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the Cell Component that has nothing to do with the operation of the grid. Accessing Cell Components is done using the grid API `getCellRendererInstances(params)`.
-
-{% apiDocumentation source="grid-api/api.json" section="rendering" names=["getCellRendererInstances"] /%}
-
-An example of getting the Cell Component for exactly one cell is as follows:
-
-```js
-// example - get cell renderer for first row and column 'gold'
-const firstRowNode = api.getDisplayedRowAtIndex(0);
-const params = { columns: ['gold'], rowNodes: [firstRowNode] };
-const instances = api.getCellRendererInstances(params);
-
-if (instances.length > 0) {
-    // got it, user must be scrolled so that it exists
-    const instance = instances[0];
-}
-```
-
-Note that this method will only return instances of the Cell Component that exists. Due to Row and Column Virtualisation, Cell Components will only exist for Cells that are within the viewport of the Vertical and Horizontal scrolls.
-
-The example below demonstrates custom methods on Cell Components called by the application. The following can be noted:
-
-* The medal columns are all using the user defined `MedalCellRenderer`. The Cell Component has an arbitrary method `medalUserFunction()` which prints some data to the developer console.
-* The **Gold** button executes a method on all instances of the Cell Component in the gold column and prints the data to the developer console.
-* The **First Row Gold** button executes a method on the gold cell of the first row only and prints data to the developer console. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
-* The **All Cells** button executes a method on all instances of all Cell Components and prints data to the developer console.
-
-{% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" /%}
-
 ### Custom Props
 
 The `props` passed to the Cell Component can be complemented with custom props. This allows configuring reusable Cell Components - e.g. a component could have buttons that are optionally displayed via additional props.
 
 Complement props to a cell renderer using the Column Definition attribute  `cellRendererParams`. When provided, these props will be merged with the grid provided props.
+
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellRendererParams"] /%}
 
 {% partial file="./_complementing-component-javascript.mdoc" /%}
 {% partial file="./_complementing-component-angular.mdoc" /%}
@@ -245,20 +205,11 @@ The `Refresh Data` button triggers the cell components to refresh by randomising
 
 {% gridExampleRunner title="Custom Props" name="custom-props" /%}
 
-{% if isFramework("javascript") %}
-{% note %}
-You might be wondering how the grid knows if you have provided a Cell Renderer component class or
-a simple function, as JavaScript uses functions to implement classes. The answer is the grid looks
-for the `getGui()` method in the prototype of the function (a mandatory method in the cell renderer
-interface). If the `getGui()` method exists, it assumes a component, otherwise it assumes a function.
-{% /note %}
-{% /if %}
-
 ### Dynamic Tooltips
 
-When working with Custom Cell Renderers it is possible to register custom tooltips that are displayed dynamically by using the `setTooltip` method.
+When working with Custom Cell Renderers it is possible to register custom tooltips that are displayed dynamically by calling the `setTooltip` method on the params passed to the component.
 {% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ICellRendererParams" names=["setTooltip"] /%}
+{% interfaceDocumentation interfaceName="ICellRendererParams" names=["setTooltip"] config={"description": ""} /%}
 {% /if %}
 
 {% if isFramework("react") %}
@@ -311,11 +262,43 @@ The example below uses [React.lazy](https://react.dev/reference/react/lazy) to l
 
 {% /if %}
 
+### Accessing Instances
+
+After the grid has created an instance of a Cell Component for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the Cell Component that has nothing to do with the operation of the grid. Accessing Cell Components is done using the grid API `getCellRendererInstances(params)`.
+
+{% apiDocumentation source="grid-api/api.json" section="rendering" names=["getCellRendererInstances"] /%}
+
+An example of getting the Cell Component for exactly one cell is as follows:
+
+```js
+// example - get cell renderer for first row and column 'gold'
+const firstRowNode = api.getDisplayedRowAtIndex(0);
+const params = { columns: ['gold'], rowNodes: [firstRowNode] };
+const instances = api.getCellRendererInstances(params);
+
+if (instances.length > 0) {
+    // got it, user must be scrolled so that it exists
+    const instance = instances[0];
+}
+```
+
+Note that this method will only return instances of the Cell Component that exists. Due to Row and Column Virtualisation, Cell Components will only exist for Cells that are within the viewport of the Vertical and Horizontal scrolls.
+
+The example below demonstrates custom methods on Cell Components called by the application. The following can be noted:
+
+* The medal columns are all using the user defined `MedalCellRenderer`. The Cell Component has an arbitrary method `medalUserFunction()` which prints some data to the developer console.
+* The **Gold** button executes a method on all instances of the Cell Component in the gold column and prints the data to the developer console.
+* The **First Row Gold** button executes a method on the gold cell of the first row only and prints data to the developer console. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
+* The **All Cells** button executes a method on all instances of all Cell Components and prints data to the developer console.
+
+{% gridExampleRunner title="Get Cell Renderer" name="get-cell-renderer" /%}
+
 ### Keyboard Navigation
 
 When using custom Cell Components, the custom Cell Component is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom Cell Component will focus the entire cell instead of any of the elements inside the custom cell renderer.
 
 In order to handle focus in your custom cell component, implement [Custom Cell Component Keyboard Navigation](./keyboard-navigation/#custom-cell-component).
+
 
 ### Handling Mouse Events
 
@@ -357,4 +340,18 @@ It is also possible to stop propagation on mouse events from within a custom cel
 
 {% if isFramework("react") %}
 To manually prevent the grid from handling mouse events, the "capture" versions of event handlers must be used, e.g. `onClickCapture` instead of `onClick`.
+{% /if %}
+
+### API Reference
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ICellRendererComp" /%}
+{% /if %}
+
+{% if isFramework("javascript", "angular", "vue") %}
+{% interfaceDocumentation interfaceName="ICellRendererParams" /%}
+{% /if %}
+
+{% if isFramework("react") %}
+{% interfaceDocumentation interfaceName="CustomCellRendererProps" /%}
 {% /if %}

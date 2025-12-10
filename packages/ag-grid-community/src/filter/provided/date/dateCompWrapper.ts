@@ -18,6 +18,7 @@ export class DateCompWrapper {
     private disabled: boolean | null;
     private alive = true;
     private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, 500);
+    private timeoutHandle: number | null = null;
 
     constructor(
         private readonly context: Context,
@@ -117,10 +118,12 @@ export class DateCompWrapper {
             // In some browsers, this needs to be debounced or it will interrupt user inputs.
             if (isInvalid) {
                 if (defer) {
-                    this.debouncedReport(eInput);
+                    this.timeoutHandle = this.debouncedReport(eInput);
                 } else {
                     reportValidity(eInput);
                 }
+            } else if (this.timeoutHandle) {
+                window.clearTimeout(this.timeoutHandle);
             }
 
             _setAriaInvalid(eInput, isInvalid);

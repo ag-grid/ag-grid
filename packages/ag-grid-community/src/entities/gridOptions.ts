@@ -125,7 +125,7 @@ import type {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
-import type { FormulaDataSource, FormulaFunctionParams } from '../interfaces/formulas';
+import type { FormulaDataSource, FormulaFuncs } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
@@ -1172,7 +1172,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `FormulaModule`
      */
-    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } };
+    formulaFuncs?: FormulaFuncs;
 
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
@@ -2028,10 +2028,13 @@ export interface GridOptions<TData = any> {
     loadThemeGoogleFonts?: boolean;
 
     /**
-     * The CSS layer that this theme should be rendered onto. If your
-     * application loads its styles into a CSS layer, use this to load the grid
-     * styles into a previous layer so that application styles can override grid
-     * styles.
+     * The CSS layer that this theme should be rendered onto. When specified,
+     * grid CSS will be wrapped in a `@layer ${themeCssLayer} { ... }` block.
+     *
+     * NOTE: when specifying `themeCssLayer` we recommend setting
+     * `themeStyleContainer` to `document.body` to ensure that the grid CSS
+     * comes after your application CSS, allowing your application to set the
+     * order of layers.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */

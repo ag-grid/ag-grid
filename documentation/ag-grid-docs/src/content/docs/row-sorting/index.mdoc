@@ -44,8 +44,6 @@ const gridOptions = {
 
 Custom sorting is provided at a column level by configuring a comparator on the column definition.
 
-{% apiDocumentation source="column-properties/properties.json" section="sort" names=["comparator"] /%}
-
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
@@ -65,8 +63,7 @@ const gridOptions = {
     ]
 }
 ```
-
-### Custom Sorting Example
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["comparator"] /%}
 
 Example below shows the following:
 
@@ -115,7 +112,7 @@ will make it sort descending. Another click will remove the sort.
 
 It is possible to override this behaviour by providing your own `sortingOrder` on the `colDef`.
 
-### Example: Sorting Order
+{% apiDocumentation source="column-properties/properties.json" section="sort" names=["sortingOrder"] /%}
 
 The example below shows different combinations of sorting orders as follows:
 
@@ -130,13 +127,7 @@ The example below shows different combinations of sorting orders as follows:
 ## Absolute Sorting
 Absolute Sorting enables sorting numeric values based on their magnitude, ignoring their sign. This can be used to rank values by their size ignoring if a value is positive or negative.
 
-### Example: Absolute Sorting
-
-The example below shows how to use a column definition to sort by absolute value.
-
-{% gridExampleRunner title="Absolute Value Sorting" name="absolute-sorting" /%}
-
-In this example, the column `rankingChange` uses the following column definition:
+In the following example, the column `rankingChange` uses absolute sorting:
 
 ```{% frameworkTransform=true %}
 
@@ -158,6 +149,8 @@ const gridOptions = {
 
 {% apiDocumentation source="column-properties/properties.json" section="sort" names=["sort", "sortingOrder"] /%}
 
+{% gridExampleRunner title="Absolute Value Sorting" name="absolute-sorting" /%}
+
 ## Sorting API
 
 {% note %}
@@ -170,11 +163,10 @@ What sorting is applied is controlled via [Column State](./column-state/). The b
 
 ## Accented Sort
 
-By default sorting doesn't take into consideration locale-specific characters. If you need to make your sort
+By default, sorting doesn't take into consideration locale-specific characters. If you need to make your sort
 locale-specific you can configure this by setting the grid option `accentedSort = true`.
 
-Using this feature is more expensive; if you need to sort a very large amount of data, you might find that this
-causes the sort to be noticeably slower.
+Please note, accented sort is slower than default sort; the effect is more noticeable when sorting a large number of rows.
 
 The following example is configured to use this feature.
 

@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_VN = {
     searchOoo: 'Tìm kiếm...',
     blanks: '(Trống)',
     noMatches: 'Không có kết quả',
+    typeToSearchOoo: 'Gõ để tìm kiếm...',
 
     // Number Filter & Text Filter
     filterOoo: 'Lọc...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_VN = {
     maxLengthValidation: 'Phải có ${variable} ký tự hoặc ít hơn.',
     minValueValidation: 'Phải lớn hơn hoặc bằng ${variable}',
     maxValueValidation: 'Phải nhỏ hơn hoặc bằng ${variable}',
+    strictMinValueValidation: 'Phải lớn hơn ${variable}',
+    strictMaxValueValidation: 'Phải nhỏ hơn ${variable}',
     invalidSelectionValidation: 'Lựa chọn không hợp lệ.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_VN = {
     loadingOoo: 'Đang tải...',
     loadingError: 'LỖI',
     noRowsToShow: 'Không có hàng để hiển thị',
+    noMatchingRows: 'Không có Hàng nào Phù hợp',
+    exportingOoo: 'Đang xuất...',
     enabled: 'Đã bật',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_VN = {
     chooseColumns: 'Chọn Cột',
     sortAscending: 'Sắp Xếp Tăng Dần',
     sortDescending: 'Sắp Xếp Giảm Dần',
+    sortAbsoluteAscending: 'Sắp Xếp Tăng Dần Tuyệt Đối',
+    sortAbsoluteDescending: 'Sắp Xếp Giảm Dần Tuyệt Đối',
     sortUnSort: 'Xóa Sắp Xếp',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_VN = {
     ariaChecked: 'đã đánh dấu',
     ariaColumn: 'Cột',
     ariaColumnGroup: 'Nhóm cột',
+    ariaFilterActive: 'Bộ lọc đang hoạt động',
     ariaColumnFiltered: 'Cột đã lọc',
     ariaColumnSelectAll: 'Chuyển đổi hiển thị tất cả các cột',
     ariaDateFilterInput: 'Đầu vào Bộ lọc Ngày',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_VN = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' của ',
     ariaDropZoneColumnComponentSortAscending: 'tăng dần',
     ariaDropZoneColumnComponentSortDescending: 'giảm dần',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'tăng dần tuyệt đối',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'giảm dần tuyệt đối',
     ariaLabelDialog: 'Hộp thoại',
     ariaLabelColumnMenu: 'Menu Cột',
     ariaLabelColumnFilter: 'Bộ Lọc Cột',

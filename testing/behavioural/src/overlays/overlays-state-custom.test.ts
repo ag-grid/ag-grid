@@ -431,6 +431,7 @@ describe('ag-grid modern overlays state', () => {
         // create a named component and a class component
         const NamedComp = makeOverlayComp(capturedParams, 'my-named-overlay');
         const ClassComp = makeOverlayComp(capturedParams, 'my-class-overlay');
+        const ClassComp2 = makeOverlayComp(capturedParams, 'my-class-overlay-2');
 
         const api = gridsManager.createGrid('myGrid', {
             columnDefs,
@@ -470,6 +471,11 @@ describe('ag-grid modern overlays state', () => {
         // 3) switch back to the class component (by passing class again)
         api.setGridOption('activeOverlay', ClassComp);
         expect(document.querySelector('.my-class-overlay')).toBeTruthy();
+        expect(hasCustomOverlayWrapper()).toBeTruthy();
+
+        // 3.1) switch to a different class component (by passing a different class)
+        api.setGridOption('activeOverlay', ClassComp2);
+        expect(document.querySelector('.my-class-overlay-2')).toBeTruthy();
         expect(hasCustomOverlayWrapper()).toBeTruthy();
 
         // 4) set activeOverlay to null to remove active overlay

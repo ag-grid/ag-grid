@@ -89,10 +89,17 @@ export class NumberFilter extends SimpleFilter<
     public override refresh(legacyNewParams: ProvidedFilterParams): boolean {
         const result = super.refresh(legacyNewParams);
 
-        const newState = (legacyNewParams as unknown as NumberFilterDisplayParams).state;
+        const { state: newState, additionalEventAttributes } = legacyNewParams as unknown as NumberFilterDisplayParams;
         const oldState = this.state;
 
-        if (newState.model !== oldState.model || !this.areStatesEqual(newState.state, oldState.state)) {
+        const fromAction = additionalEventAttributes?.fromAction;
+        const forceRefreshValidation = fromAction && fromAction != 'apply';
+
+        if (
+            forceRefreshValidation ||
+            newState.model !== oldState.model ||
+            !this.areStatesEqual(newState.state, oldState.state)
+        ) {
             this.refreshInputValidation();
         }
 
@@ -131,8 +138,13 @@ export class NumberFilter extends SimpleFilter<
             () =>
                 this.refreshInputPairValidation(from, to, isFrom);
 
-        from.onValueChange(getFieldChangedListener(from, to, true));
-        to.onValueChange(getFieldChangedListener(from, to, false));
+        const fromListener = getFieldChangedListener(from, to, true);
+        from.onValueChange(fromListener);
+        from.addGuiEventListener('focusin', fromListener);
+
+        const toListener = getFieldChangedListener(from, to, false);
+        to.onValueChange(toListener);
+        to.addGuiEventListener('focusin', toListener);
 
         return eCondition;
     }

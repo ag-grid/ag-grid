@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_PL = {
     searchOoo: 'Szukaj...',
     blanks: '(Puste)',
     noMatches: 'Brak wyników',
+    typeToSearchOoo: 'Wpisz, aby wyszukać...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtruj...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_PL = {
     maxLengthValidation: 'Musi mieć ${variable} znaków lub mniej.',
     minValueValidation: 'Musi być większa lub równa ${variable}',
     maxValueValidation: 'Musi być mniejsza lub równa ${variable}',
+    strictMinValueValidation: 'Musi być większa niż ${variable}',
+    strictMaxValueValidation: 'Musi być mniejsza niż ${variable}',
     invalidSelectionValidation: 'Nieprawidłowy wybór.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_PL = {
     loadingOoo: 'Ładowanie...',
     loadingError: 'BŁĄD',
     noRowsToShow: 'Brak wierszy do wyświetlenia',
+    noMatchingRows: 'Brak pasujących wierszy',
+    exportingOoo: 'Eksportowanie...',
     enabled: 'Włączone',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_PL = {
     chooseColumns: 'Wybierz kolumny',
     sortAscending: 'Sortuj Rosnąco',
     sortDescending: 'Sortuj Malejąco',
+    sortAbsoluteAscending: 'Sortuj bezwzględnie rosnąco',
+    sortAbsoluteDescending: 'Sortuj bezwzględnie malejąco',
     sortUnSort: 'Usuń Sortowanie',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_PL = {
     ariaChecked: 'zaznaczone',
     ariaColumn: 'Kolumna',
     ariaColumnGroup: 'Grupa Kolumn',
+    ariaFilterActive: 'Filtr aktywny',
     ariaColumnFiltered: 'Kolumna Filtrowana',
     ariaColumnSelectAll: 'Przełącz widoczność wszystkich kolumn',
     ariaDateFilterInput: 'Wejście Filtra Daty',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_PL = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' z ',
     ariaDropZoneColumnComponentSortAscending: 'rosnąco',
     ariaDropZoneColumnComponentSortDescending: 'malejąco',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'sortowanie absolutne rosnąco',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'sortowanie absolutne malejąco',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Menu kolumny',
     ariaLabelColumnFilter: 'Filtr kolumny',

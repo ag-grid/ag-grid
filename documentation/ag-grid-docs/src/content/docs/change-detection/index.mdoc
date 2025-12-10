@@ -74,6 +74,7 @@ The following operations will **automatically** trigger change detection on all 
 1. Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).
 1. Using the `rowNode.setDataValue(col,value)` Row Node method.
 1. Using the `api.applyTransaction(transaction)` API method.
+1. Group value edited if `refreshAfterGroupEdit` grid option is set to `true`, (see [Grouping Edit](./grouping-edit/)).
 
 If you do not want change detection to be automatically done, then set the grid property
 `suppressChangeDetection=true`. This will stop the change detection process firing when the above events happen.
@@ -90,13 +91,25 @@ To **manually** run Value Change Detection to refresh all visible cells call [ap
 
 Aggregation change detection means rerunning [aggregations](./aggregation/) when a value changes. So for example, if you are grouping by a column and summing by a value, and one of those values change, then the summed value should also change.
 
+{% note %}
+If you want edited rows to jump to their new groups automatically, enable [Grouping Edit](./grouping-edit/) by setting the grid property `refreshAfterGroupEdit=true`.
+This property triggers the necessary regroup, sort and filter refresh after the edit and is our preferred approach when inline editing grouped columns.
+{% /note %}
+
+### Flashing Cells During Filter Updates
+
+By default, the grid does not flash cells when filtering is applied, even if the value in the aggregated cell has changed.
+To change this behaviour, set the grid property `allowShowChangeAfterFilter=true`.
+
+All examples on this page set `allowShowChangeAfterFilter` to `true` to clearly see value changes while experimenting with filters.
+
 ### Example: Re-Aggregation of Groups
 
 The example below shows change detection impacting the result of groups. The grid is doing all the refresh by itself with no need for the client application explicitly requesting a refresh. Notice the following:
 
 * Column 'Group' is marked as a [Row Group](./grouping/) and columns A to D are marked as [Aggregation](./aggregation/) columns so that their values are summed into the group level.
 
-* Column 'Total' has a valueGetter which gives a sum of all columns A to D.
+* Column 'Total' has a valueGetter which gives a sum of all columns A to D for the rows, and a `sum` aggregation for the groups.
 
 * Columns A to D are editable. If you edit a cells value, then the aggregate value at the group level is also updated to reflect the change. This is because the grid is recalculating the aggregations as a result of the change.
 
@@ -105,6 +118,21 @@ The example below shows change detection impacting the result of groups. The gri
 {% gridExampleRunner title="Change Detection with Groups" name="change-detection-groups"  exampleHeight=590 /%}
 
 Notice above that the group column is also editable (eg you can change one of the rows from group 'A' to group 'G'), however the row does **not** move into the correct group after this change is made. This is discussed below in the section [Change Detection and Sorting, Filtering, Grouping](#change-detection-and-sorting-filtering-grouping).
+
+### Refreshing Groups After Inline Edits
+
+By default the grid keeps the edited row in place until you manually refresh the client-side row model. This prevents jarring row movement while the user is typing, but it can look incorrect if group edits are infrequent and you expect the row to relocate immediately.
+
+`refreshAfterGroupEdit` flips that behaviour. When set to `true`, the grid automatically reruns grouping, sorting and filtering after the edit is committed, so the row will move according to its new value.
+
+```ts
+const gridOptions = {
+    refreshAfterGroupEdit: true,
+    // other grid options
+};
+```
+
+See [Grouping Edit](./grouping-edit/) for more details.
 
 ### Triggering Aggregation Change Detection
 
@@ -137,7 +165,14 @@ For this reason, if you want to update the sorting, filtering or group grouping 
 
 ### Example: Change Detection and Filter / Sort / Group
 
-The following example is the same as the example above [Change Detection and Groups](#example-change-detection-groups) except it gets the grid to do a transaction update so that the grouping, sorting and filtering are recomputed. From the example, the following can be noted:
+The following example is the same as the example above [Change Detection and Groups](#example-change-detection-groups) except it sets the flag `refreshAfterGroupEdit` to true.
+This flag tells the grid to refresh the grouping, sorting and filtering if the group column changes.
+
+See [Editing Groups](./grouping-edit/) for more on editing grouped data and `refreshAfterGroupEdit`.
+
+{% gridExampleRunner title="Change Detection with Filter / Sort / Group" name="change-detection-filter-sort-group" /%}
+
+From the example, the following can be noted:
 
 * As before, updating any value will update the total column and aggregated group columns.
 
@@ -146,8 +181,6 @@ The following example is the same as the example above [Change Detection and Gro
 * If you order by a column (eg order by 'A') and then change the data so that the order is incorrect, the grid will fix itself so that the ordering is maintained. In other words, the updated row will move to the new sorted position.
 
 * If you set a filter (eg filter 'A' to be 'less than 50') and then change the data so that a row no longer passes the filter, the grid will fix itself so that the filtering is maintained. In other words, the updated row will be removed if it no longer passes the filter.
-
-{% gridExampleRunner title="Change Detection with Filter / Sort / Group" name="change-detection-filter-sort-group" /%}
 
 ## Aggregation Path Selection
 
@@ -167,7 +200,7 @@ If you are sure that a value change impacts that one column only, then you can s
 
 ## Example: Tree Path & Column Path Selection
 
-Consider the example below. When you edit a cell value under under the groups "Bottom" -> "Group B2" and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom". It will not recompute any aggregates for any other groups or for any other columns.
+Consider the example below. When you edit a cell value under the groups "Bottom" -> "Group B2" and column "Column C". The grid will only recompute column C aggregations for "Group B2" and "Bottom". It will not recompute any aggregates for any other groups or for any other columns.
 
 The tree path selection (ie not updating anything in the group "Top") is always active in the grid and the column selection (only updating column "Column C") is active because of the grid property `aggregateOnlyChangedColumns=true`.
 

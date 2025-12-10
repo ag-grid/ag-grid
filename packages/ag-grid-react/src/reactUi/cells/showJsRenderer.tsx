@@ -12,7 +12,8 @@ const useJsCellRenderer = (
     eCellValue: HTMLElement | undefined | null,
     cellValueVersion: number,
     jsCellRendererRef: MutableRefObject<ICellRendererComp | undefined>,
-    eGui: MutableRefObject<any>
+    eGui: MutableRefObject<any>,
+    suppressInlineEditRenderer = false
 ) => {
     const { context } = useContext(BeansContext);
 
@@ -34,7 +35,7 @@ const useJsCellRenderer = (
 
     // create or refresh JS cell renderer
     useEffect(() => {
-        const showValue = showDetails != null;
+        const showValue = showDetails != null && !suppressInlineEditRenderer;
         const jsCompDetails = showDetails?.compDetails && !showDetails.compDetails.componentFromFramework;
         const waitingForToolsSetup = showTools && eCellValue == null;
         const showComp = showValue && jsCompDetails && !waitingForToolsSetup;
@@ -81,7 +82,7 @@ const useJsCellRenderer = (
             jsCellRendererRef.current = comp;
         });
         // We do not return the destroy here as we want to keep the comp alive for our custom refresh approach above
-    }, [showDetails, showTools, cellValueVersion]);
+    }, [showDetails, showTools, cellValueVersion, suppressInlineEditRenderer]);
 
     // this effect makes sure destroyCellRenderer gets called when the
     // component is destroyed. as the other effect only updates when there

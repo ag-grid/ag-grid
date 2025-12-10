@@ -74,11 +74,11 @@ export function _debounce<TArgs extends any[], TContext>(
     bean: { isAlive(): boolean },
     func: (this: TContext, ...args: TArgs) => void,
     delay: number
-): (this: TContext, ...args: TArgs) => void {
-    let timeout: any;
+): (this: TContext, ...args: TArgs) => number {
+    let timeout: number;
 
     // Calling debounce returns a new anonymous function
-    return function (this: TContext, ...args: TArgs) {
+    return function (this: TContext, ...args: TArgs): number {
         const context = this as any;
         window.clearTimeout(timeout);
 
@@ -90,6 +90,8 @@ export function _debounce<TArgs extends any[], TContext>(
                 func.apply(context, args);
             }
         }, delay);
+
+        return timeout;
     };
 }
 

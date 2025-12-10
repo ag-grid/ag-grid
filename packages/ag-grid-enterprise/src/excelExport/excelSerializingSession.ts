@@ -587,7 +587,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
 
             value = getXlsxStringPosition(value).toString();
         } else if (type === 'f') {
-            value = value.slice(1);
+            value = this.addXlfnPrefix(value).slice(1);
         } else if (type === 'n') {
             const numberValue = Number(value);
 
@@ -599,6 +599,16 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
 
         return { value, escaped };
+    }
+
+    private addXlfnPrefix(value: string): string {
+        if (!value) {
+            return value;
+        }
+
+        const concatRegex = /(^|[^A-Z0-9._])(CONCAT)(\s*\()/gi;
+
+        return value.replace(concatRegex, (_match, prefix, fn, openParen) => `${prefix}_xlfn.${fn}${openParen}`);
     }
 
     private getStyleId(styleIds?: string[] | null): string | null {

@@ -29,7 +29,8 @@ const AgPillContainerElement: ElementParams = {
 };
 export class AgPillContainer<TValue> extends Component {
     private params: PillRendererParams<TValue>;
-    private pills: AgPill[] = [];
+    private pills: { pill: AgPill; key: string }[] = [];
+    private getKey: { (value: TValue | TValue[]): string | null };
 
     constructor() {
         super(AgPillContainerElement);
@@ -37,13 +38,14 @@ export class AgPillContainer<TValue> extends Component {
 
     public init(params: PillRendererParams<TValue>) {
         this.params = params;
+        this.getKey = params.valueFormatter ?? ((v: TValue) => String(v));
         this.refresh();
     }
 
     public refresh(): void {
         this.clearPills();
 
-        const { params, onPillKeyDown } = this;
+        const { params, onPillKeyDown, getKey } = this;
 
         let values = params.getValue();
 
@@ -84,7 +86,7 @@ export class AgPillContainer<TValue> extends Component {
             pill.setText(valueFormatter(value) ?? '');
             pill.toggleCloseButtonClass('ag-icon-cancel', true);
             this.appendChild(pillGui);
-            this.pills.push(pill);
+            this.pills.push({ key: getKey(value) ?? i.toString(), pill });
         }
     }
 
@@ -125,7 +127,7 @@ export class AgPillContainer<TValue> extends Component {
         }
 
         _clearElement(eGui);
-        this.destroyBeans(this.pills);
+        this.destroyBeans(this.pills.map(({ pill }) => pill));
         this.pills = [];
     }
 
@@ -143,28 +145,29 @@ export class AgPillContainer<TValue> extends Component {
         e.preventDefault();
 
         const eDoc = _getDocument(this.beans);
-        const pillIndex = this.pills.findIndex((pill) => pill.getGui().contains(eDoc.activeElement));
+        const pillIndex = this.pills.findIndex(({ pill }) => pill.getGui().contains(eDoc.activeElement));
 
         if (pillIndex === -1) {
             return;
         }
 
-        const pill = this.pills[pillIndex];
+        const pillObj = this.pills[pillIndex];
 
-        if (pill) {
-            this.deletePill(pill, pillIndex);
+        if (pillObj?.pill) {
+            this.deletePill(pillObj.pill, pillIndex);
         }
     }
 
-    private deletePill(pill: AgPill, restoreFocusToIndex?: number): void {
-        const value = pill.getText();
-        const values = (this.params.getValue() || []).filter((val) => val !== value);
-        this.params.setValue(values);
+    private deletePill(p: AgPill, restoreFocusToIndex?: number): void {
+        const { getKey, pills, params } = this;
+        const pillKey = (pills[restoreFocusToIndex ?? -1] ?? pills.find(({ pill }) => pill === p))?.key;
+        const values = (params.getValue() || []).filter((val) => getKey(val) !== pillKey);
+        params.setValue(values);
 
-        if (!values.length && this.params.eWrapper) {
-            this.params.eWrapper.focus();
+        if (!values.length && params.eWrapper) {
+            params.eWrapper.focus();
         } else if (restoreFocusToIndex != null) {
-            const pill = this.pills[Math.min(restoreFocusToIndex, this.pills.length - 1)];
+            const { pill } = pills[Math.min(restoreFocusToIndex, pills.length - 1)];
             if (pill) {
                 pill.getFocusableElement().focus();
             }

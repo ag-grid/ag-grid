@@ -4,10 +4,10 @@ import { FormulaError } from '../../ast/utils';
 import { criteriaToPredicate, isRangeParam, isValueParam, iterableWithoutBlanks, take, takeBetween } from '../utils';
 import { coerceFiniteNumber, dateFromDays, isDateValue } from './utils';
 
-export const MULTIPLY = ({ values }: FormulaFunctionParams): number => {
+export const PRODUCT = ({ values }: FormulaFunctionParams): number => {
     let acc = 1;
     for (const v of iterableWithoutBlanks(values)) {
-        const n = coerceFiniteNumber('MULTIPLY', v);
+        const n = coerceFiniteNumber('PRODUCT', v);
         if (n == null) {
             continue;
         }

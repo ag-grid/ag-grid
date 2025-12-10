@@ -3,11 +3,12 @@
     flex-direction: column;
 }
 
-:where(.ag-pill-select) {
-    .ag-column-drop-list {
-        padding: 0;
-    }
+/* stylelint-disable-next-line selector-max-specificity */
+.ag-pill-select .ag-column-drop-list {
+    padding: 0;
+}
 
+:where(.ag-pill-select) {
     .ag-select {
         padding-top: var(--ag-spacing);
     }
