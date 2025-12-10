@@ -239,10 +239,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             </div>
                         </div>
 
-                        <div className={styles.enterpriseTrialContainer} id="request-trial-licence">
-                            <EnterpriseTrial />
-                        </div>
-
                         <div className={styles.licenceKeyDocs}>
                             <h3>Already have a licence and need to install your key?</h3>
                             <p>
@@ -268,7 +264,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.videoPrompt}>
                             <a
-                                id="licence-explainer-video-thumbnail"
                                 href="https://www.youtube.com/watch?v=VPr__OKxH50"
                                 target="_blank"
                                 className={styles.thumbnail}
@@ -282,11 +277,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <div>
                                 <h3>Which licences do I need?</h3>
                                 <p>
-                                    <a
-                                        id="licence-explainer-video-text"
-                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
-                                        target="_blank"
-                                    >
+                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
                                         <span className="icon"></span>
                                         Watch our short explainer video
                                     </a>
