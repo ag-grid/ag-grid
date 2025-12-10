@@ -1,8 +1,11 @@
 {% if isFramework("vue") %}
-You can access the `params` object via `this.params` in the usual methods (lifecycle hooks, methods etc), and via `props.params` when using `setup`.
-{% /if %}
+A cell renderer is either:
+- A function returning an HTML string or a DOM object
+- A regular Vue component
 
-{% if isFramework("vue") %}
+Use the function variant of a Cell Component if you have no refresh requirements.
+
+When providing a Vue component, you can access the `params` object via `this.params` in the usual methods (lifecycle hooks, methods etc), and via `props.params` when using `setup`. The full definition of `params` can be found below in the [API Reference](#api-reference).
 ```ts
   // ...
   beforeMount() {
@@ -10,4 +13,36 @@ You can access the `params` object via `this.params` in the usual methods (lifec
   }
   // ...
 ```
+When providing a function-based component, it receives the same `params` as its argument as would have been provided to the Vue component via `this.params` above.
+In the example below we're outputting a string value that depends on the cell value:
+```js
+<template>
+    <ag-grid-vue :columnDefs="columnDefs" ...other properties>
+    </ag-grid-vue>
+</template>
+
+<script>
+//...other imports
+import {AgGridVue} from "ag-grid-vue3";
+
+export default {
+    components: {
+        AgGridVue
+    },
+    data() {
+        return {
+            columnDefs: [
+                {
+                    headerName: "Value",
+                    field: "value",
+                    cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
+                }
+            ]
+        }
+    }
+    //...
+}
+</script>
+```
+It is also possible to write a JavaScript-based Cell Component - refer to the [documentation here](/javascript-data-grid/component-cell-renderer/#creating-custom-components) for more information
 {% /if %}

@@ -1,8 +1,12 @@
 {% if isFramework("angular") %}
-The interface for the Cell Component is as follows:
-{% /if %}
+A cell renderer is either:
+- A function returning an HTML string or a DOM object
+- A class implementing the [`ICellRendererAngularComp`](#api-reference) interface
 
-{% if isFramework("angular") %}
+Use the function variant of a Cell Component if you have no refresh requirements.
+
+{% metaTag tags=["ICellRendererAngularComp"] /%}
+
 ```ts
 interface ICellRendererAngularComp {
     // Mandatory - Params for rendering
@@ -14,13 +18,9 @@ interface ICellRendererAngularComp {
     refresh(params: ICellRendererParams): boolean;
 }
 ```
-{% /if %}
 
-{% if isFramework("angular") %}
-The Component is provided `props` containing, amongst other things, the value to be rendered.
-{% /if %}
+When providing a class-based component, it is initialised with `props` containing, amongst other things, the value to be rendered. The full definition can be found below in the [API Reference](#api-reference).
 
-{% if isFramework("angular") %}
 ```ts
 class CustomButtonComponent implements ICellRendererAngularComp {
   // ...
@@ -29,4 +29,29 @@ class CustomButtonComponent implements ICellRendererAngularComp {
   }
   // ...
 ```
+
+When using a function-based component, it receives the same `props` as its argument as would have been provided to the `agInit` method above.
+In the example below we're outputting a string value that depends on the cell value:
+
+```js
+@Component({
+    selector: 'my-app',
+    template: `
+        <ag-grid-angular
+                [columnDefs]="columnDefs"
+                ...other properties />`
+})
+export class AppComponent {
+    columnDefs = [
+        {
+            headerName: "Value",
+            field: "value",
+            cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
+        }
+    ];
+    //...
+}
+```
+
+It is also possible to write a JavaScript-based Cell Renderer Component - refer to the [documentation here](/javascript-data-grid/component-cell-renderer/#creating-custom-components) for more information
 {% /if %}

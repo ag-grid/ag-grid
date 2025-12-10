@@ -804,7 +804,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     initialSortIndex?: number;
     /**
-     * An array defining the order in which sorting occurs (if sorting is enabled) with any of the following in any order `(SortDef | SortDirection)[]`.
+     * An array defining the order in which sorting occurs (if sorting is enabled).
      * <br /><br />
      * Defaults:
      *
@@ -819,14 +819,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.
      * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.
      *
-     * Return:
+     * Returns:
      *  - `0`  valueA is the same as valueB
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?:
-        | SortComparatorFn<TData, TValue>
-        | Partial<Record<NonNullable<SortType>, SortComparatorFn<TData, TValue>>>;
+    comparator?: SortComparatorFn<TData, TValue> | Partial<Record<SortType, SortComparatorFn<TData, TValue>>>;
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false

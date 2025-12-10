@@ -195,15 +195,15 @@ describe('ag-grid formulas general behaviour', () => {
             },
             {
                 id: 'minus-a3-minus-a1',
-                value: '=MINUS(REF(COLUMN("value"),ROW("value-a3")),REF(COLUMN("value"),ROW("value-a1")))',
+                value: '=REF(COLUMN("value"),ROW("value-a3")) - REF(COLUMN("value"),ROW("value-a1"))',
             },
             {
                 id: 'multiply-a1-a2-times-2',
-                value: '=MULTIPLY(REF(COLUMN("value"),ROW("value-a1")),REF(COLUMN("value"),ROW("value-a2")),2)',
+                value: '=REF(COLUMN("value"),ROW("value-a1")) * REF(COLUMN("value"),ROW("value-a2")) * 2',
             },
             {
                 id: 'divide-a3-by-a2',
-                value: '=DIVIDE(REF(COLUMN("value"),ROW("value-a3")),REF(COLUMN("value"),ROW("value-a2")))',
+                value: '=REF(COLUMN("value"),ROW("value-a3")) / REF(COLUMN("value"),ROW("value-a2"))',
             },
             { id: 'min-a1-a4', value: '=MIN(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))' },
             { id: 'max-a1-a4', value: '=MAX(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))' },
@@ -215,7 +215,7 @@ describe('ag-grid formulas general behaviour', () => {
                 id: 'median-a1-a4',
                 value: '=MEDIAN(REF(COLUMN("value"),ROW("value-a1"),COLUMN("value"),ROW("value-a4")))',
             },
-            { id: 'percent-b2', value: '=PERCENT(REF(COLUMN("altValue"),ROW("value-a2")))' },
+            { id: 'percent-b2', value: '=REF(COLUMN("altValue"),ROW("value-a2")) / 100' },
             { id: 'power-b2-squared', value: '=POWER(REF(COLUMN("altValue"),ROW("value-a2")),2)' },
             { id: 'rand-fixed', value: '=RAND()' },
         ];
@@ -367,12 +367,12 @@ describe('ag-grid formulas general behaviour', () => {
                 A: 5,
                 B: 3,
                 branch: '=IF(REF(COLUMN("A"),ROW("logic"))>REF(COLUMN("B"),ROW("logic")),"High","Low")',
-                equals: '=EQ(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
-                notEquals: '=NE(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
-                greater: '=GT(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
-                greaterOrEqual: '=GTE(REF(COLUMN("A"),ROW("logic")),5)',
-                less: '=LT(REF(COLUMN("A"),ROW("logic")),REF(COLUMN("B"),ROW("logic")))',
-                lessOrEqual: '=LTE(REF(COLUMN("A"),ROW("logic")),5)',
+                equals: '=REF(COLUMN("A"),ROW("logic")) = REF(COLUMN("B"),ROW("logic"))',
+                notEquals: '=REF(COLUMN("A"),ROW("logic")) <> REF(COLUMN("B"),ROW("logic"))',
+                greater: '=REF(COLUMN("A"),ROW("logic")) > REF(COLUMN("B"),ROW("logic"))',
+                greaterOrEqual: '=REF(COLUMN("A"),ROW("logic")) >= 5',
+                less: '=REF(COLUMN("A"),ROW("logic")) < REF(COLUMN("B"),ROW("logic"))',
+                lessOrEqual: '=REF(COLUMN("A"),ROW("logic")) <= 5',
             },
         ];
 

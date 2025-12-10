@@ -1,8 +1,10 @@
 {% if isFramework("javascript") %}
-The interface for the Cell Component is as follows:
-{% /if %}
+A cell renderer is either:
+- A function returning an HTML string or a DOM object
+- A class implementing the [`ICellRendererComp`](#api-reference) interface
 
-{% if isFramework("javascript") %}
+Use the function variant of a Cell Component if you have no refresh or cleanup requirements (ie you don't need to implement the refresh or destroy functions).
+
 ```ts
 interface ICellRendererComp {
     // Optional - props for rendering.
@@ -21,13 +23,9 @@ interface ICellRendererComp {
     refresh(params: ICellRendererParams): boolean;
 }
 ```
-{% /if %}
 
-{% if isFramework("javascript") %}
-The Component is provided `props` containing, amongst other things, the value to be rendered.
-{% /if %}
+When providing a class-based component, it is initialised with `props` containing, amongst other things, the value to be rendered. A full description of the props can be found below in the [API Reference](#api-reference).
 
-{% if isFramework("javascript") %}
 ```ts
 class CustomButtonComponent {
     // ...
@@ -37,6 +35,24 @@ class CustomButtonComponent {
         this.eGui.innerHTML = props.value;
     }
     // ...
+}
+```
+
+When providing a function-based component, it receives the same `props` as its argument as would have been provided to the `init` method above.
+Below are some simple examples of Cell Components provided as simple functions:
+
+```js
+// uppercase the value
+colDef.cellRenderer = params => `${params.value.toUpperCase()}`;
+
+// put a tooltip on the value
+colDef.cellRenderer = params => `<span title="the tooltip">${params.value}</span>`;
+
+// create a DOM object
+colDef.cellRenderer = params => {
+    const eDiv = document.createElement('div');
+    eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
+    return eDiv;
 }
 ```
 {% /if %}

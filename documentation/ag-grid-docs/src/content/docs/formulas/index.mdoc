@@ -6,7 +6,9 @@ Formula strings can be provided to cells in the grid, allowing for dynamic calcu
 
 ## Enabling Formulas
 
-To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids).
+To enable formulas, set the column property `allowFormula = true` on one or more columns and ensure that your rows have [Row IDs](./row-ids/#row-ids). In the example below, the values in columns Subtotal, Tax and Total are computed using formulas which can be modified by the end-user.
+
+{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -21,8 +23,6 @@ const gridOptions = {
     getRowId: (params) => String(params.data.rid),
 }
 ```
-
-{% gridExampleRunner title="Formulas" name="formulas" exampleHeight=390 /%}
 
 When using formulas, the following features are enabled by default:
 - [Row Numbers](./row-numbers/)
@@ -70,8 +70,10 @@ To instead always refer to the same position, use absolute references by prefixi
 - `=A$1` always refers to row 1, but the column can change.
 - `=$A1` always refers to column A, but the row can change.
 
+#### Long-Form References
 When saving cell references, the grid converts these into a long hand format using column and row IDs to ensure that changes in the source data allow the grid to continue to refer to the correct cells when the data changes without
 the grid being open.
+
 For example, if the column with ID `athlete` is in column A, and the row with ID `a` is in row 1, then the formula `=A1` becomes `=REF(COLUMN('athlete'), ROW('a'))`.
 When this is a static reference, for example $A$1, the long hand format uses A and 1 in place of IDs, but adds a true to indicate the value is absolute (e.g `=$A$1` becomes `=REF(COLUMN('a', true), ROW('1', true))`).
 
@@ -124,6 +126,8 @@ If a formula results in an error, users will see the following error codes in th
 
 Custom functions can be provided to formulas by providing the `gridOption` property `formulaFuncs`.
 
+{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaFuncs"] /%}
+
 The following example and snippet demonstrates how to write a custom function `CUSTOMSUM` which adds all of the provided values.
 
 It uses the `params.values` iterator to simplify navigating all of the values, including those provided in ranges by flattening
@@ -171,7 +175,7 @@ The example below demonstrates a custom function `ERRORIFONE` which errors when 
 {% note %}
 When a function (or a referenced cell) throws an error, the cell displays `#ERROR!` and hovering over the cell displays the thrown error message.
 
-Errors will also propagate to any other cells that reference these cells in their formulas, as demonstrated in cell `D4`.
+Errors will also propagate to any other cells that reference these cells in their formulas, as demonstrated in cell `D9`.
 {% /note %}
 
 {% gridExampleRunner title="Custom Errors" name="formulas-custom-errors" exampleHeight=430 /%}
@@ -212,6 +216,7 @@ The grid provides an alternative iterator `params.args` which provides wrapped a
 This means that ranges are provided as a `RangeParam` object, which is iterable for navigating the values in the range.
 
 The following example demonstrates how to implement a custom function `COUNTEQ` which counts the number of values in a range that match the second parameter. 
+In the example we use this function in the "Result" column to count the number of times the value "2" appears in the given range.
 
 {% gridExampleRunner title="Contextual Iterator" name="formulas-context-iterator" exampleHeight=390 /%}
 
@@ -258,9 +263,11 @@ const gridOptions = {
 
 Formulas can be stored outside of the grid's `rowData` by providing a `formulaDataSource`. This is useful when you want to keep row data clean, or persist formulas separately (e.g. to local storage or your own API).
 
+{% apiDocumentation source="grid-options/properties.json" section="formulas" names=["formulaDataSource"] /%}
+
 The snippet and example below illustrate an example of storing formulae in a `Map` object, external to the grid. 
 
-In the example, the "Total" column contains editable formulas wich are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
+In the example, the "Total" column contains editable formulas which are stored in an external `Map`. The contents of the map and the row data can be visualised with the provided buttons.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -325,14 +332,11 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 | -------- | ----------- |
 | `SUM(arg1, arg2, ...)` | Returns the sum of all arguments. |
 | `SUMIF(range, criteria, [sum_range])` | Returns the sum of values in `sum_range` where the corresponding values in `range` meet the `criteria`. If `sum_range` is not provided, `range` is used for summation. |
-| `MINUS(arg1, arg2)` | Returns the result of subtracting the second argument from the first argument. |
-| `MULTIPLY(arg1, arg2, ...)` | Returns the product of all arguments. |
-| `DIVIDE(arg1, arg2)` | Returns the result of dividing the first argument by the second argument. |
+| `PRODUCT(arg1, arg2, ...)` | Returns the product of all arguments. |
 | `MIN(arg1, arg2, ...)` | Returns the minimum value among the arguments. |
 | `MAX(arg1, arg2, ...)` | Returns the maximum value among the arguments. |
 | `AVERAGE(arg1, arg2, ...)` | Returns the average of all numeric values among the arguments. |
 | `MEDIAN(arg1, arg2, ...)` | Returns the median of all numeric values among the arguments. |
-| `PERCENT(arg1)` | Returns value of its argument as a decimal percentage. |
 | `POWER(arg1, arg2)` | Returns the result of raising the first argument to the power of the second argument. |
 | `RAND()` | Returns a random number between 0 and 1. |
 
@@ -347,19 +351,13 @@ When performing an [Excel Export](./excel-export), the grid will export the form
 
 | Function | Description |
 | -------- | ----------- |
-| `CONCAT(arg1, arg2, ...)` | Returns the concatenation of all arguments. |
+| `CONCAT(arg1, arg2, ...)` |
 
 **Logical Functions**
 
 | Function | Description |
 | -------- | ----------- |
 | `IF(condition, value_if_true, value_if_false)` | Returns `value_if_true` if the condition is true, otherwise returns `value_if_false`. |
-| `EQ(arg1, arg2)` | Returns `TRUE` if the two arguments are equal, otherwise returns `FALSE`. |
-| `NE(arg1, arg2)` | Returns `TRUE` if the two arguments are not equal, otherwise returns `FALSE`. |
-| `GT(arg1, arg2)` | Returns `TRUE` if the first argument is greater than the second argument, otherwise returns `FALSE`. |
-| `GTE(arg1, arg2)` | Returns `TRUE` if the first argument is greater than or equal to the second argument, otherwise returns `FALSE`. |
-| `LT(arg1, arg2)` | Returns `TRUE` if the first argument is less than the second argument, otherwise returns `FALSE`. |
-| `LTE(arg1, arg2)` | Returns `TRUE` if the first argument is less than or equal to the second argument, otherwise returns `FALSE`. |
 
 **Counting Functions**
 

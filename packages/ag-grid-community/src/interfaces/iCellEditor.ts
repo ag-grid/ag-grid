@@ -54,7 +54,7 @@ export interface BaseCellEditor {
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor {
     /**
-     * Return the final value - called by the grid once after editing is complete
+     * Mandatory - Return the final value. Called by the grid once after editing is complete.
      */
     getValue(): TValue | null | undefined;
 

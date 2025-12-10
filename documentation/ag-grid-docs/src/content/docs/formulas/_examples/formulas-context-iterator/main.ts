@@ -1,4 +1,4 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFunctionParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellApiModule,
     ClientSideRowModelModule,
@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
 const rowData = [
     { rid: 'r1', gold: 1, silver: 2 },
@@ -36,17 +36,17 @@ const rowData = [
         rid: 'r8',
         gold: 1,
         silver: 2,
-        result: '=COUNTEQ(REF(COLUMN("c0"),ROW("r1"),COLUMN("c1"),ROW("r8")),2)',
+        result: '=COUNTEQ($A$1:$B$8,2)',
     },
 ];
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'gold', colId: 'c0' },
         { field: 'silver', colId: 'c1' },
         { field: 'result', colId: 'c2', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params: GetRowIdParams) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
@@ -59,7 +59,7 @@ const gridOptions: GridOptions<any> = {
     rowData,
     formulaFuncs: {
         COUNTEQ: {
-            func: (params) => {
+            func: (params: FormulaFunctionParams) => {
                 const argsArr = Array.from(params.args);
                 if (argsArr.length != 2) {
                     throw 'COUNTEQ requires exactly 2 arguments';

@@ -378,6 +378,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                 const formattedValue = valueSvc.getValueForDisplay({
                                     column: sourceCol,
                                     node: sourceRowNode!,
+                                    includeValueFormatted: true,
                                 }).valueFormatted;
 
                                 if (formattedValue != null) {

@@ -55,3 +55,7 @@
 .logoCell {
     background-color: #fff3;
 }
+
+.btn-simple {
+    min-width: 125px;
+}

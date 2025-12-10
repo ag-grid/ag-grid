@@ -111,7 +111,16 @@ const CellComp = ({
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
+    const suppressJsRenderer = !!editDetails && !editDetails.popup;
+    useJsCellRenderer(
+        renderDetails,
+        showCellWrapper,
+        eCellValue.current,
+        cellValueVersion,
+        jsCellRendererRef,
+        eGui,
+        suppressJsRenderer
+    );
 
     // if RenderDetails changed, need to call refresh. This is not our preferred way (the preferred
     // way for React is just allow the new props to propagate down to the React Cell Renderer)

@@ -90,6 +90,10 @@ export class CheckboxSelectionComponent extends Component {
                 // would possibly get selected twice
                 _stopPropagationForAgGrid(event);
 
+                if (this.eCheckbox.isDisabled()) {
+                    return;
+                }
+
                 this.beans.selectionSvc?.handleSelectionEvent(event, this.rowNode, 'checkboxSelected');
             },
         });

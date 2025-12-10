@@ -7,7 +7,9 @@
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: 'ts',
-        typescriptOptions: {},
+        typescriptOptions: {
+            target: 'es2020',
+        },
         meta: {
             typescript: {
                 exports: 'ts',

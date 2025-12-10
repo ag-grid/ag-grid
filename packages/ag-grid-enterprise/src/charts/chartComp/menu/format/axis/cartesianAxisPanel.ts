@@ -1,4 +1,4 @@
-import type { AgCartesianAxisOptions } from 'ag-charts-types';
+import type { AgCartesianAxisOptions, AgTimeAxisFormattableLabelFormat } from 'ag-charts-types';
 
 import type {
     AgComponentSelectorType,
@@ -189,13 +189,14 @@ export class CartesianAxisPanel extends Component {
                         : undefined
                     : null;
             // Update the axis type (and label format if necessary)
+            if (updatedLabelFormat === undefined) {
+                // clear before update to avoid validation errors
+                chartOptions.clearValue?.('label', 'format');
+            }
             this.chartOptionsService.setCartesianCategoryAxisType(this.axisType, value);
-            if (updatedLabelFormat !== null) {
-                const existingLabel = chartOptions.getValue<AgCartesianAxisOptions['label']>('label') ?? {};
-                chartOptions.setValue<AgCartesianAxisOptions['label']>('label', {
-                    ...existingLabel,
-                    format: updatedLabelFormat,
-                });
+            if (updatedLabelFormat != null) {
+                // set after update to avoid validation errors
+                chartOptions.setValue<AgTimeAxisFormattableLabelFormat>('label.format', updatedLabelFormat!);
             }
             // Reapply the previous theme overrides to the new axis type
             chartAxisAppliedThemeOverrides.setValue<AgCartesianAxisOptions>('*', previousAxisThemeOverrides);
