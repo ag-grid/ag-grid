@@ -183,6 +183,10 @@ id = "GHSA-wrwg-2hg8-v723"
 reason = "This vulnerability affects server-side code, but astro is only used for generating a static site"
 
 [[IgnoredVulns]]
+id = "GHSA-whqg-ppgf-wp8c"
+reason = "This vulnerability affects server-side code, but astro is only used for generating a static site"
+
+[[IgnoredVulns]]
 id = "GHSA-4hjh-wcwx-xvwj"
 reason = "We only use axios for build and testing"
 
@@ -190,3 +194,18 @@ reason = "We only use axios for build and testing"
 id = "GHSA-5j98-mcp5-4vw2"
 reason = "glob not accessible to end user/external users"
 
+[[IgnoredVulns]]
+id = "GHSA-58c5-g7wp-6w37"
+reason = "@angular/common is only used for dev/testing, or for libraries, it is not using angular http client"
+
+[[IgnoredVulns]]
+id = "GHSA-v4hv-rgfq-gp49"
+reason = "@angular/common is only used for dev/testing, or for libraries, it is not used for SVG or MathML attributes"
+
+[[IgnoredVulns]]
+id = "GHSA-mh29-5h37-fv8m"
+reason = "js-yaml is only used in development/testing - it's not used in the final production build"
+
+[[IgnoredVulns]]
+id = "GHSA-4fh9-h7wg-q85m"
+reason = "mdast-util-to-hast is only used in dev files we control"
