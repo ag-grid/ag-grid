@@ -123,8 +123,7 @@ describe('ag-grid grouping selection', () => {
         `);
     });
 
-    // TODO: Test temporarily skipped, there might be a bug in grouping deselection of deleted filler nodes
-    test.skip('group selection checkbox behavior', async () => {
+    test('group selection checkbox behavior', async () => {
         const rowData = cachedJSONObjects.array([
             { id: '1', country: 'Ireland', athlete: 'John Smith', sport: 'Sailing' },
             { id: '2', country: 'Ireland', athlete: 'Jane Doe', sport: 'Soccer' },
@@ -180,7 +179,7 @@ describe('ag-grid grouping selection', () => {
 
         await new GridRows(api, 'deselect one child').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland 
+            ├─┬ LEAF_GROUP indeterminate id:row-group-country-Ireland 
             │ ├── LEAF id:1 athlete:"John Smith" sport:"Sailing"
             │ └── LEAF selected id:2 athlete:"Jane Doe" sport:"Soccer"
             └─┬ LEAF_GROUP id:row-group-country-Italy 

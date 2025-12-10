@@ -1,5 +1,5 @@
-import { RowNode } from 'ag-grid-community';
-import type { AgColumn, IRowNode } from 'ag-grid-community';
+import { RowNode, _getGroupSelectsDescendants } from 'ag-grid-community';
+import type { AgColumn, GridOptionsService, IRowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
@@ -454,6 +454,12 @@ export class GridRowsValidator {
                         .join(', ')
             );
         }
+
+        // Hack: Want to re-use the `_getGroupSelectsDescendants` utility, since the underlying code
+        // is a bit annoying to reproduce here.
+        const gos = { get: (prop) => gridRows.api.getGridOption(prop) } as GridOptionsService;
+        const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
+
         for (const row of this.validatedRows) {
             const rowErrors = this.errors.get(row);
             const selected = !!row.isSelected();
@@ -461,6 +467,11 @@ export class GridRowsValidator {
                 rowErrors.add('Non-selectable node is selected');
             }
             if (selected !== selectedRowsSet.has(row)) {
+                // Group rows are not part of the selection state when `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'`
+                // So we ignore the case where we have a missing group row in this case.
+                if (!selectedRowsSet.has(row) && row.group && groupSelectsDescendants) {
+                    continue;
+                }
                 rowErrors.add(
                     selectedRowsSet.has(row)
                         ? 'Selected node is not in getSelectedNodes()'
