@@ -97,7 +97,10 @@ export interface GetCellValueParams<TValue = any> {
     colKey: string | Column<TValue>;
     /** If `true` formatted value will be returned. */
     useFormatter?: boolean;
-    /** When `false` (default) returns the in-progress edit value; when `true` forces the last committed value from the row data. */
+    /**
+     * When `false` (default) returns the in-progress edit value, if there is an edit in progress;
+     * When `true` forces the last committed value from the row data, before edit started, so the actual value.
+     */
     committed?: boolean;
 }
 

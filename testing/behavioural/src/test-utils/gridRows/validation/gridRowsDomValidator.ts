@@ -133,7 +133,12 @@ class GridRowDomValidator {
         }
 
         const api = this.gridRows.api;
-        const cellValue = api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const cellValue = api.getCellValue({
+            rowNode: row,
+            colKey: column,
+            useFormatter: true,
+            committed: true,
+        });
         const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
         const colDef = column.getColDef();
         const cellRenderer = colDef?.cellRenderer;
@@ -259,7 +264,12 @@ class GridRowDomValidator {
     }
 
     private getExpectedGroupTextFromColumn(row: RowNode<any>, column: Column<any>): string {
-        const cellValue = this.gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: true });
+        const cellValue = this.gridRows.api.getCellValue({
+            rowNode: row,
+            colKey: column,
+            useFormatter: true,
+            committed: true,
+        });
         const stringCellValue = cellValue != null ? String(cellValue).trim() : '';
         return this.getExpectedGroupCellText(row, column, stringCellValue) ?? '';
     }
@@ -349,7 +359,11 @@ class GridRowDomValidator {
             return false;
         }
 
-        const cellValue = this.gridRows.api.getCellValue({ rowNode: row, colKey: column });
+        const cellValue = this.gridRows.api.getCellValue({
+            rowNode: row,
+            colKey: column,
+            committed: true,
+        });
 
         if (!checkboxElement) {
             return true;

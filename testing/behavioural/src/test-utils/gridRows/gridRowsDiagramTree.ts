@@ -326,13 +326,19 @@ export class GridRowsDiagramTree {
                     continue;
                 }
 
-                const value = gridRows.api.getCellValue({ rowNode: row, colKey: column, useFormatter: false });
+                const value = gridRows.api.getCellValue({
+                    rowNode: row,
+                    colKey: column,
+                    useFormatter: false,
+                    committed: true,
+                });
                 let formattedValue = value;
                 if (gridRows.options.useFormatter ?? true) {
                     formattedValue = gridRows.api.getCellValue({
                         rowNode: row,
                         colKey: column,
                         useFormatter: true,
+                        committed: true,
                     });
                     if (formattedValue === String(value)) {
                         formattedValue = value;
