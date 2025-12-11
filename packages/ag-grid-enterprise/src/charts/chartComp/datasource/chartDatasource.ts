@@ -181,7 +181,7 @@ export class ChartDatasource extends BeanStub {
                 const column = this.colModel.getCol(colId);
 
                 if (column) {
-                    const valueObject = this.valueSvc.getValue(column, rowNode);
+                    const valueObject = this.valueSvc.getValue(column, rowNode, false, 'api');
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
@@ -240,7 +240,7 @@ export class ChartDatasource extends BeanStub {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    const value = this.valueSvc.getValue(col, rowNode);
+                    const value = this.valueSvc.getValue(col, rowNode, false, 'api');
                     let actualValue = value;
 
                     // unwrap value objects if present
@@ -261,7 +261,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // add data value to value column
-                    let value = this.valueSvc.getValue(col, rowNode);
+                    let value = this.valueSvc.getValue(col, rowNode, false, 'api');
 
                     // unwrap value object if present
                     if (value && typeof value.value === 'number') {
@@ -439,7 +439,7 @@ export class ChartDatasource extends BeanStub {
                     // just like we do for the initialLabel
                     const groupColumn = this.colModel.getCol(GROUP_AUTO_COLUMN_ID);
                     if (groupColumn) {
-                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode);
+                        const valueObject = this.valueSvc.getValue(groupColumn, rowNode, false, 'api');
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : ' ';
                         labels.push(valueString);
                     }

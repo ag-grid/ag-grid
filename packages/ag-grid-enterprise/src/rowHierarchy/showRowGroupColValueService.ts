@@ -43,20 +43,20 @@ export class ShowRowGroupColValueService extends BeanStub implements NamedBean, 
             if (hideOpenParentsNode) {
                 return {
                     displayedNode: hideOpenParentsNode,
-                    value: valueSvc.getValue(column, hideOpenParentsNode),
+                    value: valueSvc.getValue(column, hideOpenParentsNode, false, 'api'),
                 };
             }
         }
 
         // cell value > showOpenedGroup
-        const value = valueSvc.getValue(column, node);
+        const value = valueSvc.getValue(column, node, false, 'api');
         if (value == null) {
             // showOpenedGroup
             const displayedNode = this.getDisplayedNode(node, column);
             if (displayedNode) {
                 return {
                     displayedNode,
-                    value: valueSvc.getValue(column, displayedNode),
+                    value: valueSvc.getValue(column, displayedNode, false, 'api'),
                 };
             }
         }

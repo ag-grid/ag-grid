@@ -1,6 +1,7 @@
 import type { AgColumn, IClientSideRowModel, RowNode } from 'ag-grid-community';
 import { AgPromise, BeanStub, _makeNull } from 'ag-grid-community';
 
+import { getKeyForNode } from '../rowHierarchy/rowHierarchyUtils';
 import { processDataPath } from './setFilterUtils';
 
 /** @param V type of value in the Set Filter */
@@ -103,7 +104,7 @@ export class ClientSideValuesExtractor<V> extends BeanStub {
             }
             dataPath = node.getRoute() ?? [node.key ?? node.id!];
         } else {
-            dataPath = groupedCols.map((groupCol) => this.beans.valueSvc.getKeyForNode(groupCol, node));
+            dataPath = groupedCols.map((groupCol) => getKeyForNode(this.beans, groupCol, node));
             dataPath.push(this.getValue(node) as any);
         }
         const processedDataPath = processDataPath(dataPath, treeData, groupAllowUnbalanced);

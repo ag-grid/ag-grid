@@ -14,6 +14,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _missing } from 'ag-grid-community';
 
+import { getKeyForNode } from '../rowHierarchy/rowHierarchyUtils';
 import type { PivotColDefService } from './pivotColDefService';
 
 const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.';
@@ -229,12 +230,14 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         pivotIndex: number,
         uniqueValues: Map<string, any>
     ): Map<string, any> {
+        const beans = this.beans;
         const mappedChildren: Map<string, RowNode[]> = new Map();
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
-        children.forEach((child: RowNode) => {
-            let key: string = this.valueSvc.getKeyForNode(pivotColumn, child);
+        for (let i = 0, len = children.length; i < len; i++) {
+            const child = children[i];
+            let key: string = getKeyForNode(beans, pivotColumn, child);
 
             if (_missing(key)) {
                 key = '';
@@ -252,11 +255,13 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
                 }
             }
 
-            if (!mappedChildren.has(key)) {
-                mappedChildren.set(key, []);
+            const mapped = mappedChildren.get(key);
+            if (mapped) {
+                mapped.push(child);
+            } else {
+                mappedChildren.set(key, [child]);
             }
-            mappedChildren.get(key)!.push(child);
-        });
+        }
 
         // if it's the last pivot column, return as is, otherwise go one level further in the map
         if (pivotIndex === pivotColumns.length - 1) {

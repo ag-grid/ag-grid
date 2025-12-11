@@ -1,9 +1,12 @@
+import { _addGridCommonParams, _warn } from 'ag-grid-community';
 import type {
+    AgColumn,
     Bean,
     BeanCollection,
     GridOptions,
     GridOptionsService,
     IRowNode,
+    KeyCreatorParams,
     NestedDataGetter,
     RefreshModelParams,
     RowNode,
@@ -85,4 +88,35 @@ export const _getRowDefaultExpanded = (
         rowGroupColumn: rowNode.rowGroupColumn!,
     };
     return isGroupOpenByDefault(params) == true;
+};
+
+// used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
+export const getKeyForNode = (beans: BeanCollection, col: AgColumn, rowNode: IRowNode): any => {
+    const value = beans.valueSvc.getValue(col, rowNode, false, 'api');
+    const keyCreator = col.getColDef().keyCreator;
+
+    let result = value;
+    if (keyCreator) {
+        const keyParams: KeyCreatorParams = _addGridCommonParams(beans.gos, {
+            value: value,
+            colDef: col.getColDef(),
+            column: col,
+            node: rowNode,
+            data: rowNode.data,
+        });
+        result = keyCreator(keyParams);
+    }
+
+    // if already a string, or missing, just return it
+    if (typeof result === 'string' || result == null) {
+        return result;
+    }
+
+    result = String(result);
+
+    if (result === '[object Object]') {
+        _warn(121);
+    }
+
+    return result;
 };

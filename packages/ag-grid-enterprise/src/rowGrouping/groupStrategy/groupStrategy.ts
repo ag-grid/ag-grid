@@ -9,7 +9,7 @@ import type {
 import { BeanStub, RowNode, _csrmFirstLeaf, _warn } from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
-import { _getRowDefaultExpanded } from '../../rowHierarchy/rowHierarchyUtils';
+import { _getRowDefaultExpanded, getKeyForNode } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import type { GroupColumn } from './groupColumns';
 import { groupColumnsChanged, makeGroupColumns } from './groupColumns';
@@ -64,7 +64,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         const leafNode = _csrmFirstLeaf(node);
         const rowGroupColId = rowGroupCol.getId();
-        if (!showRowGroupCols) {
+        if (!showRowGroupCols || !leafNode) {
             return groupData;
         }
         const groupDisplayCols = showRowGroupCols.columns;
@@ -74,7 +74,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
             if (col.isRowGroupDisplayed(rowGroupColId)) {
                 // if maintain group value type, get the value from any leaf node.
-                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode);
+                groupData[col.getColId()] = valueSvc.getValue(rowGroupCol, leafNode, false, 'api');
             }
         }
 
@@ -259,7 +259,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     }
 
     private moveNodeInWrongPath(rootNode: RowNode, childNode: RowNode): boolean {
-        const { valueSvc } = this.beans;
+        const beans = this.beans;
         const createGroupForEmpty = this.groupEmpty;
 
         let ancestor: RowNode | null = childNode.parent;
@@ -271,7 +271,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
         for (let idx = groupCols.length - 1; idx >= 0; --idx) {
             const { col } = groupCols[idx];
-            let key = valueSvc.getKeyForNode(col, childNode);
+            let key = getKeyForNode(beans, col, childNode);
             if (key == null || key === '') {
                 if (!createGroupForEmpty) {
                     continue; // skip columns with empty keys when unbalanced trees are allowed
@@ -445,7 +445,6 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
     private insertOneNode(rootNode: RowNode, childNode: RowNode): void {
         let parentGroup = rootNode;
         const { beans, pivotMode, groupCols, groupEmpty } = this;
-        const valueSvc = beans.valueSvc;
         if (!groupCols) {
             return;
         }
@@ -453,7 +452,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         for (let i = 0; i < len; ++i) {
             const groupCol = groupCols[i];
             const col = groupCol.col;
-            let key = valueSvc.getKeyForNode(col, childNode);
+            let key = getKeyForNode(beans, col, childNode);
             if (key == null || key === '') {
                 if (!groupEmpty) {
                     continue;
@@ -517,7 +516,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
         groupsById.set(id, groupNode);
 
-        groupNode.groupValue = leafNode && this.beans.valueSvc.getValue(col, leafNode);
+        groupNode.groupValue = leafNode && this.beans.valueSvc.getValue(col, leafNode, false, 'api');
 
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
@@ -548,7 +547,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
             groupNode._groupData = undefined;
             const rowGroupColumn = groupNode.rowGroupColumn;
             const leafNode = rowGroupColumn && _csrmFirstLeaf(groupNode);
-            groupNode.groupValue = leafNode && valueSvc.getValue(rowGroupColumn, leafNode);
+            groupNode.groupValue = leafNode && valueSvc.getValue(rowGroupColumn, leafNode, false, 'api');
         }
 
         const allLeafs = rowModel.rootNode?._leafs;

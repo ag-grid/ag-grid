@@ -23,6 +23,7 @@ import {
     _toStringOrNull,
 } from 'ag-grid-community';
 
+import { getKeyForNode } from '../rowHierarchy/rowHierarchyUtils';
 import { ClientSideValuesExtractor } from './clientSideValueExtractor';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import { processDataPath, translateForSetFilter } from './setFilterUtils';
@@ -355,13 +356,8 @@ export class SetFilterHandler<TValue = string>
     }
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
-        const {
-            appliedModel,
-            params,
-            gos,
-            beans: { rowGroupColsSvc, valueSvc },
-        } = this;
-        const dataPath = (rowGroupColsSvc?.columns ?? []).map((groupCol) => valueSvc.getKeyForNode(groupCol, node));
+        const { appliedModel, params, gos, beans } = this;
+        const dataPath = (beans.rowGroupColsSvc?.columns ?? []).map((groupCol) => getKeyForNode(beans, groupCol, node));
         dataPath.push(params.getValue(node));
         return appliedModel.has(
             this.createKey(processDataPath(dataPath, false, gos.get('groupAllowUnbalanced')) as any) as any

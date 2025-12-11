@@ -510,9 +510,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, range: CellRange) => {
             updatedRowNodes.push(rowNode);
-            range.columns.forEach((column: AgColumn) =>
-                this.updateCellValue(rowNode, column, value, cellsToFlash, EXPORT_TYPE_CLIPBOARD, changedPath)
-            );
+            const columns = range.columns as AgColumn[];
+            for (let i = 0, len = columns.length; i < len; ++i) {
+                const column = columns[i];
+                this.updateCellValue(rowNode, column, value, cellsToFlash, EXPORT_TYPE_CLIPBOARD, changedPath);
+            }
         };
 
         this.iterateActiveRanges(rowCallback);
@@ -540,16 +542,17 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const processCellFromClipboardFunc = gos.getCallback('processCellFromClipboard');
 
             const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, range: CellRange) => {
-                const { columns } = range;
+                const columns = range.columns as AgColumn[];
                 // take reference of first row, this is the one we will be using to copy from
                 if (!firstRowValues.length) {
                     // two reasons for looping through columns
-                    columns.forEach((column: AgColumn) => {
+                    for (let i = 0, len = columns.length; i < len; ++i) {
+                        const column = columns[i];
                         // get the initial values to copy down
                         const value = this.processCell(
                             rowNode,
                             column,
-                            valueSvc.getValue(column, rowNode),
+                            valueSvc.getValue(column, rowNode, false, 'ui'),
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -557,20 +560,21 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         );
 
                         firstRowValues.push(value);
-                    });
+                    }
                 } else {
                     // otherwise we are not the first row, so copy
                     updatedRowNodes.push(rowNode);
-                    columns.forEach((column: AgColumn, index) => {
+                    for (let i = 0, len = columns.length; i < len; ++i) {
+                        const column = columns[i];
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
-                            return;
+                            continue;
                         }
 
-                        const isFormula = column.isAllowFormula() && formula?.isFormula(firstRowValues[index]);
+                        const isFormula = column.isAllowFormula() && formula?.isFormula(firstRowValues[i]);
 
                         if (isFormula) {
-                            firstRowValues[index] = formula?.updateFormulaByOffset({
-                                value: firstRowValues[index],
+                            firstRowValues[i] = formula?.updateFormulaByOffset({
+                                value: firstRowValues[i],
                                 rowDelta: 1,
                             });
                         }
@@ -578,7 +582,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const firstRowValue = this.processCell(
                             rowNode,
                             column,
-                            firstRowValues[index],
+                            firstRowValues[i],
                             EXPORT_TYPE_DRAG_COPY,
                             processCellFromClipboardFunc,
                             true
@@ -593,7 +597,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const { rowIndex, rowPinned } = currentRow;
                         const cellId = _createCellId({ rowIndex, column, rowPinned });
                         cellsToFlash[cellId] = true;
-                    });
+                    }
                 }
             };
 
@@ -686,9 +690,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 continue;
             }
 
-            clipboardRowData.forEach((value, index) =>
-                this.updateCellValue(rowNode, columnsToPasteInto[index], value, cellsToFlash, type, changedPath)
-            );
+            for (let i = 0, len = clipboardRowData.length; i < len; ++i) {
+                const value = clipboardRowData[i];
+                this.updateCellValue(rowNode, columnsToPasteInto[i], value, cellsToFlash, type, changedPath);
+            }
 
             updatedRowNodes.push(rowNode);
         }
@@ -941,7 +946,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         for (const range of ranges) {
-            range.columns.forEach((col: AgColumn) => columnsSet.add(col));
+            const columns = range.columns as AgColumn[];
+            for (let i = 0, len = columns.length; i < len; ++i) {
+                columnsSet.add(columns[i]);
+            }
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             for (const rowPosition of rowPositions) {
                 const isInCache = flatCache.has(rowPosition.rowIndex);
@@ -1098,6 +1106,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 column: column as AgColumn,
                 node,
                 includeValueFormatted: true,
+                source: 'ui',
             });
 
             const val = valueFormatted ?? value ?? '';
@@ -1144,7 +1153,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private processCell<T>(
-        rowNode: RowNode | undefined,
+        rowNode: RowNode,
         column: AgColumn,
         value: T,
         type: string,
@@ -1162,14 +1171,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 formatValue: (valueToFormat: any) =>
                     valueSvc.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
                 parseValue: (valueToParse: string) =>
-                    valueSvc.parseValue(column, rowNode ?? null, valueToParse, valueSvc.getValue(column, rowNode)),
+                    valueSvc.parseValue(
+                        column,
+                        rowNode ?? null,
+                        valueToParse,
+                        valueSvc.getValue(column, rowNode, false, 'ui')
+                    ),
             };
 
             return func(params);
         }
 
         if (canParse && column.getColDef().useValueParserForImport !== false) {
-            return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode));
+            return valueSvc.parseValue(column, rowNode ?? null, value, valueSvc.getValue(column, rowNode, false, 'ui'));
         }
 
         if (canFormat && column.getColDef().useValueFormatterForExport !== false) {

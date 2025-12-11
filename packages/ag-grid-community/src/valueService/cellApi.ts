@@ -8,13 +8,18 @@ export function expireValueCache(beans: BeanCollection): void {
 }
 
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
-    const { colKey, rowNode, useFormatter } = params;
+    const { colKey, rowNode, useFormatter, committed } = params;
 
     const column = beans.colModel.getColDefCol(colKey) ?? beans.colModel.getCol(colKey);
     if (_missing(column)) {
         return null;
     }
-    const result = beans.valueSvc.getValueForDisplay({ column, node: rowNode, includeValueFormatted: useFormatter });
+    const result = beans.valueSvc.getValueForDisplay({
+        column,
+        node: rowNode,
+        includeValueFormatted: useFormatter,
+        source: committed ? 'api' : 'ui',
+    });
     if (useFormatter) {
         return result.valueFormatted ?? _toString(result.value);
     }

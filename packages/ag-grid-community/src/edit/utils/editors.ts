@@ -73,14 +73,15 @@ export function _setupEditors(
 
         if (!curCellCtrl) {
             if (cellRowNode && cellColumn) {
-                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, undefined, 'api');
+                const oldValue = valueSvc.getValue(cellColumn as AgColumn, cellRowNode, false, 'api');
                 const isNewValueCell = position?.rowNode === cellRowNode && position?.column === cellColumn;
                 const cellStartValue = (isNewValueCell && key) || undefined;
 
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition, false) ??
-                    valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode })?.value ??
+                    valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode, source: 'ui' })
+                        ?.value ??
                     oldValue ??
                     UNEDITED;
 
@@ -266,7 +267,7 @@ function _createEditorParams(
 
     const value =
         initialNewValue === UNEDITED
-            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode })?.value
+            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode, source: 'ui' })?.value
             : initialNewValue;
 
     // if formula, normalise the value to shorthand for users.
@@ -395,7 +396,7 @@ export function _syncFromEditor(
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
         const editValue: Partial<EditValue> = {
-            sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
+            sourceValue: valueSvc.getValue(column as AgColumn, rowNode, false, 'api'),
             pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
         };
 

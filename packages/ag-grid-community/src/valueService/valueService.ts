@@ -7,41 +7,30 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type {
-    KeyCreatorParams,
-    ValueFormatterParams,
-    ValueGetterParams,
-    ValueParserParams,
-    ValueSetterParams,
-} from '../entities/colDef';
+import type { ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IFormulaDataService } from '../interfaces/formulas';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
-import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
 export class ValueService extends BeanStub implements NamedBean {
     beanName = 'valueSvc' as const;
 
-    private expressionSvc?: ExpressionService;
     private colModel: ColumnModel;
     private valueCache?: ValueCache;
     private dataTypeSvc?: DataTypeService;
     private editSvc?: IEditService;
-    private hasEditSvc: boolean = false;
     private formulaDataSvc?: IFormulaDataService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.expressionSvc = beans.expressionSvc;
         this.colModel = beans.colModel;
         this.valueCache = beans.valueCache;
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
-        this.hasEditSvc = !!beans.editSvc;
         this.formulaDataSvc = beans.formulaDataSvc;
     }
 
@@ -54,14 +43,6 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private isSsrm = false;
 
-    private executeValueGetter: (
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        valueGetter: string | Function,
-        data: any,
-        column: AgColumn,
-        rowNode: IRowNode
-    ) => any;
-
     public postConstruct(): void {
         if (!this.initialised) {
             this.init();
@@ -69,10 +50,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
-        const { gos, valueCache } = this;
-        this.executeValueGetter = valueCache
-            ? this.executeValueGetterWithValueCache.bind(this)
-            : this.executeValueGetterWithoutValueCache.bind(this);
+        const gos = this.gos;
         this.isSsrm = _isServerSideRowModel(gos);
         this.cellExpressions = gos.get('enableCellExpressions');
         this.isTreeData = gos.get('treeData');
@@ -98,7 +76,7 @@ export class ValueService extends BeanStub implements NamedBean {
         includeValueFormatted?: boolean;
         useRawFormula?: boolean;
         exporting?: boolean;
-        source?: 'ui' | 'api';
+        source: 'ui' | 'api';
     }): {
         value: any;
         valueFormatted: string | null;
@@ -152,7 +130,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
-        const ignoreAggData = isOpenedGroup && !groupShowsAggData;
+        const ignoreAggData = !!isOpenedGroup && !groupShowsAggData;
         let value = this.getValue(column, node, ignoreAggData, source);
         let valueToFormat = value;
 
@@ -176,9 +154,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public getValue(
         column: AgColumn,
-        rowNode?: IRowNode | null,
-        ignoreAggData = false,
-        source: 'ui' | 'api' | 'edit' | string = 'ui'
+        rowNode: IRowNode | null,
+        ignoreAggData: boolean,
+        source: 'ui' | 'api' | 'edit'
     ): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -192,9 +170,8 @@ export class ValueService extends BeanStub implements NamedBean {
 
         // pull these out to make code below easier to read
 
-        if (this.hasEditSvc && source === 'ui') {
-            const editSvc = this.editSvc!;
-
+        const editSvc = this.editSvc;
+        if (editSvc && source === 'ui') {
             // if the row is editing, we want to return the new value, if available
             if (editSvc.isEditing()) {
                 const newValue = editSvc.getCellDataValue({ rowNode, column }, true);
@@ -305,28 +282,31 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
+        const beans = this.beans;
         const colDef = column.getColDef();
 
         // we do not allow parsing of formulas
-        if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
+        if (colDef.allowFormula && beans.formula?.isFormula(newValue)) {
             return newValue;
         }
 
         const valueParser = colDef.valueParser;
 
         if (_exists(valueParser)) {
-            const params: ValueParserParams = _addGridCommonParams(this.gos, {
+            const params: ValueParserParams = {
+                api: beans.gridApi,
+                context: beans.gridOptions.context,
                 node: rowNode,
                 data: rowNode?.data,
                 oldValue,
                 newValue,
                 colDef,
                 column,
-            });
+            };
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
-            return this.expressionSvc?.evaluate(valueParser, params);
+            return beans.expressionSvc?.evaluate(valueParser, params);
         }
         return newValue;
     }
@@ -334,7 +314,12 @@ export class ValueService extends BeanStub implements NamedBean {
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
         if (_exists(column.getColDef().valueParser)) {
             return (
-                this.parseValue(column, rowNode, '', this.getValueForDisplay({ column, node: rowNode }).value) ?? null
+                this.parseValue(
+                    column,
+                    rowNode,
+                    '',
+                    this.getValueForDisplay({ column, node: rowNode, source: 'ui' }).value
+                ) ?? null
             );
         }
         return null;
@@ -347,7 +332,7 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
-        const { expressionSvc } = this.beans;
+        const beans = this.beans;
         let result: string | null = null;
         let formatter: ((value: any) => string) | string | undefined;
 
@@ -363,16 +348,19 @@ export class ValueService extends BeanStub implements NamedBean {
         if (formatter) {
             const data = node ? node.data : null;
 
-            const params: ValueFormatterParams = _addGridCommonParams(this.gos, {
+            const params: ValueFormatterParams = {
+                api: beans.gridApi,
+                context: beans.gridOptions.context,
                 value,
                 node,
                 data,
                 colDef,
                 column,
-            });
+            };
             if (typeof formatter === 'function') {
                 result = formatter(params);
             } else {
+                const expressionSvc = beans.expressionSvc;
                 result = expressionSvc ? expressionSvc.evaluate(formatter, params) : null;
             }
         } else if (colDef.refData) {
@@ -408,14 +396,17 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const params: ValueSetterParams = _addGridCommonParams(this.gos, {
+        const beans = this.beans;
+        const params: ValueSetterParams = {
+            api: beans.gridApi,
+            context: beans.gridOptions.context,
             node: rowNode,
             data: rowNode.data,
-            oldValue: this.getValue(column, rowNode, undefined, eventSource),
+            oldValue: this.getValue(column, rowNode, false, 'api'),
             newValue: newValue,
             colDef,
             column: column,
-        });
+        };
 
         params.newValue = newValue;
 
@@ -466,7 +457,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         this.valueCache?.onDataChanged();
 
-        const savedValue = this.getValue(column, rowNode);
+        const savedValue = this.getValue(column, rowNode, false, 'ui');
 
         this.dispatchCellValueChangedEvent(rowNode, params, savedValue, eventSource);
         if ((rowNode as RowNode).pinnedSibling) {
@@ -572,7 +563,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (typeof valueSetter === 'function') {
                 return valueSetter(setterParams);
             }
-            return this.expressionSvc?.evaluate(valueSetter, setterParams);
+            return this.beans.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
         return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
@@ -654,7 +645,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return !valuesAreSame;
     }
 
-    private executeValueGetterWithValueCache(
+    private executeValueGetter(
         // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
         data: any,
@@ -663,82 +654,50 @@ export class ValueService extends BeanStub implements NamedBean {
     ): any {
         const colId = column.getColId();
 
-        // if inside the same turn, just return back the value we got last time
-        const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
+        const valueCache = this.valueCache;
 
-        if (valueFromCache !== undefined) {
-            return valueFromCache;
+        // if inside the same turn, just return back the value we got last time
+        if (valueCache) {
+            const valueFromCache = valueCache.getValue(rowNode as RowNode, colId);
+            if (valueFromCache !== undefined) {
+                return valueFromCache;
+            }
         }
 
-        const result = this.executeValueGetterWithoutValueCache(valueGetter, data, column, rowNode);
+        const result = this.executeValueGetterNoCache(valueGetter, data, column, rowNode);
 
         // if a turn is active, store the value in case the grid asks for it again
-        this.valueCache!.setValue(rowNode as RowNode, colId, result);
+        valueCache?.setValue(rowNode as RowNode, colId, result);
 
         return result;
     }
 
-    private executeValueGetterWithoutValueCache(
+    public executeValueGetterNoCache(
         // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
         data: any,
         column: AgColumn,
         rowNode: IRowNode
     ): any {
-        const params: ValueGetterParams = _addGridCommonParams(this.gos, {
+        const beans = this.beans;
+        const params: ValueGetterParams = {
+            api: beans.gridApi,
+            context: beans.gridOptions.context,
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode),
-        });
+            getValue: (field: string | AgColumn) => {
+                const otherColumn = this.colModel.getColDefCol(field);
+                return otherColumn ? this.getValue(otherColumn, rowNode, false, 'api') : null;
+            },
+        };
 
         let result;
         if (typeof valueGetter === 'function') {
             result = valueGetter(params);
         } else {
-            result = this.expressionSvc?.evaluate(valueGetter, params);
-        }
-
-        return result;
-    }
-
-    public getValueCallback(node: IRowNode, field: string | AgColumn): any {
-        const otherColumn = this.colModel.getColDefCol(field);
-
-        if (otherColumn) {
-            return this.getValue(otherColumn, node);
-        }
-
-        return null;
-    }
-
-    // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: AgColumn, rowNode: IRowNode): any {
-        const value = this.getValue(col, rowNode);
-        const keyCreator = col.getColDef().keyCreator;
-
-        let result = value;
-        if (keyCreator) {
-            const keyParams: KeyCreatorParams = _addGridCommonParams(this.gos, {
-                value: value,
-                colDef: col.getColDef(),
-                column: col,
-                node: rowNode,
-                data: rowNode.data,
-            });
-            result = keyCreator(keyParams);
-        }
-
-        // if already a string, or missing, just return it
-        if (typeof result === 'string' || result == null) {
-            return result;
-        }
-
-        result = String(result);
-
-        if (result === '[object Object]') {
-            _warn(121);
+            result = beans.expressionSvc?.evaluate(valueGetter, params);
         }
 
         return result;

@@ -190,7 +190,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         let { anchorToElement, value, source } = params;
 
         if (rowNode && column && value == null) {
-            value = this.beans.valueSvc.getValueForDisplay({ column, node: rowNode }).value;
+            value = this.beans.valueSvc.getValueForDisplay({ column, node: rowNode, source: 'ui' }).value;
         }
 
         if (anchorToElement == null) {
@@ -216,7 +216,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         const rowNode = cellCtrl?.rowNode ?? rowCtrl?.rowNode ?? null;
         const column = cellCtrl?.column ?? rowCtrl?.findFullWidthInfoForEvent(mouseEvent || touchEvent)?.column ?? null;
         const { valueSvc, ctrlsSvc } = this.beans;
-        const value = column ? valueSvc.getValue(column, rowNode) : null;
+        const value = column ? valueSvc.getValue(column, rowNode, false, 'ui') : null;
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         const gridBodyCon = ctrlsSvc.getGridBodyCtrl();

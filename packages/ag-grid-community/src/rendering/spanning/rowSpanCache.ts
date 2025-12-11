@@ -133,6 +133,9 @@ export class RowSpanCache extends BeanStub {
                 return;
             }
 
+            // check value is equal, if not, no span
+            const value = valueSvc.getValue(column, node, false, 'api');
+
             // if level or key is different, cells do not span.
             if (
                 lastNode == null ||
@@ -140,12 +143,10 @@ export class RowSpanCache extends BeanStub {
                 node.footer ||
                 (spanData && node.rowIndex - 1 !== spanData?.getLastNode().rowIndex) // no span if rows not contiguous (SSRM)
             ) {
-                setNewHead(node, valueSvc.getValue(column, node));
+                setNewHead(node, value);
                 return;
             }
 
-            // check value is equal, if not, no span
-            const value = valueSvc.getValue(column, node);
             if (isCustomCompare) {
                 const params: SpanRowsParams = _addGridCommonParams(gos, {
                     valueA: lastValue,

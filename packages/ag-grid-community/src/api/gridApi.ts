@@ -97,6 +97,8 @@ export interface GetCellValueParams<TValue = any> {
     colKey: string | Column<TValue>;
     /** If `true` formatted value will be returned. */
     useFormatter?: boolean;
+    /** When `false` (default) returns the in-progress edit value; when `true` forces the last committed value from the row data. */
+    committed?: boolean;
 }
 
 export interface _CoreGridApi<TData = any> {
