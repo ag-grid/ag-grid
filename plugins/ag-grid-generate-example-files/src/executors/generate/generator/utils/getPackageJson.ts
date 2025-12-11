@@ -60,11 +60,11 @@ export function getPackageJson({ isLocale, internalFramework, isIntegratedCharts
     }
 
     if (isFrameworkReact()) {
-        addDependency('react', '18');
-        addDependency('react-dom', '18');
+        addDependency('react', '19.2.1');
+        addDependency('react-dom', '19.2.1');
 
-        addDependency('@types/react', '18');
-        addDependency('@types/react-dom', '18');
+        addDependency('@types/react', '19.2.1');
+        addDependency('@types/react-dom', '19.2.1');
     }
 
     const agGridVersion = getPackageJsonVersion('ag-grid-community');

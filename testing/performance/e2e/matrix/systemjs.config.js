@@ -24,9 +24,9 @@
               }
             : {
                   map: {
-                      react: `npm:react@19.1.0/cjs/react.${filePart}.js`,
-                      'react-dom': `npm:react-dom@19.1.0/cjs/react-dom.${filePart}.js`,
-                      'react-dom/client': `npm:react-dom@19.1.0/cjs/react-dom-client.${filePart}.js`,
+                      react: `npm:react@19.1.1/cjs/react.${filePart}.js`,
+                      'react-dom': `npm:react-dom@19.1.1/cjs/react-dom.${filePart}.js`,
+                      'react-dom/client': `npm:react-dom@19.1.1/cjs/react-dom-client.${filePart}.js`,
                       scheduler: `npm:scheduler@0.26.0/cjs/scheduler.${filePart}.js`,
                   },
                   packages: {

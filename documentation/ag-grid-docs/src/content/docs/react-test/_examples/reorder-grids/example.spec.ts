@@ -4,10 +4,10 @@ import { agTestIdFor } from 'ag-grid-community';
 
 test.agExample(import.meta, () => {
     [
-        { prod: true, version: '19.1.0' },
-        { prod: false, version: '19.1.0' },
-        { prod: true, version: '19.2.0' },
-        { prod: false, version: '19.2.0' },
+        { prod: true, version: '19.1.1' },
+        { prod: false, version: '19.1.1' },
+        { prod: true, version: '19.2.1' },
+        { prod: false, version: '19.2.1' },
         { prod: true, version: '18.2.0' },
         { prod: false, version: '18.2.0' },
     ].forEach((configOptions) => {
@@ -41,7 +41,7 @@ test.agExample(import.meta, () => {
 
                 // REACT 19 DEV Resets grids state that moves down in re-order
                 if (
-                    (loadPageOptions!.version === '19.1.0' || loadPageOptions!.version === '19.2.0') &&
+                    (loadPageOptions!.version === '19.1.1' || loadPageOptions!.version === '19.2.1') &&
                     !loadPageOptions!.prod
                 ) {
                     await expect(grid1.getByTestId(agTestIdFor.headerCell('id'))).toHaveText(' users         ');
@@ -59,7 +59,7 @@ test.agExample(import.meta, () => {
 
                 // REACT 19 DEV Resets grids state that moves down in re-order
                 if (
-                    (loadPageOptions!.version === '19.1.0' || loadPageOptions!.version === '19.2.0') &&
+                    (loadPageOptions!.version === '19.1.1' || loadPageOptions!.version === '19.2.1') &&
                     !loadPageOptions!.prod
                 ) {
                     await expect(grid1.getByTestId(agTestIdFor.headerCell('id'))).toHaveText('    users   1       ');
@@ -77,7 +77,7 @@ test.agExample(import.meta, () => {
 
                 // REACT 19 DEV Resets grids state that moves down in re-order
                 if (
-                    (loadPageOptions!.version === '19.1.0' || loadPageOptions!.version === '19.2.0') &&
+                    (loadPageOptions!.version === '19.1.1' || loadPageOptions!.version === '19.2.1') &&
                     !loadPageOptions!.prod
                 ) {
                     await expect(grid1.getByTestId(agTestIdFor.headerCell('id'))).toHaveText('    users   1       ');
