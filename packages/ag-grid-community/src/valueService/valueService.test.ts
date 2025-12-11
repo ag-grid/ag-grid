@@ -27,6 +27,7 @@ describe('formatValue', () => {
         (valueSvc as any).expressionSvc = expressionSvc;
         (valueSvc as any).beans = {
             editSvc: mock<IEditService>('isEditing'),
+            gridOptions: {},
             expressionSvc,
         };
     });

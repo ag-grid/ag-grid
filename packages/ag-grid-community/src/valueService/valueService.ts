@@ -69,6 +69,10 @@ export class ValueService extends BeanStub implements NamedBean {
      * Use this function to get a displayable cell value.
      * The values from this function are not used for sorting, filtering, or aggregation purposes.
      * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
+     *
+     * The source can be either 'ui' or 'api':
+     * - 'ui' - gets the value as seen by the user, including any in-progress edits
+     * - 'api' - gets the last committed value from the row data, ignoring any in-progress edits
      */
     public getValueForDisplay(params: {
         column?: AgColumn;
@@ -152,6 +156,13 @@ export class ValueService extends BeanStub implements NamedBean {
         };
     }
 
+    /**
+     * Gets a cell value.
+     *
+     * The source can be either 'ui' or 'api':
+     * - 'ui' - gets the value as seen by the user, including any in-progress edits
+     * - 'api' - gets the last committed value from the row data, ignoring any in-progress edits
+     */
     public getValue(
         column: AgColumn,
         rowNode: IRowNode | null,
