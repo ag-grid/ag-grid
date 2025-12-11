@@ -12,10 +12,10 @@ test.agExample(import.meta, () => {
 
 test.agExample(import.meta, () => {
     [
-        { prod: true, version: '19.1.0' },
-        { prod: false, version: '19.1.0' },
-        { prod: true, version: '19.2.0' },
-        { prod: false, version: '19.2.0' },
+        { prod: true, version: '19.1.1' },
+        { prod: false, version: '19.1.1' },
+        { prod: true, version: '19.2.1' },
+        { prod: false, version: '19.2.1' },
         { prod: true, version: '18.2.0' },
         { prod: false, version: '18.2.0' },
     ].forEach((configOptions) => {
