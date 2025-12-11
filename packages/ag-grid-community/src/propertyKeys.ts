@@ -91,8 +91,10 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'rowClassRules',
     'detailCellRendererParams',
     'loadingCellRendererParams',
+    'overlayComponentParams',
     'loadingOverlayComponentParams',
     'noRowsOverlayComponentParams',
+    'activeOverlayParams',
     'popupParent',
     'themeStyleContainer',
     'statusBar',
@@ -103,6 +105,8 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'advancedFilterParent',
     'advancedFilterBuilderParams',
     'advancedFilterParams',
+    'formulaDataSource',
+    'formulaFuncs',
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
@@ -123,6 +127,7 @@ const ARRAY_GRID_OPTIONS: KeysWithType<any[]>[] = [
     'chartThemes',
     'rowClass',
     'paginationPageSizeSelector',
+    'suppressOverlays',
 ];
 
 // Used in validations to check type of number inputs
@@ -239,6 +244,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressClickEdit',
     'rowDragEntireRow',
     'rowDragManaged',
+    'refreshAfterGroupEdit',
     'suppressRowDrag',
     'suppressMoveWhenRowDragging',
     'rowDragMultiRow',
@@ -325,6 +331,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressStartEditOnTab',
     'hidePaddedHeaderRows',
     'ssrmExpandAllAffectsAllRows',
+    'animateColumnResizing',
 ];
 
 /** @knipIgnore Used in example generation */
@@ -339,8 +346,11 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'dragAndDropImageComponent',
     'fullWidthCellRenderer',
     'loadingCellRenderer',
+    'overlayComponent',
     'loadingOverlayComponent',
     'noRowsOverlayComponent',
+    'overlayComponentSelector',
+    'activeOverlay',
     'detailCellRenderer',
     'quickFilterParser',
     'quickFilterMatcher',

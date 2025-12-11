@@ -29,7 +29,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import type { VirtualListModel } from '../widgets/iVirtualList';
+import type { VirtualListModel } from '../agStack/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -157,7 +157,9 @@ export class SetFilter<V = string>
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
         const oldHandler = this.handler;
         if (oldHandler !== handler) {
-            this.handlerDestroyFuncs?.forEach((func) => func());
+            for (const func of this.handlerDestroyFuncs ?? []) {
+                func();
+            }
             this.handlerDestroyFuncs = [
                 ...this.addManagedListeners(handler, {
                     anyFilterChanged: (event) => {
@@ -448,9 +450,9 @@ export class SetFilter<V = string>
 
     private newSetTreeItemAttributes(item: SetFilterModelTreeItem): {
         value: V | string | (() => string) | null;
-        depth?: number | undefined;
-        isGroup?: boolean | undefined;
-        hasIndeterminateExpandState?: boolean | undefined;
+        depth?: number;
+        isGroup?: boolean;
+        hasIndeterminateExpandState?: boolean;
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
@@ -507,9 +509,9 @@ export class SetFilter<V = string>
 
     private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): {
         value: V | string | (() => string) | null;
-        depth?: number | undefined;
-        isGroup?: boolean | undefined;
-        hasIndeterminateExpandState?: boolean | undefined;
+        depth?: number;
+        isGroup?: boolean;
+        hasIndeterminateExpandState?: boolean;
         selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
         expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
     } {
@@ -570,14 +572,12 @@ export class SetFilter<V = string>
             } else {
                 isSelected = this.selectedKeys.has(item.key!);
             }
+        } else if (item === SET_FILTER_SELECT_ALL) {
+            isSelected = this.isSelectAllSelected();
+        } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
+            isSelected = this.isAddCurrentSelectionToFilterChecked();
         } else {
-            if (item === SET_FILTER_SELECT_ALL) {
-                isSelected = this.isSelectAllSelected();
-            } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
-                isSelected = this.isAddCurrentSelectionToFilterChecked();
-            } else {
-                isSelected = this.selectedKeys.has(item);
-            }
+            isSelected = this.selectedKeys.has(item);
         }
         return { isSelected, isExpanded };
     }
@@ -1031,7 +1031,7 @@ export class SetFilter<V = string>
         const formattedFilterText = handler.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && handler.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
+            valueToCheck != null && handler.caseFormat(valueToCheck).includes(formattedFilterText);
 
         const nullMatchesFilter = !!this.params.excelMode && matchesFilter(translateForSetFilter(this, 'blanks'));
 
@@ -1178,7 +1178,9 @@ export class SetFilter<V = string>
     public override destroy(): void {
         (this.virtualList as any) = this.destroyBean(this.virtualList);
 
-        this.handlerDestroyFuncs?.forEach((func) => func());
+        for (const func of this.handlerDestroyFuncs ?? []) {
+            func();
+        }
 
         (this.handler as any) = undefined;
         (this.displayValueModel as any) = undefined;

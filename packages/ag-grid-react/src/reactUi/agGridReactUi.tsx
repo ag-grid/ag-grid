@@ -4,6 +4,7 @@ import React, {
     useContext,
     useEffect,
     useImperativeHandle,
+    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -38,6 +39,7 @@ import {
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
+import { CustomOverlayComponentWrapper } from '../shared/customComp/customOverlayComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
@@ -45,9 +47,7 @@ import { FilterDisplayComponentWrapper } from '../shared/customComp/filterDispla
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
 import { FloatingFilterDisplayComponentWrapper } from '../shared/customComp/floatingFilterDisplayComponentWrapper';
 import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderComponentWrapper';
-import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
 import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
-import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
@@ -96,10 +96,39 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
+    const appliedClassName = useRef<string>();
+    const updateClassName = (classNameFromReact: string | undefined) => {
+        // Fix for AG-16224. The grid sets the className on the div using
+        // el.classList, so we must use classList too - if we did
+        // `className={props.className}` we would overwrite the grid's changes
+        const classList = eGui.current?.classList;
+        const splitClasses = (s = '') => s.trim().split(/\s+/g).filter(Boolean);
+        if (appliedClassName.current !== classNameFromReact) {
+            for (const cls of splitClasses(appliedClassName.current)) {
+                if (classList?.contains(cls)) {
+                    classList.remove(cls);
+                }
+            }
+            for (const cls of splitClasses(classNameFromReact)) {
+                if (!classList?.contains(cls)) {
+                    classList?.add(cls);
+                }
+            }
+            appliedClassName.current = classNameFromReact;
+        }
+    };
+
+    useLayoutEffect(() => {
+        updateClassName(props.className);
+    }, [props.className]);
+
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
+        updateClassName(props.className);
         if (!eRef) {
-            destroyFuncs.current.forEach((f) => f());
+            for (const f of destroyFuncs.current) {
+                f();
+            }
             destroyFuncs.current.length = 0;
             return;
         }
@@ -188,7 +217,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
                     },
                 },
                 () => {
-                    whenReadyFuncs.current.forEach((f) => f());
+                    for (const f of whenReadyFuncs.current) {
+                        f();
+                    }
                     whenReadyFuncs.current.length = 0;
                     ready.current = true;
                 }
@@ -243,7 +274,9 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             ? 'legacy'
             : 'default';
     return (
-        <div style={style} className={props.className} ref={setRef}>
+        // IMPORTANT! Don't set className here, we must use classList
+        // imperatively to avoid removing classes set by the grid
+        <div style={style} ref={setRef}>
             <RenderModeContext.Provider value={renderMode}>
                 {context && !context.isDestroyed() ? <GridComp key={context.instanceId} context={context} /> : null}
                 {portalManager.current?.getPortals() ?? null}
@@ -254,18 +287,18 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
 
 function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
     const changes: { [p: string]: any } = {};
-    Object.keys(nextProps).forEach((propKey) => {
+    for (const propKey of Object.keys(nextProps)) {
         if (excludeReactCompProps.has(propKey)) {
             if (deprecatedReactCompProps.has(propKey)) {
                 _warn(274, { prop: propKey });
             }
-            return;
+            continue;
         }
         const propValue = nextProps[propKey];
         if (prevProps[propKey] !== propValue) {
             changes[propKey] = propValue;
         }
-    });
+    }
 
     return changes;
 }
@@ -300,9 +333,9 @@ class ReactFrameworkComponentWrapper
                     case 'dragAndDropImageComponent':
                         return DragAndDropImageComponentWrapper;
                     case 'loadingOverlayComponent':
-                        return LoadingOverlayComponentWrapper;
                     case 'noRowsOverlayComponent':
-                        return NoRowsOverlayComponentWrapper;
+                    case 'activeOverlay':
+                        return CustomOverlayComponentWrapper;
                     case 'statusPanel':
                         return StatusPanelComponentWrapper;
                     case 'toolPanel':
@@ -327,6 +360,7 @@ class ReactFrameworkComponentWrapper
                 case 'dragAndDropImageComponent':
                 case 'loadingOverlayComponent':
                 case 'noRowsOverlayComponent':
+                case 'activeOverlay':
                 case 'statusPanel':
                 case 'toolPanel':
                 case 'menuItem':

@@ -47,13 +47,9 @@ describe('ag-grid tree data without tree module', () => {
 
         consoleErrorSpy.mockRestore();
 
-        const gridRowsOptions = {
-            checkDom: true,
-            columns: true,
+        const gridRows = new GridRows(api, 'data', {
             treeData: false,
-        };
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:0 x:1

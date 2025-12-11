@@ -3,13 +3,6 @@ import type { AgFrameworkOverrides } from '../agStack/interfaces/agFrameworkOver
 import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
 export interface IFrameworkOverrides extends AgFrameworkOverrides {
-    /**
-     * This method is to cater for Angular's change detection.
-     * This is currently used for events that the user provides either via the component or via registration with the grid api.
-     * This method should not be implemented for the other frameworks to avoid unnecessary overhead.
-     */
-    wrapOutgoing: <T>(callback: () => T) => T;
-
     /** Used for Angular event listener wrapping */
     createLocalEventListenerWrapper?(
         existingFrameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined,

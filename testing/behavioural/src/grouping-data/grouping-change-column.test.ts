@@ -31,32 +31,29 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        let gridRows = new GridRows(api, 'column A', { columns: true, checkDom: true });
+        let gridRows = new GridRows(api, 'column A');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
-            · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"bob"
+            · └── LEAF id:0 1:"bob"
         `);
 
         api.setGridOption('columnDefs', columnDefsB);
 
-        gridRows = new GridRows(api, 'column B', {
-            columns: true,
-            checkDom: true,
-        });
+        gridRows = new GridRows(api, 'column B');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-cat ag-Grid-AutoColumn:"cat"
-            · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"cat"
+            · └── LEAF id:0 1:"cat"
         `);
 
         api.setGridOption('columnDefs', columnDefsA);
 
-        gridRows = new GridRows(api, 'column A (2)', { columns: true, checkDom: true });
+        gridRows = new GridRows(api, 'column A (2)');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ LEAF_GROUP id:row-group-1-bob ag-Grid-AutoColumn:"bob"
-            · └── LEAF id:0 ag-Grid-AutoColumn:undefined 1:"bob"
+            · └── LEAF id:0 1:"bob"
         `);
     });
 });

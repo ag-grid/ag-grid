@@ -3,9 +3,10 @@ import type {
     ICellEditorParams,
     KeyCreatorParams,
     RichCellEditorParams,
+    RichCellEditorValuesCallbackParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { AgAbstractCellEditor, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, _addGridCommonParams, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
@@ -13,7 +14,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     protected override params: RichCellEditorParams<TData, TValue>;
     private focusAfterAttached: boolean;
     protected eEditor: AgRichSelect<TValue>;
-    private isAsync: boolean = false;
+    private currentSearchRequest: number = 0;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -26,17 +27,21 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             _warn(180);
         }
 
-        const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
+        const { params: richSelectParams, valueList } = this.buildRichSelectParams();
         const richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
 
         this.eEditor = richSelect;
         richSelect.addCss('ag-cell-editor');
         this.appendChild(richSelect);
 
-        if (valuesPromise) {
-            this.isAsync = true;
-            valuesPromise.then((values: TValue[]) => {
-                richSelect.setValueList({ valueList: values, refresh: true });
+        if (this.isFullAsync()) {
+            richSelect.showPicker();
+        }
+        this.eEditor.setValueList({ valueList, refresh: true, isInitial: true });
+
+        const isOneTimeAsync = valueList && !Array.isArray(valueList);
+        if (isOneTimeAsync) {
+            valueList.then((values) => {
                 const searchStringCallback = this.getSearchStringCallback(values);
                 if (searchStringCallback) {
                     richSelect.setSearchStringCreator(searchStringCallback);
@@ -60,10 +65,56 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         }
     }
 
-    private buildRichSelectParams(): { params: RichSelectParams<TValue>; valuesPromise?: Promise<TValue[]> } {
+    private getPlaceholderText(): string {
+        const { valuePlaceholder } = this.params;
+
+        if (valuePlaceholder !== undefined) {
+            return valuePlaceholder;
+        }
+        const i18n = this.getLocaleTextFunc();
+        return this.isFullAsync()
+            ? i18n('typeToSearchOoo', 'Type to search...')
+            : i18n('advancedFilterBuilderSelectOption', 'Select an option...');
+    }
+
+    private isFullAsync(): boolean {
+        const { allowTyping, filterListAsync, values } = this.params;
+        const isSyncOrAsyncOrFullAsync = typeof values === 'function';
+
+        if (!isSyncOrAsyncOrFullAsync && filterListAsync) {
+            _warn(294);
+        }
+        return !!(allowTyping && filterListAsync && typeof values === 'function');
+    }
+
+    private getInitialValueList() {
+        const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
+        const { values } = params;
+        const maybeItIsFullAsync = this.isFullAsync();
+        const isSync = Array.isArray(values) || !values;
+        const isSyncOrAsyncOrFullAsync = typeof values === 'function';
+
+        if (isSync) {
+            return values ?? [];
+        }
+        if (!isSyncOrAsyncOrFullAsync) {
+            return [];
+        }
+        if (maybeItIsFullAsync) {
+            // we never call values() with empty search string, even if initial
+            return;
+        }
+        return values({ ...params });
+    }
+
+    private buildRichSelectParams(): {
+        params: RichSelectParams<TValue>;
+        valueList?: TValue[] | Promise<TValue[]>;
+    } {
         const params = this.params;
         const {
             cellRenderer,
+            cellRendererParams,
             cellHeight,
             value,
             values,
@@ -76,7 +127,6 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             filterList,
             searchType,
             highlightMatch,
-            valuePlaceholder,
             eventKey,
             multiSelect,
             suppressDeselectAll,
@@ -84,8 +134,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
         } = params;
 
         const ret: RichSelectParams = {
-            value: value,
+            value,
             cellRenderer,
+            cellRendererParams,
             cellRowHeight: cellHeight,
             searchDebounceDelay,
             valueFormatter: formatValue,
@@ -99,36 +150,77 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             highlightMatch,
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth,
-            placeholder: valuePlaceholder,
-            initialInputValue: eventKey?.length === 1 ? eventKey : undefined,
+            placeholder: this.getPlaceholderText(),
+            initialInputValue: eventKey?.length === 1 ? eventKey : eventKey === KeyCode.BACKSPACE ? '' : undefined,
             multiSelect,
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
         };
 
-        let valuesResult;
-        let valuesPromise;
+        const valueList = this.getInitialValueList();
 
-        if (typeof values === 'function') {
-            valuesResult = values(params as ICellEditorParams);
-        } else {
-            valuesResult = values ?? [];
-        }
+        const maybeItIsFullAsync = this.isFullAsync();
+        const isSync = Array.isArray(values);
+        const isSyncOrAsyncOrFullAsync = typeof values === 'function';
 
-        if (Array.isArray(valuesResult)) {
-            ret.valueList = valuesResult;
-            ret.searchStringCreator = this.getSearchStringCallback(valuesResult);
-        } else {
-            valuesPromise = valuesResult;
+        if (isSync) {
+            ret.valueList = valueList as any[];
+            ret.searchStringCreator = this.getSearchStringCallback(valueList as any[]);
+        } else if (isSyncOrAsyncOrFullAsync && maybeItIsFullAsync) {
+            ret.onSearch = this.onSearchCallback;
+            ret.allowNoResultsCopy = true;
+            ret.filterList = true; // force filterList when doing full async
         }
 
         if (multiSelect && allowTyping) {
-            params.allowTyping = ret.allowTyping = false;
+            params.allowTyping = false;
+            ret.allowTyping = false;
             _warn(181);
         }
 
-        return { params: ret, valuesPromise };
+        return { params: ret, valueList };
     }
+
+    private readonly onSearchCallback = (searchString: string): void => {
+        const currentRequest = ++this.currentSearchRequest;
+        const richSelect = this.eEditor;
+        richSelect.setValueList({ refresh: true, valueList: undefined }); // undefined removes any previous value list and also removes any label like 'No matches'
+        const params = this.params as RichCellEditorValuesCallbackParams<TData, TValue>;
+
+        params.search = searchString;
+        if (!params.search) {
+            // if search input is empty or has initial cell value, hide the picker
+            // it is consistent with the requirement of not calling values() with empty search
+            return;
+        }
+
+        if (typeof params.values !== 'function') {
+            if (this.isFullAsync()) {
+                _warn(294);
+            }
+            // should be impossible, but potentially allow sync values here
+            return;
+        }
+        const valuesPromise = params.values(params);
+        if (Array.isArray(valuesPromise)) {
+            // this is only possible due to grid misconfiguration, in which case handle it gracefully
+            if (this.isFullAsync()) {
+                _warn(294);
+            }
+            richSelect.setValueList({ refresh: true, valueList: valuesPromise });
+            return;
+        }
+        richSelect.setValueList({
+            valueList: valuesPromise.then((results) => {
+                // only set the results if this is the latest search request
+                // this avoids out of order responses messing up the results
+                if (currentRequest === this.currentSearchRequest) {
+                    return results;
+                }
+            }),
+            refresh: true,
+        });
+    };
 
     private getSearchStringCallback(values: TValue[]): ((values: TValue[]) => string[]) | undefined {
         if (typeof values[0] !== 'object') {
@@ -163,7 +255,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
     }
 
     // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
+    // virtual row logic needs info about the gui state.
     public afterGuiAttached(): void {
         const { focusAfterAttached, params } = this;
 
@@ -188,9 +280,7 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
                 richSelect.showPicker();
             }
 
-            if (!this.isAsync) {
-                this.processEventKey(eventKey);
-            }
+            this.processEventKey(eventKey);
         });
     }
 
@@ -199,7 +289,9 @@ export class RichSelectCellEditor<TData = any, TValue = any, TContext = any> ext
             return;
         }
 
-        if (eventKey?.length === 1) {
+        if (eventKey === KeyCode.BACKSPACE) {
+            this.eEditor.searchTextFromString(null);
+        } else if (eventKey?.length === 1) {
             this.eEditor.searchTextFromString(eventKey);
         }
     }

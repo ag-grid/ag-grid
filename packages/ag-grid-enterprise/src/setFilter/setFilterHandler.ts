@@ -145,7 +145,7 @@ export class SetFilterHandler<TValue = string>
     }
 
     private getFormattedValue(key: string | null): string | null {
-        let value: TValue | string | null = this.valueModel.getValueForFormatter(key)!;
+        let value: TValue | string | null = this.valueModel.getValueForFormatter(key);
         if (this.noValueFormatterSupplied && this.isTreeDataOrGrouping() && Array.isArray(value)) {
             // essentially get back the cell value
             value = _last(value) as string;
@@ -314,20 +314,21 @@ export class SetFilterHandler<TValue = string>
                 }
             }
             const numNewValues = newValues.length;
-            if (numNewValues === 0 && params.filterParams.excelMode) {
+            const filterParams = params.filterParams;
+            if (numNewValues === 0 && filterParams.excelMode) {
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
             const clearOnAllSelected =
-                this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
-                !params.filterParams.suppressClearModelOnRefreshValues;
+                !filterParams.defaultToNothingSelected &&
+                (this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ||
+                    !filterParams.suppressClearModelOnRefreshValues);
             const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
 
             if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model
                 const newModel = allSelected ? null : { filterType: this.filterType, values: newValues };
                 params.onModelChange(newModel, additionalEventAttributes);
-                return;
             }
         });
     }
@@ -378,7 +379,7 @@ export class SetFilterHandler<TValue = string>
         if (keyCreator) {
             return (value, node = null) => {
                 const params = this.getKeyCreatorParams(value, node);
-                return _makeNull(keyCreator!(params));
+                return _makeNull(keyCreator(params));
             };
         }
         return (value) => _makeNull(_toStringOrNull(value));

@@ -1,12 +1,12 @@
 import { KeyCode } from '../agStack/constants/keyCode';
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
+import type { IAriaAnnouncementService } from '../agStack/interfaces/iAriaAnnouncementService';
 import { _setAriaDisabled } from '../agStack/utils/aria';
 import type { BeanCollection } from '../context/context';
 import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { ElementParams } from '../utils/element';
 import { _addFocusableContainerListener, _focusGridInnerElement } from '../utils/gridFocus';
 import { _createIconNoSpan } from '../utils/icon';
@@ -21,7 +21,7 @@ import type { PaginationService } from './paginationService';
 class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
     private pagination: PaginationService;
-    private ariaAnnounce?: AriaAnnouncementService;
+    private ariaAnnounce: IAriaAnnouncementService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
@@ -121,12 +121,12 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
         if (!this.areListenersSetup) {
             this.addManagedEventListeners({ paginationChanged: this.onPaginationChanged.bind(this) });
 
-            [
+            for (const item of [
                 { el: this.btFirst, fn: this.onBtFirst.bind(this) },
                 { el: this.btPrevious, fn: this.onBtPrevious.bind(this) },
                 { el: this.btNext, fn: this.onBtNext.bind(this) },
                 { el: this.btLast, fn: this.onBtLast.bind(this) },
-            ].forEach((item) => {
+            ]) {
                 const { el, fn } = item;
                 this.addManagedListeners(el, {
                     click: fn,
@@ -137,7 +137,7 @@ class PaginationComp extends TabGuardComp implements FocusableContainer {
                         }
                     },
                 });
-            });
+            }
 
             _addFocusableContainerListener(this.beans, this, this.getGui());
 

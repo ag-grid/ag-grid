@@ -24,3 +24,7 @@ export function _escapeString(toEscape?: string | null): string | null {
     // in react we don't need to escape html characters, as it's done by the framework
     return _toString(toEscape)?.replace(reUnescapedHtml, (chr) => HTML_ESCAPES[chr]) ?? null;
 }
+
+export function _isExpressionString(value: unknown): value is `=${string}` {
+    return typeof value === 'string' && value.startsWith('=') && value.length > 1;
+}

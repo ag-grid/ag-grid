@@ -99,6 +99,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressMaxRenderedRowRestriction: false,
     suppressRowVirtualisation: false,
     rowDragManaged: false,
+    refreshAfterGroupEdit: false,
     rowDragInsertDelay: 500,
     suppressRowDrag: false,
     suppressMoveWhenRowDragging: false,
@@ -175,7 +176,6 @@ export const GRID_OPTION_DEFAULTS = {
     columnMenu: 'new',
     reactiveCustomComponents: true,
     suppressSetFilterByDefault: false,
-    rowNumbers: false,
     enableFilterHandlers: false,
 } as const;
 /**

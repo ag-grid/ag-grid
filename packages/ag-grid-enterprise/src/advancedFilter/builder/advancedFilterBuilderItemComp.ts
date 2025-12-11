@@ -281,12 +281,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
         this.addManagedListeners(this.eRemoveButton, {
             click: () => this.removeItem(),
             keydown: (event: KeyboardEvent) => {
-                switch (event.key) {
-                    case KeyCode.ENTER:
-                        event.preventDefault();
-                        _stopPropagationForAgGrid(event);
-                        this.removeItem();
-                        break;
+                if (event.key === KeyCode.ENTER) {
+                    event.preventDefault();
+                    _stopPropagationForAgGrid(event);
+                    this.removeItem();
                 }
             },
         });
@@ -310,12 +308,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.addManagedListeners(this.eMoveUpButton, {
                 click: () => this.moveItem(true),
                 keydown: (event: KeyboardEvent) => {
-                    switch (event.key) {
-                        case KeyCode.ENTER:
-                            event.preventDefault();
-                            _stopPropagationForAgGrid(event);
-                            this.moveItem(true);
-                            break;
+                    if (event.key === KeyCode.ENTER) {
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.moveItem(true);
                     }
                 },
             });
@@ -339,12 +335,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             this.addManagedListeners(this.eMoveDownButton, {
                 click: () => this.moveItem(false),
                 keydown: (event: KeyboardEvent) => {
-                    switch (event.key) {
-                        case KeyCode.ENTER:
-                            event.preventDefault();
-                            _stopPropagationForAgGrid(event);
-                            this.moveItem(false);
-                            break;
+                    if (event.key === KeyCode.ENTER) {
+                        event.preventDefault();
+                        _stopPropagationForAgGrid(event);
+                        this.moveItem(false);
                     }
                 },
             });

@@ -10,6 +10,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
+import { CssClassManager } from '../rendering/cssClassManager';
 import type { AgElementParams } from '../utils/dom';
 import {
     DataRefAttribute,
@@ -20,11 +21,10 @@ import {
     _setVisible,
 } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
-import { CssClassManager } from './cssClassManager';
 
 let compIdSequence = 0;
 
-export abstract class AgComponentStub<
+export class AgComponentStub<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
         TProperties extends BaseProperties,
         TGlobalEvents extends BaseEvents,
@@ -84,7 +84,9 @@ export abstract class AgComponentStub<
     public preConstruct(): void {
         this.wireTemplate(this.getGui());
         const debugId = 'component-' + Object.getPrototypeOf(this)?.constructor?.name;
-        this.css?.forEach((css) => this.beans.environment.addGlobalCSS(css, debugId));
+        for (const css of this.css ?? []) {
+            this.beans.environment.addGlobalCSS(css, debugId);
+        }
     }
 
     private wireTemplate(element: HTMLElement | undefined, paramsMap?: { [key: string]: any }): void {
@@ -148,9 +150,9 @@ export abstract class AgComponentStub<
             childNodeList.push(childNode);
         }
 
-        childNodeList.forEach((childNode) => {
+        for (const childNode of childNodeList) {
             if (!(childNode instanceof HTMLElement)) {
-                return;
+                continue;
             }
 
             const childComp = this.createComponentFromElement(
@@ -182,7 +184,7 @@ export abstract class AgComponentStub<
             } else if (childNode.childNodes) {
                 this.createChildComponentsFromTags(childNode, paramsMap);
             }
-        });
+        }
     }
 
     private createComponentFromElement(
@@ -230,8 +232,8 @@ export abstract class AgComponentStub<
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
     }
 
-    protected activateTabIndex(elements?: Element[]): void {
-        const tabIndex = this.gos.get('tabIndex')!;
+    protected activateTabIndex(elements?: Element[], overrideTabIndex?: number): void {
+        const tabIndex = overrideTabIndex ?? this.gos.get('tabIndex')!;
 
         if (!elements) {
             elements = [];
@@ -241,7 +243,9 @@ export abstract class AgComponentStub<
             elements.push(this.getGui());
         }
 
-        elements.forEach((el) => el.setAttribute('tabindex', tabIndex.toString()));
+        for (const el of elements) {
+            el.setAttribute('tabindex', tabIndex.toString());
+        }
     }
 
     protected setTemplate(

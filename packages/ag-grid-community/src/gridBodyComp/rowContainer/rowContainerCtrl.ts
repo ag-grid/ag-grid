@@ -293,7 +293,9 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     private registerWithCtrlsService(): void {
         // we don't register full width containers
-        if (this.options.fullWidth) return;
+        if (this.options.fullWidth) {
+            return;
+        }
         this.beans.ctrlsSvc.register(this.name as any, this);
     }
 
@@ -373,7 +375,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         if (spannedRowRenderer && this.options.getSpannedRowCtrls && gos.get('enableCellSpan')) {
             this.addManagedListeners(spannedRowRenderer, {
                 spannedRowsUpdated: () => {
-                    const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer!);
+                    const spannedCtrls = this.options.getSpannedRowCtrls!(spannedRowRenderer);
                     if (!spannedCtrls) {
                         return;
                     }
@@ -413,7 +415,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
         const preventScroll = (e: TouchEvent) => {
-            if (dragSvc!.dragging) {
+            if (dragSvc.dragging) {
                 if (e.cancelable) {
                     e.preventDefault();
                 }

@@ -1,5 +1,67 @@
 [
     {
+        "version": "35.0.0",
+        "date": "10th December 2025",
+        "landingPageHighlight": "Formulas, Row Group Dragging, Absolute Sorting, Column Selection, Filtering & Export Overlays",
+        "highlights": [
+            {
+                "text": "Formulas",
+                "path": "./formulas/"
+            },
+            {
+                "text": "Row Group Dragging",
+                "path": "./grouping-row-dragging/"
+            },
+            {
+                "text": "Absolute Sorting",
+                "path": "./row-sorting/#absolute-sorting"
+            },
+            {
+                "text": "Column Selection",
+                "path": "./cell-selection/#selecting-cells-via-column-headers"
+            },
+            {
+                "text": "Filtering & Export Overlays",
+                "path": "./overlays-overview/"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35",
+        "hideBlogPostLink": false
+    },
+    {
+        "version": "34.3.1",
+        "date": "29th October 2025"
+    },
+    {
+        "version": "34.3.0",
+        "date": "22nd October 2025",
+        "landingPageHighlight": "MCP Server, AI Toolkit, Scaled Column Auto-Sizing, Date and Time Pivoting, React 19.2 Support",
+        "highlights": [
+            {
+                "text": "MCP Server",
+                "path": "./mcp-server"
+            },
+            {
+                "text": "AI Toolkit",
+                "path": "./ai-toolkit"
+            },
+            {
+                "text": "Scaled Column Auto-Sizing",
+                "path": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
+            },
+            {
+                "text": "Date and Time Pivoting",
+                "path": "./pivoting-column-groups/#pivoting-by-dates-and-times"
+            },
+            {
+                "text": "React 19.2 Support",
+                "path": "https://www.ag-grid.com/react-data-grid/compatibility/#ag-grid--react-compatibility-chart"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-34-3",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "34.2.0",
         "date": "10th September 2025",
         "landingPageHighlight": "Date and Time Grouping, Tool Panels Displayed Outside of grid, Expand/Collapse all group rows in the server-side row model, Clipboard and Row Dragging Improvements",
@@ -98,6 +160,14 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-34",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "33.3.2",
+        "date": "4th June 2025"
+    },
+    {
+        "version": "33.3.1",
+        "date": "28th May 2025"
     },
     {
         "version": "33.3.0",
@@ -313,7 +383,7 @@
             },
             {
                 "text": "Custom Drag & Drop Image",
-                "path": "./row-dragging/#custom-drag-and-drop-image"
+                "path": "./row-dragging-customisation/#custom-drag-and-drop-image"
             },
             {
                 "text": "Deferred Column Moving Mode",

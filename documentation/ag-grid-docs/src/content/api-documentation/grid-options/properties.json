@@ -324,6 +324,10 @@
                 "name": "Auto-Size Columns to Fit Cell Contents",
                 "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
+        },
+        "animateColumnResizing": {
+            "more": "Auto-Size Columns to Fit Cell Contents",
+            "url": "./column-sizing/#auto-size-columns-to-fit-cell-contents"
         }
     },
     "columnPinning": {
@@ -861,13 +865,49 @@
             "displayName": "Overlays",
             "page": {
                 "name": "Overlays",
-                "url": "./overlays/"
+                "url": "./overlays-overview/"
             }
         },
         "loading": {
             "more": {
                 "name": "Loading Overlay",
-                "url": "./overlays/#loading-overlay"
+                "url": "./overlays-provided/#loading"
+            }
+        },
+        "overlayComponent": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "overlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "overlayComponentSelector": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "suppressOverlays": {
+            "more": {
+                "name": "Suppress Overlays",
+                "url": "./overlays-provided/#suppress-overlays"
+            }
+        },
+        "activeOverlay": {
+            "more": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        },
+        "activeOverlayParams": {
+            "more": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
             }
         },
         "overlayLoadingTemplate": {
@@ -877,7 +917,6 @@
             }
         },
         "loadingOverlayComponent": {
-            "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
                 "url": "./overlays/"
@@ -902,7 +941,6 @@
             }
         },
         "noRowsOverlayComponent": {
-            "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
                 "url": "./overlays/"
@@ -1065,6 +1103,17 @@
         "alwaysAggregateAtRootLevel": {},
         "getGroupRowAgg": {}
     },
+    "formulas": {
+        "meta": {
+            "displayName": "Formulas",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
+        "formulaDataSource": {},
+        "formulaFuncs": {}
+    },
     "rowPivoting": {
         "meta": {
             "displayName": "Row Pivoting",
@@ -1223,49 +1272,49 @@
         "rowDragManaged": {
             "more": {
                 "name": "Managed Row Dragging",
-                "url": "./row-dragging/#managed-dragging"
+                "url": "./row-dragging-managed/"
             }
         },
         "rowDragEntireRow": {
             "more": {
                 "name": "Entire Row Dragging",
-                "url": "./row-dragging/#entire-row-dragging"
+                "url": "./row-dragging-customisation/#entire-row-dragging"
             }
         },
         "rowDragMultiRow": {
             "more": {
                 "name": "Mulit-Row Dragging",
-                "url": "./row-dragging/#multi-row-dragging"
+                "url": "./row-dragging-managed/#multi-row-dragging"
             }
         },
         "suppressRowDrag": {
             "more": {
                 "name": "Suppress Row Drag",
-                "url": "./row-dragging/#suppress-row-drag"
+                "url": "./row-dragging-managed/#suppress-row-drag"
             }
         },
         "suppressMoveWhenRowDragging": {
             "more": {
                 "name": "Suppress Move When Dragging",
-                "url": "./row-dragging/#suppress-move-when-dragging"
+                "url": "./row-dragging-managed/#suppress-move-when-dragging"
             }
         },
         "rowDragText": {
             "more": {
                 "name": "Custom Row Drag Text",
-                "url": "./row-dragging/#custom-row-drag-text"
+                "url": "./row-dragging-customisation/#custom-row-drag-text"
             }
         },
         "dragAndDropImageComponent": {
             "more": {
                 "name": "Custom Drag and Drop Image",
-                "url": "./row-dragging/#custom-drag-and-drop-image"
+                "url": "./row-dragging-customisation/#custom-drag-and-drop-image"
             }
         },
         "dragAndDropImageComponentParams": {
             "more": {
                 "name": "Custom Drag and Drop Image",
-                "url": "./row-dragging/#custom-params"
+                "url": "./row-dragging-customisation/#custom-params"
             }
         },
         "rowDragInsertDelay": {
@@ -1433,6 +1482,12 @@
             "more": {
                 "name": "Row Grouping - Expand All / Collapse All",
                 "url": "./server-side-model-grouping/#expand-all--collapse-all"
+            }
+        },
+        "refreshAfterGroupEdit": {
+            "more": {
+                "name": "Row Grouping - Editing Groups",
+                "url": "./grouping-edit"
             }
         }
     },
@@ -1980,7 +2035,7 @@
         "themeCssLayer": {
             "more": {
                 "name": "CSS Layers",
-                "url": "./theming-css/#css-layers"
+                "url": "./theming/#css-layers"
             }
         },
         "styleNonce": {

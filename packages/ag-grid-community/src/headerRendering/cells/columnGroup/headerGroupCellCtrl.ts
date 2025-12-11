@@ -8,9 +8,10 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
-import { _addGridCommonParams } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
+import { _getActiveDomElement } from '../../../main';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -38,6 +39,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private expandable: boolean;
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
+    private ariaAnnouncement?: string;
 
     public override wireComp(
         comp: IHeaderGroupCellComp,
@@ -59,6 +61,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupMovingCss(compBean);
         this.setupExpandable(compBean);
         this.setupTooltip();
+        this.refreshAnnouncement();
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
@@ -66,7 +69,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
 
         this.setupUserComp();
-        this.addHeaderMouseListeners(compBean);
+        this.addHeaderMouseListeners(compBean, eHeaderCompWrapper);
 
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
@@ -96,6 +99,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         );
 
         this.addHighlightListeners(compBean, leafCols);
+
+        this.addManagedEventListeners({
+            cellSelectionChanged: () => this.refreshAnnouncement(),
+        });
 
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
@@ -240,12 +247,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    private addHeaderMouseListeners(compBean: BeanStub): void {
+    private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
+        const {
+            column,
+            comp,
+            beans: { rangeSvc },
+            gos,
+        } = this;
+
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () =>
-            this.dispatchColumnMouseEvent('columnHeaderClicked', this.column.getProvidedColumnGroup());
+            this.dispatchColumnMouseEvent('columnHeaderClicked', column.getProvidedColumnGroup());
         const contextMenuListener = (event: MouseEvent) =>
-            this.handleContextMenuMouseEvent(event, undefined, this.column.getProvidedColumnGroup());
+            this.handleContextMenuMouseEvent(event, undefined, column.getProvidedColumnGroup());
 
         compBean.addManagedListeners(this.eGui, {
             mouseenter: listener,
@@ -253,6 +267,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             click: clickListener,
             contextmenu: contextMenuListener,
         });
+
+        comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(gos));
+        const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(this.column, eHeaderCompWrapper);
+        if (mouseListener) {
+            this.createManagedBean(mouseListener);
+        }
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
@@ -317,7 +337,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             }
         }
 
-        classes.forEach((c) => this.comp.toggleCss(c, true));
+        for (const c of classes) {
+            this.comp.toggleCss(c, true);
+        }
     }
 
     private setupMovingCss(compBean: BeanStub): void {
@@ -330,9 +352,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         // user that the column was picked up).
         const listener = () => this.comp.toggleCss('ag-header-cell-moving', column.isMoving());
 
-        leafColumns.forEach((col) => {
+        for (const col of leafColumns) {
             compBean.addManagedListeners(col, { movingChanged: listener });
-        });
+        }
 
         listener();
     }
@@ -340,16 +362,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private readonly onSuppressColMoveChange = () => {
         if (!this.isAlive() || this.isSuppressMoving()) {
             this.removeDragSource();
-        } else {
-            if (!this.dragSource) {
-                this.setDragSource(this.eGui);
-            }
+        } else if (!this.dragSource) {
+            this.setDragSource(this.eGui);
         }
     };
 
     private onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             this.focusThis();
+            this.announceAriaDescription();
         }
     }
 
@@ -358,20 +379,54 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         const wrapperHasFocus = this.getWrapperHasFocus();
 
-        if (!this.expandable || !wrapperHasFocus) {
+        if (!wrapperHasFocus) {
             return;
         }
 
-        if (e.key === KeyCode.ENTER) {
-            const column = this.column;
+        const { column, expandable, gos, beans } = this;
+        const enableColumnSelection = _getEnableColumnSelection(gos);
+
+        if (e.key != KeyCode.ENTER) {
+            return;
+        }
+
+        if (enableColumnSelection && !e.altKey) {
+            beans.rangeSvc?.handleColumnSelection(column, e);
+        } else if (expandable) {
             const newExpandedValue = !column.isExpanded();
 
-            this.beans.colGroupSvc!.setColumnGroupOpened(
+            beans.colGroupSvc!.setColumnGroupOpened(
                 column.getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );
         }
+    }
+
+    private refreshAnnouncement(): void {
+        let description: string | undefined;
+        const { gos, column, beans } = this;
+        const enableColumnSelection = _getEnableColumnSelection(gos);
+
+        if (enableColumnSelection) {
+            const translate = this.getLocaleTextFunc();
+            const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
+            description = translate(
+                'ariaColumnCellSelection',
+                `Press CTRL+SPACE to ${colSelected ? 'de' : ''}select all visible cells in this column group`
+            );
+        }
+
+        this.ariaAnnouncement = description;
+    }
+
+    private announceAriaDescription(): void {
+        const { beans, eGui, ariaAnnouncement } = this;
+        if (!ariaAnnouncement || !eGui.contains(_getActiveDomElement(beans))) {
+            return;
+        }
+
+        beans.ariaAnnounce?.announceValue(ariaAnnouncement, 'columnHeader');
     }
 
     // unlike columns, this will only get called once, as we don't react on props on column groups

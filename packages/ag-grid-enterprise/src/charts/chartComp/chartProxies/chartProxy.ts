@@ -38,7 +38,6 @@ export interface ChartProxyParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
-    suppressFieldDotNotation?: boolean;
     translate: (toTranslate: string, defaultText?: string) => string;
     context: GridChartContext;
 }
@@ -200,25 +199,15 @@ export abstract class ChartProxy<
             ...existingOptions,
             mode: 'integrated',
             ...(styleNonce ? { styleNonce } : {}),
-        } as const;
+            suppressFieldDotNotation: true,
+            theme,
+            container: this.chartProxyParams.parentElement,
+        };
 
-        // propagate setting if set
-        if (this.chartProxyParams.suppressFieldDotNotation !== undefined) {
-            newOptions.suppressFieldDotNotation = this.chartProxyParams.suppressFieldDotNotation;
-        }
-
-        newOptions.theme = theme;
-        newOptions.container = this.chartProxyParams.parentElement;
-        return newOptions;
+        return newOptions as TOptions & { mode: 'integrated' };
     }
 
     private getChartThemeDefaults(): AgChartThemeOverrides | undefined {
-        const seriesOverrides = this.getSeriesChartThemeDefaults();
-        const seriesChartOptions = seriesOverrides
-            ? {
-                  [this.standaloneChartType]: seriesOverrides,
-              }
-            : {};
         const crosshair: AgCrosshairOptions = {
             enabled: true,
             snap: true,
@@ -250,10 +239,19 @@ export abstract class ChartProxy<
             height: 18,
         };
         common.context = this.chartProxyParams.context;
-        return {
+        const overrides = {
             common,
-            ...seriesChartOptions,
         };
+        this.setSeriesChartThemeDefaults(overrides);
+        return overrides;
+    }
+
+    protected setSeriesChartThemeDefaults(overrides: AgChartThemeOverrides): void {
+        const seriesOverrides = this.getSeriesChartThemeDefaults();
+        if (!seriesOverrides) {
+            return;
+        }
+        overrides[this.standaloneChartType] = seriesOverrides;
     }
 
     protected getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {

@@ -1,31 +1,35 @@
 import type {
     Bean,
     BeanCollection,
+    GridOptions,
     GridOptionsService,
-    GroupingApproach,
     IRowNode,
+    NestedDataGetter,
+    RefreshModelParams,
     RowNode,
-    StageExecuteParams,
 } from 'ag-grid-community';
 
 export interface IRowGroupingStrategy<TData = any> extends Bean {
-    execute(params: StageExecuteParams<TData>, approach: GroupingApproach): boolean | undefined | void;
+    /** Getter for grid option treeDataChildrenField, only not null for tree nested data. */
+    readonly nestedDataGetter?: NestedDataGetter<TData> | null;
 
-    /** Called to reset the state when the strategy changes */
-    reset?(): void;
+    /** Map of group nodes (for grouping) or filler nodes (for treeData) by their id. Used by ClientSideRowModel. */
+    readonly nonLeafsById: ReadonlyMap<string, RowNode<TData>> | null;
 
-    /** Gets a group or a filler node, as those nodes do not exists in ClientSideNodeManager */
-    getNode(id: string): RowNode<TData> | undefined;
-}
+    onPropChange?(changedProps: ReadonlySet<keyof GridOptions<any>> | null): void;
 
-export interface GroupingRowNode<TData = any> extends RowNode<TData> {
-    parent: this | null;
-    allLeafChildren: this[] | null;
-    childrenAfterGroup: this[] | null;
-    treeParent: this | null;
-    treeNodeFlags: number;
-    sibling: this;
-    sourceRowIndex: number;
+    onShowRowGroupColsSetChanged(): void;
+
+    execute(rootNode: RowNode<TData>, params: RefreshModelParams<TData>): boolean | undefined | void;
+
+    /** Used to lazily compute and store groupData for a row node */
+    loadGroupData(node: RowNode<TData>): Record<string, any> | null;
+
+    /** Clears any cached group/filler nodes maintained by the strategy. */
+    clearNonLeafs(): void;
+
+    /** Called when row group columns changes */
+    invalidateGroupCols?(): void;
 }
 
 /**

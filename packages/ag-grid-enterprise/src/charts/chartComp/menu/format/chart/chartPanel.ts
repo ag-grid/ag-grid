@@ -1,8 +1,8 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { FormatPanelOptions } from '../formatPanel';
 import { BackgroundPanel } from './backgroundPanel';
@@ -14,7 +14,7 @@ export class ChartPanel extends Component {
     public wireBeans(beans: BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
-    private readonly chartGroup: AgGroupComponent = RefPlaceholder;
+    private readonly chartGroup: GroupComponent = RefPlaceholder;
 
     constructor(private readonly options: FormatPanelOptions) {
         super();
@@ -28,7 +28,7 @@ export class ChartPanel extends Component {
             registerGroupComponent,
         } = this.options;
 
-        const chartGroupParams: AgGroupComponentParams = {
+        const chartGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('chartStyle'),

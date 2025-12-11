@@ -1,4 +1,5 @@
 import { _exists, _missing } from '../agStack/utils/generic';
+import { _isExpressionString } from '../agStack/utils/string';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
@@ -16,6 +17,7 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _addGridCommonParams, _isServerSideRowModel } from '../gridOptionsUtils';
+import type { IFormulaDataService } from '../interfaces/formulas';
 import type { IEditService } from '../interfaces/iEditService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warn } from '../validation/logging';
@@ -31,6 +33,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private dataTypeSvc?: DataTypeService;
     private editSvc?: IEditService;
     private hasEditSvc: boolean = false;
+    private formulaDataSvc?: IFormulaDataService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -39,9 +42,11 @@ export class ValueService extends BeanStub implements NamedBean {
         this.dataTypeSvc = beans.dataTypeSvc;
         this.editSvc = beans.editSvc;
         this.hasEditSvc = !!beans.editSvc;
+        this.formulaDataSvc = beans.formulaDataSvc;
     }
 
     private cellExpressions: boolean;
+
     // Store locally for performance reasons and keep updated via property listener
     private isTreeData: boolean;
 
@@ -64,12 +69,13 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
-        this.executeValueGetter = this.valueCache
+        const { gos, valueCache } = this;
+        this.executeValueGetter = valueCache
             ? this.executeValueGetterWithValueCache.bind(this)
             : this.executeValueGetterWithoutValueCache.bind(this);
-        this.isSsrm = _isServerSideRowModel(this.gos);
-        this.cellExpressions = this.gos.get('enableCellExpressions');
-        this.isTreeData = this.gos.get('treeData');
+        this.isSsrm = _isServerSideRowModel(gos);
+        this.cellExpressions = gos.get('enableCellExpressions');
+        this.isTreeData = gos.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
@@ -86,16 +92,18 @@ export class ValueService extends BeanStub implements NamedBean {
      * The values from this function are not used for sorting, filtering, or aggregation purposes.
      * Handles: groupHideOpenParents, showOpenedGroup and groupSuppressBlankHeader behaviours
      */
-    public getValueForDisplay(
-        column: AgColumn | undefined,
-        node: IRowNode,
-        includeValueFormatted: boolean = false,
-        exporting: boolean = false,
-        source: 'ui' | 'api' = 'ui'
-    ): {
+    public getValueForDisplay(params: {
+        column?: AgColumn;
+        node: IRowNode;
+        includeValueFormatted?: boolean;
+        useRawFormula?: boolean;
+        exporting?: boolean;
+        source?: 'ui' | 'api';
+    }): {
         value: any;
         valueFormatted: string | null;
     } {
+        const { column, node, includeValueFormatted, useRawFormula, exporting, source = 'ui' } = params;
         const { showRowGroupColValueSvc } = this.beans;
         const isFullWidthGroup = !column && node.group;
         const isGroupCol = column?.colDef.showRowGroup;
@@ -145,12 +153,24 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenedGroup && !groupShowsAggData;
-        const value = this.getValue(column, node, ignoreAggData, source);
+        let value = this.getValue(column, node, ignoreAggData, source);
+        let valueToFormat = value;
 
+        const { formula } = this.beans;
         const format = includeValueFormatted && !(exporting && column.colDef.useValueFormatterForExport === false);
+        if (column.isAllowFormula() && formula?.isFormula(value)) {
+            if (useRawFormula) {
+                value = formula.normaliseFormula(value, true);
+                valueToFormat = formula.resolveValue(column, node as RowNode);
+            } else {
+                value = formula.resolveValue(column, node as RowNode);
+                valueToFormat = value;
+            }
+        }
+
         return {
             value,
-            valueFormatted: format ? this.formatValue(column, node, value) : null,
+            valueFormatted: format ? this.formatValue(column, node, valueToFormat) : null,
         };
     }
 
@@ -171,10 +191,6 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         // pull these out to make code below easier to read
-        const colDef = column.getColDef();
-        const field = colDef.field;
-        const colId = column.getColId();
-        const data = rowNode.data;
 
         if (this.hasEditSvc && source === 'ui') {
             const editSvc = this.editSvc!;
@@ -188,8 +204,7 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        let result: any;
-
+        const colDef = column.getColDef();
         // when using multiple columns, the group column should have no value higher than its level
         const rowGroupColId = colDef.showRowGroup;
         if (typeof rowGroupColId === 'string') {
@@ -200,12 +215,65 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
 
-        // don't retrieve group values from field or valueGetter for multiple auto cols
-        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
+        let result = this.resolveValue(column, rowNode, ignoreAggData);
+
+        // the result could be an expression itself, if we are allowing cell values to be expressions
+        if (this.cellExpressions && _isExpressionString(result)) {
+            const cellValueGetter = result.substring(1);
+            result = this.executeValueGetter(cellValueGetter, rowNode.data, column, rowNode);
+        }
+
+        return result;
+    }
+
+    private getFormulaFromDataSource(column: AgColumn, rowNode: IRowNode): string | undefined {
+        const dataSource = this.formulaDataSvc;
+        if (!dataSource?.hasDataSource() || !column.isAllowFormula()) {
+            return undefined;
+        }
+
+        const formula = dataSource.getFormula({ column, rowNode });
+        return _isExpressionString(formula) ? formula : undefined;
+    }
+
+    private resolveValue(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean): any {
+        const colDef = column.getColDef();
+        const colId = column.getColId();
+
+        const isTreeData = this.isTreeData;
+
+        const dataSourceFormula = this.getFormulaFromDataSource(column, rowNode);
+        if (dataSourceFormula !== undefined) {
+            return dataSourceFormula;
+        }
 
         // if there is a value getter, this gets precedence over a field
-        const groupDataExists = rowNode.groupData && colId in rowNode.groupData;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
+        if (isTreeData && aggDataExists) {
+            return rowNode.aggData[colId];
+        }
+
+        const data = rowNode.data;
+        const field = colDef.field;
+        if (isTreeData && colDef.valueGetter) {
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        }
+        if (isTreeData && field && data) {
+            return _getValueUsingField(data, field, column.isFieldContainsDots());
+        }
+
+        const groupData = rowNode.groupData;
+        const groupDataExists = groupData && colId in groupData;
+        if (groupDataExists) {
+            return rowNode.groupData![colId];
+        }
+        if (aggDataExists) {
+            return rowNode.aggData[colId];
+        }
+
+        // don't retrieve group values from field or valueGetter for multiple auto cols
+        const rowGroupColId = colDef.showRowGroup;
+        const allowUserValuesForCell = typeof rowGroupColId !== 'string' || !rowNode.group;
 
         // SSRM agg data comes from the data attribute, so ignore that instead
         const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!colDef.aggFunc;
@@ -213,45 +281,36 @@ export class ValueService extends BeanStub implements NamedBean {
             this.isSsrm &&
             rowNode.footer &&
             rowNode.field &&
-            (colDef.showRowGroup === true || colDef.showRowGroup === rowNode.field);
+            (rowGroupColId === true || rowGroupColId === rowNode.field);
 
-        if (this.isTreeData && aggDataExists) {
-            result = rowNode.aggData[colId];
-        } else if (this.isTreeData && colDef.valueGetter) {
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (this.isTreeData && field && data) {
-            result = _getValueUsingField(data, field, column.isFieldContainsDots());
-        } else if (groupDataExists) {
-            result = rowNode.groupData![colId];
-        } else if (aggDataExists) {
-            result = rowNode.aggData[colId];
-        } else if (colDef.valueGetter && !ignoreSsrmAggData) {
+        if (colDef.valueGetter && !ignoreSsrmAggData) {
             if (!allowUserValuesForCell) {
-                return result;
+                return undefined;
             }
-            result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (ssrmFooterGroupCol) {
+            return this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
+        }
+        if (ssrmFooterGroupCol) {
             // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
             // the group value from the data using the row field
-            result = _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
-        } else if (field && data && !ignoreSsrmAggData) {
+            return _getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
+        }
+        if (field && data && !ignoreSsrmAggData) {
             if (!allowUserValuesForCell) {
-                return result;
+                return undefined;
             }
-            result = _getValueUsingField(data, field, column.isFieldContainsDots());
+            return _getValueUsingField(data, field, column.isFieldContainsDots());
         }
 
-        // the result could be an expression itself, if we are allowing cell values to be expressions
-        if (this.cellExpressions && typeof result === 'string' && result.indexOf('=') === 0) {
-            const cellValueGetter = result.substring(1);
-            result = this.executeValueGetter(cellValueGetter, data, column, rowNode);
-        }
-
-        return result;
+        return undefined;
     }
 
     public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
         const colDef = column.getColDef();
+
+        // we do not allow parsing of formulas
+        if (colDef.allowFormula && this.beans.formula?.isFormula(newValue)) {
+            return newValue;
+        }
 
         const valueParser = colDef.valueParser;
 
@@ -274,7 +333,9 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
         if (_exists(column.getColDef().valueParser)) {
-            return this.parseValue(column, rowNode, '', this.getValueForDisplay(column, rowNode).value) ?? null;
+            return (
+                this.parseValue(column, rowNode, '', this.getValueForDisplay({ column, node: rowNode }).value) ?? null
+            );
         }
         return null;
     }
@@ -340,20 +401,10 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!rowNode || !column) {
             return false;
         }
-        // this happens when enableGroupEdit is turned on and editing is performed on group rows
-        if (_missing(rowNode.data)) {
-            rowNode.data = {};
-        }
+        this.ensureRowData(rowNode);
 
-        const { field, valueSetter } = column.getColDef();
-
-        if (_missing(field) && _missing(valueSetter)) {
-            _warn(17);
-            return false;
-        }
-
-        if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
-            _warn(135);
+        const colDef = column.getColDef();
+        if (!this.isSetValueSupported({ column, newValue, colDef })) {
             return false;
         }
 
@@ -362,23 +413,31 @@ export class ValueService extends BeanStub implements NamedBean {
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode, undefined, eventSource),
             newValue: newValue,
-            colDef: column.getColDef(),
+            colDef,
             column: column,
         });
 
         params.newValue = newValue;
 
-        let valueWasDifferent: boolean;
-
-        if (_exists(valueSetter)) {
-            if (typeof valueSetter === 'function') {
-                valueWasDifferent = valueSetter(params);
-            } else {
-                valueWasDifferent = this.expressionSvc?.evaluate(valueSetter, params);
-            }
-        } else {
-            valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
+        const externalFormulaResult = this.handleExternalFormulaChange({
+            column,
+            eventSource,
+            newValue,
+            setterParams: params,
+            rowNode,
+        });
+        if (externalFormulaResult !== null) {
+            return externalFormulaResult;
         }
+
+        let valueWasDifferent = this.computeValueChange({
+            column,
+            newValue,
+            params,
+            rowData: rowNode.data,
+            valueSetter: colDef.valueSetter,
+            field: colDef.field,
+        });
 
         // in case user forgot to return something (possible if they are not using TypeScript
         // and just forgot we default the return value to true, so we always refresh.
@@ -393,6 +452,15 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
+        return this.finishValueChange(rowNode, column, params, eventSource);
+    }
+
+    private finishValueChange(
+        rowNode: IRowNode,
+        column: AgColumn,
+        params: ValueSetterParams,
+        eventSource?: string
+    ): boolean {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
@@ -406,6 +474,108 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         return true;
+    }
+
+    private ensureRowData(rowNode: IRowNode): void {
+        // enableGroupEdit allows editing group rows without data.
+        if (_missing(rowNode.data)) {
+            rowNode.data = {};
+        }
+    }
+
+    private isSetValueSupported(params: {
+        column: AgColumn;
+        newValue: any;
+        colDef: ReturnType<AgColumn['getColDef']>;
+    }): boolean {
+        const { column, newValue, colDef } = params;
+        const { field, valueSetter } = colDef;
+
+        const formulaSvc = this.beans.formula;
+        const isFormulaValue = column.isAllowFormula() && formulaSvc?.isFormula(newValue);
+        const hasExternalFormulaData = !!this.formulaDataSvc?.hasDataSource();
+
+        if (_missing(field) && _missing(valueSetter) && !(hasExternalFormulaData && isFormulaValue)) {
+            _warn(17);
+            return false;
+        }
+
+        if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
+            _warn(135);
+            return false;
+        }
+
+        return true;
+    }
+
+    private handleExternalFormulaChange(args: {
+        column: AgColumn;
+        rowNode: IRowNode;
+        newValue: any;
+        setterParams: ValueSetterParams;
+        eventSource?: string;
+    }): boolean | null {
+        const { column, rowNode, newValue, eventSource, setterParams } = args;
+        const formulaSvc = this.beans.formula;
+        const formulaDataSvc = this.formulaDataSvc;
+        if (!formulaDataSvc?.hasDataSource() || !column.isAllowFormula()) {
+            return null;
+        }
+
+        const isFormulaValue = formulaSvc?.isFormula(newValue);
+        const existingFormula = formulaDataSvc.getFormula({ column, rowNode });
+
+        if (isFormulaValue) {
+            const valueWasDifferent = existingFormula !== newValue;
+            if (!valueWasDifferent) {
+                return false;
+            }
+
+            formulaDataSvc.setFormula({ column, rowNode, formula: newValue });
+
+            // Store the computed value into rowData for consumers that do not understand formulas.
+            const computedValue = formulaSvc?.resolveValue(column, rowNode as RowNode);
+            const colDef = column.getColDef();
+            if (_exists(colDef.valueSetter) || !_missing(colDef.field)) {
+                const computedParams: ValueSetterParams = { ...setterParams, newValue: computedValue };
+                this.computeValueChange({
+                    column,
+                    newValue: computedValue,
+                    params: computedParams,
+                    rowData: rowNode.data,
+                    valueSetter: colDef.valueSetter,
+                    field: colDef.field,
+                });
+            }
+
+            return this.finishValueChange(rowNode, column, setterParams, eventSource);
+        }
+
+        if (existingFormula !== undefined) {
+            formulaDataSvc.setFormula({ column, rowNode, formula: undefined });
+        }
+
+        return null;
+    }
+
+    private computeValueChange(params: {
+        valueSetter: ValueSetterParams['colDef']['valueSetter'];
+        params: ValueSetterParams;
+        rowData: any;
+        field: string | undefined;
+        column: AgColumn;
+        newValue: any;
+    }): boolean | undefined {
+        const { valueSetter, params: setterParams, rowData, field, column, newValue } = params;
+
+        if (_exists(valueSetter)) {
+            if (typeof valueSetter === 'function') {
+                return valueSetter(setterParams);
+            }
+            return this.expressionSvc?.evaluate(valueSetter, setterParams);
+        }
+
+        return this.setValueUsingField(rowData, field, newValue, column.isFieldContainsDots());
     }
 
     private dispatchCellValueChangedEvent(

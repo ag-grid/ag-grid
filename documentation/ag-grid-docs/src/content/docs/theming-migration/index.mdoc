@@ -214,7 +214,7 @@ If your application is split between multiple pages, it can be migrated one page
 
 If a single HTML document contains multiple grids, we recommend migrating all the grids at the same time if possible - this is the most straightforward way of avoiding conflicts between the v32 styles and the Theming API.
 
-In order to migrate one grid on a page that contains multiple grids, you can use shadow DOM to isolate grids using v32 styles from grids using the Theming API. Be aware however that this is an advanced technique and requires you to understand how shadow DOM works, and how it interacts with your framework and your application structure. Shadow DOM has other effects than simply isolating styles, and using it it may require code changes in your application.
+In order to migrate one grid on a page that contains multiple grids, you can use shadow DOM to isolate grids using v32 styles from grids using the Theming API. Be aware however that this is an advanced technique and requires you to understand how shadow DOM works, and how it interacts with your framework and your application structure. Shadow DOM has other effects than simply isolating styles, and using it may require code changes in your application.
 
 {% if isFramework("react") %}
 

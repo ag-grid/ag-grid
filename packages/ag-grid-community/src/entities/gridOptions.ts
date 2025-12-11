@@ -116,11 +116,7 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type {
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSize';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
@@ -129,6 +125,7 @@ import type {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
 } from '../interfaces/exportParams';
+import type { FormulaDataSource, FormulaFuncs } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
@@ -190,6 +187,7 @@ import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
+import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
@@ -505,10 +503,12 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    autoSizeStrategy?:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy;
+    autoSizeStrategy?: AutoSizeStrategy;
+    /**
+     * Set to `true` to animate changes to column width when auto-sizing the columns.
+     * @default false
+     */
+    animateColumnResizing?: boolean;
 
     // *** Components *** //
     /**
@@ -951,25 +951,34 @@ export interface GridOptions<TData = any> {
     // *** Overlays *** //
     /**
      * Show or hide the loading overlay.
+     * - `true`: the loading overlay is shown.
+     * - `false`: the loading overlay is hidden.
+     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
+     * @default undefined
      */
     loading?: boolean;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * @initial
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
+     *
+     * - **Prefer using `overlayComponentParams`**
      */
     loadingOverlayComponentParams?: any;
     /**
      * Disables the 'loading' overlay.
-     * @deprecated v32 - Deprecated. Use `loading=false` instead.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
      * @default false
      * @initial
      */
@@ -977,23 +986,69 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     overlayNoRowsTemplate?: string;
     /**
      * Provide a custom no-rows overlay component.
-     * @initial
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no-rows overlay component.
+     *
+     * - **Prefer using `overlayComponentParams`**
      */
     noRowsOverlayComponentParams?: any;
     /**
      * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
+     *
+     * - **Prefer `suppressOverlays=['noRows']`**
+     *
      * @default false
      * @initial
      */
     suppressNoRowsOverlay?: boolean;
+
+    /**
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+     */
+    suppressOverlays?: OverlayType[];
+
+    /**
+     * Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
+     * @initial
+     */
+    overlayComponent?: any;
+
+    /**
+     * Customise the parameters provided to the `overlayComponent`.
+     * Provided overlays accept parameters specified on the `OverlayComponentUserParams` interface.
+     * Any custom parameters can also be provided for custom overlay components.
+     */
+    overlayComponentParams?: any;
+
+    /**
+     * Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.
+     * @initial
+     */
+    overlayComponentSelector?: OverlaySelectorFunc<TData>;
+
+    /**
+     * Display an overlay on demand. If provided takes precedence over the grid provided overlays.
+     * - name of a provided overlay, i.e `agLoadingOverlay`, `agNoRowsOverlay`, `agNoMatchingRowsOverlay`, `agExportingOverlay`
+     * - component class/function.
+     * - key of a custom component registered in the `components` map.
+     * - `undefined` to clear.
+     */
+    activeOverlay?: any;
+
+    /**
+     * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
+     */
+    activeOverlayParams?: any;
 
     // *** Pagination *** //
     /**
@@ -1103,6 +1158,22 @@ export interface GridOptions<TData = any> {
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFuncs?: { [key: string]: IAggFunc<TData> };
+
+    /**
+     * Provide a data source to control where formulas are stored and retrieved.
+     * If not supplied, formulas are read from and written to the row data.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    formulaDataSource?: FormulaDataSource;
+
+    /**
+     * A map of 'function name' to 'function' for custom functions that are used for formulas.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    formulaFuncs?: FormulaFuncs;
+
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
@@ -1215,6 +1286,13 @@ export interface GridOptions<TData = any> {
      */
     rowDragManaged?: boolean;
     /**
+     * When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
+     * managed dragging only reorders rows inside their existing group.
+     * @default false
+     * @agModule `RowDragModule`
+     */
+    refreshAfterGroupEdit?: boolean;
+    /**
      * Used if rowDragManaged is enabled and treeData is enabled,
      * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
      * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
@@ -1307,9 +1385,10 @@ export interface GridOptions<TData = any> {
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
-    autoGroupColumnDef?: ColDef<TData>;
+    autoGroupColumnDef?: AutoGroupColumnDef<TData>;
     /**
      * When `true`, preserves the current group order when sorting on non-group columns.
+     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
      * @default false
      * @agModule `RowGroupingModule`
      */
@@ -1462,7 +1541,7 @@ export interface GridOptions<TData = any> {
     suppressGroupRowsSticky?: boolean;
 
     /**
-     * Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+     * Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
     groupHierarchyConfig?: { [k: string]: ColDef };
@@ -1949,10 +2028,13 @@ export interface GridOptions<TData = any> {
     loadThemeGoogleFonts?: boolean;
 
     /**
-     * The CSS layer that this theme should be rendered onto. If your
-     * application loads its styles into a CSS layer, use this to load the grid
-     * styles into a previous layer so that application styles can override grid
-     * styles.
+     * The CSS layer that this theme should be rendered onto. When specified,
+     * grid CSS will be wrapped in a `@layer ${themeCssLayer} { ... }` block.
+     *
+     * NOTE: when specifying `themeCssLayer` we recommend setting
+     * `themeStyleContainer` to `document.body` to ensure that the grid CSS
+     * comes after your application CSS, allowing your application to set the
+     * order of layers.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
@@ -1971,14 +2053,16 @@ export interface GridOptions<TData = any> {
 
     /**
      * An element to insert style elements into when injecting styles into the
-     * grid. If undefined, styles will be added to the document head for grids
+     * grid. Styles are inserted at the start of the element.
+     *
+     * If undefined, styles will be added to the document head for grids
      * rendered in the main document fragment, or to the grid wrapper element
      * for other grids (e.g. those rendered in a shadow DOM or detached from the
      * document).
      *
      * @initial
      */
-    themeStyleContainer?: HTMLElement;
+    themeStyleContainer?: HTMLElement | (() => HTMLElement | void);
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
@@ -2133,7 +2217,7 @@ export interface GridOptions<TData = any> {
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    ssrmExpandAllAffectsAllRows?: boolean | undefined;
+    ssrmExpandAllAffectsAllRows?: boolean;
     /**
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
@@ -2940,8 +3024,14 @@ export interface CellSelectionOptions<TData = any> {
     suppressMultiRanges?: boolean;
     /**
      * If `true` the header of cells containing ranges will be highlighted.
+     * @default false;
      */
     enableHeaderHighlight?: boolean;
+    /**
+     * If `true`, allows selection of a column of cells when clicking the column header.
+     * @default false
+     */
+    enableColumnSelection?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
      */
@@ -3065,7 +3155,15 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = 
      * @default true
      */
     headerCheckbox?: boolean;
+    /**
+     * If `true`, using CTRL+A will select all rows when [Cell Selection](./cell-selection) is enabled
+     * @default false
+     */
+    ctrlASelectsRows?: boolean;
 }
+
+/** Configuration for the `autoGroupColumnDef` property. Equivalent to `ColDef` but without the `colId` as this is defined by the grid. */
+export type AutoGroupColumnDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'colId'>;
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */
 export type SelectionColumnDef = Pick<
@@ -3081,6 +3179,7 @@ export type SelectionColumnDef = Pick<
     | 'onCellDoubleClicked'
     | 'onCellValueChanged'
     | 'headerTooltip'
+    | 'headerTooltipValueGetter'
     | 'headerStyle'
     | 'headerClass'
     | 'headerComponent'
@@ -3117,6 +3216,7 @@ export type SelectionColumnDef = Pick<
     | 'tooltipValueGetter'
     | 'tooltipComponent'
     | 'tooltipComponentParams'
+    | 'tooltipComponentSelector'
     | 'width'
     | 'initialWidth'
     | 'maxWidth'

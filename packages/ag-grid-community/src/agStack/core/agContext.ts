@@ -80,7 +80,7 @@ export class AgContext<
             this.beans[beanName] = params.providedBeanInstances[beanName] as any;
         }
 
-        params.beanClasses.forEach((BeanClass) => {
+        for (const BeanClass of params.beanClasses) {
             const instance = new BeanClass();
             if (instance.beanName) {
                 this.beans[instance.beanName] = instance as any;
@@ -89,13 +89,13 @@ export class AgContext<
                 console.error(`Bean ${BeanClass.name} is missing beanName`);
             }
             this.createdBeans.push(instance);
-        });
+        }
 
-        params.derivedBeans?.forEach((beanFunc) => {
+        for (const beanFunc of params.derivedBeans ?? []) {
             const { beanName, bean } = beanFunc(this);
             this.beans[beanName] = bean;
             this.createdBeans.push(bean);
-        });
+        }
 
         if (params.beanInitComparator) {
             // sort the beans so that they are in a consistent order
@@ -122,18 +122,22 @@ export class AgContext<
         afterPreCreateCallback?: (bean: AgBaseBean<TBeanCollection>) => void
     ): void {
         const beans = this.beans;
-        beanInstances.forEach((instance) => {
+        for (const instance of beanInstances) {
             // used to avoid the need for calling super.wireBeans() in every subclasses
             instance.preWireBeans?.(beans);
             instance.wireBeans?.(beans);
-        });
+        }
 
         // used by the component class
-        beanInstances.forEach((instance) => instance.preConstruct?.());
+        for (const instance of beanInstances) {
+            instance.preConstruct?.();
+        }
         if (afterPreCreateCallback) {
             beanInstances.forEach(afterPreCreateCallback);
         }
-        beanInstances.forEach((instance) => instance.postConstruct?.());
+        for (const instance of beanInstances) {
+            instance.postConstruct?.();
+        }
     }
 
     public getBeans(): TBeanCollection {

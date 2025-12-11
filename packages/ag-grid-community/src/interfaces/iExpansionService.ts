@@ -1,13 +1,19 @@
+import type { GridApi } from '../api/gridApi';
 import type { RowNode } from '../entities/rowNode';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export interface RowGroupExpansionState {
     expandedRowGroupIds: string[];
-    collapsedRowGroupIds?: string[];
+    collapsedRowGroupIds: string[];
 }
 
 export interface RowGroupBulkExpansionState {
-    expandAll: boolean;
+    /**
+     * If true, all groups are expanded except those in `invertedRowGroupIds`.
+     * If false, all groups are collapsed except those in `invertedRowGroupIds`.
+     * If undefined, the grid is in its initial state (no groups expanded or collapsed).
+     */
+    expandAll: boolean | undefined;
     invertedRowGroupIds: string[];
 }
 
@@ -31,4 +37,6 @@ export interface IExpansionService<
     setExpanded(rowNode: RowNode, expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
 
     isExpandable(rowNode: RowNode): boolean;
+
+    setDetailsExpansionState(detailGridApi: GridApi): void;
 }

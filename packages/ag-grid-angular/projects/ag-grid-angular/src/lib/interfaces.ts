@@ -12,6 +12,8 @@ import type {
     IDateParams,
     IDragAndDropImage,
     IDragAndDropImageParams,
+    IExportingOverlay,
+    IExportingOverlayParams,
     IFilter,
     IFilterParams,
     IFloatingFilter,
@@ -25,8 +27,12 @@ import type {
     ILoadingOverlayParams,
     IMenuItem,
     IMenuItemParams,
+    INoMatchingRowsOverlay,
+    INoMatchingRowsOverlayParams,
     INoRowsOverlay,
     INoRowsOverlayParams,
+    IOverlay,
+    IOverlayParams,
     IStatusPanel,
     IStatusPanelParams,
     IToolPanel,
@@ -83,9 +89,17 @@ export interface AgFloatingFilterComponent extends IFloatingFilterAngularComp {}
 
 export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {}
 
+export interface IOverlayAngularComp extends AgFrameworkComponent<IOverlayParams>, IOverlay {}
+
 export interface ILoadingOverlayAngularComp extends AgFrameworkComponent<ILoadingOverlayParams>, ILoadingOverlay {}
+export interface IExportingOverlayAngularComp
+    extends AgFrameworkComponent<IExportingOverlayParams>,
+        IExportingOverlay {}
 
 export interface INoRowsOverlayAngularComp extends AgFrameworkComponent<INoRowsOverlayParams>, INoRowsOverlay {}
+export interface INoMatchingRowsOverlayAngularComp
+    extends AgFrameworkComponent<INoMatchingRowsOverlayParams>,
+        INoMatchingRowsOverlay {}
 
 export interface IStatusPanelAngularComp extends AgFrameworkComponent<IStatusPanelParams>, IStatusPanel {}
 

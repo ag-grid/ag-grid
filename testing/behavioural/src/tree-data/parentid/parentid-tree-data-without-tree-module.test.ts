@@ -48,13 +48,9 @@ describe('ag-grid parentId tree data without tree module', () => {
 
         consoleErrorSpy.mockRestore();
 
-        const gridRowsOptions = {
-            checkDom: true,
-            columns: true,
+        await new GridRows(api, 'data', {
             treeData: false,
-        };
-
-        await new GridRows(api, 'data', gridRowsOptions).check(`
+        }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:"1"
             ├── LEAF id:2 x:"2"

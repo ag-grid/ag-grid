@@ -4,7 +4,7 @@ import type { FilterAction } from './iFilter';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /** The tool-panel-specific initial state as provided in grid options if applicable */
-    initialState?: TState | undefined;
+    initialState?: TState;
 }
 
 export interface IToolPanelParams<TData = any, TContext = any, TState = any>
@@ -24,7 +24,7 @@ export interface IToolPanel<TData = any, TContext = any, TState = any> {
     refresh(params: IToolPanelParams<TData, TContext, TState>): boolean | void;
 
     /** If saving and restoring state, this should return the current state */
-    getState?(): TState | undefined;
+    getState?(): TState;
 }
 
 export interface IToolPanelComp<TData = any, TContext = any, TState = any>

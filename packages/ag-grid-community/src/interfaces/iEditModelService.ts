@@ -17,8 +17,8 @@ export type EditValue = {
     editorState: {
         cellStartedEditing?: boolean;
         cellStoppedEditing?: boolean;
-        isCancelAfterEnd?: ReturnType<NonNullable<ICellEditor['isCancelAfterEnd']>> | undefined;
-        isCancelBeforeStart?: ReturnType<NonNullable<ICellEditor['isCancelBeforeStart']>> | undefined;
+        isCancelAfterEnd?: ReturnType<NonNullable<ICellEditor['isCancelAfterEnd']>>;
+        isCancelBeforeStart?: ReturnType<NonNullable<ICellEditor['isCancelBeforeStart']>>;
     };
 };
 

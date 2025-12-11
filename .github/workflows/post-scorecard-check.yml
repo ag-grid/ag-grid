@@ -1,8 +1,5 @@
 name: OSS Scorecard Results Check
 on:
-  push:
-    branches:
-      - 'post-scorecard-check'
   workflow_dispatch:
   workflow_run:
     workflows: [ 'OSS Scorecard' ]
@@ -12,10 +9,12 @@ on:
 env:
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
-  THRESHOLD: 7.5
+  THRESHOLD: 7.3
+  SCORECARD_FILE: ./scorecard.json
   REPORT_FILE: ./ctrf-report.json
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   check_results:
@@ -28,6 +27,7 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
+      # NOTE: This is done outside of the `scorecard` workflow as there are restrictions on `ossf/scorecard-action`
       - name: "Check Results"
         id: check_results
         uses: actions/github-script@v7
@@ -35,32 +35,52 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const fs = require('fs');
+            const fs = require("fs");
 
             async function exec() {
-                const {
-                    belowThreshold
-                } = require('./external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs');
-            
-                const result = await belowThreshold(
-                    process.env.AG_LIBRARY,
-                    process.env.THRESHOLD
-                );
-            
-                const passed = !result;
-                const failed = result;
-                const skipped = 0;
+              const {
+                getOSSFScorecardResults,
+              } = require("./external/ag-shared/scripts/ossf-scorecard/getAndCheckResults.mjs");
 
-                const report = { results: { summary: { failed, passed, skipped } } };
-                fs.writeFileSync('${{ env.REPORT_FILE }}', JSON.stringify(report));
-                
-                process.exit(result);
+              const project = process.env.AG_LIBRARY;
+              const threshold = process.env.THRESHOLD;
+
+              const { results, report, hasPassed } = await getOSSFScorecardResults({ project, threshold });
+
+              const messageType = hasPassed ? '::notice' : '::error';
+              console.log(`${messageType}::Scorecard score for ${project}: ${results.score} (threshold = ${threshold})`);
+
+              fs.writeFileSync("${{ env.REPORT_FILE }}", JSON.stringify(report));
+              fs.writeFileSync("${{ env.SCORECARD_FILE }}", JSON.stringify(results));
+
+              // Exit with a numeric code to signal step success/failure to GitHub Actions
+              process.exit(hasPassed ? 0 : 1);
             }
 
             await exec();
 
+      - name: Persist scorecard report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: oss-scorecard-results
+            path: ${{ env.REPORT_FILE }}
+
+      - name: Persist scorecard response
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+            name: oss-scorecard-response
+            path: ${{ env.SCORECARD_FILE }}
+
+      - name: Publish CTRF Report
+        uses: ctrf-io/github-test-reporter@v1
+        if: always()
+        with:
+          report-path: '${{ env.REPORT_FILE }}'
+
       - name: Slack Notification
-        if: failure() && (github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request')
+        if: success() && steps.check_results.outcome == 'failure'
         uses: ./external/ag-shared/github/actions/slack-integration
         with:
           AG_LIBRARY: ${{ env.AG_LIBRARY }}
@@ -68,3 +88,10 @@ jobs:
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
           IS_SUCCESS: ${{ steps.check_results.outcome != 'failure' }}
+
+      - name: Fail job if scan failed
+        shell: bash
+        if: success() && steps.check_results.outcome == 'failure'
+        run: |
+            echo "Workflow failed, failing the build."
+            exit 1

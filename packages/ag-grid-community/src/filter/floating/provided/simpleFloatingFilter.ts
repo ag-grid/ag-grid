@@ -53,7 +53,7 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
 
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            condition = combinedModel.conditions![0];
+            condition = combinedModel.conditions[0];
         } else {
             condition = model as ISimpleFilterModel;
         }
@@ -179,8 +179,8 @@ export abstract class SimpleFloatingFilter<TParams extends IFloatingFilterParams
         );
     }
 
-    protected getAriaLabel(params: IFloatingFilterParams): string {
-        const displayName = this.beans.colNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
+    protected getAriaLabel(column: AgColumn): string {
+        const displayName = this.beans.colNames.getDisplayNameForColumn(column, 'header', true);
         return `${displayName} ${this.getLocaleTextFunc()('ariaFilterInput', 'Filter Input')}`;
     }
 }

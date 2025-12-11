@@ -8,18 +8,20 @@ export function setRowNodeGroupValue(
 ): void {
     const column = colModel.getCol(colKey)!;
 
-    if (!rowNode.groupData) {
-        rowNode.groupData = {};
+    let groupData = rowNode._groupData;
+    if (!groupData) {
+        groupData = {};
+        rowNode._groupData = groupData;
     }
 
     const columnId = column.getColId();
-    const oldValue = rowNode.groupData[columnId];
+    const oldValue = groupData[columnId];
 
     if (oldValue === newValue) {
         return;
     }
 
-    rowNode.groupData[columnId] = newValue;
+    groupData[columnId] = newValue;
     rowNode.dispatchCellChangedEvent(column, newValue, oldValue);
 }
 

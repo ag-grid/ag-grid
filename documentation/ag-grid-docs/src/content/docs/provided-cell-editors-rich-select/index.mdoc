@@ -151,10 +151,13 @@ const colors = [
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
-        keyCreator: params => params.value.name,
+        valueFormatter: (p) => `${p.value.name} (${p.value.code})`,
+        valueParser: (p) => p.newValue,
         cellEditorParams: {
             values: colors,
-            formatValue: value => value.toUpperCase()
+            formatValue: (v) => v.name,
+            allowTyping: true,
+            filterList: true,
         }
         // ...other props
     }
@@ -191,10 +194,10 @@ List values can be provided asynchronously to the editor as shown below:
 
 {% gridExampleRunner title="Rich Select Async Values" name="rich-select-async-values" /%}
 
-The `values` property can receive a Promise that **resolves** an array of values.
+For example:
 
 ```ts
-function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
+function fetchLanguages(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(['English', 'Spanish', 'French', 'Portuguese', '(other)']), 1000);
   });
@@ -204,15 +207,55 @@ function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
 ```js
 columnDefs: [
     {
+        headerName: 'Language',
+        field: 'language',
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            values: getValueFromServer,
+            values: fetchLanguages,
         }
-        // ...other props
     }
 ]
 ```
 
+### Async Filtering
+
+For advanced filtering scenarios, combine async `values` callback, `allowTyping`, and `filterListAsync` to enable async filtering. This is shown in the example below:
+
+{% gridExampleRunner title="Rich Select Async Filtering" name="rich-select-full-async-values" /%}
+
+When `filterListAsync` is set to `true`, the cell editor behaves as follows:
+
+- It calls the `values` callback with the current search term.
+- It delays the search request by 300ms (this can be adjusted using `searchDebounceDelay`) to avoid excessive calls.
+- A loading indicator appears while the network request is in progress.
+- Once the promise resolves, the dropdown is updated with the filtered results.
+
+For example:
+
+```ts
+function fetchLanguages(params: RichCellEditorValuesCallbackParams): Promise<string[]> {
+    return fetch(`/api/languages?search=${encodeURIComponent(params.search)}`)
+        .then(res => res.json())
+        .then(data => data.items as string[]);
+}
+```
+
+```js
+columnDefs: [
+    {
+        headerName: 'Language',
+        field: 'language',
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            allowTyping: true,
+            filterList: true,
+            filterListAsync: true,
+            values: fetchLanguages
+        }
+    }
+]
+```
+ 
 ## API Reference
 
 

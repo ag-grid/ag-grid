@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_TW = {
     searchOoo: '搜尋...',
     blanks: '(空白)',
     noMatches: '無匹配項',
+    typeToSearchOoo: '輸入以搜尋...',
 
     // Number Filter & Text Filter
     filterOoo: '篩選...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_TW = {
     maxDateValidation: '日期必須在 ${variable} 之前',
     maxLengthValidation: '必須少於或等於 ${variable} 個字元。',
     minValueValidation: '必須大於或等於 ${variable}',
-    maxValueValidation: '必須小於或等於 ${variable}',
+    maxValueValidation: '必須小於或等於${variable}',
+    strictMinValueValidation: '必須大於${variable}',
+    strictMaxValueValidation: '必須小於${variable}',
     invalidSelectionValidation: '無效的選擇。',
     tooltipValidationErrorSeparator: '。',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_TW = {
     loadingOoo: '加載中...',
     loadingError: '錯誤',
     noRowsToShow: '無顯示行',
+    noMatchingRows: '沒有符合的資料列',
+    exportingOoo: '匯出中...',
     enabled: '已啟用',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_TW = {
     pinLeft: '固定在左側',
     pinRight: '固定在右側',
     noPin: '取消固定',
+    pinRow: '固定列',
+    pinTop: '固定至頂部',
+    pinBottom: '固定至底部',
+    unpinRow: '取消固定列',
     valueAggregation: '值聚合',
     noAggregation: '無',
     autosizeThisColumn: '自適應列寬',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_TW = {
     chooseColumns: '選擇欄位',
     sortAscending: '升序排列',
     sortDescending: '降序排列',
+    sortAbsoluteAscending: '絕對遞增排序',
+    sortAbsoluteDescending: '絕對遞減排序',
     sortUnSort: '清除排列',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -552,6 +563,7 @@ export const AG_GRID_LOCALE_TW = {
     ariaChecked: '已勾選',
     ariaColumn: '欄',
     ariaColumnGroup: '欄組',
+    ariaFilterActive: '篩選器啟用',
     ariaColumnFiltered: '欄已篩選',
     ariaColumnSelectAll: '切換所有列的可見性',
     ariaDateFilterInput: '日期篩選輸入',
@@ -605,6 +617,8 @@ export const AG_GRID_LOCALE_TW = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' 的 ',
     ariaDropZoneColumnComponentSortAscending: '升序',
     ariaDropZoneColumnComponentSortDescending: '降序',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '絕對升序',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '絕對降序',
     ariaLabelDialog: '對話框',
     ariaLabelColumnMenu: '欄位選單',
     ariaLabelColumnFilter: '欄位篩選器',
@@ -660,6 +674,15 @@ export const AG_GRID_LOCALE_TW = {
     november: '十一月',
     december: '十二月',
 
+    // Date-time parts
+    year: '年',
+    quarter: '季',
+    month: '月',
+    day: '日',
+    hour: '小时',
+    minute: '分钟',
+    second: '秒',
+
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
     timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
@@ -670,5 +693,5 @@ export const AG_GRID_LOCALE_TW = {
     timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
     timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
     timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+    timeFormatHHMMSSAmPm: 'HH:MM:SS 上午/下午',
 };

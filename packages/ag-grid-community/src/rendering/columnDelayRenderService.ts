@@ -1,22 +1,23 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { AutoSizeStrategy } from '../interfaces/autoSize';
 import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { columnDelayRenderCSS } from './column-delay-render.css-GENERATED';
 
 const HideClass = 'ag-delay-render';
-type ColumnDelayRenderKey = 'colFlex' | 'columnState' | 'fitGridWidth' | 'fitProvidedWidth' | 'fitCellContents';
+type ColumnDelayRenderKey = 'colFlex' | 'columnState' | AutoSizeStrategy['type'];
 
 export class ColumnDelayRenderService extends BeanStub implements NamedBean {
     beanName = 'colDelayRenderSvc' as const;
 
-    private hideRequested: boolean = false;
-    private alreadyRevealed: boolean = false;
-    private timesRetried: number = 0;
+    private hideRequested = false;
+    private alreadyRevealed = false;
+    private timesRetried = 0;
 
-    private readonly requesters: Set<ColumnDelayRenderKey> = new Set();
+    private readonly requesters = new Set<ColumnDelayRenderKey>();
 
-    public hideColumns(key: ColumnDelayRenderKey) {
+    public hideColumns(key: ColumnDelayRenderKey): void {
         if (this.alreadyRevealed || this.requesters.has(key)) {
             // If already revealed then we don't want to hide again
             // Already requested a hide, no need to do it again
@@ -34,7 +35,7 @@ export class ColumnDelayRenderService extends BeanStub implements NamedBean {
         }
     }
 
-    public revealColumns(key: ColumnDelayRenderKey) {
+    public revealColumns(key: ColumnDelayRenderKey): void {
         if (this.alreadyRevealed || !this.isAlive()) {
             // If already revealed then we don't want to reveal again
             // As calling in a loop with setTimeout need to check if alive

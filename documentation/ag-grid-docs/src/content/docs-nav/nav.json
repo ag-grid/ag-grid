@@ -149,6 +149,22 @@
             ]
         },
         {
+            "title": "AI Features",
+            "children": [
+                {
+                    "type": "item",
+                    "title": "AI Toolkit",
+                    "path": "ai-toolkit",
+                    "isEnterprise": true
+                },
+                {
+                    "type": "item",
+                    "title": "MCP Server",
+                    "path": "mcp-server"
+                }
+            ]
+        },
+        {
             "title": "Layout & Styling",
             "children": [
                 {
@@ -630,6 +646,21 @@
                             "children": [
                                 {
                                     "type": "item",
+                                    "title": "Managed Row Dragging",
+                                    "path": "row-dragging-managed"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Unmanaged Row Dragging",
+                                    "path": "row-dragging-unmanaged"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Row Dragging Customisation",
+                                    "path": "row-dragging-customisation"
+                                },
+                                {
+                                    "type": "item",
                                     "title": "External DropZone",
                                     "path": "row-dragging-to-external-dropzone"
                                 },
@@ -680,6 +711,18 @@
                         },
                         {
                             "type": "item",
+                            "title": "Formulas",
+                            "path": "formulas",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Find",
+                            "path": "find",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
                             "title": "Styling Cells",
                             "path": "cell-styles"
                         },
@@ -712,12 +755,6 @@
                             "type": "item",
                             "title": "Cell Text Selection",
                             "path": "cell-text-selection"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Find",
-                            "path": "find",
-                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1132,6 +1169,18 @@
                             "title": "Sorting",
                             "path": "grouping-sorting",
                             "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Editing Groups",
+                            "path": "grouping-edit",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Row Dragging",
+                            "path": "grouping-row-dragging",
+                            "isEnterprise": true
                         }
                     ]
                 },
@@ -1392,7 +1441,19 @@
                         {
                             "type": "item",
                             "title": "Overlays",
-                            "path": "overlays"
+                            "path": "overlays-overview",
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Provided Overlays",
+                                    "path": "overlays-provided"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Active Overlay",
+                                    "path": "overlays-active"
+                                }
+                            ]
                         }
                     ]
                 },

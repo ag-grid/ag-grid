@@ -82,9 +82,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public update(params: UpdateChartParams): boolean {
-        if (!this.validUpdateType(params)) return false;
+        if (!this.validUpdateType(params)) {
+            return false;
+        }
         const validationResult = validateUpdateParams(params, this.agChartsExports.isEnterprise);
-        if (!validationResult) return false;
+        if (!validationResult) {
+            return false;
+        }
         const validParams = validationResult === true ? params : validationResult;
         this.applyValidatedChartParams(validParams);
         return true;
@@ -119,6 +123,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 chartModelParams.seriesChartTypes = params.seriesChartTypes;
                 chartModelParams.suppressChartRanges = params.suppressChartRanges ?? this.model.suppressChartRanges;
                 chartModelParams.seriesGroupType = params.seriesGroupType ?? this.model.seriesGroupType;
+                chartModelParams.useGroupColumnAsCategory =
+                    (params as UpdateRangeChartParams).useGroupColumnAsCategory ?? this.model.useGroupColumnAsCategory;
                 break;
             case 'crossFilterChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
@@ -267,6 +273,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             unlinkChart: this.model.unlinked,
             seriesChartTypes,
             seriesGroupType: this.model.seriesGroupType,
+            useGroupColumnAsCategory: this.model.useGroupColumnAsCategory,
         };
     }
 
@@ -304,7 +311,9 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public switchCategorySeries(inverted: boolean): void {
-        if (!supportsInvertedCategorySeries(this.getChartType())) return;
+        if (!supportsInvertedCategorySeries(this.getChartType())) {
+            return;
+        }
         this.model.switchCategorySeries = inverted;
         this.raiseChartModelUpdateEvent();
     }
@@ -314,9 +323,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public setAggFunc(value: string | IAggFunc | undefined, silent?: boolean): void {
-        if (this.model.aggFunc === value) return;
+        if (this.model.aggFunc === value) {
+            return;
+        }
         this.model.aggFunc = value;
-        if (silent) return;
+        if (silent) {
+            return;
+        }
         this.model.updateData();
         this.raiseChartModelUpdateEvent();
     }
@@ -327,7 +340,9 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         const updateForMax = (columns: ColState[], maxNum: number) => {
             let numSelected = 0;
             for (const colState of columns) {
-                if (!colState.selected) continue;
+                if (!colState.selected) {
+                    continue;
+                }
                 if (numSelected >= maxNum) {
                     colState.selected = false;
                 } else {
@@ -406,31 +421,16 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         });
     }
 
-    public getValueColState(): ColState[] {
-        return this.model.valueColState.map(this.displayNameMapper.bind(this));
-    }
-
     public getSelectedValueColState(): { colId: string; displayName: string | null }[] {
-        return this.getValueColState().filter((cs) => cs.selected);
+        return this.model.getValueColState().filter((cs) => cs.selected);
     }
 
     public getSelectedDimensions(): ColState[] {
         return this.model.getSelectedDimensions();
     }
 
-    private displayNameMapper(col: ColState): ColState {
-        const { column } = col;
-        if (column) {
-            col.displayName = this.model.getColDisplayName(column, this.model.isPivotMode());
-        } else {
-            const colNames = this.model.colNames[col.colId];
-            col.displayName = colNames ? colNames.join(' - ') : this.model.getColDisplayName(column!);
-        }
-        return col;
-    }
-
     public getColStateForMenu(): { dimensionCols: ColState[]; valueCols: ColState[] } {
-        return { dimensionCols: this.model.dimensionColState, valueCols: this.getValueColState() };
+        return { dimensionCols: this.model.dimensionColState, valueCols: this.model.getValueColState() };
     }
 
     public setChartRange(silent = false): void {

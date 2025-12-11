@@ -2,12 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { RowDataTransaction } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
-
-const gridRowsOptions: GridRowsOptions = {
-    checkDom: true,
-};
+import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -40,21 +35,21 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ A GROUP id:a
-            · └─┬ B filler id:row-group-0-A-1-B
-            · · └─┬ C GROUP id:c
-            · · · └── D LEAF id:d
+            └─┬ A GROUP id:a ag-Grid-AutoColumn:"A"
+            · └─┬ B filler id:row-group-0-A-1-B ag-Grid-AutoColumn:"B"
+            · · └─┬ C GROUP id:c ag-Grid-AutoColumn:"C"
+            · · · └── D LEAF id:d ag-Grid-AutoColumn:"D"
         `);
 
-        api.applyTransaction({ remove: [rowC] });
-        api.applyTransaction({ remove: [rowD] });
+        applyTransactionChecked(api, { remove: [rowC] });
+        applyTransactionChecked(api, { remove: [rowD] });
 
-        const gridRows = new GridRows(api, '', gridRowsOptions);
+        const gridRows = new GridRows(api, '');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └── A LEAF id:a
+            └── A LEAF id:a ag-Grid-AutoColumn:"A"
         `);
 
         const rows = gridRows.rootAllLeafChildren;
@@ -86,29 +81,29 @@ describe('ag-grid tree transactions', () => {
                 getDataPath: (data: any) => data.orgHierarchy,
             });
 
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ A filler id:row-group-0-A
-                │ ├── B LEAF id:b
-                │ └── C LEAF id:c
-                └── D LEAF id:d
+                ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                │ ├── B LEAF id:b ag-Grid-AutoColumn:"B"
+                │ └── C LEAF id:c ag-Grid-AutoColumn:"C"
+                └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction({ remove: [rowB, rowC] });
+            applyTransactionChecked(api, { remove: [rowB, rowC] });
 
-            await new GridRows(api, 'Transaction[0]', gridRowsOptions).check(`
+            await new GridRows(api, 'Transaction[0]').check(`
                 ROOT id:ROOT_NODE_ID
-                └── D LEAF id:d
+                └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction({ add: [rowC, rowB] });
+            applyTransactionChecked(api, { add: [rowC, rowB] });
 
-            await new GridRows(api, 'finalSync', gridRowsOptions).check(`
+            await new GridRows(api, 'finalSync').check(`
                 ROOT id:ROOT_NODE_ID
-                ├── D LEAF id:d
-                └─┬ A filler id:row-group-0-A
-                · ├── C LEAF id:c
-                · └── B LEAF id:b
+                ├── D LEAF id:d ag-Grid-AutoColumn:"D"
+                └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                · ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+                · └── B LEAF id:b ag-Grid-AutoColumn:"B"
             `);
         });
 
@@ -130,25 +125,25 @@ describe('ag-grid tree transactions', () => {
                 getDataPath: (data: any) => data.orgHierarchy,
             });
 
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ A filler id:row-group-0-A
-                │ ├── B LEAF id:b
-                │ └── C LEAF id:c
-                └── D LEAF id:d
+                ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                │ ├── B LEAF id:b ag-Grid-AutoColumn:"B"
+                │ └── C LEAF id:c ag-Grid-AutoColumn:"C"
+                └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction({
+            applyTransactionChecked(api, {
                 remove: [rowB, rowC],
                 add: [rowC, rowB],
             });
 
-            await new GridRows(api, 'finalTogether', gridRowsOptions).check(`
+            await new GridRows(api, 'finalTogether').check(`
                 ROOT id:ROOT_NODE_ID
-                ├── D LEAF id:d
-                └─┬ A filler id:row-group-0-A
-                · ├── C LEAF id:c
-                · └── B LEAF id:b
+                ├── D LEAF id:d ag-Grid-AutoColumn:"D"
+                └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                · ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+                · └── B LEAF id:b ag-Grid-AutoColumn:"B"
             `);
         });
 
@@ -175,22 +170,22 @@ describe('ag-grid tree transactions', () => {
                 getDataPath: (data: any) => data.orgHierarchy,
             });
 
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ A filler id:row-group-0-A
-                │ ├── B LEAF id:b
-                │ └── C LEAF id:c
-                └── D LEAF id:d
+                ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                │ ├── B LEAF id:b ag-Grid-AutoColumn:"B"
+                │ └── C LEAF id:c ag-Grid-AutoColumn:"C"
+                └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
             await executeTransactionsAsync([{ remove: [rowB, rowC] }, { add: [rowC, rowB] }], api);
 
-            await new GridRows(api, 'finalAsync', gridRowsOptions).check(`
+            await new GridRows(api, 'finalAsync').check(`
                 ROOT id:ROOT_NODE_ID
-                ├── D LEAF id:d
-                └─┬ A filler id:row-group-0-A
-                · ├── C LEAF id:c
-                · └── B LEAF id:b
+                ├── D LEAF id:d ag-Grid-AutoColumn:"D"
+                └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                · ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+                · └── B LEAF id:b ag-Grid-AutoColumn:"B"
             `);
         });
     });
@@ -218,12 +213,12 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A filler id:row-group-0-A
-            │ ├── B LEAF id:b
-            │ └── C LEAF id:c
-            └── D LEAF id:d
+            ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            │ ├── B LEAF id:b ag-Grid-AutoColumn:"B"
+            │ └── C LEAF id:c ag-Grid-AutoColumn:"C"
+            └── D LEAF id:d ag-Grid-AutoColumn:"D"
         `);
 
         const transactions: RowDataTransaction[] = [{ remove: [rowB, rowC] }, { add: [rowC, rowB] }];
@@ -231,24 +226,24 @@ describe('ag-grid tree transactions', () => {
         if (mode === 'async') {
             await executeTransactionsAsync(transactions, api);
         } else if (mode === 'together') {
-            api.applyTransaction({ ...transactions[0], ...transactions[1] });
+            applyTransactionChecked(api, { ...transactions[0], ...transactions[1] });
         } else {
-            api.applyTransaction(transactions[0]);
+            applyTransactionChecked(api, transactions[0]);
 
-            await new GridRows(api, 'Transaction[0]', gridRowsOptions).check(`
+            await new GridRows(api, 'Transaction[0]').check(`
                 ROOT id:ROOT_NODE_ID
-                └── D LEAF id:d
+                └── D LEAF id:d ag-Grid-AutoColumn:"D"
             `);
 
-            api.applyTransaction(transactions[1]);
+            applyTransactionChecked(api, transactions[1]);
         }
 
-        await new GridRows(api, 'final' + mode, gridRowsOptions).check(`
+        await new GridRows(api, 'final' + mode).check(`
             ROOT id:ROOT_NODE_ID
-            ├── D LEAF id:d
-            └─┬ A filler id:row-group-0-A
-            · ├── C LEAF id:c
-            · └── B LEAF id:b
+            ├── D LEAF id:d ag-Grid-AutoColumn:"D"
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+            · └── B LEAF id:b ag-Grid-AutoColumn:"B"
         `);
     });
 
@@ -272,16 +267,16 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data: any) => data.orgHierarchy,
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A filler id:row-group-0-A
-            │ ├─┬ B filler id:row-group-0-A-1-B
-            │ │ └── B LEAF id:b
-            │ ├── C LEAF id:c
-            │ ├── D LEAF id:d
-            │ └─┬ E filler id:row-group-0-A-1-E
-            │ · └── E LEAF id:e
-            └── F LEAF id:f
+            ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            │ ├─┬ B filler id:row-group-0-A-1-B ag-Grid-AutoColumn:"B"
+            │ │ └── B LEAF id:b ag-Grid-AutoColumn:"B"
+            │ ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+            │ ├── D LEAF id:d ag-Grid-AutoColumn:"D"
+            │ └─┬ E filler id:row-group-0-A-1-E ag-Grid-AutoColumn:"E"
+            │ · └── E LEAF id:e ag-Grid-AutoColumn:"E"
+            └── F LEAF id:f ag-Grid-AutoColumn:"F"
         `);
 
         const transactions1: RowDataTransaction[] = [
@@ -292,31 +287,31 @@ describe('ag-grid tree transactions', () => {
         if (mode === 'async') {
             await executeTransactionsAsync(transactions1, api);
         } else if (mode === 'together') {
-            api.applyTransaction({ ...transactions1[0], ...transactions1[1] });
+            applyTransactionChecked(api, { ...transactions1[0], ...transactions1[1] });
         } else {
-            api.applyTransaction(transactions1[0]);
+            applyTransactionChecked(api, transactions1[0]);
 
-            await new GridRows(api, 'Transaction1[0]', gridRowsOptions).check(`
+            await new GridRows(api, 'Transaction1[0]').check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ A filler id:row-group-0-A
-                │ └─┬ B filler id:row-group-0-A-1-B
-                │ · └── B LEAF id:b
-                └── F LEAF id:f
+                ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+                │ └─┬ B filler id:row-group-0-A-1-B ag-Grid-AutoColumn:"B"
+                │ · └── B LEAF id:b ag-Grid-AutoColumn:"B"
+                └── F LEAF id:f ag-Grid-AutoColumn:"F"
             `);
 
-            api.applyTransaction(transactions1[1]);
+            applyTransactionChecked(api, transactions1[1]);
         }
 
-        await new GridRows(api, 'Transactions1 ' + mode, gridRowsOptions).check(`
+        await new GridRows(api, 'Transactions1 ' + mode).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A filler id:row-group-0-A
-            │ ├─┬ B filler id:row-group-0-A-1-B
-            │ │ └── B LEAF id:b
-            │ ├── C LEAF id:c
-            │ ├─┬ E filler id:row-group-0-A-1-E
-            │ │ └── E LEAF id:e
-            │ └── D LEAF id:d
-            └── F LEAF id:f
+            ├─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            │ ├─┬ B filler id:row-group-0-A-1-B ag-Grid-AutoColumn:"B"
+            │ │ └── B LEAF id:b ag-Grid-AutoColumn:"B"
+            │ ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+            │ ├─┬ E filler id:row-group-0-A-1-E ag-Grid-AutoColumn:"E"
+            │ │ └── E LEAF id:e ag-Grid-AutoColumn:"E"
+            │ └── D LEAF id:d ag-Grid-AutoColumn:"D"
+            └── F LEAF id:f ag-Grid-AutoColumn:"F"
         `);
 
         const transactions2 = [{ remove: [rowC, rowB, rowE, rowD] }, { add: [rowB, rowC, rowD, rowE] }];
@@ -324,28 +319,28 @@ describe('ag-grid tree transactions', () => {
         if (mode === 'async') {
             await executeTransactionsAsync(transactions2, api);
         } else if (mode === 'together') {
-            api.applyTransaction({ ...transactions2[0], ...transactions2[1] });
+            applyTransactionChecked(api, { ...transactions2[0], ...transactions2[1] });
         } else {
-            api.applyTransaction(transactions2[0]);
+            applyTransactionChecked(api, transactions2[0]);
 
-            await new GridRows(api, 'Transaction2[0]', gridRowsOptions).check(`
+            await new GridRows(api, 'Transaction2[0]').check(`
                 ROOT id:ROOT_NODE_ID
-                └── F LEAF id:f
+                └── F LEAF id:f ag-Grid-AutoColumn:"F"
             `);
 
-            api.applyTransaction(transactions2[1]);
+            applyTransactionChecked(api, transactions2[1]);
         }
 
-        await new GridRows(api, 'Transactions2 ' + mode, gridRowsOptions).check(`
+        await new GridRows(api, 'Transactions2 ' + mode).check(`
             ROOT id:ROOT_NODE_ID
-            ├── F LEAF id:f
-            └─┬ A filler id:row-group-0-A
-            · ├─┬ B filler id:row-group-0-A-1-B
-            · │ └── B LEAF id:b
-            · ├── C LEAF id:c
-            · ├── D LEAF id:d
-            · └─┬ E filler id:row-group-0-A-1-E
-            · · └── E LEAF id:e
+            ├── F LEAF id:f ag-Grid-AutoColumn:"F"
+            └─┬ A filler id:row-group-0-A ag-Grid-AutoColumn:"A"
+            · ├─┬ B filler id:row-group-0-A-1-B ag-Grid-AutoColumn:"B"
+            · │ └── B LEAF id:b ag-Grid-AutoColumn:"B"
+            · ├── C LEAF id:c ag-Grid-AutoColumn:"C"
+            · ├── D LEAF id:d ag-Grid-AutoColumn:"D"
+            · └─┬ E filler id:row-group-0-A-1-E ag-Grid-AutoColumn:"E"
+            · · └── E LEAF id:e ag-Grid-AutoColumn:"E"
         `);
     });
 });

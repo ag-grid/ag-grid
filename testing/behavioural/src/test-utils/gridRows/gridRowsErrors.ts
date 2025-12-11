@@ -1,7 +1,6 @@
 import util from 'util';
 
-import type { IRowNode } from 'ag-grid-community';
-import type { RowNode } from 'ag-grid-community';
+import type { IRowNode, RowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../grid-test-utils';
 

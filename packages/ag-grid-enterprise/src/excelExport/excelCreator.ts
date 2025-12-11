@@ -261,25 +261,33 @@ export class ExcelCreator
             return;
         }
 
-        const mergedParams = this.getMergedParams(userParams);
-        const data = this.getData(mergedParams);
+        const exportFunc = () => {
+            const mergedParams = this.getMergedParams(userParams);
+            const data = this.getData(mergedParams);
 
-        const exportParams: ExcelExportMultipleSheetParams = {
-            data: [data],
-            fontSize: mergedParams.fontSize,
-            author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
+            const exportParams: ExcelExportMultipleSheetParams = {
+                data: [data],
+                fontSize: mergedParams.fontSize,
+                author: mergedParams.author,
+                mimeType: mergedParams.mimeType,
+            };
+
+            this.packageCompressedFile(exportParams).then((packageFile) => {
+                if (packageFile) {
+                    const { fileName } = mergedParams;
+                    const providedFileName =
+                        typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
+
+                    _downloadFile(this.getFileName(providedFileName), packageFile);
+                }
+            });
         };
-
-        this.packageCompressedFile(exportParams).then((packageFile) => {
-            if (packageFile) {
-                const { fileName } = mergedParams;
-                const providedFileName =
-                    typeof fileName === 'function' ? fileName(_addGridCommonParams(this.gos, {})) : fileName;
-
-                _downloadFile(this.getFileName(providedFileName), packageFile);
-            }
-        });
+        const { overlays } = this.beans;
+        if (overlays) {
+            overlays.showExportOverlay(exportFunc);
+        } else {
+            exportFunc();
+        }
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
@@ -326,7 +334,7 @@ export class ExcelCreator
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { colModel, colNames, rowGroupColsSvc, valueSvc, gos } = this.beans;
+        const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos } = this.beans;
 
         const config: ExcelGridSerializingParams = {
             ...params,
@@ -334,6 +342,7 @@ export class ExcelCreator
             colNames,
             rowGroupColsSvc,
             valueSvc,
+            formulaSvc: formula,
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,

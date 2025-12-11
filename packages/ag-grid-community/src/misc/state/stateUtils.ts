@@ -5,6 +5,7 @@ import type { SortModelItem } from '../../interfaces/iSortModelItem';
 /**
  * Converts state retrieved from `api.getColumnState()` to grid state.
  *
+ * @param columnState
  * @param enablePivotMode Whether pivot mode should be enabled or not. Default `false`.
  * @returns A partial `GridState` object containing only the properties relevant to columns
  */
@@ -37,6 +38,7 @@ export function convertColumnState(
         const {
             colId,
             sort,
+            sortType,
             sortIndex,
             rowGroup,
             rowGroupIndex,
@@ -50,7 +52,7 @@ export function convertColumnState(
         } = columnState[i];
         columns.push(colId);
         if (sort) {
-            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort };
+            sortColumns[sortIndex ?? defaultSortIndex++] = { colId, sort, type: sortType };
         }
         if (rowGroup) {
             groupColIds[rowGroupIndex ?? 0] = colId;
@@ -68,15 +70,18 @@ export function convertColumnState(
             hiddenColIds.push(colId);
         }
         if (flex != null || width) {
-            columnSizes.push({ colId, flex: flex ?? undefined, width });
+            columnSizes.push({ colId, flex: flex ?? undefined, width: width === null ? undefined : width });
         }
     }
 
     return {
-        sort: sortColumns.length ? { sortModel: sortColumns } : undefined,
-        rowGroup: groupColIds.length ? { groupColIds } : undefined,
+        sort: sortColumns.length ? { sortModel: _removeEmptyValues(sortColumns) } : undefined,
+        rowGroup: groupColIds.length ? { groupColIds: _removeEmptyValues(groupColIds) } : undefined,
         aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
-        pivot: pivotColIds.length || enablePivotMode ? { pivotMode: enablePivotMode, pivotColIds } : undefined,
+        pivot:
+            pivotColIds.length || enablePivotMode
+                ? { pivotMode: enablePivotMode, pivotColIds: _removeEmptyValues(pivotColIds) }
+                : undefined,
         columnPinning: leftColIds.length || rightColIds.length ? { leftColIds, rightColIds } : undefined,
         columnVisibility: hiddenColIds.length ? { hiddenColIds } : undefined,
         columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
@@ -84,15 +89,22 @@ export function convertColumnState(
     };
 }
 
+// Removes null or undefined values from an array to catch the case where sortIndex, rowGroupIndex or pivotIndex
+// have invalid values resulting in sparse arrays which will break state persistence/restoration.
+// e.g. [ 'colId1', undefined, 'colId3' ] => [ 'colId1', 'colId3' ]
+function _removeEmptyValues<T>(array: T[]): T[] {
+    return array.filter((a) => a != undefined);
+}
+
 export function _convertColumnGroupState(
     columnGroupState: { groupId: string; open: boolean }[]
 ): ColumnGroupState | undefined {
     const openColumnGroups: string[] = [];
-    columnGroupState.forEach(({ groupId, open }) => {
+    for (const { groupId, open } of columnGroupState) {
         if (open) {
             openColumnGroups.push(groupId);
         }
-    });
+    }
     return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
 }
 

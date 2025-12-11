@@ -96,7 +96,9 @@ export class AgList<
     }
 
     public addOptions(listOptions: ListOption<TValue>[]): this {
-        listOptions.forEach((listOption) => this.addOption(listOption));
+        for (const listOption of listOptions) {
+            this.addOption(listOption);
+        }
         return this;
     }
 
@@ -115,14 +117,23 @@ export class AgList<
     public clearOptions(): void {
         this.options = [];
         this.reset(true);
-        this.listItems.forEach((item) => {
+        for (const item of this.listItems) {
             item.destroy();
-        });
+        }
 
         _clearElement(this.getGui());
 
         this.listItems = [];
         this.refreshAriaRole();
+    }
+
+    public updateOptions(listOptions: ListOption<TValue>[]): boolean {
+        const needsUpdate = this.options !== listOptions;
+        if (needsUpdate) {
+            this.clearOptions();
+            this.addOptions(listOptions);
+        }
+        return needsUpdate;
     }
 
     public setValue(value?: TValue | null, silent?: boolean): this {

@@ -1,22 +1,12 @@
-import type {
-    BeanCollection,
-    CellCtrl,
-    GridOptionsService,
-    IRowNumbersRowResizeFeature,
-    RowNode,
-} from 'ag-grid-community';
-import { _removeFromParent, _warn } from 'ag-grid-community';
+import type { BeanCollection, CellCtrl, IRowNumbersRowResizeFeature, RowNode } from 'ag-grid-community';
+import { _isRowNumbers, _removeFromParent, _warn } from 'ag-grid-community';
 
 import type { AgRowNumbersRowResizer } from './rowNumbersRowResizer';
 
-export function _isRowNumbersResizerEnabled(gos: GridOptionsService): boolean {
-    const rowNumbers = gos.get('rowNumbers');
+export function _isRowNumbersResizerEnabled(beans: BeanCollection): boolean {
+    const rowNumbers = _isRowNumbers(beans);
 
-    if (!rowNumbers || typeof rowNumbers !== 'object' || !rowNumbers.enableRowResizer) {
-        return false;
-    }
-
-    return true;
+    return !(!rowNumbers || typeof rowNumbers !== 'object' || !rowNumbers.enableRowResizer);
 }
 
 export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
@@ -28,7 +18,7 @@ export class RowNumbersRowResizeFeature implements IRowNumbersRowResizeFeature {
     ) {}
 
     public refreshRowResizer(): void {
-        if (!_isRowNumbersResizerEnabled(this.beans.gos) || !this.isRowResizeSupported(this.cellCtrl.rowNode)) {
+        if (!_isRowNumbersResizerEnabled(this.beans) || !this.isRowResizeSupported(this.cellCtrl.rowNode)) {
             this.removeRowResizerFromCellComp();
         } else {
             this.addResizerToCellComp();

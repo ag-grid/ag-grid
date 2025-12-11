@@ -183,9 +183,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setGridRootRole(): void {
-        const { rowGroupColsSvc, colModel } = this;
+        const { rowGroupColsSvc, colModel, gos } = this;
 
-        let isTreeGrid = this.gos.get('treeData');
+        let isTreeGrid = gos.get('treeData');
 
         if (!isTreeGrid) {
             const isPivotActive = colModel.isPivotMode();
@@ -198,7 +198,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {
-        elements.forEach((element) => {
+        for (const element of elements) {
             this.addManagedElementListeners(element, {
                 focusin: (e: FocusEvent) => {
                     const { target } = e;
@@ -230,7 +230,7 @@ export class GridBodyCtrl extends BeanStub {
                     }
                 },
             });
-        });
+        }
     }
 
     // used by ColumnAnimationService
@@ -324,7 +324,7 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedPropertyListener('animateRows', updateAnimationClass);
 
         this.addManagedEventListeners({
-            gridStylesChanged: () => {
+            stylesChanged: () => {
                 if (!initialSizeMeasurementComplete && environment.sizesMeasured) {
                     initialSizeMeasurementComplete = true;
                     updateAnimationClass();

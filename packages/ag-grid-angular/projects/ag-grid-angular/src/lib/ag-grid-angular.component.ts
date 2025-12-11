@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-imports */
 // False positive lint error, ElementRef and co can't be type imports
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
@@ -20,6 +21,8 @@ import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
+    AutoGroupColumnDef,
+    AutoSizeStrategy,
     BatchEditingStartedEvent,
     BatchEditingStoppedEvent,
     BodyScrollEndEvent,
@@ -99,6 +102,8 @@ import type {
     FirstDataRenderedEvent,
     FloatingFilterUiChangedEvent,
     FocusGridInnerElementParams,
+    FormulaDataSource,
+    FormulaFuncs,
     FullWidthCellKeyDownEvent,
     GetChartMenuItems,
     GetChartToolbarItems,
@@ -144,6 +149,8 @@ import type {
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     NewColumnsLoadedEvent,
+    OverlaySelectorFunc,
+    OverlayType,
     PaginationChangedEvent,
     PaginationNumberFormatterParams,
     PasteEndEvent,
@@ -192,9 +199,6 @@ import type {
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     SideBarDef,
-    SizeColumnsToContentStrategy,
-    SizeColumnsToFitGridStrategy,
-    SizeColumnsToFitProvidedWidthStrategy,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
@@ -285,10 +289,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             );
 
             const coercedGridOptions = {} as GridOptions<TData>;
-            gridOptionKeys.forEach((key) => {
+            for (const key of gridOptionKeys) {
                 const valueToUse = getValueOrCoercedValue(key, this[key as keyof AgGridAngular]);
                 coercedGridOptions[key as keyof GridOptions] = valueToUse;
-            });
+            }
 
             const mergedGridOps = _combineAttributesAndGridOptions(
                 this.gridOptions,
@@ -638,11 +642,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `ColumnAutoSizeModule`
      */
-    @Input() public autoSizeStrategy:
-        | SizeColumnsToFitGridStrategy
-        | SizeColumnsToFitProvidedWidthStrategy
-        | SizeColumnsToContentStrategy
-        | undefined = undefined;
+    @Input() public autoSizeStrategy: AutoSizeStrategy | undefined = undefined;
+    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public animateColumnResizing: boolean | undefined = undefined;
     /** A map of component names to components.
      * @initial
      */
@@ -989,39 +993,82 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input({ transform: booleanAttribute }) public debug: boolean | undefined = undefined;
     /** Show or hide the loading overlay.
+     * - `true`: the loading overlay is shown.
+     * - `false`: the loading overlay is hidden.
+     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
+     * @default undefined
      */
     @Input({ transform: booleanAttribute }) public loading: boolean | undefined = undefined;
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
+     *
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
-     * @initial
+     *
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public loadingOverlayComponent: any = undefined;
     /** Customise the parameters provided to the loading overlay component.
+     *
+     * -     **Prefer using `overlayComponentParams`**
      */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
-     * @deprecated v32 - Deprecated. Use `loading=false` instead.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
+     *
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no-rows overlay component.
-     * @initial
+     *
+     * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** Customise the parameters provided to the no-rows overlay component.
+     *
+     * -     **Prefer using `overlayComponentParams`**
      */
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
+     *
+     * -     **Prefer `suppressOverlays=['noRows']`**
+     *
      * @default false
      * @initial
      */
     @Input({ transform: booleanAttribute }) public suppressNoRowsOverlay: boolean | undefined = undefined;
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+     */
+    @Input() public suppressOverlays: OverlayType[] | undefined = undefined;
+    /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
+     * @initial
+     */
+    @Input() public overlayComponent: any = undefined;
+    /** Customise the parameters provided to the `overlayComponent`.
+     * Provided overlays accept parameters specified on the `OverlayComponentUserParams` interface.
+     * Any custom parameters can also be provided for custom overlay components.
+     */
+    @Input() public overlayComponentParams: any = undefined;
+    /** Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.
+     * @initial
+     */
+    @Input() public overlayComponentSelector: OverlaySelectorFunc<TData> | undefined = undefined;
+    /** Display an overlay on demand. If provided takes precedence over the grid provided overlays.
+     * - name of a provided overlay, i.e `agLoadingOverlay`, `agNoRowsOverlay`, `agNoMatchingRowsOverlay`, `agExportingOverlay`
+     * - component class/function.
+     * - key of a custom component registered in the `components` map.
+     * - `undefined` to clear.
+     */
+    @Input() public activeOverlay: any = undefined;
+    /** Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
+     */
+    @Input() public activeOverlayParams: any = undefined;
     /** Set whether pagination is enabled.
      * @default false
      * @agModule `PaginationModule`
@@ -1111,6 +1158,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
+    /** Provide a data source to control where formulas are stored and retrieved.
+     * If not supplied, formulas are read from and written to the row data.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    @Input() public formulaDataSource: FormulaDataSource | undefined = undefined;
+    /** A map of 'function name' to 'function' for custom functions that are used for formulas.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    @Input() public formulaFuncs: FormulaFuncs | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -1199,6 +1257,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowDragModule`
      */
     @Input({ transform: booleanAttribute }) public rowDragManaged: boolean | undefined = undefined;
+    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
+     * managed dragging only reorders rows inside their existing group.
+     * @default false
+     * @agModule `RowDragModule`
+     */
+    @Input({ transform: booleanAttribute }) public refreshAfterGroupEdit: boolean | undefined = undefined;
     /** Used if rowDragManaged is enabled and treeData is enabled,
      * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
      * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
@@ -1271,8 +1335,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
-    @Input() public autoGroupColumnDef: ColDef<TData> | undefined = undefined;
+    @Input() public autoGroupColumnDef: AutoGroupColumnDef<TData> | undefined = undefined;
     /** When `true`, preserves the current group order when sorting on non-group columns.
+     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
      * @default false
      * @agModule `RowGroupingModule`
      */
@@ -1391,7 +1456,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
     @Input({ transform: booleanAttribute }) public suppressGroupRowsSticky: boolean | undefined = undefined;
-    /** Custom group hierarchy components can be defined here for later use in `colDef.rowGroupingHierarchy`
+    /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
     @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
@@ -1751,10 +1816,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
      */
     @Input({ transform: booleanAttribute }) public loadThemeGoogleFonts: boolean | undefined = undefined;
-    /** The CSS layer that this theme should be rendered onto. If your
-     * application loads its styles into a CSS layer, use this to load the grid
-     * styles into a previous layer so that application styles can override grid
-     * styles.
+    /** The CSS layer that this theme should be rendered onto. When specified,
+     * grid CSS will be wrapped in a `@layer ${themeCssLayer} { ... }` block.
+     *
+     * NOTE: when specifying `themeCssLayer` we recommend setting
+     * `themeStyleContainer` to `document.body` to ensure that the grid CSS
+     * comes after your application CSS, allowing your application to set the
+     * order of layers.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
@@ -1769,14 +1837,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public styleNonce: string | undefined = undefined;
     /** An element to insert style elements into when injecting styles into the
-     * grid. If undefined, styles will be added to the document head for grids
+     * grid. Styles are inserted at the start of the element.
+     *
+     * If undefined, styles will be added to the document head for grids
      * rendered in the main document fragment, or to the grid wrapper element
      * for other grids (e.g. those rendered in a shadow DOM or detached from the
      * document).
      *
      * @initial
      */
-    @Input() public themeStyleContainer: HTMLElement | undefined = undefined;
+    @Input() public themeStyleContainer: (HTMLElement | (() => HTMLElement | void)) | undefined = undefined;
     /** For customising the context menu.
      * @agModule `ContextMenuModule`
      */
@@ -1900,7 +1970,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
      * @agModule RowGroupingModule / TreeDataModule
      */
-    @Input() public ssrmExpandAllAffectsAllRows: boolean | undefined | undefined = undefined;
+    @Input({ transform: booleanAttribute }) public ssrmExpandAllAffectsAllRows: boolean | undefined = undefined;
     /** Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */

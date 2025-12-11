@@ -2,7 +2,7 @@ import { _setAriaInvalid } from '../../agStack/utils/aria';
 import { _getLocaleTextFunc } from '../../agStack/utils/locale';
 import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
-import type { BeanCollection } from '../../context/context';
+import type { BeanCollection, UserComponentName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColDef } from '../../entities/colDef';
 import type { CellEditingStoppedEvent } from '../../events';
@@ -15,6 +15,7 @@ import type {
     ICellEditorParams,
     ICellEditorValidationError,
 } from '../../interfaces/iCellEditor';
+import type { Column } from '../../interfaces/iColumn';
 import type { EditValue } from '../../interfaces/iEditModelService';
 import type { EditPosition } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -79,12 +80,12 @@ export function _setupEditors(
                 const newValue =
                     cellStartValue ??
                     editSvc?.getCellDataValue(cellPosition, false) ??
-                    valueSvc.getValueForDisplay(cellColumn as AgColumn, cellRowNode)?.value ??
+                    valueSvc.getValueForDisplay({ column: cellColumn as AgColumn, node: cellRowNode })?.value ??
                     oldValue ??
                     UNEDITED;
 
                 editModelSvc?.setEdit(cellPosition, {
-                    pendingValue: newValue,
+                    pendingValue: getNormalisedFormula(beans, newValue, false, cellColumn),
                     sourceValue: oldValue,
                     state: 'editing',
                 });
@@ -104,8 +105,6 @@ export function _setupEditors(
             }
         );
     }
-
-    return;
 }
 
 export function _sourceAndPendingDiffer({
@@ -128,64 +127,82 @@ export function _setupEditor(
         silent?: boolean;
     }
 ): void {
-    const enableGroupEditing = beans.gos.get('enableGroupEdit');
     const { key, event, cellStartedEdit, silent } = params ?? {};
-    const cellCtrl = _getCellCtrl(beans, position)!;
+    const { editModelSvc, editSvc, gos, userCompFactory } = beans;
+
+    const cellCtrl = _getCellCtrl(beans, position);
     const editorComp = cellCtrl?.comp?.getCellEditor();
 
     const editorParams = _createEditorParams(beans, position, key, cellStartedEdit && !silent);
+    const isAllowFormula = position.column.isAllowFormula();
 
-    const previousEdit = beans.editModelSvc?.getEdit(position);
+    const previousEdit = editModelSvc?.getEdit(position);
 
-    let newValue = editorParams.value;
-
-    if (newValue === undefined) {
-        newValue = previousEdit?.sourceValue;
-    }
-
-    beans.editModelSvc?.setEdit(position, {
-        editorValue: newValue,
-        state: 'editing',
-    });
+    const newValue = editorParams.value ?? previousEdit?.sourceValue;
 
     if (editorComp) {
+        editModelSvc?.setEdit(position, {
+            editorValue: getNormalisedFormula(beans, newValue, true, position.column),
+            state: 'editing',
+        });
         // don't reinitialise, just refresh if possible
         editorComp.refresh?.(editorParams);
         return;
     }
 
     const colDef = position.column.getColDef();
-    const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
+    let cellEditorParams = colDef;
 
-    // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
-    const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
-    const popupLocation: 'over' | 'under' | undefined =
-        compDetails?.popupPositionFromSelector != null
-            ? compDetails.popupPositionFromSelector
-            : colDef.cellEditorPopupPosition;
+    if (isAllowFormula) {
+        cellEditorParams = { ...colDef };
+        const supportedEditors: UserComponentName[] = [
+            'agFormulaCellEditor',
+            'agTextCellEditor',
+            'agLargeTextCellEditor',
+        ];
 
-    checkAndPreventDefault(compDetails!.params, event);
-
-    if (cellCtrl) {
-        cellCtrl.editCompDetails = compDetails;
-        cellCtrl.onEditorAttachedFuncs.push(() => cellCtrl.rangeFeature?.unsetComp());
-        cellCtrl.comp?.setEditDetails(compDetails, popup, popupLocation, beans.gos.get('reactiveCustomComponents'));
-        cellCtrl?.rowCtrl?.refreshRow({ suppressFlash: true });
-
-        const edit = beans.editModelSvc?.getEdit(position, true);
-
-        if (!silent && !edit?.editorState?.cellStartedEditing) {
-            beans.editSvc?.dispatchCellEvent(
-                position,
-                event,
-                'cellEditingStarted',
-                enableGroupEditing ? { value: newValue } : {}
-            );
-            beans.editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
+        const { cellEditor } = cellEditorParams;
+        if (!supportedEditors.includes(cellEditor)) {
+            cellEditorParams.cellEditor = 'agFormulaCellEditor';
         }
     }
 
-    return;
+    const compDetails = _getCellEditorDetails(userCompFactory, cellEditorParams, editorParams);
+
+    if (!compDetails) {
+        return;
+    }
+
+    const { popupFromSelector, popupPositionFromSelector } = compDetails;
+
+    // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
+    const popup = popupFromSelector ?? !!colDef.cellEditorPopup;
+    const popupLocation: 'over' | 'under' | undefined = popupPositionFromSelector ?? colDef.cellEditorPopupPosition;
+
+    checkAndPreventDefault(compDetails.params, event);
+
+    if (!cellCtrl) {
+        return;
+    }
+
+    const { rangeFeature, rowCtrl, comp, onEditorAttachedFuncs } = cellCtrl;
+
+    editModelSvc?.setEdit(position, {
+        editorValue: getNormalisedFormula(beans, newValue, true, position.column),
+        state: 'editing',
+    });
+
+    cellCtrl.editCompDetails = compDetails;
+    onEditorAttachedFuncs.push(() => rangeFeature?.unsetComp());
+    comp?.setEditDetails(compDetails, popup, popupLocation, gos.get('reactiveCustomComponents'));
+    rowCtrl?.refreshRow({ suppressFlash: true });
+
+    const edit = editModelSvc?.getEdit(position, true);
+
+    if (!silent && !edit?.editorState?.cellStartedEditing) {
+        editSvc?.dispatchCellEvent(position, event, 'cellEditingStarted', { value: newValue });
+        editModelSvc?.setEdit(position, { editorState: { cellStartedEditing: true } });
+    }
 }
 
 function _valueFromEditor(
@@ -238,14 +255,29 @@ function _createEditorParams(
     const { rowNode, column } = position;
 
     const editor = cellCtrl.comp?.getCellEditor();
+
+    const cellDataValue = editSvc?.getCellDataValue(position, false);
     const initialNewValue =
-        editSvc?.getCellDataValue(position, false) ??
-        (editor ? _valueFromEditor(beans, editor)?.editorValue : undefined);
+        cellDataValue === undefined
+            ? editor
+                ? _valueFromEditor(beans, editor)?.editorValue
+                : undefined
+            : cellDataValue;
+
     const value =
-        initialNewValue === UNEDITED ? valueSvc.getValueForDisplay(agColumn, rowNode)?.value : initialNewValue;
+        initialNewValue === UNEDITED
+            ? valueSvc.getValueForDisplay({ column: agColumn, node: rowNode })?.value
+            : initialNewValue;
+
+    // if formula, normalise the value to shorthand for users.
+    let paramsValue = enableGroupEditing ? initialNewValue : value;
+    if (column.isAllowFormula() && beans.formula?.isFormula(paramsValue)) {
+        // normalise to shorthand for editing
+        paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
+    }
 
     return _addGridCommonParams(gos, {
-        value: enableGroupEditing ? initialNewValue : value,
+        value: paramsValue,
         eventKey: key ?? null,
         column,
         colDef: column.getColDef(),
@@ -317,17 +349,17 @@ export function _syncFromEditors(
     beans: BeanCollection,
     params: { persist: boolean; isCancelling?: boolean; isStopping?: boolean }
 ): void {
-    beans.editModelSvc?.getEditPositions().forEach((cellId) => {
+    for (const cellId of beans.editModelSvc?.getEditPositions() ?? []) {
         const cellCtrl = _getCellCtrl(beans, cellId);
 
         if (!cellCtrl) {
-            return;
+            continue;
         }
 
         const editor = cellCtrl.comp?.getCellEditor();
 
         if (!editor) {
-            return;
+            continue;
         }
 
         const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params);
@@ -337,7 +369,7 @@ export function _syncFromEditors(
         }
 
         _syncFromEditor(beans, cellId, editorValue, undefined, !editorValueExists, params);
-    });
+    }
 }
 
 export function _syncFromEditor(
@@ -362,21 +394,38 @@ export function _syncFromEditor(
 
     if (!edit?.sourceValue) {
         // sourceValue not set means sync called without corresponding startEdit - from API call
-        edit = editModelSvc.setEdit(position, {
+        const editValue: Partial<EditValue> = {
             sourceValue: valueSvc.getValue(column as AgColumn, rowNode, undefined, 'api'),
-            pendingValue: edit ? edit.editorValue : UNEDITED,
-        });
+            pendingValue: edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED,
+        };
+
+        if (params?.persist) {
+            editValue.state = 'changed';
+        }
+        edit = editModelSvc.setEdit(position, editValue);
     }
 
     // Note: we don't clear the edit state here (even if new===old) as this is also called from the stop editing flow.
     // Note: editorValue should be in the correct target format already, so no need to parse it again - this is done in the editor, via the colDef parseValue function.
     editModelSvc.setEdit(position, {
-        editorValue: valueSameAsSource ? edit.sourceValue : editorValue,
+        editorValue: valueSameAsSource ? getNormalisedFormula(beans, edit.sourceValue, true, column) : editorValue,
     });
 
     if (params?.persist) {
         _persistEditorValue(beans, position);
     }
+}
+
+/**
+ * Converts formula to shorthand or longhand depending on context
+ * @param forEditing if true, converts to shorthand (A1), if false converts to longhand (REF(COL(id),ROW(id))) for storage
+ */
+function getNormalisedFormula(beans: BeanCollection, value: any, forEditing: boolean, column: Column): any {
+    const { formula } = beans;
+    if (column.isAllowFormula() && formula?.isFormula(value)) {
+        return formula?.normaliseFormula(value, forEditing) ?? value;
+    }
+    return value;
 }
 
 function _persistEditorValue(beans: BeanCollection, position: Required<EditPosition>): void {
@@ -386,7 +435,7 @@ function _persistEditorValue(beans: BeanCollection, position: Required<EditPosit
 
     // propagate the editor value to pending.
     editModelSvc?.setEdit(position, {
-        pendingValue: edit?.editorValue,
+        pendingValue: getNormalisedFormula(beans, edit?.editorValue, false, position.column),
     });
 }
 
@@ -399,7 +448,9 @@ export function _destroyEditors(
         edits = beans.editModelSvc?.getEditPositions();
     }
 
-    edits!.forEach((cellPosition) => _destroyEditor(beans, cellPosition, params));
+    for (const cellPosition of edits ?? []) {
+        _destroyEditor(beans, cellPosition, params);
+    }
 }
 
 type DestroyEditorParams = { event?: Event | null; silent?: boolean; cancel?: boolean };
@@ -425,8 +476,8 @@ export function _destroyEditor(
 
     const { comp } = cellCtrl;
 
+    // editor already cleaned up, refresh cell (React usually)
     if (comp && !comp.getCellEditor()) {
-        // editor already cleaned up, refresh cell
         cellCtrl?.refreshCell();
 
         if (edit) {
@@ -491,7 +542,7 @@ function groupEditOverrides(params: DestroyEditorParams | undefined, latest: Rea
               value: latest.sourceValue,
           }
         : {
-              valueChanged: false,
+              valueChanged: _sourceAndPendingDiffer(latest),
               oldValue: latest.sourceValue,
               newValue: latest.pendingValue,
               value: latest.sourceValue,

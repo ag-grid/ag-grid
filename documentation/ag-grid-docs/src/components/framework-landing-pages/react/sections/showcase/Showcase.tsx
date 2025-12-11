@@ -73,7 +73,12 @@ const ShowcaseItem: React.FC = ({ title, titleIcon, description, projectName, pr
             </h3>
             <p className={styles.showcaseDescription}>{description}</p>
             <div className={styles.showcaseLinksWrapper}>
-                <a href={projectHref} target="_blank" rel="noopener noreferrer">
+                <a
+                    id={`showcase-cta-${title.toLowerCase()}`}
+                    href={projectHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     Visit {projectName}
                 </a>
             </div>

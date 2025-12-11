@@ -164,7 +164,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
             const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
 
-            const wrapperHeight = eCellWrapper!.offsetHeight;
+            const wrapperHeight = eCellWrapper.offsetHeight;
             const autoHeight = wrapperHeight + extraHeight;
 
             if (timesCalled < 5) {

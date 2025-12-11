@@ -6,7 +6,7 @@ function getTypes(node: ts.Node) {
     let typesToInclude: string[] = [];
     if (ts.isIdentifier(node)) {
         const typeName = node.getText();
-        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue'].includes(typeName)) {
+        if (!['HTMLElement', 'Function', 'Partial', 'TData', 'TContext', 'TValue', 'Iterable'].includes(typeName)) {
             typesToInclude.push(typeName);
         }
     }

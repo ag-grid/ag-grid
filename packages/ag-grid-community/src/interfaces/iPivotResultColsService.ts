@@ -1,6 +1,6 @@
-import type { ColKey, ColumnCollections } from '../columns/columnModel';
+import type { ColumnCollections } from '../columns/columnModel';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
 export interface IPivotResultColsService {

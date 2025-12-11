@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_RO = {
     searchOoo: 'Căutare...',
     blanks: '(Goluri)',
     noMatches: 'Fără potriviri',
+    typeToSearchOoo: 'Tastează pentru a căuta...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtrează...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_RO = {
     maxLengthValidation: 'Trebuie să fie cel mult ${variable} caractere.',
     minValueValidation: 'Trebuie să fie mai mare sau egal cu ${variable}',
     maxValueValidation: 'Trebuie să fie mai mic sau egal cu ${variable}',
+    strictMinValueValidation: 'Trebuie să fie mai mare decât ${variable}',
+    strictMaxValueValidation: 'Trebuie să fie mai mic decât ${variable}',
     invalidSelectionValidation: 'Selecție invalidă.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_RO = {
     loadingOoo: 'Se încarcă...',
     loadingError: 'EROARE',
     noRowsToShow: 'Nicio rânduri de afișat',
+    noMatchingRows: 'Nicio rânduri potrivite',
+    exportingOoo: 'Se exportă...',
     enabled: 'Activat',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_RO = {
     pinLeft: 'Fixează la Stânga',
     pinRight: 'Fixează la Dreapta',
     noPin: 'Nu Fixa',
+    pinRow: 'Fixează rândul',
+    pinTop: 'Fixează în partea de sus',
+    pinBottom: 'Fixează în partea de jos',
+    unpinRow: 'Anulează fixarea rândului',
     valueAggregation: 'Agregare Valori',
     noAggregation: 'Niciuna',
     autosizeThisColumn: 'Auto redimensiona această coloană',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_RO = {
     chooseColumns: 'Alege Coloane',
     sortAscending: 'Sortare Ascendentă',
     sortDescending: 'Sortare Descendentă',
+    sortAbsoluteAscending: 'Sortează în ordine ascendentă absolută',
+    sortAbsoluteDescending: 'Sortează în ordine descendentă absolută',
     sortUnSort: 'Șterge Sortarea',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_RO = {
     ariaChecked: 'bifat',
     ariaColumn: 'Coloană',
     ariaColumnGroup: 'Grup de Coloane',
+    ariaFilterActive: 'Filtru activ',
     ariaColumnFiltered: 'Coloană Filtrată',
     ariaColumnSelectAll: 'Comută vizibilitatea tuturor coloanelor',
     ariaDateFilterInput: 'Intrare Filtru de Dată',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_RO = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' din ',
     ariaDropZoneColumnComponentSortAscending: 'crescător',
     ariaDropZoneColumnComponentSortDescending: 'descrescător',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendent absolut',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendent absolut',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Meniu Coloană',
     ariaLabelColumnFilter: 'Filtru Coloană',
@@ -661,15 +675,24 @@ export const AG_GRID_LOCALE_RO = {
     november: 'Noiembrie',
     december: 'Decembrie',
 
+    // Date-time parts
+    year: 'An',
+    quarter: 'Trimestru',
+    month: 'Lună',
+    day: 'Zi',
+    hour: 'Oră',
+    minute: 'Minut',
+    second: 'Secundă',
+
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.M.YY',
-    timeFormatDotsMDDYY: 'M.DD.YY',
-    timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
-    timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
-    timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS AM/PM',
+    timeFormatSlashesDDMMYYYY: 'ZZ/LL/AAAA',
+    timeFormatSlashesMMDDYYYY: 'LL/ZZ/AAAA',
+    timeFormatSlashesDDMMYY: 'ZZ/LL/AA',
+    timeFormatSlashesMMDDYY: 'LL/ZZ/AA',
+    timeFormatDotsDDMYY: 'ZZ.L.AA',
+    timeFormatDotsMDDYY: 'L.ZZ.AA',
+    timeFormatDashesYYYYMMDD: 'AAAA-LL-ZZ',
+    timeFormatSpacesDDMMMMYYYY: 'ZZ LLLL AAAA',
+    timeFormatHHMMSS: 'OO:MM:SS',
+    timeFormatHHMMSSAmPm: 'OO:MM:SS AM/PM',
 };

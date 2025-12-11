@@ -107,11 +107,20 @@ The example below demonstrates switching categories and series:
 
 The best way to display grouped data in a chart is using [Pivot Charts](./integrated-charts-pivot-chart/). However, it is also possible to use Range Charts with [Row Grouping](./grouping/).
 
-When Row Grouping is enabled, the chart can either display a grouped category, or aggregated values.
+When Row Grouping is enabled, the chart can display in one of three ways:
+- Without the group column
+- As a grouped category
+- With aggregated values
+
+### Without Group Column
+
+If the group column is not included in the cell range, the chart will be displayed flat as if grouping was disabled.
+
+If the chart range spreads across groups and there are no values at the group level, the chart will have blank values.
 
 ### Grouped Category
 
-By default, a grouped category will be displayed. For the group category to be displayed correctly, it is necessary to [Add Values to Leaf Nodes](./grouping-single-group-column/#configuration) in the grid.
+If the group column is included in the cell range, by default a grouped category will be displayed. For the group category to be displayed correctly, it is necessary to [Add Values to Leaf Nodes](./grouping-single-group-column/#configuration) in the grid.
 
 The following example demonstrates this via defining the `field` **Resource** on the [Group Column Configuration](./grouping-single-group-column/#configuration):
 

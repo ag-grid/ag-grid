@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid parentId tree selection', () => {
@@ -43,12 +42,6 @@ describe('ag-grid parentId tree selection', () => {
             treeDataParentIdField: 'parent',
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-            checkDom: true,
-            checkSelectedNodes: true,
-        };
-
         api.setNodesSelected({
             nodes: [
                 api.getRowNode('A')!,
@@ -60,17 +53,17 @@ describe('ag-grid parentId tree selection', () => {
             newValue: true,
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP selected id:A name:"John Von Neumann"
-            │ ├─┬ B GROUP id:B name:"Alan Turing"
-            │ │ ├── D LEAF selected id:D name:"Donald Knuth"
-            │ │ └── E LEAF id:E name:"Grace Hopper"
-            │ └─┬ C GROUP selected id:C name:"A. Church"
-            │ · ├── F LEAF id:F name:"Linus Torvalds"
-            │ · └─┬ G GROUP id:G name:"Brian Kernighan"
-            │ · · └── H LEAF selected id:H name:"Claude Elwood Shannon"
-            └── I LEAF selected id:I name:"E. Dijkstra"
+            ├─┬ A GROUP selected id:A ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ B GROUP id:B ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ │ ├── D LEAF selected id:D ag-Grid-AutoColumn:"D" name:"Donald Knuth"
+            │ │ └── E LEAF id:E ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └─┬ C GROUP selected id:C ag-Grid-AutoColumn:"C" name:"A. Church"
+            │ · ├── F LEAF id:F ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ · └─┬ G GROUP id:G ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            │ · · └── H LEAF selected id:H ag-Grid-AutoColumn:"H" name:"Claude Elwood Shannon"
+            └── I LEAF selected id:I ag-Grid-AutoColumn:"I" name:"E. Dijkstra"
         `);
 
         api.setNodesSelected({
@@ -78,17 +71,17 @@ describe('ag-grid parentId tree selection', () => {
             newValue: true,
         });
 
-        await new GridRows(api, 'select 8', gridRowsOptions).check(`
+        await new GridRows(api, 'select 8').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ A GROUP selected id:A name:"John Von Neumann"
-            │ ├─┬ B GROUP id:B name:"Alan Turing"
-            │ │ ├── D LEAF selected id:D name:"Donald Knuth"
-            │ │ └── E LEAF id:E name:"Grace Hopper"
-            │ └─┬ C GROUP selected id:C name:"A. Church"
-            │ · ├── F LEAF id:F name:"Linus Torvalds"
-            │ · └─┬ G GROUP selected id:G name:"Brian Kernighan"
-            │ · · └── H LEAF selected id:H name:"Claude Elwood Shannon"
-            └── I LEAF selected id:I name:"E. Dijkstra"
+            ├─┬ A GROUP selected id:A ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            │ ├─┬ B GROUP id:B ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            │ │ ├── D LEAF selected id:D ag-Grid-AutoColumn:"D" name:"Donald Knuth"
+            │ │ └── E LEAF id:E ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └─┬ C GROUP selected id:C ag-Grid-AutoColumn:"C" name:"A. Church"
+            │ · ├── F LEAF id:F ag-Grid-AutoColumn:"F" name:"Linus Torvalds"
+            │ · └─┬ G GROUP selected id:G ag-Grid-AutoColumn:"G" name:"Brian Kernighan"
+            │ · · └── H LEAF selected id:H ag-Grid-AutoColumn:"H" name:"Claude Elwood Shannon"
+            └── I LEAF selected id:I ag-Grid-AutoColumn:"I" name:"E. Dijkstra"
         `);
 
         api.setGridOption(
@@ -104,15 +97,15 @@ describe('ag-grid parentId tree selection', () => {
             ])
         );
 
-        await new GridRows(api, 'rowData 2', gridRowsOptions).check(`
+        await new GridRows(api, 'rowData 2').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ X GROUP id:X name:"A. Church"
-            │ ├─┬ Y GROUP id:Y name:"Brian Kernighan"
-            │ │ ├── G LEAF selected id:G name:"Linus Torvalds"
-            │ │ └── E LEAF id:E name:"Grace Hopper"
-            │ └── B LEAF id:B name:"Alan Turing"
-            ├── A LEAF selected id:A name:"John Von Neumann"
-            └── J LEAF id:J name:"E. Dijkstra"
+            ├─┬ X GROUP id:X ag-Grid-AutoColumn:"X" name:"A. Church"
+            │ ├─┬ Y GROUP id:Y ag-Grid-AutoColumn:"Y" name:"Brian Kernighan"
+            │ │ ├── G LEAF selected id:G ag-Grid-AutoColumn:"G" name:"Linus Torvalds"
+            │ │ └── E LEAF id:E ag-Grid-AutoColumn:"E" name:"Grace Hopper"
+            │ └── B LEAF id:B ag-Grid-AutoColumn:"B" name:"Alan Turing"
+            ├── A LEAF selected id:A ag-Grid-AutoColumn:"A" name:"John Von Neumann"
+            └── J LEAF id:J ag-Grid-AutoColumn:"J" name:"E. Dijkstra"
         `);
 
         api.setFilterModel({ name: { type: 'equals', filter: 'Grace Hopper' } });
@@ -122,11 +115,11 @@ describe('ag-grid parentId tree selection', () => {
             newValue: true,
         });
 
-        await new GridRows(api, 'filtered', gridRowsOptions).check(`
+        await new GridRows(api, 'filtered').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ X GROUP id:X name:"A. Church"
-            · └─┬ Y GROUP id:Y name:"Brian Kernighan"
-            · · └── E LEAF selected id:E name:"Grace Hopper"
+            └─┬ X GROUP id:X ag-Grid-AutoColumn:"X" name:"A. Church"
+            · └─┬ Y GROUP id:Y ag-Grid-AutoColumn:"Y" name:"Brian Kernighan"
+            · · └── E LEAF selected id:E ag-Grid-AutoColumn:"E" name:"Grace Hopper"
         `);
     });
 });

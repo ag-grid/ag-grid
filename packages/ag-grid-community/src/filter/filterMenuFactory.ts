@@ -46,7 +46,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             column,
             (eMenu) => {
                 this.popupSvc?.positionPopupUnderMouseEvent({
-                    column,
+                    additionalParams: { column },
                     type: containerType,
                     mouseEvent,
                     ePopup: eMenu,
@@ -92,7 +92,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
                     alignSide,
                     keepWithinBounds: true,
                     position: 'under',
-                    column,
+                    additionalParams: { column },
                 });
             },
             containerType,
@@ -127,8 +127,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-        eMenu.appendChild(comp?.getGui()!);
+        eMenu.appendChild(comp?.getGui());
 
         let hidePopup: () => void;
 

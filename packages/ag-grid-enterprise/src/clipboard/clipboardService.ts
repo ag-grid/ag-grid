@@ -356,25 +356,16 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const rangeSvc = this.beans.rangeSvc!;
 
         const clipboardRowCount = clipboardData.length;
-        const clipboardColCount = clipboardData[0].length;
         const rangeRowCount = rangeSvc.getRangeRowCount(cellRange);
-        const rangeColCount = cellRange.columns.length;
+        const isRowMultiple = rangeRowCount >= clipboardRowCount && rangeRowCount % clipboardRowCount === 0;
 
-        if (
-            rangeRowCount >= clipboardRowCount &&
-            rangeRowCount % clipboardRowCount === 0 &&
-            rangeColCount >= clipboardColCount &&
-            rangeColCount % clipboardColCount === 0
-        ) {
-            return {
-                rowDiff: rangeRowCount - clipboardRowCount,
-                colDiff: rangeColCount - clipboardColCount,
-            };
-        }
+        const clipboardColCount = clipboardData[0].length;
+        const rangeColCount = cellRange.columns.length;
+        const isColMultiple = rangeColCount >= clipboardColCount && rangeColCount % clipboardColCount === 0;
 
         return {
-            rowDiff: clipboardRowCount - rangeRowCount,
-            colDiff: clipboardColCount - rangeColCount,
+            rowDiff: isRowMultiple ? 0 : clipboardRowCount - rangeRowCount,
+            colDiff: isColMultiple ? 0 : clipboardColCount - rangeColCount,
         };
     }
 
@@ -442,7 +433,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     true
                 );
 
-                this.beans.editSvc?.commitNextEdit();
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
                 changedPath?.addParentNode(rowNode.parent, [column]);
 
@@ -533,7 +523,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public copyRangeDown(): void {
-        const { rangeSvc, gos, valueSvc } = this.beans;
+        const { rangeSvc, gos, formula, valueSvc } = this.beans;
         if (!rangeSvc || rangeSvc.isEmpty()) {
             return;
         }
@@ -576,6 +566,15 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             return;
                         }
 
+                        const isFormula = column.isAllowFormula() && formula?.isFormula(firstRowValues[index]);
+
+                        if (isFormula) {
+                            firstRowValues[index] = formula?.updateFormulaByOffset({
+                                value: firstRowValues[index],
+                                rowDelta: 1,
+                            });
+                        }
+
                         const firstRowValue = this.processCell(
                             rowNode,
                             column,
@@ -585,7 +584,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             true
                         );
 
-                        this.beans.editSvc?.commitNextEdit();
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
                         if (changedPath) {
@@ -624,7 +622,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        rowNodes.forEach((rowNode) => {
+        for (const rowNode of rowNodes) {
             this.eventSvc.dispatchEvent({
                 type: 'rowValueChanged',
                 node: rowNode,
@@ -632,7 +630,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 rowIndex: rowNode.rowIndex!,
                 rowPinned: rowNode.rowPinned,
             });
-        });
+        }
     }
 
     private pasteMultipleValues(
@@ -680,12 +678,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
         };
 
-        clipboardGridData.forEach((clipboardRowData) => {
+        for (const clipboardRowData of clipboardGridData) {
             const rowNode = getNextGoodRowNode();
 
             // if we have come to end of rows in grid, then skip
             if (!rowNode) {
-                return;
+                continue;
             }
 
             clipboardRowData.forEach((value, index) =>
@@ -693,7 +691,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             );
 
             updatedRowNodes.push(rowNode);
-        });
+        }
     }
 
     private updateCellValue(
@@ -717,7 +715,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             true
         );
 
-        this.beans.editSvc?.commitNextEdit();
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
 
         const { rowIndex, rowPinned } = rowNode;
@@ -873,7 +870,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const currentCellRanges = rangeSvc.getCellRanges();
         const cellRanges = onlyFirst ? [currentCellRanges[0]] : currentCellRanges;
 
-        cellRanges.forEach((cellRange) => this.iterateActiveRange({ cellRange, rowCallback, preProcessRange }));
+        for (const cellRange of cellRanges) {
+            this.iterateActiveRange({ cellRange, rowCallback, preProcessRange });
+        }
     }
 
     private iterateActiveRange(params: {
@@ -941,25 +940,25 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             });
         }
 
-        ranges.forEach((range) => {
+        for (const range of ranges) {
             range.columns.forEach((col: AgColumn) => columnsSet.add(col));
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
-            rowPositions.forEach((rowPosition) => {
+            for (const rowPosition of rowPositions) {
                 const isInCache = flatCache.has(rowPosition.rowIndex);
                 if (!isClientSideRowModel && !isInCache) {
-                    return; // skip rows that are not in the flat cache
+                    continue; // skip rows that are not in the flat cache
                 }
                 const rowPositionAsString = `${rowPosition.rowIndex}-${rowPosition.rowPinned || 'null'}`;
                 if (!rowPositionsMap.get(rowPositionAsString)) {
                     rowPositionsMap.set(rowPositionAsString, true);
                     allRowPositions.push(rowPosition);
                 }
-            });
+            }
             Object.assign(allCellsToFlash, cellsToFlash);
-        });
+        }
 
         const allColumns = this.beans.visibleCols.allCols;
-        const exportedColumns = Array.from(columnsSet) as AgColumn[];
+        const exportedColumns = Array.from(columnsSet);
 
         exportedColumns.sort((a, b) => {
             const posA = allColumns.indexOf(a);
@@ -983,7 +982,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const data: string[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
-        ranges.forEach((range) => {
+        for (const range of ranges) {
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             Object.assign(allCellsToFlash, cellsToFlash);
             data.push(
@@ -994,7 +993,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     includeGroupHeaders: params.includeGroupHeaders,
                 })
             );
-        });
+        }
 
         return { data: data.join('\n'), cellsToFlash: allCellsToFlash };
     }
@@ -1011,11 +1010,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         while (node) {
             rowPositions.push(node);
-            range.columns.forEach((column) => {
-                const { rowIndex, rowPinned } = node!;
+            for (const column of range.columns) {
+                const { rowIndex, rowPinned } = node;
                 const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
-            });
+            }
             if (_isSameRow(node, lastRow)) {
                 break;
             }
@@ -1095,7 +1094,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { gos, csvCreator } = this.beans;
 
         const processRowGroupCallback = ({ node, column }: ProcessRowGroupForExportParams) => {
-            const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(column as AgColumn, node, true);
+            const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay({
+                column: column as AgColumn,
+                node,
+                includeValueFormatted: true,
+            });
 
             const val = valueFormatted ?? value ?? '';
             const cb = gos.getCallback('processCellForClipboard');
@@ -1149,7 +1152,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         canParse?: boolean,
         canFormat?: boolean
     ): T {
-        const valueSvc = this.beans.valueSvc;
+        const { valueSvc, formula } = this.beans;
         if (func) {
             const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
@@ -1170,6 +1173,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
+            if (formula?.isFormula(value)) {
+                return value;
+            }
             return valueSvc.formatValue(column, rowNode ?? null, value) ?? (value as any);
         }
 
@@ -1258,10 +1264,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (callbackAfter) {
             window.setTimeout(() => {
                 callbackAfter(eTempInput);
-                guiRoot.removeChild(eTempInput);
+                eTempInput.remove();
             }, 100);
         } else {
-            guiRoot.removeChild(eTempInput);
+            eTempInput.remove();
         }
     }
 }

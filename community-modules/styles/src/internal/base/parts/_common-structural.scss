@@ -453,7 +453,8 @@
         position: relative;
     }
 
-    .ag-header-cell-sortable .ag-header-cell-label {
+    .ag-header-cell-sortable .ag-header-cell-label,
+    .ag-header-group-cell-selectable .ag-header-cell-comp-wrapper {
         cursor: pointer;
     }
 
@@ -853,7 +854,7 @@
         flex: 1 1 auto;
     }
 
-    .ag-cell-value,
+    .ag-cell-value:not(.ag-allow-overflow),
     .ag-group-value {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1053,7 +1054,9 @@
         text-align: center;
     }
 
-    .ag-overlay-loading-wrapper {
+    .ag-overlay-loading-wrapper,
+    .ag-overlay-exporting-wrapper,
+    .ag-overlay-modal-wrapper {
         // prevent interaction with grid while it's loading
         pointer-events: all;
     }
@@ -1416,7 +1419,8 @@
 
     .ag-rich-select-list {
         position: relative;
-        .ag-loading-text {
+        .ag-rich-select-loading {
+            display: flex;
             min-height: 2rem;
         }
     }

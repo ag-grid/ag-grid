@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_NO = {
     searchOoo: 'Søk...',
     blanks: '(Tomme)',
     noMatches: 'Ingen treff',
+    typeToSearchOoo: 'Skriv for å søke...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_NO = {
     maxLengthValidation: 'Må være ${variable} tegn eller færre.',
     minValueValidation: 'Må være større enn eller lik ${variable}',
     maxValueValidation: 'Må være mindre enn eller lik ${variable}',
+    strictMinValueValidation: 'Må være større enn ${variable}',
+    strictMaxValueValidation: 'Må være mindre enn ${variable}',
     invalidSelectionValidation: 'Ugyldig valg.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_NO = {
     loadingOoo: 'Laster...',
     loadingError: 'FEIL',
     noRowsToShow: 'Ingen rader å vise',
+    noMatchingRows: 'Ingen matchende rader',
+    exportingOoo: 'Eksporterer...',
     enabled: 'Aktivert',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_NO = {
     pinLeft: 'Fest til Venstre',
     pinRight: 'Fest til Høyre',
     noPin: 'Ingen Festing',
+    pinRow: 'Fest rad',
+    pinTop: 'Fest øverst',
+    pinBottom: 'Fest nederst',
+    unpinRow: 'Løsne rad',
     valueAggregation: 'Verdi Aggregering',
     noAggregation: 'Ingen',
     autosizeThisColumn: 'Tilpass Denne Kolonnen',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_NO = {
     chooseColumns: 'Velg kolonner',
     sortAscending: 'Sorter Stigende',
     sortDescending: 'Sorter Synkende',
+    sortAbsoluteAscending: 'Sorter absolutt stigende',
+    sortAbsoluteDescending: 'Sorter absolutt synkende',
     sortUnSort: 'Fjern Sortering',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -552,6 +563,7 @@ export const AG_GRID_LOCALE_NO = {
     ariaChecked: 'avmerket',
     ariaColumn: 'Kolonne',
     ariaColumnGroup: 'Kolonnegruppe',
+    ariaFilterActive: 'Filter aktiv',
     ariaColumnFiltered: 'Kolonne filtrert',
     ariaColumnSelectAll: 'Bytt synlighet for alle kolonner',
     ariaDateFilterInput: 'Inndata for datofilter',
@@ -605,6 +617,8 @@ export const AG_GRID_LOCALE_NO = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' av ',
     ariaDropZoneColumnComponentSortAscending: 'stigende',
     ariaDropZoneColumnComponentSortDescending: 'synkende',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutt stigende',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutt synkende',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Kolonnemeny',
     ariaLabelColumnFilter: 'Kolonnefilter',
@@ -660,15 +674,24 @@ export const AG_GRID_LOCALE_NO = {
     november: 'November',
     december: 'Desember',
 
+    // Date-time parts
+    year: 'År',
+    quarter: 'Kvartal',
+    month: 'Måned',
+    day: 'Dag',
+    hour: 'Time',
+    minute: 'Minutt',
+    second: 'Sekund',
+
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.M.YY',
-    timeFormatDotsMDDYY: 'M.DD.YY',
-    timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
-    timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/ÅÅÅÅ',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/ÅÅÅÅ',
+    timeFormatSlashesDDMMYY: 'DD/MM/ÅÅ',
+    timeFormatSlashesMMDDYY: 'MM/DD/ÅÅ',
+    timeFormatDotsDDMYY: 'DD.M.ÅÅ',
+    timeFormatDotsMDDYY: 'M.DD.ÅÅ',
+    timeFormatDashesYYYYMMDD: 'ÅÅÅÅ-MM-DD',
+    timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 };

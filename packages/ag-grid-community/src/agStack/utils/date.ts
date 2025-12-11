@@ -177,7 +177,7 @@ export function _parseDateTimeFromString(
         return null;
     }
 
-    const fields = dateStr.split('-').map((f) => parseInt(f, 10));
+    const fields = dateStr.split('-').map((f) => Number.parseInt(f, 10));
 
     if (fields.filter((f) => !isNaN(f)).length !== 3) {
         return null;
@@ -199,7 +199,7 @@ export function _parseDateTimeFromString(
         return date;
     }
 
-    const [hours, minutes, seconds] = timeStr.split(':').map((part) => parseInt(part, 10)); // if last part includes Z, it is dropped here
+    const [hours, minutes, seconds] = timeStr.split(':').map((part) => Number.parseInt(part, 10)); // if last part includes Z, it is dropped here
 
     if (hours >= 0 && hours < 24) {
         date.setHours(hours);

@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_CZ = {
     searchOoo: 'Hledat...',
     blanks: '(Prázdné)',
     noMatches: 'Žádné shody',
+    typeToSearchOoo: 'Pište pro hledání...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtr...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_CZ = {
     maxLengthValidation: 'Musí mít ${variable} znaků nebo méně.',
     minValueValidation: 'Musí být větší nebo rovno ${variable}',
     maxValueValidation: 'Musí být menší nebo rovno ${variable}',
+    strictMinValueValidation: 'Musí být větší než ${variable}',
+    strictMaxValueValidation: 'Musí být menší než ${variable}',
     invalidSelectionValidation: 'Neplatný výběr.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_CZ = {
     loadingOoo: 'Načítání...',
     loadingError: 'CHYBA',
     noRowsToShow: 'Žádné řádky k zobrazení',
+    noMatchingRows: 'Žádné odpovídající řádky',
+    exportingOoo: 'Probíhá export...',
     enabled: 'Povoleno',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_CZ = {
     pinLeft: 'Připnout vlevo',
     pinRight: 'Připnout vpravo',
     noPin: 'Nepřipínat',
+    pinRow: 'Připnout řádek',
+    pinTop: 'Připnout nahoru',
+    pinBottom: 'Připnout dolů',
+    unpinRow: 'Odepnout řádek',
     valueAggregation: 'Agregace hodnot',
     noAggregation: 'Žádná',
     autosizeThisColumn: 'Automatická velikost tohoto sloupce',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_CZ = {
     chooseColumns: 'Vybrat sloupce',
     sortAscending: 'Třídit vzestupně',
     sortDescending: 'Třídit sestupně',
+    sortAbsoluteAscending: 'Řadit absolutně vzestupně',
+    sortAbsoluteDescending: 'Řadit absolutně sestupně',
     sortUnSort: 'Zrušit třídění',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -552,6 +563,7 @@ export const AG_GRID_LOCALE_CZ = {
     ariaChecked: 'zaškrtnuto',
     ariaColumn: 'Sloupec',
     ariaColumnGroup: 'Skupina sloupců',
+    ariaFilterActive: 'Filtr aktivní',
     ariaColumnFiltered: 'Sloupec filtrován',
     ariaColumnSelectAll: 'Přepnout viditelnost všech sloupců',
     ariaDateFilterInput: 'Vstup datového filtru',
@@ -605,6 +617,8 @@ export const AG_GRID_LOCALE_CZ = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' z ',
     ariaDropZoneColumnComponentSortAscending: 'vzestupně',
     ariaDropZoneColumnComponentSortDescending: 'sestupně',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutně stoupající',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutně klesající',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Nabídka sloupců',
     ariaLabelColumnFilter: 'Filtr sloupců',
@@ -659,6 +673,15 @@ export const AG_GRID_LOCALE_CZ = {
     october: 'Říjen',
     november: 'Listopad',
     december: 'Prosinec',
+
+    // Date-time parts
+    year: 'Rok',
+    quarter: 'Čtvrtletí',
+    month: 'Měsíc',
+    day: 'Den',
+    hour: 'Hodina',
+    minute: 'Minuta',
+    second: 'Sekunda',
 
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/RRRR',

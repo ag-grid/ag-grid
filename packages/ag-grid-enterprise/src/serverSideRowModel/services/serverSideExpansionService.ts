@@ -1,6 +1,7 @@
 import { RowNode, _exists, _getRowHeightForNode } from 'ag-grid-community';
 import type {
     BeanCollection,
+    GridApi,
     IExpansionService,
     NamedBean,
     RowGroupBulkExpansionState,
@@ -42,8 +43,10 @@ export class ServerSideExpansionService
         };
 
         this.addManagedEventListeners({
-            // when row grouping changes, the old expand all state is no longer valid as rows changed
+            // when row grouping / pivot changes, the old expand all state is no longer valid as rows changed
             columnRowGroupChanged: setDefaultExpand,
+            columnPivotChanged: setDefaultExpand,
+            columnPivotModeChanged: setDefaultExpand,
         });
 
         this.addManagedPropertyListener('ssrmExpandAllAffectsAllRows', (p) => {
@@ -98,12 +101,12 @@ export class ServerSideExpansionService
     }
 
     public expandAll(expanded: boolean): void {
-        const canUseNewExpandAll = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
+        const ssrmExpandAllAffectsAllRows = this.beans.gos.get('ssrmExpandAllAffectsAllRows');
         // if allowed, swap to expand all strategy
-        const strategy: IExpansionStrategy<any> =
-            this.isExpandAllStrategy(this.strategy) || !canUseNewExpandAll ? this.strategy : new ExpandAllStrategy();
-        this.strategy = strategy;
-        strategy.expandAll(expanded);
+        const shouldUseExpandAllStrategy = !this.isExpandAllStrategy(this.strategy) && ssrmExpandAllAffectsAllRows;
+
+        this.strategy = shouldUseExpandAllStrategy ? new ExpandAllStrategy() : this.strategy;
+        this.strategy.expandAll(expanded);
         this.updateAllNodes();
         this.dispatchStateUpdatedEvent();
         this.beans.eventSvc.dispatchEvent({
@@ -121,6 +124,30 @@ export class ServerSideExpansionService
     public onGroupExpandedOrCollapsed(): void {
         // this could be made to work, but the pattern for encouraging .expanded to be explicitly set on nodes
         // is old, and we should move towards batch APIs
+    }
+
+    public setDetailsExpansionState(detailGridApi: GridApi): void {
+        const { gos: masterGos } = this.beans;
+
+        // to prevent massive server side queries, we only propagate if the master is using a special flag
+        // this flag also indicates that we are using the expandAll strategy, and it's safe to cast the state to RowGroupBulkExpansionState
+        if (!masterGos.get('ssrmExpandAllAffectsAllRows')) {
+            return;
+        }
+
+        // ideally, we would want to combine these strategies / states some day so there is no need in type cast here
+        const masterExpansionState = this.getExpansionState() as RowGroupBulkExpansionState;
+        const isInitial = masterExpansionState.expandAll === undefined;
+        if (isInitial) {
+            return;
+        }
+        const allExpanded = masterExpansionState.expandAll! && masterExpansionState.invertedRowGroupIds.length === 0;
+        const allCollapsed = !masterExpansionState.expandAll! && masterExpansionState.invertedRowGroupIds.length === 0;
+
+        if (allCollapsed === allExpanded) {
+            return;
+        }
+        return allExpanded ? detailGridApi.expandAll() : detailGridApi.collapseAll();
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {

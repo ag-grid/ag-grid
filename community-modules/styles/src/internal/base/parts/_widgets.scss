@@ -166,6 +166,11 @@
         color: var(--ag-secondary-foreground-color);
     }
 
+    .ag-drag-handle-disabled {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         // assign internal variables to simplify the `height` value
         --ag-internal-calculated-line-height: var(
@@ -515,7 +520,7 @@
         height: auto;
         border-radius: var(--ag-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
-        .ag-loading-text {
+        .ag-rich-select-loading {
             padding: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
         }
     }
@@ -683,7 +688,8 @@
         border-radius: var(--ag-card-radius);
         white-space: normal;
 
-        &.ag-cell-editor-tooltip {
+        &.ag-cell-editor-tooltip,
+        &.ag-cell-formula-tooltip {
             background-color: var(--ag-tooltip-error-background-color);
             color: var(--ag-tooltip-error-text-color);
             border: var(--ag-borders) var(--ag-tooltip-error-border-color);

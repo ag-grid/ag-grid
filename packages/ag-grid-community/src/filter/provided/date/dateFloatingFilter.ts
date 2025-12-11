@@ -3,6 +3,7 @@ import { _parseDateTimeFromString, _serialiseDate } from '../../../agStack/utils
 import { _setDisplayed } from '../../../agStack/utils/dom';
 import { _debounce } from '../../../agStack/utils/function';
 import { AgInputTextFieldSelector } from '../../../agStack/widgets/agInputTextField';
+import type { AgColumn } from '../../../entities/agColumn';
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
 import type { ElementParams } from '../../../utils/element';
@@ -125,16 +126,16 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         const {
             beans: { context, userCompFactory },
             eDateWrapper,
-            params,
+            params: { column },
         } = this;
         this.dateComp = new DateCompWrapper(
             context,
             userCompFactory,
-            params.column.getColDef(),
+            column.getColDef(),
             this.getDateComponentParams(),
             eDateWrapper,
             (dateComp) => {
-                dateComp.setInputAriaLabel(this.getAriaLabel(params));
+                dateComp.setInputAriaLabel(this.getAriaLabel(column as AgColumn));
             }
         );
 

@@ -57,6 +57,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
         },
         chartType: 'groupedColumn',
         aggFunc: 'sum',
+        useGroupColumnAsCategory: true,
     });
 }
 

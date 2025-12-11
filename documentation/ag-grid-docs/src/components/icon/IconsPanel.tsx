@@ -11,6 +11,8 @@ const ICONS = [
     'aggregation',
     'arrows',
     'asc',
+    'aasc',
+    'adesc',
     'cancel',
     'chart',
     'chevron-up',

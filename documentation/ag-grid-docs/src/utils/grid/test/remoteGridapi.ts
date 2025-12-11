@@ -1,8 +1,7 @@
 import type { Page } from 'playwright/test';
 import { test } from 'playwright/test';
 
-import type { AgPublicEventType, GridApi } from 'ag-grid-community';
-import type { GridOptions } from 'ag-grid-community';
+import type { AgPublicEventType, GridApi, GridOptions } from 'ag-grid-community';
 
 import type { TemplateEventKeys } from '../test-event-types';
 
@@ -19,6 +18,24 @@ export const ensureGridReady = async (page: Page, gridId: string = '1') => {
         return true;
     });
 };
+
+export async function waitForGridContent(page: Page) {
+    await page.locator('ag-overlay-loading-center').first().waitFor({ state: 'hidden' });
+    // Normal cells
+    const cellLocator = page.locator('.ag-cell');
+    // Grouped cells
+    const cellWrapperLocator = page.locator('.ag-cell-wrapper');
+    // Full width only cells
+    const fullWidthRow = page.locator('.ag-full-width-row');
+    // No rows to show
+    const noRowsToShowLocator = page.locator('.ag-overlay-no-rows-center');
+    await cellLocator
+        .or(cellWrapperLocator)
+        .or(noRowsToShowLocator)
+        .or(fullWidthRow)
+        .first()
+        .waitFor({ state: 'visible' });
+}
 
 export const createRemoteGridApiProxy = (page: Page, gridId: string = '1', eventLog: EventLog): AsyncGridApi => {
     page.exposeFunction('logEvent', (listenerName: AgPublicEventType, arg0: any, ...args: any[]) => {

@@ -1,11 +1,12 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
-import { onRowHeightChanged, resetRowHeights } from 'ag-grid-community';
 import {
     _CsrmSsrmSharedApiModule,
     _RowModelSharedApiModule,
     _SharedRowSelectionModule,
     _SortModule,
     _SsrmInfiniteSharedApiModule,
+    onRowHeightChanged,
+    resetRowHeights,
 } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';

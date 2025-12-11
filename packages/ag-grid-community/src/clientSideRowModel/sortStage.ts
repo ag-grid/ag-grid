@@ -4,12 +4,13 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
-import type { ClientSideRowModelStage, IChangedRowNodes } from '../interfaces/iClientSideRowModel';
+import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import type { IRowNodeSortStage } from '../interfaces/iRowNodeStage';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { ChangedPath } from '../utils/changedPath';
+import type { ChangedRowNodes } from './changedRowNodes';
 
 export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     const childrenAfterSort = rowNode.childrenAfterSort;
@@ -39,33 +40,24 @@ export const updateRowNodeAfterSort = (rowNode: RowNode): void => {
     }
 };
 
-export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
+export class SortStage extends BeanStub implements NamedBean, IRowNodeSortStage {
     beanName = 'sortStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set(['postSortRows', 'groupDisplayType', 'accentedSort']);
-    public step: ClientSideRowModelStage = 'sort';
+    public readonly step: ClientSideRowModelStage = 'sort';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = ['postSortRows', 'groupDisplayType', 'accentedSort'];
 
-    public execute(params: StageExecuteParams): void {
+    public execute(changedPath: ChangedPath | undefined, changedRowNodes: ChangedRowNodes | undefined): void {
         const sortOptions = this.beans.sortSvc!.getSortOptions();
 
-        const deltaSort =
+        const useDeltaSort =
             sortOptions.length > 0 &&
-            !!params.changedRowNodes &&
+            !!changedRowNodes &&
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
             this.gos.get('deltaSort');
 
-        this.sort(sortOptions, deltaSort, params.changedRowNodes, params.changedPath);
-    }
-
-    private sort(
-        sortOptions: SortOption[],
-        useDeltaSort: boolean,
-        changedRowNodes: IChangedRowNodes | undefined,
-        changedPath: ChangedPath | undefined
-    ): void {
         const { gos, colModel, rowGroupColsSvc, rowNodeSorter, rowRenderer, showRowGroupCols } = this.beans;
         const groupMaintainOrder = gos.get('groupMaintainOrder');
         const groupColumnsPresent = colModel.getCols().some((c) => c.isRowGroupActive());
@@ -95,8 +87,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                 if (groupCols) {
                     const nextGroupIndex = rowNode.level + 1;
                     if (nextGroupIndex < groupCols.length) {
-                        // if the sort is null, then sort was explicitly removed, so remove sort from this group.
-                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].getSort() === null;
+                        wasSortExplicitlyRemoved = groupCols[nextGroupIndex].wasSortExplicitlyRemoved;
                     }
                 }
 
@@ -105,7 +96,6 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
                 }
             } else if (!sortOptions.length || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
-                newChildrenAfterSort = null;
             } else if (useDeltaSort && changedRowNodes) {
                 newChildrenAfterSort = doDeltaSort(rowNodeSorter!, rowNode, changedRowNodes, changedPath, sortOptions);
             } else {
@@ -132,7 +122,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         // displays the parent grouping - it's cheaper here to refresh all cells in col rather than fire events for every potential
         // child cell
         if (hasAnyFirstChildChanged && gos.get('groupHideOpenParents')) {
-            const columns = showRowGroupCols?.getShowRowGroupCols();
+            const columns = showRowGroupCols?.columns;
             if (columns?.length) {
                 rowRenderer.refreshCells({ columns, force: true });
             }
@@ -167,7 +157,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
 const doDeltaSort = (
     rowNodeSorter: RowNodeSorter,
     rowNode: RowNode,
-    changedRowNodes: IChangedRowNodes,
+    changedRowNodes: ChangedRowNodes,
     changedPath: ChangedPath | undefined,
     sortOptions: SortOption[]
 ): RowNode[] => {

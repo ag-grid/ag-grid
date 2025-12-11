@@ -21,6 +21,7 @@
 .ag-panel-title-bar-button,
 .ag-floating-filter-button-button,
 :where(.ag-header-cell-sortable) .ag-header-cell-label,
+:where(.ag-header-group-cell-selectable) .ag-header-cell-comp-wrapper,
 .ag-header-expand-icon {
     cursor: pointer;
 }
@@ -197,6 +198,11 @@
 }
 
 :where(.ag-header-cell:not(.ag-right-aligned-header)) {
+    .ag-header-col-ref {
+        margin-right: var(--ag-spacing);
+        color: var(--ag-subtle-text-color);
+    }
+
     .ag-header-label-icon,
     .ag-header-menu-icon {
         margin-left: var(--ag-spacing);
@@ -204,6 +210,11 @@
 }
 
 :where(.ag-header-cell.ag-right-aligned-header) {
+    .ag-header-col-ref {
+        margin-left: var(--ag-spacing);
+        color: var(--ag-subtle-text-color);
+    }
+
     .ag-header-label-icon,
     .ag-header-menu-icon {
         margin-right: var(--ag-spacing);
@@ -230,8 +241,10 @@
     content: '';
     position: absolute;
     height: 100%;
-    width: 1px;
-    background-color: var(--ag-accent-color);
+    top: 0;
+    width: var(--ag-column-drag-indicator-width);
+    border-radius: calc(var(--ag-column-drag-indicator-width) / 2);
+    background-color: var(--ag-column-drag-indicator-color);
 }
 
 .ag-header-highlight-before::after {

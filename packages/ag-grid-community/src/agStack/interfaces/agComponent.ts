@@ -13,7 +13,7 @@ export interface AgComponent<
     TBeanCollection,
     TProperties extends BaseProperties,
     TGlobalEvents extends BaseEvents,
-    TLocalEventType extends string,
+    TLocalEventType extends string = AgComponentEvent,
 > extends AgBaseComponent<TBeanCollection>,
         AgBean<TBeanCollection, TProperties, TGlobalEvents, TLocalEventType> {
     getCompId(): number;

@@ -59,6 +59,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
             columns: ['expenses'],
         },
         chartType: 'groupedColumn',
+        useGroupColumnAsCategory: true,
     });
 }
 

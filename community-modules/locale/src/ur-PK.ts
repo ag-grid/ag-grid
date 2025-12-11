@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_PK = {
     searchOoo: 'تلاش کریں...',
     blanks: '(خالی)',
     noMatches: 'کوئی مماثلت نہیں',
+    typeToSearchOoo: 'تلاش کے لئے ٹائپ کریں...',
 
     // Number Filter & Text Filter
     filterOoo: 'فلٹر...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_PK = {
     maxDateValidation: 'تاریخ ${variable} سے پہلے کی ہونی چاہیے',
     maxLengthValidation: '${variable} حروف یا کم ہونا چاہیے۔',
     minValueValidation: '${variable} کے برابر یا اس سے زیادہ ہونا چاہیے',
-    maxValueValidation: '${variable} کے برابر یا اس سے کم ہونا چاہیے',
+    maxValueValidation: '${variable} کے برابر یا کم ہونا چاہیے',
+    strictMinValueValidation: '${variable} سے زیادہ ہونا چاہیے',
+    strictMaxValueValidation: '${variable} سے کم ہونا چاہیے',
     invalidSelectionValidation: 'غلط انتخاب',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_PK = {
     loadingOoo: 'لوڈ ہو رہا ہے ...',
     loadingError: 'غلطی',
     noRowsToShow: 'دکھانے کے لیے کوئی قطار نہیں',
+    noMatchingRows: 'کوئی مماثل قطاریں نہیں',
+    exportingOoo: 'برآمد ہو رہا ہے...',
     enabled: 'فعال',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_PK = {
     pinLeft: 'بائیں پن کریں',
     pinRight: 'دائیں پن کریں',
     noPin: 'کوئی پن نہیں',
+    pinRow: 'پن قطار',
+    pinTop: 'اوپر پن',
+    pinBottom: 'نیچے پن',
+    unpinRow: 'پن ہٹائیں',
     valueAggregation: 'ویلیو ایگریگیشن',
     noAggregation: 'کوئی نہیں',
     autosizeThisColumn: 'اس کالم کے سائز کو خودکار بنائیں',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_PK = {
     chooseColumns: 'کالمز منتخب کریں',
     sortAscending: 'آروہیبھک ترتیب',
     sortDescending: 'زوال پذیر ترتیب',
+    sortAbsoluteAscending: 'مکمل ابجدی ترتیب میں ترتیب دیں',
+    sortAbsoluteDescending: 'مکمل اُتری ابجدی ترتیب میں ترتیب دیں',
     sortUnSort: 'ترتیب مٹائیں',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -552,6 +563,7 @@ export const AG_GRID_LOCALE_PK = {
     ariaChecked: 'چیکڈ',
     ariaColumn: 'کالم',
     ariaColumnGroup: 'کالم گروپ',
+    ariaFilterActive: 'فلٹر فعال',
     ariaColumnFiltered: 'کالم فلٹرڈ',
     ariaColumnSelectAll: 'تمام کالمز کی مرئیت کو ٹوگل کریں',
     ariaDateFilterInput: 'تاریخ فلٹر انپٹ',
@@ -605,6 +617,8 @@ export const AG_GRID_LOCALE_PK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' کا ',
     ariaDropZoneColumnComponentSortAscending: 'بڑھتے ہوئے ترتیب',
     ariaDropZoneColumnComponentSortDescending: 'گرتے ہوئے ترتیب',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'مکمل اوپر کی طرف',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'مکمل نیچے کی طرف',
     ariaLabelDialog: 'ڈائیلاگ',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',
@@ -660,15 +674,24 @@ export const AG_GRID_LOCALE_PK = {
     november: 'نومبر',
     december: 'دسمبر',
 
+    // Date-time parts
+    year: 'سال',
+    quarter: 'سہ ماہی',
+    month: 'مہینہ',
+    day: 'دن',
+    hour: 'گھنٹہ',
+    minute: 'منٹ',
+    second: 'سیکنڈ',
+
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'ڈی ڈی/ایم ایم/وائی وائی وائی وائی',
-    timeFormatSlashesMMDDYYYY: 'ایم ایم/ڈی ڈی/وائی وائی وائی وائی',
-    timeFormatSlashesDDMMYY: 'ڈی ڈی/ایم ایم/وائی وائی',
-    timeFormatSlashesMMDDYY: 'ایم ایم/ڈی ڈی/وائی وائی',
-    timeFormatDotsDDMYY: 'ڈی ڈی.ایم.وائی وائی',
-    timeFormatDotsMDDYY: 'ایم.ڈی ڈی.وائی وائی',
-    timeFormatDashesYYYYMMDD: 'وائی وائی وائی وائی-ایم ایم-ڈی ڈی',
-    timeFormatSpacesDDMMMMYYYY: 'ڈی ڈی ایم ایم ایم ایم وائی وائی وائی وائی',
-    timeFormatHHMMSS: 'ایچ ایچ:ایم ایم:ایس ایس',
-    timeFormatHHMMSSAmPm: 'ایچ ایچ:ایم ایم:ایس ایس اے ایم/پی ایم',
+    timeFormatSlashesDDMMYYYY: 'دد/مم/سسسس',
+    timeFormatSlashesMMDDYYYY: 'مم/دد/سسسس',
+    timeFormatSlashesDDMMYY: 'دد/مم/سس',
+    timeFormatSlashesMMDDYY: 'مم/دد/سس',
+    timeFormatDotsDDMYY: 'دد.م.سس',
+    timeFormatDotsMDDYY: 'م.دد.سس',
+    timeFormatDashesYYYYMMDD: 'سسسس-مم-دد',
+    timeFormatSpacesDDMMMMYYYY: 'دد مممم سسسس',
+    timeFormatHHMMSS: 'گگ:مم:سس',
+    timeFormatHHMMSSAmPm: 'گگ:مم:سس ص/ش',
 };

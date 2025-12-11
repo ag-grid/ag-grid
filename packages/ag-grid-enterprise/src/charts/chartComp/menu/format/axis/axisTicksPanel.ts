@@ -1,17 +1,16 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import type { AgSlider } from '../../../../widgets/agSlider';
-import { AgSliderSelector } from '../../../../widgets/agSlider';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import { AgSliderSelector } from '../../../../../agStack/agSlider';
+import type { GridSlider, GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class AxisTicksPanel extends Component {
     private chartTranslation: ChartTranslationService;
-    private readonly axisTicksSizeSlider: AgSlider = RefPlaceholder;
+    private readonly axisTicksSizeSlider: GridSlider = RefPlaceholder;
 
     public wireBeans(beans: BeanCollection): void {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
@@ -23,7 +22,7 @@ export class AxisTicksPanel extends Component {
 
     public postConstruct() {
         const { chartMenuUtils } = this;
-        const axisTicksGroupParams = chartMenuUtils.addEnableParams<AgGroupComponentParams>('tick.enabled', {
+        const axisTicksGroupParams = chartMenuUtils.addEnableParams<GroupComponentParams>('tick.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
@@ -42,7 +41,7 @@ export class AxisTicksPanel extends Component {
                 <ag-slider data-ref="axisTicksSizeSlider"></ag-slider>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            [AgGroupComponentSelector, ColorPickerSelector, AgSliderSelector],
             {
                 axisTicksGroup: axisTicksGroupParams,
                 axisTicksColorPicker: axisTicksColorPickerParams,

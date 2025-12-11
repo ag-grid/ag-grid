@@ -71,9 +71,9 @@ const gridOptions = {
 
 When grouping by date/time values, the grid can optionally group by components of the date/time.
 
-To enable grouping by parts of the date for a particular column, use the `rowGroupingHierarchy` property of the [Column Definition](./column-properties/#reference-grouping-rowGroupingHierarchy).
+To enable grouping by parts of the date for a particular column, use the `groupHierarchy` property of the [Column Definition](./column-properties/#reference-grouping-groupHierarchy).
 
-{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["rowGroupingHierarchy"] /%}
+{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["groupHierarchy"] /%}
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -81,7 +81,7 @@ const gridOptions = {
         {
             field: 'date',
             rowGroup: true,
-            rowGroupingHierarchy: ['year', 'month']
+            groupHierarchy: ['year', 'month']
         },
         // ...other column definitions
     ],
@@ -93,14 +93,16 @@ This snippet is illustrated in the example below.
 {% gridExampleRunner title="Grouping by Dates and Times" name="grouping-date-time" /%}
 
 {% note %}
-Date values must be formatted as ISO-8601 dates in order to be correctly parsed into their components.
+By default, the grid requires datetime values to be formatted using the ISO-8601 format in order to be correctly parsed into their components.
+
+To use other date formats, provide a custom [Cell Data Type Definition](./cell-data-types/#providing-custom-cell-data-types) for the `dateString` and/or `dateTimeString` data types.
 {% /note %}
 
 ## Defining Custom Grouping Hierarchies
 
-When using `rowGroupingHierarchy` as demonstrated in [Grouping by Dates and Times](./grouping-data/#grouping-by-dates-and-times), the grid provides built-in support for several components of a date/time value.
+When using `groupHierarchy` as demonstrated in [Grouping by Dates and Times](./grouping-data/#grouping-by-dates-and-times), the grid provides built-in support for several components of a date/time value.
 
-Users may instead provide definitions of their own components via the `groupHierarchyConfig` grid option. These definitions may then be used in the `rowGroupingHierarchy` property of a column definition.
+Users may instead provide definitions of their own components via the `groupHierarchyConfig` grid option. These definitions may then be used in the `groupHierarchy` property of a column definition.
 
 {% apiDocumentation source="grid-options/properties.json" section="rowGrouping" names=["groupHierarchyConfig"] /%}
 

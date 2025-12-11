@@ -2,13 +2,13 @@ import { _removeFromArray } from '../agStack/utils/array';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
+import type { ColDef, ColKey } from '../entities/colDef';
 import type { GridOptions, SelectionColumnDef } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyValueChangedEvent } from '../gridOptionsService';
 import { _getCheckboxLocation, _getCheckboxes, _getHeaderCheckbox, _isRowSelection } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
-import type { ColKey, ColumnCollections } from './columnModel';
+import type { ColumnCollections } from './columnModel';
 import { _applyColumnState } from './columnStateUtils';
 import {
     ROW_NUMBERS_COLUMN_ID,
@@ -17,6 +17,7 @@ import {
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _updateColsMap,
     isColumnSelectionCol,
 } from './columnUtils';
@@ -93,12 +94,13 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
 
     public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
         const source = _convertColumnEventSourceType(event.source);
+        const { beans } = this;
+        for (const col of this.columns?.list ?? []) {
+            const colDef = this.createSelectionColDef(event.currentValue);
+            col.setColDef(colDef, null, source);
 
-        this.columns?.list.forEach((col) => {
-            const newColDef = this.createSelectionColDef(event.currentValue);
-            col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ ...newColDef, colId: col.getColId() }] }, source);
-        });
+            _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
+        }
     }
 
     public getColumn(key: ColKey): AgColumn | null {
@@ -151,6 +153,7 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
             },
             editable: false,
             suppressFillHandle: true,
+            suppressAutoSize: true,
             pinned: null,
             // overrides
             ...filteredSelColDef,
@@ -224,10 +227,12 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
         }
 
         // There's only one selection column
-        const column = this.columns.list[0]!;
+        const column = this.columns.list[0];
 
         // If it's deliberately hidden, we needn't do anything
-        if (!column.isVisible()) return;
+        if (!column.isVisible()) {
+            return;
+        }
 
         const hideSelectionCol = () => {
             let cols;

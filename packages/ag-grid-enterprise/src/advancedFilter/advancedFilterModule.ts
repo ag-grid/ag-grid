@@ -46,6 +46,8 @@ export const AdvancedFilterModule: _ModuleWithApi<_AdvancedFilterGridApi> = {
         advancedFilterBuilderSelectOpen: 'small-down',
         // remove for rich select editor pills
         richSelectRemove: 'cancel',
+        // loading async values
+        richSelectLoading: 'loading',
     },
     apiFunctions: {
         getAdvancedFilterModel,

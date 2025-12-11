@@ -3,12 +3,12 @@ import type { AgAxisGridLineOptions } from 'ag-charts-types';
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
-import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import type { AgColorPickerParams } from '../../../../widgets/agColorPicker';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../widgets/agSlider';
-import { AgSliderSelector } from '../../../../widgets/agSlider';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import type { AgSliderParams } from '../../../../../agStack/agSlider';
+import { AgSliderSelector } from '../../../../../agStack/agSlider';
+import type { GroupComponentParams } from '../../../../../widgets/gridEnterpriseWidgetTypes';
+import type { ColorPickerParams } from '../../../../widgets/colorPicker';
+import { ColorPickerSelector } from '../../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -27,7 +27,7 @@ export class GridLinePanel extends Component {
     }
 
     public postConstruct() {
-        const gridLineGroupParams = this.chartMenuUtils.addEnableParams<AgGroupComponentParams>('gridLine.enabled', {
+        const gridLineGroupParams = this.chartMenuUtils.addEnableParams<GroupComponentParams>('gridLine.enabled', {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
@@ -46,7 +46,7 @@ export class GridLinePanel extends Component {
                 <ag-slider data-ref="gridLineLineDashSlider"></ag-slider>
             </ag-group-component>
         </div>`,
-            [AgGroupComponentSelector, AgColorPickerSelector, AgSliderSelector],
+            [AgGroupComponentSelector, ColorPickerSelector, AgSliderSelector],
             {
                 gridLineGroup: gridLineGroupParams,
                 gridLineColorPicker: gridLineColorPickerParams,
@@ -56,14 +56,16 @@ export class GridLinePanel extends Component {
         );
     }
 
-    private getGridLineColorPickerParams(labelKey: ChartTranslationKey): AgColorPickerParams {
+    private getGridLineColorPickerParams(labelKey: ChartTranslationKey): ColorPickerParams {
         return this.chartMenuUtils.getDefaultColorPickerParams('gridLine.style', labelKey, {
             formatInputValue: (value: AgAxisGridLineOptions['style']) => {
                 return value?.[0]?.stroke;
             },
             parseInputValue: (value: string) => {
                 const styles = this.chartOptions.getValue<AgAxisGridLineOptions['style']>('gridLine.style') ?? [];
-                if (styles.length === 0) return [{ stroke: value, lineDash: [] }];
+                if (styles.length === 0) {
+                    return [{ stroke: value, lineDash: [] }];
+                }
                 return [{ ...styles[0], stroke: value }];
             },
         });

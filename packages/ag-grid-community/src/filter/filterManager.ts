@@ -151,11 +151,9 @@ export class FilterManager extends BeanStub implements NamedBean {
             if (this.colFilter?.disableFilters()) {
                 this.onFilterChanged({ source: 'advancedFilter' });
             }
-        } else {
-            if (this.advancedFilter?.isFilterPresent()) {
-                this.advancedFilter.setModel(null);
-                this.onFilterChanged({ source: 'advancedFilter' });
-            }
+        } else if (this.advancedFilter?.isFilterPresent()) {
+            this.advancedFilter.setModel(null);
+            this.onFilterChanged({ source: 'advancedFilter' });
         }
     }
 
@@ -362,7 +360,9 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.advFilterModelUpdateQueue.forEach((model) => this.setAdvFilterModel(model));
+        for (const model of this.advFilterModelUpdateQueue) {
+            this.setAdvFilterModel(model);
+        }
         this.advFilterModelUpdateQueue = [];
     }
 

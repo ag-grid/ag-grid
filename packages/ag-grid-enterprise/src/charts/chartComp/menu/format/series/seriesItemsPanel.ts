@@ -1,9 +1,13 @@
 import type { AgComponentSelectorType, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgSlider } from '../../../../widgets/agSlider';
+import { AgGroupComponentSelector } from '../../../../../agStack/agGroupComponent';
+import { AgSlider } from '../../../../../agStack/agSlider';
+import type {
+    GridSlider,
+    GroupComponent,
+    GroupComponentParams,
+} from '../../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
@@ -11,7 +15,7 @@ import { FontPanel } from '../fontPanel';
 type SeriesItemType = 'positive' | 'negative';
 
 export class SeriesItemsPanel extends Component {
-    private readonly seriesItemsGroup: AgGroupComponent = RefPlaceholder;
+    private readonly seriesItemsGroup: GroupComponent = RefPlaceholder;
 
     private chartTranslation: ChartTranslationService;
 
@@ -25,7 +29,7 @@ export class SeriesItemsPanel extends Component {
     }
 
     public postConstruct() {
-        const seriesItemsGroupParams: AgGroupComponentParams = {
+        const seriesItemsGroupParams: GroupComponentParams = {
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             title: this.chartTranslation.translate('seriesItems'),
@@ -57,7 +61,7 @@ export class SeriesItemsPanel extends Component {
 
         const seriesItemChangedCallback = (newValue: SeriesItemType) => {
             this.destroyActivePanels();
-            this.initSeriesControls(newValue as SeriesItemType);
+            this.initSeriesControls(newValue);
         };
 
         return this.chartMenuUtils.getDefaultSelectParamsWithoutValueParams(
@@ -86,7 +90,7 @@ export class SeriesItemsPanel extends Component {
         const params = this.chartMenuUtils.getDefaultSliderParams(seriesOptionKey, labelKey, maxValue, isArray);
         params.step = step;
 
-        const itemSlider = this.seriesItemsGroup.createManagedBean(new AgSlider(params));
+        const itemSlider: GridSlider = this.seriesItemsGroup.createManagedBean(new AgSlider(params));
 
         this.seriesItemsGroup.addItem(itemSlider);
         this.activePanels.push(itemSlider);
@@ -104,10 +108,10 @@ export class SeriesItemsPanel extends Component {
     }
 
     private destroyActivePanels(): void {
-        this.activePanels.forEach((panel) => {
+        for (const panel of this.activePanels) {
             _removeFromParent(panel.getGui());
             this.destroyBean(panel);
-        });
+        }
     }
 
     public override destroy(): void {

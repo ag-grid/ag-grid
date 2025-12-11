@@ -6,6 +6,7 @@ import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise'
 
 import {
     TestGridsManager,
+    applyTransactionChecked,
     assertSelectedRowElementsById,
     assertSelectedRowNodes,
     assertSelectedRowsByIndex,
@@ -383,7 +384,7 @@ describe('Row Selection Grid API', () => {
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
-                api.applyTransaction({ add: [{ sport: 'lacrosse' }] });
+                applyTransactionChecked(api, { add: [{ sport: 'lacrosse' }] });
 
                 assertSelectedRowsByIndex([2, 4, 6], api);
             });
@@ -400,7 +401,7 @@ describe('Row Selection Grid API', () => {
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
-                api.applyTransaction({ update: [{ id: '7', sport: 'lacrosse' }] });
+                applyTransactionChecked(api, { update: [{ id: '7', sport: 'lacrosse' }] });
 
                 assertSelectedRowsByIndex([2, 4, 6], api);
             });
@@ -417,7 +418,7 @@ describe('Row Selection Grid API', () => {
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
-                api.applyTransaction({ remove: rowData.slice(-1) });
+                applyTransactionChecked(api, { remove: rowData.slice(-1) });
 
                 assertSelectedRowsByIndex([2, 4], api);
             });
@@ -477,13 +478,13 @@ describe('Row Selection Grid API', () => {
                 };
 
                 // add new row to swimming group
-                api.applyTransaction({ add: [newRowData], addIndex: 2 });
+                applyTransactionChecked(api, { add: [newRowData], addIndex: 2 });
 
                 // expect swimming group row to no longer be selected
                 assertSelectedRowElementsById(expectedRowIds.slice(1), api);
 
                 // remove new row
-                api.applyTransaction({ remove: [newRowData] });
+                applyTransactionChecked(api, { remove: [newRowData] });
 
                 // expect swimming group to be selected again
                 assertSelectedRowElementsById(expectedRowIds, api);
@@ -534,7 +535,7 @@ describe('Row Selection Grid API', () => {
 
                 actions.selectRowsByIndex([2, 4, 6], false);
 
-                api.applyTransaction({ update: [{ id: '7', sport: 'lacrosse' }] });
+                applyTransactionChecked(api, { update: [{ id: '7', sport: 'lacrosse' }] });
 
                 assertSelectedRowsByIndex([2, 4, 6], api);
             });

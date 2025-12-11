@@ -307,11 +307,6 @@
         color: var(--ag-alpine-active-color);
     }
 
-    .ag-header-highlight-before::after,
-    .ag-header-highlight-after::after {
-        background-color: var(--ag-alpine-active-color);
-    }
-
     .ag-advanced-filter-builder-item-button-disabled,
     .ag-disabled,
     .ag-column-select-column-group-readonly,

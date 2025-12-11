@@ -157,8 +157,9 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
         // bad coder here - we are not populating all values of the cellRendererParams
         let cellRendererPromise: AgPromise<any> | undefined;
         let userCompDetails: UserCompDetails | undefined;
+        const { cellRenderer, cellRendererParams } = this.params;
 
-        if (this.params.cellRenderer) {
+        if (cellRenderer) {
             const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
                 this.userCompFactory,
@@ -166,6 +167,7 @@ export class RichSelectRow<TValue> extends Component<HighlightTooltipEventType> 
                 _addGridCommonParams(this.gos, {
                     value,
                     valueFormatted,
+                    cellRendererParams,
                     getValue: () => richSelect?.getValue(),
                     setValue: (value: TValue[] | TValue | null) => {
                         richSelect?.setValue(value, true);

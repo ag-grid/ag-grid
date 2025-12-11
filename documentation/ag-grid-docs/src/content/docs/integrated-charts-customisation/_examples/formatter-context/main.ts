@@ -93,7 +93,7 @@ const gridOptions: GridOptions = {
                         value?.toString()
                     );
                 }
-                // fallback to default
+                // fall back to default
                 return undefined;
             },
         },

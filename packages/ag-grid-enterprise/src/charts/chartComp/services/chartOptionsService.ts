@@ -23,6 +23,8 @@ export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
     setValue<T = string>(expression: string, value: T): void;
     setValues<T = string>(properties: { expression: string; value: T }[]): void;
+    /** only used for chart options (not theme overrides) */
+    clearValue?(parentExpression: string, key: string): void;
 }
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
@@ -71,6 +73,7 @@ export class ChartOptionsService extends BeanStub {
             getValue: (expression) => this.getCartesianAxisProperty(axisType, expression),
             setValue: (expression, value) => this.setCartesianAxisOptions(axisType, [{ expression, value }]),
             setValues: (properties) => this.setCartesianAxisOptions(axisType, properties),
+            clearValue: (parentExpression, key) => this.clearCartesianAxisOptions(axisType, parentExpression, key),
         };
     }
 
@@ -272,10 +275,14 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private applyChartOptions(chartOptions: AgChartOptions, options?: { silent?: boolean }): void {
-        if (Object.keys(chartOptions).length === 0) return;
+        if (Object.keys(chartOptions).length === 0) {
+            return;
+        }
         this.updateChart(chartOptions);
         const shouldRaiseEvent = !options?.silent;
-        if (shouldRaiseEvent) this.raiseChartOptionsChangedEvent();
+        if (shouldRaiseEvent) {
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public awaitChartOptionUpdate(func: () => void) {
@@ -288,7 +295,7 @@ export class ChartOptionsService extends BeanStub {
 
     private getAxisProperty<T = string>(expression: string): T {
         // Assume the property exists on the first axis
-        return get(this.getChart().axes?.[0], expression, undefined);
+        return get(this.getChart().axes?.x, expression, undefined);
     }
 
     private setAxisThemeOverrides<T = string>(properties: { expression: string; value: T }[]): void {
@@ -299,7 +306,7 @@ export class ChartOptionsService extends BeanStub {
         const chartOptions = this.createChartOptions();
         for (const { expression, value } of properties) {
             // Only apply the property to axes that declare the property on their prototype chain
-            const relevantAxes = chart.axes?.filter((axis) => {
+            const relevantAxes = Object.values(chart.axes ?? {}).filter((axis) => {
                 const parts = expression.split('.');
                 let current: any = axis;
                 for (const part of parts) {
@@ -310,10 +317,14 @@ export class ChartOptionsService extends BeanStub {
                 }
                 return true;
             });
-            if (!relevantAxes) continue;
+            if (!relevantAxes) {
+                continue;
+            }
 
             for (const axis of relevantAxes) {
-                if (!this.isValidAxisType(axis)) continue;
+                if (!this.isValidAxisType(axis)) {
+                    continue;
+                }
                 this.assignChartAxisThemeOverride(chartOptions, chartType, axis.type, null, expression, value);
             }
         }
@@ -333,7 +344,9 @@ export class ChartOptionsService extends BeanStub {
     ): T | undefined {
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis || !this.isValidAxisType(chartAxis)) return undefined;
+        if (!chartAxis || !this.isValidAxisType(chartAxis)) {
+            return undefined;
+        }
         const chartType = this.getChartType();
         const chartOptions = this.getChart().getOptions();
 
@@ -352,7 +365,9 @@ export class ChartOptionsService extends BeanStub {
     ): void {
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis || !this.isValidAxisType(chartAxis)) return;
+        if (!chartAxis || !this.isValidAxisType(chartAxis)) {
+            return;
+        }
         const chartType = this.getChartType();
 
         // combine the axis options into a single merged object
@@ -373,46 +388,52 @@ export class ChartOptionsService extends BeanStub {
 
     private setCartesianAxisOptions<T = string>(
         axisType: 'xAxis' | 'yAxis',
-        properties: Array<{ expression: string; value: T }>
+        properties: Array<{ expression: string; value?: T }>
     ): void {
-        this.updateCartesianAxisOptions(axisType, (chartOptions, axes, chartAxis) => {
+        this.updateCartesianAxisOptions(axisType, (chartOptions) => {
             // assign the provided axis options onto the combined chart options object
-            const axisIndex = axes.indexOf(chartAxis);
+            const axisId = axisType === 'yAxis' ? 'y' : 'x';
             for (const { expression, value } of properties) {
-                this.assignChartOption(chartOptions, `axes.${axisIndex}.${expression}`, value);
+                this.assignChartOption(chartOptions, `axes.${axisId}.${expression}`, value);
             }
+        });
+    }
+
+    private clearCartesianAxisOptions(axisType: 'xAxis' | 'yAxis', parentExpression: string, key: string): void {
+        this.updateCartesianAxisOptions(axisType, (chartOptions) => {
+            const axisId = axisType === 'yAxis' ? 'y' : 'x';
+            this.clearChartOption(chartOptions, `axes.${axisId}.${parentExpression}`, key);
         });
     }
 
     private updateCartesianAxisOptions(
         axisType: 'xAxis' | 'yAxis',
-        updateFunc: (
-            chartOptions: AgChartOptions,
-            axes: ChartAxis[],
-            chartAxis: ChartAxis,
-            existingChartOptions: AgChartOptions
-        ) => void
+        updateFunc: (chartOptions: AgChartOptions, chartAxis: ChartAxis, existingChartOptions: AgChartOptions) => void
     ): void {
         // get a snapshot of all existing axis options from the chart instance
         const existingChartOptions = this.getChart().getOptions();
         const axisOptions = 'axes' in existingChartOptions ? existingChartOptions.axes : undefined;
-        if (!existingChartOptions || !axisOptions) return;
+        if (!existingChartOptions || !axisOptions) {
+            return;
+        }
 
         const axes = this.getChartAxes();
         const chartAxis = this.getCartesianAxis(axes, axisType);
-        if (!chartAxis) return;
+        if (!chartAxis) {
+            return;
+        }
 
         // combine the axis options into a single merged object
         const chartOptions = this.createChartOptions();
         (chartOptions as Extract<AgChartOptions, { axes?: any }>).axes = axisOptions;
 
-        updateFunc(chartOptions, axes, chartAxis, existingChartOptions);
+        updateFunc(chartOptions, chartAxis, existingChartOptions);
 
         this.applyChartOptions(chartOptions);
     }
 
     public setCartesianCategoryAxisType(axisType: 'xAxis' | 'yAxis', value: AgCartesianAxisOptions['type']): void {
-        this.updateCartesianAxisOptions(axisType, (chartOptions, _axes, chartAxis, existingChartOptions) => {
+        this.updateCartesianAxisOptions(axisType, (chartOptions, chartAxis, existingChartOptions) => {
             const chartType = this.getChartType();
             this.assignPersistedAxisOverrides({
                 existingAxes: [chartAxis],
@@ -426,7 +447,7 @@ export class ChartOptionsService extends BeanStub {
                 existingChartType: chartType,
                 targetChartType: chartType,
             });
-            this.assignChartOption(chartOptions, `axes.0.type`, value);
+            this.assignChartOption(chartOptions, `axes.x.type`, value);
             this.chartController.setCategoryAxisType(value);
         });
     }
@@ -474,7 +495,7 @@ export class ChartOptionsService extends BeanStub {
 
     private getChartAxes(): Array<ChartAxis> {
         const chart = this.getChart();
-        return chart.axes ?? [];
+        return Object.values(chart.axes ?? {});
     }
 
     private retrieveChartAxisThemeOverride<T = string>(
@@ -493,7 +514,9 @@ export class ChartOptionsService extends BeanStub {
                     chartType,
                     ['axes', axisType, axisPosition, ...(expression ? [expression] : [])].join('.')
                 );
-                if (value === undefined) continue;
+                if (value === undefined) {
+                    continue;
+                }
                 return value;
             }
         } else {
@@ -572,7 +595,9 @@ export class ChartOptionsService extends BeanStub {
         // Retrieve the first matching value
         for (const seriesType of chartSeriesTypes) {
             const value = this.retrieveChartOptionsSeriesThemeOverride<T>(chartOptions, seriesType, expression);
-            if (value === undefined) continue;
+            if (value === undefined) {
+                continue;
+            }
             return value;
         }
 
@@ -634,6 +659,13 @@ export class ChartOptionsService extends BeanStub {
 
     private assignChartOption<T>(chartOptions: AgChartOptions, expression: string, value: T): void {
         set(chartOptions, expression, value);
+    }
+
+    private clearChartOption(chartOptions: AgChartOptions, parentExpression: string, key: string): void {
+        const parentObject = get(chartOptions, parentExpression, undefined);
+        if (parentObject) {
+            delete parentObject[key];
+        }
     }
 
     private raiseChartOptionsChangedEvent(): void {

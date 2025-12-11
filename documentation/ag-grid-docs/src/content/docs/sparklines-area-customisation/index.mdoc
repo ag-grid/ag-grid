@@ -27,7 +27,7 @@ sparklineOptions: {
         enabled: true,
         size: 0,
         itemStyler: (params: any) => {
-            if (params.highlighted) {
+            if (params.highlightState === 'highlighted-item') {
                 return {
                     size: 7
                 };
@@ -94,7 +94,7 @@ sparklineOptions: {
         stroke: 'green',
         strokeWidth: 2,
         itemStyler: (params) => {
-            if(params.highlighted) {
+            if (params.highlightState === 'highlighted-item') {
                 return {
                     size: 10
                 }

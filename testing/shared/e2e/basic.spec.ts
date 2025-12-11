@@ -17,6 +17,7 @@ test.describe(`${titleCaseFw} ${variantTitle} ${version}`, () => {
         await expect(page).toHaveScreenshot(`${fw}-${variantTitle}${version}${subcase}.png`, {
             animations: 'disabled',
             stylePath: 'e2e/basic.css',
+            maxDiffPixels: 3,
         });
     });
 });

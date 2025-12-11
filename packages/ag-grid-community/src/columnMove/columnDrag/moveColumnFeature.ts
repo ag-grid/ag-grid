@@ -158,7 +158,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public onDragStop(): void {
-        this.onDragging(this.lastDraggingEvent!, false, true, true);
+        this.onDragging(this.lastDraggingEvent, false, true, true);
         this.ensureIntervalCleared();
         this.lastMovedInfo = null;
     }
@@ -392,7 +392,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         let position: ColumnHighlightPosition;
 
-        if (mouseX - start < width / 2 !== isRtl) {
+        if (mouseX - start < width / 2) {
             position = ColumnHighlightPosition.Before;
         } else {
             position = ColumnHighlightPosition.After;
@@ -421,8 +421,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         const visibleColumns = visibleCols.allCols;
         const movingColIndex = visibleColumns.indexOf(firstMovingCol);
-        const targetIndex = visibleColumns.indexOf(column!);
-        const isBefore = (position === ColumnHighlightPosition.Before) !== isRtl;
+        const targetIndex = visibleColumns.indexOf(column);
+        const isBefore = position === ColumnHighlightPosition.Before;
         const fromLeft = movingColIndex < targetIndex || (movingColIndex === targetIndex && !isBefore);
         let diff: number = 0;
 
@@ -430,10 +430,8 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             if (fromLeft) {
                 diff -= 1;
             }
-        } else {
-            if (!fromLeft) {
-                diff += 1;
-            }
+        } else if (!fromLeft) {
+            diff += 1;
         }
 
         if (targetIndex + diff === movingColIndex) {

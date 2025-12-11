@@ -51,7 +51,7 @@ export class MultiFilterHandler
             }
             const { handler, handlerParams } = wrapper;
             handler.init?.({
-                ...this.updateHandlerParams(handlerParams!, index),
+                ...this.updateHandlerParams(handlerParams, index, true),
                 model: getFilterModelForIndex(params.model, index),
                 source: 'init',
             });
@@ -66,14 +66,14 @@ export class MultiFilterHandler
 
         this.handlerWrappers.forEach((wrapper, index) => {
             if (wrapper) {
-                const handlerParams = this.updateHandlerParams(params, index);
+                const handlerParams = this.updateHandlerParams(params, index, false);
                 const originalFilterParams = handlerParams.filterParams;
                 const providedFilterParams = filters?.[index].filterParams;
                 const filterParamsForFilter = providedFilterParams
                     ? { ...originalFilterParams, ...providedFilterParams }
                     : originalFilterParams;
                 const updatedParams = {
-                    ...this.updateHandlerParams(params, index),
+                    ...handlerParams,
                     filterParams: filterParamsForFilter,
                 };
                 wrapper.handlerParams = updatedParams;
@@ -87,12 +87,19 @@ export class MultiFilterHandler
         if (params.source !== 'floating' && params.source !== 'ui') {
             this.resetActiveList(params.model);
         }
+        if (params.additionalEventAttributes?.fromButtons) {
+            this.onAnyFilterChanged();
+        }
     }
 
-    private updateHandlerParams(params: FilterHandlerBaseParams, index: number): FilterHandlerBaseParams {
+    private updateHandlerParams(
+        params: FilterHandlerBaseParams,
+        index: number,
+        isInit: boolean
+    ): FilterHandlerBaseParams {
         const { onModelChange, doesRowPassOtherFilter, getValue } = params;
         const handlerParams: FilterHandlerBaseParams = {
-            ...params!,
+            ...params,
             onModelChange: (newModel, additionalEventAttributes) =>
                 onModelChange(
                     getUpdatedMultiFilterModel(this.params.model, this.handlerWrappers.length, newModel, index),
@@ -103,6 +110,12 @@ export class MultiFilterHandler
                 this.doesFilterPass({ node, data: node.data, model: this.params.model, handlerParams }, index),
             getValue: updateGetValue(this.beans, params.column as AgColumn, this.filterDefs[index], getValue),
         };
+        if (handlerParams.filterParams.buttons) {
+            if (isInit) {
+                _warn(292, { colId: params.column.getColId() });
+            }
+            delete handlerParams.filterParams.buttons;
+        }
         return handlerParams;
     }
 
@@ -177,7 +190,9 @@ export class MultiFilterHandler
     }
 
     public override destroy(): void {
-        this.handlerWrappers.forEach((wrapper) => this.destroyBean(wrapper?.handler));
+        for (const wrapper of this.handlerWrappers) {
+            this.destroyBean(wrapper?.handler);
+        }
         this.handlerWrappers.length = 0;
         super.destroy();
     }

@@ -1,4 +1,5 @@
 import type {
+    AgChartThemeOverrides,
     AgDonutSeriesOptions,
     AgPieSeriesOptions,
     AgPolarChartOptions,
@@ -7,6 +8,7 @@ import type {
 
 import type { FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
+import { getSeriesHighlight } from '../chartTheme';
 
 interface DonutOffset {
     offsetAmount: number;
@@ -93,7 +95,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
     private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {
         const primarySeries = series[0];
-        const angleKey = primarySeries.angleKey!;
+        const angleKey = primarySeries.angleKey;
 
         const commonOptions = {
             ...primarySeries,
@@ -114,7 +116,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
 
         const filteredOutOptions = {
             ...commonOptions,
-            radiusKey: `${angleKey!}-filtered-out`,
+            radiusKey: `${angleKey}-filtered-out`,
             showInLegend: false,
         };
 
@@ -124,5 +126,13 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     private getFields(params: UpdateParams): FieldDefinition[] {
         // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
+    }
+
+    protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides['pie' | 'donut'] {
+        return {
+            series: {
+                highlight: getSeriesHighlight(this.crossFiltering),
+            },
+        };
     }
 }

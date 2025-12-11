@@ -1,4 +1,4 @@
-import type { CellStyleFunc, ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
+import type { CellStyleFunc, ColDef, ColGroupDef, GridOptions, ValueFormatterParams } from 'ag-grid-community';
 
 import { COUNTRY_NAMES, LANGUAGES, type RowItem, games, months } from '../data';
 import { CountryCellRenderer, RatingRenderer } from './renderers';

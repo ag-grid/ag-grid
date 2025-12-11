@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_NL = {
     searchOoo: 'Zoeken...',
     blanks: '(Leegten)',
     noMatches: 'Geen overeenkomsten',
+    typeToSearchOoo: 'Typ om te zoeken...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_NL = {
     maxDateValidation: 'Datum moet voor ${variable} zijn',
     maxLengthValidation: 'Moet ${variable} tekens of minder zijn.',
     minValueValidation: 'Moet groter dan of gelijk aan ${variable} zijn',
-    maxValueValidation: 'Moet kleiner dan of gelijk aan ${variable} zijn',
+    maxValueValidation: 'Moet minder dan of gelijk aan ${variable} zijn',
+    strictMinValueValidation: 'Moet groter zijn dan ${variable}',
+    strictMaxValueValidation: 'Moet minder dan ${variable} zijn',
     invalidSelectionValidation: 'Ongeldige selectie.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_NL = {
     loadingOoo: 'Laden...',
     loadingError: 'FOUT',
     noRowsToShow: 'Geen rijen om weer te geven',
+    noMatchingRows: 'Geen overeenkomende rijen',
+    exportingOoo: 'Bezig met exporteren...',
     enabled: 'Ingeschakeld',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_NL = {
     pinLeft: 'Links vastzetten',
     pinRight: 'Rechts vastzetten',
     noPin: 'Niet vastzetten',
+    pinRow: 'Vastzetten Rij',
+    pinTop: 'Vastzetten Bovenaan',
+    pinBottom: 'Vastzetten Onderaan',
+    unpinRow: 'Losmaken Rij',
     valueAggregation: 'Waarde-aggregering',
     noAggregation: 'Geen',
     autosizeThisColumn: 'Deze kolom automatisch aanpassen',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_NL = {
     chooseColumns: 'Kolommen Kiezen',
     sortAscending: 'Oplopend sorteren',
     sortDescending: 'Aflopend sorteren',
+    sortAbsoluteAscending: 'Sorteren absoluut oplopend',
+    sortAbsoluteDescending: 'Sorteren absoluut aflopend',
     sortUnSort: 'Sortering wissen',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_NL = {
     ariaChecked: 'geselecteerd',
     ariaColumn: 'Kolom',
     ariaColumnGroup: 'Kolom Groep',
+    ariaFilterActive: 'Filter actief',
     ariaColumnFiltered: 'Kolom Gefilterd',
     ariaColumnSelectAll: 'Schakel zichtbaarheid van alle kolommen in/uit',
     ariaDateFilterInput: 'Datum Filter Invoer',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_NL = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'oplopend',
     ariaDropZoneColumnComponentSortDescending: 'aflopend',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluut oplopend',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluut aflopend',
     ariaLabelDialog: 'Dialoog',
     ariaLabelColumnMenu: 'Kolommenu',
     ariaLabelColumnFilter: 'Kolomfilter',
@@ -660,6 +674,15 @@ export const AG_GRID_LOCALE_NL = {
     october: 'Oktober',
     november: 'November',
     december: 'December',
+
+    // Date-time parts
+    year: 'Jaar',
+    quarter: 'Kwartaal',
+    month: 'Maand',
+    day: 'Dag',
+    hour: 'Uur',
+    minute: 'Minuut',
+    second: 'Seconde',
 
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/JJJJ',

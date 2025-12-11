@@ -11,7 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, FilterButtonComp, RefPlaceholder, _exists, _removeFromParent } from 'ag-grid-community';
 
-import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
+import type { VirtualListDragItem } from '../../agStack/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
@@ -189,11 +189,9 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                     mouseleave: () => mouseListener(false),
                 });
             }
-        } else {
-            if (eButtonsPanel) {
-                _removeFromParent(eButtonsPanel.getGui());
-                this.eButtons = this.destroyBean(eButtonsPanel);
-            }
+        } else if (eButtonsPanel) {
+            _removeFromParent(eButtonsPanel.getGui());
+            this.eButtons = this.destroyBean(eButtonsPanel);
         }
     }
 
@@ -319,9 +317,9 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         ) => {
             items.push({ filterModel, level, parent, valid: true, showMove: this.params.showMoveButtons });
             if (filterModel.filterType === 'join') {
-                filterModel.conditions.forEach((childFilterModel) =>
-                    parseFilterModel(childFilterModel, items, level + 1, filterModel)
-                );
+                for (const childFilterModel of filterModel.conditions) {
+                    parseFilterModel(childFilterModel, items, level + 1, filterModel);
+                }
                 if (level === 0) {
                     items.push({ filterModel: null, level: level + 1, parent: filterModel, valid: true });
                 }
@@ -334,18 +332,18 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private refreshList(softRefresh: boolean): void {
         if (!softRefresh) {
             const invalidModels: AdvancedFilterModel[] = [];
-            this.items.forEach((item) => {
+            for (const item of this.items) {
                 if (!item.valid) {
                     invalidModels.push(item.filterModel!);
                 }
-            });
+            }
             this.buildList();
             if (invalidModels.length) {
-                this.items.forEach((item) => {
+                for (const item of this.items) {
                     if (item.filterModel && invalidModels.includes(item.filterModel)) {
                         item.valid = false;
                     }
-                });
+                }
             }
         }
         this.virtualList.refresh(softRefresh);
@@ -358,7 +356,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             const parentItem = this.items.find((itemToCheck) => itemToCheck.filterModel === filterModel);
             const parentFilterModel = parentItem?.parent;
             if (parentFilterModel) {
-                const { conditions } = parentFilterModel as JoinAdvancedFilterModel;
+                const { conditions } = parentFilterModel;
                 // check parent
                 populateTreeLines(parentFilterModel, treeLines);
                 treeLines.push(conditions[conditions.length - 1] === filterModel);
@@ -415,7 +413,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                   conditions: [],
               } as JoinAdvancedFilterModel)
             : ({} as ColumnAdvancedFilterModel);
-        const parent = (itemIsJoin ? (itemFilterModel as JoinAdvancedFilterModel) : itemParent)!;
+        const parent = (itemIsJoin ? itemFilterModel : itemParent)!;
         let insertIndex = itemIsJoin ? 0 : parent.conditions.indexOf(itemFilterModel!);
         if (insertIndex >= 0) {
             if (!itemIsJoin) {
@@ -494,27 +492,23 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 const newParentItem = parent!.conditions[indexInParent - 1] as JoinAdvancedFilterModel;
                 newParentItem.conditions.push(filterModel!);
             }
-        } else {
-            if (destinationLevel === level) {
-                if (destinationFilterModel!.filterType === 'join') {
-                    // destination is join. move to first child
-                    (destinationFilterModel as JoinAdvancedFilterModel).conditions.splice(0, 0, filterModel!);
-                } else {
-                    // switch positions
-                    const destinationIndex = destinationParent!.conditions.indexOf(destinationFilterModel!);
-                    destinationParent!.conditions.splice(destinationIndex + 1, 0, filterModel!);
-                }
+        } else if (destinationLevel === level) {
+            if (destinationFilterModel!.filterType === 'join') {
+                // destination is join. move to first child
+                (destinationFilterModel as JoinAdvancedFilterModel).conditions.splice(0, 0, filterModel!);
             } else {
-                if (indexInParent < parent!.conditions.length) {
-                    // keep in parent, but swap with next child
-                    parent!.conditions.splice(indexInParent + 1, 0, filterModel!);
-                } else {
-                    // need to move down a level. move after parent in its parent
-                    const parentItem = this.items.find((itemToCheck) => itemToCheck.filterModel === parent);
-                    const destinationIndex = parentItem!.parent!.conditions.indexOf(parentItem!.filterModel!) + 1;
-                    parentItem!.parent!.conditions.splice(destinationIndex, 0, filterModel!);
-                }
+                // switch positions
+                const destinationIndex = destinationParent!.conditions.indexOf(destinationFilterModel!);
+                destinationParent!.conditions.splice(destinationIndex + 1, 0, filterModel!);
             }
+        } else if (indexInParent < parent!.conditions.length) {
+            // keep in parent, but swap with next child
+            parent!.conditions.splice(indexInParent + 1, 0, filterModel!);
+        } else {
+            // need to move down a level. move after parent in its parent
+            const parentItem = this.items.find((itemToCheck) => itemToCheck.filterModel === parent);
+            const destinationIndex = parentItem!.parent!.conditions.indexOf(parentItem!.filterModel!) + 1;
+            parentItem!.parent!.conditions.splice(destinationIndex, 0, filterModel!);
         }
         this.refreshList(false);
         const newIndex = this.items.findIndex(
@@ -567,8 +561,6 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             isValid = JSON.stringify(this.filterModel) !== this.stringifiedModel;
             if (!isValid) {
                 validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationAlreadyApplied');
-            } else {
-                validationMessage = null;
             }
         } else {
             validationMessage = this.advFilterExpSvc.translate('advancedFilterBuilderValidationIncomplete');
@@ -583,9 +575,9 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
         const clearOperand = (filterModel: ColumnAdvancedFilterModel) => {
             delete (filterModel as any).filter;
         };
-        this.items.forEach((item) => {
+        for (const item of this.items) {
             if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
-                return;
+                continue;
             }
             const { filterModel } = item;
             const { colId } = filterModel;
@@ -596,7 +588,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 filterModel.colId = undefined as any;
                 clearOperator(filterModel);
                 clearOperand(filterModel);
-                return;
+                continue;
             }
             const operatorForType = this.advFilterExpSvc.getDataTypeExpressionOperator(columnDetails.baseCellDataType)!;
             const operator = operatorForType.operators[filterModel.type];
@@ -604,12 +596,11 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
                 item.valid = false;
                 clearOperator(filterModel);
                 clearOperand(filterModel);
-                return;
+                continue;
             }
             if (operator.numOperands > 0 && !_exists((filterModel as any).filter)) {
                 item.valid = false;
-                return;
             }
-        });
+        }
     }
 }

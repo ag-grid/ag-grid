@@ -1,0 +1,93 @@
+---
+title: "Unmanaged Row Dragging"
+---
+
+Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`.
+
+{% gridExampleRunner title="Row Drag Simple Unmanaged" name="simple-unmanaged" /%}
+
+The example above shows how to implement simple row dragging using unmanaged row dragging and events similarly to the [Managed Row Dragging](./row-dragging-managed) example;
+however, the logic for moving the rows is in the application rather than the grid.
+
+The property `suppressRowDrag=true` is set by the application depending on whether sorting or filtering is active.
+This is because the logic in the example doesn't cover these scenarios and wants to prevent row dragging when sorting or filtering is active.
+
+## Differences from Managed Row Dragging
+
+Unmanaged dragging differs from managed dragging in the following ways:
+* The grid does not manage moving of the rows. The only thing the grid responds with is firing drag events. It is up to the application to do the moving of the rows (if that is what the application wants to do).
+* Dragging is allowed while sort is applied.
+* Dragging is allowed while filter is applied.
+* Dragging is allowed while row group or pivot is applied.
+
+{% note %}
+It is not possible for the grid to provide a generic solution for row dragging that fits all usage scenarios. Unmanaged row dragging is provided as a way for the application developer to meet their requirements by responding to events emitted by the grid.
+{% /note %}
+
+## Row Drag Events
+
+Row drag events are raised by both [Managed Row Dragging](./row-dragging-managed) and unmanaged row dragging.
+
+There are five grid events associated with row dragging which are:
+
+* `rowDragEnter`: A drag has started, or dragging already started and the mouse has re-entered the grid having previously left the grid.
+* `rowDragMove`: The mouse has moved while dragging.
+* `rowDragLeave`: The mouse has left the grid while dragging.
+* `rowDragEnd`: The drag has finished over the grid.
+* `rowDragCancel`: The drag has cancelled over the grid.
+
+Typically a drag will fire the following events:
+
+1. `rowDragEnter` fired once - The drag has started.
+1. `rowDragMove` fired multiple times - The mouse is dragging over the rows.
+1. `rowDragEnd` fired once - The drag has finished.
+
+Additional `rowDragLeave` and `rowDragEnter` events are fired if the mouse leaves or re-enters the grid. If the drag is finished outside of the grid, then the `rowDragLeave` is the last event fired and no `rowDragEnd` is fired, as the drag did not end on the grid.
+
+{% note %}
+When the Grid is created, a [Drop Zone](./row-dragging-to-external-dropzone/) that is responsible for firing all the Row Drag Events is added to the Grid Body. This why Row Drag Events (including `rowDragEnd`) are only fired when they happen on top of the Grid. If you need to monitor when a Row Drag ends outside of the Grid, for example, use the [DragStopped](./grid-events/#reference-miscellaneous-dragStopped) event.
+{% /note %}
+
+Each of the four row drag events extend the `RowDragEvent` interface.
+
+{% interfaceDocumentation interfaceName="RowDragEvent" /%}
+
+## Example Events
+
+The example above demonstrates unmanaged row dragging with no attempt by the application or the grid to re-order the rows.
+This is on purpose to demonstrate that the grid will not attempt to re-order rows unless the `rowDragManaged` property is set to true.
+The example also demonstrates all the events that are fired.
+
+From the example the following can be noted:
+
+* The first column has `rowDrag=true` which results in a draggable
+  area included in the cell.
+
+* The grid has not set `rowDragManaged` which results in the grid
+  not reordering rows as they are dragged.
+
+* All of the drag events are listened for and when one is received, it is printed to the console. To best see this, open the example in a new tab and open the developer console.
+
+* Because `rowDragManaged` is not set, the row dragging is left enabled even if sorting or filtering is applied. This is because your application should decide if dragging should be allowed or suppressed using the `suppressRowDrag` property.
+
+* While dragging the row, the `setRowDropPositionIndicator` API method is called to display the projected row drop location using a horizontal line indicator.
+
+{% gridExampleRunner title="Row Drag Events" name="dragging-events" /%}
+
+{% note %}
+When dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged.
+It is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+{% /note %}
+
+See also [Preventing Dropping on Certain Rows](./row-dragging-managed/#preventing-dropping-on-certain-rows).
+
+{% note %}
+For grouping-specific guidance, including managed row dragging support, see [Row Dragging with Row Groups](./grouping-row-dragging/).
+{% /note %}
+
+## Other Row Models
+
+Unmanaged row dragging will work with any of the row models - [Infinite](./infinite-scrolling/), [Server-Side](./server-side-model/) and [Viewport](./viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
+
+## Next Up
+Continue to the next section to learn about [Row Dragging Customisation](./row-dragging-customisation).

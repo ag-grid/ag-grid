@@ -1,9 +1,9 @@
-import { KeyCode } from '../../agStack/constants/keyCode';
+import { KeyCode, _normaliseQwertyAzerty } from '../../agStack/constants/keyCode';
 import { _isEventFromThisInstance, _isEventSupported } from '../../agStack/utils/event';
 import { _isEventFromPrintableCharacter } from '../../agStack/utils/keyboard';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn } from '../../entities/agColumn';
-import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
+import { _getCtrlASelectsRows, _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IEditService } from '../../interfaces/iEditService';
 import type { CellCtrl } from '../../rendering/cell/cellCtrl';
@@ -13,43 +13,6 @@ import type { UndoRedoService } from '../../undoRedo/undoRedoService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _isUserSuppressingKeyboardEvent } from '../../utils/keyboardEvent';
 import { _selectAllCells } from '../../utils/selection';
-
-const A_KEYCODE = 65;
-const C_KEYCODE = 67;
-const V_KEYCODE = 86;
-const D_KEYCODE = 68;
-const Z_KEYCODE = 90;
-const Y_KEYCODE = 89;
-
-function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
-    const { keyCode } = keyboardEvent;
-    let code: string;
-
-    switch (keyCode) {
-        case A_KEYCODE:
-            code = KeyCode.A;
-            break;
-        case C_KEYCODE:
-            code = KeyCode.C;
-            break;
-        case V_KEYCODE:
-            code = KeyCode.V;
-            break;
-        case D_KEYCODE:
-            code = KeyCode.D;
-            break;
-        case Z_KEYCODE:
-            code = KeyCode.Z;
-            break;
-        case Y_KEYCODE:
-            code = KeyCode.Y;
-            break;
-        default:
-            code = keyboardEvent.code;
-    }
-
-    return code;
-}
 
 export class RowContainerEventsFeature extends BeanStub {
     private editSvc?: IEditService;
@@ -75,10 +38,10 @@ export class RowContainerEventsFeature extends BeanStub {
         const mouseDownEvent = _isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
         const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
 
-        eventNames.forEach((eventName) => {
+        for (const eventName of eventNames) {
             const listener = this.processMouseEvent.bind(this, eventName);
             this.addManagedElementListeners(this.element, { [eventName]: listener });
-        });
+        }
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -255,10 +218,10 @@ export class RowContainerEventsFeature extends BeanStub {
             gos,
         } = this;
 
-        if (rangeSvc && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
+        if (rangeSvc && _isCellSelectionEnabled(gos) && !_getCtrlASelectsRows(gos) && rowModel.isRowsToRender()) {
             _selectAllCells(this.beans);
         } else if (selectionSvc) {
-            selectionSvc?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
+            selectionSvc.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
         }
 
         event.preventDefault();

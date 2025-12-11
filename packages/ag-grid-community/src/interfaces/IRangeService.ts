@@ -1,5 +1,5 @@
+import type { AutoScrollService } from '../agStack/rendering/autoScrollService';
 import type { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { IAbstractHeaderCellComp } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
@@ -11,13 +11,15 @@ import type { ICellRangeFeature } from './iCellRangeFeature';
 import type { RowPosition } from './iRowPosition';
 
 export interface IRangeService {
+    readonly autoScrollService: AutoScrollService;
     isEmpty(): boolean;
     removeAllCellRanges(silent?: boolean): void;
     getCellRangeCount(cell: CellPosition): number;
     getRangeRowCount(cellRange: CellRange): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
-    isRowInRange(rowIndex: number, rowPinned: RowPinnedType, cellRange: CellRange): boolean;
+    isColumnInAnyRange(column: AgColumn | AgColumnGroup): boolean;
+    isRowInRange(rowPos: RowPosition, cellRange: CellRange): boolean;
     isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;
@@ -27,11 +29,13 @@ export interface IRangeService {
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
+    handleCellMouseDown(event: MouseEvent, cell: CellPosition): void;
     intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
-    addCellRange(params: CellRangeParams): void;
+    addCellRange(params: CellRangeParams): CellRange | undefined;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
+    extendRangeToCell(cellRange: CellRange, cell: CellPosition): void;
     extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void;
     extendRangeColumnCountBy(cellRange: CellRange, delta: number): void;
     updateRangeRowBoundary(params: CellRangeBoundaryParams): void;
@@ -45,13 +49,15 @@ export interface IRangeService {
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
     createDragListenerFeature(eContainer: HTMLElement): BeanStub;
-    createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature;
+    createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature;
     createRangeHighlightFeature(
         compBean: BeanStub,
         column: AgColumn | AgColumnGroup,
         headerComp: IAbstractHeaderCellComp
     ): void;
+    createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub;
     forEachRowInRange(cellRange: CellRange, callback: (row: RowPosition) => void): void;
+    handleColumnSelection(column: AgColumn | AgColumnGroup, event: MouseEvent | KeyboardEvent): void;
 }
 
 export enum CellRangeType {
@@ -71,6 +77,8 @@ export interface CellRange {
     columns: Column[];
     /** The start column for the range */
     startColumn: Column;
+    /** A custom color class to be applied to this range */
+    colorClass?: string | null;
 }
 
 export type PartialCellRange = Omit<CellRange, 'startColumn'> & Partial<Pick<CellRange, 'startColumn'>>;

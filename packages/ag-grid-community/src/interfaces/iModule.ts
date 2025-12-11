@@ -1,8 +1,9 @@
 import type { ClassImp } from '../agStack/interfaces/iContext';
+import type { IconValue } from '../agStack/interfaces/iIcon';
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
-import type { IconName, IconValue } from '../utils/icon';
+import type { IconName } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
@@ -10,7 +11,7 @@ type ModuleValidationValidResult = {
     isValid: true;
 };
 
-export type ModuleValidationInvalidResult = {
+type ModuleValidationInvalidResult = {
     isValid: false;
     message: string;
 };
@@ -85,6 +86,7 @@ type InternalModuleName =
     | 'FilterCore'
     | 'FilterValue'
     | 'FindCore'
+    | 'GroupEdit'
     | 'GroupCellRenderer'
     | 'GroupColumn'
     | 'GroupHierarchy'
@@ -162,6 +164,7 @@ export type CommunityModuleName =
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
+    | 'AiToolkit'
     | 'AllEnterprise'
     | 'BatchEdit'
     | 'CellSelection'
@@ -192,10 +195,12 @@ export type EnterpriseModuleName =
     | 'Sparklines'
     | 'StatusBar'
     | 'TreeData'
-    | 'ViewportRowModel';
+    | 'ViewportRowModel'
+    | 'Formula';
 
 /** The names of all publicly available AG Grid modules */
 export type AgModuleName =
+    | 'AiToolkitModule'
     | 'AlignedGridsModule'
     | 'AllCommunityModule'
     | 'CellApiModule'
@@ -271,7 +276,8 @@ export type AgModuleName =
     | 'SparklinesModule'
     | 'StatusBarModule'
     | 'TreeDataModule'
-    | 'ViewportRowModelModule';
+    | 'ViewportRowModelModule'
+    | 'FormulaModule';
 
 // Types to ensure that our AgModuleName type with Module suffix is equivalent to the internal module names based on Community and Enterprise module names
 type AgModuleNameInternal = `${CommunityModuleName | EnterpriseModuleName}Module`;

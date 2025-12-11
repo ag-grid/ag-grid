@@ -1,7 +1,7 @@
 /** An array that is always empty and that cannot be modified */
 export const _EmptyArray = Object.freeze([]) as unknown as any[];
 
-export function _last<T>(arr: T[]): T;
+export function _last<T>(arr: readonly T[]): T;
 export function _last<T extends Node>(arr: NodeListOf<T>): T;
 export function _last(arr: any): any {
     if (!arr?.length) {
@@ -38,21 +38,47 @@ export function _areEqual<T>(
 /**
  * Utility that uses the fastest looping approach to apply a callback to each element of the array
  * https://jsperf.app/for-for-of-for-in-foreach-comparison
+ * If callback returns true, exit early.
  */
-export function _forAll<T>(array: T[] | undefined, callback: (value: T) => void) {
+export function _forAll<T>(array: T[] | undefined, callback: (value: T) => boolean | void) {
     if (!array) {
         return;
     }
     for (const value of array) {
-        callback(value);
+        if (callback(value)) {
+            return true;
+        }
     }
 }
 
-export function _removeFromArray<T>(array: T[], object: T) {
+export function _removeFromArray<T>(array: T[], object: T): void {
     const index = array.indexOf(object);
 
     if (index >= 0) {
         array.splice(index, 1);
+    }
+}
+
+/**
+ * O(N+M) way to remove M elements from an array of size N. Better than calling _removeFromArray in a loop
+ *
+ * Note: this implementation removes _any_ instances of the `elementsToRemove`
+ */
+export function _removeAllFromArray<T>(array: T[], elementsToRemove: readonly T[]): void {
+    let i = 0;
+    let j = 0;
+
+    for (; i < array.length; i++) {
+        if (!elementsToRemove.includes(array[i])) {
+            // elements that we want to keep are moved to the beginning of the array, maintaining original order
+            array[j] = array[i];
+            j++;
+        }
+    }
+
+    // j marks the elements we want to keep, so pop off the remaining elements (each pop is O(1))
+    while (j < array.length) {
+        array.pop();
     }
 }
 

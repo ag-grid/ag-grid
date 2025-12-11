@@ -1,5 +1,19 @@
-import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
+import type {
+    IRowModel,
+    IViewportDatasource,
+    NamedBean,
+    OverlayType,
+    RowBounds,
+    RowModelType,
+} from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _addGridCommonParams,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+    _warn,
+} from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -13,6 +27,9 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     private rowNodesByIndex: { [index: number]: RowNode } = {};
     private rowHeight: number;
     private datasource: IViewportDatasource;
+
+    /** Dummy root node */
+    public rootNode: RowNode | null = null;
 
     /**
      * Used to see if setRowData has been called inside of the viewportChanged event context,
@@ -33,6 +50,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public postConstruct(): void {
         const beans = this.beans;
+
+        const rootNode = new RowNode(beans);
+        this.rootNode = rootNode;
+        rootNode.level = -1;
+
         this.rowHeight = _getRowHeightAsNumber(beans);
         this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
@@ -53,6 +75,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     public override destroy(): void {
         this.destroyDatasource();
         super.destroy();
+        this.rootNode = null;
     }
 
     private destroyDatasource(): void {
@@ -125,16 +148,16 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public purgeRowsNotInViewport(): void {
         const rowNodesByIndex = this.rowNodesByIndex;
-        Object.keys(rowNodesByIndex).forEach((indexStr) => {
+        for (const indexStr of Object.keys(rowNodesByIndex)) {
             const index = parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
                 if (this.isRowFocused(index) || this.beans.editSvc?.isRowEditing(rowNodesByIndex[index])) {
-                    return;
+                    continue;
                 }
 
                 delete rowNodesByIndex[index];
             }
-        });
+        }
     }
 
     private isRowFocused(rowIndex: number): boolean {
@@ -159,11 +182,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         if (!viewportDatasource.init) {
             _warn(226);
         } else {
-            viewportDatasource.init({
-                setRowCount: this.setRowCount.bind(this),
-                setRowData: this.setRowData.bind(this),
-                getRow: this.getRow.bind(this),
-            });
+            viewportDatasource.init(
+                _addGridCommonParams(this.gos, {
+                    setRowCount: this.setRowCount.bind(this),
+                    setRowData: this.setRowData.bind(this),
+                    getRow: this.getRow.bind(this),
+                })
+            );
         }
     }
 
@@ -241,6 +266,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     public isEmpty(): boolean {
         return this.rowCount > 0;
     }
+    public getOverlayType(): OverlayType | null {
+        // not supported for the viewport row model
+        return null;
+    }
 
     public isRowsToRender(): boolean {
         return this.rowCount > 0;
@@ -272,12 +301,12 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
 
-        Object.keys(this.rowNodesByIndex).forEach((indexStr) => {
+        for (const indexStr of Object.keys(this.rowNodesByIndex)) {
             const index = parseInt(indexStr, 10);
             const rowNode: RowNode = this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
             callbackCount++;
-        });
+        }
     }
 
     private setRowData(rowData: { [key: number]: any }): void {

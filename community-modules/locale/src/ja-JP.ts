@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_JP = {
     searchOoo: '検索...',
     blanks: '(空白)',
     noMatches: '一致するものがありません',
+    typeToSearchOoo: '検索するには入力してください...',
 
     // Number Filter & Text Filter
     filterOoo: 'フィルター...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_JP = {
     maxDateValidation: '日付は${variable}より前でなければなりません',
     maxLengthValidation: '${variable}文字以内でなければなりません。',
     minValueValidation: '${variable}以上でなければなりません',
-    maxValueValidation: '${variable}以下でなければなりません',
+    maxValueValidation: '${variable}以下である必要があります',
+    strictMinValueValidation: '${variable}より大きい必要があります',
+    strictMaxValueValidation: '${variable}より小さい必要があります',
     invalidSelectionValidation: '無効な選択です。',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_JP = {
     loadingOoo: '読み込み中...',
     loadingError: 'エラー',
     noRowsToShow: '表示する行がありません',
+    noMatchingRows: '一致する行はありません',
+    exportingOoo: 'エクスポート中...',
     enabled: '有効',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_JP = {
     pinLeft: '左に固定',
     pinRight: '右に固定',
     noPin: '固定なし',
+    pinRow: '行を固定',
+    pinTop: '先頭に固定',
+    pinBottom: '末尾に固定',
+    unpinRow: '行の固定を解除',
     valueAggregation: '値の集計',
     noAggregation: 'なし',
     autosizeThisColumn: 'この列の自動サイズ調整',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_JP = {
     chooseColumns: '列を選択',
     sortAscending: '昇順で並べ替え',
     sortDescending: '降順で並べ替え',
+    sortAbsoluteAscending: '絶対昇順に並べ替え',
+    sortAbsoluteDescending: '絶対降順に並べ替え',
     sortUnSort: 'ソート解除',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_JP = {
     ariaChecked: 'チェック済み',
     ariaColumn: '列',
     ariaColumnGroup: '列グループ',
+    ariaFilterActive: 'フィルターがアクティブ',
     ariaColumnFiltered: 'フィルターが適用された列',
     ariaColumnSelectAll: 'すべての列の表示を切り替え',
     ariaDateFilterInput: '日付フィルター入力',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_JP = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' の ',
     ariaDropZoneColumnComponentSortAscending: '昇順',
     ariaDropZoneColumnComponentSortDescending: '降順',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '「絶対昇順」',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '「絶対降順」',
     ariaLabelDialog: 'ダイアログ',
     ariaLabelColumnMenu: '列メニュー',
     ariaLabelColumnFilter: '列フィルター',
@@ -660,6 +674,15 @@ export const AG_GRID_LOCALE_JP = {
     october: '10月',
     november: '11月',
     december: '12月',
+
+    // Date-time parts
+    year: '年',
+    quarter: '四半期',
+    month: '月',
+    day: '日',
+    hour: '時',
+    minute: '分',
+    second: '秒',
 
     // Time formats
     timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',

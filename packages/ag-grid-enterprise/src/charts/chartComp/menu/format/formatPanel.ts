@@ -1,7 +1,7 @@
 import type { ChartFormatPanel, ChartFormatPanelGroup } from 'ag-grid-community';
 import { Component, _warn } from 'ag-grid-community';
 
-import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
 import { isCartesian, isFunnel, isPolar } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
@@ -17,7 +17,7 @@ import { TitlesPanel } from './titles/titlesPanel';
 export interface FormatPanelOptions extends ChartMenuContext {
     isExpandedOnInit: boolean;
     seriesType: ChartSeriesType;
-    registerGroupComponent: (groupComponent: AgGroupComponent) => void;
+    registerGroupComponent: (groupComponent: GroupComponent) => void;
 }
 
 const DefaultFormatPanelDef: ChartFormatPanel = {
@@ -61,7 +61,7 @@ export class FormatPanel extends Component {
                 panelExpandedOnInit = true;
             }
 
-            const registerGroupComponent = (groupComponent: AgGroupComponent) =>
+            const registerGroupComponent = (groupComponent: GroupComponent) =>
                 this.groupExpansionFeature.addGroupComponent(groupComponent);
 
             const opts: FormatPanelOptions = {

@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
 
 const gridRowsOptions: GridRowsOptions = {};
 
@@ -57,17 +57,17 @@ describe('ag-grid grouping complex transactions', () => {
         let gridRows = new GridRows(api, 'initial', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020
-            │ · └── LEAF id:0
-            └─┬ filler id:row-group-country-Italy
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020
-            · · └── LEAF id:1
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ · └── LEAF id:0 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · · └── LEAF id:1 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toStrictEqual([row0, row1a]);
 
         // Complex transaction: add, update, remove in one go
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [row2, row3, row4],
             update: [row1b],
             remove: [row0],
@@ -76,22 +76,22 @@ describe('ag-grid grouping complex transactions', () => {
         gridRows = new GridRows(api, 'complex transaction 1', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021
-            │ · └── LEAF id:3
-            ├─┬ filler id:row-group-country-Italy
-            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021
-            │ · └── LEAF id:2
-            └─┬ filler id:row-group-country-France
-            · └─┬ LEAF_GROUP id:row-group-country-France-year-2020
-            · · ├── LEAF id:1
-            · · └── LEAF id:4
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:3 country:"Ireland" year:2021 athlete:"Jane Doe" sport:"Soccer"
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:2 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+            · · ├── LEAF id:1 country:"France" year:2020 athlete:"Mario Rossi Updated" sport:"Soccer"
+            · · └── LEAF id:4 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toStrictEqual([row1b, row2, row3, row4]);
 
         // Another complex transaction
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [row5b],
             remove: [row2, row3],
         });
@@ -99,13 +99,13 @@ describe('ag-grid grouping complex transactions', () => {
         gridRows = new GridRows(api, 'complex transaction 2', gridRowsOptions);
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-France
-            │ └─┬ LEAF_GROUP id:row-group-country-France-year-2020
-            │ · ├── LEAF id:1
-            │ · └── LEAF id:4
-            └─┬ filler id:row-group-country-Germany
-            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2021
-            · · └── LEAF id:5
+            ├─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └─┬ LEAF_GROUP id:row-group-country-France-year-2020 ag-Grid-AutoColumn:2020
+            │ · ├── LEAF id:1 country:"France" year:2020 athlete:"Mario Rossi Updated" sport:"Soccer"
+            │ · └── LEAF id:4 country:"France" year:2020 athlete:"Jean Dupont" sport:"Tennis"
+            └─┬ filler id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:5 country:"Germany" year:2021 athlete:"Carlos Garcia Updated" sport:"Basketball"
         `);
         expect(gridRows.rootAllLeafChildren.map((row) => row.data)).toStrictEqual([row1b, row4, row5b]);
     });
@@ -135,12 +135,12 @@ describe('ag-grid grouping complex transactions', () => {
 
         await new GridRows(api, 'async batched adds', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ └── LEAF id:1
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ └── LEAF id:2
-            └─┬ LEAF_GROUP id:row-group-country-France
-            · └── LEAF id:3
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:2 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:3 country:"France" athlete:"Jean Dupont" sport:"Tennis"
         `);
 
         // Mix of async updates and removes
@@ -157,12 +157,12 @@ describe('ag-grid grouping complex transactions', () => {
 
         await new GridRows(api, 'async batched mixed operations', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ └── LEAF id:1
-            ├─┬ LEAF_GROUP id:row-group-country-France
-            │ └── LEAF id:3
-            └─┬ LEAF_GROUP id:row-group-country-Spain
-            · └── LEAF id:4
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:1 country:"Ireland" athlete:"John Smith Updated" sport:"Sailing"
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ └── LEAF id:3 country:"France" athlete:"Jean Dupont" sport:"Tennis"
+            └─┬ LEAF_GROUP id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └── LEAF id:4 country:"Spain" athlete:"Carlos Garcia" sport:"Basketball"
         `);
     });
 
@@ -182,29 +182,29 @@ describe('ag-grid grouping complex transactions', () => {
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:a
-            │ └── LEAF id:b
-            └─┬ LEAF_GROUP id:row-group-country-Italy
-            · └── LEAF id:c
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:a country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Move John Smith from Ireland to Italy (by updating country)
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: 'a', country: 'Italy', athlete: 'John Smith', sport: 'Sailing' }],
         });
 
         await new GridRows(api, 'moved John Smith to Italy', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ └── LEAF id:b
-            └─┬ LEAF_GROUP id:row-group-country-Italy
-            · ├── LEAF id:c
-            · └── LEAF id:a
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:a country:"Italy" athlete:"John Smith" sport:"Sailing"
+            · └── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Move both Jane and Mario to a new country
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [
                 { id: 'b', country: 'France', athlete: 'Jane Doe', sport: 'Soccer' },
                 { id: 'c', country: 'France', athlete: 'Mario Rossi', sport: 'Soccer' },
@@ -213,11 +213,11 @@ describe('ag-grid grouping complex transactions', () => {
 
         await new GridRows(api, 'moved Jane and Mario to France', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ └── LEAF id:a
-            └─┬ LEAF_GROUP id:row-group-country-France
-            · ├── LEAF id:b
-            · └── LEAF id:c
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:a country:"Italy" athlete:"John Smith" sport:"Sailing"
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:b country:"France" athlete:"Jane Doe" sport:"Soccer"
+            · └── LEAF id:c country:"France" athlete:"Mario Rossi" sport:"Soccer"
         `);
     });
 
@@ -242,47 +242,47 @@ describe('ag-grid grouping complex transactions', () => {
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020
-            │ │ ├── LEAF id:a
-            │ │ └── LEAF id:b
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021
-            │ · └── LEAF id:c
-            └─┬ filler id:row-group-country-Italy
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020
-            · · └── LEAF id:d
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ ├── LEAF id:a country:"Ireland" year:2020 athlete:"John Smith"
+            │ │ └── LEAF id:b country:"Ireland" year:2020 athlete:"Jane Doe"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:c country:"Ireland" year:2021 athlete:"Bob Johnson"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · · └── LEAF id:d country:"Italy" year:2020 athlete:"Mario Rossi"
         `);
 
         // Remove all Ireland 2020 rows - the year group should be removed
-        api.applyTransaction({ remove: [rowA, rowB] });
+        applyTransactionChecked(api, { remove: [rowA, rowB] });
 
         await new GridRows(api, 'Ireland 2020 group removed', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021
-            │ · └── LEAF id:c
-            └─┬ filler id:row-group-country-Italy
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020
-            · · └── LEAF id:d
+            ROOT id:ROOT_NODE_ID 
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:c country:"Ireland" year:2021 athlete:"Bob Johnson"
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · · └── LEAF id:d country:"Italy" year:2020 athlete:"Mario Rossi"
         `);
 
         // Remove the last Ireland row - the country group should be removed
-        api.applyTransaction({ remove: [rowC] });
+        applyTransactionChecked(api, { remove: [rowC] });
 
         await new GridRows(api, 'Ireland country group removed', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-country-Italy
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020
-            · · └── LEAF id:d
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · · └── LEAF id:d country:"Italy" year:2020 athlete:"Mario Rossi"
         `);
 
         // Remove the last row completely
-        api.applyTransaction({ remove: [rowD] });
+        applyTransactionChecked(api, { remove: [rowD] });
 
         await new GridRows(api, 'all groups removed', gridRowsOptions).check('empty');
 
         // Add back some data to verify groups are recreated properly
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             add: [
                 { id: 'e', country: 'Spain', year: 2022, athlete: 'Carlos Garcia' },
                 { id: 'f', country: 'Spain', year: 2022, athlete: 'Ana Lopez' },
@@ -291,10 +291,10 @@ describe('ag-grid grouping complex transactions', () => {
 
         await new GridRows(api, 'new groups created', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-country-Spain
-            · └─┬ LEAF_GROUP id:row-group-country-Spain-year-2022
-            · · ├── LEAF id:e
-            · · └── LEAF id:f
+            └─┬ filler id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
+            · └─┬ LEAF_GROUP id:row-group-country-Spain-year-2022 ag-Grid-AutoColumn:2022
+            · · ├── LEAF id:e country:"Spain" year:2022 athlete:"Carlos Garcia"
+            · · └── LEAF id:f country:"Spain" year:2022 athlete:"Ana Lopez"
         `);
     });
 
@@ -316,7 +316,7 @@ describe('ag-grid grouping complex transactions', () => {
 
         if (mode === 'sync') {
             // Add all at once
-            api.applyTransaction({ add: finalData });
+            applyTransactionChecked(api, { add: finalData });
         } else if (mode === 'async') {
             // Add one by one asynchronously
             finalData.forEach((row) => {
@@ -325,9 +325,9 @@ describe('ag-grid grouping complex transactions', () => {
             api.flushAsyncTransactions();
         } else {
             // Mix of sync and async
-            api.applyTransaction({ add: [rowB] });
+            applyTransactionChecked(api, { add: [rowB] });
             api.applyTransactionAsync({ add: [rowC] });
-            api.applyTransaction({ add: [rowD] });
+            applyTransactionChecked(api, { add: [rowD] });
             api.flushAsyncTransactions();
         }
 
@@ -336,22 +336,22 @@ describe('ag-grid grouping complex transactions', () => {
             // Together mode may have different ordering due to mixed sync/async operations
             await new GridRows(api, `${mode} final result`, gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-country-Ireland
-                │ └── LEAF id:b
-                ├─┬ LEAF_GROUP id:row-group-country-France
-                │ └── LEAF id:d
-                └─┬ LEAF_GROUP id:row-group-country-Italy
-                · └── LEAF id:c
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+                ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+                │ └── LEAF id:d country:"France" athlete:"Jean Dupont" sport:"Tennis"
+                └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+                · └── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             `);
         } else {
             await new GridRows(api, `${mode} final result`, gridRowsOptions).check(`
                 ROOT id:ROOT_NODE_ID
-                ├─┬ LEAF_GROUP id:row-group-country-Ireland
-                │ └── LEAF id:b
-                ├─┬ LEAF_GROUP id:row-group-country-Italy
-                │ └── LEAF id:c
-                └─┬ LEAF_GROUP id:row-group-country-France
-                · └── LEAF id:d
+                ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+                │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+                ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+                │ └── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
+                └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+                · └── LEAF id:d country:"France" athlete:"Jean Dupont" sport:"Tennis"
             `);
         }
     });
@@ -377,7 +377,7 @@ describe('ag-grid grouping complex transactions', () => {
         });
 
         // Complex transaction: remove all from one group, add to new group, move between groups
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             remove: [
                 { id: '2', department: 'Engineering', level: 'Junior', name: 'Bob' },
                 { id: '3', department: 'Marketing', level: 'Senior', name: 'Charlie' },
@@ -389,20 +389,16 @@ describe('ag-grid grouping complex transactions', () => {
             update: [{ id: '1', department: 'HR', level: 'Manager', name: 'Alice Updated' }],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-        };
-
-        await new GridRows(api, 'complex batch transaction', gridRowsOptions).check(`
+        await new GridRows(api, 'complex batch transaction').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-HR
-            │ └─┬ LEAF_GROUP id:row-group-department-HR-level-Manager
-            │ · └── LEAF id:1 name:"Alice Updated"
-            └─┬ filler id:row-group-department-Sales
-            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Manager
-            · │ └── LEAF id:4 name:"Diana"
-            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
-            · · └── LEAF id:5 name:"Eve"
+            ├─┬ filler id:row-group-department-HR ag-Grid-AutoColumn:"HR"
+            │ └─┬ LEAF_GROUP id:row-group-department-HR-level-Manager ag-Grid-AutoColumn:"Manager"
+            │ · └── LEAF id:1 department:"HR" level:"Manager" name:"Alice Updated"
+            └─┬ filler id:row-group-department-Sales ag-Grid-AutoColumn:"Sales"
+            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Manager ag-Grid-AutoColumn:"Manager"
+            · │ └── LEAF id:4 department:"Sales" level:"Manager" name:"Diana"
+            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior ag-Grid-AutoColumn:"Junior"
+            · · └── LEAF id:5 department:"Sales" level:"Junior" name:"Eve"
         `);
     });
 });

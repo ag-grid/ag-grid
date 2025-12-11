@@ -2,10 +2,11 @@
     white-space: normal;
     height: 100%;
     width: 100%;
-    border: 2px solid grey;
-    border-style: ridge;
     box-sizing: border-box;
-    background-color: #ccaa22a9;
+    background-color: #ccaa2233;
+    border: 1px solid;
+    border-color: transparent;
+    border-style: var(--ag-range-selection-border-style);
     display: flex;
     align-items: center;
     gap: 5px;
@@ -17,5 +18,6 @@
 }
 
 .ag-row:focus .full-width-panel {
-    background-color: #ccaa22cc;
+    background-color: #ccaa2255;
+    border-color: var(--ag-range-selection-border-color);
 }

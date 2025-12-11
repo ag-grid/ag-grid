@@ -12,10 +12,16 @@ import {
 } from '../theming/inject';
 import type { Theme } from '../theming/theme';
 import { ThemeImpl } from '../theming/themeImpl';
-import { _createAgElement } from '../utils/dom';
+import { _createAgElement, _isInDOM, _observeResize } from '../utils/dom';
 import { AgBeanStub } from './agBeanStub';
 
 let paramsId = 0;
+
+const LIST_ITEM_HEIGHT: CssVariable<BaseCssChangeKeys> = {
+    cssName: '--ag-list-item-height',
+    changeKey: 'listItemHeightChanged',
+    defaultValue: 24,
+};
 
 export abstract class BaseEnvironment<
         TBeanCollection extends AgCoreBeanCollection<TProperties, TGlobalEvents, TCommon, TPropertiesService>,
@@ -23,7 +29,7 @@ export abstract class BaseEnvironment<
         TGlobalEvents extends BaseEvents,
         TCommon,
         TPropertiesService extends IPropertiesService<TProperties, TCommon>,
-        TChangeKey extends string = 'themeChanged',
+        TChangeKeys extends BaseCssChangeKeys = BaseCssChangeKeys,
     >
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements IEnvironment
@@ -35,6 +41,10 @@ export abstract class BaseEnvironment<
     public cssLayer: string | undefined;
     public styleNonce: string | undefined;
     private mutationObserver: MutationObserver;
+    private readonly sizeEls = new Map<CssVariable<TChangeKeys>, HTMLElement>();
+    private readonly lastKnownValues = new Map<CssVariable<TChangeKeys>, number>();
+    private eMeasurementContainer: HTMLElement | undefined;
+    public sizesMeasured = false;
 
     public wireBeans(beans: TBeanCollection): void {
         this.eRootDiv = beans.eRootDiv;
@@ -46,9 +56,6 @@ export abstract class BaseEnvironment<
     private readonly globalCSS: [string, string][] = [];
 
     protected abstract initVariables(): void;
-
-    protected abstract fireStylesChangedEvent(change: TChangeKey): void;
-
     protected abstract getAdditionalCss(): Map<string, string[]>;
 
     protected abstract postProcessThemeChange(newTheme: ThemeImpl | undefined, themeProperty?: Theme | 'legacy'): void;
@@ -57,22 +64,34 @@ export abstract class BaseEnvironment<
 
     protected abstract themeError(theme: Theme | 'legacy'): void;
 
+    protected abstract shadowRootError(): void;
+
+    protected abstract varError(variable: CssVariable<TChangeKeys>): void;
+
     public postConstruct(): void {
         const { gos, eRootDiv } = this;
         gos.setInstanceDomData(eRootDiv);
+        const themeStyleContainer = gos.get('themeStyleContainer');
+        const hasShadowRootGlobal = typeof ShadowRoot !== 'undefined';
+        const isShadowRoot = hasShadowRootGlobal && eRootDiv.getRootNode() instanceof ShadowRoot;
         this.eStyleContainer =
-            gos.get('themeStyleContainer') ?? (eRootDiv.getRootNode() === document ? document.head : eRootDiv);
+            (typeof themeStyleContainer === 'function' ? themeStyleContainer() : themeStyleContainer) ??
+            (isShadowRoot ? eRootDiv : document.head);
+        if (!themeStyleContainer && !isShadowRoot && hasShadowRootGlobal) {
+            warnOnAttachToShadowRoot(eRootDiv, this.shadowRootError.bind(this), this.addDestroyFunc.bind(this));
+        }
         this.cssLayer = gos.get('themeCssLayer');
         this.styleNonce = gos.get('styleNonce');
         this.addManagedPropertyListener('theme', () => this.handleThemeChange());
         this.handleThemeChange();
 
+        this.getSizeEl(LIST_ITEM_HEIGHT);
         this.initVariables();
 
         this.addDestroyFunc(() => _unregisterInstanceUsingThemingAPI(this));
 
         this.mutationObserver = new MutationObserver(() => {
-            this.fireStylesChangedEvent('themeChanged' as TChangeKey);
+            this.fireStylesChangedEvent('themeChanged');
         });
         this.addDestroyFunc(() => this.mutationObserver.disconnect());
     }
@@ -94,7 +113,7 @@ export abstract class BaseEnvironment<
         }
         if (themeClass) {
             const oldClass = el.className;
-            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ` ${extraClasses.join(' ')}` : ''}`;
+            el.className = `${oldClass}${oldClass ? ' ' : ''}${themeClass}${extraClasses?.length ? ' ' + extraClasses.join(' ') : ''}`;
         }
     }
 
@@ -127,6 +146,92 @@ export abstract class BaseEnvironment<
         } else {
             this.globalCSS.push([css, debugId]);
         }
+    }
+
+    public getDefaultListItemHeight(): number {
+        return this.getCSSVariablePixelValue(LIST_ITEM_HEIGHT);
+    }
+
+    protected getCSSVariablePixelValue(variable: CssVariable<TChangeKeys>): number {
+        const cached = this.lastKnownValues.get(variable);
+        if (cached != null) {
+            return cached;
+        }
+        const measurement = this.measureSizeEl(variable);
+        if (measurement === 'detached' || measurement === 'no-styles') {
+            if (variable.cacheDefault) {
+                this.lastKnownValues.set(variable, variable.defaultValue);
+            }
+            return variable.defaultValue;
+        }
+        this.lastKnownValues.set(variable, measurement);
+        return measurement;
+    }
+
+    private measureSizeEl(variable: CssVariable<TChangeKeys>): number | 'detached' | 'no-styles' {
+        const sizeEl = this.getSizeEl(variable);
+        if (sizeEl.offsetParent == null) {
+            return 'detached';
+        }
+        const newSize = sizeEl.offsetWidth;
+        if (newSize === NO_VALUE_SENTINEL) {
+            return 'no-styles';
+        }
+        this.sizesMeasured = true;
+        return newSize;
+    }
+
+    protected getMeasurementContainer(): HTMLElement {
+        let container = this.eMeasurementContainer;
+        if (!container) {
+            container = this.eMeasurementContainer = _createAgElement({ tag: 'div', cls: 'ag-measurement-container' });
+            this.eRootDiv.appendChild(container);
+        }
+        return container;
+    }
+
+    protected getSizeEl(variable: CssVariable<TChangeKeys>): HTMLElement {
+        let sizeEl = this.sizeEls.get(variable);
+        if (sizeEl) {
+            return sizeEl;
+        }
+        const container = this.getMeasurementContainer();
+
+        sizeEl = _createAgElement({ tag: 'div' });
+        const { border, noWarn } = variable;
+        if (border) {
+            sizeEl.className = 'ag-measurement-element-border';
+            sizeEl.style.setProperty(
+                '--ag-internal-measurement-border',
+                `var(${variable.cssName}, solid ${NO_VALUE_SENTINEL}px)`
+            );
+        } else {
+            sizeEl.style.width = `var(${variable.cssName}, ${NO_VALUE_SENTINEL}px)`;
+        }
+        container.appendChild(sizeEl);
+        this.sizeEls.set(variable, sizeEl);
+
+        let lastMeasurement = this.measureSizeEl(variable);
+
+        if (lastMeasurement === 'no-styles' && !noWarn) {
+            // No value for the variable
+            this.varError(variable);
+        }
+
+        const unsubscribe = _observeResize(this.beans, sizeEl, () => {
+            const newMeasurement = this.measureSizeEl(variable);
+            if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
+                return;
+            }
+            this.lastKnownValues.set(variable, newMeasurement);
+            if (newMeasurement !== lastMeasurement) {
+                lastMeasurement = newMeasurement;
+                this.fireStylesChangedEvent(variable.changeKey);
+            }
+        });
+        this.addDestroyFunc(() => unsubscribe());
+
+        return sizeEl;
     }
 
     private handleThemeChange(): void {
@@ -182,6 +287,50 @@ export abstract class BaseEnvironment<
         }
 
         this.applyThemeClasses(eRootDiv);
-        this.fireStylesChangedEvent('themeChanged' as TChangeKey);
+        this.fireStylesChangedEvent('themeChanged');
+    }
+
+    protected fireStylesChangedEvent(change: keyof TChangeKeys): void {
+        this.eventSvc.dispatchEvent({
+            type: 'stylesChanged',
+            [change]: true,
+        });
     }
 }
+
+export type CssVariable<TChangeKeys extends BaseCssChangeKeys> = {
+    cssName: string;
+    changeKey: keyof TChangeKeys;
+    defaultValue: number;
+    border?: boolean;
+    noWarn?: boolean;
+    cacheDefault?: boolean;
+};
+
+export interface BaseCssChangeKeys {
+    themeChanged: true;
+    listItemHeightChanged: true;
+}
+
+const NO_VALUE_SENTINEL = 15538;
+
+const warnOnAttachToShadowRoot = (
+    el: HTMLElement,
+    errorCallback: () => void,
+    onDestroy: (handler: () => void) => void
+) => {
+    // only retry for a minute, to prevent our tests (and potentially customer's
+    // tests) from hanging if they try to use vi.runAllTimers() to run the interval
+    // until it terminates
+    let retries = 60;
+    const interval = setInterval(() => {
+        if (typeof ShadowRoot !== 'undefined' && el.getRootNode() instanceof ShadowRoot) {
+            errorCallback();
+            clearInterval(interval);
+        }
+        if (_isInDOM(el) || --retries < 0) {
+            clearInterval(interval);
+        }
+    }, 1000);
+    onDestroy(() => clearInterval(interval));
+};

@@ -1,0 +1,9 @@
+:where(.ag-animate-autosize) {
+    .ag-header-cell,
+    .ag-header-group-cell,
+    .ag-cell {
+        transition:
+            width 0.2s ease-in-out,
+            left 0.2s ease-in-out;
+    }
+}

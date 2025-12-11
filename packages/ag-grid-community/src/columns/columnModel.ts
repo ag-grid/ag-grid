@@ -4,17 +4,16 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
-import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import type { Column } from '../interfaces/iColumn';
+import { _isRowNumbers, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IColumnCollectionService } from '../interfaces/iColumnCollectionService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import { _createColumnTree } from './columnFactoryUtils';
-import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import type { ColumnState } from './columnStateUtils';
+import { _applyColumnState, _compareColumnStatesAndDispatchEvents } from './columnStateUtils';
 import {
     _columnsMatch,
     _convertColumnEventSourceType,
@@ -25,7 +24,6 @@ import {
     isRowNumberCol,
 } from './columnUtils';
 
-export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 export type Maybe<T> = T | null | undefined;
 
 export interface ColumnCollections {
@@ -121,7 +119,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
-        list.forEach((col) => (map[col.getId()] = col));
+        for (const col of list) {
+            map[col.getId()] = col;
+        }
 
         this.colDefCols = { tree, treeDepth, list, map };
 
@@ -135,7 +135,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.ready = true;
 
+        this.changeEventsDispatching = true;
         this.refreshCols(true, source);
+        this.changeEventsDispatching = false;
 
         visibleCols.refresh(source);
 
@@ -189,9 +191,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             visibleCols,
             colViewport,
             eventSvc,
+            formula,
         } = this.beans;
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
+        // we need to initialise the formula service before
+        // attempting to create the column services as currently
+        // the rowNumbers will automatically activate with formulas
+        formula?.setFormulasActive(cols);
 
         this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
@@ -214,8 +221,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         visibleCols.clear();
         colViewport.clear();
 
-        const dispatchChangedEvent = !_areEqual(prevColTree, this.cols!.tree);
-        if (dispatchChangedEvent) {
+        if (!_areEqual(prevColTree, this.cols!.tree)) {
             eventSvc.dispatchEvent({
                 type: 'gridColumnsChanged',
             });
@@ -277,14 +283,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on and possibly the selection/row numbers column
+        const { beans, showingPivotResult, cols } = this;
 
-        const { valueColsSvc, selectionColSvc, gos } = this.beans;
-        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
+        const { valueColsSvc, selectionColSvc } = beans;
+        const showAutoGroupAndValuesOnly = this.isPivotMode() && !showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
-        const showRowNumbers = gos.get('rowNumbers');
+        const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
 
-        const res = this.cols.list.filter((col) => {
+        const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
@@ -511,15 +518,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        return this.colDefCols
-            ? this.beans.colDefFactory?.getColumnDefs(
-                  this.colDefCols.list,
-                  this.showingPivotResult,
-                  this.lastOrder,
-                  this.cols?.list ?? []
-              )
-            : undefined;
+    public getColumnDefs(sorted?: boolean): (ColDef | ColGroupDef)[] | undefined {
+        return (
+            this.colDefCols &&
+            this.beans.colDefFactory?.getColumnDefs(
+                this.colDefCols.list,
+                this.showingPivotResult,
+                this.lastOrder,
+                this.cols?.list ?? [],
+                sorted
+            )
+        );
     }
 
     private setColSpanActive(): void {
@@ -601,13 +610,26 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.cols?.list ?? [];
     }
 
-    public forAllCols(callback: (column: AgColumn) => void): void {
+    /**
+     * If callback returns true, exit early.
+     */
+    public forAllCols(callback: (column: AgColumn) => boolean | void): void {
         const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
-        _forAll(this.colDefCols?.list, callback);
-        _forAll(autoColSvc?.columns?.list, callback);
-        _forAll(selectionColSvc?.columns?.list, callback);
-        _forAll(groupHierarchyColSvc?.columns?.list, callback);
-        _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
+        if (_forAll(this.colDefCols?.list, callback)) {
+            return;
+        }
+        if (_forAll(autoColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(selectionColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(groupHierarchyColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(pivotResultCols?.getPivotResultCols()?.list, callback)) {
+            return;
+        }
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {

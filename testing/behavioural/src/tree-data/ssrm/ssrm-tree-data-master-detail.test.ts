@@ -1,8 +1,6 @@
-import { ServerSideRowModelModule } from 'ag-grid-enterprise';
-import { MasterDetailModule, TreeDataModule } from 'ag-grid-enterprise';
+import { MasterDetailModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, ssrmExpandAndLoadAll } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid SSRM treeData with master detail', () => {
     const gridsManager = new TestGridsManager({
@@ -86,8 +84,7 @@ describe('ag-grid SSRM treeData with master detail', () => {
 
         await ssrmExpandAndLoadAll(api);
 
-        const gridRowsOptions: GridRowsOptions = { columns: true };
-        const gridRows = new GridRows(api, '', gridRowsOptions);
+        const gridRows = new GridRows(api, '');
         await gridRows.check(`
             ROOT id:<no-id>
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" id:"A"

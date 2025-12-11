@@ -25,3 +25,5 @@ jest.jsdom-env.cjs
 scripts
 coverage
 .dependency-cruiser.js
+.swcrc
+osv-scanner.toml

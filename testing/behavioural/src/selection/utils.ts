@@ -13,7 +13,9 @@ export class GridActions {
         parentSelector = '#myGrid'
     ) {
         this.parent = document.querySelector(parentSelector)!;
-        if (!this.parent) throw new Error(`${parentSelector} not found.`);
+        if (!this.parent) {
+            throw new Error(`${parentSelector} not found.`);
+        }
     }
 
     getRowByIndex(index: number): HTMLElement | null {
@@ -106,4 +108,8 @@ export class GridActions {
 
 export function pressSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
     element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.SPACE, bubbles: true }));
+}
+
+export function pressAKey(element: HTMLElement, opts?: KeyboardEventInit): void {
+    element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.A, keyCode: 65, bubbles: true }));
 }

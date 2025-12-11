@@ -1,7 +1,9 @@
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    DateEditorModule,
     ModuleRegistry,
+    NumberEditorModule,
     TextEditorModule,
     ValidationModule,
     createGrid,
@@ -15,6 +17,8 @@ ModuleRegistry.registerModules([
     ContextMenuModule,
     CellSelectionModule,
     SetFilterModule,
+    DateEditorModule,
+    NumberEditorModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
@@ -27,6 +31,8 @@ interface IOlympicDataTypes extends IOlympicData {
     };
 }
 
+const DATE_REGEX = /\d{2}\/\d{2}\/\d{4}/;
+
 let gridApi: GridApi<IOlympicDataTypes>;
 
 const gridOptions: GridOptions<IOlympicDataTypes> = {
@@ -34,6 +40,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
         { field: 'athlete' },
         { field: 'countryObject', headerName: 'Country' },
         { field: 'sportObject', headerName: 'Sport' },
+        { field: 'date' },
     ],
     defaultColDef: {
         filter: true,
@@ -47,7 +54,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
             valueParser: (params) =>
                 params.newValue == null || params.newValue === '' ? null : { code: params.newValue },
             valueFormatter: (params) => (params.value == null ? '' : params.value.code),
-            dataTypeMatcher: (value: any) => value && !!value.code,
+            dataTypeMatcher: (value) => value && !!value.code,
         },
         sport: {
             baseDataType: 'object',
@@ -55,7 +62,34 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
             valueParser: (params) =>
                 params.newValue == null || params.newValue === '' ? null : { name: params.newValue },
             valueFormatter: (params) => (params.value == null ? '' : params.value.name),
-            dataTypeMatcher: (value: any) => value && !!value.name,
+            dataTypeMatcher: (value) => value && !!value.name,
+        },
+        dateString: {
+            baseDataType: 'dateString',
+            extendsDataType: 'dateString',
+            valueParser: (params) =>
+                params.newValue != null && params.newValue.match(DATE_REGEX) ? params.newValue : null,
+            valueFormatter: (params) => (params.value == null ? '' : params.value),
+            dataTypeMatcher: (value) => typeof value === 'string' && !!value.match(DATE_REGEX),
+            dateParser: (value) => {
+                if (value == null || value === '') {
+                    return undefined;
+                }
+                const dateParts = value.split('/');
+                return dateParts.length === 3
+                    ? new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]))
+                    : undefined;
+            },
+            dateFormatter: (value) => {
+                if (value == null) {
+                    return undefined;
+                }
+                const date = String(value.getDate());
+                const month = String(value.getMonth() + 1);
+                return `${date.length === 1 ? '0' + date : date}/${
+                    month.length === 1 ? '0' + month : month
+                }/${value.getFullYear()}`;
+            },
         },
     },
     cellSelection: { handle: { mode: 'fill' } },
@@ -71,17 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .then((data: IOlympicDataTypes[]) =>
             gridApi!.setGridOption(
                 'rowData',
-                data.map((rowData) => {
-                    return {
-                        ...rowData,
-                        countryObject: {
-                            code: rowData.country,
-                        },
-                        sportObject: {
-                            name: rowData.sport,
-                        },
-                    };
-                })
+                data.map((rowData) => ({
+                    ...rowData,
+                    countryObject: { code: rowData.country },
+                    sportObject: { name: rowData.sport },
+                }))
             )
         );
 });

@@ -1,7 +1,6 @@
 import type { GridOptions, IsServerSideGroupOpenByDefaultParams } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from '../../test-utils';
 import { createFakeServer, createServerSideDatasource, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
@@ -67,8 +66,7 @@ describe('ag-grid SSRM treeData open-by-default loads children', () => {
 
         await waitForNoLoadingRows(api);
 
-        const gridRowsOptions: GridRowsOptions = { columns: true };
-        const gridRows = new GridRows(api, 'ssrm open by default', gridRowsOptions);
+        const gridRows = new GridRows(api, 'ssrm open by default');
         await gridRows.check(`
             ROOT id:<no-id>
             └─┬ 101 GROUP id:101 ag-Grid-AutoColumn:"Erica Rogers" employeeId:"101" employeeName:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"

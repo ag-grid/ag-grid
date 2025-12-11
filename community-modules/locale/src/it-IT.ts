@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_IT = {
     searchOoo: 'Cerca...',
     blanks: '(Vuoti)',
     noMatches: 'Nessuna corrispondenza',
+    typeToSearchOoo: 'Digita per cercare...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtra...',
@@ -161,6 +162,8 @@ export const AG_GRID_LOCALE_IT = {
     maxLengthValidation: 'Deve essere di ${variable} caratteri o meno.',
     minValueValidation: 'Deve essere maggiore o uguale a ${variable}',
     maxValueValidation: 'Deve essere minore o uguale a ${variable}',
+    strictMinValueValidation: 'Deve essere maggiore di ${variable}',
+    strictMaxValueValidation: 'Deve essere minore di ${variable}',
     invalidSelectionValidation: 'Selezione non valida.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -188,6 +191,8 @@ export const AG_GRID_LOCALE_IT = {
     loadingOoo: 'Caricamento...',
     loadingError: 'ERR',
     noRowsToShow: 'Nessuna riga da mostrare',
+    noMatchingRows: 'Nessuna corrispondenza trovata',
+    exportingOoo: 'Esportazione in corso...',
     enabled: 'Abilitato',
 
     // Menu
@@ -195,6 +200,10 @@ export const AG_GRID_LOCALE_IT = {
     pinLeft: 'Blocca a Sinistra',
     pinRight: 'Blocca a Destra',
     noPin: 'Non Bloccare',
+    pinRow: 'Fissa riga',
+    pinTop: 'Fissa in alto',
+    pinBottom: 'Fissa in basso',
+    unpinRow: 'Sblocca riga',
     valueAggregation: 'Aggregazione Valori',
     noAggregation: 'Nessuna',
     autosizeThisColumn: 'Dimensiona Automaticamente Questa Colonna',
@@ -225,6 +234,8 @@ export const AG_GRID_LOCALE_IT = {
     chooseColumns: 'Scegli colonne',
     sortAscending: 'Ordina in modo Ascendente',
     sortDescending: 'Ordina in modo Discendente',
+    sortAbsoluteAscending: 'Ordina Assoluto Crescente',
+    sortAbsoluteDescending: 'Ordina Assoluto Decrescente',
     sortUnSort: 'Annulla Ordinamento',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -554,6 +565,7 @@ export const AG_GRID_LOCALE_IT = {
     ariaChecked: 'selezionato',
     ariaColumn: 'Colonna',
     ariaColumnGroup: 'Gruppo di Colonne',
+    ariaFilterActive: 'Filtro attivo',
     ariaColumnFiltered: 'Colonna Filtrata',
     ariaColumnSelectAll: 'Attiva/disattiva visibilità di tutte le colonne',
     ariaDateFilterInput: 'Inserimento Filtro Data',
@@ -607,6 +619,8 @@ export const AG_GRID_LOCALE_IT = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' di ',
     ariaDropZoneColumnComponentSortAscending: 'crescendo',
     ariaDropZoneColumnComponentSortDescending: 'decrescendo',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'crescente assoluto',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'decrescente assoluto',
     ariaLabelDialog: 'Dialogo',
     ariaLabelColumnMenu: 'Menù Colonna',
     ariaLabelColumnFilter: 'Filtro Colonna',
@@ -661,6 +675,15 @@ export const AG_GRID_LOCALE_IT = {
     october: 'Ottobre',
     november: 'Novembre',
     december: 'Dicembre',
+
+    // Date-time parts
+    year: 'Anno',
+    quarter: 'Trimestre',
+    month: 'Mese',
+    day: 'Giorno',
+    hour: 'Ora',
+    minute: 'Minuto',
+    second: 'Secondo',
 
     // Time formats
     timeFormatSlashesDDMMYYYY: 'GG/MM/AAAA',

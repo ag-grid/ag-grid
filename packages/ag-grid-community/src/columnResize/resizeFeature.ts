@@ -44,12 +44,14 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
             if (canAutosize && colAutosize) {
-                destroyResizeFuncs.push(colAutosize.addColumnAutosize(this.eResize, this.column));
+                destroyResizeFuncs.push(colAutosize.addColumnAutosizeListeners(this.eResize, this.column));
             }
         };
 
         const removeResize = () => {
-            destroyResizeFuncs.forEach((f) => f());
+            for (const f of destroyResizeFuncs) {
+                f();
+            }
             destroyResizeFuncs.length = 0;
         };
 
@@ -125,11 +127,10 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             if (notPinningLeft) {
                 result *= -1;
             }
-        } else {
-            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            if (pinningRight) {
-                result *= -1;
-            }
+        }
+        // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
+        else if (pinningRight) {
+            result *= -1;
         }
 
         return result;

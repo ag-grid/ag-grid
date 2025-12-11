@@ -1,9 +1,9 @@
 import type { AgComponentSelectorType, AgSelectParams, BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../widgets/agColorPicker';
+import { AgGroupComponentSelector } from '../../../../agStack/agGroupComponent';
+import type { GroupComponent, GroupComponentParams } from '../../../../widgets/gridEnterpriseWidgetTypes';
+import { ColorPickerSelector } from '../../../widgets/colorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
@@ -37,7 +37,7 @@ export class FontPanel extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    private readonly fontGroup: AgGroupComponent = RefPlaceholder;
+    private readonly fontGroup: GroupComponent = RefPlaceholder;
 
     private readonly chartOptions: ChartOptionsProxy;
     private readonly activeComps: Component[] = [];
@@ -57,7 +57,7 @@ export class FontPanel extends Component {
             chartMenuParamsFactory,
             keyMapper,
         } = this.params;
-        const fontGroupParams: AgGroupComponentParams = {
+        const fontGroupParams: GroupComponentParams = {
             cssIdentifier,
             direction: 'vertical',
             suppressOpenCloseIcons: true,
@@ -82,7 +82,7 @@ export class FontPanel extends Component {
             </div>
         </ag-group-component>
     </div>`,
-            [AgGroupComponentSelector, AgSelectSelector, AgColorPickerSelector],
+            [AgGroupComponentSelector, AgSelectSelector, ColorPickerSelector],
             {
                 fontGroup: fontGroupParams,
                 familySelect: this.getFamilySelectParams(),
@@ -175,7 +175,7 @@ export class FontPanel extends Component {
             'size',
             options,
             `${size}`,
-            (newValue) => this.setFont({ fontSize: parseInt(newValue!, 10) })
+            (newValue) => this.setFont({ fontSize: parseInt(newValue, 10) })
         );
     }
 
@@ -219,10 +219,10 @@ export class FontPanel extends Component {
     }
 
     private destroyActiveComps(): void {
-        this.activeComps.forEach((comp) => {
+        for (const comp of this.activeComps) {
             _removeFromParent(comp.getGui());
             this.destroyBean(comp);
-        });
+        }
     }
 
     public override destroy(): void {

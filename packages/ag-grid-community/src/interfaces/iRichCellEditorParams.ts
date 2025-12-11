@@ -3,21 +3,24 @@ import type { AgComponentSelectorType } from '../widgets/component';
 import type { ICellEditorParams } from './iCellEditor';
 import type { ICellEditorRendererParams } from './iCellEditorRenderer';
 
-export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {}
+export interface IRichCellEditorRendererParams<TValue> extends ICellEditorRendererParams<TValue> {
+    cellRendererParams: any;
+}
 
 export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgComponentSelectorType> {
     value?: TValue[] | TValue;
     valueList?: TValue[];
-    allowTyping?: boolean;
+    onSearch?: (search?: string) => void;
     cellRenderer?: any;
+    cellRendererParams?: any;
 
     cellRowHeight?: number;
     searchDebounceDelay?: number;
 
+    allowTyping?: boolean;
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
-
     multiSelect?: boolean;
     suppressDeselectAll?: boolean;
     suppressMultiSelectPillRenderer?: boolean;
@@ -27,10 +30,17 @@ export interface RichSelectParams<TValue = any> extends AgPickerFieldParams<AgCo
 
     valueFormatter?: (value: TValue[] | TValue) => string;
     searchStringCreator?: (values: TValue[]) => string[];
+    allowNoResultsCopy?: boolean;
+}
+
+export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any>
+    extends RichCellEditorParams<TData, TValue> {
+    /** The current search string entered by the user. Is always defined when async filtering is enabled. */
+    search?: string;
 }
 
 export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
-    (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
+    (params: RichCellEditorValuesCallbackParams<TData, TValue>): TValue[] | Promise<TValue[]>;
 }
 
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {
@@ -40,6 +50,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
     cellHeight?: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
     cellRenderer?: any;
+    /** The custom parameters to be used by the cell render. */
+    cellRendererParams?: any;
+
     /**
      * Set to `true` to be able to type values in the display area.
      * @default false
@@ -50,6 +63,14 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      * @default false
      */
     filterList?: boolean;
+
+    /**
+     *
+     * Set to `true` to enable asynchronous filtering of values via the `values` callback.
+     * (only relevant when `allowTyping=true`, `filterList=true` and the `values` callback returns a promise of filtered values).
+     * @default false
+     */
+    filterListAsync?: boolean;
     /**
      * The type of search algorithm that is used when searching for values.
      *  - `match` - Matches if the value starts with the text typed.
@@ -80,7 +101,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> 
      */
     suppressMultiSelectPillRenderer?: boolean;
     /**
-     * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
+     * The value in `ms` for the search algorithm debounce delay
      * @default 300
      */
     searchDebounceDelay?: number;

@@ -2,7 +2,7 @@ import type { AgColumn, AgProvidedColumnGroup, IconName, MenuItemDef } from 'ag-
 import { Component, _createIconNoSpan, _focusInto, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import { AgMenuList } from '../widgets/agMenuList';
+import { MenuList } from '../widgets/menuList';
 
 type MenuItemName = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
 
@@ -28,7 +28,7 @@ export class ToolPanelContextMenu extends Component {
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
-        private readonly mouseEvent: MouseEvent,
+        private readonly mouseEventOrTouch: MouseEvent | Touch,
         private readonly parentEl: HTMLElement
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
@@ -52,7 +52,10 @@ export class ToolPanelContextMenu extends Component {
         this.buildMenuItemMap();
 
         if (this.isActive()) {
-            this.mouseEvent.preventDefault();
+            const mouseEventOrTouch = this.mouseEventOrTouch;
+            if ('preventDefault' in mouseEventOrTouch) {
+                mouseEventOrTouch.preventDefault();
+            }
             const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
             if (menuItemsMapped.length === 0) {
                 return;
@@ -169,20 +172,20 @@ export class ToolPanelContextMenu extends Component {
             return true;
         }
 
-        return parent.getDisplayedChildren()?.indexOf(col) !== -1;
+        return parent.getDisplayedChildren()?.includes(col) ?? true;
     }
 
     private addColumnsToList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return [...columnList].concat(this.columns.filter((col) => predicate(col) && columnList.indexOf(col) === -1));
+        return [...columnList].concat(this.columns.filter((col) => predicate(col) && !columnList.includes(col)));
     }
 
     private removeColumnsFromList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return columnList.filter((col) => predicate(col) && this.columns.indexOf(col) === -1);
+        return columnList.filter((col) => predicate(col) && this.columns.includes(col));
     }
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
         const eGui = this.getGui();
-        const menuList = this.createBean(new AgMenuList());
+        const menuList = this.createBean(new MenuList());
         const localeTextFunc = this.getLocaleTextFunc();
 
         let hideFunc = () => {};
@@ -217,7 +220,7 @@ export class ToolPanelContextMenu extends Component {
 
         popupSvc.positionPopupUnderMouseEvent({
             type: 'columnContextMenu',
-            mouseEvent: this.mouseEvent,
+            mouseEvent: this.mouseEventOrTouch,
             ePopup: eGui,
         });
     }

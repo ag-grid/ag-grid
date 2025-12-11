@@ -252,19 +252,6 @@ const reactLandingPage = defineCollection({
     ),
 });
 
-const contentApi = defineCollection({
-    loader: glob({ base: './src/content/content-api', pattern: 'content-api.json' }),
-    schema: z.object({
-        supportedVersionFrom: z.string(),
-        root: z.array(
-            z.object({
-                id: z.string(),
-                url: z.string(),
-            })
-        ),
-    }),
-});
-
 const aboutPage = defineCollection({
     loader: glob({ base: './src/content/about', pattern: 'about.json' }),
     schema: z.object({
@@ -286,6 +273,19 @@ const aboutPage = defineCollection({
     }),
 });
 
+const contactResults = defineCollection({
+    loader: glob({ base: '../../external/ag-website-shared/src/content/contact', pattern: 'result.json' }),
+    schema: z.record(
+        z.string(),
+        z.object({
+            title: z.string(),
+            description: z.string(),
+            heroTag: z.string(),
+            heroHeading: z.string(),
+        })
+    ),
+});
+
 export const collections = {
     docs,
     apiDocumentation,
@@ -303,6 +303,6 @@ export const collections = {
     siteHeader,
     seedProjects,
     reactLandingPage,
-    contentApi,
     aboutPage,
+    contactResults,
 };

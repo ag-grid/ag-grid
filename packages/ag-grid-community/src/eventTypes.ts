@@ -134,6 +134,7 @@ const _INTERNAL_EVENTS = [
     'scrollGapChanged',
     'columnHoverChanged',
     'flashCells',
+    'rowDragVisibilityChanged',
     'paginationPixelOffsetChanged',
     'displayedRowsChanged',
     'leftPinnedWidthChanged',
@@ -142,9 +143,10 @@ const _INTERNAL_EVENTS = [
     'headerHeightChanged',
     'columnGroupHeaderHeightChanged',
     'columnHeaderHeightChanged',
-    'gridStylesChanged',
+    'stylesChanged',
     'storeUpdated',
     'filterDestroyed',
+    'filterHandlerDestroyed',
     'rowDataUpdateStarted',
     'rowCountReady',
     'advancedFilterEnabledChanged',
@@ -166,6 +168,7 @@ const _INTERNAL_EVENTS = [
     'filterClosed',
     'headerRowsChanged',
     'rowExpansionStateChanged',
+    'showRowGroupColsSetChanged',
 ] as const;
 
 // We define as a callback to help with tree shaking (esbuild)

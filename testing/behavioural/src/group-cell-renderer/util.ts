@@ -38,18 +38,6 @@ export const getTestGenerator =
         return generateTestsRecursively(gridManager, getSnapshot, tests, prevGridOptions, 0);
     };
 
-function innerTextPolyfill() {
-    // for snapshots, the grid uses innerText which is not supported by JSDOM; so we need to polyfill it
-    // with innerText instead
-    if (!('innerText' in Element.prototype)) {
-        Object.defineProperty(Element.prototype, 'innerText', {
-            set(value) {
-                this.textContent = value;
-            },
-        });
-    }
-}
-
 const generateTestsRecursively = (
     gridManager: TestGridsManager,
     getSnapshot: (container: HTMLDivElement, api: GridApi) => any,
@@ -64,7 +52,6 @@ const generateTestsRecursively = (
 
     let div: HTMLDivElement;
     beforeAll(() => {
-        innerTextPolyfill();
         div = document.createElement('div');
         document.body.appendChild(div);
     });

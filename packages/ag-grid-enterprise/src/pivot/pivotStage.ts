@@ -7,11 +7,10 @@ import type {
     GridOptions,
     IColsService,
     IPivotResultColsService,
-    IRowNodeStage,
     NamedBean,
     RowNode,
-    StageExecuteParams,
     ValueService,
+    _IRowNodePivotStage,
 } from 'ag-grid-community';
 import { BeanStub, _missing } from 'ag-grid-community';
 
@@ -25,16 +24,16 @@ const mapToObject = (map: Map<string, any>): Record<string, any> => {
     return obj;
 };
 
-export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
+export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotStage {
     beanName = 'pivotStage' as const;
 
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+    public readonly step: ClientSideRowModelStage = 'pivot';
+    public readonly refreshProps: (keyof GridOptions<any>)[] = [
         'removePivotHeaderRowWhenSingleValueColumn',
         'pivotRowTotals',
         'pivotColumnGroupTotals',
         'suppressExpandablePivotGroups',
-    ]);
-    public step: ClientSideRowModelStage = 'pivot';
+    ];
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;
@@ -70,8 +69,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private maxUniqueValues: number = -1;
 
-    public execute(params: StageExecuteParams): void {
-        const changedPath = params.changedPath;
+    public execute(changedPath: ChangedPath): void {
         if (this.colModel.isPivotActive()) {
             this.executePivotOn(changedPath!);
         } else {
@@ -270,7 +268,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         for (const key of mappedChildren.keys()) {
             result.set(
                 key,
-                this.bucketChildren(mappedChildren.get(key)!, pivotColumns, pivotIndex + 1, uniqueValues.get(key)!)
+                this.bucketChildren(mappedChildren.get(key)!, pivotColumns, pivotIndex + 1, uniqueValues.get(key))
             );
         }
 

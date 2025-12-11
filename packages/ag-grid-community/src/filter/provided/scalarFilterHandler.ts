@@ -66,7 +66,7 @@ export abstract class ScalarFilterHandler<
         }
 
         const comparator = this.comparator();
-        const compareResult = values[0] != null ? comparator(values[0]!, cellValue) : 0;
+        const compareResult = values[0] != null ? comparator(values[0], cellValue) : 0;
 
         switch (type) {
             case 'equals':

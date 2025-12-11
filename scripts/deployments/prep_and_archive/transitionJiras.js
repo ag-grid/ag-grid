@@ -22,26 +22,24 @@ const jiraRequest = async (url) => {
 };
 
 const retrieveData = async (url) => {
-    // JIRA limits the data returned via the rest api so we need to access the whole data set in chunks - each "page" will be maxResults long
-    // we keep executing the request with a new startAt until we reach the total number of issues in the set
-    const startAt = 0,
-        maxResults = 50;
-
     const result = [];
 
-    const data = await jiraRequest(`${url}&startAt=${startAt}&maxResults=${maxResults}`);
+    const data = await jiraRequest(`${url}`);
     result.push(...data.issues);
 
-    for (let page = 1; page < Math.ceil(data.total / maxResults); page++) {
-        const block = await jiraRequest(`${url}&startAt=${maxResults * page}&maxResults=${maxResults}`);
-        result.push(...block.issues);
+    let nextPageToken = data.nextPageToken;
+    while (nextPageToken) {
+        const block = await jiraRequest(`${url}&nextPageToken=${nextPageToken}`);
+        result.issues = result.issues.concat(block.issues);
+
+        nextPageToken = block.nextPageToken;
     }
 
     return result;
 };
 
 const getAvailableTransitions = async (issueId) => {
-    const transitionData = await jiraRequest(`https://ag-grid.atlassian.net/rest/api/2/issue/${issueId}/transitions`);
+    const transitionData = await jiraRequest(`https://ag-grid.atlassian.net/rest/api/3/issue/${issueId}/transitions`);
     return Object.assign(
         ...transitionData.transitions.map((transition) => ({ [transition.name.toUpperCase()]: transition.id }))
     );
@@ -75,8 +73,10 @@ const transitionIssues = async (issueIds, transitionId) => {
 };
 
 const transitionIssuesForFilter = async (filterId, transition) => {
-    const data = await retrieveData(`https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=${filterId}&fields=id`);
-    const issueIds = data.map((datum) => datum.key);
+    const data = await retrieveData(
+        `https://ag-grid.atlassian.net/rest/api/3/search/jql?jql=filter=${filterId}&fields=id`
+    );
+    const issueIds = data.map((datum) => datum.id);
 
     if (issueIds.length > 0) {
         const transitions = await getAvailableTransitions(issueIds[0]);

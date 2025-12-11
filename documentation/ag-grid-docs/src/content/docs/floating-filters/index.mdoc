@@ -70,7 +70,7 @@ The screen shots below show example scenarios where the provided Number floating
 
 The `Text` and `Number` floating filters support overriding the browser's autocomplete behaviour on the filter's input field.
 You can control that autocomplete behaviour by passing `browserAutoComplete` parameter in `floatingFilterComponentParams` (as
-defined in  `ITextFloatingFilterParams` and `INumberFloatingFilterParams`).
+defined in `ITextFloatingFilterParams` and `INumberFloatingFilterParams`).
 
 Possible values for `browserAutoComplete`:
 
@@ -81,6 +81,13 @@ Possible values for `browserAutoComplete`:
 **By default**, `browserAutoComplete` is set to `false` to disable autocomplete.
 
 Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+
+### Placeholder Text on Floating Filters
+
+By default, no placeholder text is displayed in floating filter inputs. Placeholder text can be set using the `filterPlaceholder` property of `floatingFilterComponentParams` (as
+found in `ITextFloatingFilterParams` and `INumberFloatingFilterParams`):
+
+{% interfaceDocumentation interfaceName="ITextFloatingFilterParams" names=["filterPlaceholder"] config={"description":""} /%}
 
 ## Custom Floating Filters
 

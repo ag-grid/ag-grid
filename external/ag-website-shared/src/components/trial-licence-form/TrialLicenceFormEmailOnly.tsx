@@ -33,7 +33,7 @@ const getFormErrorMessage = (message: string) => {
 };
 
 const isEmailValid = (email: string) => {
-    const emailPattern = /^([a-zA-Z0-9._-]|\+)+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const emailPattern = /^([a-zA-Z0-9._-]|\+)+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$/;
     return emailPattern.test(email);
 };
 
@@ -193,6 +193,7 @@ export const TrialLicenceFormEmailOnly: FunctionComponent = ({ submitUrl }: Prop
             </div>
             <div className={classnames(styles.actions, 'trial-licence-actions')}>
                 <button
+                    id="submit-trial-licence"
                     className={styles.submit}
                     type="submit"
                     disabled={hasFormError || formState === 'loading' || formState === 'success'}

@@ -695,7 +695,7 @@ export class ColumnFilterService
         return this.allColumnFilters.get(column.getColId());
     }
 
-    private getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
+    public getDefaultFilter(column: AgColumn, isFloating: boolean = false): string {
         return this.getDefaultFilterFromDataType(() => this.beans.dataTypeSvc?.getBaseDataType(column), isFloating);
     }
 
@@ -838,7 +838,7 @@ export class ColumnFilterService
             };
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
-                this.refreshHandlerAndUi(column, model, 'ui').then(() => {
+                this.refreshHandlerAndUi(column, model, 'ui', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -976,7 +976,7 @@ export class ColumnFilterService
         const providedFilterHandler = enableFilterHandlers ? getFilterHandlerFromDef(filterDef) : undefined;
 
         const resolveProvidedFilterHandler = (handlerName: FilterHandlerName) => () =>
-            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName!, true)!);
+            this.createBean(registry.createDynamicBean<FilterHandler & BeanStub>(handlerName, true)!);
 
         let filterHandler: CreateFilterHandlerFunc | undefined;
         let handlerName: FilterHandlerName | undefined;
@@ -985,11 +985,9 @@ export class ColumnFilterService
             const userFilterHandler = gos.get('filterHandlers')?.[providedFilterHandler];
             if (userFilterHandler != null) {
                 filterHandler = userFilterHandler;
-            } else {
-                if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
-                    filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
-                    handlerName = providedFilterHandler as FilterHandlerName;
-                }
+            } else if (FILTER_HANDLERS.has(providedFilterHandler as FilterHandlerName)) {
+                filterHandler = resolveProvidedFilterHandler(providedFilterHandler as FilterHandlerName);
+                handlerName = providedFilterHandler as FilterHandlerName;
             }
         } else {
             filterHandler = providedFilterHandler;
@@ -1080,7 +1078,7 @@ export class ColumnFilterService
                 this.beans.filterManager?.doesRowPassOtherFilters(colId, node as RowNode) ?? true,
             onModelChange: (newModel, additionalEventAttributes) => {
                 this.updateStoredModel(colId, newModel);
-                this.refreshHandlerAndUi(column, newModel, 'handler').then(() => {
+                this.refreshHandlerAndUi(column, newModel, 'handler', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             },
@@ -1132,16 +1130,11 @@ export class ColumnFilterService
     }
 
     public getFloatingFilterCompDetails(column: AgColumn, showParentFilter: () => void): UserCompDetails | undefined {
-        const { userCompFactory, frameworkOverrides, selectableFilter } = this.beans;
+        const { userCompFactory, frameworkOverrides, selectableFilter, gos } = this.beans;
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getOrCreateFilterUi(column);
-
-            if (filterComponent == null) {
-                return;
-            }
-
-            filterComponent.then((instance) => {
+            filterComponent?.then((instance) => {
                 callback(_unwrapUserComp(instance!));
             });
         };
@@ -1154,14 +1147,14 @@ export class ColumnFilterService
         const defaultFloatingFilterType =
             _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => this.getDefaultFloatingFilter(column)) ??
             'agReadOnlyFloatingFilter';
-        const isReactive = this.gos.get('enableFilterHandlers');
+        const isReactive = gos.get('enableFilterHandlers');
         const filterParams = _mergeFilterParamsWithApplicationProvidedParams(
             userCompFactory,
             filterDef,
             this.createFilterCompParams(column, isReactive, 'init', true) as IFilterParams
         );
 
-        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(this.gos, {
+        const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(gos, {
             column,
             filterParams,
             currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
@@ -1178,7 +1171,7 @@ export class ColumnFilterService
             displayParams.model = _getFilterModel(this.model, colId);
             displayParams.onModelChange = (model, additionalEventAttributes) => {
                 this.updateStoredModel(colId, model);
-                this.refreshHandlerAndUi(column, model, 'floating', true).then(() => {
+                this.refreshHandlerAndUi(column, model, 'floating', true, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             };
@@ -1199,6 +1192,7 @@ export class ColumnFilterService
         compDetails: UserCompDetails | null,
         createFilterUi: ((update?: boolean) => AgPromise<IFilterComp>) | null
     ): void {
+        const source = 'paramsUpdated';
         if (filterWrapper.isHandler) {
             const colId = column.getColId();
             delete this.initialModel[colId];
@@ -1206,21 +1200,29 @@ export class ColumnFilterService
             const filterUi = filterWrapper.filterUi;
             const newFilterUi = this.createFilterUiForHandler(compDetails, createFilterUi as any);
             filterWrapper.filterUi = newFilterUi;
+            const eventSvc = this.eventSvc;
             // destroy the old one after creating the new one
             // so that anything listening to the destroyed event will receive the new comp
+
             if (filterUi?.created) {
                 filterUi.promise.then((filter) => {
                     this.destroyBean(filter);
 
-                    this.eventSvc.dispatchEvent({
+                    eventSvc.dispatchEvent({
                         type: 'filterDestroyed',
-                        source: 'paramsUpdated',
-                        column: filterWrapper.column,
+                        source,
+                        column,
                     });
+                });
+            } else {
+                eventSvc.dispatchEvent({
+                    type: 'filterHandlerDestroyed',
+                    source,
+                    column,
                 });
             }
         } else {
-            this.destroyFilter(column, 'paramsUpdated');
+            this.destroyFilter(column, source);
         }
     }
 
@@ -1400,7 +1402,7 @@ export class ColumnFilterService
         // If refresh() method is implemented - call it and destroy filter if it returns false
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         getFilterUiFromWrapper(filterWrapper, wasHandler)?.then((filter) => {
-            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams as any) : true;
+            const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
                 this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);
@@ -1418,7 +1420,8 @@ export class ColumnFilterService
         column: AgColumn,
         model: any,
         source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler',
-        createIfMissing?: boolean
+        createIfMissing?: boolean,
+        additionalEventAttributes?: any
     ): AgPromise<void> {
         const filterWrapper = this.cachedFilter(column);
 
@@ -1455,7 +1458,8 @@ export class ColumnFilterService
             handlerParams,
             model,
             this.state.get(column.getColId()) ?? { model },
-            source
+            source,
+            additionalEventAttributes
         );
     }
 
@@ -1708,17 +1712,19 @@ export class ColumnFilterService
         const filterWrapper = this.cachedFilter(column);
         const getFilterUi = () =>
             filterWrapper?.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
-        _updateFilterModel(
+        _updateFilterModel({
             action,
+            filterParams: filterWrapper?.filterUi?.filterParams as FilterWrapperParams | undefined,
             getFilterUi,
-            () => _getFilterModel(this.model, colId),
-            () => this.state.get(colId),
-            (state) => this.updateState(column, state),
-            (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
-            filterWrapper?.isHandler
+            getModel: () => _getFilterModel(this.model, colId),
+            getState: () => this.state.get(colId),
+            updateState: (state) => this.updateState(column, state),
+            updateModel: (model) =>
+                getFilterUi()?.filterParams?.onModelChange(model, { ...additionalEventAttributes, fromAction: action }),
+            processModelToApply: filterWrapper?.isHandler
                 ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
-                : undefined
-        );
+                : undefined,
+        });
     }
 
     public updateAllModels(action: FilterAction, additionalEventAttributes?: any): void {
@@ -1726,13 +1732,14 @@ export class ColumnFilterService
         this.allColumnFilters.forEach((filter, colId) => {
             const column = this.beans.colModel.getColDefCol(colId);
             if (column) {
-                _updateFilterModel(
+                _updateFilterModel({
                     action,
-                    () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-                    () => _getFilterModel(this.model, colId),
-                    () => this.state.get(colId),
-                    (state) => this.updateState(column, state),
-                    (model) => {
+                    filterParams: filter.filterUi?.filterParams as FilterWrapperParams | undefined,
+                    getFilterUi: () => filter.filterUi as FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
+                    getModel: () => _getFilterModel(this.model, colId),
+                    getState: () => this.state.get(colId),
+                    updateState: (state) => this.updateState(column, state),
+                    updateModel: (model) => {
                         this.updateStoredModel(colId, model);
                         this.dispatchLocalEvent<FilterActionEvent>({
                             type: 'filterAction',
@@ -1741,8 +1748,10 @@ export class ColumnFilterService
                         });
                         promises.push(this.refreshHandlerAndUi(column, model, 'ui'));
                     },
-                    filter?.isHandler ? filter.handler.processModelToApply?.bind(filter.handler) : undefined
-                );
+                    processModelToApply: filter?.isHandler
+                        ? filter.handler.processModelToApply?.bind(filter.handler)
+                        : undefined,
+                });
             }
         });
         if (promises.length) {
