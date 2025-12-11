@@ -453,7 +453,8 @@ export abstract class BaseDragAndDropService<
 
         this.dragImageCompPromise = promise;
         promise?.then((dragImageComp) => {
-            if (promise !== this.dragImageCompPromise || !this.lastMouseEvent || !this.isAlive()) {
+            const lastMouseEvent = this.lastMouseEvent;
+            if (promise !== this.dragImageCompPromise || !lastMouseEvent || !this.isAlive()) {
                 this.destroyBean(dragImageComp);
                 return; // New promise was started, ignore this old one.
             }
@@ -470,6 +471,7 @@ export abstract class BaseDragAndDropService<
             if (dragImageComp) {
                 this.appendDragImageComp(dragImageComp);
                 this.updateDragImageComp();
+                this.positionDragImageComp(lastMouseEvent);
             }
         });
     }
