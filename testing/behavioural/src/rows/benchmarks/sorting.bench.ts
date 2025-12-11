@@ -10,7 +10,7 @@ import { SimplePRNG, TestGridsManager } from '../../test-utils';
 const DATA_SIZES = [20000];
 const COLUMN_COUNTS = [5];
 
-suite('row grouping', () => {
+suite('sorting', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule],
     });
