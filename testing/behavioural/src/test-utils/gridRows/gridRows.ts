@@ -19,7 +19,7 @@ export interface GridRowsOptions<TData = any> {
     /**
      * Columns to include when making the diagram. If true, all columns will be included.
      * If an array, it must contain the id of the columns to include. Default is false, no columns.
-     * Default is true
+     * Default is true. There is usually no need to defined this.
      */
     columns?: (string | Column)[] | boolean;
 
@@ -37,7 +37,7 @@ export interface GridRowsOptions<TData = any> {
 
     errors?: GridRowsErrors<TData>;
 
-    /** Forces treeData to be checked as true or false */
+    /** Forces treeData to be checked as true or false. There is usually no need to set this. */
     treeData?: boolean;
 
     /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
@@ -62,6 +62,11 @@ export class GridRows<TData = any> {
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
+    /**
+     * @param api The grid API instance
+     * @param label A label to identify the grid in error messages and diagrams
+     * @param options Options to configure the GridRows instance - please try to not use this, the default options should be enough
+     */
     public constructor(
         api: GridApi<TData>,
         public readonly label: string = '',
