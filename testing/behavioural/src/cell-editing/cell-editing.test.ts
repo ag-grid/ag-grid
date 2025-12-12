@@ -308,39 +308,37 @@ describe('Cell Editing Start', () => {
         });
     });
 
-    describe('Value getters with pending edits', () => {
-        test('valueGetter reads live value from another cell editor', async () => {
-            const api = await gridMgr.createGridAndWait('myGrid', {
-                columnDefs: [
-                    { field: 'a', editable: true },
-                    {
-                        field: 'b',
-                        valueGetter: (params) => params.getValue('a'),
-                    },
-                ],
-                rowData: [{ id: '0', a: 'initial' }],
-                getRowId: (params) => params.data.id,
-            });
-
-            const gridDiv = getGridElement(api)! as HTMLElement;
-            await asyncSetTimeout(1);
-
-            const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
-            const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
-            expect(cellB).toHaveTextContent('initial');
-
-            await userEvent.dblClick(cellA);
-            await asyncSetTimeout(1);
-
-            const input = await waitForInput(gridDiv, cellA, { popup: false });
-            await userEvent.clear(input);
-            await userEvent.type(input, 'pending');
-            await asyncSetTimeout(1);
-
-            api.refreshCells({ columns: ['b'], force: true });
-            await asyncSetTimeout(1);
-
-            expect(cellB).toHaveTextContent('pending');
+    test('valueGetter reads live value from another cell editor', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                {
+                    field: 'b',
+                    valueGetter: (params) => params.getValue('a'),
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
         });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        expect(cellB).toHaveTextContent('initial');
+
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+
+        const input = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'pending');
+        await asyncSetTimeout(1);
+
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('pending');
     });
 });
