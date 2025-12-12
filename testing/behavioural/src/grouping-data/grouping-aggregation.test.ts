@@ -244,17 +244,17 @@ describe('ag-grid grouping aggregation', () => {
 
         await new GridRows(api, 'after transaction (raw)', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID scores:83.72 metadata:{"minPriority":null}
-            ├─ footer id:rowGroupFooter_ROOT_NODE_ID scores:83.72 metadata:{"minPriority":null}
-            ├─┬ LEAF_GROUP id:row-group-category-A
-            │ ├── LEAF id:1 scores:[80,90,85] metadata:{"priority":1}
-            │ ├── LEAF id:2 scores:[82,94,88] metadata:{"priority":3}
-            │ └─ footer id:rowGroupFooter_row-group-category-A scores:86.5 metadata:{"minPriority":1}
-            ├─┬ LEAF_GROUP id:row-group-category-B
-            │ ├── LEAF id:3 scores:[95,87,90] metadata:{"priority":1}
-            │ └─ footer id:rowGroupFooter_row-group-category-B scores:90.67 metadata:{"minPriority":1}
-            └─┬ LEAF_GROUP id:row-group-category-C
-            · ├── LEAF id:4 scores:[70,74,78] metadata:{"priority":2}
-            · └─ footer id:rowGroupFooter_row-group-category-C scores:74 metadata:{"minPriority":2}
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null scores:83.72 metadata:{"minPriority":null}
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 category:"A" scores:[80,90,85] metadata:{"priority":1}
+            │ ├── LEAF id:2 category:"A" scores:[82,94,88] metadata:{"priority":3}
+            │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"A" scores:86.5 metadata:{"minPriority":1}
+            ├─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
+            │ ├── LEAF id:3 category:"B" scores:[95,87,90] metadata:{"priority":1}
+            │ └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"B" scores:90.67 metadata:{"minPriority":1}
+            └─┬ LEAF_GROUP id:row-group-category-C ag-Grid-AutoColumn:"C"
+            · ├── LEAF id:4 category:"C" scores:[70,74,78] metadata:{"priority":2}
+            · └─ footer id:rowGroupFooter_row-group-category-C ag-Grid-AutoColumn:"C" scores:74 metadata:{"minPriority":2}
         `);
 
         await new GridRows(api, 'after transaction (formatted)').check(`

@@ -207,16 +207,16 @@ describe('ag-grid grouping with transactions', () => {
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
-            └─┬ filler id:row-group-country-Italy
-            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -238,16 +238,16 @@ describe('ag-grid grouping with transactions', () => {
         gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Italy
-            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             │ │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
-            └─┬ filler id:row-group-country-Germany
-            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
+            └─┬ filler id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
+            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2000 ag-Grid-AutoColumn:2000
             · │ ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:2000
             · │ └── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
-            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2001 ag-Grid-AutoColumn:2001
             · · └── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
         `);
     });
@@ -287,16 +287,16 @@ describe('ag-grid grouping with transactions', () => {
         let gridRows = new GridRows(api, 'first');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ │ ├── LEAF id:0 name:"John Von Neumann" country:"Ireland" year:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
-            └─┬ filler id:row-group-country-Italy
-            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             · │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:2001
             · · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
         `);
 
@@ -318,19 +318,19 @@ describe('ag-grid grouping with transactions', () => {
         gridRows = new GridRows(api, 'transaction 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ │ └── LEAF id:1 name:"Ada Lovelace" country:"Ireland" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:2 name:"Alan Turing" country:"Ireland" year:2001
-            ├─┬ filler id:row-group-country-Italy
-            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             │ │ ├── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
             │ │ └── LEAF id:5 name:"Grace Hopper 6" country:"Italy" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
-            └─┬ filler id:row-group-country-Switzerland
-            · └─┬ LEAF_GROUP id:row-group-country-Switzerland-year-2000
+            └─┬ filler id:row-group-country-Switzerland ag-Grid-AutoColumn:"Switzerland"
+            · └─┬ LEAF_GROUP id:row-group-country-Switzerland-year-2000 ag-Grid-AutoColumn:2000
             · · └── LEAF id:0 name:"John Von Neumann" country:"Switzerland" year:2000
         `);
 
@@ -358,13 +358,13 @@ describe('ag-grid grouping with transactions', () => {
         gridRows = new GridRows(api, 'transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Italy
-            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             │ │ └── LEAF id:3 name:"Donald Knuth" country:"Italy" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:4 name:"Marvin Minsky" country:"Italy" year:2001
-            └─┬ filler id:row-group-country-Germany
-            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-3000
+            └─┬ filler id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-3000 ag-Grid-AutoColumn:3000
             · · ├── LEAF id:0 name:"John Von Neumann" country:"Germany" year:3000
             · · ├── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:3000
             · · ├── LEAF id:2 name:"Alan Turing" country:"Germany" year:3000
@@ -392,14 +392,14 @@ describe('ag-grid grouping with transactions', () => {
         gridRows = new GridRows(api, 'transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-country-Germany
-            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-3000
+            └─┬ filler id:row-group-country-Germany ag-Grid-AutoColumn:"Germany"
+            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-3000 ag-Grid-AutoColumn:3000
             · │ ├── LEAF id:6 name:"Albert Einstein" country:"Germany" year:3000
             · │ └── LEAF id:5 name:"added" country:"Germany" year:3000
-            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2001
+            · ├─┬ LEAF_GROUP id:row-group-country-Germany-year-2001 ag-Grid-AutoColumn:2001
             · │ ├── LEAF id:2 name:"Alan Turing" country:"Germany" year:2001
             · │ └── LEAF id:4 name:"Marvin Minsky" country:"Germany" year:2001
-            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2000
+            · └─┬ LEAF_GROUP id:row-group-country-Germany-year-2000 ag-Grid-AutoColumn:2000
             · · ├── LEAF id:1 name:"Ada Lovelace" country:"Germany" year:2000
             · · └── LEAF id:3 name:"Donald Knuth" country:"Germany" year:2000
         `);
@@ -431,16 +431,16 @@ describe('ag-grid grouping with transactions', () => {
         // Verify initial structure
         await new GridRows(api, 'initial with multiple groups').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ │ └── LEAF id:1 name:"John" country:"Ireland" year:2000
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2001 ag-Grid-AutoColumn:2001
             │ · └── LEAF id:2 name:"Jane" country:"Ireland" year:2001
-            ├─┬ filler id:row-group-country-Italy
-            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             │ · └── LEAF id:3 name:"Mario" country:"Italy" year:2000
-            └─┬ filler id:row-group-country-France
-            · └─┬ LEAF_GROUP id:row-group-country-France-year-2000
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2000 ag-Grid-AutoColumn:2000
             · · └── LEAF id:4 name:"Pierre" country:"France" year:2000
         `);
 
@@ -451,14 +451,14 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after removing year 2001 group').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ · └── LEAF id:1 name:"John" country:"Ireland" year:2000
-            ├─┬ filler id:row-group-country-Italy
-            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            ├─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             │ · └── LEAF id:3 name:"Mario" country:"Italy" year:2000
-            └─┬ filler id:row-group-country-France
-            · └─┬ LEAF_GROUP id:row-group-country-France-year-2000
+            └─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └─┬ LEAF_GROUP id:row-group-country-France-year-2000 ag-Grid-AutoColumn:2000
             · · └── LEAF id:4 name:"Pierre" country:"France" year:2000
         `);
 
@@ -469,11 +469,11 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after removing entire France group').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ · └── LEAF id:1 name:"John" country:"Ireland" year:2000
-            └─┬ filler id:row-group-country-Italy
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             · · └── LEAF id:3 name:"Mario" country:"Italy" year:2000
         `);
 
@@ -484,8 +484,8 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after removing Ireland group').check(`
             ROOT id:ROOT_NODE_ID
-            └─┬ filler id:row-group-country-Italy
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000 ag-Grid-AutoColumn:2000
             · · └── LEAF id:3 name:"Mario" country:"Italy" year:2000
         `);
     });
@@ -521,11 +521,11 @@ describe('ag-grid grouping with transactions', () => {
             ├── LEAF id:4 name:"Empty" country:"" year:""
             ├── LEAF id:5 name:"Null" country:null year:null
             ├── LEAF id:6 name:"Orphan"
-            ├─┬ filler id:row-group-country-Ireland
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:2 name:"Jane" country:"Ireland"
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ · └── LEAF id:1 name:"John" country:"Ireland" year:2000
-            └─┬ filler id:row-group-year-2000
+            └─┬ filler id:row-group-year-2000 ag-Grid-AutoColumn:2000
             · └── LEAF id:3 name:"Mario" year:2000
         `);
 
@@ -535,15 +535,15 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'balanced groups with empty keys', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland
-            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000 ag-Grid-AutoColumn:2000
             │ │ └── LEAF id:1 name:"John" country:"Ireland" year:2000
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-
             │ · └── LEAF id:2 name:"Jane" country:"Ireland"
             └─┬ filler id:row-group-country-
-            · ├─┬ LEAF_GROUP id:row-group-country--year-2000
+            · ├─┬ LEAF_GROUP id:row-group-country--year-2000 ag-Grid-AutoColumn:2000
             · │ └── LEAF id:3 name:"Mario" year:2000
-            · └─┬ LEAF_GROUP id:row-group-country--year-
+            · └─┬ LEAF_GROUP id:row-group-country--year- ag-Grid-AutoColumn:""
             · · ├── LEAF id:4 name:"Empty" country:"" year:""
             · · ├── LEAF id:5 name:"Null" country:null year:null
             · · └── LEAF id:6 name:"Orphan"
@@ -601,20 +601,20 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'custom key creators grouping').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Europe
-            │ └─┬ LEAF_GROUP id:row-group-country-Europe-year-2000s
+            ├─┬ filler id:row-group-country-Europe ag-Grid-AutoColumn:"Ireland"
+            │ └─┬ LEAF_GROUP id:row-group-country-Europe-year-2000s ag-Grid-AutoColumn:2001
             │ · ├── LEAF id:1 name:"John" country:"Ireland" year:2001
             │ · └── LEAF id:2 name:"Pierre" country:"France" year:2005
-            ├─┬ filler id:"row-group-country-North America"
-            │ ├─┬ LEAF_GROUP id:"row-group-country-North America-year-2000s"
+            ├─┬ filler id:"row-group-country-North America" ag-Grid-AutoColumn:"USA"
+            │ ├─┬ LEAF_GROUP id:"row-group-country-North America-year-2000s" ag-Grid-AutoColumn:2001
             │ │ └── LEAF id:3 name:"Bob" country:"USA" year:2001
-            │ └─┬ LEAF_GROUP id:"row-group-country-North America-year-1990s"
+            │ └─┬ LEAF_GROUP id:"row-group-country-North America-year-1990s" ag-Grid-AutoColumn:1995
             │ · └── LEAF id:4 name:"Alex" country:"Canada" year:1995
-            ├─┬ filler id:"row-group-country-South America"
-            │ └─┬ LEAF_GROUP id:"row-group-country-South America-year-1990s"
+            ├─┬ filler id:"row-group-country-South America" ag-Grid-AutoColumn:"Brazil"
+            │ └─┬ LEAF_GROUP id:"row-group-country-South America-year-1990s" ag-Grid-AutoColumn:1999
             │ · └── LEAF id:5 name:"Carlos" country:"Brazil" year:1999
-            └─┬ filler id:row-group-country-Other
-            · └─┬ LEAF_GROUP id:row-group-country-Other-year-2010s
+            └─┬ filler id:row-group-country-Other ag-Grid-AutoColumn:"Unknown"
+            · └─┬ LEAF_GROUP id:row-group-country-Other-year-2010s ag-Grid-AutoColumn:2010
             · · └── LEAF id:6 name:"Mystery" country:"Unknown" year:2010
         `);
 
@@ -625,19 +625,19 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after updating to change custom key').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Europe
-            │ ├─┬ LEAF_GROUP id:row-group-country-Europe-year-2000s
+            ├─┬ filler id:row-group-country-Europe ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Europe-year-2000s ag-Grid-AutoColumn:2001
             │ │ ├── LEAF id:1 name:"John" country:"Ireland" year:2001
             │ │ └── LEAF id:2 name:"Pierre" country:"France" year:2005
-            │ └─┬ LEAF_GROUP id:row-group-country-Europe-year-2010s
+            │ └─┬ LEAF_GROUP id:row-group-country-Europe-year-2010s ag-Grid-AutoColumn:2010
             │ · └── LEAF id:6 name:"Mystery Irish" country:"Ireland" year:2010
-            ├─┬ filler id:"row-group-country-North America"
-            │ ├─┬ LEAF_GROUP id:"row-group-country-North America-year-2000s"
+            ├─┬ filler id:"row-group-country-North America" ag-Grid-AutoColumn:"USA"
+            │ ├─┬ LEAF_GROUP id:"row-group-country-North America-year-2000s" ag-Grid-AutoColumn:2001
             │ │ └── LEAF id:3 name:"Bob" country:"USA" year:2001
-            │ └─┬ LEAF_GROUP id:"row-group-country-North America-year-1990s"
+            │ └─┬ LEAF_GROUP id:"row-group-country-North America-year-1990s" ag-Grid-AutoColumn:1995
             │ · └── LEAF id:4 name:"Alex" country:"Canada" year:1995
-            └─┬ filler id:"row-group-country-South America"
-            · └─┬ LEAF_GROUP id:"row-group-country-South America-year-1990s"
+            └─┬ filler id:"row-group-country-South America" ag-Grid-AutoColumn:"Brazil"
+            · └─┬ LEAF_GROUP id:"row-group-country-South America-year-1990s" ag-Grid-AutoColumn:1999
             · · └── LEAF id:5 name:"Carlos" country:"Brazil" year:1999
         `);
     });
@@ -667,15 +667,15 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'initial departments').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-Engineering
-            │ ├─┬ LEAF_GROUP id:row-group-department-Engineering-level-Junior
+            ├─┬ filler id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering"
+            │ ├─┬ LEAF_GROUP id:row-group-department-Engineering-level-Junior ag-Grid-AutoColumn:"Junior"
             │ │ └── LEAF id:1 name:"Alice" department:"Engineering" level:"Junior"
-            │ └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior
+            │ └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior ag-Grid-AutoColumn:"Senior"
             │ · └── LEAF id:2 name:"Bob" department:"Engineering" level:"Senior"
-            └─┬ filler id:row-group-department-Sales
-            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
+            └─┬ filler id:row-group-department-Sales ag-Grid-AutoColumn:"Sales"
+            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior ag-Grid-AutoColumn:"Junior"
             · │ └── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
-            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior
+            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior ag-Grid-AutoColumn:"Senior"
             · · └── LEAF id:4 name:"Diana" department:"Sales" level:"Senior"
         `);
 
@@ -686,14 +686,14 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after moving Alice to Sales').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-Engineering
-            │ └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior
+            ├─┬ filler id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering"
+            │ └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior ag-Grid-AutoColumn:"Senior"
             │ · └── LEAF id:2 name:"Bob" department:"Engineering" level:"Senior"
-            └─┬ filler id:row-group-department-Sales
-            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
+            └─┬ filler id:row-group-department-Sales ag-Grid-AutoColumn:"Sales"
+            · ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior ag-Grid-AutoColumn:"Junior"
             · │ ├── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
             · │ └── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
-            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior
+            · └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior ag-Grid-AutoColumn:"Senior"
             · · └── LEAF id:4 name:"Diana" department:"Sales" level:"Senior"
         `);
 
@@ -704,14 +704,14 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after moving Bob to new department').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-Sales
-            │ ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
+            ├─┬ filler id:row-group-department-Sales ag-Grid-AutoColumn:"Sales"
+            │ ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior ag-Grid-AutoColumn:"Junior"
             │ │ ├── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
             │ │ └── LEAF id:3 name:"Charlie" department:"Sales" level:"Junior"
-            │ └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior
+            │ └─┬ LEAF_GROUP id:row-group-department-Sales-level-Senior ag-Grid-AutoColumn:"Senior"
             │ · └── LEAF id:4 name:"Diana" department:"Sales" level:"Senior"
-            └─┬ filler id:row-group-department-Marketing
-            · └─┬ LEAF_GROUP id:row-group-department-Marketing-level-Manager
+            └─┬ filler id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing"
+            · └─┬ LEAF_GROUP id:row-group-department-Marketing-level-Manager ag-Grid-AutoColumn:"Manager"
             · · └── LEAF id:2 name:"Bob" department:"Marketing" level:"Manager"
         `);
 
@@ -725,16 +725,16 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after batch move to Engineering').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-Sales
-            │ └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
+            ├─┬ filler id:row-group-department-Sales ag-Grid-AutoColumn:"Sales"
+            │ └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior ag-Grid-AutoColumn:"Junior"
             │ · └── LEAF id:1 name:"Alice" department:"Sales" level:"Junior"
-            ├─┬ filler id:row-group-department-Marketing
-            │ └─┬ LEAF_GROUP id:row-group-department-Marketing-level-Manager
+            ├─┬ filler id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing"
+            │ └─┬ LEAF_GROUP id:row-group-department-Marketing-level-Manager ag-Grid-AutoColumn:"Manager"
             │ · └── LEAF id:2 name:"Bob" department:"Marketing" level:"Manager"
-            └─┬ filler id:row-group-department-Engineering
-            · ├─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior
+            └─┬ filler id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering"
+            · ├─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior ag-Grid-AutoColumn:"Senior"
             · │ └── LEAF id:3 name:"Charlie" department:"Engineering" level:"Senior"
-            · └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Junior
+            · └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Junior ag-Grid-AutoColumn:"Junior"
             · · └── LEAF id:4 name:"Diana" department:"Engineering" level:"Junior"
         `);
     });
@@ -789,15 +789,15 @@ describe('ag-grid grouping with transactions', () => {
 
         await new GridRows(api, 'after complex async operations').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-status-Completed
-            │ ├─┬ LEAF_GROUP id:row-group-status-Completed-priority-High
+            ├─┬ filler id:row-group-status-Completed ag-Grid-AutoColumn:"Completed"
+            │ ├─┬ LEAF_GROUP id:row-group-status-Completed-priority-High ag-Grid-AutoColumn:"High"
             │ │ └── LEAF id:1 name:"Task1" status:"Completed" priority:"High"
-            │ └─┬ LEAF_GROUP id:row-group-status-Completed-priority-Medium
+            │ └─┬ LEAF_GROUP id:row-group-status-Completed-priority-Medium ag-Grid-AutoColumn:"Medium"
             │ · └── LEAF id:4 name:"Task4" status:"Completed" priority:"Medium"
-            └─┬ filler id:row-group-status-Blocked
-            · ├─┬ LEAF_GROUP id:row-group-status-Blocked-priority-Low
+            └─┬ filler id:row-group-status-Blocked ag-Grid-AutoColumn:"Blocked"
+            · ├─┬ LEAF_GROUP id:row-group-status-Blocked-priority-Low ag-Grid-AutoColumn:"Low"
             · │ └── LEAF id:2 name:"Task2" status:"Blocked" priority:"Low"
-            · └─┬ LEAF_GROUP id:row-group-status-Blocked-priority-Critical
+            · └─┬ LEAF_GROUP id:row-group-status-Blocked-priority-Critical ag-Grid-AutoColumn:"Critical"
             · · ├── LEAF id:5 name:"Task5" status:"Blocked" priority:"Critical"
             · · └── LEAF id:6 name:"Task6" status:"Blocked" priority:"Critical"
         `);

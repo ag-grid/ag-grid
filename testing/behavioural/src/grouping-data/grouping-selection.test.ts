@@ -290,17 +290,17 @@ describe('ag-grid grouping selection', () => {
 
         await new GridRows(api, 'multi-level selection').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-country-Ireland 
-            │ ├─┬ LEAF_GROUP selected id:row-group-country-Ireland-year-2020 
-            │ │ ├── LEAF id:1 athlete:"John Smith" sport:"Sailing"
-            │ │ └── LEAF id:2 athlete:"Jane Doe" sport:"Soccer"
-            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 
-            │ · └── LEAF selected id:3 athlete:"Bob Johnson" sport:"Football"
-            └─┬ filler selected id:row-group-country-Italy 
-            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 
-            · │ └── LEAF id:4 athlete:"Mario Rossi" sport:"Soccer"
-            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 
-            · · └── LEAF id:5 athlete:"Luigi Verdi" sport:"Football"
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP selected id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing"
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer"
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF selected id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football"
+            └─┬ filler selected id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer"
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football"
         `);
     });
 });
