@@ -5,7 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 import { BatchEditModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, waitForInput } from '../test-utils';
 import { expect } from '../test-utils/matchers';
 
 describe('Cell Editing Batch', () => {
@@ -193,5 +193,41 @@ describe('Cell Editing Batch', () => {
         expect(cell).not.toHaveClass(/ag-cell-batch-edit/);
 
         commitButton.remove();
+    });
+
+    test('valueGetter sees pending edits during batch edit', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', editable: true, cellEditor: 'agTextCellEditor' },
+                {
+                    field: 'b',
+                    valueGetter: (params) => params.getValue('a'),
+                },
+            ],
+            rowData: [{ id: '0', a: 'initial' }],
+            getRowId: (params) => params.data.id,
+        });
+
+        api.startBatchEdit();
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await asyncSetTimeout(1);
+        const cellA = getByTestId(gridDiv, agTestIdFor.cell('0', 'a'));
+        const cellB = getByTestId(gridDiv, agTestIdFor.cell('0', 'b'));
+        expect(cellB).toHaveTextContent('initial');
+
+        await userEvent.dblClick(cellA);
+        const editor = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(editor);
+        await userEvent.type(editor, 'pending{Enter}');
+        await asyncSetTimeout(1);
+
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('pending');
+
+        api.commitBatchEdit();
+        await asyncSetTimeout(1);
     });
 });
