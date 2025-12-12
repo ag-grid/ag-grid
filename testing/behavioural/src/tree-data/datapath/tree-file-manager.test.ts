@@ -2,7 +2,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions, IRowNode } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
@@ -42,75 +41,71 @@ describe('ag-grid tree transactions', () => {
 
         api.getRowNode('2')!.setSelected(true);
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: [],
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ Documents GROUP id:1
-            │ ├─┬ txt GROUP selected id:2
-            │ │ └── notes.txt LEAF id:3
-            │ ├─┬ pdf GROUP id:4
-            │ │ ├── book.pdf LEAF id:5
-            │ │ └── cv.pdf LEAF id:6
-            │ ├─┬ xls GROUP id:7
-            │ │ └── accounts.xls LEAF id:8
-            │ └─┬ stuff GROUP id:9
-            │ · └── xyz.txt LEAF id:10
-            ├─┬ Music filler id:row-group-0-Music
-            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop GROUP id:11
-            │ · │ └── theme.mp3 LEAF id:13
-            │ · └── jazz LEAF id:14
-            └── temp.txt LEAF id:12
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID size:"0 MB"
+            ├─┬ Documents GROUP id:1 ag-Grid-AutoColumn:"Documents" size:"24.6 MB"
+            │ ├─┬ txt GROUP selected id:2 ag-Grid-AutoColumn:"txt" size:"14.7 MB"
+            │ │ └── notes.txt LEAF id:3 ag-Grid-AutoColumn:"notes.txt" size:"14.7 MB"
+            │ ├─┬ pdf GROUP id:4 ag-Grid-AutoColumn:"pdf" size:"4.5 MB"
+            │ │ ├── book.pdf LEAF id:5 ag-Grid-AutoColumn:"book.pdf" size:"2.1 MB"
+            │ │ └── cv.pdf LEAF id:6 ag-Grid-AutoColumn:"cv.pdf" size:"2.4 MB"
+            │ ├─┬ xls GROUP id:7 ag-Grid-AutoColumn:"xls" size:"4.3 MB"
+            │ │ └── accounts.xls LEAF id:8 ag-Grid-AutoColumn:"accounts.xls" size:"4.3 MB"
+            │ └─┬ stuff GROUP id:9 ag-Grid-AutoColumn:"stuff" size:"1.1 MB"
+            │ · └── xyz.txt LEAF id:10 ag-Grid-AutoColumn:"xyz.txt" size:"1.1 MB"
+            ├─┬ Music filler id:row-group-0-Music ag-Grid-AutoColumn:"Music" size:"202 MB"
+            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3 ag-Grid-AutoColumn:"mp3" size:"202 MB"
+            │ · ├─┬ pop GROUP id:11 ag-Grid-AutoColumn:"pop" size:"101 MB"
+            │ · │ └── theme.mp3 LEAF id:13 ag-Grid-AutoColumn:"theme.mp3" size:"101 MB"
+            │ · └── jazz LEAF id:14 ag-Grid-AutoColumn:"jazz" size:"101 MB"
+            └── temp.txt LEAF id:12 ag-Grid-AutoColumn:"temp.txt" size:"101 MB"
         `);
 
         // Move 'txt' into 'stuff'
         moveSelectedNodeToTarget('9');
 
-        await new GridRows(api, 'move Documents/txt to Documents/stuff/', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ Documents GROUP id:1
-            │ ├─┬ pdf GROUP id:4
-            │ │ ├── book.pdf LEAF id:5
-            │ │ └── cv.pdf LEAF id:6
-            │ ├─┬ xls GROUP id:7
-            │ │ └── accounts.xls LEAF id:8
-            │ └─┬ stuff GROUP id:9
-            │ · ├─┬ txt GROUP selected id:2
-            │ · │ └── notes.txt LEAF id:3
-            │ · └── xyz.txt LEAF id:10
-            ├─┬ Music filler id:row-group-0-Music
-            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop GROUP id:11
-            │ · │ └── theme.mp3 LEAF id:13
-            │ · └── jazz LEAF id:14
-            └── temp.txt LEAF id:12
+        await new GridRows(api, 'move Documents/txt to Documents/stuff/').check(`
+            ROOT id:ROOT_NODE_ID size:"0 MB"
+            ├─┬ Documents GROUP id:1 ag-Grid-AutoColumn:"Documents" size:"24.6 MB"
+            │ ├─┬ pdf GROUP id:4 ag-Grid-AutoColumn:"pdf" size:"4.5 MB"
+            │ │ ├── book.pdf LEAF id:5 ag-Grid-AutoColumn:"book.pdf" size:"2.1 MB"
+            │ │ └── cv.pdf LEAF id:6 ag-Grid-AutoColumn:"cv.pdf" size:"2.4 MB"
+            │ ├─┬ xls GROUP id:7 ag-Grid-AutoColumn:"xls" size:"4.3 MB"
+            │ │ └── accounts.xls LEAF id:8 ag-Grid-AutoColumn:"accounts.xls" size:"4.3 MB"
+            │ └─┬ stuff GROUP id:9 ag-Grid-AutoColumn:"stuff" size:"15.8 MB"
+            │ · ├─┬ txt GROUP selected id:2 ag-Grid-AutoColumn:"txt" size:"14.7 MB"
+            │ · │ └── notes.txt LEAF id:3 ag-Grid-AutoColumn:"notes.txt" size:"14.7 MB"
+            │ · └── xyz.txt LEAF id:10 ag-Grid-AutoColumn:"xyz.txt" size:"1.1 MB"
+            ├─┬ Music filler id:row-group-0-Music ag-Grid-AutoColumn:"Music" size:"202 MB"
+            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3 ag-Grid-AutoColumn:"mp3" size:"202 MB"
+            │ · ├─┬ pop GROUP id:11 ag-Grid-AutoColumn:"pop" size:"101 MB"
+            │ · │ └── theme.mp3 LEAF id:13 ag-Grid-AutoColumn:"theme.mp3" size:"101 MB"
+            │ · └── jazz LEAF id:14 ag-Grid-AutoColumn:"jazz" size:"101 MB"
+            └── temp.txt LEAF id:12 ag-Grid-AutoColumn:"temp.txt" size:"101 MB"
         `);
 
         applyTransactionChecked(api, { update: [{ id: '7', filePath: ['Documents', 'stuff', 'var', 'xls-renamed'] }] });
 
-        await new GridRows(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID
-            ├─┬ Documents GROUP id:1
-            │ ├─┬ pdf GROUP id:4
-            │ │ ├── book.pdf LEAF id:5
-            │ │ └── cv.pdf LEAF id:6
-            │ ├─┬ xls filler id:row-group-0-Documents-1-xls
-            │ │ └── accounts.xls LEAF id:8
-            │ └─┬ stuff GROUP id:9
-            │ · ├─┬ txt GROUP selected id:2
-            │ · │ └── notes.txt LEAF id:3
-            │ · ├─┬ var filler id:row-group-0-Documents-1-stuff-2-var
-            │ · │ └── xls-renamed LEAF id:7
-            │ · └── xyz.txt LEAF id:10
-            ├─┬ Music filler id:row-group-0-Music
-            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3
-            │ · ├─┬ pop GROUP id:11
-            │ · │ └── theme.mp3 LEAF id:13
-            │ · └── jazz LEAF id:14
-            └── temp.txt LEAF id:12
+        await new GridRows(api, 'rename "Documents/xls" to "Documents/stuff/var/xls-renamed"').check(`
+            ROOT id:ROOT_NODE_ID size:"0 MB"
+            ├─┬ Documents GROUP id:1 ag-Grid-AutoColumn:"Documents" size:"24.6 MB"
+            │ ├─┬ pdf GROUP id:4 ag-Grid-AutoColumn:"pdf" size:"4.5 MB"
+            │ │ ├── book.pdf LEAF id:5 ag-Grid-AutoColumn:"book.pdf" size:"2.1 MB"
+            │ │ └── cv.pdf LEAF id:6 ag-Grid-AutoColumn:"cv.pdf" size:"2.4 MB"
+            │ ├─┬ xls filler id:row-group-0-Documents-1-xls ag-Grid-AutoColumn:"xls" size:"4.3 MB"
+            │ │ └── accounts.xls LEAF id:8 ag-Grid-AutoColumn:"accounts.xls" size:"4.3 MB"
+            │ └─┬ stuff GROUP id:9 ag-Grid-AutoColumn:"stuff" size:"15.8 MB"
+            │ · ├─┬ txt GROUP selected id:2 ag-Grid-AutoColumn:"txt" size:"14.7 MB"
+            │ · │ └── notes.txt LEAF id:3 ag-Grid-AutoColumn:"notes.txt" size:"14.7 MB"
+            │ · ├─┬ var filler id:row-group-0-Documents-1-stuff-2-var ag-Grid-AutoColumn:"var" size:"0 MB"
+            │ · │ └── xls-renamed LEAF id:7 ag-Grid-AutoColumn:"xls-renamed" size:"0 MB"
+            │ · └── xyz.txt LEAF id:10 ag-Grid-AutoColumn:"xyz.txt" size:"1.1 MB"
+            ├─┬ Music filler id:row-group-0-Music ag-Grid-AutoColumn:"Music" size:"202 MB"
+            │ └─┬ mp3 filler id:row-group-0-Music-1-mp3 ag-Grid-AutoColumn:"mp3" size:"202 MB"
+            │ · ├─┬ pop GROUP id:11 ag-Grid-AutoColumn:"pop" size:"101 MB"
+            │ · │ └── theme.mp3 LEAF id:13 ag-Grid-AutoColumn:"theme.mp3" size:"101 MB"
+            │ · └── jazz LEAF id:14 ag-Grid-AutoColumn:"jazz" size:"101 MB"
+            └── temp.txt LEAF id:12 ag-Grid-AutoColumn:"temp.txt" size:"101 MB"
         `);
 
         function getRowsToUpdate(node: IRowNode, parentPath: string[]) {

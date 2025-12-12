@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping aggregation', () => {
@@ -44,30 +43,21 @@ describe('ag-grid grouping aggregation', () => {
             groupTotalRow: 'bottom',
         });
 
-        const gridRowsOptionsFormatted: GridRowsOptions = {
-            columns: ['sport', 'gold', 'silver'],
-        };
-
-        const gridRowsOptionsUnformatted: GridRowsOptions = {
-            ...gridRowsOptionsFormatted,
-            useFormatter: false,
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptionsFormatted).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:1 sport:"Sailing" gold:1 silver:2
-            │ ├── LEAF id:2 sport:"Soccer" gold:2 silver:1
-            │ ├── LEAF id:3 sport:"Football" gold:1 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-Ireland gold:4 silver:{"count":3,"value":2}
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ ├── LEAF id:4 sport:"Soccer" gold:3 silver:1
-            │ ├── LEAF id:5 sport:"Football" gold:2 silver:2
-            │ └─ footer id:rowGroupFooter_row-group-country-Italy gold:5 silver:{"count":2,"value":1.5}
-            └─┬ LEAF_GROUP id:row-group-country-France
-            · ├── LEAF id:6 sport:"Tennis" gold:1 silver:1
-            · ├── LEAF id:7 sport:"Soccer" gold:2 silver:3
-            · └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1 silver:2
+            │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2 silver:1
+            │ ├── LEAF id:3 country:"Ireland" sport:"Football" gold:1 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Total Ireland" gold:4 silver:{"count":3,"value":2}
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3 silver:1
+            │ ├── LEAF id:5 country:"Italy" sport:"Football" gold:2 silver:2
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Total Italy" gold:5 silver:{"count":2,"value":1.5}
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:6 country:"France" sport:"Tennis" gold:1 silver:1
+            · ├── LEAF id:7 country:"France" sport:"Soccer" gold:2 silver:3
+            · └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"Total France" gold:3 silver:{"count":2,"value":2}
         `);
 
         applyTransactionChecked(api, {
@@ -78,46 +68,46 @@ describe('ag-grid grouping aggregation', () => {
             ],
         });
 
-        await new GridRows(api, 'after update', gridRowsOptionsFormatted).check(`
+        await new GridRows(api, 'after update', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:1 sport:"Swimming" gold:12 silver:7
-            │ ├── LEAF id:2 sport:"Soccer" gold:2 silver:1
-            │ ├── LEAF id:3 sport:"Football" gold:1 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-Ireland gold:15 silver:{"count":3,"value":3.6666666666666665}
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ ├── LEAF id:4 sport:"Soccer" gold:3 silver:1
-            │ ├── LEAF id:5 sport:"Football" gold:2 silver:2
-            │ └─ footer id:rowGroupFooter_row-group-country-Italy gold:5 silver:{"count":2,"value":1.5}
-            ├─┬ LEAF_GROUP id:row-group-country-France
-            │ ├── LEAF id:6 sport:"Tennis" gold:1 silver:1
-            │ ├── LEAF id:7 sport:"Soccer" gold:2 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
-            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom"
-            · ├── LEAF id:8 sport:"Rowing" gold:4 silver:4
-            · ├── LEAF id:9 sport:"Athletics" gold:5 silver:3
-            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" gold:9 silver:{"count":2,"value":3.5}
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" sport:"Swimming" gold:12 silver:7
+            │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2 silver:1
+            │ ├── LEAF id:3 country:"Ireland" sport:"Football" gold:1 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:15 silver:{"count":3,"value":3.6666666666666665}
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3 silver:1
+            │ ├── LEAF id:5 country:"Italy" sport:"Football" gold:2 silver:2
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:5 silver:{"count":2,"value":1.5}
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:6 country:"France" sport:"Tennis" gold:1 silver:1
+            │ ├── LEAF id:7 country:"France" sport:"Soccer" gold:2 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"France" gold:3 silver:{"count":2,"value":2}
+            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom"
+            · ├── LEAF id:8 country:"United Kingdom" sport:"Rowing" gold:4 silver:4
+            · ├── LEAF id:9 country:"United Kingdom" sport:"Athletics" gold:5 silver:3
+            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" gold:9 silver:{"count":2,"value":3.5}
         `);
 
-        await new GridRows(api, 'after update', gridRowsOptionsUnformatted).check(`
+        await new GridRows(api, 'after update', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:1 sport:"Swimming" gold:12 silver:7
-            │ ├── LEAF id:2 sport:"Soccer" gold:2 silver:1
-            │ ├── LEAF id:3 sport:"Football" gold:1 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-Ireland gold:15 silver:{"count":3,"value":3.6666666666666665}
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ ├── LEAF id:4 sport:"Soccer" gold:3 silver:1
-            │ ├── LEAF id:5 sport:"Football" gold:2 silver:2
-            │ └─ footer id:rowGroupFooter_row-group-country-Italy gold:5 silver:{"count":2,"value":1.5}
-            ├─┬ LEAF_GROUP id:row-group-country-France
-            │ ├── LEAF id:6 sport:"Tennis" gold:1 silver:1
-            │ ├── LEAF id:7 sport:"Soccer" gold:2 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
-            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom"
-            · ├── LEAF id:8 sport:"Rowing" gold:4 silver:4
-            · ├── LEAF id:9 sport:"Athletics" gold:5 silver:3
-            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" gold:9 silver:{"count":2,"value":3.5}
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" sport:"Swimming" gold:12 silver:7
+            │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2 silver:1
+            │ ├── LEAF id:3 country:"Ireland" sport:"Football" gold:1 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:15 silver:{"count":3,"value":3.6666666666666665}
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3 silver:1
+            │ ├── LEAF id:5 country:"Italy" sport:"Football" gold:2 silver:2
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:5 silver:{"count":2,"value":1.5}
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:6 country:"France" sport:"Tennis" gold:1 silver:1
+            │ ├── LEAF id:7 country:"France" sport:"Soccer" gold:2 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"France" gold:3 silver:{"count":2,"value":2}
+            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom"
+            · ├── LEAF id:8 country:"United Kingdom" sport:"Rowing" gold:4 silver:4
+            · ├── LEAF id:9 country:"United Kingdom" sport:"Athletics" gold:5 silver:3
+            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" gold:9 silver:{"count":2,"value":3.5}
         `);
     });
 
@@ -223,19 +213,16 @@ describe('ag-grid grouping aggregation', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'custom aggregation functions (raw)', {
-            columns: ['scores', 'metadata'],
-            useFormatter: false,
-        }).check(`
+        await new GridRows(api, 'custom aggregation functions (raw)', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID scores:87.84 metadata:{"minPriority":null}
-            ├─ footer id:rowGroupFooter_ROOT_NODE_ID scores:87.84 metadata:{"minPriority":null}
-            ├─┬ LEAF_GROUP id:row-group-category-A
-            │ ├── LEAF id:1 scores:[80,90,85] metadata:{"priority":1}
-            │ ├── LEAF id:2 scores:[75,88,92] metadata:{"priority":2}
-            │ └─ footer id:rowGroupFooter_row-group-category-A scores:85 metadata:{"minPriority":1}
-            └─┬ LEAF_GROUP id:row-group-category-B
-            · ├── LEAF id:3 scores:[95,87,90] metadata:{"priority":1}
-            · └─ footer id:rowGroupFooter_row-group-category-B scores:90.67 metadata:{"minPriority":1}
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null scores:87.84 metadata:{"minPriority":null}
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 category:"A" scores:[80,90,85] metadata:{"priority":1}
+            │ ├── LEAF id:2 category:"A" scores:[75,88,92] metadata:{"priority":2}
+            │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"A" scores:85 metadata:{"minPriority":1}
+            └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 category:"B" scores:[95,87,90] metadata:{"priority":1}
+            · └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"B" scores:90.67 metadata:{"minPriority":1}
         `);
 
         await new GridRows(api, 'custom aggregation functions (formatted)').check(`
@@ -255,10 +242,7 @@ describe('ag-grid grouping aggregation', () => {
             add: [{ id: '4', category: 'C', scores: [70, 74, 78], metadata: { priority: 2 } }],
         });
 
-        await new GridRows(api, 'after transaction (raw)', {
-            columns: ['scores', 'metadata'],
-            useFormatter: false,
-        }).check(`
+        await new GridRows(api, 'after transaction (raw)', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID scores:83.72 metadata:{"minPriority":null}
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID scores:83.72 metadata:{"minPriority":null}
             ├─┬ LEAF_GROUP id:row-group-category-A

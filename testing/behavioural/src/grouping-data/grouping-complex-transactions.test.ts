@@ -1,10 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked } from '../test-utils';
-
-const gridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid grouping complex transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -54,7 +51,7 @@ describe('ag-grid grouping complex transactions', () => {
             getRowId: (params) => params.data.id,
         });
 
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -73,7 +70,7 @@ describe('ag-grid grouping complex transactions', () => {
             remove: [row0],
         });
 
-        gridRows = new GridRows(api, 'complex transaction 1', gridRowsOptions);
+        gridRows = new GridRows(api, 'complex transaction 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
@@ -96,7 +93,7 @@ describe('ag-grid grouping complex transactions', () => {
             remove: [row2, row3],
         });
 
-        gridRows = new GridRows(api, 'complex transaction 2', gridRowsOptions);
+        gridRows = new GridRows(api, 'complex transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-France ag-Grid-AutoColumn:"France"
@@ -133,7 +130,7 @@ describe('ag-grid grouping complex transactions', () => {
         // Flush async transactions
         api.flushAsyncTransactions();
 
-        await new GridRows(api, 'async batched adds', gridRowsOptions).check(`
+        await new GridRows(api, 'async batched adds').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -155,7 +152,7 @@ describe('ag-grid grouping complex transactions', () => {
         // Flush async transactions
         api.flushAsyncTransactions();
 
-        await new GridRows(api, 'async batched mixed operations', gridRowsOptions).check(`
+        await new GridRows(api, 'async batched mixed operations').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └── LEAF id:1 country:"Ireland" athlete:"John Smith Updated" sport:"Sailing"
@@ -180,7 +177,7 @@ describe('ag-grid grouping complex transactions', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├── LEAF id:a country:"Ireland" athlete:"John Smith" sport:"Sailing"
@@ -194,7 +191,7 @@ describe('ag-grid grouping complex transactions', () => {
             update: [{ id: 'a', country: 'Italy', athlete: 'John Smith', sport: 'Sailing' }],
         });
 
-        await new GridRows(api, 'moved John Smith to Italy', gridRowsOptions).check(`
+        await new GridRows(api, 'moved John Smith to Italy').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
@@ -211,7 +208,7 @@ describe('ag-grid grouping complex transactions', () => {
             ],
         });
 
-        await new GridRows(api, 'moved Jane and Mario to France', gridRowsOptions).check(`
+        await new GridRows(api, 'moved Jane and Mario to France').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             │ └── LEAF id:a country:"Italy" athlete:"John Smith" sport:"Sailing"
@@ -240,7 +237,7 @@ describe('ag-grid grouping complex transactions', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
@@ -256,7 +253,7 @@ describe('ag-grid grouping complex transactions', () => {
         // Remove all Ireland 2020 rows - the year group should be removed
         applyTransactionChecked(api, { remove: [rowA, rowB] });
 
-        await new GridRows(api, 'Ireland 2020 group removed', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland 2020 group removed').check(`
             ROOT id:ROOT_NODE_ID 
             ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
@@ -269,7 +266,7 @@ describe('ag-grid grouping complex transactions', () => {
         // Remove the last Ireland row - the country group should be removed
         applyTransactionChecked(api, { remove: [rowC] });
 
-        await new GridRows(api, 'Ireland country group removed', gridRowsOptions).check(`
+        await new GridRows(api, 'Ireland country group removed').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
@@ -279,7 +276,7 @@ describe('ag-grid grouping complex transactions', () => {
         // Remove the last row completely
         applyTransactionChecked(api, { remove: [rowD] });
 
-        await new GridRows(api, 'all groups removed', gridRowsOptions).check('empty');
+        await new GridRows(api, 'all groups removed').check('empty');
 
         // Add back some data to verify groups are recreated properly
         applyTransactionChecked(api, {
@@ -289,7 +286,7 @@ describe('ag-grid grouping complex transactions', () => {
             ],
         });
 
-        await new GridRows(api, 'new groups created', gridRowsOptions).check(`
+        await new GridRows(api, 'new groups created').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-Spain ag-Grid-AutoColumn:"Spain"
             · └─┬ LEAF_GROUP id:row-group-country-Spain-year-2022 ag-Grid-AutoColumn:2022
@@ -334,7 +331,7 @@ describe('ag-grid grouping complex transactions', () => {
         // All modes should result in the same final structure
         if (mode === 'together') {
             // Together mode may have different ordering due to mixed sync/async operations
-            await new GridRows(api, `${mode} final result`, gridRowsOptions).check(`
+            await new GridRows(api, `${mode} final result`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
                 │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
@@ -344,7 +341,7 @@ describe('ag-grid grouping complex transactions', () => {
                 · └── LEAF id:c country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
             `);
         } else {
-            await new GridRows(api, `${mode} final result`, gridRowsOptions).check(`
+            await new GridRows(api, `${mode} final result`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
                 │ └── LEAF id:b country:"Ireland" athlete:"Jane Doe" sport:"Soccer"

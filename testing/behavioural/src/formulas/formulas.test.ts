@@ -5,7 +5,6 @@ import type { GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 const rowNumberRefreshBufferMs = 25;
@@ -70,23 +69,22 @@ describe('ag-grid formulas general behaviour', () => {
 
         let gridRows = new GridRows(api, 'initial constants', {
             useFormatter: false,
-            columns: ['value'],
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:value-a1 value:10
-            ├── LEAF id:value-a2 value:20
-            ├── LEAF id:constant-pi value:3.14
-            ├── LEAF id:constant-hello value:"Hello"
-            ├── LEAF id:constant-true value:true
-            ├── LEAF id:relative-a1 value:10
-            ├── LEAF id:"absolute-row-a$1" value:10
-            ├── LEAF id:"absolute-col-$a1" value:10
-            ├── LEAF id:"absolute-both-$a$1" value:10
-            ├── LEAF id:relative-a2 value:20
-            ├── LEAF id:"absolute-row-a$2" value:20
-            ├── LEAF id:"absolute-col-$a2" value:20
-            └── LEAF id:"absolute-both-$a$2" value:20
+            ├── LEAF id:value-a1 row-number:"1" value:10
+            ├── LEAF id:value-a2 row-number:"2" value:20
+            ├── LEAF id:constant-pi row-number:"3" value:3.14
+            ├── LEAF id:constant-hello row-number:"4" value:"Hello"
+            ├── LEAF id:constant-true row-number:"5" value:true
+            ├── LEAF id:relative-a1 row-number:"6" value:10
+            ├── LEAF id:"absolute-row-a$1" row-number:"7" value:10
+            ├── LEAF id:"absolute-col-$a1" row-number:"8" value:10
+            ├── LEAF id:"absolute-both-$a$1" row-number:"9" value:10
+            ├── LEAF id:relative-a2 row-number:"10" value:20
+            ├── LEAF id:"absolute-row-a$2" row-number:"11" value:20
+            ├── LEAF id:"absolute-col-$a2" row-number:"12" value:20
+            └── LEAF id:"absolute-both-$a$2" row-number:"13" value:20
         `);
 
         const updatedRow2 = { ...rowData[1], value: 50 };
@@ -94,24 +92,23 @@ describe('ag-grid formulas general behaviour', () => {
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
         gridRows = new GridRows(api, 'after update', {
-            columns: ['value'],
             useFormatter: false,
         });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:value-a1 value:10
-            ├── LEAF id:value-a2 value:50
-            ├── LEAF id:constant-pi value:3.14
-            ├── LEAF id:constant-hello value:"Hello"
-            ├── LEAF id:constant-true value:true
-            ├── LEAF id:relative-a1 value:10
-            ├── LEAF id:"absolute-row-a$1" value:10
-            ├── LEAF id:"absolute-col-$a1" value:10
-            ├── LEAF id:"absolute-both-$a$1" value:10
-            ├── LEAF id:relative-a2 value:50
-            ├── LEAF id:"absolute-row-a$2" value:50
-            ├── LEAF id:"absolute-col-$a2" value:50
-            └── LEAF id:"absolute-both-$a$2" value:50
+            ├── LEAF id:value-a1 row-number:"1" value:10
+            ├── LEAF id:value-a2 row-number:"2" value:50
+            ├── LEAF id:constant-pi row-number:"3" value:3.14
+            ├── LEAF id:constant-hello row-number:"4" value:"Hello"
+            ├── LEAF id:constant-true row-number:"5" value:true
+            ├── LEAF id:relative-a1 row-number:"6" value:10
+            ├── LEAF id:"absolute-row-a$1" row-number:"7" value:10
+            ├── LEAF id:"absolute-col-$a1" row-number:"8" value:10
+            ├── LEAF id:"absolute-both-$a$1" row-number:"9" value:10
+            ├── LEAF id:relative-a2 row-number:"10" value:50
+            ├── LEAF id:"absolute-row-a$2" row-number:"11" value:50
+            ├── LEAF id:"absolute-col-$a2" row-number:"12" value:50
+            └── LEAF id:"absolute-both-$a$2" row-number:"13" value:50
         `);
     });
 
@@ -232,29 +229,27 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-numeric-rows', gridOptions);
 
-        const gridRows = new GridRows(api, 'numeric helpers across rows', {
-            columns: ['value'],
-        });
+        const gridRows = new GridRows(api, 'numeric helpers across rows');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:value-a1 value:2
-            ├── LEAF id:value-a2 value:4
-            ├── LEAF id:value-a3 value:6
-            ├── LEAF id:value-a4 value:8
-            ├── LEAF id:sum-a1-a4 value:20
-            ├── LEAF id:sumif-a-range-gt-4 value:14
-            ├── LEAF id:sumif-high-category-a-values value:12
-            ├── LEAF id:sumif-high-category-b-values value:60
-            ├── LEAF id:minus-a3-minus-a1 value:4
-            ├── LEAF id:multiply-a1-a2-times-2 value:16
-            ├── LEAF id:divide-a3-by-a2 value:1.5
-            ├── LEAF id:min-a1-a4 value:2
-            ├── LEAF id:max-a1-a4 value:8
-            ├── LEAF id:average-a1-a4 value:5
-            ├── LEAF id:median-a1-a4 value:5
-            ├── LEAF id:percent-b2 value:0.2
-            ├── LEAF id:power-b2-squared value:400
-            └── LEAF id:rand-fixed value:0.123
+            ├── LEAF id:value-a1 row-number:"1" value:2 altValue:10 category:"Low"
+            ├── LEAF id:value-a2 row-number:"2" value:4 altValue:20 category:"High"
+            ├── LEAF id:value-a3 row-number:"3" value:6 altValue:30 category:"Low"
+            ├── LEAF id:value-a4 row-number:"4" value:8 altValue:40 category:"High"
+            ├── LEAF id:sum-a1-a4 row-number:"5" value:20
+            ├── LEAF id:sumif-a-range-gt-4 row-number:"6" value:14
+            ├── LEAF id:sumif-high-category-a-values row-number:"7" value:12
+            ├── LEAF id:sumif-high-category-b-values row-number:"8" value:60
+            ├── LEAF id:minus-a3-minus-a1 row-number:"9" value:4
+            ├── LEAF id:multiply-a1-a2-times-2 row-number:"10" value:16
+            ├── LEAF id:divide-a3-by-a2 row-number:"11" value:1.5
+            ├── LEAF id:min-a1-a4 row-number:"12" value:2
+            ├── LEAF id:max-a1-a4 row-number:"13" value:8
+            ├── LEAF id:average-a1-a4 row-number:"14" value:5
+            ├── LEAF id:median-a1-a4 row-number:"15" value:5
+            ├── LEAF id:percent-b2 row-number:"16" value:0.2
+            ├── LEAF id:power-b2-squared row-number:"17" value:400
+            └── LEAF id:rand-fixed row-number:"18" value:0.123
         `);
     });
 
@@ -423,9 +418,7 @@ describe('ag-grid formulas general behaviour', () => {
 
             const api = gridsManager.createGrid('formulas-date', gridOptions);
 
-            const gridRows = new GridRows(api, 'date functions fixed clock', {
-                columns: ['today', 'now'],
-            });
+            const gridRows = new GridRows(api, 'date functions fixed clock');
 
             const rowNode = gridRows.displayedRows[0];
             const todayValue = api.getCellValue<Date>({ rowNode, colKey: 'today' })!;
@@ -442,7 +435,7 @@ describe('ag-grid formulas general behaviour', () => {
 
             await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            └── LEAF id:dates today:"${todayIso}" now:"${nowIso}"
+            └── LEAF id:dates row-number:"1" today:"${todayIso}" now:"${nowIso}"
         `);
 
             expect(todayIso).toBe(expectedToday.toISOString());
@@ -608,44 +601,40 @@ describe('ag-grid formulas general behaviour', () => {
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['result'],
-        };
-
-        let gridRows = new GridRows(api, 'initial long-hand formulas', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial long-hand formulas');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:base
-            ├── LEAF id:longhand-row result:100
-            ├── LEAF id:absolute-row result:100
-            └── LEAF id:relative-row result:100
+            ├── LEAF id:base row-number:"1" source:100
+            ├── LEAF id:longhand-row row-number:"2" result:100
+            ├── LEAF id:absolute-row row-number:"3" result:100
+            └── LEAF id:relative-row row-number:"4" result:100
         `);
 
         applyTransactionChecked(api, { update: [{ id: 'base', source: 250 }] });
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after base update', gridRowsOptions);
+        gridRows = new GridRows(api, 'after base update');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:base
-            ├── LEAF id:longhand-row result:250
-            ├── LEAF id:absolute-row result:250
-            └── LEAF id:relative-row result:250
+            ├── LEAF id:base row-number:"1" source:250
+            ├── LEAF id:longhand-row row-number:"2" result:250
+            ├── LEAF id:absolute-row row-number:"3" result:250
+            └── LEAF id:relative-row row-number:"4" result:250
         `);
 
         applyTransactionChecked(api, { add: [{ id: 'prepended', source: 10 }], addIndex: 0 });
 
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after prepending row', gridRowsOptions);
+        gridRows = new GridRows(api, 'after prepending row');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:prepended
-            ├── LEAF id:base
-            ├── LEAF id:longhand-row result:250
-            ├── LEAF id:absolute-row result:10
-            └── LEAF id:relative-row result:250
+            ├── LEAF id:prepended row-number:"1" source:10
+            ├── LEAF id:base row-number:"2" source:250
+            ├── LEAF id:longhand-row row-number:"3" result:250
+            ├── LEAF id:absolute-row row-number:"4" result:10
+            └── LEAF id:relative-row row-number:"5" result:250
         `);
     });
 
@@ -689,27 +678,23 @@ describe('ag-grid formulas general behaviour', () => {
 
         const api = gridsManager.createGrid('formulas-abs-rel', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['value'],
-        };
-
-        let gridRows = new GridRows(api, 'initial absolute/relative references', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial absolute/relative references');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:x-base
-            ├── LEAF id:relative-A1 value:10
-            ├── LEAF id:"absolute-row-A$1" value:10
-            ├── LEAF id:"absolute-col-$A1" value:10
-            ├── LEAF id:"absolute-both-$A$1" value:10
-            ├── LEAF id:x-middle
-            ├── LEAF id:relative-forward-A6 value:40
-            ├── LEAF id:"absolute-row-forward-A$6" value:40
-            ├── LEAF id:"absolute-col-forward-$A6" value:40
-            ├── LEAF id:"absolute-both-forward-$A$6" value:40
-            ├── LEAF id:relative-self-A11 value:130
-            ├── LEAF id:"absolute-row-self-A$12" value:135
-            ├── LEAF id:"absolute-col-self-$A13" value:140
-            └── LEAF id:"absolute-mixed-A$1+$B2" value:25
+            ├── LEAF id:x-base row-number:"1" x:10 y:5
+            ├── LEAF id:relative-A1 row-number:"2" y:15 value:10
+            ├── LEAF id:"absolute-row-A$1" row-number:"3" value:10
+            ├── LEAF id:"absolute-col-$A1" row-number:"4" value:10
+            ├── LEAF id:"absolute-both-$A$1" row-number:"5" value:10
+            ├── LEAF id:x-middle row-number:"6" x:40 y:10
+            ├── LEAF id:relative-forward-A6 row-number:"7" value:40
+            ├── LEAF id:"absolute-row-forward-A$6" row-number:"8" value:40
+            ├── LEAF id:"absolute-col-forward-$A6" row-number:"9" value:40
+            ├── LEAF id:"absolute-both-forward-$A$6" row-number:"10" value:40
+            ├── LEAF id:relative-self-A11 row-number:"11" x:130 y:17 value:130
+            ├── LEAF id:"absolute-row-self-A$12" row-number:"12" x:135 y:18 value:135
+            ├── LEAF id:"absolute-col-self-$A13" row-number:"13" x:140 y:19 value:140
+            └── LEAF id:"absolute-mixed-A$1+$B2" row-number:"14" value:25
         `);
 
         const updatedRowData = [
@@ -740,23 +725,23 @@ describe('ag-grid formulas general behaviour', () => {
         api.updateGridOptions({ rowData: updatedRowData });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after setRowData update', gridRowsOptions);
+        gridRows = new GridRows(api, 'after setRowData update');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:x-base
-            ├── LEAF id:relative-A1 value:25
-            ├── LEAF id:"absolute-row-A$1" value:25
-            ├── LEAF id:"absolute-col-$A1" value:25
-            ├── LEAF id:"absolute-both-$A$1" value:25
-            ├── LEAF id:x-middle
-            ├── LEAF id:relative-forward-A6 value:60
-            ├── LEAF id:"absolute-row-forward-A$6" value:60
-            ├── LEAF id:"absolute-col-forward-$A6" value:60
-            ├── LEAF id:"absolute-both-forward-$A$6" value:60
-            ├── LEAF id:relative-self-A11 value:140
-            ├── LEAF id:"absolute-row-self-A$12" value:145
-            ├── LEAF id:"absolute-col-self-$A13" value:150
-            └── LEAF id:"absolute-mixed-A$1+$B2" value:43
+            ├── LEAF id:x-base row-number:"1" x:25 y:7
+            ├── LEAF id:relative-A1 row-number:"2" y:18 value:25
+            ├── LEAF id:"absolute-row-A$1" row-number:"3" value:25
+            ├── LEAF id:"absolute-col-$A1" row-number:"4" value:25
+            ├── LEAF id:"absolute-both-$A$1" row-number:"5" value:25
+            ├── LEAF id:x-middle row-number:"6" x:60 y:12
+            ├── LEAF id:relative-forward-A6 row-number:"7" value:60
+            ├── LEAF id:"absolute-row-forward-A$6" row-number:"8" value:60
+            ├── LEAF id:"absolute-col-forward-$A6" row-number:"9" value:60
+            ├── LEAF id:"absolute-both-forward-$A$6" row-number:"10" value:60
+            ├── LEAF id:relative-self-A11 row-number:"11" x:140 y:20 value:140
+            ├── LEAF id:"absolute-row-self-A$12" row-number:"12" x:145 y:21 value:145
+            ├── LEAF id:"absolute-col-self-$A13" row-number:"13" x:150 y:22 value:150
+            └── LEAF id:"absolute-mixed-A$1+$B2" row-number:"14" value:43
         `);
 
         applyTransactionChecked(api, {
@@ -765,24 +750,24 @@ describe('ag-grid formulas general behaviour', () => {
         });
         await asyncSetTimeout(rowNumberRefreshBufferMs);
 
-        gridRows = new GridRows(api, 'after inserting a new first row', gridRowsOptions);
+        gridRows = new GridRows(api, 'after inserting a new first row');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:prepended-row
-            ├── LEAF id:x-base
-            ├── LEAF id:relative-A1 value:25
-            ├── LEAF id:"absolute-row-A$1" value:-5
-            ├── LEAF id:"absolute-col-$A1" value:25
-            ├── LEAF id:"absolute-both-$A$1" value:-5
-            ├── LEAF id:x-middle
-            ├── LEAF id:relative-forward-A6 value:60
-            ├── LEAF id:"absolute-row-forward-A$6"
-            ├── LEAF id:"absolute-col-forward-$A6" value:60
-            ├── LEAF id:"absolute-both-forward-$A$6"
-            ├── LEAF id:relative-self-A11 value:140
-            ├── LEAF id:"absolute-row-self-A$12" value:140
-            ├── LEAF id:"absolute-col-self-$A13" value:150
-            └── LEAF id:"absolute-mixed-A$1+$B2" value:13
+            ├── LEAF id:prepended-row row-number:"1" x:-5 y:-2
+            ├── LEAF id:x-base row-number:"2" x:25 y:7
+            ├── LEAF id:relative-A1 row-number:"3" y:18 value:25
+            ├── LEAF id:"absolute-row-A$1" row-number:"4" value:-5
+            ├── LEAF id:"absolute-col-$A1" row-number:"5" value:25
+            ├── LEAF id:"absolute-both-$A$1" row-number:"6" value:-5
+            ├── LEAF id:x-middle row-number:"7" x:60 y:12
+            ├── LEAF id:relative-forward-A6 row-number:"8" value:60
+            ├── LEAF id:"absolute-row-forward-A$6" row-number:"9"
+            ├── LEAF id:"absolute-col-forward-$A6" row-number:"10" value:60
+            ├── LEAF id:"absolute-both-forward-$A$6" row-number:"11"
+            ├── LEAF id:relative-self-A11 row-number:"12" x:140 y:20 value:140
+            ├── LEAF id:"absolute-row-self-A$12" row-number:"13" x:145 y:21 value:140
+            ├── LEAF id:"absolute-col-self-$A13" row-number:"14" x:150 y:22 value:150
+            └── LEAF id:"absolute-mixed-A$1+$B2" row-number:"15" value:13
         `);
 
         api.applyColumnState({
@@ -790,24 +775,24 @@ describe('ag-grid formulas general behaviour', () => {
             applyOrder: true,
         });
 
-        gridRows = new GridRows(api, 'after column reorder', gridRowsOptions);
+        gridRows = new GridRows(api, 'after column reorder');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:prepended-row
-            ├── LEAF id:x-base
-            ├── LEAF id:relative-A1 value:25
-            ├── LEAF id:"absolute-row-A$1" value:-5
-            ├── LEAF id:"absolute-col-$A1" value:7
-            ├── LEAF id:"absolute-both-$A$1" value:-2
-            ├── LEAF id:x-middle
-            ├── LEAF id:relative-forward-A6 value:60
-            ├── LEAF id:"absolute-row-forward-A$6"
-            ├── LEAF id:"absolute-col-forward-$A6" value:12
-            ├── LEAF id:"absolute-both-forward-$A$6"
-            ├── LEAF id:relative-self-A11 value:140
-            ├── LEAF id:"absolute-row-self-A$12" value:140
-            ├── LEAF id:"absolute-col-self-$A13" value:22
-            └── LEAF id:"absolute-mixed-A$1+$B2" value:-5
+            ├── LEAF id:prepended-row row-number:"1" y:-2 x:-5
+            ├── LEAF id:x-base row-number:"2" y:7 x:25
+            ├── LEAF id:relative-A1 row-number:"3" y:18 value:25
+            ├── LEAF id:"absolute-row-A$1" row-number:"4" value:-5
+            ├── LEAF id:"absolute-col-$A1" row-number:"5" value:7
+            ├── LEAF id:"absolute-both-$A$1" row-number:"6" value:-2
+            ├── LEAF id:x-middle row-number:"7" y:12 x:60
+            ├── LEAF id:relative-forward-A6 row-number:"8" value:60
+            ├── LEAF id:"absolute-row-forward-A$6" row-number:"9"
+            ├── LEAF id:"absolute-col-forward-$A6" row-number:"10" value:12
+            ├── LEAF id:"absolute-both-forward-$A$6" row-number:"11"
+            ├── LEAF id:relative-self-A11 row-number:"12" y:20 x:140 value:140
+            ├── LEAF id:"absolute-row-self-A$12" row-number:"13" y:21 x:145 value:140
+            ├── LEAF id:"absolute-col-self-$A13" row-number:"14" y:22 x:150 value:22
+            └── LEAF id:"absolute-mixed-A$1+$B2" row-number:"15" value:-5
         `);
     });
 });

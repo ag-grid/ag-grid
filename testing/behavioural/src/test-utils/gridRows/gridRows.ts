@@ -21,7 +21,7 @@ export interface GridRowsOptions<TData = any> {
      * If an array, it must contain the id of the columns to include. Default is false, no columns.
      * Default is true. There is usually no need to defined this.
      */
-    columns?: (string | Column)[] | boolean;
+    forcedColumns?: (string | Column)[] | boolean;
 
     /** If false, the id will not be shown in the diagram. Default is true */
     printIds?: boolean;
@@ -38,7 +38,7 @@ export interface GridRowsOptions<TData = any> {
     errors?: GridRowsErrors<TData>;
 
     /** Forces treeData to be checked as true or false. There is usually no need to set this. */
-    treeData?: boolean;
+    forcedTreeData?: boolean;
 
     /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
     nodeDataProps?: string[];
@@ -75,7 +75,7 @@ export class GridRows<TData = any> {
         this.api = api;
         const errors = options.errors || new GridRowsErrors<TData>();
         this.errors = errors;
-        this.treeData = options.treeData ?? !!api.getGridOption('treeData');
+        this.treeData = options.forcedTreeData ?? !!api.getGridOption('treeData');
         const rowNodes: RowNode<TData>[] = [];
         const displayedRows: RowNode<TData>[] = [];
         const rootNodesSet = new Set<RowNode<TData>>();
@@ -100,7 +100,7 @@ export class GridRows<TData = any> {
                         const detailGridRow = new GridRows(api, label, {
                             ...options,
                             errors,
-                            columns: options.columns ?? true,
+                            forcedColumns: options.forcedColumns ?? true,
                         });
                         detailGridRows.set(row, detailGridRow);
                         detailGridRows.set(api, detailGridRow);
@@ -168,7 +168,7 @@ export class GridRows<TData = any> {
 
     public makeDiagram(printErrors = false): string {
         let columns: Column[] | null = null;
-        const optionsColumns = this.options.columns ?? true;
+        const optionsColumns = this.options.forcedColumns ?? true;
         if (optionsColumns) {
             columns = this.api.getAllGridColumns();
             if (Array.isArray(optionsColumns)) {

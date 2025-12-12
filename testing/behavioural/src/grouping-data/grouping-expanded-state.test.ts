@@ -624,21 +624,19 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'custom groupDefaultExpanded callback', {
-            columns: ['title'],
-        }).check(`
+        await new GridRows(api, 'custom groupDefaultExpanded callback').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-priority-High
-            │ ├─┬ LEAF_GROUP collapsed id:row-group-priority-High-category-Bug
-            │ │ └── LEAF hidden id:1 title:"Critical Issue"
-            │ └─┬ LEAF_GROUP collapsed id:row-group-priority-High-category-Feature
-            │ · └── LEAF hidden id:2 title:"Important Feature"
-            ├─┬ filler collapsed id:row-group-priority-Low
-            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-priority-Low-category-Bug
-            │ · └── LEAF hidden id:3 title:"Minor Issue"
-            └─┬ filler collapsed id:row-group-priority-Medium
-            · └─┬ LEAF_GROUP collapsed hidden id:row-group-priority-Medium-category-Task
-            · · └── LEAF hidden id:4 title:"Regular Task"
+            ├─┬ filler id:row-group-priority-High ag-Grid-AutoColumn:"High"
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-priority-High-category-Bug ag-Grid-AutoColumn:"Bug"
+            │ │ └── LEAF hidden id:1 priority:"High" category:"Bug" title:"Critical Issue"
+            │ └─┬ LEAF_GROUP collapsed id:row-group-priority-High-category-Feature ag-Grid-AutoColumn:"Feature"
+            │ · └── LEAF hidden id:2 priority:"High" category:"Feature" title:"Important Feature"
+            ├─┬ filler collapsed id:row-group-priority-Low ag-Grid-AutoColumn:"Low"
+            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-priority-Low-category-Bug ag-Grid-AutoColumn:"Bug"
+            │ · └── LEAF hidden id:3 priority:"Low" category:"Bug" title:"Minor Issue"
+            └─┬ filler collapsed id:row-group-priority-Medium ag-Grid-AutoColumn:"Medium"
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-priority-Medium-category-Task ag-Grid-AutoColumn:"Task"
+            · · └── LEAF hidden id:4 priority:"Medium" category:"Task" title:"Regular Task"
         `);
     });
 
@@ -670,20 +668,18 @@ describe('ag-grid grouping expanded state', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'isGroupOpenByDefault callback', {
-            columns: ['sales'],
-        }).check(`
+        await new GridRows(api, 'isGroupOpenByDefault callback').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-status-Active sales:4500
-            │ ├─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-North sales:1000
-            │ │ └── LEAF hidden id:1 sales:1000
-            │ ├─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-South sales:1500
-            │ │ └── LEAF hidden id:2 sales:1500
-            │ └─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-East sales:2000
-            │ · └── LEAF hidden id:4 sales:2000
-            └─┬ filler collapsed id:row-group-status-Inactive sales:500
-            · └─┬ LEAF_GROUP collapsed hidden id:row-group-status-Inactive-region-North sales:500
-            · · └── LEAF hidden id:3 sales:500
+            ├─┬ filler id:row-group-status-Active ag-Grid-AutoColumn:"Active" sales:4500
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-North ag-Grid-AutoColumn:"North" sales:1000
+            │ │ └── LEAF hidden id:1 status:"Active" region:"North" sales:1000
+            │ ├─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-South ag-Grid-AutoColumn:"South" sales:1500
+            │ │ └── LEAF hidden id:2 status:"Active" region:"South" sales:1500
+            │ └─┬ LEAF_GROUP collapsed id:row-group-status-Active-region-East ag-Grid-AutoColumn:"East" sales:2000
+            │ · └── LEAF hidden id:4 status:"Active" region:"East" sales:2000
+            └─┬ filler collapsed id:row-group-status-Inactive ag-Grid-AutoColumn:"Inactive" sales:500
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-status-Inactive-region-North ag-Grid-AutoColumn:"North" sales:500
+            · · └── LEAF hidden id:3 status:"Inactive" region:"North" sales:500
         `);
     });
 
@@ -709,17 +705,17 @@ describe('ag-grid grouping expanded state', () => {
         });
 
         // Initial state - only regions expanded
-        await new GridRows(api, 'initial state', { columns: ['city'] }).check(`
+        await new GridRows(api, 'initial state').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler collapsed id:row-group-region-North
-            │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-region-North-country-USA
-            │ │ ├── LEAF hidden id:1 city:"New York"
-            │ │ └── LEAF hidden id:2 city:"Boston"
-            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-region-North-country-Canada
-            │ · └── LEAF hidden id:3 city:"Toronto"
-            └─┬ filler collapsed id:row-group-region-South
-            · └─┬ LEAF_GROUP collapsed hidden id:row-group-region-South-country-USA
-            · · └── LEAF hidden id:4 city:"Miami"
+            ├─┬ filler collapsed id:row-group-region-North ag-Grid-AutoColumn:"North"
+            │ ├─┬ LEAF_GROUP collapsed hidden id:row-group-region-North-country-USA ag-Grid-AutoColumn:"USA"
+            │ │ ├── LEAF hidden id:1 region:"North" country:"USA" city:"New York"
+            │ │ └── LEAF hidden id:2 region:"North" country:"USA" city:"Boston"
+            │ └─┬ LEAF_GROUP collapsed hidden id:row-group-region-North-country-Canada ag-Grid-AutoColumn:"Canada"
+            │ · └── LEAF hidden id:3 region:"North" country:"Canada" city:"Toronto"
+            └─┬ filler collapsed id:row-group-region-South ag-Grid-AutoColumn:"South"
+            · └─┬ LEAF_GROUP collapsed hidden id:row-group-region-South-country-USA ag-Grid-AutoColumn:"USA"
+            · · └── LEAF hidden id:4 region:"South" country:"USA" city:"Miami"
         `);
 
         // Programmatically expand regions and specific countries
@@ -733,17 +729,17 @@ describe('ag-grid grouping expanded state', () => {
         api.setRowNodeExpanded(northUSANode!, true, undefined, true);
         api.setRowNodeExpanded(southUSANode!, true, undefined, true);
 
-        await new GridRows(api, 'after programmatic expansion', { columns: ['city'] }).check(`
+        await new GridRows(api, 'after programmatic expansion').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-North
-            │ ├─┬ LEAF_GROUP id:row-group-region-North-country-USA
-            │ │ ├── LEAF id:1 city:"New York"
-            │ │ └── LEAF id:2 city:"Boston"
-            │ └─┬ LEAF_GROUP collapsed id:row-group-region-North-country-Canada
-            │ · └── LEAF hidden id:3 city:"Toronto"
-            └─┬ filler id:row-group-region-South
-            · └─┬ LEAF_GROUP id:row-group-region-South-country-USA
-            · · └── LEAF id:4 city:"Miami"
+            ├─┬ filler id:row-group-region-North ag-Grid-AutoColumn:"North"
+            │ ├─┬ LEAF_GROUP id:row-group-region-North-country-USA ag-Grid-AutoColumn:"USA"
+            │ │ ├── LEAF id:1 region:"North" country:"USA" city:"New York"
+            │ │ └── LEAF id:2 region:"North" country:"USA" city:"Boston"
+            │ └─┬ LEAF_GROUP collapsed id:row-group-region-North-country-Canada ag-Grid-AutoColumn:"Canada"
+            │ · └── LEAF hidden id:3 region:"North" country:"Canada" city:"Toronto"
+            └─┬ filler id:row-group-region-South ag-Grid-AutoColumn:"South"
+            · └─┬ LEAF_GROUP id:row-group-region-South-country-USA ag-Grid-AutoColumn:"USA"
+            · · └── LEAF id:4 region:"South" country:"USA" city:"Miami"
         `);
 
         // Add new data and verify expansion state persists
@@ -754,19 +750,19 @@ describe('ag-grid grouping expanded state', () => {
             ],
         });
 
-        await new GridRows(api, 'after adding data', { columns: ['city'] }).check(`
+        await new GridRows(api, 'after adding data').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-region-North
-            │ ├─┬ LEAF_GROUP id:row-group-region-North-country-USA
-            │ │ ├── LEAF id:1 city:"New York"
-            │ │ ├── LEAF id:2 city:"Boston"
-            │ │ └── LEAF id:5 city:"Chicago"
-            │ └─┬ LEAF_GROUP collapsed id:row-group-region-North-country-Canada
-            │ · ├── LEAF hidden id:3 city:"Toronto"
-            │ · └── LEAF hidden id:6 city:"Montreal"
-            └─┬ filler id:row-group-region-South
-            · └─┬ LEAF_GROUP id:row-group-region-South-country-USA
-            · · └── LEAF id:4 city:"Miami"
+            ├─┬ filler id:row-group-region-North ag-Grid-AutoColumn:"North"
+            │ ├─┬ LEAF_GROUP id:row-group-region-North-country-USA ag-Grid-AutoColumn:"USA"
+            │ │ ├── LEAF id:1 region:"North" country:"USA" city:"New York"
+            │ │ ├── LEAF id:2 region:"North" country:"USA" city:"Boston"
+            │ │ └── LEAF id:5 region:"North" country:"USA" city:"Chicago"
+            │ └─┬ LEAF_GROUP collapsed id:row-group-region-North-country-Canada ag-Grid-AutoColumn:"Canada"
+            │ · ├── LEAF hidden id:3 region:"North" country:"Canada" city:"Toronto"
+            │ · └── LEAF hidden id:6 region:"North" country:"Canada" city:"Montreal"
+            └─┬ filler id:row-group-region-South ag-Grid-AutoColumn:"South"
+            · └─┬ LEAF_GROUP id:row-group-region-South-country-USA ag-Grid-AutoColumn:"USA"
+            · · └── LEAF id:4 region:"South" country:"USA" city:"Miami"
         `);
     });
 });

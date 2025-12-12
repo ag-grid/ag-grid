@@ -9,9 +9,6 @@ import {
     cachedJSONObjects,
     executeTransactionsAsync,
 } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
-
-const gridRowsOptions: GridRowsOptions = {};
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -59,7 +56,7 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data) => data.path,
         });
 
-        let gridRows = new GridRows(api, 'rowData', gridRowsOptions);
+        let gridRows = new GridRows(api, 'rowData');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0 ag-Grid-AutoColumn:"A" x:"0"
@@ -71,7 +68,7 @@ describe('ag-grid tree transactions', () => {
 
         applyTransactionChecked(api, transactions[0]);
 
-        gridRows = new GridRows(api, 'Transaction 0', gridRowsOptions);
+        gridRows = new GridRows(api, 'Transaction 0');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0 ag-Grid-AutoColumn:"A" x:"0"
@@ -84,7 +81,7 @@ describe('ag-grid tree transactions', () => {
 
         applyTransactionChecked(api, transactions[1]);
 
-        gridRows = new GridRows(api, 'Transaction 1', gridRowsOptions);
+        gridRows = new GridRows(api, 'Transaction 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:"0"
@@ -102,7 +99,7 @@ describe('ag-grid tree transactions', () => {
 
         applyTransactionChecked(api, transactions[2]);
 
-        gridRows = new GridRows(api, 'Transaction 2', gridRowsOptions);
+        gridRows = new GridRows(api, 'Transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:"0"
@@ -119,7 +116,7 @@ describe('ag-grid tree transactions', () => {
 
         applyTransactionChecked(api, transactions[3]);
 
-        gridRows = new GridRows(api, 'final', gridRowsOptions);
+        gridRows = new GridRows(api, 'final');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:"0"
@@ -164,7 +161,7 @@ describe('ag-grid tree transactions', () => {
             getDataPath: (data) => data.path,
         });
 
-        await new GridRows(api, 'rowData', gridRowsOptions).check(`
+        await new GridRows(api, 'rowData').check(`
             ROOT id:ROOT_NODE_ID
             ├── A LEAF id:0 ag-Grid-AutoColumn:"A"
             └─┬ X filler id:row-group-0-X ag-Grid-AutoColumn:"X"
@@ -174,7 +171,7 @@ describe('ag-grid tree transactions', () => {
 
         await executeTransactionsAsync(transactions, api);
 
-        const gridRows = new GridRows(api, 'final', gridRowsOptions);
+        const gridRows = new GridRows(api, 'final');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A"
@@ -229,7 +226,7 @@ describe('ag-grid tree transactions', () => {
 
         await loadedPromise;
 
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler1 filler id:row-group-0-filler1 ag-Grid-AutoColumn:"filler1"
@@ -275,7 +272,7 @@ describe('ag-grid tree transactions', () => {
         applyTransactionChecked(api, { add: more });
 
         // Verify filler IDs and structure regardless of insertion order
-        await new GridRows(api, 'more', gridRowsOptions).check(`
+        await new GridRows(api, 'more').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler1 filler id:row-group-0-filler1 ag-Grid-AutoColumn:"filler1"
             · └─┬ X1 GROUP id:X1 ag-Grid-AutoColumn:"X1" id:"X1"

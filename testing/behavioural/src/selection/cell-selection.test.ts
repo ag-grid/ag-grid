@@ -690,19 +690,15 @@ describe('Cell Selection', () => {
 
             assertColumnsSelected([], api);
 
-            await new GridRows(api, 'grid', {
-                printIds: false,
-                printRowIndices: false,
-                columns: ['sport'],
-            }).check(`
-                ROOT
-                ├── LEAF sport:"cricket"
-                ├── LEAF sport:"football"
-                ├── LEAF sport:"golf"
-                ├── LEAF sport:"rowing"
-                ├── LEAF sport:"rugby"
-                ├── LEAF sport:"swimming"
-                └── LEAF sport:"tennis"
+            await new GridRows(api, 'grid').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
             `);
         });
 

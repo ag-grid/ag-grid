@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid grouping sorting', () => {
@@ -40,20 +39,15 @@ describe('ag-grid grouping sorting', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            printIds: false,
-            columns: ['athlete', 'sport', 'gold'],
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            └─┬ LEAF_GROUP
-            · ├── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            · └── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football" gold:3
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
+            · └── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
 
         // Sort by sport ascending
@@ -61,15 +55,15 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'sport', sort: 'asc' }],
         });
 
-        await new GridRows(api, 'sort by sport asc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            └─┬ LEAF_GROUP
-            · ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
-            · └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
+        await new GridRows(api, 'sort by sport asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football" gold:3
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
+            · └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
         `);
 
         // Sort by gold descending
@@ -77,15 +71,15 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'gold', sort: 'desc' }],
         });
 
-        await new GridRows(api, 'sort by sport asc + gold desc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            └─┬ LEAF_GROUP
-            · ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
-            · └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
+        await new GridRows(api, 'sort by sport asc + gold desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football" gold:3
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
+            · └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
         `);
 
         // Multi-column sort: sport asc, then gold desc
@@ -96,15 +90,15 @@ describe('ag-grid grouping sorting', () => {
             ],
         });
 
-        await new GridRows(api, 'multi-column sort', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            └─┬ LEAF_GROUP
-            · ├── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            · └── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
+        await new GridRows(api, 'multi-column sort').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            │ └── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football" gold:3
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
+            · └── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
     });
 
@@ -132,27 +126,22 @@ describe('ag-grid grouping sorting', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            printIds: false,
-            columns: ['athlete', 'sport', 'gold'],
-        };
-
         // Sort by gold descending first
         api.applyColumnState({
             state: [{ colId: 'gold', sort: 'desc' }],
         });
 
-        await new GridRows(api, 'sort by gold desc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
-            │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            └─┬ LEAF_GROUP
-            · └── LEAF athlete:"Jean Dupont" sport:"Soccer" gold:1
+        await new GridRows(api, 'sort by gold desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football" gold:3
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
+            │ └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:6 country:"France" athlete:"Jean Dupont" sport:"Soccer" gold:1
         `);
 
         // Filter by sport containing "Soccer"
@@ -160,14 +149,14 @@ describe('ag-grid grouping sorting', () => {
             sport: { filterType: 'text', type: 'contains', filter: 'Soccer' },
         });
 
-        await new GridRows(api, 'filter Soccer + sort gold desc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            ├─┬ LEAF_GROUP
-            │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            └─┬ LEAF_GROUP
-            · └── LEAF athlete:"Jean Dupont" sport:"Soccer" gold:1
+        await new GridRows(api, 'filter Soccer + sort gold desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:6 country:"France" athlete:"Jean Dupont" sport:"Soccer" gold:1
         `);
 
         // Change sort to athlete ascending while filter is active
@@ -175,30 +164,30 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'athlete', sort: 'asc' }],
         });
 
-        await new GridRows(api, 'filter Soccer + sort athlete asc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            ├─┬ LEAF_GROUP
-            │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            └─┬ LEAF_GROUP
-            · └── LEAF athlete:"Jean Dupont" sport:"Soccer" gold:1
+        await new GridRows(api, 'filter Soccer + sort athlete asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:6 country:"France" athlete:"Jean Dupont" sport:"Soccer" gold:1
         `);
 
         // Clear filter, sort should remain
         api.setFilterModel(null);
 
-        await new GridRows(api, 'clear filter, keep sort athlete asc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            │ ├── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
-            │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            └─┬ LEAF_GROUP
-            · └── LEAF athlete:"Jean Dupont" sport:"Soccer" gold:1
+        await new GridRows(api, 'clear filter, keep sort athlete asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:3 country:"Ireland" athlete:"Bob Johnson" sport:"Football" gold:3
+            │ ├── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing" gold:1
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:5 country:"Italy" athlete:"Luigi Verdi" sport:"Football" gold:5
+            │ └── LEAF id:4 country:"Italy" athlete:"Mario Rossi" sport:"Soccer" gold:4
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF id:6 country:"France" athlete:"Jean Dupont" sport:"Soccer" gold:1
         `);
     });
 
@@ -233,20 +222,15 @@ describe('ag-grid grouping sorting', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            printIds: false,
-            columns: ['task', 'priority', 'score'],
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF task:"Task A" priority:"High" score:10
-            │ ├── LEAF task:"Task B" priority:"Low" score:5
-            │ └── LEAF task:"Task C" priority:"Medium" score:8
-            └─┬ LEAF_GROUP
-            · ├── LEAF task:"Task D" priority:"High" score:12
-            · └── LEAF task:"Task E" priority:"Low" score:3
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" task:"Task A" priority:"High" score:10
+            │ ├── LEAF id:2 country:"Ireland" task:"Task B" priority:"Low" score:5
+            │ └── LEAF id:3 country:"Ireland" task:"Task C" priority:"Medium" score:8
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:4 country:"Italy" task:"Task D" priority:"High" score:12
+            · └── LEAF id:5 country:"Italy" task:"Task E" priority:"Low" score:3
         `);
 
         // Sort by priority using custom comparator
@@ -254,15 +238,15 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'priority', sort: 'asc' }],
         });
 
-        await new GridRows(api, 'sort by priority with custom comparator', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF task:"Task A" priority:"High" score:10
-            │ ├── LEAF task:"Task C" priority:"Medium" score:8
-            │ └── LEAF task:"Task B" priority:"Low" score:5
-            └─┬ LEAF_GROUP
-            · ├── LEAF task:"Task D" priority:"High" score:12
-            · └── LEAF task:"Task E" priority:"Low" score:3
+        await new GridRows(api, 'sort by priority with custom comparator').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" task:"Task A" priority:"High" score:10
+            │ ├── LEAF id:3 country:"Ireland" task:"Task C" priority:"Medium" score:8
+            │ └── LEAF id:2 country:"Ireland" task:"Task B" priority:"Low" score:5
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:4 country:"Italy" task:"Task D" priority:"High" score:12
+            · └── LEAF id:5 country:"Italy" task:"Task E" priority:"Low" score:3
         `);
 
         // Sort by priority descending
@@ -270,15 +254,15 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'priority', sort: 'desc' }],
         });
 
-        await new GridRows(api, 'sort by priority desc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ LEAF_GROUP
-            │ ├── LEAF task:"Task B" priority:"Low" score:5
-            │ ├── LEAF task:"Task C" priority:"Medium" score:8
-            │ └── LEAF task:"Task A" priority:"High" score:10
-            └─┬ LEAF_GROUP
-            · ├── LEAF task:"Task E" priority:"Low" score:3
-            · └── LEAF task:"Task D" priority:"High" score:12
+        await new GridRows(api, 'sort by priority desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:2 country:"Ireland" task:"Task B" priority:"Low" score:5
+            │ ├── LEAF id:3 country:"Ireland" task:"Task C" priority:"Medium" score:8
+            │ └── LEAF id:1 country:"Ireland" task:"Task A" priority:"High" score:10
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├── LEAF id:5 country:"Italy" task:"Task E" priority:"Low" score:3
+            · └── LEAF id:4 country:"Italy" task:"Task D" priority:"High" score:12
         `);
     });
 
@@ -306,24 +290,19 @@ describe('ag-grid grouping sorting', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            printIds: false,
-            columns: ['athlete', 'sport', 'gold'],
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptions).check(`
-            ROOT
-            ├─┬ filler
-            │ ├─┬ LEAF_GROUP
-            │ │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └─┬ LEAF_GROUP
-            │ · └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            └─┬ filler
-            · ├─┬ LEAF_GROUP
-            · │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            · └─┬ LEAF_GROUP
-            · · └── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
+        await new GridRows(api, 'initial').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing" gold:1
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football" gold:3
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer" gold:4
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
 
         // Sort by sport ascending within each group
@@ -331,19 +310,19 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'sport', sort: 'asc' }],
         });
 
-        await new GridRows(api, 'sort by sport asc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ filler
-            │ ├─┬ LEAF_GROUP
-            │ │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └─┬ LEAF_GROUP
-            │ · └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            └─┬ filler
-            · ├─┬ LEAF_GROUP
-            · │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            · └─┬ LEAF_GROUP
-            · · └── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
+        await new GridRows(api, 'sort by sport asc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing" gold:1
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football" gold:3
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer" gold:4
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
 
         // Sort by gold descending within each group
@@ -351,19 +330,19 @@ describe('ag-grid grouping sorting', () => {
             state: [{ colId: 'gold', sort: 'desc' }],
         });
 
-        await new GridRows(api, 'sort by gold desc', gridRowsOptions).check(`
-            ROOT
-            ├─┬ filler
-            │ ├─┬ LEAF_GROUP
-            │ │ ├── LEAF athlete:"John Smith" sport:"Sailing" gold:1
-            │ │ └── LEAF athlete:"Jane Doe" sport:"Soccer" gold:2
-            │ └─┬ LEAF_GROUP
-            │ · └── LEAF athlete:"Bob Johnson" sport:"Football" gold:3
-            └─┬ filler
-            · ├─┬ LEAF_GROUP
-            · │ └── LEAF athlete:"Mario Rossi" sport:"Soccer" gold:4
-            · └─┬ LEAF_GROUP
-            · · └── LEAF athlete:"Luigi Verdi" sport:"Football" gold:5
+        await new GridRows(api, 'sort by gold desc').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2020 ag-Grid-AutoColumn:2020
+            │ │ ├── LEAF id:1 country:"Ireland" year:2020 athlete:"John Smith" sport:"Sailing" gold:1
+            │ │ └── LEAF id:2 country:"Ireland" year:2020 athlete:"Jane Doe" sport:"Soccer" gold:2
+            │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2021 ag-Grid-AutoColumn:2021
+            │ · └── LEAF id:3 country:"Ireland" year:2021 athlete:"Bob Johnson" sport:"Football" gold:3
+            └─┬ filler id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · ├─┬ LEAF_GROUP id:row-group-country-Italy-year-2020 ag-Grid-AutoColumn:2020
+            · │ └── LEAF id:4 country:"Italy" year:2020 athlete:"Mario Rossi" sport:"Soccer" gold:4
+            · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2021 ag-Grid-AutoColumn:2021
+            · · └── LEAF id:5 country:"Italy" year:2021 athlete:"Luigi Verdi" sport:"Football" gold:5
         `);
     });
 });

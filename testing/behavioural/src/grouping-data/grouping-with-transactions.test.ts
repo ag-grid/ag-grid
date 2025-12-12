@@ -2,7 +2,6 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked, executeTransactionsAsync } from '../test-utils';
 
 describe('ag-grid grouping with transactions', () => {
@@ -204,11 +203,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-        };
-
-        let gridRows = new GridRows(api, 'first', gridRowsOptions);
+        let gridRows = new GridRows(api, 'first');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -240,7 +235,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        gridRows = new GridRows(api, 'update 1', gridRowsOptions);
+        gridRows = new GridRows(api, 'update 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Italy
@@ -289,10 +284,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-        };
-        let gridRows = new GridRows(api, 'first', gridRowsOptions);
+        let gridRows = new GridRows(api, 'first');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -323,7 +315,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        gridRows = new GridRows(api, 'transaction 1', gridRowsOptions);
+        gridRows = new GridRows(api, 'transaction 1');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
@@ -363,7 +355,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        gridRows = new GridRows(api, 'transaction 2', gridRowsOptions);
+        gridRows = new GridRows(api, 'transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Italy
@@ -397,7 +389,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        gridRows = new GridRows(api, 'transaction 2', gridRowsOptions);
+        gridRows = new GridRows(api, 'transaction 2');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-Germany
@@ -436,12 +428,8 @@ describe('ag-grid grouping with transactions', () => {
             ],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-        };
-
         // Verify initial structure
-        await new GridRows(api, 'initial with multiple groups', gridRowsOptions).check(`
+        await new GridRows(api, 'initial with multiple groups').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
@@ -461,7 +449,7 @@ describe('ag-grid grouping with transactions', () => {
             remove: [{ id: '2' }],
         });
 
-        await new GridRows(api, 'after removing year 2001 group', gridRowsOptions).check(`
+        await new GridRows(api, 'after removing year 2001 group').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
@@ -479,7 +467,7 @@ describe('ag-grid grouping with transactions', () => {
             remove: [{ id: '4' }],
         });
 
-        await new GridRows(api, 'after removing entire France group', gridRowsOptions).check(`
+        await new GridRows(api, 'after removing entire France group').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
             │ └─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
@@ -494,7 +482,7 @@ describe('ag-grid grouping with transactions', () => {
             remove: [{ id: '1' }],
         });
 
-        await new GridRows(api, 'after removing Ireland group', gridRowsOptions).check(`
+        await new GridRows(api, 'after removing Ireland group').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ filler id:row-group-country-Italy
             · └─┬ LEAF_GROUP id:row-group-country-Italy-year-2000
@@ -528,13 +516,7 @@ describe('ag-grid grouping with transactions', () => {
             ],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-
-            useFormatter: false,
-        };
-
-        await new GridRows(api, 'unbalanced groups with missing values', gridRowsOptions).check(`
+        await new GridRows(api, 'unbalanced groups with missing values', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:4 name:"Empty" country:"" year:""
             ├── LEAF id:5 name:"Null" country:null year:null
@@ -551,7 +533,7 @@ describe('ag-grid grouping with transactions', () => {
         api.setGridOption('groupAllowUnbalanced', false);
         api.refreshClientSideRowModel();
 
-        await new GridRows(api, 'balanced groups with empty keys', gridRowsOptions).check(`
+        await new GridRows(api, 'balanced groups with empty keys', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Ireland
             │ ├─┬ LEAF_GROUP id:row-group-country-Ireland-year-2000
@@ -617,11 +599,7 @@ describe('ag-grid grouping with transactions', () => {
             ],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['country', 'year', 'name'],
-        };
-
-        await new GridRows(api, 'custom key creators grouping', gridRowsOptions).check(`
+        await new GridRows(api, 'custom key creators grouping').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Europe
             │ └─┬ LEAF_GROUP id:row-group-country-Europe-year-2000s
@@ -645,7 +623,7 @@ describe('ag-grid grouping with transactions', () => {
             update: [{ id: '6', country: 'Ireland', year: 2010, name: 'Mystery Irish' }],
         });
 
-        await new GridRows(api, 'after updating to change custom key', gridRowsOptions).check(`
+        await new GridRows(api, 'after updating to change custom key').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-country-Europe
             │ ├─┬ LEAF_GROUP id:row-group-country-Europe-year-2000s
@@ -687,11 +665,7 @@ describe('ag-grid grouping with transactions', () => {
             ],
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['department', 'level', 'name'],
-        };
-
-        await new GridRows(api, 'initial departments', gridRowsOptions).check(`
+        await new GridRows(api, 'initial departments').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-department-Engineering
             │ ├─┬ LEAF_GROUP id:row-group-department-Engineering-level-Junior
@@ -710,7 +684,7 @@ describe('ag-grid grouping with transactions', () => {
             update: [{ id: '1', department: 'Sales', level: 'Junior', name: 'Alice' }],
         });
 
-        await new GridRows(api, 'after moving Alice to Sales', gridRowsOptions).check(`
+        await new GridRows(api, 'after moving Alice to Sales').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-department-Engineering
             │ └─┬ LEAF_GROUP id:row-group-department-Engineering-level-Senior
@@ -728,7 +702,7 @@ describe('ag-grid grouping with transactions', () => {
             update: [{ id: '2', department: 'Marketing', level: 'Manager', name: 'Bob' }],
         });
 
-        await new GridRows(api, 'after moving Bob to new department', gridRowsOptions).check(`
+        await new GridRows(api, 'after moving Bob to new department').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-department-Sales
             │ ├─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
@@ -749,7 +723,7 @@ describe('ag-grid grouping with transactions', () => {
             ],
         });
 
-        await new GridRows(api, 'after batch move to Engineering', gridRowsOptions).check(`
+        await new GridRows(api, 'after batch move to Engineering').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-department-Sales
             │ └─┬ LEAF_GROUP id:row-group-department-Sales-level-Junior
@@ -792,10 +766,6 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['status', 'priority', 'name'],
-        };
-
         // Complex async operations that test race conditions
         await executeTransactionsAsync(
             [
@@ -817,7 +787,7 @@ describe('ag-grid grouping with transactions', () => {
             api
         );
 
-        await new GridRows(api, 'after complex async operations', gridRowsOptions).check(`
+        await new GridRows(api, 'after complex async operations').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ filler id:row-group-status-Completed
             │ ├─┬ LEAF_GROUP id:row-group-status-Completed-priority-High

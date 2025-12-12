@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../../test-utils';
 import {
     GridRows,
     TestGridsManager,
@@ -58,38 +57,34 @@ describe('ag-grid tree aggregation and filter', () => {
                 groupSuppressBlankHeader: true,
             });
 
-            const gridRowsOptions: GridRowsOptions = {
-                columns: ['x', 'y'],
-            };
-
-            await new GridRows(api, 'initial', gridRowsOptions).check(`
+            await new GridRows(api, 'initial').check(`
                 ROOT id:ROOT_NODE_ID x:100
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:100
-                ├─┬ A GROUP id:0 x:80 y:1
-                │ ├─┬ B GROUP id:1 x:29 y:2
-                │ │ ├── D LEAF id:3 x:14 y:4
-                │ │ └── E LEAF id:4 x:15 y:5
-                │ └─┬ C GROUP id:2 x:51 y:3
-                │ · ├── F LEAF id:5 x:16 y:1
-                │ · ├── G LEAF id:6 x:17 y:2
-                │ · └─┬ H filler id:row-group-0-A-1-C-2-H x:18
-                │ · · └── I LEAF id:7 x:18 y:3
-                └─┬ J GROUP id:8 x:20 y:4
-                · └── K LEAF id:9 x:20 y:5
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:100
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:80 y:1
+                │ ├─┬ B GROUP id:1 ag-Grid-AutoColumn:"B" x:29 y:2
+                │ │ ├── D LEAF id:3 ag-Grid-AutoColumn:"D" x:14 y:4
+                │ │ └── E LEAF id:4 ag-Grid-AutoColumn:"E" x:15 y:5
+                │ └─┬ C GROUP id:2 ag-Grid-AutoColumn:"C" x:51 y:3
+                │ · ├── F LEAF id:5 ag-Grid-AutoColumn:"F" x:16 y:1
+                │ · ├── G LEAF id:6 ag-Grid-AutoColumn:"G" x:17 y:2
+                │ · └─┬ H filler id:row-group-0-A-1-C-2-H ag-Grid-AutoColumn:"H" x:18
+                │ · · └── I LEAF id:7 ag-Grid-AutoColumn:"I" x:18 y:3
+                └─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                · └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:5
             `);
 
             api.setFilterModel({
                 y: { filterType: 'number', type: 'greaterThan', filter: 4 },
             });
 
-            await new GridRows(api, 'filter greater than', gridRowsOptions).check(`
+            await new GridRows(api, 'filter greater than').check(`
                 ROOT id:ROOT_NODE_ID x:35
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:35
-                ├─┬ A GROUP id:0 x:15 y:1
-                │ └─┬ B GROUP id:1 x:15 y:2
-                │ · └── E LEAF id:4 x:15 y:5
-                └─┬ J GROUP id:8 x:20 y:4
-                · └── K LEAF id:9 x:20 y:5
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:35
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:15 y:1
+                │ └─┬ B GROUP id:1 ag-Grid-AutoColumn:"B" x:15 y:2
+                │ · └── E LEAF id:4 ag-Grid-AutoColumn:"E" x:15 y:5
+                └─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                · └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:5
             `);
 
             if (mode === 'transactions') {
@@ -103,15 +98,15 @@ describe('ag-grid tree aggregation and filter', () => {
                 setRowDataChecked(api, rowData);
             }
 
-            await new GridRows(api, 'filter greater than - update 1', gridRowsOptions).check(`
+            await new GridRows(api, 'filter greater than - update 1').check(`
                 ROOT id:ROOT_NODE_ID x:49
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:49
-                ├─┬ A GROUP id:0 x:29 y:1
-                │ └─┬ B GROUP id:1 x:29 y:2
-                │ · ├── D LEAF id:3 x:14 y:200
-                │ · └── E LEAF id:4 x:15 y:5
-                └─┬ J GROUP id:8 x:20 y:4
-                · └── K LEAF id:9 x:20 y:5
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:49
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:29 y:1
+                │ └─┬ B GROUP id:1 ag-Grid-AutoColumn:"B" x:29 y:2
+                │ · ├── D LEAF id:3 ag-Grid-AutoColumn:"D" x:14 y:200
+                │ · └── E LEAF id:4 ag-Grid-AutoColumn:"E" x:15 y:5
+                └─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                · └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:5
             `);
 
             if (mode === 'transactions') {
@@ -121,13 +116,13 @@ describe('ag-grid tree aggregation and filter', () => {
                 setRowDataChecked(api, rowData);
             }
 
-            await new GridRows(api, 'filter greater than - update 2', gridRowsOptions).check(`
+            await new GridRows(api, 'filter greater than - update 2').check(`
                 ROOT id:ROOT_NODE_ID x:29
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:29
-                └─┬ A GROUP id:0 x:29 y:1
-                · └─┬ B GROUP id:1 x:29 y:2
-                · · ├── D LEAF id:3 x:14 y:200
-                · · └── E LEAF id:4 x:15 y:5
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:29
+                └─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:29 y:1
+                · └─┬ B GROUP id:1 ag-Grid-AutoColumn:"B" x:29 y:2
+                · · ├── D LEAF id:3 ag-Grid-AutoColumn:"D" x:14 y:200
+                · · └── E LEAF id:4 ag-Grid-AutoColumn:"E" x:15 y:5
             `);
 
             if (mode === 'transactions') {
@@ -137,83 +132,83 @@ describe('ag-grid tree aggregation and filter', () => {
                 setRowDataChecked(api, rowData);
             }
 
-            await new GridRows(api, 'filter greater than - remove', gridRowsOptions).check(`
+            await new GridRows(api, 'filter greater than - remove').check(`
                 ROOT id:ROOT_NODE_ID x:15
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:15
-                └─┬ A GROUP id:0 x:15 y:1
-                · └─┬ B GROUP id:1 x:15 y:2
-                · · └── E LEAF id:4 x:15 y:5
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:15
+                └─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:15 y:1
+                · └─┬ B GROUP id:1 ag-Grid-AutoColumn:"B" x:15 y:2
+                · · └── E LEAF id:4 ag-Grid-AutoColumn:"E" x:15 y:5
             `);
 
             api.setFilterModel({
                 y: { filterType: 'number', type: 'lessThan', filter: 2 },
             });
 
-            await new GridRows(api, 'filter less than', gridRowsOptions).check(`
+            await new GridRows(api, 'filter less than').check(`
                 ROOT id:ROOT_NODE_ID x:86
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:86
-                ├─┬ A GROUP id:0 x:66 y:1
-                │ ├─┬ B GROUP id:1 x:15 y:2
-                │ │ └── E LEAF id:4 x:15 y:5
-                │ └─┬ C GROUP id:2 x:51 y:3
-                │ · ├── F LEAF id:5 x:16 y:1
-                │ · ├── G LEAF id:6 x:17 y:2
-                │ · └─┬ H filler id:row-group-0-A-1-C-2-H x:18
-                │ · · └── I LEAF id:7 x:18 y:3
-                └─┬ J GROUP id:8 x:20 y:4
-                · └── K LEAF id:9 x:20 y:0
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:86
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:66 y:1
+                │ ├─┬ B GROUP id:1 ag-Grid-AutoColumn:"B" x:15 y:2
+                │ │ └── E LEAF id:4 ag-Grid-AutoColumn:"E" x:15 y:5
+                │ └─┬ C GROUP id:2 ag-Grid-AutoColumn:"C" x:51 y:3
+                │ · ├── F LEAF id:5 ag-Grid-AutoColumn:"F" x:16 y:1
+                │ · ├── G LEAF id:6 ag-Grid-AutoColumn:"G" x:17 y:2
+                │ · └─┬ H filler id:row-group-0-A-1-C-2-H ag-Grid-AutoColumn:"H" x:18
+                │ · · └── I LEAF id:7 ag-Grid-AutoColumn:"I" x:18 y:3
+                └─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                · └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:0
             `);
 
             api.setGridOption('excludeChildrenWhenTreeDataFiltering', true);
 
-            await new GridRows(api, 'excludeChildrenWhenTreeDataFiltering=true', gridRowsOptions).check(`
+            await new GridRows(api, 'excludeChildrenWhenTreeDataFiltering=true').check(`
                 ROOT id:ROOT_NODE_ID x:36
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:36
-                ├─┬ A GROUP id:0 x:16 y:1
-                │ └─┬ C GROUP id:2 x:16 y:3
-                │ · └── F LEAF id:5 x:16 y:1
-                └─┬ J GROUP id:8 x:20 y:4
-                · └── K LEAF id:9 x:20 y:0
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:16 y:1
+                │ └─┬ C GROUP id:2 ag-Grid-AutoColumn:"C" x:16 y:3
+                │ · └── F LEAF id:5 ag-Grid-AutoColumn:"F" x:16 y:1
+                └─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                · └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:0
             `);
 
             api.setGridOption('suppressAggFilteredOnly', true);
 
-            await new GridRows(api, 'suppressAggFilteredOnly=true', gridRowsOptions).check(`
+            await new GridRows(api, 'suppressAggFilteredOnly=true').check(`
                 ROOT id:ROOT_NODE_ID x:86
-                ├─ footer id:rowGroupFooter_ROOT_NODE_ID x:86
-                ├─┬ A GROUP id:0 x:66 y:1
-                │ └─┬ C GROUP id:2 x:51 y:3
-                │ · └── F LEAF id:5 x:16 y:1
-                └─┬ J GROUP id:8 x:20 y:4
-                · └── K LEAF id:9 x:20 y:0
+                ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:86
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:66 y:1
+                │ └─┬ C GROUP id:2 ag-Grid-AutoColumn:"C" x:51 y:3
+                │ · └── F LEAF id:5 ag-Grid-AutoColumn:"F" x:16 y:1
+                └─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                · └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:0
             `);
 
             api.setGridOption('suppressAggFilteredOnly', false);
             api.setGridOption('grandTotalRow', 'bottom');
 
-            await new GridRows(api, 'suppressAggFilteredOnly=false grandTotalRow=bottom', gridRowsOptions).check(`
+            await new GridRows(api, 'suppressAggFilteredOnly=false grandTotalRow=bottom').check(`
                 ROOT id:ROOT_NODE_ID x:36
-                ├─┬ A GROUP id:0 x:16 y:1
-                │ └─┬ C GROUP id:2 x:16 y:3
-                │ · └── F LEAF id:5 x:16 y:1
-                ├─┬ J GROUP id:8 x:20 y:4
-                │ └── K LEAF id:9 x:20 y:0
-                └─ footer id:rowGroupFooter_ROOT_NODE_ID x:36
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:16 y:1
+                │ └─┬ C GROUP id:2 ag-Grid-AutoColumn:"C" x:16 y:3
+                │ · └── F LEAF id:5 ag-Grid-AutoColumn:"F" x:16 y:1
+                ├─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                │ └── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:0
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
             `);
 
             api.setGridOption('groupTotalRow', 'bottom');
 
-            await new GridRows(api, 'groupTotalRow=top', gridRowsOptions).check(`
+            await new GridRows(api, 'groupTotalRow=top').check(`
                 ROOT id:ROOT_NODE_ID x:36
-                ├─┬ A GROUP id:0 x:16 y:1
-                │ ├─┬ C GROUP id:2 x:16 y:3
-                │ │ ├── F LEAF id:5 x:16 y:1
-                │ │ └─ footer id:rowGroupFooter_2 x:16 y:3
-                │ └─ footer id:rowGroupFooter_0 x:16 y:1
-                ├─┬ J GROUP id:8 x:20 y:4
-                │ ├── K LEAF id:9 x:20 y:0
-                │ └─ footer id:rowGroupFooter_8 x:20 y:4
-                └─ footer id:rowGroupFooter_ROOT_NODE_ID x:36
+                ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" x:16 y:1
+                │ ├─┬ C GROUP id:2 ag-Grid-AutoColumn:"C" x:16 y:3
+                │ │ ├── F LEAF id:5 ag-Grid-AutoColumn:"F" x:16 y:1
+                │ │ └─ footer id:rowGroupFooter_2 ag-Grid-AutoColumn:"Total C" x:16 y:3
+                │ └─ footer id:rowGroupFooter_0 ag-Grid-AutoColumn:"Total A" x:16 y:1
+                ├─┬ J GROUP id:8 ag-Grid-AutoColumn:"J" x:20 y:4
+                │ ├── K LEAF id:9 ag-Grid-AutoColumn:"K" x:20 y:0
+                │ └─ footer id:rowGroupFooter_8 ag-Grid-AutoColumn:"Total J" x:20 y:4
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " x:36
             `);
         }
     );

@@ -3,7 +3,6 @@ import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid treeDataChildrenField', () => {
     const gridsManager = new TestGridsManager({
@@ -40,9 +39,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {};
-
-        let gridRows = new GridRows(api, 'data', gridRowsOptions);
+        let gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:"a"
@@ -53,7 +50,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         api.setGridOption('treeDataChildrenField', 'children');
 
-        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:"a"
@@ -64,7 +61,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         api.setGridOption('treeDataChildrenField', undefined);
 
-        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:"a"
@@ -122,9 +119,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {};
-
-        let gridRows = new GridRows(api, 'data', gridRowsOptions);
+        let gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:1 x:"a"
@@ -137,7 +132,7 @@ describe('ag-grid treeDataChildrenField', () => {
             treeDataChildrenField: 'children1',
         });
 
-        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:"a"
@@ -151,7 +146,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         api.setGridOption('treeDataChildrenField', 'subObject.children2');
 
-        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:"a"
@@ -165,7 +160,7 @@ describe('ag-grid treeDataChildrenField', () => {
 
         api.setGridOption('treeDataChildrenField', 'xxx');
 
-        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├── 1 LEAF id:1 ag-Grid-AutoColumn:"1" x:"a"

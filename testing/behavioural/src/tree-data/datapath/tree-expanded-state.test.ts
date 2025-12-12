@@ -8,7 +8,6 @@ import {
     asyncSetTimeout,
     setRowDataChecked,
 } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
 
@@ -16,8 +15,6 @@ describe('ag-grid tree expanded state', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, TreeDataModule],
     });
-
-    const gridRowsOptions: GridRowsOptions = {};
 
     beforeEach(() => {
         gridsManager.reset();
@@ -67,7 +64,7 @@ describe('ag-grid tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ "Erica Rogers" GROUP collapsed id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
             · └─┬ "Malcolm Barrett" GROUP collapsed hidden id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
@@ -88,7 +85,7 @@ describe('ag-grid tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ "Erica Rogers" GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
             · ├─┬ "Malcolm Barrett" GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
@@ -111,7 +108,7 @@ describe('ag-grid tree expanded state', () => {
 
         await asyncSetTimeout(1);
 
-        await new GridRows(api, '', gridRowsOptions).check(`
+        await new GridRows(api, '').check(`
             ROOT id:ROOT_NODE_ID
             └─┬ "Erica Rogers" GROUP id:0 ag-Grid-AutoColumn:"Erica Rogers" jobTitle:"CEO" employmentType:"Permanent"
             · ├─┬ "Malcolm Barrett" GROUP id:1 ag-Grid-AutoColumn:"Malcolm Barrett" jobTitle:"Exec. Vice President" employmentType:"Permanent"
@@ -154,7 +151,7 @@ describe('ag-grid tree expanded state', () => {
             getRowId: (params) => params.data.key,
         });
 
-        let gridRows = new GridRows(api, 'initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Desktop filler collapsed id:row-group-0-Desktop ag-Grid-AutoColumn:"Desktop"
@@ -167,7 +164,7 @@ describe('ag-grid tree expanded state', () => {
         api.getRowNode('row-group-0-Desktop')!.setExpanded(true, undefined, true);
         api.getRowNode('row-group-0-Desktop-1-ProjectAlpha')!.setExpanded(true, undefined, true);
 
-        gridRows = new GridRows(api, 'expanded', gridRowsOptions);
+        gridRows = new GridRows(api, 'expanded');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Desktop filler id:row-group-0-Desktop ag-Grid-AutoColumn:"Desktop"
@@ -195,7 +192,7 @@ describe('ag-grid tree expanded state', () => {
 
         update();
 
-        gridRows = new GridRows(api, 'updated', gridRowsOptions);
+        gridRows = new GridRows(api, 'updated');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             └─┬ Desktop filler id:row-group-0-Desktop ag-Grid-AutoColumn:"Desktop"

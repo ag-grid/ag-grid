@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, test } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping edge cases', () => {
@@ -42,17 +41,13 @@ describe('ag-grid grouping edge cases', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['sport'],
-        };
-
-        await new GridRows(api, 'groupHideOpenParents=true', gridRowsOptions).check(`
-            ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 sport:"Sailing"
-            ├── LEAF id:3 sport:"Football"
-            ├── LEAF id:2 sport:"Soccer"
-            ├── LEAF id:4 sport:"Soccer"
-            └── LEAF id:5 sport:"Football"
+        await new GridRows(api, 'groupHideOpenParents=true').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-city:null
+            ├── LEAF id:1 ag-Grid-AutoColumn-country:"Ireland" ag-Grid-AutoColumn-city:"Dublin" country:"Ireland" city:"Dublin" sport:"Sailing"
+            ├── LEAF id:3 country:"Ireland" city:"Dublin" sport:"Football"
+            ├── LEAF id:2 ag-Grid-AutoColumn-city:"Cork" country:"Ireland" city:"Cork" sport:"Soccer"
+            ├── LEAF id:4 ag-Grid-AutoColumn-country:"Italy" ag-Grid-AutoColumn-city:"Rome" country:"Italy" city:"Rome" sport:"Soccer"
+            └── LEAF id:5 ag-Grid-AutoColumn-city:"Milan" country:"Italy" city:"Milan" sport:"Football"
         `);
     });
 
@@ -78,17 +73,13 @@ describe('ag-grid grouping edge cases', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-        };
-
-        await new GridRows(api, 'groupHideParentOfSingleChild=true', gridRowsOptions).check(`
+        await new GridRows(api, 'groupHideParentOfSingleChild=true').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-Engineering
-            │ ├── LEAF id:1 name:"Alice"
-            │ └── LEAF id:2 name:"Bob"
-            ├── LEAF id:3 name:"Charlie"
-            └── LEAF id:4 name:"Diana"
+            ├─┬ filler id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering"
+            │ ├── LEAF id:1 department:"Engineering" team:"Frontend" name:"Alice"
+            │ └── LEAF id:2 department:"Engineering" team:"Backend" name:"Bob"
+            ├── LEAF id:3 department:"Marketing" team:"Digital" name:"Charlie"
+            └── LEAF id:4 department:"Sales" team:"Enterprise" name:"Diana"
         `);
     });
 
@@ -112,16 +103,12 @@ describe('ag-grid grouping edge cases', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-        };
-
-        await new GridRows(api, 'groupHideParentOfSingleChild="leafGroupsOnly"', gridRowsOptions).check(`
+        await new GridRows(api, 'groupHideParentOfSingleChild="leafGroupsOnly"').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-department-Engineering
-            │ └── LEAF id:1 name:"Alice"
-            └─┬ filler id:row-group-department-Marketing
-            · └── LEAF id:2 name:"Charlie"
+            ├─┬ filler id:row-group-department-Engineering ag-Grid-AutoColumn:"Engineering"
+            │ └── LEAF id:1 department:"Engineering" team:"Frontend" name:"Alice"
+            └─┬ filler id:row-group-department-Marketing ag-Grid-AutoColumn:"Marketing"
+            · └── LEAF id:2 department:"Marketing" team:"Digital" name:"Charlie"
         `);
     });
 
@@ -148,21 +135,17 @@ describe('ag-grid grouping edge cases', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-        };
-
-        await new GridRows(api, 'groupAllowUnbalanced with nulls', gridRowsOptions).check(`
+        await new GridRows(api, 'groupAllowUnbalanced with nulls').check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:5 name:"Item 5"
-            ├─┬ filler id:row-group-category-A
-            │ ├── LEAF id:2 name:"Item 2"
-            │ └─┬ LEAF_GROUP id:row-group-category-A-subcategory-A1
-            │ · └── LEAF id:1 name:"Item 1"
-            ├─┬ filler id:row-group-category-B
-            │ └── LEAF id:3 name:"Item 3"
-            └─┬ filler id:row-group-subcategory-C1
-            · └── LEAF id:4 name:"Item 4"
+            ├── LEAF id:5 category:"" subcategory:"" name:"Item 5"
+            ├─┬ filler id:row-group-category-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:2 category:"A" subcategory:null name:"Item 2"
+            │ └─┬ LEAF_GROUP id:row-group-category-A-subcategory-A1 ag-Grid-AutoColumn:"A1"
+            │ · └── LEAF id:1 category:"A" subcategory:"A1" name:"Item 1"
+            ├─┬ filler id:row-group-category-B ag-Grid-AutoColumn:"B"
+            │ └── LEAF id:3 category:"B" name:"Item 3"
+            └─┬ filler id:row-group-subcategory-C1 ag-Grid-AutoColumn:"C1"
+            · └── LEAF id:4 category:null subcategory:"C1" name:"Item 4"
         `);
     });
 
@@ -188,21 +171,17 @@ describe('ag-grid grouping edge cases', () => {
             getRowId: (params) => params.data.id,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['name'],
-        };
-
-        await new GridRows(api, 'groupSuppressBlankHeader=true', gridRowsOptions).check(`
+        await new GridRows(api, 'groupSuppressBlankHeader=true').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ filler id:row-group-category-Valid
-            │ └─┬ LEAF_GROUP id:row-group-category-Valid-subcategory-
-            │ · ├── LEAF id:3 name:"Item 3"
-            │ · └── LEAF id:4 name:"Item 4"
-            └─┬ filler id:row-group-category-
-            · ├─┬ LEAF_GROUP id:row-group-category--subcategory-Sub1
-            · │ └── LEAF id:1 name:"Item 1"
-            · └─┬ LEAF_GROUP id:row-group-category--subcategory-Sub2
-            · · └── LEAF id:2 name:"Item 2"
+            ├─┬ filler id:row-group-category-Valid ag-Grid-AutoColumn:"Valid"
+            │ └─┬ LEAF_GROUP id:row-group-category-Valid-subcategory- ag-Grid-AutoColumn:"(Blanks)"
+            │ · ├── LEAF id:3 category:"Valid" subcategory:"" name:"Item 3"
+            │ · └── LEAF id:4 category:"Valid" subcategory:null name:"Item 4"
+            └─┬ filler id:row-group-category- ag-Grid-AutoColumn:"(Blanks)"
+            · ├─┬ LEAF_GROUP id:row-group-category--subcategory-Sub1 ag-Grid-AutoColumn:"Sub1"
+            · │ └── LEAF id:1 category:"" subcategory:"Sub1" name:"Item 1"
+            · └─┬ LEAF_GROUP id:row-group-category--subcategory-Sub2 ag-Grid-AutoColumn:"Sub2"
+            · · └── LEAF id:2 category:null subcategory:"Sub2" name:"Item 2"
         `);
     });
 });

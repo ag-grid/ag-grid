@@ -3,7 +3,6 @@ import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, TooltipMo
 import { CellSelectionModule, FormulaModule, SetFilterModule } from 'ag-grid-enterprise';
 import type { SetFilter } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, applyTransactionChecked, waitForEvent } from '../test-utils';
 
 describe('ag-grid formulas filtering', () => {
@@ -231,18 +230,14 @@ describe('ag-grid formulas filtering', () => {
             await filterChanged;
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['athlete'],
-        };
-
         await applyMichaelFilter();
 
-        let gridRows = new GridRows(api, 'filter Michael Phelps initial', gridRowsOptions);
+        let gridRows = new GridRows(api, 'filter Michael Phelps initial');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 athlete:"Michael Phelps"
-            ├── LEAF id:2 athlete:"Michael Phelps"
-            └── LEAF id:3 athlete:"Michael Phelps"
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps"
+            ├── LEAF id:2 row-number:"2" athlete:"Michael Phelps"
+            └── LEAF id:3 row-number:"3" athlete:"Michael Phelps"
         `);
 
         await clearFilter();
@@ -253,13 +248,13 @@ describe('ag-grid formulas filtering', () => {
 
         await applyMichaelFilter();
 
-        gridRows = new GridRows(api, 'filter Michael Phelps after row 4 edit', gridRowsOptions);
+        gridRows = new GridRows(api, 'filter Michael Phelps after row 4 edit');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 athlete:"Michael Phelps"
-            ├── LEAF id:2 athlete:"Michael Phelps"
-            ├── LEAF id:3 athlete:"Michael Phelps"
-            └── LEAF id:4 athlete:"Michael Phelps"
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps"
+            ├── LEAF id:2 row-number:"2" athlete:"Michael Phelps"
+            ├── LEAF id:3 row-number:"3" athlete:"Michael Phelps"
+            └── LEAF id:4 row-number:"4" athlete:"Michael Phelps"
         `);
     });
 
@@ -452,22 +447,18 @@ describe('ag-grid formulas filtering', () => {
             await filterChanged;
         };
 
-        const gridRowsOptions: GridRowsOptions = {
-            columns: ['athlete'],
-        };
-
         let cellChanged = waitForEvent('cellValueChanged', api);
         api.getRowNode('2')?.setDataValue('athlete', '=A1');
         await cellChanged;
 
         await toMichaelFilter();
 
-        let gridRows = new GridRows(api, 'filter Michael Phelps after row 2 edit', gridRowsOptions);
+        let gridRows = new GridRows(api, 'filter Michael Phelps after row 2 edit');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 athlete:"Michael Phelps"
-            ├── LEAF id:2 athlete:"Michael Phelps"
-            └── LEAF id:3 athlete:"Michael Phelps"
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            ├── LEAF id:2 row-number:"2" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            └── LEAF id:3 row-number:"3" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
         `);
 
         await clearFilter();
@@ -478,13 +469,13 @@ describe('ag-grid formulas filtering', () => {
 
         await toMichaelFilter();
 
-        gridRows = new GridRows(api, 'filter Michael Phelps after row 4 edit', gridRowsOptions);
+        gridRows = new GridRows(api, 'filter Michael Phelps after row 4 edit');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 athlete:"Michael Phelps"
-            ├── LEAF id:2 athlete:"Michael Phelps"
-            ├── LEAF id:3 athlete:"Michael Phelps"
-            └── LEAF id:4 athlete:"Michael Phelps"
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            ├── LEAF id:2 row-number:"2" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            ├── LEAF id:3 row-number:"3" athlete:"Michael Phelps" country:"United States" sport:"Swimming"
+            └── LEAF id:4 row-number:"4" athlete:"Michael Phelps" country:"South Africa" sport:"Swimming"
         `);
     });
 
@@ -708,19 +699,15 @@ describe('ag-grid formulas filtering', () => {
         };
 
         await applyFilter('Michael');
-        let gridRows = new GridRows(api, 'custom filter', {
-            columns: ['athlete'],
-        });
+        let gridRows = new GridRows(api, 'custom filter');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
-            ├── LEAF id:1 athlete:"Michael Phelps"
-            └── LEAF id:2 athlete:"Michael Phelps"
+            ├── LEAF id:1 row-number:"1" athlete:"Michael Phelps" country:"United States" sport:"Swimming" year:2008 gold:8 silver:0 bronze:0 total:8
+            └── LEAF id:2 row-number:"2" athlete:"Michael Phelps" country:"United States" sport:"Swimming" year:2008 gold:0 silver:1 bronze:0 total:1
         `);
 
         await applyFilter('REF');
-        gridRows = new GridRows(api, 'custom filter', {
-            columns: ['athlete'],
-        });
+        gridRows = new GridRows(api, 'custom filter');
         await gridRows.check('empty');
     });
 });

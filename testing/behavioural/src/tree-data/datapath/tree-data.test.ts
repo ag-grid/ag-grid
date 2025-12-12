@@ -12,7 +12,7 @@ import {
     getRowsSnapshot,
     setRowDataChecked,
 } from '../../test-utils';
-import type { GridRowsOptions, RowSnapshot } from '../../test-utils';
+import type { RowSnapshot } from '../../test-utils';
 import { simpleHierarchyRowsSnapshot } from './simpleHierarchyRowsSnapshot';
 
 const getDataPath = (data: any) => data.orgHierarchy;
@@ -117,9 +117,7 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {};
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID groupType:"Filler"
             ├─┬ A GROUP id:0 ag-Grid-AutoColumn:"A" groupType:"Provided"
@@ -174,9 +172,7 @@ describe('ag-grid tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {};
-
-        const gridRows = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows = new GridRows(api, 'data');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID groupType:"Filler"
             ├─┬ A GROUP id:2 ag-Grid-AutoColumn:"A" groupType:"Provided"

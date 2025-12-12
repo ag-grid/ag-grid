@@ -3,7 +3,6 @@ import type { MockInstance } from 'vitest';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
-import type { GridRowsOptions } from '../test-utils';
 import {
     GridRows,
     TestGridsManager,
@@ -745,10 +744,6 @@ describe('ag-grid rows-ordering', () => {
                 { id: '3', x: 6 },
             ];
 
-            const gridRowsOptions: GridRowsOptions = {
-                checkDom: false,
-            };
-
             consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridsManager.createGrid('myGrid', {
@@ -761,7 +756,7 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleWarnSpy).toHaveBeenCalled();
             consoleWarnSpy.mockReset();
 
-            await new GridRows(api, 'data', gridRowsOptions).check(`
+            await new GridRows(api, 'data', { checkDom: false }).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 x:1
                 ├── LEAF id:2 x:2
@@ -790,7 +785,7 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleWarnSpy).toHaveBeenCalled();
             consoleWarnSpy.mockReset();
 
-            await new GridRows(api, 'data', gridRowsOptions).check(`
+            await new GridRows(api, 'data', { checkDom: false }).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:1 x:1
                 ├── LEAF id:13 x:131

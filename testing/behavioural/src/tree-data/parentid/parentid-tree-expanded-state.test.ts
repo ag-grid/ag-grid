@@ -2,7 +2,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout, setRowDataChecked } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid parentId tree expanded state', () => {
     const gridsManager = new TestGridsManager({
@@ -141,9 +140,7 @@ describe('ag-grid parentId tree expanded state', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {};
-
-        const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
+        const gridRows = new GridRows(api, 'default expanded 1');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -186,9 +183,7 @@ describe('ag-grid parentId tree expanded state', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {};
-
-        const gridRows = new GridRows(api, 'default expanded 1', gridRowsOptions);
+        const gridRows = new GridRows(api, 'default expanded 1');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID

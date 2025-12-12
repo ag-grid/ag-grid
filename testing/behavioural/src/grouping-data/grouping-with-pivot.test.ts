@@ -44,7 +44,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'ag-Grid-AutoColumn',
                 'pivot_year_2020_sales',
                 'pivot_year_2020_profit',
@@ -91,7 +91,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['ag-Grid-AutoColumn', 'pivot_year_2020_sales', 'pivot_year_2021_sales'],
+            forcedColumns: ['ag-Grid-AutoColumn', 'pivot_year_2020_sales', 'pivot_year_2021_sales'],
             printHiddenRows: false,
         };
 
@@ -134,7 +134,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'ag-Grid-AutoColumn',
                 'pivot_year-quarter_2020-Q1_sales',
                 'pivot_year-quarter_2020-Q2_sales',
@@ -188,7 +188,7 @@ describe('ag-grid grouping with pivot', () => {
 
         // Test with pivotComparator: columns should be ordered South, North, East (reverse alphabetical)
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['ag-Grid-AutoColumn', 'South_sales', 'North_sales', 'East_sales'],
+            forcedColumns: ['ag-Grid-AutoColumn', 'South_sales', 'North_sales', 'East_sales'],
         };
 
         let gridRows = new GridRows(api, 'pivot with custom column ordering', gridRowsOptions);
@@ -258,7 +258,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['salesperson', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
+            forcedColumns: ['salesperson', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
         };
 
         let gridRows = new GridRows(api, 'initial pivot data', gridRowsOptions);
@@ -333,7 +333,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'department',
                 '2020_budget',
                 '2020_expenses',
@@ -383,7 +383,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['category', 'North_revenue', 'South_revenue', 'East_revenue', 'West_revenue'],
+            forcedColumns: ['category', 'North_revenue', 'South_revenue', 'East_revenue', 'West_revenue'],
         };
 
         let gridRows = new GridRows(api, 'initial pivot columns', gridRowsOptions);
@@ -451,7 +451,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['store', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
+            forcedColumns: ['store', 'Jan_sales', 'Feb_sales', 'Mar_sales'],
         };
 
         let gridRows = new GridRows(api, 'initial pivot data', gridRowsOptions);
@@ -558,7 +558,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['team', 'Q1_score', 'Q1_attempts', 'Q1_average', 'Q2_score', 'Q2_attempts', 'Q2_average'],
+            forcedColumns: ['team', 'Q1_score', 'Q1_attempts', 'Q1_average', 'Q2_score', 'Q2_attempts', 'Q2_average'],
         };
 
         const gridRows = new GridRows(api, 'custom aggregations in pivot', gridRowsOptions);
@@ -612,7 +612,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'Jan_revenue',
                 'Jan_costs',
                 'Jan_profit',
@@ -659,7 +659,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'category',
                 'North_sales',
                 'North_units',
@@ -757,7 +757,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'ag-Grid-AutoColumn',
                 'pivot_quarter_Q1_budget',
                 'pivot_quarter_Q1_expenses',
@@ -810,7 +810,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['ag-Grid-AutoColumn'], // Just check group structure, not pivot values
+            forcedColumns: ['ag-Grid-AutoColumn'], // Just check group structure, not pivot values
             printHiddenRows: false,
         };
 
@@ -854,7 +854,7 @@ describe('ag-grid grouping with pivot', () => {
         });
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: ['ag-Grid-AutoColumn'], // Just test filtering behavior, not specific values
+            forcedColumns: ['ag-Grid-AutoColumn'], // Just test filtering behavior, not specific values
             printHiddenRows: false,
         };
 
@@ -1037,7 +1037,7 @@ describe('ag-grid grouping with pivot', () => {
         const pivotResultColumns = api.getPivotResultColumns();
 
         const gridRowsOptions: GridRowsOptions = {
-            columns: [
+            forcedColumns: [
                 'ag-Grid-AutoColumn',
                 // Use actual column names from the pivot result
                 ...(pivotResultColumns?.map((col) => col.getColId()) || []),

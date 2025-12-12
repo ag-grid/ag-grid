@@ -60,9 +60,7 @@ describe('ag-grid tree data without tree module', () => {
 
         consoleErrorSpy.mockRestore();
 
-        const gridRows = new GridRows(api, 'data', {
-            treeData: false,
-        });
+        const gridRows = new GridRows(api, 'data', { forcedTreeData: false });
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID groupType:"Filler"
             ├── LEAF id:0 groupType:"Provided" x:1
