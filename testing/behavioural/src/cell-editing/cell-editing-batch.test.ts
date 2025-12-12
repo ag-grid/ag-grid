@@ -219,15 +219,35 @@ describe('Cell Editing Batch', () => {
         await userEvent.dblClick(cellA);
         const editor = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(editor);
-        await userEvent.type(editor, 'pending{Enter}');
+        await userEvent.type(editor, 'xx{Enter}');
         await asyncSetTimeout(1);
 
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
 
-        expect(cellB).toHaveTextContent('pending');
+        expect(cellB).toHaveTextContent('xx');
 
         api.commitBatchEdit();
         await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('xx');
+
+        api.startBatchEdit();
+
+        await userEvent.dblClick(cellA);
+        const editor2 = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(editor2);
+        await userEvent.type(editor2, 'yy{Enter}');
+        await asyncSetTimeout(1);
+
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('yy');
+
+        api.cancelBatchEdit();
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('xx');
     });
 });

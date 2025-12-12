@@ -333,12 +333,34 @@ describe('Cell Editing Start', () => {
 
         const input = await waitForInput(gridDiv, cellA, { popup: false });
         await userEvent.clear(input);
-        await userEvent.type(input, 'pending');
+        await userEvent.type(input, 'xx');
         await asyncSetTimeout(1);
 
         api.refreshCells({ columns: ['b'], force: true });
         await asyncSetTimeout(1);
 
-        expect(cellB).toHaveTextContent('pending');
+        expect(cellB).toHaveTextContent('xx');
+
+        // Commit first edit and start a new edit session to test cancel
+        await userEvent.keyboard('{Enter}');
+        await asyncSetTimeout(1);
+
+        await userEvent.dblClick(cellA);
+        await asyncSetTimeout(1);
+        const input2 = await waitForInput(gridDiv, cellA, { popup: false });
+        await userEvent.clear(input2);
+        await userEvent.type(input2, 'yy');
+        await asyncSetTimeout(1);
+
+        api.refreshCells({ columns: ['b'], force: true });
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('yy');
+
+        // Cancel edit by pressing ESC, should revert to last committed value
+        await userEvent.keyboard('{Escape}');
+        await asyncSetTimeout(1);
+
+        expect(cellB).toHaveTextContent('xx');
     });
 });
