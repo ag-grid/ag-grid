@@ -6,7 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import { agTestIdFor } from './testIdUtils';
-import type { FilterSpec } from './testIdUtils';
+import type { ColumnFilterSpec, FilterSpec } from './testIdUtils';
 
 let TEST_ID_ATTR = 'data-testid';
 
@@ -409,14 +409,17 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         const filterClass = spec.source === 'floating-filter' ? '.ag-floating-filter-body' : '.ag-filter-body';
 
-        const numberInput = filterRoot.querySelector(`${filterClass} input[type="number"]`);
-        setTestId(numberInput, agTestIdFor.numberFilterInstanceInput(spec));
+        filterRoot.querySelectorAll(`${filterClass} input[type="number"]`).forEach((numberInput, i) => {
+            setTestId(numberInput, agTestIdFor.numberFilterInstanceInput({ ...(spec as ColumnFilterSpec), index: i }));
+        });
 
-        const textInput = filterRoot.querySelector(`${filterClass} input[type="text"]`);
-        setTestId(textInput, agTestIdFor.textFilterInstanceInput(spec));
+        filterRoot.querySelectorAll(`${filterClass} input[type="text"]`).forEach((textInput, i) => {
+            setTestId(textInput, agTestIdFor.textFilterInstanceInput({ ...(spec as ColumnFilterSpec), index: i }));
+        });
 
-        const dateInput = filterRoot.querySelector(`${filterClass} input[type="date"]`);
-        setTestId(dateInput, agTestIdFor.dateFilterInstanceInput(spec));
+        filterRoot.querySelectorAll(`${filterClass} input[type="date"]`).forEach((dateInput, i) => {
+            setTestId(dateInput, agTestIdFor.dateFilterInstanceInput({ ...(spec as ColumnFilterSpec), index: i }));
+        });
 
         const setMiniFilterInput = filterRoot.querySelector('.ag-mini-filter input[type="text"]');
         setTestId(setMiniFilterInput, agTestIdFor.setFilterInstanceMiniFilterInput(spec));

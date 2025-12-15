@@ -125,5 +125,6 @@ describe('Manual pinned rows', () => {
         await asyncSetTimeout(10);
 
         assertPinnedRows(api, 'top', ['t-top-rowGroupFooter_ROOT_NODE_ID', 't-top-0-rugby']);
+        assertPinnedRows(api, 'bottom', []);
     });
 });
