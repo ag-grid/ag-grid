@@ -1,8 +1,5 @@
-import { findByText, fireEvent } from '@testing-library/dom';
-import { userEvent } from '@testing-library/user-event';
-
-import type { BeanCollection, ColDef, GridApi } from 'ag-grid-community';
-import { agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { ToolPanelContextMenu } from '../../../../packages/ag-grid-enterprise/src/columnToolPanel/toolPanelContextMenu';
@@ -26,8 +23,6 @@ describe('Cell Editing Start', async () => {
         { field: 'year' },
     ];
     let rowData: any[];
-
-    beforeAll(() => setupAgTestIds());
 
     beforeEach(() => {
         rowData = rowDataFactory();
