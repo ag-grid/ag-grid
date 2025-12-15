@@ -59,6 +59,44 @@ describe('Cell Editing Start', async () => {
 
         const getGroupedRowIds = () => gridApi.getRowGroupColumns().map((col) => col.getId());
 
+        /**
+         * TODO: these tests use private apis like createBean and 'menuItemMap'
+         * reason we do it this way is because virtualized list is not rendered in jsdom
+         * so we cannot simulate user interaction that way.
+         *
+         * once that is added to mockGridLayout, use the tests below instead:
+         *
+         *
+         *
+         *         test('addColumnsToList adds columns that meet predicate and are not already in list', async () => {
+         *             expect(gridApi.getRowGroupColumns()).toStrictEqual([]);
+         *             const panelColId = agTestIdFor.columnSelectListItemDragHandle(`${firstTwoColumns[0].headerName} Column`);
+         *             await asyncSetTimeout(1000);
+         *             const menu = gridDiv.querySelector(`[data-testid="${panelColId}"]`)!;
+         *             expect(menu).not.toBeNull();
+         *             fireEvent.contextMenu(menu);
+         *             await asyncSetTimeout(1);
+         *             const menuItem = await findByText(gridDiv, 'Group by ' + firstTwoColumns[0].headerName);
+         *             await userEvent.click(menuItem);
+         *             expect(gridApi.getRowGroupColumns()).toBe([]);
+         *         });
+         *
+         *         test('removeColumnsFromList removes columns that meet predicate and are in list', async () => {
+         *             gridApi.addRowGroupColumns(firstTwoColumns.map((col) => col.field!));
+         *             expect(gridApi.getRowGroupColumns().length).toBe(2);
+         *             const panelColId = agTestIdFor.columnSelectListItemDragHandle(`${firstTwoColumns[0].headerName} Column`);
+         *             await asyncSetTimeout(1000);
+         *             const menu = gridDiv.querySelector(`[data-testid="${panelColId}"]`)!;
+         *             expect(menu).not.toBeNull();
+         *             fireEvent.contextMenu(menu);
+         *             await asyncSetTimeout(1);
+         *             const menuItem = await findByText(gridDiv, 'Un-Group by ' + firstTwoColumns[0].headerName);
+         *             await userEvent.click(menuItem);
+         *             expect(gridApi.getRowGroupColumns()).toBe([]);
+         *         });
+         *
+         */
+
         test('addColumnsToList adds columns that meet predicate and are not already in list', async () => {
             expect(getGroupedRowIds()).toStrictEqual([]);
             const col = gridApi.getColumns()![0] as any;
