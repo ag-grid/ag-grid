@@ -420,20 +420,26 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
         // the columns to start shrinking / growing over time.
         //
-        // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
-        // for this reason we need to manually dispatch resize events after the resize has been done for each column.
+        // We skip this reset when `onlyScaleUp` is true (i.e. when scaling up auto-sized columns), because
+        // we could otherwise end up in a position where those columns could shrink again.
+        const currentWidths: Partial<Record<string, number>> = {};
         for (const column of colsToSpread) {
+            if (params?.onlyScaleUp) {
+                currentWidths[column.getColId()] = column.getActualWidth();
+            }
             column.resetActualWidth(source);
 
             const widthOverride = limitsMap?.[column.getId()];
-            const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth;
-            const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
+            const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
+            const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
 
             const colWidth = column.getActualWidth();
-            if (typeof minOverride === 'number' && colWidth < minOverride) {
-                column.setActualWidth(minOverride, source, true);
-            } else if (typeof maxOverride === 'number' && colWidth > maxOverride) {
-                column.setActualWidth(maxOverride, source, true);
+            const targetWidth = Math.max(Math.min(colWidth, maxOverride), minOverride);
+
+            // NOTE: we assign values to `this.actualWidth` of each column without firing events
+            // for this reason we need to manually dispatch resize events after the resize has been done for each column.
+            if (targetWidth != colWidth) {
+                column.setActualWidth(targetWidth, source, true);
             }
         }
 
@@ -456,8 +462,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 for (let i = colsToSpread.length - 1; i >= 0; i--) {
                     const column = colsToSpread[i];
 
-                    const widthOverride = limitsMap?.[column.getId()];
-                    const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth;
+                    const id = column.getColId();
+                    const prevWidth = currentWidths[id];
+                    const widthOverride = limitsMap?.[id];
+                    const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;
                     const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
                     const colMinWidth = column.getMinWidth();
                     const colMaxWidth = column.getMaxWidth();
@@ -486,7 +494,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
         }
 
-        // see notes above
+        // see NOTE above
         for (const col of colsToDispatchEventFor) {
             col.fireColumnWidthChangedEvent(source);
         }
