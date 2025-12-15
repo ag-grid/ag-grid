@@ -43,6 +43,7 @@ import type {
     GetCellEditorInstancesParams,
     ICellEditor,
     ICellEditorValidationError,
+    StartEditingCellParams,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -63,41 +64,13 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
+import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { StructuredSchemaParams } from '../interfaces/structuredSchemaParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
-
-export interface DetailGridInfo {
-    /**
-     * Id of the detail grid, the format is `detail_{ROW-ID}`,
-     * where `ROW-ID` is the `id` of the parent row.
-     */
-    id: string;
-    /** Grid api of the detail grid. */
-    api?: GridApi;
-}
-
-export interface StartEditingCellParams {
-    /** The row index of the row to start editing */
-    rowIndex: number;
-    /** The column key of the row to start editing */
-    colKey: string | Column;
-    /** Set to `'top'` or `'bottom'` to start editing a pinned row */
-    rowPinned?: RowPinnedType;
-    /** The key to pass to the cell editor */
-    key?: string;
-}
-
-export interface GetCellValueParams<TValue = any> {
-    /** The row node to get the value from */
-    rowNode: IRowNode;
-    /** The column to get the value from */
-    colKey: string | Column<TValue>;
-    /** If `true` formatted value will be returned. */
-    useFormatter?: boolean;
-}
+import type { GetCellValueParams } from '../valueService/cellApi';
 
 export interface _CoreGridApi<TData = any> {
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */

@@ -1,3 +1,4 @@
+/** Column Value Object */
 export interface ColumnVO {
     id: string;
     displayName: string;

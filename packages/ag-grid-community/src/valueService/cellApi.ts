@@ -1,7 +1,17 @@
 import { _missing } from '../agStack/utils/generic';
 import { _toString } from '../agStack/utils/string';
-import type { GetCellValueParams } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
+import type { Column } from '../interfaces/iColumn';
+import type { IRowNode } from '../interfaces/iRowNode';
+
+export interface GetCellValueParams<TValue = any> {
+    /** The row node to get the value from */
+    rowNode: IRowNode;
+    /** The column to get the value from */
+    colKey: string | Column<TValue>;
+    /** If `true` formatted value will be returned. */
+    useFormatter?: boolean;
+}
 
 export function expireValueCache(beans: BeanCollection): void {
     beans.valueCache?.expire();

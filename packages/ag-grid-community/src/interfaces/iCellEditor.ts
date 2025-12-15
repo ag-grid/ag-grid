@@ -4,7 +4,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
 import type { EditState } from './iEditModelService';
-import type { IRowNode } from './iRowNode';
+import type { IRowNode, RowPinnedType } from './iRowNode';
 import type { RowPosition } from './iRowPosition';
 
 export interface BaseCellEditor {
@@ -178,4 +178,15 @@ export interface EditingCellPosition extends RowPosition {
 export interface ICellEditorValidationError extends RowPosition {
     column: Column;
     messages: string[] | null;
+}
+
+export interface StartEditingCellParams {
+    /** The row index of the row to start editing */
+    rowIndex: number;
+    /** The column key of the row to start editing */
+    colKey: string | Column;
+    /** Set to `'top'` or `'bottom'` to start editing a pinned row */
+    rowPinned?: RowPinnedType;
+    /** The key to pass to the cell editor */
+    key?: string;
 }

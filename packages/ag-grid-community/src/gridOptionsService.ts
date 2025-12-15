@@ -15,7 +15,7 @@ import type { BeanCollection } from './context/context';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
-import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from './eventTypes';
 import { GlobalGridOptions } from './globalGridOptions';
 import type { GridOptionOrDefault, GridOptionsWithDefaults } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';

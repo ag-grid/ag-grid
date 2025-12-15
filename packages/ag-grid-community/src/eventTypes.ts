@@ -1,4 +1,6 @@
 // events that are available for use by users of AG Grid and so should be documented
+import type { AgEvent } from './agStack/interfaces/agEvent';
+
 /** EVENTS that should be exposed via code generation for the framework components.  */
 export const _PUBLIC_EVENTS = [
     'columnEverythingChanged',
@@ -177,3 +179,7 @@ export const _GET_ALL_EVENTS = () => [..._PUBLIC_EVENTS, ..._INTERNAL_EVENTS] as
 export type AgPublicEventType = (typeof _PUBLIC_EVENTS)[number];
 export type AgInternalEventType = (typeof _INTERNAL_EVENTS)[number];
 export type AgEventType = AgPublicEventType | AgInternalEventType;
+
+export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
+
+export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;
