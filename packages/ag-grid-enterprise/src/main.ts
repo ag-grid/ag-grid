@@ -7,55 +7,52 @@ export type { MultiFilter } from './multiFilter/multiFilter';
 export type { SetFilter } from './setFilter/setFilter';
 
 // AG Stack
-export { AgVirtualList as _AgVirtualList, VirtualListParams as _VirtualListParams } from './agStack/agVirtualList';
+export type { VirtualListParams as _VirtualListParams } from './agStack/agVirtualList';
+export { AgVirtualList as _AgVirtualList } from './agStack/agVirtualList';
 export { AgVirtualListDragFeature as _AgVirtualListDragFeature } from './agStack/agVirtualListDragFeature';
-export { VirtualListModel as _VirtualListModel } from './agStack/iVirtualList';
-export {
+export type { VirtualListModel as _VirtualListModel } from './agStack/iVirtualList';
+export type {
     VirtualListDragItem as _VirtualListDragItem,
     AgVirtualListDragParams as _AgVirtualListDragParams,
 } from './agStack/iVirtualListDragFeature';
-export {
-    AgSlider as _AgSlider,
-    AgSliderParams as _AgSliderParams,
-    AgSliderSelector as _AgSliderSelector,
-} from './agStack/agSlider';
-export {
-    AgInputRange as _AgInputRange,
-    AgInputRangeSelector as _AgInputRangeSelector,
-    AgInputRangeParams as _AgInputRangeParams,
-} from './agStack/agInputRange';
+export type { AgSliderParams as _AgSliderParams } from './agStack/agSlider';
+export { AgSlider as _AgSlider, AgSliderSelector as _AgSliderSelector } from './agStack/agSlider';
+export type { AgInputRangeParams as _AgInputRangeParams } from './agStack/agInputRange';
+export { AgInputRange as _AgInputRange, AgInputRangeSelector as _AgInputRangeSelector } from './agStack/agInputRange';
+export type { AgColorPickerParams as _AgColorPickerParams } from './agStack/agColorPicker';
 export {
     AgColorPicker as _AgColorPicker,
-    AgColorPickerParams as _AgColorPickerParams,
     AgColorPickerSelector as _AgColorPickerSelector,
 } from './agStack/agColorPicker';
-export { AgDialog as _AgDialog, AgDialogOptions as _AgDialogOptions } from './agStack/agDialog';
-export {
-    AgPanel as _AgPanel,
+export type { AgDialogOptions as _AgDialogOptions } from './agStack/agDialog';
+export { AgDialog as _AgDialog } from './agStack/agDialog';
+export type {
     AgPanelOptions as _AgPanelOptions,
     AgPanelPostProcessPopupParams as _AgPanelPostProcessPopupParams,
 } from './agStack/agPanel';
-export { IAgChartsExports as _IAgChartsExports } from './agStack/iAgChartsExports';
+export { AgPanel as _AgPanel } from './agStack/agPanel';
+export type { IAgChartsExports as _IAgChartsExports } from './agStack/iAgChartsExports';
 export { AgMenuList as _AgMenuList } from './agStack/agMenuList';
-export {
+export type {
     AgMenuItemCallbacks as _AgMenuItemCallbacks,
     AgCloseMenuEvent as _AgCloseMenuEvent,
     AgMenuItemActivatedEvent as _AgMenuItemActivatedEvent,
-    AgMenuItemComponent as _AgMenuItemComponent,
     AgMenuItemLeafDef as _AgMenuItemLeafDef,
     AgMenuItemDef as _AgMenuItemDef,
 } from './agStack/agMenuItemComponent';
-export {
-    AgContextMenuService as _AgContextMenuService,
-    AgContextMenuServiceParams as _AgContextMenuServiceParams,
-} from './agStack/agContextMenuService';
+export { AgMenuItemComponent as _AgMenuItemComponent } from './agStack/agMenuItemComponent';
+export type { AgContextMenuServiceParams as _AgContextMenuServiceParams } from './agStack/agContextMenuService';
+export { AgContextMenuService as _AgContextMenuService } from './agStack/agContextMenuService';
 export { AgMenuItemRenderer as _AgMenuItemRenderer } from './agStack/agMenuItemRenderer';
 export { AgTabbedLayout as _AgTabbedLayout } from './agStack/agTabbedLayout';
-export { AgTabbedItem as _AgTabbedItem, AgTabbedLayoutParams as _AgTabbedLayoutParams } from './agStack/iTabbedLayout';
+export type {
+    AgTabbedItem as _AgTabbedItem,
+    AgTabbedLayoutParams as _AgTabbedLayoutParams,
+} from './agStack/iTabbedLayout';
+export type { AgGroupComponentParams as _AgGroupComponentParams } from './agStack/agGroupComponent';
 export {
     AgGroupComponent as _AgGroupComponent,
     AgGroupComponentSelector as _AgGroupComponentSelector,
-    AgGroupComponentParams as _AgGroupComponentParams,
 } from './agStack/agGroupComponent';
 
 export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
