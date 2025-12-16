@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
 import type { ZipFile } from './zipContainer';
-import { getDeflatedHeaderAndContent } from './zipContainerHelper';
+import { getHeaders, preprocessFileForZip } from './zipContainerHelper';
 
-describe('getDeflatedHeaderAndContent', () => {
+describe('deflated headers', () => {
     const testPath: string = 'test-path/file-name.csv';
     let currentFile: ZipFile | undefined = undefined;
 
@@ -18,7 +18,8 @@ describe('getDeflatedHeaderAndContent', () => {
     });
 
     it('should append the right local file header', async () => {
-        const result = await getDeflatedHeaderAndContent(currentFile as ZipFile, 0);
+        const { rawContent, rawSize, deflatedSize, isCompressed } = await preprocessFileForZip(currentFile as ZipFile);
+        const result = getHeaders(currentFile as ZipFile, isCompressed, 0, rawSize, rawContent, deflatedSize);
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader =

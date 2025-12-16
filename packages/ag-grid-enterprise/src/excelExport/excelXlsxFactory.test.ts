@@ -294,6 +294,7 @@ describe('excel styles', () => {
 
     it('skips Excel table when exportAsExcelTable is true but pivot mode is active', () => {
         const workbook = new Workbook();
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
         const worksheetXml = workbook.addWorksheet(
             [],
             basicWorksheet('TableSkip'),
@@ -302,5 +303,7 @@ describe('excel styles', () => {
 
         // When table is skipped, there should be no tableParts rel
         expect(worksheetXml).not.toContain('tableParts');
+        expect(warnSpy).toHaveBeenCalled();
+        warnSpy.mockRestore();
     });
 });
