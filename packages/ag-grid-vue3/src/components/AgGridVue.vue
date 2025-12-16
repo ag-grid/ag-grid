@@ -121,7 +121,7 @@ const globalEventListenerFactory = (restrictToSyncOnly?: boolean) => {
         }
 
         if (ROW_DATA_EVENTS.has(eventType)) {
-            if (!rowDataUpdating.value) {
+            if (!rowDataUpdating.value && gridCreated.value) {
                 updateModelIfUsed(eventType);
             }
             rowDataUpdating.value = false;
@@ -179,6 +179,7 @@ onMounted(() => {
 
     const rowData = getRowDataBasedOnBindings();
     if (rowData !== undefined) {
+        rowDataUpdating.value = true;
         gridOptions.rowData = deepToRaw(rowData as TData[]);
     }
 
