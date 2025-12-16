@@ -5,7 +5,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 export interface RowGroupExpansionState {
     /**
      * By default, all group nodes in a grid are collapsed.
-     * This array would contain row IDs that were explicitly explanded.
+     * This array would contain row IDs that were explicitly expanded.
      */
     expandedRowGroupIds: string[];
     /**
