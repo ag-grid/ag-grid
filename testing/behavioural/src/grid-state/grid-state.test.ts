@@ -270,26 +270,14 @@ describe('StateService - Grid State Management', () => {
             });
 
             expect(api.getState().rowGroupExpansion).toEqual({
-                collapsedRowGroupIds: [
-                    // TODO: FIX as part of https://ag-grid.zendesk.com/agent/tickets/40345
-                    'row-group-sport-Football',
-                    '0',
-                    'row-group-sport-Tennis',
-                    '1',
-                    'row-group-sport-Golf',
-                    '2',
-                    'row-group-sport-Basketball',
-                    '3',
-                    'row-group-sport-Swimming',
-                    '4',
-                ],
+                collapsedRowGroupIds: [],
                 expandedRowGroupIds: [],
             });
 
             api.expandAll();
 
             expect(api.getState().rowGroupExpansion).toEqual({
-                collapsedRowGroupIds: ['0', '1', '2', '3', '4'], // TODO: FIX as part of https://ag-grid.zendesk.com/agent/tickets/40345
+                collapsedRowGroupIds: [],
                 expandedRowGroupIds: [
                     'row-group-sport-Football',
                     'row-group-sport-Tennis',
