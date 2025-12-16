@@ -1,11 +1,11 @@
 import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
+import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
 import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
 import { Grid } from '@ag-website-shared/components/grid/Grid';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { IssueColDef, IssueTypeColDef } from '@ag-website-shared/utils/issueColDefs';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
-import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';

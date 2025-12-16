@@ -3,7 +3,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { getDocsPages } from '../components/docs/utils/pageData';
 import { Changelog } from '@ag-website-shared/components/changelog/Changelog';
-import styles from '@pages-styles/pipelineChangelog.module.scss';
+import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 
 export async function getStaticPaths() {
