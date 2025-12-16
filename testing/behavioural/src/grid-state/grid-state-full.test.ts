@@ -81,7 +81,7 @@ describe('Grid State Full Snapshot', () => {
             rangeSelection: undefined,
             rowGroup: undefined,
             rowGroupExpansion: {
-                collapsedRowGroupIds: ['0', '1', '2', '3', '4'], // TODO: FIX as part of https://ag-grid.zendesk.com/agent/tickets/40345
+                collapsedRowGroupIds: [],
                 expandedRowGroupIds: [],
             },
             rowSelection: undefined,
@@ -178,19 +178,7 @@ describe('Grid State Full Snapshot', () => {
                 groupColIds: ['sport'],
             },
             rowGroupExpansion: {
-                collapsedRowGroupIds: [
-                    //TODO FIX
-                    'row-group-sport-Football',
-                    '0',
-                    'row-group-sport-Tennis',
-                    '1',
-                    'row-group-sport-Golf',
-                    '2',
-                    'row-group-sport-Basketball',
-                    '3',
-                    'row-group-sport-Swimming',
-                    '4',
-                ],
+                collapsedRowGroupIds: [],
                 expandedRowGroupIds: [],
             },
             rowSelection: [
