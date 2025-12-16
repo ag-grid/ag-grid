@@ -51,7 +51,7 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
-            } else if (node.isExpandable() && allowCollapsed) {
+            } else if (allowCollapsed && node.isExpandable()) {
                 collapsedRowGroupIds.push(id);
             }
         });
