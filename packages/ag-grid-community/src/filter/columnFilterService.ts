@@ -163,6 +163,22 @@ export class ColumnFilterService
             dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
+        // When filters are applied in pivotMode, they are stored in `activeAggregateFilters`.
+        // When users disable pivotMode (e.g. via sidebar), they expect any applied filters to
+        // still be active but just re-applied to the non-pivoted data.
+        // This should also apply vice-versa (i.e. applying a filter and then pivoting)
+        this.addManagedPropertyListener('pivotMode', (event) => {
+            if (event.currentValue) {
+                // move all column filters to agg filters
+                this.activeAggregateFilters.push(...this.activeColumnFilters);
+                this.activeColumnFilters.length = 0;
+            } else {
+                // move all agg filters to column filters
+                this.activeColumnFilters.push(...this.activeAggregateFilters);
+                this.activeAggregateFilters.length = 0;
+            }
+        });
+
         const gos = this.gos;
         const initialFilterModel = {
             ...(gos.get('initialState')?.filter?.filterModel ?? {}),
