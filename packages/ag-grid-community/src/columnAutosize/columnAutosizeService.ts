@@ -414,17 +414,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             colsToNotSpread.push(column);
         };
 
+        const currentWidths: Partial<Record<string, number>> = {};
+
         // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
         // rather than depending on the current size of the columns. most users call sizeColumnsToFit
         // immediately after grid is created, so will make no difference. however if application is calling
         // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
         // the columns to start shrinking / growing over time.
-        //
-        // We skip this reset when `onlyScaleUp` is true (i.e. when scaling up auto-sized columns), because
-        // we could otherwise end up in a position where those columns could shrink again.
-        const currentWidths: Partial<Record<string, number>> = {};
         for (const column of colsToSpread) {
             if (params?.onlyScaleUp) {
+                // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
+                // want any columns to get smaller
                 currentWidths[column.getColId()] = column.getActualWidth();
             }
             column.resetActualWidth(source);
