@@ -127,7 +127,7 @@
     margin: 2px;
     padding: 0px $spacing-size-2;
     font-size: var(--text-fs-sm);
-    font-weight: var(--text-base);
+    font-weight: var(--text-bold);
     color: var(--color-brand-500);
 
     #{$selector-darkmode} & {
@@ -187,13 +187,17 @@
 }
 
 .heroSectionTag {
-    color: var(--color-brand-400);
-    font-size: 24px;
+    color: var(--color-util-brand-500);
+    font-size: 20px;
     text-align: center;
     line-height: 24px;
     font-weight: var(--text-bold);
     margin-top: $spacing-size-8;
     margin-bottom: 0;
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-100);
+    }
 }
 
 .heroSectionHeading {
@@ -259,13 +263,17 @@
     gap: $spacing-size-2;
     padding: $spacing-size-2;
     border-radius: var(--radius-md);
-    background-color: var(--color-brand-200);
+    background-color: color-mix(in srgb, var(--color-brand-200) 50%, transparent);
     color: var(--color-gray-900);
     font-family: var(--text-monospace-font-family);
     justify-content: center;
 
     #{$selector-darkmode} & {
         background-color: var(--color-button-tertiary-bg-hover);
+
+        svg:hover {
+            fill: var(--color-brand-100) !important;
+        }
     }
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
