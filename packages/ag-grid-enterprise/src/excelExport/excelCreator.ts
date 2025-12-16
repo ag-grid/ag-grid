@@ -68,7 +68,7 @@ const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): v
     let headerFooterImageCounter = 0;
 
     for (let i = 0; i < data.length; i++) {
-        const value = String(data[i]);
+        const value = data[i];
         zipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
 
         const hasImages = XLSX_IMAGES.size > 0 && XLSX_WORKSHEET_IMAGES.has(i);

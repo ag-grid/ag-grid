@@ -40,11 +40,10 @@ import worksheetFactory from './files/ooxml/worksheet';
  */
 
 const XLSX_SHARED_STRINGS: Map<string, number> = new Map();
+// Registry that keeps sheet names, XML, and content-to-index mapping in sync.
 let XLSX_SHEET_NAMES: string[] = [];
-// Preserve the serialized worksheets in creation order so we can realign state if callers reorder sheets.
 let XLSX_SHEET_DATA: string[] = [];
-// Tracks creation indices per worksheet XML content (content can repeat, so store all indices).
-let XLSX_SHEET_REF_IDS: Map<string, number[]> = new Map();
+let XLSX_SHEET_CONTENT_INDICES: Map<string, number[]> = new Map();
 
 /** Maps images to sheet */
 export const XLSX_IMAGES: Map<
@@ -93,12 +92,7 @@ export function createXlsxExcel(
     processTableConfig(worksheet, newConfig);
     const worksheetXml = createWorksheet(worksheet, newConfig);
 
-    // Track the worksheet XML to its creation index so we can preserve naming when reordered.
-    const indices = XLSX_SHEET_REF_IDS.get(worksheetXml) ?? [];
-    indices.push(XLSX_SHEET_NAMES.length - 1);
-    XLSX_SHEET_REF_IDS.set(worksheetXml, indices);
-
-    XLSX_SHEET_DATA.push(worksheetXml);
+    registerSheetXml(worksheetXml);
 
     return worksheetXml;
 }
@@ -307,7 +301,7 @@ export function resetXlsxFactory(): void {
 
     XLSX_SHEET_NAMES = [];
     XLSX_SHEET_DATA = [];
-    XLSX_SHEET_REF_IDS = new Map();
+    XLSX_SHEET_CONTENT_INDICES = new Map();
     XLSX_FACTORY_MODE = 'SINGLE_SHEET';
 }
 
@@ -503,8 +497,16 @@ const reorderSheetSpecificMap = <T>(map: Map<number, T>, order: number[]) => {
     remapped.forEach((value, key) => map.set(key, value));
 };
 
+const registerSheetXml = (worksheetXml: string): void => {
+    const indices = XLSX_SHEET_CONTENT_INDICES.get(worksheetXml) ?? [];
+    indices.push(XLSX_SHEET_NAMES.length - 1);
+    XLSX_SHEET_CONTENT_INDICES.set(worksheetXml, indices);
+
+    XLSX_SHEET_DATA.push(worksheetXml);
+};
+
 const getSheetOrderFromRefs = (data: string[]): number[] | null => {
-    const refMap = new Map<string, number[]>(XLSX_SHEET_REF_IDS);
+    const refMap = new Map<string, number[]>(XLSX_SHEET_CONTENT_INDICES);
     const order: number[] = [];
 
     for (const sheetData of data) {
@@ -563,6 +565,14 @@ const reorderSheetState = (order: number[]) => {
                 entry.sheetId = remappedId;
             }
         });
+    });
+
+    // Rebuild content index map to reflect new ordering for any subsequent lookups.
+    XLSX_SHEET_CONTENT_INDICES = new Map();
+    XLSX_SHEET_DATA.forEach((xml, idx) => {
+        const indices = XLSX_SHEET_CONTENT_INDICES.get(xml) ?? [];
+        indices.push(idx);
+        XLSX_SHEET_CONTENT_INDICES.set(xml, indices);
     });
 };
 
