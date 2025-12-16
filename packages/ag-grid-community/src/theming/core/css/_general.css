@@ -138,7 +138,9 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-full-width-container,
 .ag-floating-bottom-full-width-container,
 .ag-sticky-top-container,
-.ag-sticky-bottom-container {
+.ag-sticky-bottom-container,
+.ag-pinned-left-sticky-bottom,
+.ag-pinned-right-sticky-bottom {
     position: relative;
 }
 
@@ -434,7 +436,10 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 
 .ag-sticky-bottom {
     box-sizing: content-box !important;
-    border-top: var(--ag-row-border);
+
+    :where(.ag-pinned-left-sticky-bottom, .ag-sticky-bottom-container, .ag-pinned-right-sticky-bottom) {
+        border-top: var(--ag-row-border);
+    }
 }
 
 .ag-opacity-zero {

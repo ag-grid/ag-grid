@@ -100,11 +100,6 @@
     border-bottom-color: transparent;
 }
 
-.ag-sticky-bottom {
-    border-top: var(--ag-row-border);
-    box-sizing: content-box !important;
-}
-
 .ag-group-expanded,
 .ag-group-contracted {
     cursor: pointer;
