@@ -437,12 +437,7 @@ always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-sticky-bottom {
     box-sizing: content-box !important;
 
-    :where(
-            .ag-pinned-left-sticky-bottom,
-            .ag-sticky-bottom-container,
-            .ag-pinned-right-sticky-bottom,
-            .ag-sticky-bottom-full-width-container
-        ) {
+    :where(.ag-pinned-left-sticky-bottom, .ag-sticky-bottom-container, .ag-pinned-right-sticky-bottom) {
         border-top: var(--ag-row-border);
     }
 }
