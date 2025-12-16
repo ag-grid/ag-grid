@@ -4,7 +4,10 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export interface RowGroupExpansionState {
     expandedRowGroupIds: string[];
-    collapsedRowGroupIds: string[];
+    /**
+     * @deprecated Collapsed nodes array is unused and will be removed in the future versions.
+     */
+    collapsedRowGroupIds?: string[];
 }
 
 export interface RowGroupBulkExpansionState {

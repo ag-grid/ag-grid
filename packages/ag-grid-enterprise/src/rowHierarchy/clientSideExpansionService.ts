@@ -42,7 +42,6 @@ export class ClientSideExpansionService
 
     public getExpansionState(): RowGroupExpansionState {
         const expandedRowGroupIds: string[] = [];
-        const collapsedRowGroupIds: string[] = [];
         this.beans.rowModel.forEachNode((node) => {
             const id = node.id;
             if (!id) {
@@ -51,11 +50,9 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
-            } else if (node.isExpandable()) {
-                collapsedRowGroupIds.push(id);
             }
         });
-        return { expandedRowGroupIds, collapsedRowGroupIds };
+        return { expandedRowGroupIds, collapsedRowGroupIds: [] };
     }
 
     public expandAll(expand: boolean): void {
