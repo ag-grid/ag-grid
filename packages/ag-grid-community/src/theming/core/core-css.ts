@@ -23,9 +23,7 @@ import {
 /**
  * All possible theme param types - the actual params available will be a subset of this type depending on the parts in use by the theme.
  */
-export type CoreParams = CoreThemeParams;
-
-interface CoreThemeParams extends SharedThemeParams {
+export interface CoreParams extends SharedThemeParams {
     /**
      * Color of the dividing line above the buttons in the advanced filter builder
      */
@@ -732,7 +730,7 @@ interface CoreThemeParams extends SharedThemeParams {
     statusBarValueFontWeight: FontWeightValue;
 }
 
-export const coreDefaults: Readonly<Omit<CoreThemeParams, keyof SharedThemeParams>> = {
+export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> = {
     wrapperBorder: true,
     rowBorder: true,
     headerRowBorder: true,
