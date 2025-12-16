@@ -66,13 +66,17 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             let comparatorResult: number;
             const providedComparator = this.getComparator(sortOption, nodeA);
             if (providedComparator) {
-                //if comparator provided, use it
+                // if comparator provided, use it
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
-                //otherwise do our own comparison
+                // otherwise do our own comparison
                 const opts = { accentedCompare: this.isAccentedSort } as DefaultComparatorOptions;
                 if (sortOption.type === 'absolute') {
                     opts.transform = _absoluteValueTransformer;
+                }
+                if (sortOption.type === 'insensitive') {
+                    opts.collatorOpts ??= {};
+                    opts.collatorOpts.sensitivity = opts.accentedCompare ? 'accent' : 'base';
                 }
                 comparatorResult = _defaultComparator(valueA, valueB, opts);
             }

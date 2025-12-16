@@ -35,6 +35,7 @@ export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
 export type DefaultComparatorOptions = {
     accentedCompare?: boolean;
     transform?: (val: any) => any;
+    collatorOpts?: Intl.CollatorOptions;
 };
 
 export function _defaultComparator(valueA: any, valueB: any, options: DefaultComparatorOptions = {}): number {
@@ -83,7 +84,7 @@ export function _defaultComparator(valueA: any, valueB: any, options: DefaultCom
 
     try {
         // using local compare also allows chinese comparisons
-        return valueA.localeCompare(valueB);
+        return valueA.localeCompare(valueB, undefined, options.collatorOpts);
     } catch (e) {
         // if something wrong with localeCompare, eg not supported
         // by browser, then just continue with the quick one

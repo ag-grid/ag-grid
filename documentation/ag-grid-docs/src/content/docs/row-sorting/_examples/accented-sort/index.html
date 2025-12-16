@@ -1,1 +1,19 @@
-<div id="myGrid" style="height: 100%"></div>
+<style>
+    .parent {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 1fr 10fr;
+        grid-column-gap: 16px;
+        grid-row-gap: 0px;
+
+        height: 100%;
+        width: 100%;
+    }
+</style>
+
+<div class="parent">
+    <div>Accented: false</div>
+    <div>Accented: true</div>
+    <div id="accentedfalse"></div>
+    <div id="accentedtrue"></div>
+</div>

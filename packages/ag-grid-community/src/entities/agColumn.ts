@@ -827,7 +827,15 @@ export function _isSortDirectionValid(maybeSortDir: unknown): maybeSortDir is So
 }
 
 export function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
-    return maybeSortType === 'default' || maybeSortType === 'absolute';
+    switch (maybeSortType as SortType) {
+        case 'absolute':
+        case 'default':
+        case 'insensitive':
+            return true;
+        default:
+            // warn
+            return false;
+    }
 }
 
 export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {

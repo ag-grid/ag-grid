@@ -1,4 +1,4 @@
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, ValidationModule, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([
@@ -6,18 +6,20 @@ ModuleRegistry.registerModules([
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-const columnDefs: ColDef[] = [{ field: 'accented', width: 150 }];
-
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
-    columnDefs: columnDefs,
-    accentedSort: true,
-    rowData: [{ accented: 'aàáä' }, { accented: 'aäàá' }, { accented: 'aáàä' }],
+    columnDefs: [{ field: 'a', width: 150 }],
+    rowData: [...'äáaäàáaáàäaàäá'].map((a, i) => ({ a: `${a} ${i + 1}` })),
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+    createGrid(document.querySelector<HTMLElement>('#accentedfalse')!, {
+        ...gridOptions,
+        accentedSort: false,
+    });
+    createGrid(document.querySelector<HTMLElement>('#accentedtrue')!, {
+        ...gridOptions,
+        accentedSort: true, // this makes all A-s equal regardless of accent
+    });
 });
+``;
