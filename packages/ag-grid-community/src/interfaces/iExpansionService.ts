@@ -9,7 +9,7 @@ export interface RowGroupExpansionState {
      */
     expandedRowGroupIds: string[];
     /**
-     * Collapsed Row Group Ids array is only used in SSRM when bulk expansion feature is enabled.
+     * Collapsed Row Group Ids array is only used in SSRM when bulk expansion feature is not used.
      * It contains row IDs that were explicitly collapsed.
      */
     collapsedRowGroupIds?: string[];
