@@ -425,6 +425,7 @@ type RoleType =
     | 'columnheader'
     | 'gridcell'
     | 'heading'
+    | 'listbox'
     | 'menu'
     | 'option'
     | 'presentation'

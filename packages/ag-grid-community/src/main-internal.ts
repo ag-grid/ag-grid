@@ -118,6 +118,7 @@ export {
     _setAriaSelected,
     _setAriaSetSize,
     _setAriaSort,
+    _setAriaOrientation,
 } from './agStack/utils/aria';
 export { _EmptyArray, _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
@@ -149,6 +150,7 @@ export {
     _setDisplayed,
     _setFixedWidth,
     _setVisible,
+    _isFocusableFormField,
 } from './agStack/utils/dom';
 export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
 export {
