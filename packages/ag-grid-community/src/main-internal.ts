@@ -3,64 +3,64 @@
  *
  */
 
-export { AgBeanStub as _AgBeanStub } from './agStack/core/agBeanStub';
-export type { AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
+export { AgBeanStub as _AgBeanStub, AgBeanStubEvent as _AgBeanStubEvent } from './agStack/core/agBeanStub';
 export { AgComponentStub as _AgComponentStub } from './agStack/core/agComponentStub';
-export { AgContext as _AgContext } from './agStack/core/agContext';
-export type { AgSingletonBeanClass as _AgSingletonBeanClass } from './agStack/core/agContext';
+export { AgContext as _AgContext, AgSingletonBeanClass as _AgSingletonBeanClass } from './agStack/core/agContext';
 export { BaseDragAndDropService as _BaseDragAndDropService } from './agStack/core/baseDragAndDropService';
 export { BaseDragService as _BaseDragService } from './agStack/core/baseDragService';
-export { BaseEnvironment as _BaseEnvironment } from './agStack/core/baseEnvironment';
-export type {
+export {
     BaseCssChangeKeys as _BaseCssChangeKeys,
+    BaseEnvironment as _BaseEnvironment,
     CssVariable as _CssVariable,
 } from './agStack/core/baseEnvironment';
 export { BaseRegistry as _BaseRegistry } from './agStack/core/baseRegistry';
 export { BaseEventService as _BaseEventService } from './agStack/events/baseEventService';
 export { LocalEventService } from './agStack/events/localEventService';
-export { FOCUS_MANAGED_CLASS as _FOCUS_MANAGED_CLASS } from './agStack/focus/agManagedFocusFeature';
-export type {
+export {
     ManagedFocusCallbacks,
+    FOCUS_MANAGED_CLASS as _FOCUS_MANAGED_CLASS,
     StopPropagationCallbacks as _StopPropagationCallbacks,
 } from './agStack/focus/agManagedFocusFeature';
 export { AgTabGuardComp as _AgTabGuardComp } from './agStack/focus/agTabGuardComp';
-export { AgTabGuardFeature as _AgTabGuardFeature } from './agStack/focus/agTabGuardFeature';
-export type { AgTabGuardParams as _AgTabGuardParams } from './agStack/focus/agTabGuardFeature';
-export { TabGuardClassNames } from './agStack/focus/tabGuardCtrl';
-export type { ITabGuard } from './agStack/focus/tabGuardCtrl';
-export { RefPlaceholder, _isComponent } from './agStack/interfaces/agComponent';
-export type {
+export {
+    AgTabGuardFeature as _AgTabGuardFeature,
+    AgTabGuardParams as _AgTabGuardParams,
+} from './agStack/focus/agTabGuardFeature';
+export { ITabGuard, TabGuardClassNames } from './agStack/focus/tabGuardCtrl';
+export {
     AgBaseComponent,
+    RefPlaceholder,
     VisibleChangedEvent,
     AgComponent as _AgComponent,
     AgComponentEvent as _AgComponentEvent,
     AgComponentSelector as _AgComponentSelector,
+    _isComponent,
 } from './agStack/interfaces/agComponent';
-export type { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
-export type { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
-export type { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
-export type {
+export { AgCoreBean as _AgCoreBean } from './agStack/interfaces/agCoreBean';
+export { AgCoreBeanCollection as _AgCoreBeanCollection } from './agStack/interfaces/agCoreBeanCollection';
+export { FrameworkOverridesIncomingSource } from './agStack/interfaces/agFrameworkOverrides';
+export {
     AgStylesChangedEvent as _AgStylesChangedEvent,
     BaseEvents as _BaseEvents,
 } from './agStack/interfaces/baseEvents';
-export type { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProperties';
-export type { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
-export type { IAriaAnnouncementService } from './agStack/interfaces/iAriaAnnouncementService';
-export type { IDragService as _IDragService } from './agStack/interfaces/iDrag';
-export type {
+export { BaseProperties as _BaseProperties } from './agStack/interfaces/baseProperties';
+export { AfterGuiAttachedParams as _AfterGuiAttachedParams } from './agStack/interfaces/iAfterGuiAttachedParams';
+export { IAriaAnnouncementService } from './agStack/interfaces/iAriaAnnouncementService';
+export { IDragService as _IDragService } from './agStack/interfaces/iDrag';
+export {
     IDragAndDropImage,
     AgDragSource as _AgDragSource,
     AgDraggingEvent as _AgDraggingEvent,
     AgDropTarget as _AgDropTarget,
     IDragAndDropService as _IDragAndDropService,
 } from './agStack/interfaces/iDragAndDrop';
-export type { AgEventService as _AgEventService, WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
-export type { IconValue as _IconValue } from './agStack/interfaces/iIcon';
-export type { IIconService as _IIconService } from './agStack/interfaces/iIconService';
-export type { LocaleTextFunc, ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
-export type { AddPopupParams as _AddPopupParams, AddPopupResult as _AddPopupResult } from './agStack/interfaces/iPopup';
-export type { IPopupService as _IPopupService } from './agStack/interfaces/iPopupService';
-export type {
+export { AgEventService as _AgEventService, WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
+export { IconValue as _IconValue } from './agStack/interfaces/iIcon';
+export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
+export { LocaleTextFunc, ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
+export { AddPopupParams as _AddPopupParams, AddPopupResult as _AddPopupResult } from './agStack/interfaces/iPopup';
+export { IPopupService as _IPopupService } from './agStack/interfaces/iPopupService';
+export {
     AgPropertyChangeSet as _AgPropertyChangeSet,
     AgPropertyChangedSource as _AgPropertyChangedSource,
     AgPropertyKey as _AgPropertyKey,
@@ -68,27 +68,30 @@ export type {
     AgPropertyValueChangedListener as _AgPropertyValueChangedListener,
     IPropertiesService as _IPropertiesService,
 } from './agStack/interfaces/iProperties';
-export type { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
+export { ITooltipFeature as _ITooltipFeature, TooltipCtrl as _TooltipCtrl } from './agStack/interfaces/iTooltip';
 export { AgPopupComponent } from './agStack/popup/agPopupComponent';
 export { BasePopupService as _BasePopupService } from './agStack/popup/basePopupService';
-export { AgPositionableFeature as _AgPositionableFeature } from './agStack/rendering/agPositionableFeature';
-export type {
+export {
     PositionableOptions,
     ResizableSides,
     ResizableStructure,
+    AgPositionableFeature as _AgPositionableFeature,
 } from './agStack/rendering/agPositionableFeature';
 export { AutoScrollService } from './agStack/rendering/autoScrollService';
 export { CssClassManager } from './agStack/rendering/cssClassManager';
 export { _asThemeImpl } from './agStack/theming/themeImpl';
-export type { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
+export { ThemeLogger as _ThemeLogger } from './agStack/theming/themeLogger';
 export { getParamType as _getParamType, paramValueToCss as _paramValueToCss } from './agStack/theming/themeTypeUtils';
 export { paramToVariableName as _paramToVariableName } from './agStack/theming/themeUtils';
-export type { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
+export { HighlightTooltipEventType } from './agStack/tooltip/agHighlightTooltipFeature';
 export { AgTooltipComponent as _AgTooltipComponent } from './agStack/tooltip/agTooltipComponent';
 export { AgTooltipFeature as _AgTooltipFeature } from './agStack/tooltip/agTooltipFeature';
-export { BaseTooltipStateManager as _BaseTooltipStateManager } from './agStack/tooltip/baseTooltipStateManager';
-export type { BaseTooltipParams as _BaseTooltipParams } from './agStack/tooltip/baseTooltipStateManager';
 export {
+    BaseTooltipParams as _BaseTooltipParams,
+    BaseTooltipStateManager as _BaseTooltipStateManager,
+} from './agStack/tooltip/baseTooltipStateManager';
+export {
+    AriaSortState,
     _getAriaPosInSet,
     _removeAriaExpanded,
     _removeAriaSort,
@@ -116,7 +119,6 @@ export {
     _setAriaSetSize,
     _setAriaSort,
 } from './agStack/utils/aria';
-export type { AriaSortState } from './agStack/utils/aria';
 export { _EmptyArray, _areEqual, _flatten, _last, _removeAllFromArray, _removeFromArray } from './agStack/utils/array';
 export { _isBrowserFirefox, _isBrowserSafari, _isIOSUserAgent } from './agStack/utils/browser';
 export { MONTHS as _MONTHS, _getDateParts, _parseDateTimeFromString, _serialiseDate } from './agStack/utils/date';
@@ -128,6 +130,7 @@ export {
     _isNothingFocused,
 } from './agStack/utils/document';
 export {
+    AgElementParams as _AgElementParams,
     _clearElement,
     _createAgElement,
     _getAbsoluteHeight,
@@ -147,7 +150,6 @@ export {
     _setFixedWidth,
     _setVisible,
 } from './agStack/utils/dom';
-export type { AgElementParams as _AgElementParams } from './agStack/utils/dom';
 export { _anchorElementToMouseMoveEvent, _isElementInEventPath } from './agStack/utils/event';
 export {
     _findFocusableElements,
@@ -170,8 +172,8 @@ export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
 export { _isPromise } from './agStack/utils/promise';
 export { _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
-export type { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
-export type {
+export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
+export {
     _AdvancedFilterGridApi,
     _AggregationGridApi,
     _AiToolkitGridApi,
@@ -205,7 +207,9 @@ export {
     _updateColumnState,
 } from './columns/columnFactoryUtils';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
-export type { ColumnModel, ColumnCollections as _ColumnCollections } from './columns/columnModel';
+export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
+export { ColumnCollections as _ColumnCollections } from './columns/columnModel';
+export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _getColumnState, _resetColumnState } from './columns/columnStateUtils';
 export {
@@ -223,11 +227,13 @@ export {
     isSpecialCol,
 } from './columns/columnUtils';
 export type { DataTypeService } from './columns/dataTypeService';
-export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
-export { BaseComponentWrapper } from './components/framework/frameworkComponentWrapper';
-export type { FrameworkComponentWrapper, WrappableInterface } from './components/framework/frameworkComponentWrapper';
+export {
+    BaseComponentWrapper,
+    FrameworkComponentWrapper,
+    WrappableInterface,
+} from './components/framework/frameworkComponentWrapper';
 export type { Registry } from './components/framework/registry';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 export {
@@ -238,9 +244,10 @@ export {
     _getInnerCellRendererDetails,
 } from './components/framework/userCompUtils';
 export type { UserComponentFactory } from './components/framework/userComponentFactory';
-export type { Bean, NamedBean } from './context/bean';
+export { Bean, NamedBean } from './context/bean';
 export { BeanStub } from './context/beanStub';
-export type { BeanCollection, BeanName, Context, SingletonBean, StatusPanelComponentName } from './context/context';
+export { BeanCollection, BeanName, SingletonBean, StatusPanelComponentName } from './context/context';
+export type { Context } from './context/context';
 export type { CtrlsService } from './ctrlsService';
 export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 export type { DragService } from './dragAndDrop/dragService';
@@ -298,29 +305,24 @@ export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterM
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export type { FocusService } from './focusService';
 export { _getGlobalGridOption } from './globalGridOptions';
-export { GridCoreCreator } from './grid';
-export type { GridParams } from './grid';
+export { GridCoreCreator, GridParams } from './grid';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
-export { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
-export type { IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
+export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
 export { _getCellPositionForEvent, _getNormalisedMousePosition } from './gridBodyComp/mouseEventUtils';
 export {
+    IRowContainerComp,
     RowContainerCtrl,
+    RowContainerName,
+    RowContainerOptions,
+    RowContainerType,
     _getRowContainerClass,
     _getRowContainerOptions,
     _getRowSpanContainerClass,
     _getRowViewportClass,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
-export type {
-    IRowContainerComp,
-    RowContainerName,
-    RowContainerOptions,
-    RowContainerType,
-} from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
-export { GridCtrl } from './gridComp/gridCtrl';
-export type { IGridComp } from './gridComp/gridCtrl';
+export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export {
     _addGridCommonParams,
     _canSkipShowingRowGroup,
@@ -373,30 +375,30 @@ export {
     getFloatingFiltersHeight as _getFloatingFiltersHeight,
     getHeaderRowCount as _getHeaderRowCount,
 } from './headerRendering/headerUtils';
-export type { IRangeService } from './interfaces/IRangeService';
-export type { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
-export type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
-export type { IAggColumnNameService } from './interfaces/iAggColumnNameService';
-export type { IAggFuncService } from './interfaces/iAggFuncService';
-export type { ICellRangeFeature } from './interfaces/iCellRangeFeature';
-export type { IClipboardService } from './interfaces/iClipboardService';
+export { IRangeService } from './interfaces/IRangeService';
+export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
+export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
+export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
+export { IAggFuncService } from './interfaces/iAggFuncService';
+export { ICellRangeFeature } from './interfaces/iCellRangeFeature';
+export { IClipboardService } from './interfaces/iClipboardService';
 export type { IColsService } from './interfaces/iColsService';
 export type { IColumnCollectionService } from './interfaces/iColumnCollectionService';
-export type { IEventService } from './interfaces/iEventService';
-export type { IExpansionService } from './interfaces/iExpansionService';
-export type { FocusableContainer } from './interfaces/iFocusableContainer';
-export type { IFooterService } from './interfaces/iFooterService';
-export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
-export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
+export { IEventService } from './interfaces/iEventService';
+export { IExpansionService } from './interfaces/iExpansionService';
+export { FocusableContainer } from './interfaces/iFocusableContainer';
+export { IFooterService } from './interfaces/iFooterService';
+export { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
+export { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';
 export type { IGroupFilterService } from './interfaces/iGroupFilterService';
 export type { IGroupHierarchyColService } from './interfaces/iGroupHierarchyColService';
-export type { IMenuFactory } from './interfaces/iMenuFactory';
-export type { IMultiFilterService } from './interfaces/iMultiFilterService';
-export type { IPinnedRowModel } from './interfaces/iPinnedRowModel';
-export type { IPivotColDefService } from './interfaces/iPivotColDefService';
-export type { IPivotResultColsService } from './interfaces/iPivotResultColsService';
-export type { IRowChildrenService } from './interfaces/iRowChildrenService';
+export { IMenuFactory } from './interfaces/iMenuFactory';
+export { IMultiFilterService } from './interfaces/iMultiFilterService';
+export { IPinnedRowModel } from './interfaces/iPinnedRowModel';
+export { IPivotColDefService } from './interfaces/iPivotColDefService';
+export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
+export { IRowChildrenService } from './interfaces/iRowChildrenService';
 export type {
     NestedDataGetter,
     IRowNodeAggregationStage as _IRowNodeAggregationStage,
@@ -405,15 +407,15 @@ export type {
     IRowNodeGroupStage as _IRowNodeGroupStage,
     IRowNodePivotStage as _IRowNodePivotStage,
 } from './interfaces/iRowNodeStage';
-export type { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
-export type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
-export type { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
-export type { ISideBar, ISideBarService } from './interfaces/iSideBar';
-export type { SortOption } from './interfaces/iSortOption';
-export type { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
-export type { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
-export type { IWatermark } from './interfaces/iWatermark';
-export type { IRenderStatusService } from './interfaces/renderStatusService';
+export { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelectionService';
+export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
+export { ISideBar, ISideBarService } from './interfaces/iSideBar';
+export { SortOption } from './interfaces/iSortOption';
+export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
+export { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';
+export { IWatermark } from './interfaces/iWatermark';
+export { IRenderStatusService } from './interfaces/renderStatusService';
 export type { IRowNumbersService } from './interfaces/rowNumbers';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { LocaleService } from './misc/locale/localeService';
@@ -424,7 +426,6 @@ export type { CellNavigationService } from './navigation/cellNavigationService';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
 export type { NavigationService } from './navigation/navigationService';
 export type { PageBoundsService } from './pagination/pageBoundsService';
-export { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 export { _BOOLEAN_MIXED_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS } from './propertyKeys';
 export { _PUBLIC_EVENT_HANDLERS_MAP } from './publicEventHandlersMap';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
@@ -440,14 +441,19 @@ export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
-export type { RowNodeSorter, SortedRowNode } from './sort/rowNodeSorter';
+export { SortedRowNode } from './sort/rowNodeSorter';
+export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
-export { _getShouldDisplayTooltip, _isShowTooltipWhenTruncated } from './tooltip/tooltipFeature';
-export type { ITooltipCtrl, ITooltipCtrlParams, TooltipFeature } from './tooltip/tooltipFeature';
+export {
+    ITooltipCtrl,
+    ITooltipCtrlParams,
+    TooltipFeature,
+    _getShouldDisplayTooltip,
+    _isShowTooltipWhenTruncated,
+} from './tooltip/tooltipFeature';
 export { ChangedPath } from './utils/changedPath';
-export { _createElement } from './utils/element';
-export type { ElementParams } from './utils/element';
+export { ElementParams, _createElement } from './utils/element';
 export { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from './utils/gridEvent';
 export {
     _addFocusableContainerListener,
@@ -465,8 +471,7 @@ export type { ExpressionService } from './valueService/expressionService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ValueService } from './valueService/valueService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
-export { Component } from './widgets/component';
-export type { AgComponentSelectorType, ComponentEvent, ComponentSelector } from './widgets/component';
+export { AgComponentSelectorType, Component, ComponentEvent, ComponentSelector } from './widgets/component';
 export * from './widgets/gridWidgetTypes';
 export {
     ManagedFocusFeature,
@@ -482,7 +487,7 @@ export { AgAbstractInputField } from './agStack/widgets/agAbstractInputField';
 export { AgAbstractLabel } from './agStack/widgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agStack/widgets/agCheckbox';
 export { AgContentEditableField, AgContentEditableFieldSelector } from './agStack/widgets/agContentEditableField';
-export type {
+export {
     AgCheckboxParams,
     AgFieldParams,
     AgInputFieldParams,
@@ -490,20 +495,19 @@ export type {
     LabelAlignment,
 } from './agStack/widgets/agFieldParams';
 export { AgInputDateField } from './agStack/widgets/agInputDateField';
-export { AgInputNumberField, AgInputNumberFieldSelector } from './agStack/widgets/agInputNumberField';
-export type { AgInputNumberFieldParams } from './agStack/widgets/agInputNumberField';
+export {
+    AgInputNumberField,
+    AgInputNumberFieldParams,
+    AgInputNumberFieldSelector,
+} from './agStack/widgets/agInputNumberField';
 export { AgInputTextArea } from './agStack/widgets/agInputTextArea';
-export { AgInputTextField, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
-export type { AgInputTextFieldParams } from './agStack/widgets/agInputTextField';
-export type { ListOption } from './agStack/widgets/agList';
+export { AgInputTextField, AgInputTextFieldParams, AgInputTextFieldSelector } from './agStack/widgets/agInputTextField';
+export { ListOption } from './agStack/widgets/agList';
 export { AgPickerField } from './agStack/widgets/agPickerField';
-export type { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
-export { AgRadioButton, AgRadioButtonSelector } from './agStack/widgets/agRadioButton';
-export type { AgRadioButtonParams } from './agStack/widgets/agRadioButton';
-export { AgSelect, AgSelectSelector } from './agStack/widgets/agSelect';
-export type { AgSelectParams } from './agStack/widgets/agSelect';
-export { AgToggleButton, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
-export type { AgToggleButtonParams } from './agStack/widgets/agToggleButton';
+export { AgPickerFieldParams } from './agStack/widgets/agPickerFieldParams';
+export { AgRadioButton, AgRadioButtonParams, AgRadioButtonSelector } from './agStack/widgets/agRadioButton';
+export { AgSelect, AgSelectParams, AgSelectSelector } from './agStack/widgets/agSelect';
+export { AgToggleButton, AgToggleButtonParams, AgToggleButtonSelector } from './agStack/widgets/agToggleButton';
 
 // These should have been exported with _ as only used in SSRM and end users should be using them via the gridApi
 export { onRowHeightChanged, resetRowHeights } from './api/rowModelSharedApi';
@@ -528,7 +532,7 @@ export {
     FilterCoreModule as _FilterCoreModule,
     FilterValueModule as _FilterValueModule,
 } from './filter/filterModule';
-export type {
+export {
     ModuleName,
     ModuleValidationResult,
     _ModuleWithApi,
