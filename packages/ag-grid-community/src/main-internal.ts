@@ -55,7 +55,6 @@ export {
     IDragAndDropService as _IDragAndDropService,
 } from './agStack/interfaces/iDragAndDrop';
 export { AgEventService as _AgEventService, WithoutCommon as _WithoutCommon } from './agStack/interfaces/iEvent';
-export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 export { IconValue as _IconValue } from './agStack/interfaces/iIcon';
 export { IIconService as _IIconService } from './agStack/interfaces/iIconService';
 export { LocaleTextFunc, ILocaleService as _ILocaleService } from './agStack/interfaces/iLocaleService';
@@ -171,7 +170,7 @@ export {
 } from './agStack/utils/generic';
 export { _isEventFromPrintableCharacter } from './agStack/utils/keyboard';
 export { _getLocaleTextFromFunc, _getLocaleTextFromMap, _getLocaleTextFunc, _translate } from './agStack/utils/locale';
-export { AgPromise, _isPromise } from './agStack/utils/promise';
+export { _isPromise } from './agStack/utils/promise';
 export { _escapeString, _isExpressionString, _toString } from './agStack/utils/string';
 export { AgWidgetSelectorType as _AgWidgetSelectorType } from './agStack/widgets/agWidgetSelectorType';
 export {
@@ -412,7 +411,6 @@ export { ISelectionService, ISetNodesSelectedParams } from './interfaces/iSelect
 export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export { IShowRowGroupColsValueService } from './interfaces/iShowRowGroupColsValueService';
 export { ISideBar, ISideBarService } from './interfaces/iSideBar';
-export { SortModelItem } from './interfaces/iSortModelItem';
 export { SortOption } from './interfaces/iSortOption';
 export { IStickyRowFeature, IStickyRowService } from './interfaces/iStickyRows';
 export { ComponentType, UserCompDetails } from './interfaces/iUserCompDetails';

@@ -22,6 +22,7 @@ export {
     SizeColumnsToFitProvidedWidthStrategy,
 } from './interfaces/autoSize';
 export { Column, ColumnGroup, ColumnGroupShowType, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
+export { SortModelItem } from './interfaces/iSortModelItem';
 
 // IRowNode
 export {
@@ -71,6 +72,7 @@ export type {
     RowDropPositionIndicator,
     SetRowDropPositionIndicatorParams,
 } from './dragAndDrop/rowDropHighlightService';
+export { AgPromise } from './agStack/utils/promise';
 
 // Excel Export
 export { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from './export/iGridSerializer';
@@ -888,6 +890,7 @@ export { ValidationModule } from './validation/validationModule';
 export { CellApiModule, ValueCacheModule } from './valueService/valueModule';
 
 // Events
+export { IEventEmitter, IEventListener } from './agStack/interfaces/iEventEmitter';
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export * from './events';
 
