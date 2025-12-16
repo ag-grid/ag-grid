@@ -28,7 +28,7 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
     }
 
     public execute(changedPath: ChangedPath): void {
-        const filterActive: boolean = !!this.filterManager?.isChildFilterPresent();
+        const filterActive = !!this.filterManager?.isChildFilterPresent();
         if (this.beans.formula?.active) {
             this.softFilter(filterActive, changedPath);
         } else {
