@@ -467,12 +467,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     const widthOverride = limitsMap?.[id];
                     const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;
                     const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-                    const colMinWidth = column.getMinWidth();
-                    const colMaxWidth = column.getMaxWidth();
-                    const minWidth =
-                        typeof minOverride === 'number' && minOverride > colMinWidth ? minOverride : colMinWidth;
-                    const maxWidth =
-                        typeof maxOverride === 'number' && maxOverride < colMaxWidth ? maxOverride : colMaxWidth;
+                    const minWidth = Math.max(minOverride ?? -Infinity, column.getMinWidth());
+                    const maxWidth = Math.min(maxOverride ?? Infinity, column.getMaxWidth());
                     let newWidth = Math.round(column.getActualWidth() * scale);
 
                     if (newWidth < minWidth) {
