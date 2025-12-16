@@ -1,15 +1,27 @@
+import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
+import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
+import { Grid } from '@ag-website-shared/components/grid/Grid';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import DetailCellRenderer from '@components/grid/DetailCellRendererComponent';
-import { Grid } from '@components/grid/Grid';
+import { IssueColDef, IssueTypeColDef } from '@ag-website-shared/utils/issueColDefs';
 import ReleaseVersionNotes from '@components/release-notes/ReleaseVersionNotes.jsx';
 import styles from '@pages-styles/pipelineChangelog.module.scss';
-import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { type ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import type { FunctionComponent } from 'react';
+
+interface Props {
+    library: Library;
+}
 
 const ALL_FIX_VERSIONS = 'All Versions';
+const CHANGELOG_DATA_URL = urlWithBaseUrl('/changelog/changelog.json');
+const RELEASE_VERSION_NOTES_URL = urlWithBaseUrl('/changelog/releaseVersionNotes.json');
+
+function getChangelogReleaseNotesUrl(pageName: string) {
+    return urlWithBaseUrl(`/changelog/${pageName}`);
+}
 
 function useFixVersion() {
     const [fixVersion, setFixVersion] = useState<string>(ALL_FIX_VERSIONS);
@@ -57,7 +69,19 @@ const compareSemver = (a: any, b: any) => {
     }
 };
 
-export const Changelog = () => {
+const gridToChartVersion = (gridVersion: string) => {
+    const versionParts = gridVersion.split('.');
+
+    // The first charts release was on grid version 22 - we'll keep in lock step release wise going forward so this works
+    const chartMajorVersion = parseInt(versionParts[0]) - 22;
+    return `${chartMajorVersion}.${versionParts[1]}.${versionParts[2]}`;
+};
+
+const transformVersion: Record<Library, (version: string) => string> = {
+    charts: gridToChartVersion,
+};
+
+export const Changelog: FunctionComponent<Props> = ({ library }) => {
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
     const [versions, setVersions] = useState<string[]>([]);
@@ -81,11 +105,22 @@ export const Changelog = () => {
     }, [gridApi, fixVersion, versions]);
 
     useEffect(() => {
-        fetch(urlWithBaseUrl('/changelog/changelog.json'))
+        fetch(CHANGELOG_DATA_URL)
             .then((response) => response.json())
             .then((data) => {
-                const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
-                const allVersions = Array.from(new Set<string>(gridVersions)).sort((v1, v2) => {
+                // Extract `version` and transform if needed
+                return data.map((row) => {
+                    const rowVersion = row.versions[0];
+                    const version = library in transformVersion ? transformVersion[library](rowVersion) : rowVersion;
+                    return {
+                        ...row,
+                        version,
+                    };
+                });
+            })
+            .then((data) => {
+                const dataVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.version)];
+                const allVersions = Array.from(new Set<string>(dataVersions)).sort((v1, v2) => {
                     const [v1Major, v1Minor, v1Patch] = v1.split('.').map((num: string) => parseInt(num, 10));
                     const [v2Major, v2Minor, v2Patch] = v2.split('.').map((num: string) => parseInt(num, 10));
 
@@ -98,19 +133,14 @@ export const Changelog = () => {
                     return v2Patch - v1Patch;
                 });
                 setVersions(allVersions);
-
-                data.forEach((row) => {
-                    // Only one version per row
-                    row.version = row.versions[0];
-                });
                 setRowData(data);
             });
-        fetch(urlWithBaseUrl('/changelog/releaseVersionNotes.json'))
+        fetch(RELEASE_VERSION_NOTES_URL)
             .then((response) => response.json())
             .then((data) => {
                 setAllReleaseNotes(data);
             });
-    }, []);
+    }, [library]);
 
     useEffect(() => {
         applyFixVersionFilter();
@@ -134,7 +164,7 @@ export const Changelog = () => {
                 newHideExpander = !releaseNotes['showExpandLink'] && releaseNotes['markdown'];
 
                 if (releaseNotes['markdown']) {
-                    fetch(urlWithBaseUrl(`/changelog/${releaseNotes['markdown']}`))
+                    fetch(getChangelogReleaseNotesUrl(releaseNotes['markdown']))
                         .then((response) => response.text())
                         .then((markdownContent) => {
                             setMarkdownContent(markdownContent);
@@ -337,14 +367,12 @@ export const Changelog = () => {
     );
 
     return (
-        <div className={classnames('page-margin', styles.container)}>
-            <h1>AG Grid Changelog</h1>
-
+        <>
             <section className={styles.header}>
                 <Alert type="idea">
                     This changelog enables you to identify the specific version in which a feature request or bug fix
-                    was included. Check out the <a href="../pipeline/">Pipeline</a> to see what's in our product
-                    backlog.
+                    was included. Check out the <a href={urlWithBaseUrl('/pipeline/')}>Pipeline</a> to see what's in our
+                    product backlog.
                 </Alert>
 
                 <ReleaseVersionNotes
@@ -395,6 +423,6 @@ export const Changelog = () => {
                 doesExternalFilterPass={doesExternalFilterPass}
                 isExternalFilterPresent={isExternalFilterPresent}
             ></Grid>
-        </div>
+        </>
     );
 };
