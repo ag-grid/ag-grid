@@ -290,7 +290,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     public setupHeader(comp: Component, column: AgColumn): void {
-        const onSortingChanged = () => {
+        const refreshStyles = () => {
             const { type, direction } = _getSortDefFromInput(column.getSortDef());
             comp.toggleCss('ag-header-cell-sorted-asc', direction === 'asc');
             comp.toggleCss('ag-header-cell-sorted-desc', direction === 'desc');
@@ -309,9 +309,12 @@ export class SortService extends BeanStub implements NamedBean {
                 comp.toggleCss('ag-header-cell-sorted-mixed', isMultiSorting);
             }
         };
+
         comp.addManagedEventListeners({
-            sortChanged: onSortingChanged,
-            columnRowGroupChanged: onSortingChanged,
+            sortChanged: refreshStyles,
+            columnPinned: refreshStyles,
+            columnRowGroupChanged: refreshStyles,
+            displayedColumnsChanged: refreshStyles,
         });
     }
 
