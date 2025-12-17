@@ -45,11 +45,10 @@ function parseHeading(heading: string, frameworkKey: string) {
         }
         if (i < parts.length - 1) {
             result.push({ 
-                type: 'logo', 
+                type: 'logoGroup', 
                 logo: frameworkInfo.logo, 
                 name: frameworkInfo.name 
             });
-            result.push({ type: 'text', content: ` ${frameworkInfo.name} ` });
         }
     }
     
@@ -82,12 +81,15 @@ const headingParts = parseHeading(config.hero.heading, framework);
                     {headingParts.map((part) => {
                         if (part.type === 'text') {
                             return part.content;
-                        } else if (part.type === 'logo') {
+                        } else if (part.type === 'logoGroup') {
                             return (
-                                <img
-                                    src={urlWithBaseUrl(`/images/fw-logos/${part.logo}`)}
-                                    alt={part.name}
-                                />
+                                <span class={styles.frameworkLogoGroup}>
+                                    <img
+                                        src={urlWithBaseUrl(`/images/fw-logos/${part.logo}`)}
+                                        alt={part.name}
+                                    />
+                                    {` ${part.name} `}
+                                </span>
                             );
                         }
                         return '';
