@@ -35,6 +35,15 @@
     }
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 @mixin hero-section-cta2 {
     display: flex;
     align-items: center;
@@ -57,5 +66,37 @@
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         min-width: auto;
         width: 100%;
+    }
+}
+
+@mixin hero-section-button-container {
+    display: flex;
+    justify-content: center;
+    min-height: 48px;
+    gap: $spacing-size-4;
+    animation: fadeIn 0.7s ease 1300ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+
+    @media screen and (min-width: $breakpoint-landing-page-medium) {
+        margin-bottom: 48px;
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-direction: column;
+    }
+}
+
+@mixin hero-section-demo-container {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    animation: fadeIn 0.7s ease 2000ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+
+    // Ensure Finance component doesn't cause layout shift
+    > * {
+        opacity: 1;
     }
 }

@@ -213,15 +213,6 @@
     }
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
 .heroSectionHeading {
     font-size: 72px;
     text-align: center;
@@ -259,21 +250,7 @@
 }
 
 .heroSectionButtonContainer {
-    display: flex;
-    justify-content: center;
-    min-height: 48px;
-    gap: $spacing-size-4;
-    animation: fadeIn 0.7s ease 1300ms;
-    opacity: 0;
-    animation-fill-mode: forwards;
-
-    @media screen and (min-width: $breakpoint-landing-page-medium) {
-        margin-bottom: 48px;
-    }
-
-    @media screen and (max-width: $breakpoint-landing-page-medium) {
-        flex-direction: column;
-    }
+    @include frameworkShared.hero-section-button-container;
 }
 
 .heroSectionCta1 {
@@ -298,17 +275,7 @@
 }
 
 .heroSectionDemoContainer {
-    display: flex;
-    flex-direction: column;
-    height: 600px;
-    animation: fadeIn 0.7s ease 2000ms;
-    opacity: 0;
-    animation-fill-mode: forwards;
-
-    // Ensure Finance component doesn't cause layout shift
-    > * {
-        opacity: 1;
-    }
+    @include frameworkShared.hero-section-demo-container;
 }
 
 .heroLinks {

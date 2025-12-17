@@ -197,14 +197,7 @@
 }
 
 .heroSectionButtonContainer {
-    display: flex;
-    justify-content: center;
-    min-height: 48px;
-    gap: $spacing-size-4;
-
-    @media screen and (max-width: $breakpoint-landing-page-medium) {
-        flex-direction: column;
-    }
+    @include frameworkShared.hero-section-button-container;
 }
 
 .heroSectionCta1 {
@@ -250,9 +243,7 @@
 }
 
 .heroSectionDemoContainer {
-    display: flex;
-    flex-direction: column;
-    height: 600px;
+    @include frameworkShared.hero-section-demo-container;
 }
 
 .heroSectionViewAllDemosLink {
@@ -376,12 +367,16 @@
     font-weight: var(--text-bold);
     color: var(--color-brand-500);
     margin-bottom: $spacing-size-1;
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-200);
+    }
 }
 
 .pricingPriceFree {
     font-size: 48px;
     font-weight: var(--text-bold);
-    color: var(--color-brand-200);
+    color: var(--color-fg-primary);
     margin-bottom: $spacing-size-1;
 }
 
@@ -413,6 +408,12 @@
             background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230E4491'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E")
                 no-repeat center;
             background-size: contain;
+
+            #{$selector-darkmode} & {
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4e3f8'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E")
+                    no-repeat center;
+                background-size: contain;
+            }
         }
     }
 }
