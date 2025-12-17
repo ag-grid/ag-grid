@@ -542,6 +542,7 @@
 :global {
     header[class*='headingContainer'] {
         max-width: 800px;
+        gap: 24px;
     }
 
     // Style framework logos in section headings
