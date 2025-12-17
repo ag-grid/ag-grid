@@ -346,6 +346,14 @@
     display: flex;
     flex-direction: column;
     height: 600px;
+    animation: fadeIn 0.7s ease 2000ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+
+    // Ensure Finance component doesn't cause layout shift
+    > * {
+        opacity: 1;
+    }
 }
 
 .heroLinks {
