@@ -1,4 +1,5 @@
 @use 'design-system' as *;
+@use './framework-shared' as frameworkShared;
 
 .heroSection {
     display: flex;
@@ -163,12 +164,17 @@
 }
 
 .heroSectionTag {
-    color: var(--color-brand-400);
-    font-size: 24px;
+    color: var(--color-util-brand-500);
+    font-size: 20px;
     text-align: center;
     line-height: 24px;
     font-weight: var(--text-bold);
-    margin-bottom: $spacing-size-4;
+    margin-top: $spacing-size-8;
+    margin-bottom: 0;
+
+    #{$selector-darkmode} & {
+        color: var(--color-brand-100);
+    }
 }
 
 .heroSectionHeading {
@@ -187,17 +193,7 @@
 }
 
 .heroSectionSubHeading {
-    font-size: var(--text-fs-lg);
-    font-weight: var(--text-base);
-    color: var(--color-text-primary);
-    margin: 0px $spacing-size-48;
-    text-align: center;
-    margin-bottom: 0px;
-
-    @media screen and (max-width: $breakpoint-landing-page-medium) {
-        margin: 0;
-        padding: 0;
-    }
+    @include frameworkShared.hero-section-subheading;
 }
 
 .heroSectionButtonContainer {
@@ -228,25 +224,8 @@
 }
 
 .heroSectionCta2 {
-    display: flex;
     min-width: 380px;
-    align-items: center;
-    gap: $spacing-size-2;
-    padding: $spacing-size-2;
-    border-radius: var(--radius-md);
-    background-color: var(--color-brand-200);
-    color: var(--color-gray-900);
-    font-family: var(--text-monospace-font-family);
-    justify-content: center;
-
-    #{$selector-darkmode} & {
-        background-color: var(--color-button-tertiary-bg-hover);
-    }
-
-    @media screen and (max-width: $breakpoint-landing-page-medium) {
-        min-width: auto;
-        width: 100%;
-    }
+    @include frameworkShared.hero-section-cta2;
 }
 
 .heroSectionNote {

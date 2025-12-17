@@ -1,0 +1,61 @@
+// Shared SCSS for framework-related landing pages and enterprise hero:
+// - Framework landing pages (e.g. /react-data-grid, /angular-data-grid, /vue-data-grid)
+//   via styles in framework-landing-page.module.scss
+// - Enterprise landing page (/enterprise-data-grid)
+//   via styles in enterprise.module.scss
+
+@use 'design-system' as *;
+
+@mixin hero-section-subheading {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-base);
+    color: var(--color-text-primary);
+    max-width: 600px;
+    margin: 16px auto;
+    line-height: 1.5;
+    text-align: center;
+    animation: subHeadingFadeInUp 0.7s ease 600ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@keyframes subHeadingFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@mixin hero-section-cta2 {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    padding: $spacing-size-2;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in srgb, var(--color-brand-200) 50%, transparent);
+    color: var(--color-gray-900);
+    font-family: var(--text-monospace-font-family);
+    justify-content: center;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-button-tertiary-bg-hover);
+
+        svg:hover {
+            fill: var(--color-brand-100) !important;
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        min-width: auto;
+        width: 100%;
+    }
+}
