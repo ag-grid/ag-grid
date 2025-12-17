@@ -212,6 +212,26 @@
     }
 }
 
+@keyframes subHeadingFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .heroSectionHeading {
     font-size: 72px;
     text-align: center;
@@ -252,6 +272,9 @@
     margin: 16px auto;
     line-height: 1.5;
     text-align: center;
+    animation: subHeadingFadeInUp 0.7s ease 600ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         margin: 0;
@@ -264,6 +287,9 @@
     justify-content: center;
     min-height: 48px;
     gap: $spacing-size-4;
+    animation: fadeIn 0.7s ease 1300ms;
+    opacity: 0;
+    animation-fill-mode: forwards;
 
     @media screen and (min-width: $breakpoint-landing-page-medium) {
         margin-bottom: 48px;
@@ -516,5 +542,24 @@
 :global {
     header[class*='headingContainer'] {
         max-width: 800px;
+    }
+
+    // Style framework logos in section headings
+    h3[class*='heading'] {
+        max-width: 600px;
+
+        img {
+            display: inline-block;
+            vertical-align: middle;
+            height: 40px;
+            width: auto;
+            margin: 0 0.2em;
+        }
+
+        span[style*='display: inline-block'] {
+            display: inline-block;
+            white-space: nowrap;
+            vertical-align: baseline;
+        }
     }
 }
