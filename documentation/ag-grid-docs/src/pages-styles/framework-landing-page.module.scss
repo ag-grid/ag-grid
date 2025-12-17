@@ -64,6 +64,7 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    max-width: 800px;
     margin-bottom: $spacing-size-12;
     gap: $spacing-size-2;
 }
@@ -507,5 +508,13 @@
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         max-width: 100%;
+    }
+}
+
+// Framework-specific headingContainer override
+// Use descendant selector to target shared component's headingContainer on framework pages
+:global {
+    header[class*='headingContainer'] {
+        max-width: 800px;
     }
 }
