@@ -14,6 +14,49 @@ interface Props {
 
 const { framework, latestVersion, landingPageHighlight } = Astro.props;
 const config: FrameworkConfig = FRAMEWORK_CONFIGS[framework];
+
+// Map frameworks to their logo and display name
+const frameworkLogoMap: Record<string, { logo: string; name: string }> = {
+    react: { logo: 'react.svg', name: 'React' },
+    reactDataGrid: { logo: 'react.svg', name: 'React' },
+    angular: { logo: 'angular.svg', name: 'Angular' },
+    vue: { logo: 'vue.svg', name: 'Vue' },
+    javascript: { logo: 'javascript.svg', name: 'JavaScript' },
+};
+
+// Function to parse heading and replace framework name with logo + text
+function parseHeading(heading: string, frameworkKey: string) {
+    const frameworkInfo = frameworkLogoMap[frameworkKey];
+    if (!frameworkInfo) {
+        return [{ type: 'text', content: heading }];
+    }
+    
+    const regex = new RegExp(`\\b${frameworkInfo.name}\\b`);
+    const parts = heading.split(regex);
+    
+    if (parts.length === 1) {
+        return [{ type: 'text', content: heading }];
+    }
+    
+    const result = [];
+    for (let i = 0; i < parts.length; i++) {
+        if (parts[i]) {
+            result.push({ type: 'text', content: parts[i] });
+        }
+        if (i < parts.length - 1) {
+            result.push({ 
+                type: 'logo', 
+                logo: frameworkInfo.logo, 
+                name: frameworkInfo.name 
+            });
+            result.push({ type: 'text', content: ` ${frameworkInfo.name} ` });
+        }
+    }
+    
+    return result;
+}
+
+const headingParts = parseHeading(config.hero.heading, framework);
 ---
 
 <div class={styles.heroSection}>
@@ -35,7 +78,21 @@ const config: FrameworkConfig = FRAMEWORK_CONFIGS[framework];
                     </span>
                 </a>
                 <h1 class={styles.heroSectionTag}>{config.hero.tag}</h1>
-                <h2 class={styles.heroSectionHeading}>{config.hero.heading}</h2>
+                <h2 class={styles.heroSectionHeading}>
+                    {headingParts.map((part) => {
+                        if (part.type === 'text') {
+                            return part.content;
+                        } else if (part.type === 'logo') {
+                            return (
+                                <img
+                                    src={urlWithBaseUrl(`/images/fw-logos/${part.logo}`)}
+                                    alt={part.name}
+                                />
+                            );
+                        }
+                        return '';
+                    })}
+                </h2>
                 <h3 class={styles.heroSectionSubHeading}>
                     Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b>
                     {config.hero.subHeading}
