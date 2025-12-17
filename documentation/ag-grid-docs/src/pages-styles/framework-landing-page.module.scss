@@ -321,6 +321,45 @@
     height: 600px;
 }
 
+.heroLinks {
+    position: relative;
+    display: flex;
+    gap: $spacing-size-2;
+    align-items: center;
+    margin: $spacing-size-4 0 0;
+    justify-content: flex-end;
+
+    :global(.button-tertiary):hover {
+        background-color: color-mix(in srgb, var(--color-button-tertiary-bg), transparent 33.3333%);
+    }
+
+    a svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin-left: -$spacing-size-1;
+        margin-right: $spacing-size-1;
+    }
+}
+
+.heroSectioncta1 {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    width: fit-content;
+    padding: 0.5em 0.5em 0.5em 1em;
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+
+        transform: translate(-3px, 1px);
+        transition: transform $transition-default-timing;
+    }
+
+    &:hover :global(.icon) {
+        transform: translate(4px, 1px);
+    }
+}
+
 .heroSectionViewAllDemosLink {
     appearance: none;
     padding: 0;
