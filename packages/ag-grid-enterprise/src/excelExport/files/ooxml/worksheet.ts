@@ -6,9 +6,9 @@ import type {
     ExcelHeaderFooterContent,
     ExcelOOXMLTemplate,
     ExcelRow,
-    ExcelSheetProtection,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
+    ExcelSheetProtection,
     ExcelWorksheet,
     XmlElement,
 } from 'ag-grid-community';
@@ -353,16 +353,16 @@ const addSheetProtection = (protectSheet?: boolean | ExcelSheetProtection) => {
             selectUnlockedCells: true,
         };
 
-        (
-            Object.keys(defaults) as (Exclude<keyof ExcelSheetProtection, 'password'>)[]
-        ).forEach((key: Exclude<keyof ExcelSheetProtection, 'password'>) => {
-            const allow = sheetProtection[key];
-            if (allow == null || allow === defaults[key]) {
-                return;
-            }
+        (Object.keys(defaults) as Exclude<keyof ExcelSheetProtection, 'password'>[]).forEach(
+            (key: Exclude<keyof ExcelSheetProtection, 'password'>) => {
+                const allow = sheetProtection[key];
+                if (allow == null || allow === defaults[key]) {
+                    return;
+                }
 
-            rawMap[key] = allow ? 0 : 1;
-        });
+                rawMap[key] = allow ? 0 : 1;
+            }
+        );
 
         params.children.push({
             name: 'sheetProtection',
@@ -609,6 +609,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             rightToLeft,
             frozenRowCount,
             frozenColumnCount,
+            protectSheet,
         } = config;
 
         const { table } = worksheet;
@@ -625,7 +626,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addSheetFormatPr(rows),
             addColumns(columns),
             addSheetData(rows, currentSheet + 1),
-            addSheetProtection(config.protectSheet),
+            addSheetProtection(protectSheet),
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),
