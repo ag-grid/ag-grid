@@ -30,28 +30,28 @@ function parseHeading(heading: string, frameworkKey: string) {
     if (!frameworkInfo) {
         return [{ type: 'text', content: heading }];
     }
-    
+
     const regex = new RegExp(`\\b${frameworkInfo.name}\\b`);
     const parts = heading.split(regex);
-    
+
     if (parts.length === 1) {
         return [{ type: 'text', content: heading }];
     }
-    
+
     const result = [];
     for (let i = 0; i < parts.length; i++) {
         if (parts[i]) {
             result.push({ type: 'text', content: parts[i] });
         }
         if (i < parts.length - 1) {
-            result.push({ 
-                type: 'logoGroup', 
-                logo: frameworkInfo.logo, 
-                name: frameworkInfo.name 
+            result.push({
+                type: 'logoGroup',
+                logo: frameworkInfo.logo,
+                name: frameworkInfo.name,
             });
         }
     }
-    
+
     return result;
 }
 
@@ -78,22 +78,21 @@ const headingParts = parseHeading(config.hero.heading, framework);
                 </a>
                 <h1 class={styles.heroSectionTag}>{config.hero.tag}</h1>
                 <h2 class={styles.heroSectionHeading}>
-                    {headingParts.map((part) => {
-                        if (part.type === 'text') {
-                            return part.content;
-                        } else if (part.type === 'logoGroup') {
-                            return (
-                                <span class={styles.frameworkLogoGroup}>
-                                    <img
-                                        src={urlWithBaseUrl(`/images/fw-logos/${part.logo}`)}
-                                        alt={part.name}
-                                    />
-                                    {` ${part.name} `}
-                                </span>
-                            );
-                        }
-                        return '';
-                    })}
+                    {
+                        headingParts.map((part) => {
+                            if (part.type === 'text') {
+                                return part.content;
+                            } else if (part.type === 'logoGroup') {
+                                return (
+                                    <span class={styles.frameworkLogoGroup}>
+                                        <img src={urlWithBaseUrl(`/images/fw-logos/${part.logo}`)} alt={part.name} />
+                                        {` ${part.name} `}
+                                    </span>
+                                );
+                            }
+                            return '';
+                        })
+                    }
                 </h2>
                 <h3 class={styles.heroSectionSubHeading}>
                     Add <b>high-performance</b>, <b>feature rich</b>, and <b>fully customisable</b>
@@ -120,18 +119,19 @@ const headingParts = parseHeading(config.hero.heading, framework);
             <div class={styles.heroSectionDemoContainer}>
                 <Finance client:only="react" gridHeight={600} />
             </div>
-            <a
-                id="view-demos"
-                class:list={[
-                    'button',
-                    styles.heroSectionViewAllDemosLink,
-                    `plausible-event-name=${config.analyticsPrefix}-view-demos`,
-                ]}
-                href={urlWithBaseUrl('./example')}
-            >
-                View All Demos
-                <Icon svgClasses={styles.heroSectionDemosArrow} name="arrowRight" />
-            </a>
+            <div class={styles.heroLinks}>
+                <a
+                    id="demos-cta"
+                    class:list={[
+                        'button-tertiary',
+                        styles.heroSectioncta1,
+                        `plausible-event-name=${config.analyticsPrefix}-get-started`,
+                    ]}
+                    href={urlWithBaseUrl('./example')}
+                >
+                    See demos <Icon name="chevronRight" />
+                </a>
+            </div>
         </div>
     </div>
 </div>

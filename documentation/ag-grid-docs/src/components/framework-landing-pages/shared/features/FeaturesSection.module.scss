@@ -15,8 +15,8 @@
     display: flex;
     justify-content: space-between;
     gap: $spacing-size-4;
-    background: var(--color-brand-200);
-    border-radius: var(--radius-4xl);
+    background: var(--color-brand-100);
+    border-radius: 100px;
     padding: $spacing-size-1;
     margin-bottom: $spacing-size-12;
     width: auto;
@@ -35,7 +35,12 @@
     appearance: none;
     background-color: transparent;
     box-shadow: none;
-    font-weight: var(--text-regular);
+    font-weight: var(--text-bold);
+
+    &:hover {
+        background: var(--color-brand-200);
+        color: var(--color-fg-primary);
+    }
 }
 
 .activeTab {
@@ -55,7 +60,7 @@
 .buttonContainer {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: $spacing-size-2;
 }
 
