@@ -11,6 +11,7 @@ import HeroSection from '@components/framework-landing-pages/shared/hero/HeroSec
 import ExamplesSection from '@components/framework-landing-pages/shared/examples/ExamplesSection.astro';
 import ContactSection from '@components/framework-landing-pages/shared/contact/ContactSection.astro';
 import { FRAMEWORK_CONFIGS } from '@components/framework-landing-pages/shared/types';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 const framework = 'javascript' as const;
 const config = FRAMEWORK_CONFIGS[framework];
@@ -19,6 +20,30 @@ const { data: faqData } = (await getEntry('faqs', 'javascript-landing-page')) as
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: examples } = (await getEntry('javascriptLandingPage', 'examples')) as CollectionEntry<'javascriptLandingPage'>;
 const latestVersionWithHighlightData = versionsData.find((version) => version.landingPageHighlight);
+
+// Map frameworks to their logo and display name
+const frameworkLogoMap: Record<string, { logo: string; name: string }> = {
+    react: { logo: 'react.svg', name: 'React' },
+    reactDataGrid: { logo: 'react.svg', name: 'React' },
+    angular: { logo: 'angular.svg', name: 'Angular' },
+    vue: { logo: 'vue.svg', name: 'Vue' },
+    javascript: { logo: 'javascript.svg', name: 'JavaScript' },
+};
+
+// Function to generate heading HTML with framework logo
+function getHeadingWithLogo(frameworkKey: string, headingTemplate: string): string {
+    const frameworkInfo = frameworkLogoMap[frameworkKey] || frameworkLogoMap['react'];
+    const logoUrl = urlWithBaseUrl(`/images/fw-logos/${frameworkInfo.logo}`);
+    const frameworkName = frameworkInfo.name;
+    
+    // Replace framework name with logo + text
+    const logoHtml = `<span style="display: inline-block; white-space: nowrap; vertical-align: baseline;"><img src="${logoUrl}" alt="${frameworkName}" style="display: inline-block; vertical-align: middle; height: 40px; width: auto; margin: 0 0.2em;"/> ${frameworkName}</span>`;
+    const heading = headingTemplate.replace(frameworkName, logoHtml);
+    
+    return heading;
+}
+
+const featuresHeading = getHeadingWithLogo(framework, 'Build, Customise and Expand your JavaScript Data Grid');
 ---
 
 <Layout
@@ -35,7 +60,7 @@ const latestVersionWithHighlightData = versionsData.find((version) => version.la
 
     <LandingPageSection
         tag={config.sections.features.tag}
-        heading="Amazingly Fast and Fully Customisable with an Unbeatable Feature Set"
+        headingHtml={featuresHeading}
         subHeading={config.sections.features.subHeading}
     >
         <FeaturesSection client:load framework={framework} />
