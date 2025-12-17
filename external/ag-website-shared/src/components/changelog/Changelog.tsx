@@ -1,6 +1,7 @@
 import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
+import { transformVersion } from '@ag-website-shared/components/changelog/transformVersion';
 import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
 import { Grid } from '@ag-website-shared/components/grid/Grid';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
@@ -67,18 +68,6 @@ const compareSemver = (a: any, b: any) => {
     } else {
         return bPatch - aPatch;
     }
-};
-
-const gridToChartVersion = (gridVersion: string) => {
-    const versionParts = gridVersion.split('.');
-
-    // The first charts release was on grid version 22 - we'll keep in lock step release wise going forward so this works
-    const chartMajorVersion = parseInt(versionParts[0]) - 22;
-    return `${chartMajorVersion}.${versionParts[1]}.${versionParts[2]}`;
-};
-
-const transformVersion: Record<Library, (version: string) => string> = {
-    charts: gridToChartVersion,
 };
 
 export const Changelog: FunctionComponent<Props> = ({ library }) => {
