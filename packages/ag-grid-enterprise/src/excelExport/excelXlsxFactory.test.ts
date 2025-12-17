@@ -92,6 +92,40 @@ describe('excelXlsxFactory Workbook', () => {
         expect(worksheetXml).toMatch(/&(amp;)?P/);
     });
 
+    it('writes sheet protection when enabled', () => {
+        const workbook = new Workbook();
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            basicWorksheet('Protected'),
+            stubParams({ protectSheet: true }, workbook)
+        );
+
+        expect(worksheetXml).toMatch(/<sheetProtection\b[^>]*sheet="1"/);
+    });
+
+    it('writes sheet protection settings and password hash', () => {
+        const workbook = new Workbook();
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            basicWorksheet('Protected'),
+            stubParams(
+                {
+                    protectSheet: {
+                        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+                        password: 'password',
+                        formatCells: true,
+                        selectLockedCells: false,
+                    },
+                },
+                workbook
+            )
+        );
+
+        expect(worksheetXml).toMatch(/<sheetProtection\b[^>]*password="83AF"/);
+        expect(worksheetXml).toMatch(/formatCells="0"/);
+        expect(worksheetXml).toMatch(/selectLockedCells="1"/);
+    });
+
     it('adds drawing relationship when body images are present', () => {
         const workbook = new Workbook();
         const col = { getId: () => 'c1' } as any;

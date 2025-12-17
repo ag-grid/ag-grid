@@ -108,6 +108,7 @@ export {
     ExcelRelationship,
     ExcelRow,
     ExcelSheetMargin,
+    ExcelSheetProtection,
     ExcelSheetNameGetter,
     ExcelSheetNameGetterParams,
     ExcelSheetPageSetup,

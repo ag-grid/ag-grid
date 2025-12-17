@@ -1731,6 +1731,12 @@
                                     "title": "Page Setup",
                                     "path": "excel-export-page-setup",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Data Protection",
+                                    "path": "excel-export-data-protection",
+                                    "isEnterprise": true
                                 }
                             ]
                         },
