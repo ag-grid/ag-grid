@@ -1,14 +1,24 @@
+import type { Library } from '@ag-grid-types';
 import { Alert } from '@ag-website-shared/components/alert/Alert';
 import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
+import { transformVersion } from '@ag-website-shared/components/changelog/transformVersion';
+import { useSearchQuery } from '@ag-website-shared/components/changelog/useSearchQuery';
 import DetailCellRenderer from '@ag-website-shared/components/grid/DetailCellRendererComponent';
 import { Grid } from '@ag-website-shared/components/grid/Grid';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { IssueColDef, IssueTypeColDef } from '@ag-website-shared/utils/issueColDefs';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
-import { type ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import type { FunctionComponent } from 'react';
 
-const COLUMN_DEFS = [
+interface Props {
+    library: Library;
+}
+
+const PIPELINE_DATA_URL = urlWithBaseUrl('/pipeline/pipeline.json');
+
+const getColDefs = (library: Library) => [
     IssueColDef,
     {
         field: 'summary',
@@ -32,7 +42,8 @@ const COLUMN_DEFS = [
                 if (fixVersion.toUpperCase() === 'NEXT') {
                     return 'Scheduled';
                 } else {
-                    return `Scheduled for ${fixVersion}`;
+                    const version = library in transformVersion ? transformVersion[library](fixVersion) : fixVersion;
+                    return `Scheduled for ${version}`;
                 }
             }
             return 'Backlog';
@@ -75,33 +86,14 @@ const detailCellRendererParams = (params) => {
     };
 };
 
-function useSearchQuery() {
-    const [searchQuery, setSearchQuery] = useState<string>('');
-    const handleSearchQueryChange = useCallback((event: ChangeEvent<{ value: string }>) => {
-        const value = event.target?.value;
-        setSearchQuery(value);
-    }, []);
-
-    useEffect(() => {
-        const searchParams = window.location.search;
-        const urlSearchQuery = new URLSearchParams(searchParams).get('searchQuery');
-        const value = searchParams && urlSearchQuery ? urlSearchQuery : '';
-        setSearchQuery(value);
-    }, []);
-
-    return {
-        searchQuery,
-        handleSearchQueryChange,
-    };
-}
-
-export const Pipeline = () => {
+export const Pipeline: FunctionComponent<Props> = ({ library }) => {
+    const [COLUMN_DEFS] = useState(getColDefs(library));
     const [rowData, setRowData] = useState(null);
     const [gridApi, setGridApi] = useState(null);
     const { searchQuery, handleSearchQueryChange } = useSearchQuery();
 
     useEffect(() => {
-        fetch(urlWithBaseUrl('/pipeline/pipeline.json'))
+        fetch(PIPELINE_DATA_URL)
             .then((response) => response.json())
             .then((data) => {
                 setRowData(data);
@@ -124,8 +116,7 @@ export const Pipeline = () => {
     }, [gridApi, searchQuery]);
 
     return (
-        <div className={classnames('page-margin', styles.container)}>
-            <h1>AG Grid Pipeline</h1>
+        <>
             <section className={styles.header}>
                 <Alert type="idea">
                     <p>
@@ -165,6 +156,6 @@ export const Pipeline = () => {
                 rowData={rowData}
                 onGridReady={gridReady}
             ></Grid>
-        </div>
+        </>
     );
 };
