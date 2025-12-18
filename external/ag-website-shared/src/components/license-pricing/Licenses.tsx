@@ -1,6 +1,4 @@
 // import { trackBuyButton } from '@utils/analytics';
-import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
-import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
 import { useState } from 'react';
 import type { FunctionComponent } from 'react';
@@ -85,7 +83,6 @@ const Price: FunctionComponent<{ priceFullDollars: string }> = ({ priceFullDolla
 };
 
 const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
-    const framework = useFrameworkFromStore();
     const { id, description, subHeading, priceFullDollars, buyLink } = props;
     const ctaId = id === 'community' ? 'get-started' : id.includes('enterprise') ? 'buy-now' : 'bundle-buy-now';
 
@@ -114,18 +111,6 @@ const License: FunctionComponent<LicenseData> = (props: LicenseData) => {
                     >
                         {id === 'community' ? 'Get started' : 'Buy now'}
                     </a>
-
-                    {subHeading === 'Enterprise Bundle' && (
-                        <a
-                            className={`${'button-secondary'} ${styles.pricing}`}
-                            href={gridUrlWithPrefix({
-                                framework,
-                                url: './community-vs-enterprise/#request-an-enterprise-bundle-trial-licence',
-                            })}
-                        >
-                            Free Trial
-                        </a>
-                    )}
                 </div>
             </div>
         </>
