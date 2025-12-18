@@ -7,14 +7,18 @@ export type ValueParserLiteParams<TData, TValue, TContext = any> = Omit<
     'data' | 'node' | 'oldValue'
 >;
 
-export type ValueParserLiteFunc<TData, TValue, TContext = any> = (params: ValueParserLiteParams<TData, TValue, TContext>) => TValue | null | undefined;
+export type ValueParserLiteFunc<TData, TValue, TContext = any> = (
+    params: ValueParserLiteParams<TData, TValue, TContext>
+) => TValue | null | undefined;
 
 export type ValueFormatterLiteParams<TData, TValue, TContext = any> = Omit<
     ValueFormatterParams<TData, TValue, TContext>,
     'data' | 'node'
 >;
 
-export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (params: ValueFormatterLiteParams<TData, TValue, TContext>) => string;
+export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (
+    params: ValueFormatterLiteParams<TData, TValue, TContext>
+) => string;
 
 /**
  * The pre-defined base data types.
