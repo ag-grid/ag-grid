@@ -342,6 +342,11 @@
     fill: var(--color-link) !important;
 }
 
+// Examples Section
+.examplesSection {
+    --gradient-top-offset: 50% !important;
+}
+
 .examplesSectionContainer {
     --horizontal-gap: #{$spacing-size-4};
 
@@ -360,11 +365,8 @@
 
 .examplesSectionCard {
     border-radius: var(--radius-md);
-    background: var(--color-gray-50);
-
-    #{$selector-darkmode} & {
-        background: var(--color-gray-800);
-    }
+    border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-primary);
 
     @media screen and (min-width: $breakpoint-landing-page-small) {
         width: calc(50% - var(--horizontal-gap) / 2);
@@ -391,6 +393,7 @@
     font-size: 16px;
     flex-direction: column;
     padding: $spacing-size-4 $spacing-size-4 0px;
+    border-top: 1px solid var(--color-border-secondary);
 }
 
 .examplesSectionCardCta {
