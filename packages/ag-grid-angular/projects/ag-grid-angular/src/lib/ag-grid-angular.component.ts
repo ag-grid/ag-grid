@@ -14,12 +14,13 @@ import {
     ViewEncapsulation,
     booleanAttribute,
 } from '@angular/core';
-import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 // @START_IMPORTS@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
+    AlwaysPassFilterFunc,
     AsyncTransactionsFlushedEvent,
     AutoGroupColumnDef,
     AutoSizeStrategy,
@@ -40,7 +41,6 @@ import type {
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
-    CellPosition,
     CellSelectionChangedEvent,
     CellSelectionDeleteEndEvent,
     CellSelectionDeleteStartEvent,
@@ -50,12 +50,10 @@ import type {
     ChartDestroyedEvent,
     ChartOptionsChangedEvent,
     ChartRangeSelectionChangedEvent,
-    ChartRefParams,
     ChartToolPanelsDef,
     ColDef,
     ColGroupDef,
-    ColTypeDef,
-    Column,
+    ColTypeDefs,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
@@ -73,14 +71,17 @@ import type {
     ColumnVisibleEvent,
     ColumnsResetEvent,
     ComponentStateChangedEvent,
+    Components,
     ContextMenuVisibleChangedEvent,
-    CreateFilterHandlerFunc,
+    CreateChartContainer,
     CsvExportParams,
+    CustomChartThemes,
     CutEndEvent,
     CutStartEvent,
-    DataTypeDefinition,
+    DataTypeDefinitions,
     DefaultChartMenuItem,
     DisplayedColumnsChangedEvent,
+    DoesExternalFilterPass,
     DomLayoutType,
     DragCancelledEvent,
     DragStartedEvent,
@@ -91,9 +92,10 @@ import type {
     ExcelStyle,
     ExpandOrCollapseAllEvent,
     FillEndEvent,
-    FillOperationParams,
+    FillOperation,
     FillStartEvent,
     FilterChangedEvent,
+    FilterHandlers,
     FilterModifiedEvent,
     FilterOpenedEvent,
     FilterUiChangedEvent,
@@ -101,40 +103,45 @@ import type {
     FindOptions,
     FirstDataRenderedEvent,
     FloatingFilterUiChangedEvent,
-    FocusGridInnerElementParams,
+    FocusGridInnerElement,
     FormulaDataSource,
     FormulaFuncs,
     FullWidthCellKeyDownEvent,
+    GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetChildCount,
     GetContextMenuItems,
     GetDataPath,
+    GetDocument,
     GetFullRowEditValidationErrors,
-    GetGroupRowAggParams,
-    GetLocaleTextParams,
+    GetGroupRowAgg,
+    GetLocaleText,
     GetMainMenuItems,
+    GetRowClass,
+    GetRowHeight,
     GetRowIdFunc,
+    GetRowStyle,
     GetServerSideGroupKey,
-    GetServerSideGroupLevelParamsParams,
+    GetServerSideGroupLevelParams,
     GridColumnsChangedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
+    GroupHierarchyConfig,
     HeaderFocusedEvent,
-    HeaderPosition,
     IAdvancedFilterBuilderParams,
     IAdvancedFilterParams,
-    IAggFunc,
+    IAggFuncs,
     IDatasource,
-    IRowDragItem,
-    IRowNode,
     IServerSideDatasource,
     IViewportDatasource,
-    InitialGroupOrderComparatorParams,
+    Icons,
+    InitialGroupOrderComparator,
     IsApplyServerSideTransaction,
-    IsExternalFilterPresentParams,
-    IsFullWidthRowParams,
-    IsGroupOpenByDefaultParams,
+    IsExternalFilterPresent,
+    IsFullWidthRow,
+    IsGroupOpenByDefault,
     IsRowFilterable,
     IsRowMaster,
     IsRowPinnable,
@@ -142,36 +149,41 @@ import type {
     IsRowSelectable,
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
-    IsServerSideGroupOpenByDefaultParams,
+    IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
+    LocaleText,
     MenuItemDef,
     ModelUpdatedEvent,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
+    NavigateToNextCell,
+    NavigateToNextHeader,
     NewColumnsLoadedEvent,
     OverlaySelectorFunc,
     OverlayType,
     PaginationChangedEvent,
-    PaginationNumberFormatterParams,
+    PaginationNumberFormatter,
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
     PinnedRowsChangedEvent,
     PivotMaxColumnsExceededEvent,
-    PostProcessPopupParams,
-    PostSortRowsParams,
-    ProcessCellForExportParams,
-    ProcessDataFromClipboardParams,
-    ProcessGroupHeaderForExportParams,
-    ProcessHeaderForExportParams,
-    ProcessRowParams,
-    ProcessUnpinnedColumnsParams,
+    PostProcessPopup,
+    PostSortRows,
+    ProcessCellForClipboard,
+    ProcessCellFromClipboard,
+    ProcessDataFromClipboard,
+    ProcessGroupHeaderForClipboard,
+    ProcessHeaderForClipboard,
+    ProcessPivotResultColDef,
+    ProcessPivotResultColGroupDef,
+    ProcessRowPostCreate,
+    ProcessUnpinnedColumns,
+    QuickFilterMatcherFunc,
+    QuickFilterParserFunc,
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
-    RowClassParams,
     RowClassRules,
     RowClickedEvent,
     RowDataUpdatedEvent,
@@ -181,11 +193,11 @@ import type {
     RowDragEnterEvent,
     RowDragLeaveEvent,
     RowDragMoveEvent,
+    RowDragTextFunc,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowGroupOpenedEvent,
     RowGroupingDisplayType,
-    RowHeightParams,
     RowModelType,
     RowNumbersOptions,
     RowResizeEndedEvent,
@@ -196,16 +208,15 @@ import type {
     RowValueChangedEvent,
     SelectionChangedEvent,
     SelectionColumnDef,
-    SendToClipboardParams,
-    ServerSideGroupLevelParams,
+    SendToClipboard,
     SideBarDef,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
-    StatusPanelDef,
+    StatusBar,
     StoreRefreshedEvent,
-    TabToNextCellParams,
-    TabToNextHeaderParams,
+    TabToNextCell,
+    TabToNextHeader,
     Theme,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
@@ -397,7 +408,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
      */
-    @Input() public statusBar: { statusPanels: StatusPanelDef[] } | undefined = undefined;
+    @Input() public statusBar: StatusBar | undefined = undefined;
     /** Specifies the side bar components.
      * @agModule `SideBarModule`
      */
@@ -535,17 +546,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.
      */
-    @Input() public columnTypes: { [key: string]: ColTypeDef<TData> } | undefined = undefined;
+    @Input() public columnTypes: ColTypeDefs<TData> | undefined = undefined;
     /** An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
      * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
      * or can be custom data types.
      */
-    @Input() public dataTypeDefinitions:
-        | {
-              [cellDataType: string]: DataTypeDefinition<TData>;
-          }
-        | undefined = undefined;
+    @Input() public dataTypeDefinitions: DataTypeDefinitions<TData> | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
      *
      * @default false
@@ -650,7 +657,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A map of component names to components.
      * @initial
      */
-    @Input() public components: { [p: string]: any } | undefined = undefined;
+    @Input() public components: Components | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
      * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
      */
@@ -763,13 +770,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Changes how the Quick Filter splits the Quick Filter text into search terms.
      * @agModule `QuickFilterModule`
      */
-    @Input() public quickFilterParser: ((quickFilter: string) => string[]) | undefined = undefined;
+    @Input() public quickFilterParser: QuickFilterParserFunc | undefined = undefined;
     /** Changes the matching logic for whether a row passes the Quick Filter.
      * @agModule `QuickFilterModule`
      */
-    @Input() public quickFilterMatcher:
-        | ((quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean)
-        | undefined = undefined;
+    @Input() public quickFilterMatcher: QuickFilterMatcherFunc | undefined = undefined;
     /** When pivoting, Quick Filter is only applied on the pivoted data
      * (or aggregated data if `groupAggFiltering = true`).
      * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
@@ -793,7 +798,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Only works with the Client-Side Row Model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
-    @Input() public alwaysPassFilter: ((rowNode: IRowNode<TData>) => boolean) | undefined = undefined;
+    @Input() public alwaysPassFilter: AlwaysPassFilterFunc<TData> | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
      * To include hidden columns, set to `true`.
      * @default false
@@ -839,7 +844,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    @Input() public filterHandlers: { [key: string]: CreateFilterHandlerFunc<TData> } | undefined = undefined;
+    @Input() public filterHandlers: FilterHandlers<TData> | undefined = undefined;
     /** Set to `true` to Enable Charts.
      * @default false
      * @agModule `IntegratedChartsModule`
@@ -855,7 +860,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
+    @Input() public customChartThemes: CustomChartThemes | undefined = undefined;
     /** Chart theme overrides applied to all themes.
      * @initial
      * @agModule `IntegratedChartsModule`
@@ -888,7 +893,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `LocaleModule`
      */
-    @Input() public localeText: { [key: string]: string } | undefined = undefined;
+    @Input() public localeText: LocaleText | undefined = undefined;
     /** Set to `true` to enable Master Detail.
      * @default false
      * @agModule `MasterDetailModule`
@@ -1157,7 +1162,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
-    @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
+    @Input() public aggFuncs: IAggFuncs | undefined = undefined;
     /** Provide a data source to control where formulas are stored and retrieved.
      * If not supplied, formulas are read from and written to the row data.
      * @initial
@@ -1296,7 +1301,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `RowDragModule`
      */
-    @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
+    @Input() public rowDragText: RowDragTextFunc | undefined = undefined;
     /** Provide a custom drag and drop image component.
      * @initial
      * @agModule `RowDragModule`
@@ -1459,7 +1464,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
-    @Input() public groupHierarchyConfig: { [k: string]: ColDef } | undefined = undefined;
+    @Input() public groupHierarchyConfig: GroupHierarchyConfig | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.
      * @agModule `PinnedRowModule`
      */
@@ -1757,7 +1762,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    @Input() public icons: { [key: string]: ((...args: any[]) => any) | string } | undefined = undefined;
+    @Input() public icons: Icons | undefined = undefined;
     /** Default row height in pixels.
      * @default 25
      */
@@ -1858,53 +1863,44 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getMainMenuItems: GetMainMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
-    @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
+    @Input() public postProcessPopup: PostProcessPopup | undefined = undefined;
     /** Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
      * Returns an array of columns to be removed from the pinned areas.
      * @initial
      */
-    @Input() public processUnpinnedColumns: ((params: ProcessUnpinnedColumnsParams<TData>) => Column[]) | undefined =
-        undefined;
+    @Input() public processUnpinnedColumns: ProcessUnpinnedColumns<TData> | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.
      * @agModule `ClipboardModule`
      */
-    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined =
-        undefined;
+    @Input() public processCellForClipboard: ProcessCellForClipboard<TData> | undefined = undefined;
     /** Allows you to process header values for the clipboard.
      * @agModule `ClipboardModule`
      */
-    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams<TData>) => any) | undefined =
-        undefined;
+    @Input() public processHeaderForClipboard: ProcessHeaderForClipboard<TData> | undefined = undefined;
     /** Allows you to process group header values for the clipboard.
      * @agModule `ClipboardModule`
      */
-    @Input() public processGroupHeaderForClipboard:
-        | ((params: ProcessGroupHeaderForExportParams<TData>) => any)
-        | undefined = undefined;
+    @Input() public processGroupHeaderForClipboard: ProcessGroupHeaderForClipboard<TData> | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
      * @agModule `ClipboardModule`
      */
-    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined =
-        undefined;
+    @Input() public processCellFromClipboard: ProcessCellFromClipboard<TData> | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.
      * @agModule `ClipboardModule`
      */
-    @Input() public sendToClipboard: ((params: SendToClipboardParams<TData>) => void) | undefined = undefined;
+    @Input() public sendToClipboard: SendToClipboard<TData> | undefined = undefined;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
      * @agModule `ClipboardModule`
      */
-    @Input() public processDataFromClipboard:
-        | ((params: ProcessDataFromClipboardParams<TData>) => string[][] | null)
-        | undefined = undefined;
+    @Input() public processDataFromClipboard: ProcessDataFromClipboard<TData> | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.
      * @agModule `ExternalFilterModule`
      */
-    @Input() public isExternalFilterPresent: ((params: IsExternalFilterPresentParams<TData>) => boolean) | undefined =
-        undefined;
+    @Input() public isExternalFilterPresent: IsExternalFilterPresent<TData> | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.
      * @agModule `ExternalFilterModule`
      */
-    @Input() public doesExternalFilterPass: ((node: IRowNode<TData>) => boolean) | undefined = undefined;
+    @Input() public doesExternalFilterPass: DoesExternalFilterPass<TData> | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.
      * @initial
      * @agModule `IntegratedChartsModule`
@@ -1914,57 +1910,48 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    @Input() public createChartContainer: ((params: ChartRefParams<TData>) => void) | undefined = undefined;
+    @Input() public createChartContainer: CreateChartContainer<TData> | undefined = undefined;
     /** Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
      * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
      */
-    @Input() public focusGridInnerElement: ((params: FocusGridInnerElementParams<TData>) => boolean) | undefined =
-        undefined;
+    @Input() public focusGridInnerElement: FocusGridInnerElement<TData> | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
-    @Input() public navigateToNextHeader:
-        | ((params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null)
-        | undefined = undefined;
+    @Input() public navigateToNextHeader: NavigateToNextHeader<TData> | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
      * Return the next header position to navigate to, `true` to stay on the current header,
      * or `false` to let the browser handle the tab behaviour.
      */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean) | undefined =
-        undefined;
+    @Input() public tabToNextHeader: TabToNextHeader<TData> | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
      */
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => CellPosition | null) | undefined =
-        undefined;
+    @Input() public navigateToNextCell: NavigateToNextCell<TData> | undefined = undefined;
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
      * Return the next cell position to navigate to, `true` to stay on the current cell,
      * or `false` to let the browser handle the tab behaviour.
      */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => CellPosition | boolean) | undefined =
-        undefined;
+    @Input() public tabToNextCell: TabToNextCell<TData> | undefined = undefined;
     /** A callback for localising text within the grid.
      * @initial
      * @agModule `LocaleModule`
      */
-    @Input() public getLocaleText: ((params: GetLocaleTextParams<TData>) => string) | undefined = undefined;
+    @Input() public getLocaleText: GetLocaleText<TData> | undefined = undefined;
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)
      */
-    @Input() public getDocument: (() => Document) | undefined = undefined;
+    @Input() public getDocument: GetDocument | undefined = undefined;
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.
      * @initial
      * @agModule `PaginationModule`
      */
-    @Input() public paginationNumberFormatter:
-        | ((params: PaginationNumberFormatterParams<TData>) => string)
-        | undefined = undefined;
+    @Input() public paginationNumberFormatter: PaginationNumberFormatter<TData> | undefined = undefined;
     /** Callback to use when you need access to more then the current column for aggregation.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
-    @Input() public getGroupRowAgg: ((params: GetGroupRowAggParams<TData>) => any) | undefined = undefined;
+    @Input() public getGroupRowAgg: GetGroupRowAgg<TData> | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
-    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined =
-        undefined;
+    @Input() public isGroupOpenByDefault: IsGroupOpenByDefault<TData> | undefined = undefined;
     /** Controls how expand/collapse operations affect all rows and group interactions.
      * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
      * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
@@ -1974,17 +1961,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */
-    @Input() public initialGroupOrderComparator:
-        | ((params: InitialGroupOrderComparatorParams<TData>) => number)
-        | undefined = undefined;
+    @Input() public initialGroupOrderComparator: InitialGroupOrderComparator<TData> | undefined = undefined;
     /** Callback for the mutation of the generated pivot result column definitions
      * @agModule `PivotModule`
      */
-    @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
+    @Input() public processPivotResultColDef: ProcessPivotResultColDef<TData> | undefined = undefined;
     /** Callback for the mutation of the generated pivot result column group definitions
      * @agModule `PivotModule`
      */
-    @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
+    @Input() public processPivotResultColGroupDef: ProcessPivotResultColGroupDef<TData> | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.
      * @initial
      * @agModule `TreeDataModule`
@@ -1994,20 +1979,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `ServerSideRowModelModule`
      */
-    @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
+    @Input() public getChildCount: GetChildCount | undefined = undefined;
     /** Allows providing different params for different levels of grouping.
      * @initial
      * @agModule `ServerSideRowModelModule`
      */
-    @Input() public getServerSideGroupLevelParams:
-        | ((params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams)
-        | undefined = undefined;
+    @Input() public getServerSideGroupLevelParams: GetServerSideGroupLevelParams<TData> | undefined = undefined;
     /** Allows groups to be open by default.
      * @agModule `ServerSideRowModelModule`
      */
-    @Input() public isServerSideGroupOpenByDefault:
-        | ((params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean)
-        | undefined = undefined;
+    @Input() public isServerSideGroupOpenByDefault: IsServerSideGroupOpenByDefault<TData> | undefined = undefined;
     /** Allows cancelling transactions.
      * @agModule `ServerSideRowModelModule`
      */
@@ -2023,7 +2004,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
-    @Input() public getBusinessKeyForNode: ((node: IRowNode<TData>) => string) | undefined = undefined;
+    @Input() public getBusinessKeyForNode: GetBusinessKeyForNode<TData> | undefined = undefined;
     /** Provide a pure function that returns a string ID to uniquely identify a given row. This enables the grid to work optimally with data changes and updates.
      * @initial
      */
@@ -2035,7 +2016,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input({ transform: booleanAttribute }) public resetRowDataOnUpdate: boolean | undefined = undefined;
     /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
-    @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
+    @Input() public processRowPostCreate: ProcessRowPostCreate<TData> | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
      */
@@ -2047,26 +2028,24 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.
      * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
      */
-    @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
+    @Input() public fillOperation: FillOperation<TData> | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.
      */
-    @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
+    @Input() public postSortRows: PostSortRows<TData> | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
      * @agModule `RowStyleModule`
      */
-    @Input() public getRowStyle: ((params: RowClassParams<TData>) => RowStyle | undefined) | undefined = undefined;
+    @Input() public getRowStyle: GetRowStyle<TData> | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.
      * @agModule `RowStyleModule`
      */
-    @Input() public getRowClass: ((params: RowClassParams<TData>) => string | string[] | undefined) | undefined =
-        undefined;
+    @Input() public getRowClass: GetRowClass<TData> | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.
      */
-    @Input() public getRowHeight: ((params: RowHeightParams<TData>) => number | undefined | null) | undefined =
-        undefined;
+    @Input() public getRowHeight: GetRowHeight<TData> | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.
      */
-    @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
+    @Input() public isFullWidthRow: IsFullWidthRow<TData> | undefined = undefined;
     /** Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
      * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
      * @agModule `RowDragModule`
