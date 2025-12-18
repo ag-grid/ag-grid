@@ -490,6 +490,11 @@
     border: 1px solid var(--color-border-primary);
     overflow: hidden;
 
+    div {
+        display: block !important;
+        margin-bottom: 0 !important;
+    }
+
     video {
         display: block;
         width: 100%;
@@ -571,4 +576,5 @@
 // Enterprise Trial Section
 .enterpriseTrialSection {
     margin-top: $spacing-size-12;
+    border-top: none !important;
 }
