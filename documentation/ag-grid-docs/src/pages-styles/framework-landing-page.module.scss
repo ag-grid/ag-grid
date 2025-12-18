@@ -270,8 +270,9 @@
 }
 
 .heroSectionCta2 {
-    min-width: 315px;
     @include frameworkShared.hero-section-cta2;
+
+    min-width: 315px;
 }
 
 .heroSectionDemoContainer {
