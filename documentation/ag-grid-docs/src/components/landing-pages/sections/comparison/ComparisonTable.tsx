@@ -177,7 +177,7 @@ const ComparisonTable: React.FC = () => {
                     </div>
                     <div className={styles.headerCellEnterprise}>
                         <span className={styles.headerTitle}>Enterprise Bundle</span>
-                        <span className={styles.headerSubtitle}>1,498/dev</span>
+                        <span className={styles.headerSubtitle}>$1,498/dev</span>
                     </div>
                 </div>
                 <div className={styles.tableBody}>
