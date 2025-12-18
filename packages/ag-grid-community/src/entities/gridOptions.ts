@@ -1166,7 +1166,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
-    aggFuncs?: IAggFuncs;
+    aggFuncs?: IAggFuncs<TData>;
 
     /**
      * Provide a data source to control where formulas are stored and retrieved.
@@ -2092,7 +2092,7 @@ export interface GridOptions<TData = any> {
     /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
-    postProcessPopup?: PostProcessPopup;
+    postProcessPopup?: PostProcessPopup<TData>;
 
     // *** Columns *** //
     /**

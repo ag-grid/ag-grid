@@ -148,7 +148,9 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
  */
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
 
-export type IAggFunc<TData = any, TValue = any, TContext = any> = (params: IAggFuncParams<TData, TValue, TContext>) => any;
+export type IAggFunc<TData = any, TValue = any, TContext = any> = (
+    params: IAggFuncParams<TData, TValue, TContext>
+) => any;
 
 export type IAggFuncs<TData = any, TValue = any, TContext = any> = { [key: string]: IAggFunc<TData, TValue, TContext> };
 
@@ -169,7 +171,9 @@ export interface IAggFuncParams<TData = any, TValue = any, TContext = any> exten
 
 export type PivotComparatorFunc = (valueA: string, valueB: string) => number;
 
-export type HeaderStyleFunc<TData = any, TValue = any, TContext = any> = (headerClassParams: HeaderClassParams<TData, TValue, TContext>) => HeaderStyle | null | undefined;
+export type HeaderStyleFunc<TData = any, TValue = any, TContext = any> = (
+    headerClassParams: HeaderClassParams<TData, TValue, TContext>
+) => HeaderStyle | null | undefined;
 
 export interface HeaderStyle {
     [cssProperty: string]: string | number;
@@ -445,7 +449,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value).
      * @agModule `QuickFilterModule`
      */
-    getQuickFilterText?: GetQuickFilterTextFunc<TData, TValue>;
+    getQuickFilterText?: GetQuickFilterText<TData, TValue>;
     /**
      * Function or expression. Gets the value for filtering purposes.
      */
@@ -475,7 +479,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Returning `null` means Find will not search within the cell.
      * @agModule `FindModule`
      */
-    getFindText?: GetFindTextFunc<TData, TValue>;
+    getFindText?: GetFindText<TData, TValue>;
 
     // *** Column Headers *** //
     /**
@@ -923,10 +927,14 @@ export interface ColumnFunctionCallbackParams<TData = any, TValue = any, TContex
 
 export interface CheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
-export type CheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (params: CheckboxSelectionCallbackParams<TData, TValue, TContext>) => boolean;
+export type CheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
+    params: CheckboxSelectionCallbackParams<TData, TValue, TContext>
+) => boolean;
 export interface RowDragCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
-export type RowDragCallback<TData = any, TValue = any, TContext = any> = (params: RowDragCallbackParams<TData, TValue, TContext>) => boolean;
+export type RowDragCallback<TData = any, TValue = any, TContext = any> = (
+    params: RowDragCallbackParams<TData, TValue, TContext>
+) => boolean;
 export interface DndSourceCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
 
@@ -939,22 +947,32 @@ export interface DndSourceOnRowDragParams<TData = any, TContext = any> extends A
     /** The DOM event that represents a drag and drop interaction */
     dragEvent: DragEvent;
 }
-export type DndSourceCallback<TData = any, TValue = any, TContext = any> = (params: DndSourceCallbackParams<TData, TValue, TContext>) => boolean;
+export type DndSourceCallback<TData = any, TValue = any, TContext = any> = (
+    params: DndSourceCallbackParams<TData, TValue, TContext>
+) => boolean;
 export interface EditableCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
-export type EditableCallback<TData = any, TValue = any, TContext = any> = (params: EditableCallbackParams<TData, TValue, TContext>) => boolean;
+export type EditableCallback<TData = any, TValue = any, TContext = any> = (
+    params: EditableCallbackParams<TData, TValue, TContext>
+) => boolean;
 export interface SuppressPasteCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
-export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (params: SuppressPasteCallbackParams<TData, TValue, TContext>) => boolean;
+export type SuppressPasteCallback<TData = any, TValue = any, TContext = any> = (
+    params: SuppressPasteCallbackParams<TData, TValue, TContext>
+) => boolean;
 export interface SuppressNavigableCallbackParams<TData = any, TValue = any, TContext = any>
     extends ColumnFunctionCallbackParams<TData, TValue, TContext> {}
-export type SuppressNavigableCallback<TData = any, TValue = any, TContext = any> = (params: SuppressNavigableCallbackParams<TData, TValue, TContext>) => boolean;
+export type SuppressNavigableCallback<TData = any, TValue = any, TContext = any> = (
+    params: SuppressNavigableCallbackParams<TData, TValue, TContext>
+) => boolean;
 export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     column: Column<TValue>;
     colDef: ColDef<TData, TValue>;
 }
-export type HeaderCheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (params: HeaderCheckboxSelectionCallbackParams<TData, TValue, TContext>) => boolean;
+export type HeaderCheckboxSelectionCallback<TData = any, TValue = any, TContext = any> = (
+    params: HeaderCheckboxSelectionCallbackParams<TData, TValue, TContext>
+) => boolean;
 
 interface GetTextParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Value for the cell. */
@@ -965,7 +983,7 @@ interface GetTextParams<TData = any, TValue = any, TContext = any> extends AgGri
     data: TData;
 }
 
-export type GetQuickFilterTextFunc<TData = any, TValue = any, TContext = any> = (
+export type GetQuickFilterText<TData = any, TValue = any, TContext = any> = (
     params: GetQuickFilterTextParams<TData, TValue, TContext>
 ) => string;
 export interface GetQuickFilterTextParams<TData = any, TValue = any, TContext = any>
@@ -986,7 +1004,9 @@ export interface GetFindTextParams<TData = any, TValue = any, TContext = any>
     getValueFormatted: () => string | null;
 }
 
-export type GetFindTextFunc<TData = any, TValue = any, TContext = any> = (params: GetFindTextParams<TData, TValue, TContext>) => string | null;
+export type GetFindText<TData = any, TValue = any, TContext = any> = (
+    params: GetFindTextParams<TData, TValue, TContext>
+) => string | null;
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
@@ -1052,7 +1072,9 @@ export interface ValueGetterParams<TData = any, TValue = any, TContext = any>
     /** A utility method for getting other column values */
     getValue: (field: string) => any;
 }
-export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (params: ValueGetterParams<TData, TValue, TContext>) => TValue | null | undefined;
+export type ValueGetterFunc<TData = any, TValue = any, TContext = any> = (
+    params: ValueGetterParams<TData, TValue, TContext>
+) => TValue | null | undefined;
 export type HeaderLocation =
     | 'chart'
     | 'columnDrop'
@@ -1076,7 +1098,9 @@ export interface HeaderValueGetterParams<TData = any, TValue = any, TContext = a
     /** Where the column is going to appear */
     location: HeaderLocation;
 }
-export type HeaderValueGetterFunc<TData = any, TValue = any, TContext = any> = (params: HeaderValueGetterParams<TData, TValue, TContext>) => string;
+export type HeaderValueGetterFunc<TData = any, TValue = any, TContext = any> = (
+    params: HeaderValueGetterParams<TData, TValue, TContext>
+) => string;
 export type HeaderTooltipValueGetterFunc<TData = any, TValue = any, TContext = any> = (
     params: ITooltipParams<TData, TValue, TContext>
 ) => string | any;
@@ -1098,10 +1122,14 @@ export interface NewValueParams<TData = any, TValue = any, TContext = any>
 
 export interface ValueSetterParams<TData = any, TValue = any, TContext = any>
     extends ChangedValueParams<TData, TValue | null | undefined, TValue | null | undefined, TContext> {}
-export type ValueSetterFunc<TData = any, TValue = any, TContext = any> = (params: ValueSetterParams<TData, TValue, TContext>) => boolean;
+export type ValueSetterFunc<TData = any, TValue = any, TContext = any> = (
+    params: ValueSetterParams<TData, TValue, TContext>
+) => boolean;
 export interface ValueParserParams<TData = any, TValue = any, TContext = any>
     extends ChangedValueParams<TData, TValue | null | undefined, string, TContext> {}
-export type ValueParserFunc<TData = any, TValue = any, TContext = any> = (params: ValueParserParams<TData, TValue, TContext>) => TValue | null | undefined;
+export type ValueParserFunc<TData = any, TValue = any, TContext = any> = (
+    params: ValueParserParams<TData, TValue, TContext>
+) => TValue | null | undefined;
 
 export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
     extends BaseColDefOptionalDataParams<TData, TValue, TContext> {
@@ -1109,7 +1137,9 @@ export interface ValueFormatterParams<TData = any, TValue = any, TContext = any>
     value: TValue | null | undefined;
 }
 
-export type ValueFormatterFunc<TData = any, TValue = any, TContext = any> = (params: ValueFormatterParams<TData, TValue, TContext>) => string;
+export type ValueFormatterFunc<TData = any, TValue = any, TContext = any> = (
+    params: ValueFormatterParams<TData, TValue, TContext>
+) => string;
 
 export type EqualsFunc<TValue = any> = (
     valueA: TValue | null | undefined,
@@ -1170,8 +1200,12 @@ export interface CellClassParams<TData = any, TValue = any, TContext = any> exte
     /** The value to be rendered */
     value: TValue | null | undefined;
 }
-export type CellClassFunc<TData = any, TValue = any, TContext = any> = (cellClassParams: CellClassParams<TData, TValue, TContext>) => string | string[] | null | undefined;
-export type CellStyleFunc<TData = any, TValue = any, TContext = any> = (cellClassParams: CellClassParams<TData, TValue, TContext>) => CellStyle | null | undefined;
+export type CellClassFunc<TData = any, TValue = any, TContext = any> = (
+    cellClassParams: CellClassParams<TData, TValue, TContext>
+) => string | string[] | null | undefined;
+export type CellStyleFunc<TData = any, TValue = any, TContext = any> = (
+    cellClassParams: CellClassParams<TData, TValue, TContext>
+) => CellStyle | null | undefined;
 
 export interface CellStyle {
     [cssProperty: string]: string | number;
@@ -1180,16 +1214,22 @@ export interface CellClassRules<TData = any, TValue = any, TContext = any> {
     [cssClassName: string]: ((params: CellClassParams<TData, TValue, TContext>) => boolean) | string;
 }
 
-export type CellRendererSelectorFunc<TData = any, TValue = any, TContext = any> = (params: ICellRendererParams<TData, TValue, TContext>) => CellRendererSelectorResult | undefined;
+export type CellRendererSelectorFunc<TData = any, TValue = any, TContext = any> = (
+    params: ICellRendererParams<TData, TValue, TContext>
+) => CellRendererSelectorResult | undefined;
 
-export type ILoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> = (params: ILoadingCellRendererParams<TData, TValue, TContext>) => CellRendererSelectorResult | undefined;
+export type ILoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> = (
+    params: ILoadingCellRendererParams<TData, TValue, TContext>
+) => CellRendererSelectorResult | undefined;
 
 export interface CellRendererDeferParams {
     /** Defer the rendering of the cell component  */
     deferRender?: boolean;
 }
 
-export type CellEditorSelectorFunc<TData = any, TValue = any, TContext = any> = (params: ICellEditorParams<TData, TValue, TContext>) => CellEditorSelectorResult | undefined;
+export type CellEditorSelectorFunc<TData = any, TValue = any, TContext = any> = (
+    params: ICellEditorParams<TData, TValue, TContext>
+) => CellEditorSelectorResult | undefined;
 export interface CellRendererSelectorResult {
     /** Equivalent of setting `colDef.cellRenderer` */
     component?: any;

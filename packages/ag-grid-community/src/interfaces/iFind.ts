@@ -1,5 +1,5 @@
 import type { GridApi } from '../api/gridApi';
-import type { GetFindTextFunc } from '../entities/colDef';
+import type { GetFindText } from '../entities/colDef';
 import type { Column } from './iColumn';
 import type { IRowNode } from './iRowNode';
 
@@ -116,5 +116,5 @@ export interface FindGroupRowRendererParams<TData = any, TValue = any> {
      * E.g. if the group row renderer is displaying text that is different from the formatted value.
      * Returning `null` means Find will not search within the group row.
      */
-    getFindText?: GetFindTextFunc<TData, TValue>;
+    getFindText?: GetFindText<TData, TValue>;
 }

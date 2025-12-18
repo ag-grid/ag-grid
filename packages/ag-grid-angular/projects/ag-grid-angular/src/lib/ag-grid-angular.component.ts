@@ -1162,7 +1162,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
-    @Input() public aggFuncs: IAggFuncs | undefined = undefined;
+    @Input() public aggFuncs: IAggFuncs<TData> | undefined = undefined;
     /** Provide a data source to control where formulas are stored and retrieved.
      * If not supplied, formulas are read from and written to the row data.
      * @initial
@@ -1863,7 +1863,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getMainMenuItems: GetMainMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
-    @Input() public postProcessPopup: PostProcessPopup | undefined = undefined;
+    @Input() public postProcessPopup: PostProcessPopup<TData> | undefined = undefined;
     /** Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
      * Returns an array of columns to be removed from the pinned areas.
      * @initial

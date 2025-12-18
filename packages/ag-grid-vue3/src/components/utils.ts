@@ -986,7 +986,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
-    aggFuncs?: IAggFuncs,
+    aggFuncs?: IAggFuncs<TData>,
     /** Provide a data source to control where formulas are stored and retrieved.
          * If not supplied, formulas are read from and written to the row data.
          * @initial
@@ -1684,7 +1684,7 @@ export interface Props<TData> {
     getMainMenuItems?: GetMainMenuItems<TData>,
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
-    postProcessPopup?: PostProcessPopup,
+    postProcessPopup?: PostProcessPopup<TData>,
     /** Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
          * Returns an array of columns to be removed from the pinned areas.
          * @initial
