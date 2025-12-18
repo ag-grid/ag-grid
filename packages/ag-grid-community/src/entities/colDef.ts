@@ -479,7 +479,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Returning `null` means Find will not search within the cell.
      * @agModule `FindModule`
      */
-    getFindText?: GetFindText<TData, TValue>;
+    getFindText?: GetFindTextFunc<TData, TValue>;
 
     // *** Column Headers *** //
     /**
@@ -1004,7 +1004,7 @@ export interface GetFindTextParams<TData = any, TValue = any, TContext = any>
     getValueFormatted: () => string | null;
 }
 
-export type GetFindText<TData = any, TValue = any, TContext = any> = (
+export type GetFindTextFunc<TData = any, TValue = any, TContext = any> = (
     params: GetFindTextParams<TData, TValue, TContext>
 ) => string | null;
 

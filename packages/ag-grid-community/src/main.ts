@@ -639,7 +639,7 @@ export {
     EditableCallback,
     EditableCallbackParams,
     EqualsFunc,
-    GetFindText,
+    GetFindTextFunc,
     GetFindTextParams,
     GetQuickFilterText,
     GetQuickFilterTextParams,
