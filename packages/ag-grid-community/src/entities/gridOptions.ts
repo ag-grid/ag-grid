@@ -177,12 +177,7 @@ import type {
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
-import type {
-    AlwaysPassFilterFunc,
-    FilterHandlers,
-    QuickFilterMatcherFunc,
-    QuickFilterParserFunc,
-} from '../interfaces/iFilter';
+import type { AlwaysPassFilter, FilterHandlers, QuickFilterMatcher, QuickFilterParser } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
@@ -680,12 +675,12 @@ export interface GridOptions<TData = any> {
      * Changes how the Quick Filter splits the Quick Filter text into search terms.
      * @agModule `QuickFilterModule`
      */
-    quickFilterParser?: QuickFilterParserFunc;
+    quickFilterParser?: QuickFilterParser;
     /**
      * Changes the matching logic for whether a row passes the Quick Filter.
      * @agModule `QuickFilterModule`
      */
-    quickFilterMatcher?: QuickFilterMatcherFunc;
+    quickFilterMatcher?: QuickFilterMatcher;
     /**
      * When pivoting, Quick Filter is only applied on the pivoted data
      * (or aggregated data if `groupAggFiltering = true`).
@@ -712,7 +707,7 @@ export interface GridOptions<TData = any> {
      * Only works with the Client-Side Row Model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
-    alwaysPassFilter?: AlwaysPassFilterFunc<TData>;
+    alwaysPassFilter?: AlwaysPassFilter<TData>;
 
     /**
      * Hidden columns are excluded from the Advanced Filter by default.

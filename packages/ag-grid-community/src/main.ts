@@ -227,7 +227,7 @@ export type { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterB
 export type { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
 export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfterGuiAttachedParams';
 export type {
-    AlwaysPassFilterFunc,
+    AlwaysPassFilter,
     BaseFilter,
     BaseFilterParams,
     ColumnFilter,
@@ -256,8 +256,8 @@ export type {
     IFilterParams,
     IFilterType,
     IFloatingFilterType,
-    QuickFilterMatcherFunc,
-    QuickFilterParserFunc,
+    QuickFilterMatcher,
+    QuickFilterParser,
     SharedFilterUi,
 } from './interfaces/iFilter';
 export type {

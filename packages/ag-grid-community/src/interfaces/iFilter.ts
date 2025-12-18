@@ -26,9 +26,9 @@ export interface FilterHandlerBaseParams<TData = any, TContext = any, TModel = a
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
 }
 
-export type QuickFilterParserFunc = (quickFilter: string) => string[];
-export type QuickFilterMatcherFunc = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
-export type AlwaysPassFilterFunc<TData = any> = (rowNode: IRowNode<TData>) => boolean;
+export type QuickFilterParser = (quickFilter: string) => string[];
+export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
+export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolean;
 
 export type FilterHandlerSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'handler';
 
@@ -77,8 +77,8 @@ export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TConte
 }
 
 export type CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> = (
-        params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
-    ) => FilterHandler<TData, TContext, TModel, TCustomParams>;
+    params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
+) => FilterHandler<TData, TContext, TModel, TCustomParams>;
 
 export type FilterHandlers<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> = {
     [key: string]: CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;

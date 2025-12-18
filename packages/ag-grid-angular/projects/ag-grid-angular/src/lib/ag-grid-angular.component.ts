@@ -20,7 +20,7 @@ import type { AgChartThemeOverrides } from 'ag-charts-types';
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
-    AlwaysPassFilterFunc,
+    AlwaysPassFilter,
     AsyncTransactionsFlushedEvent,
     AutoGroupColumnDef,
     AutoSizeStrategy,
@@ -177,8 +177,8 @@ import type {
     ProcessPivotResultColGroupDef,
     ProcessRowPostCreate,
     ProcessUnpinnedColumns,
-    QuickFilterMatcherFunc,
-    QuickFilterParserFunc,
+    QuickFilterMatcher,
+    QuickFilterParser,
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
@@ -770,11 +770,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Changes how the Quick Filter splits the Quick Filter text into search terms.
      * @agModule `QuickFilterModule`
      */
-    @Input() public quickFilterParser: QuickFilterParserFunc | undefined = undefined;
+    @Input() public quickFilterParser: QuickFilterParser | undefined = undefined;
     /** Changes the matching logic for whether a row passes the Quick Filter.
      * @agModule `QuickFilterModule`
      */
-    @Input() public quickFilterMatcher: QuickFilterMatcherFunc | undefined = undefined;
+    @Input() public quickFilterMatcher: QuickFilterMatcher | undefined = undefined;
     /** When pivoting, Quick Filter is only applied on the pivoted data
      * (or aggregated data if `groupAggFiltering = true`).
      * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
@@ -798,7 +798,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * Only works with the Client-Side Row Model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
-    @Input() public alwaysPassFilter: AlwaysPassFilterFunc<TData> | undefined = undefined;
+    @Input() public alwaysPassFilter: AlwaysPassFilter<TData> | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
      * To include hidden columns, set to `true`.
      * @default false

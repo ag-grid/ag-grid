@@ -2,7 +2,7 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
-    AlwaysPassFilterFunc,
+    AlwaysPassFilter,
     AutoGroupColumnDef,
     AutoSizeStrategy,
     CellSelectionOptions,
@@ -86,8 +86,8 @@ import type {
     ProcessPivotResultColGroupDef,
     ProcessRowPostCreate,
     ProcessUnpinnedColumns,
-    QuickFilterMatcherFunc,
-    QuickFilterParserFunc,
+    QuickFilterMatcher,
+    QuickFilterParser,
     RowClassRules,
     RowDragTextFunc,
     RowGroupingDisplayType,
@@ -599,11 +599,11 @@ export interface Props<TData> {
     /** Changes how the Quick Filter splits the Quick Filter text into search terms.
          * @agModule `QuickFilterModule`
          */
-    quickFilterParser?: QuickFilterParserFunc,
+    quickFilterParser?: QuickFilterParser,
     /** Changes the matching logic for whether a row passes the Quick Filter.
          * @agModule `QuickFilterModule`
          */
-    quickFilterMatcher?: QuickFilterMatcherFunc,
+    quickFilterMatcher?: QuickFilterMatcher,
     /** When pivoting, Quick Filter is only applied on the pivoted data
          * (or aggregated data if `groupAggFiltering = true`).
          * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
@@ -626,7 +626,7 @@ export interface Props<TData> {
          * Only works with the Client-Side Row Model.
          * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
          */
-    alwaysPassFilter?: AlwaysPassFilterFunc<TData>,
+    alwaysPassFilter?: AlwaysPassFilter<TData>,
     /** Hidden columns are excluded from the Advanced Filter by default.
          * To include hidden columns, set to `true`.
          * @default false
