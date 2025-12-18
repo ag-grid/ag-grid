@@ -14,12 +14,14 @@ import {
     _addGridCommonParams,
     _downloadFile,
     _getHeaderClassesFromColDef,
+    _getHeaderRowCount,
     _warn,
 } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
 import {
+    Workbook,
     XLSX_IMAGES,
     XLSX_WORKSHEET_DATA_TABLES,
     XLSX_WORKSHEET_HEADER_FOOTER_IMAGES,
@@ -38,9 +40,6 @@ import {
     createXlsxVmlDrawingRel,
     createXlsxWorkbook,
     createXlsxWorkbookRels,
-    getXlsxFactoryMode,
-    resetXlsxFactory,
-    setXlsxFactoryMode,
 } from './excelXlsxFactory';
 import { _normaliseImageExtension } from './files/ooxml/contentTypes';
 import { ZipContainer } from './zipContainer/zipContainer';
@@ -173,13 +172,16 @@ const createExcelFileForExcel = (
         fontSize?: number;
         author?: string;
         activeTab?: number;
-    } = {}
+    } = {},
+    workbook: Workbook
 ): boolean => {
     if (!data || data.length === 0) {
         _warn(159);
-        resetXlsxFactory();
+        workbook.reset();
         return false;
     }
+
+    workbook.syncOrderWithSheetData(data);
 
     const { fontSize = 11, author = 'AG Grid', activeTab = 0 } = options;
 
@@ -191,22 +193,30 @@ const createExcelFileForExcel = (
     createExcelXmlWorksheets(zipContainer, data);
     createExcelXmlCoreSheets(zipContainer, fontSize, author, len, activeTabWithinBounds);
 
-    resetXlsxFactory();
+    workbook.reset();
 
     return true;
 };
 
-const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
+const getMultipleSheetsAsExcelCompressed = (
+    params: ExcelExportMultipleSheetParams,
+    workbook: Workbook = new Workbook()
+): Promise<Blob | undefined> => {
     const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
     if (
-        !createExcelFileForExcel(zipContainer, data, {
-            author,
-            fontSize,
-            activeTab: activeSheetIndex,
-        })
+        !createExcelFileForExcel(
+            zipContainer,
+            data,
+            {
+                author,
+                fontSize,
+                activeTab: activeSheetIndex,
+            },
+            workbook
+        )
     ) {
         return Promise.resolve(undefined);
     }
@@ -214,17 +224,25 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
     return zipContainer.getZipFile(mimeType);
 };
 
-export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
+export const getMultipleSheetsAsExcel = (
+    params: ExcelExportMultipleSheetParams,
+    workbook: Workbook = new Workbook()
+): Blob | undefined => {
     const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     const zipContainer = new ZipContainer();
 
     if (
-        !createExcelFileForExcel(zipContainer, data, {
-            author,
-            fontSize,
-            activeTab: activeSheetIndex,
-        })
+        !createExcelFileForExcel(
+            zipContainer,
+            data,
+            {
+                author,
+                fontSize,
+                activeTab: activeSheetIndex,
+            },
+            workbook
+        )
     ) {
         return;
     }
@@ -235,7 +253,8 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
 
-    getMultipleSheetsAsExcelCompressed(params).then((contents) => {
+    const workbook = new Workbook();
+    getMultipleSheetsAsExcelCompressed(params, workbook).then((contents) => {
         if (contents) {
             const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
 
@@ -249,6 +268,7 @@ export class ExcelCreator
     implements NamedBean, IExcelCreator
 {
     beanName = 'excelCreator' as const;
+    private readonly workbook = new Workbook();
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
         const baseParams = this.gos.get('defaultExcelExportParams');
@@ -309,11 +329,11 @@ export class ExcelCreator
     }
 
     public setFactoryMode(factoryMode: ExcelFactoryMode): void {
-        setXlsxFactoryMode(factoryMode);
+        this.workbook.setFactoryMode(factoryMode);
     }
 
     public getFactoryMode(): ExcelFactoryMode {
-        return getXlsxFactoryMode();
+        return this.workbook.getFactoryMode();
     }
 
     public getSheetDataForExcel(params: ExcelExportParams): string {
@@ -322,11 +342,18 @@ export class ExcelCreator
     }
 
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        return getMultipleSheetsAsExcel(params);
+        return getMultipleSheetsAsExcel(params, this.workbook);
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        exportMultipleSheetsAsExcel(params);
+        getMultipleSheetsAsExcelCompressed(params, this.workbook).then((contents) => {
+            const { fileName = 'export.xlsx' } = params;
+            if (contents) {
+                const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
+
+                _downloadFile(downloadFileName, contents);
+            }
+        });
     }
 
     public getDefaultFileExtension(): 'xlsx' {
@@ -349,6 +376,9 @@ export class ExcelCreator
             baseExcelStyles: gos.get('excelStyles') || [],
             rightToLeft: params.rightToLeft ?? gos.get('enableRtl'),
             styleLinker: this.styleLinker.bind(this),
+            headerRowCount: _getHeaderRowCount(colModel),
+            pivotModeActive: colModel.isPivotActive(),
+            workbook: this.workbook,
         };
 
         return new ExcelSerializingSession(config);
@@ -422,10 +452,10 @@ export class ExcelCreator
     }
 
     private packageCompressedFile(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {
-        return getMultipleSheetsAsExcelCompressed(params);
+        return getMultipleSheetsAsExcelCompressed(params, this.workbook);
     }
 
     private packageFile(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        return getMultipleSheetsAsExcel(params);
+        return getMultipleSheetsAsExcel(params, this.workbook);
     }
 }

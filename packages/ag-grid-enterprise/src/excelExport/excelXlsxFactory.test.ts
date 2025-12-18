@@ -1,0 +1,309 @@
+import type { ExcelGridSerializingParams } from './excelSerializingSession';
+import { ExcelSerializingSession } from './excelSerializingSession';
+import { Workbook } from './excelXlsxFactory';
+
+const stubParams = (
+    overrides: Partial<ExcelGridSerializingParams> = {},
+    workbook: Workbook = new Workbook()
+): ExcelGridSerializingParams => ({
+    baseExcelStyles: [],
+    styleLinker: () => [],
+    colModel: { isPivotActive: () => false } as any,
+    colNames: { getDisplayNameForColumn: () => 'A' } as any,
+    valueSvc: {} as any,
+    formulaSvc: {} as any,
+    gos: { get: () => undefined } as any,
+    rowGroupColsSvc: {} as any,
+    processCellCallback: undefined,
+    processHeaderCallback: undefined,
+    processGroupHeaderCallback: undefined,
+    processRowGroupCallback: undefined,
+    headerRowCount: 0,
+    pivotModeActive: false,
+    workbook,
+    ...overrides,
+});
+
+const basicWorksheet = (name: string, cellValue: string = '1') => ({
+    name,
+    table: {
+        columns: [{ width: 100, displayName: 'A', filterAllowed: true }],
+        rows: [{ cells: [{ data: { type: 'n' as const, value: cellValue } }] }],
+    },
+});
+
+describe('excelXlsxFactory Workbook', () => {
+    afterEach(() => {
+        // Clear global factory state between tests.
+        new Workbook().reset();
+    });
+
+    it('orders multi-sheet exports according to supplied data array', () => {
+        const workbook = new Workbook();
+        const sheetA = workbook.addWorksheet([], basicWorksheet('First', '1'), stubParams({}, workbook));
+        const sheetB = workbook.addWorksheet([], basicWorksheet('Second', '2'), stubParams({}, workbook));
+
+        // Export with reversed order
+        workbook.syncOrderWithSheetData([sheetB, sheetA]);
+        expect(workbook.getSheetNames().slice(0, 2)).toEqual(['Second', 'First']);
+    });
+
+    it('adds table relationships when exporting as Excel table', () => {
+        const workbook = new Workbook();
+        const worksheet = basicWorksheet('TableSheet');
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            worksheet,
+            stubParams({ exportAsExcelTable: true, headerRowCount: 1 }, workbook)
+        );
+        expect(worksheetXml).toContain('tableParts');
+        expect(worksheetXml).toContain('tablePart');
+    });
+
+    it('writes frozen panes and RTL sheet view markers', () => {
+        const workbook = new Workbook();
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            basicWorksheet('Frozen'),
+            stubParams({ frozenRowCount: 1, frozenColumnCount: 1, rightToLeft: true }, workbook)
+        );
+
+        expect(worksheetXml).toMatch(/rightToLeft="1"/);
+        expect(worksheetXml).toMatch(/<pane\b(?=[^>]*xSplit="1")(?=[^>]*ySplit="1")(?=[^>]*topLeftCell="B2")/);
+    });
+
+    it('applies header/footer token replacements', () => {
+        const workbook = new Workbook();
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            basicWorksheet('HeaderFooter'),
+            stubParams(
+                {
+                    headerFooterConfig: {
+                        all: {
+                            header: [{ value: 'Page &[Page]' }],
+                        },
+                    },
+                },
+                workbook
+            )
+        );
+
+        expect(worksheetXml).toMatch(/&(amp;)?P/);
+    });
+
+    it('adds drawing relationship when body images are present', () => {
+        const workbook = new Workbook();
+        const col = { getId: () => 'c1' } as any;
+        const columnsToExport = [col];
+
+        workbook.addBodyImageToMap(
+            {
+                id: 'img-1',
+                base64: 'abc',
+                imageType: 'png',
+                width: 10,
+                height: 10,
+                position: { row: 1, column: 1 },
+            },
+            1,
+            col,
+            columnsToExport
+        );
+
+        const worksheetXml = workbook.addWorksheet([], basicWorksheet('Images'), stubParams({}, workbook));
+
+        expect(worksheetXml).toContain('<drawing');
+    });
+});
+
+describe('excel styles', () => {
+    const workbookStub: Workbook = {
+        getStringPosition: (() => {
+            const map = new Map<string, number>();
+            return (str: string) => {
+                if (!map.has(str)) {
+                    map.set(str, map.size);
+                }
+                return map.get(str)!;
+            };
+        })(),
+        addBodyImageToMap: () => {},
+        addHeaderFooterImageToMap: () => {},
+        addWorksheet: () => '',
+        syncOrderWithSheetData: () => {},
+        reset: () => {},
+        setFactoryMode: () => {},
+        getFactoryMode: () => 'SINGLE_SHEET',
+        getSheetNames: () => [],
+    } as Workbook;
+
+    const baseStyles = [
+        { id: 'cell', alignment: { vertical: 'Center' as const } },
+        { id: 'redFont', font: { color: '#ff0000' } },
+        {
+            id: 'greenBackground',
+            alignment: { horizontal: 'Right' as const, vertical: 'Bottom' as const },
+            font: { color: '#e0ffc1' },
+            interior: { color: '#008000', pattern: 'Solid' as const },
+        },
+    ];
+
+    it('merges multiple excelStyles in order (later styles override earlier)', () => {
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: baseStyles,
+                    styleLinker: () => ['cell', 'redFont', 'greenBackground'],
+                },
+                workbookStub
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            getColSpan: () => 1,
+            isAllowFormula: () => false,
+        } as any;
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: 'v' }, styleId: ['cell', 'redFont', 'greenBackground'] }],
+            },
+        ]);
+
+        const excelStyles = (session as any).excelStyles;
+        const merged = excelStyles.find((s) => s.id?.startsWith('mixedStyle'));
+
+        expect(merged).toBeDefined();
+        expect(merged!.font!.color).toBe('#e0ffc1'); // greenBackground overrides redFont
+        expect(merged!.alignment!.horizontal).toBe('Right');
+        expect(merged!.alignment!.vertical).toBe('Bottom'); // override base "cell"
+        expect(merged!.interior!.color).toBe('#008000');
+    });
+
+    it('retains base style when only one excelStyle is applied', () => {
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: baseStyles,
+                    styleLinker: () => ['redFont'],
+                },
+                workbookStub
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            getColSpan: () => 1,
+            isAllowFormula: () => false,
+        } as any;
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: 'v' }, styleId: ['redFont'] }],
+            },
+        ]);
+
+        const excelStyles = (session as any).excelStyles;
+        const red = excelStyles.find((s) => s.id === 'redFont');
+
+        expect(red).toBeDefined();
+        expect(red!.font!.color).toBe('#ff0000');
+        expect(excelStyles.some((s) => s.id?.startsWith('mixedStyle'))).toBe(false);
+    });
+
+    it('applies header and headerGroup styles to headers', () => {
+        const headerStyles = [
+            { id: 'header', alignment: { vertical: 'Center' as const }, font: { color: '#111111' } },
+            { id: 'headerGroup', font: { bold: true } },
+        ];
+
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: headerStyles,
+                    styleLinker: (p) => {
+                        if (p.rowType === 'HEADER_GROUPING') {
+                            return ['header', 'headerGroup'];
+                        }
+                        if (p.rowType === 'HEADER') {
+                            return ['header'];
+                        }
+                        return ['cell'];
+                    },
+                },
+                workbookStub
+            )
+        );
+
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({ headerClass: 'customHeader' }),
+            getColSpan: () => 1,
+            isAllowFormula: () => false,
+            getColId: () => 'c1',
+        } as any;
+        session.prepare([colStub]);
+
+        // Trigger header rows
+        session.onNewHeaderGroupingRow().onColumn({} as any, 'Group', 0, 1, []);
+        session.onNewHeaderRow().onColumn(colStub, 0, {} as any);
+
+        const rows = (session as any).rows as any[];
+        expect(rows[0].cells[0].styleId).toContain('mixedStyle'); // merged header + headerGroup
+        expect(rows[1].cells[0].styleId).toBe('header'); // plain header style
+    });
+
+    it('adds quote prefix style when value starts with apostrophe', () => {
+        const session = new ExcelSerializingSession(
+            stubParams(
+                {
+                    baseExcelStyles: baseStyles as any,
+                    styleLinker: () => ['cell', 'redFont'],
+                },
+                workbookStub
+            )
+        );
+        const colStub = {
+            getActualWidth: () => 100,
+            isFilterAllowed: () => false,
+            getDefinition: () => ({}),
+            getColSpan: () => 1,
+            isAllowFormula: () => false,
+        } as any;
+        session.prepare([colStub]);
+
+        session.addCustomContent([
+            {
+                cells: [{ data: { type: 's', value: "'text" }, styleId: ['cell', 'redFont'] }],
+            },
+        ]);
+
+        const excelStyles = (session as any).excelStyles as any[];
+        const quoteStyle = excelStyles.find((s) => s.id === '_quotePrefix');
+        expect(quoteStyle).toBeDefined();
+    });
+
+    it('skips Excel table when exportAsExcelTable is true but pivot mode is active', () => {
+        const workbook = new Workbook();
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const worksheetXml = workbook.addWorksheet(
+            [],
+            basicWorksheet('TableSkip'),
+            stubParams({ exportAsExcelTable: true, headerRowCount: 1, pivotModeActive: true }, workbook)
+        );
+
+        // When table is skipped, there should be no tableParts rel
+        expect(worksheetXml).not.toContain('tableParts');
+        expect(warnSpy).toHaveBeenCalled();
+        warnSpy.mockRestore();
+    });
+});

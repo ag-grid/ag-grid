@@ -29,7 +29,7 @@ import {
 } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
-import { addXlsxBodyImageToMap, createXlsxExcel, getXlsxStringPosition } from './excelXlsxFactory';
+import type { Workbook } from './excelXlsxFactory';
 
 export interface StyleLinkerInterface {
     rowType: 'HEADER_GROUPING' | 'HEADER' | 'BODY';
@@ -52,6 +52,9 @@ export interface ExcelGridSerializingParams extends ExcelWorksheetConfigParams, 
     styleLinker: (params: StyleLinkerInterface) => string[];
     frozenRowCount?: number;
     frozenColumnCount?: number;
+    workbook: Workbook;
+    headerRowCount?: number;
+    pivotModeActive?: boolean;
 }
 
 export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow[]> {
@@ -63,6 +66,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private mixedStyleCounter: number = 0;
 
     private readonly excelStyles: (ExcelStyle & { quotePrefix?: 1 })[];
+    private readonly workbook: Workbook;
 
     private readonly rows: ExcelRow[] = [];
     private cols: ExcelColumn[];
@@ -76,6 +80,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         super(config);
         this.formulaSvc = config.formulaSvc;
         this.config = Object.assign({}, config);
+        this.workbook = config.workbook;
 
         this.stylesByIds = {};
         for (const style of this.config.baseExcelStyles) {
@@ -455,7 +460,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             config.frozenRowCount = this.frozenRowCount;
         }
 
-        return createXlsxExcel(excelStyles, data, config);
+        return this.workbook.addWorksheet(excelStyles, data, config);
     }
 
     private getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
@@ -516,7 +521,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return;
         }
 
-        addXlsxBodyImageToMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
+        this.workbook.addBodyImageToMap(
+            addedImage.image,
+            rowIndex,
+            column,
+            this.columnsToExport,
+            this.config.rowHeight
+        );
 
         return addedImage;
     }
@@ -566,7 +577,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             styleId: this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: type === 's' ? getXlsxStringPosition(valueToUse).toString() : value,
+                value: type === 's' ? this.workbook.getStringPosition(valueToUse).toString() : value,
             },
             mergeAcross: numOfCells,
         };
@@ -585,7 +596,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 value = value.slice(1);
             }
 
-            value = getXlsxStringPosition(value).toString();
+            value = this.workbook.getStringPosition(value).toString();
         } else if (type === 'f') {
             value = this.addXlfnPrefix(value).slice(1);
         } else if (type === 'n') {

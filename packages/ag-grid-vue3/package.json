@@ -38,8 +38,10 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "run-p type-check \"build-only {@}\" --",
+    "build:watch": "run-p type-check \"build-only:watch {@}\" --",
     "type-check": "vue-tsc --build --force --declaration --emitDeclarationOnly",
-    "build-only": "vite build"
+    "build-only": "vite build",
+    "build-only:watch": "vite build --watch"
   },
   "dependencies": {
     "ag-grid-community": "35.0.0-beta.20251214.2036"

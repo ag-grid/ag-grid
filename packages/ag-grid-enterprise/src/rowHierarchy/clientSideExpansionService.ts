@@ -40,7 +40,7 @@ export class ClientSideExpansionService
         this.onGroupExpandedOrCollapsed();
     }
 
-    public getExpansionState(): RowGroupExpansionState {
+    private getInternalExpansionState(allowCollapsed = false) {
         const expandedRowGroupIds: string[] = [];
         const collapsedRowGroupIds: string[] = [];
         this.beans.rowModel.forEachNode((node) => {
@@ -51,11 +51,15 @@ export class ClientSideExpansionService
 
             if (node.expanded) {
                 expandedRowGroupIds.push(id);
-            } else {
+            } else if (allowCollapsed && node.isExpandable()) {
                 collapsedRowGroupIds.push(id);
             }
         });
         return { expandedRowGroupIds, collapsedRowGroupIds };
+    }
+
+    public getExpansionState(): RowGroupExpansionState {
+        return this.getInternalExpansionState();
     }
 
     public expandAll(expand: boolean): void {
@@ -125,7 +129,7 @@ export class ClientSideExpansionService
     }
 
     public setDetailsExpansionState(detailGridApi: GridApi): void {
-        const expansionState = this.getExpansionState();
+        const expansionState = this.getInternalExpansionState(true);
         const allExpanded = expansionState.collapsedRowGroupIds.length === 0;
         const allCollapsed = expansionState.expandedRowGroupIds.length === 0;
         if (allCollapsed === allExpanded) {

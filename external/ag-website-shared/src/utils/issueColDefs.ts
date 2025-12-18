@@ -1,8 +1,9 @@
-import ChevronButtonCellRenderer from '@components/grid/ChevronButtonRenderer';
-import IssueTypeCellRenderer from '@components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from '@components/grid/PaddingCellRenderer';
+import ChevronButtonCellRenderer from '@ag-website-shared/components/grid/ChevronButtonRenderer';
+import IssueTypeCellRenderer from '@ag-website-shared/components/grid/IssueTypeRenderer';
+import PaddingCellRenderer from '@ag-website-shared/components/grid/PaddingCellRenderer';
 
 const getIssueNumber = (issueKey: string) => parseInt(issueKey.replace('AG-', ''));
+
 export const IssueColDef = {
     colId: 'key',
     field: 'key',
@@ -33,6 +34,7 @@ export const IssueColDef = {
     },
     filter: 'agTextColumnFilter',
 };
+
 export const IssueTypeColDef = {
     field: 'issueType',
     valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),

@@ -4,7 +4,6 @@ import React, {
     useContext,
     useEffect,
     useImperativeHandle,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -57,6 +56,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
@@ -118,7 +118,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         }
     };
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         updateClassName(props.className);
     }, [props.className]);
 

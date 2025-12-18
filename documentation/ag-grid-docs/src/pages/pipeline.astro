@@ -3,7 +3,8 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import { DocsNavFromLocalStorage } from '@ag-website-shared/components/docs-navigation/DocsNavFromLocalStorage';
 import { getDocsPages } from '../components/docs/utils/pageData';
-import { Pipeline } from '@components/pipeline/Pipeline';
+import { Pipeline } from '@ag-website-shared/components/changelog/Pipeline';
+import styles from '@ag-website-shared/components/changelog/changelog.module.scss';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -24,6 +25,10 @@ const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEn
     <div class:list={['contentViewport layout-grid']}>
         <DocsNavFromLocalStorage client:load menuData={docsNavData} pageName={pageName} />
 
-        <Pipeline client:load />
+        <div class:list={['page-margin', styles.container]}>
+            <h1>AG Grid Pipeline</h1>
+
+            <Pipeline client:load library="grid" />
+        </div>
     </div>
 </Layout>

@@ -15,6 +15,14 @@ export interface ProcessedZipFile extends ZipFileHeader {
     isCompressed: boolean;
 }
 
+export interface PreprocessedZipFile {
+    rawContent: Uint8Array;
+    rawSize: number;
+    deflatedContent?: Uint8Array;
+    deflatedSize?: number;
+    isCompressed: boolean;
+}
+
 /**
  * It encodes any string in UTF-8 format
  * taken from https://github.com/mathiasbynens/utf8.js
@@ -108,7 +116,7 @@ function _utf8_encode(s: string | null): string {
     return byteString;
 }
 
-const getHeaders = (
+export const getHeaders = (
     currentFile: ZipFile,
     isCompressed: boolean,
     offset: number,
@@ -185,18 +193,18 @@ const getDecodedContent = (
     };
 };
 
-export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ProcessedZipFile> => {
+export const preprocessFileForZip = async (currentFile: ZipFile): Promise<PreprocessedZipFile> => {
     const { content } = currentFile;
 
-    const { size, content: rawContent } = !content
+    const { size: rawSize, content: rawContent } = !content
         ? { size: 0, content: Uint8Array.from([]) }
         : getDecodedContent(content);
 
-    let deflatedContent: Uint8Array | undefined = undefined;
-    let deflatedSize: number | undefined = undefined;
+    let deflatedContent: Uint8Array | undefined;
+    let deflatedSize: number | undefined;
     let deflationPerformed = false;
 
-    const shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
+    const shouldDeflate = currentFile.type === 'file' && rawContent && rawSize > 0;
     if (shouldDeflate) {
         const result = await deflateLocalFile(rawContent);
         deflatedContent = result.content;
@@ -204,11 +212,11 @@ export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: 
         deflationPerformed = true;
     }
 
-    const headers = getHeaders(currentFile, deflationPerformed, offset, size, rawContent, deflatedSize);
-
     return {
-        ...headers,
-        content: deflatedContent || rawContent,
+        rawContent,
+        rawSize,
+        deflatedContent,
+        deflatedSize,
         isCompressed: deflationPerformed,
     };
 };

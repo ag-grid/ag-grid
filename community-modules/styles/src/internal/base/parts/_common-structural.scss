@@ -299,7 +299,9 @@
     .ag-floating-bottom-full-width-container,
     .ag-virtual-list-container,
     .ag-sticky-top-container,
-    .ag-sticky-bottom-container {
+    .ag-sticky-bottom-container,
+    .ag-pinned-left-sticky-bottom,
+    .ag-pinned-right-sticky-bottom {
         position: relative;
     }
 

@@ -73,8 +73,6 @@ export class GridBodyCtrl extends BeanStub {
 
     private eCenterColsViewport: HTMLElement;
     private eFullWidthContainer: HTMLElement;
-    private eStickyTopFullWidthContainer: HTMLElement;
-    private eStickyBottomFullWidthContainer: HTMLElement;
 
     public stickyTopHeight: number = 0;
     private eStickyBottom: HTMLElement;
@@ -101,12 +99,6 @@ export class GridBodyCtrl extends BeanStub {
 
         this.eCenterColsViewport = eBodyViewport.querySelector(`.${_getRowViewportClass('center')}`) as HTMLElement;
         this.eFullWidthContainer = eBodyViewport.querySelector(`.${_getRowContainerClass('fullWidth')}`) as HTMLElement;
-        this.eStickyTopFullWidthContainer = eStickyTop.querySelector(
-            `.${_getRowContainerClass('stickyTopFullWidth')}`
-        ) as HTMLElement;
-        this.eStickyBottomFullWidthContainer = eStickyBottom.querySelector(
-            `.${_getRowContainerClass('stickyBottomFullWidth')}`
-        ) as HTMLElement;
 
         this.setCellTextSelection(this.gos.get('enableCellTextSelection'));
         this.addManagedPropertyListener('enableCellTextSelection', (props) =>
