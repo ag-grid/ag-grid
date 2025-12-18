@@ -1,0 +1,194 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        align-items: unset;
+    }
+}
+
+.tabContainer {
+    display: flex;
+    justify-content: space-around;
+    gap: $spacing-size-2;
+    background: var(--color-brand-200);
+    border-radius: var(--radius-4xl);
+    padding: $spacing-size-1;
+    margin-bottom: $spacing-size-8;
+    width: auto;
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-secondary);
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+.tab {
+    padding: $spacing-size-2 $spacing-size-4;
+    min-width: 120px;
+    height: 44px;
+    color: var(--color-fg-primary);
+    border-radius: var(--radius-4xl);
+    border: none;
+    appearance: none;
+    background-color: transparent;
+    box-shadow: none;
+    font-weight: var(--text-regular);
+    font-size: var(--text-fs-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+
+        #{$selector-darkmode} & {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        min-width: auto;
+        padding: $spacing-size-2 $spacing-size-3;
+    }
+}
+
+.activeTab {
+    padding: $spacing-size-2 $spacing-size-4;
+    min-width: 120px;
+    height: 44px;
+    border-radius: var(--radius-4xl);
+    background: white;
+    color: var(--color-brand-600);
+    border: none;
+    box-shadow: var(--shadow-lg);
+    font-weight: var(--text-semibold);
+    font-size: var(--text-fs-sm);
+    cursor: pointer;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-fg-secondary);
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        min-width: auto;
+        padding: $spacing-size-2 $spacing-size-3;
+    }
+}
+
+.contentContainer {
+    width: 100%;
+}
+
+.columnContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-8;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-direction: column;
+    }
+}
+
+.column {
+    width: var(--layout-width-2-4);
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        width: 100%;
+    }
+}
+
+.featureContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
+}
+
+.title {
+    font-size: var(--text-fs-2xl);
+    font-weight: var(--text-bold);
+    color: var(--color-fg-primary);
+    margin: 0 0 $spacing-size-4 0;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+}
+
+.featureHeading {
+    display: flex;
+    flex-grow: 1;
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-semibold);
+    margin-bottom: $spacing-size-2;
+    color: var(--color-fg-primary);
+}
+
+.featureDetail {
+    font-size: var(--text-fs-md);
+    margin-bottom: $spacing-size-2;
+    color: var(--color-fg-secondary);
+    line-height: 1.5;
+
+    a {
+        color: var(--color-link);
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.docsLink {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    margin-top: $spacing-size-4;
+    color: var(--color-link);
+    font-weight: var(--text-medium);
+    font-size: var(--text-fs-md);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: var(--color-link-hover);
+        text-decoration: underline;
+    }
+}
+
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-size-4;
+    margin-top: $spacing-size-6;
+}
+
+.trialCta {
+    flex-shrink: 0;
+}
+
+.navButtons {
+    display: flex;
+    gap: $spacing-size-2;
+}
+
+.featureNavIcon {
+    --icon-color: var(--color-fg-secondary);
+
+    cursor: pointer;
+
+    &:hover {
+        --icon-color: var(--color-link-hover);
+    }
+}
