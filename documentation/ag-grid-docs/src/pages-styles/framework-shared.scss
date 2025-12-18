@@ -50,7 +50,7 @@
     gap: $spacing-size-2;
     padding: $spacing-size-2;
     border-radius: var(--radius-md);
-    background-color: color-mix(in srgb, var(--color-brand-200) 50%, transparent);
+    background-color: var(--color-brand-200);
     color: var(--color-gray-900);
     font-family: var(--text-monospace-font-family);
     justify-content: center;
