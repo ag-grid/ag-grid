@@ -1,111 +1,18 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { getEntry, type CollectionEntry } from 'astro:content';
-import styles from '../pages-styles/framework-landing-page.module.scss';
-import Customers from '../components/customers/Customers';
-import { LandingPageFAQ } from '@ag-website-shared/components/landing-pages/LandingPageFAQ';
-import FeaturesSection from '@components/framework-landing-pages/shared/features/FeaturesSection';
-import Showcase from '@components/showcase/Showcase';
-import { LandingPageSection } from '@ag-website-shared/components/landing-pages/LandingPageSection';
-import HeroSection from '@components/framework-landing-pages/shared/hero/HeroSection.astro';
-import ExamplesSection from '@components/framework-landing-pages/shared/examples/ExamplesSection.astro';
-import ContactSection from '@components/framework-landing-pages/shared/contact/ContactSection.astro';
-import { FRAMEWORK_CONFIGS } from '@components/framework-landing-pages/shared/types';
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+/**
+ * Vue Data Grid Landing Page
+ *
+ * Content is defined in: src/content/landing-pages/vue-data-grid.json
+ */
 
-const framework = 'vue' as const;
-const config = FRAMEWORK_CONFIGS[framework];
+import LandingPage from '@components/landing-pages/LandingPage.astro';
+import { getEntry } from 'astro:content';
 
-const { data: faqData } = (await getEntry('faqs', 'vue-landing-page')) as CollectionEntry<'faqs'>;
-const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
-const { data: examples } = (await getEntry('vueLandingPage', 'examples')) as CollectionEntry<'vueLandingPage'>;
-const latestVersionWithHighlightData = versionsData.find((version) => version.landingPageHighlight);
+const contentEntry = await getEntry('landingPages', 'vue-data-grid');
+const versionsEntry = await getEntry('versions', 'ag-grid-versions');
 
-// Map frameworks to their logo and display name
-const frameworkLogoMap: Record<string, { logo: string; name: string }> = {
-    react: { logo: 'react.svg', name: 'React' },
-    reactDataGrid: { logo: 'react.svg', name: 'React' },
-    angular: { logo: 'angular.svg', name: 'Angular' },
-    vue: { logo: 'vue.svg', name: 'Vue' },
-    javascript: { logo: 'javascript.svg', name: 'JavaScript' },
-};
-
-// Function to generate heading HTML with framework logo
-function getHeadingWithLogo(frameworkKey: string, headingTemplate: string): string {
-    const frameworkInfo = frameworkLogoMap[frameworkKey] || frameworkLogoMap['react'];
-    const logoUrl = urlWithBaseUrl(`/images/fw-logos/${frameworkInfo.logo}`);
-    const frameworkName = frameworkInfo.name;
-    
-    // Replace framework name with logo + text
-    const logoHtml = `<span style="display: inline-block; white-space: nowrap; vertical-align: baseline;"><img src="${logoUrl}" alt="${frameworkName}" style="display: inline-block; vertical-align: middle; height: 40px; width: auto; margin: 0 0.2em;"/> ${frameworkName}</span>`;
-    const heading = headingTemplate.replace(frameworkName, logoHtml);
-    
-    return heading;
-}
-
-const featuresHeading = getHeadingWithLogo(framework, 'Build, Customise and Expand your Vue Data Grid');
+const content = contentEntry?.data;
+const versions = versionsEntry?.data;
 ---
 
-<Layout
-    title={'AG Grid: A Fast, Powerful, and Flexible Vue Data Grid'}
-    description={"Explore AG Grid's fast, powerful, and customisable Vue Data Grid library. Add high-performance Vue Data Grids to your Vue 3 applications in minutes, for free."}
-    showDocsNav={false}
-    showSearchBar={true}
->
-    <HeroSection
-        framework={framework}
-        latestVersion={latestVersionWithHighlightData?.version}
-        landingPageHighlight={latestVersionWithHighlightData?.landingPageHighlight}
-    />
-
-    <LandingPageSection
-        tag={config.sections.features.tag}
-        headingHtml={featuresHeading}
-        subHeading={config.sections.features.subHeading}
-    >
-        <FeaturesSection client:load framework={framework} />
-    </LandingPageSection>
-
-    <LandingPageSection
-        tag={config.sections.showcase.tag}
-        heading="Used in Every Industry, for All Types of Data"
-        subHeading="Trusted by 90% of Fortune 500 industries from Finance and AI, to DevTools and Aeronautics. Most of these uses are private, but we've hand-picked a few open-source examples:"
-    >
-        <Showcase client:load />
-    </LandingPageSection>
-
-    <LandingPageSection
-        tag={config.sections.customers.tag}
-        headingHtml={'Loved By Developers<br />Trusted By The Worlds Largest Enterprises'}
-        subHeadingHtml={config.sections.customers.subHeadingHtml}
-    >
-        <Customers client:load />
-    </LandingPageSection>
-
-    <LandingPageSection
-        tag={config.sections.examples.tag}
-        heading={config.sections.examples.heading}
-        subHeading={config.sections.examples.subHeading}
-        sectionClass={styles.examplesSection}
-        showBackgroundGradient
-    >
-        <ExamplesSection examples={examples} />
-    </LandingPageSection>
-
-    <LandingPageSection
-        tag={config.sections.faq.tag}
-        heading="Frequently Asked Questions"
-        subHeading={config.sections.faq.subHeading}
-    >
-        <LandingPageFAQ client:load FAQData={faqData} framework={framework} />
-    </LandingPageSection>
-
-    <LandingPageSection
-        id="contact"
-        tag="Get In Touch"
-        heading="Contact Our Team"
-        subHeading="Have questions about AG Grid? Get in touch with our team"
-    >
-        <ContactSection framework={framework} />
-    </LandingPageSection>
-</Layout>
+{content && <LandingPage content={content} versions={versions} />}
