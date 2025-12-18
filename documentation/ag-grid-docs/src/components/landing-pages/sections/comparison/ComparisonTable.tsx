@@ -1,7 +1,7 @@
 import { Collapsible } from '@ag-website-shared/components/collapsible/Collapsible';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
 import { TrialButton } from '@ag-website-shared/components/trial-licence-modal/TrialButton';
+import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import React, { useState } from 'react';
@@ -25,7 +25,7 @@ interface FeatureItem {
     name?: string;
     community: boolean | FeatureValue;
     enterprise: boolean | FeatureValue;
-    chartsGrid?: boolean | FeatureValue;
+    chartsGrid: boolean | FeatureValue;
     isSubGroup?: boolean;
     items?: FeatureItem[];
 }
@@ -92,6 +92,9 @@ const SubGroupRow: React.FC<{ item: FeatureItem; index: number }> = ({ item, ind
                 <div className={styles.enterpriseCell}>
                     <FeatureIcon value={true} />
                 </div>
+                <div className={styles.enterpriseCell}>
+                    <FeatureIcon value={true} />
+                </div>
             </div>
             <Collapsible id={`subgroup-${index}`} isDisabled={false} isOpen={isOpen}>
                 <div className={styles.subGroupContent}>
@@ -105,6 +108,9 @@ const SubGroupRow: React.FC<{ item: FeatureItem; index: number }> = ({ item, ind
                             </div>
                             <div className={styles.enterpriseCell}>
                                 <FeatureIcon value={subItem.enterprise} />
+                            </div>
+                            <div className={styles.enterpriseCell}>
+                                <FeatureIcon value={subItem.chartsGrid} />
                             </div>
                         </div>
                     ))}
@@ -129,6 +135,9 @@ const FeatureRow: React.FC<{ item: FeatureItem; index: number }> = ({ item, inde
             </div>
             <div className={styles.enterpriseCell}>
                 <FeatureIcon value={item.enterprise} />
+            </div>
+            <div className={styles.enterpriseCell}>
+                <FeatureIcon value={item.chartsGrid} />
             </div>
         </div>
     );
@@ -165,6 +174,10 @@ const ComparisonTable: React.FC = () => {
                     <div className={styles.headerCellEnterprise}>
                         <span className={styles.headerTitle}>Enterprise</span>
                         <span className={styles.headerSubtitle}>$999/dev</span>
+                    </div>
+                    <div className={styles.headerCellEnterprise}>
+                        <span className={styles.headerTitle}>Enterprise Bundle</span>
+                        <span className={styles.headerSubtitle}>1,498/dev</span>
                     </div>
                 </div>
                 <div className={styles.tableBody}>
