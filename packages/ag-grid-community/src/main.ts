@@ -184,7 +184,6 @@ export {
     JoinOperator,
     SimpleFilterParams,
     isCombinedFilterModel,
-    isCombinedFilterModel,
 } from './filter/provided/iSimpleFilter';
 export {
     INumberFilterParams,
