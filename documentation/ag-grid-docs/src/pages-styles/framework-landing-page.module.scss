@@ -319,20 +319,22 @@
 }
 
 .heroSectionViewAllDemosLink {
-    appearance: none;
-    padding: 0;
-    text-align: left;
+    display: inline-flex;
     align-self: flex-end;
-    font-weight: var(--text-regular);
-    color: var(--color-link);
-    transition: color 0.25s ease-in-out;
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
+    align-items: center;
+    gap: $spacing-size-2;
+    width: fit-content;
+    padding: 0.5em 0.5em 0.5em 1em;
 
-    &:hover {
-        background: transparent;
-        color: var(--color-link) !important;
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+
+        transform: translate(-3px, 1px);
+        transition: transform $transition-default-timing;
+    }
+
+    &:hover :global(.icon) {
+        transform: translate(4px, 1px);
     }
 }
 
