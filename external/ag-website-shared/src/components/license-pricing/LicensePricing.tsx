@@ -1,4 +1,5 @@
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import { Icon } from '@ag-website-shared/components/icon/Icon';
 import ChartsActive from '@ag-website-shared/images/inline-svgs/pricing/charts-active.svg?react';
 import ChartsInactive from '@ag-website-shared/images/inline-svgs/pricing/charts-inactive.svg?react';
 import GridActive from '@ag-website-shared/images/inline-svgs/pricing/grid-active.svg?react';
@@ -14,7 +15,6 @@ import type { FunctionComponent } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
-import { EnterpriseTrial } from './EnterpriseTrial';
 import { Licenses } from './Licenses';
 import { DEV_LICENSE_DATA } from './Licenses';
 import SocialProof from './SocialProof';
@@ -178,40 +178,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                 );
                             })}
                         </div>
-
-                        <div className={styles.videoPrompt}>
-                            <a
-                                href="https://www.youtube.com/watch?v=VPr__OKxH50"
-                                target="_blank"
-                                className={styles.thumbnail}
-                            >
-                                <img
-                                    src="https://img.youtube.com/vi/VPr__OKxH50/hqdefault.jpg"
-                                    alt="AG Grid licence explained video"
-                                />
-                            </a>
-
-                            <div>
-                                <h3>Which licences do I need?</h3>
-                                <p>
-                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
-                                        <span className="icon"></span>
-                                        Watch our short explainer video
-                                    </a>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className={styles.enterpriseTrialContainer}>
-                            <EnterpriseTrial />
-                        </div>
-                    </div>
-                </div>
-
-                <SocialProof />
-
-                <div className={styles.topSection}>
-                    <div className={styles.intro}>
                         <div ref={contactSalesRef} className={styles.salesForm}>
                             <div className={styles.salesFormCopy}>
                                 <h3 className="text-2xl">
@@ -236,6 +202,72 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                         defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'
                                     }
                                 />
+                            </div>
+                        </div>
+
+                        <div className={styles.trialLicence}>
+                            <div className={styles.trialLicenceCopy}>
+                                <h3
+                                    className={classnames(styles.trialLicenceHeader, 'text-2xl')}
+                                    id="request-trial-licence"
+                                >
+                                    <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                                    <p style={{ maxWidth: '16ch' }}>Start Your 30-Day Enterprise Bundle Trial</p>
+                                </h3>
+
+                                <p style={{ maxWidth: '48ch' }}>
+                                    Explore the full enterprise capabilities of AG Grid and AG Charts with a free 30-day
+                                    trial licence — no restrictions, no watermarks.
+                                </p>
+
+                                <a
+                                    id="request-trial-licence"
+                                    className={classnames('button', styles.trialButton)}
+                                    href={urlWithPrefix({
+                                        framework,
+                                        url: './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence',
+                                    })}
+                                >
+                                    Get a trial license
+                                </a>
+                            </div>
+
+                            <div className={styles.trialLicenceSeparator}></div>
+
+                            <div className={classnames(styles.trialLicenceCopy, 'trial-licence-form')}>
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="pricingFeatures" />
+                                    <p>
+                                        <b>Full enterprise features</b>
+                                        <br />
+                                        Access all advanced grid and charts features without console warnings or
+                                        watermarks.
+                                    </p>
+                                </div>
+
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="alarm" />
+                                    <p>
+                                        <b>30 days of access</b>
+                                        <br />
+                                        Enough time to evaluate integration, performance, and fit.
+                                    </p>
+                                </div>
+
+                                <div className={styles.trialLicenceSeparator}></div>
+
+                                <div className={styles.trialLicenceCopyItem}>
+                                    <Icon name="support" />
+                                    <p>
+                                        <b>Engineering support</b>
+                                        <br />
+                                        Get direct assistance from our developers via{' '}
+                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> throughout your
+                                        trial.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -264,6 +296,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.videoPrompt}>
                             <a
+                                id="licence-explainer-video-thumbnail"
                                 href="https://www.youtube.com/watch?v=VPr__OKxH50"
                                 target="_blank"
                                 className={styles.thumbnail}
@@ -277,7 +310,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <div>
                                 <h3>Which licences do I need?</h3>
                                 <p>
-                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
+                                    <a
+                                        id="licence-explainer-video-text"
+                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                        target="_blank"
+                                    >
                                         <span className="icon"></span>
                                         Watch our short explainer video
                                     </a>
@@ -286,6 +323,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
                     </div>
                 </div>
+
+                <SocialProof />
             </div>
         </>
     );
