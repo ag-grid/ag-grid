@@ -106,6 +106,10 @@ export interface FilterGlobalButtonsEvent extends AgEvent<'filterGlobalButtons'>
     isGlobal: boolean;
 }
 
+interface FilterModelAsStringChangedEvent extends AgEvent<'filterModelAsStringChanged'> {
+    column: AgColumn;
+}
+
 /** Used for non-CSRM handlers */
 const DUMMY_HANDLER = {
     filterHandler: () => ({
@@ -114,7 +118,13 @@ const DUMMY_HANDLER = {
 };
 
 export class ColumnFilterService
-    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'>
+    extends BeanStub<
+        | 'filterParamsChanged'
+        | 'filterStateChanged'
+        | 'filterAction'
+        | 'filterGlobalButtons'
+        | 'filterModelAsStringChanged'
+    >
     implements NamedBean
 {
     beanName: BeanName = 'colFilter';
@@ -1080,6 +1090,13 @@ export class ColumnFilterService
                 this.updateStoredModel(colId, newModel);
                 this.refreshHandlerAndUi(column, newModel, 'handler', false, additionalEventAttributes).then(() => {
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
+                });
+            },
+            onModelAsStringChange: () => {
+                column.dispatchColEvent('filterChanged', 'filterChanged');
+                this.dispatchLocalEvent<FilterModelAsStringChangedEvent>({
+                    type: 'filterModelAsStringChanged',
+                    column,
                 });
             },
             filterParams,

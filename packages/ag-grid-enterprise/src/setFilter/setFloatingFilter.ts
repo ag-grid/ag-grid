@@ -10,7 +10,6 @@ import type {
 import { AgInputTextFieldSelector, Component, RefPlaceholder, _error } from 'ag-grid-community';
 
 import { SetFilter } from './setFilter';
-import type { SetFilterHandler } from './setFilterHandler';
 
 const SetFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -28,8 +27,6 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     private readonly eFloatingFilterText: GridInputTextField = RefPlaceholder;
 
     private params: IFloatingFilterParams;
-    private listenerAdded = false;
-    private destroyListeners?: (() => void)[];
 
     constructor() {
         super(SetFloatingFilterElement, [AgInputTextFieldSelector]);
@@ -75,66 +72,18 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         });
     }
 
-    private addAvailableValuesListener(): void {
-        const addListener = (handler: SetFilterHandler<V>) => {
-            if (!handler?.isAlive()) {
-                return;
-            }
-            const valueModel = handler.valueModel;
-            // unlike other filters, what we show in the floating filter can be different, even
-            // if another filter changes. this is due to how set filter restricts its values based
-            // on selections in other filters, e.g. if you filter Language to English, then the set filter
-            // on Country will only show English speaking countries. Thus the list of items to show
-            // in the floating filter can change.
-            this.destroyListeners = valueModel.addManagedListeners(valueModel, {
-                availableValuesChanged: () => this.updateFloatingFilterText(handler.params.model),
-                destroyed: () => {
-                    this.listenerAdded = false;
-                    this.destroyListeners = undefined;
-                },
-            });
-        };
-        if (this.gos.get('enableFilterHandlers')) {
-            addListener((this.params as unknown as FloatingFilterDisplayParams).getHandler() as SetFilterHandler<V>);
-        } else {
-            this.parentSetFilterInstance((setFilter) => {
-                addListener(setFilter.handler);
-            });
-        }
-
-        this.listenerAdded = true;
-    }
-
     private updateFloatingFilterText(parentModel: SetFilterModel | null): void {
         if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
+        } else if (this.gos.get('enableFilterHandlers')) {
+            this.eFloatingFilterText.setValue(
+                (this.params as unknown as FloatingFilterDisplayParams).getHandler().getModelAsString?.(parentModel) ??
+                    ''
+            );
         } else {
-            // listener is only needed if there is an active model
-            if (!this.listenerAdded) {
-                this.addAvailableValuesListener();
-            }
-            if (this.gos.get('enableFilterHandlers')) {
-                this.eFloatingFilterText.setValue(
-                    (this.params as unknown as FloatingFilterDisplayParams)
-                        .getHandler()
-                        .getModelAsString?.(parentModel) ?? ''
-                );
-            } else {
-                this.parentSetFilterInstance((setFilter) => {
-                    this.eFloatingFilterText.setValue(setFilter.getModelAsString(parentModel));
-                });
-            }
+            this.parentSetFilterInstance((setFilter) => {
+                this.eFloatingFilterText.setValue(setFilter.getModelAsString(parentModel));
+            });
         }
-    }
-
-    public override destroy(): void {
-        const destroyListeners = this.destroyListeners;
-        if (destroyListeners) {
-            for (const destroyFunc of destroyListeners) {
-                destroyFunc();
-            }
-            destroyListeners.length = 0;
-        }
-        super.destroy();
     }
 }

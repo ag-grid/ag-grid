@@ -24,6 +24,14 @@ export interface FilterHandlerBaseParams<TData = any, TContext = any, TModel = a
     extends SharedFilterParams<TData, TContext> {
     filterParams: TCustomParams;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    /**
+     * When using the read-only floating filter or the new filters tool panel,
+     * the display value is retrieved from the handler via `getModelAsString()`.
+     * This will automatically be called again when the filter model changes.
+     * If the display value needs to be updated without the filter model changing,
+     * this function can be called to trigger a refresh.
+     */
+    onModelAsStringChange: () => void;
 }
 
 export type QuickFilterParser = (quickFilter: string) => string[];
@@ -57,8 +65,8 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
     doesFilterPass(params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>): boolean;
     /**
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
-     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
-     * filter.
+     * associated for this filter. This will happen if you create a custom filter and NOT a custom floating
+     * filter. This is also used by the new filters tool panel to display the summary.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
     /**
