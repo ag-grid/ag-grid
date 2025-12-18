@@ -30,7 +30,7 @@ const AgPillContainerElement: ElementParams = {
 export class AgPillContainer<TValue> extends Component {
     private params: PillRendererParams<TValue>;
     private pills: { pill: AgPill; key: string }[] = [];
-    private getKey: { (value: TValue | TValue[]): string | null };
+    private getKey: (value: TValue | TValue[]) => string | null;
 
     constructor() {
         super(AgPillContainerElement);

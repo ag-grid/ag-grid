@@ -65,7 +65,7 @@ export type AgComponentSelector<
     TBeanCollection = any,
     TComponent extends AgBaseComponent<TBeanCollection> = AgBaseComponent<TBeanCollection>,
 > = {
-    component: { new (params?: any): TComponent };
+    component: new (params?: any) => TComponent;
     selector: TComponentSelectorType;
 };
 

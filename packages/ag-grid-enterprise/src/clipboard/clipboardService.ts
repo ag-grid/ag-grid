@@ -35,13 +35,9 @@ import {
     isSpecialCol,
 } from 'ag-grid-community';
 
-interface RowCallback {
-    (gridRow: RowPosition, rowNode: RowNode, range: CellRange, rangeIndex: number): void;
-}
+type RowCallback = (gridRow: RowPosition, rowNode: RowNode, range: CellRange, rangeIndex: number) => void;
 
-interface RangeCallback {
-    (callRange: CellRange): void;
-}
+type RangeCallback = (callRange: CellRange) => void;
 
 type CellsToFlashType = { [key: string]: boolean };
 type DataForCellRangesType = { data: string; cellsToFlash: CellsToFlashType };

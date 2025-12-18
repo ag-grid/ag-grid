@@ -2,20 +2,14 @@ import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { UserCompDetails } from './iUserCompDetails';
 
-export interface FooterValueGetterFunc {
-    (params: GroupCellRendererParams): any;
-}
+export type FooterValueGetterFunc = (params: GroupCellRendererParams) => any;
 
-export interface TotalValueGetterFunc {
-    (params: GroupCellRendererParams): any;
-}
+export type TotalValueGetterFunc = (params: GroupCellRendererParams) => any;
 
 export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> &
     GroupCellRendererParams<TData, TValue>;
 
-export interface GroupCheckboxSelectionCallback<TData = any, TValue = any> {
-    (params: GroupCheckboxSelectionCallbackParams<TData, TValue>): boolean;
-}
+export type GroupCheckboxSelectionCallback<TData = any, TValue = any> = (params: GroupCheckboxSelectionCallbackParams<TData, TValue>) => boolean;
 
 /**
  * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).

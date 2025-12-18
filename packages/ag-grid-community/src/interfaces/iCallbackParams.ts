@@ -37,11 +37,15 @@ export interface GetChartMenuItemsParams<TData = any, TContext = any> extends Ag
     chartId: string;
 }
 
+export type ProcessUnpinnedColumns<TData = any, TContext = any> = (
+    params: ProcessUnpinnedColumnsParams<TData, TContext>
+) => Column[];
 export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     columns: Column[];
     viewportWidth: number;
 }
 
+export type PostProcessPopup<TData = any, TContext = any> = (params: PostProcessPopupParams<TData, TContext>) => void;
 export interface PostProcessPopupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** If popup is for a column, this gives the Column */
     column?: Column | null;
@@ -62,10 +66,14 @@ export interface PostProcessPopupParams<TData = any, TContext = any> extends AgG
      *  this is the event - eg user showing context menu */
     mouseEvent?: MouseEvent | Touch | null;
 }
-
+export type SendToClipboard<TData = any, TContext = any> = (params: SendToClipboardParams<TData, TContext>) => void;
 export interface SendToClipboardParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     data: string;
 }
+
+export type ProcessDataFromClipboard<TData = any, TContext = any> = (
+    params: ProcessDataFromClipboardParams<TData, TContext>
+) => string[][] | null;
 export interface ProcessDataFromClipboardParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** 2D array of all cells from the clipboard */
     data: string[][];
@@ -79,11 +87,18 @@ export interface GetChartToolbarItemsParams<TData = any, TContext = any> extends
     defaultItems?: ChartToolbarMenuItemOptions[];
 }
 
+export type FocusGridInnerElement<TData = any, TContext = any> = (
+    params: FocusGridInnerElementParams<TData, TContext>
+) => boolean;
+
 export interface FocusGridInnerElementParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** This will be true if the focus is coming from and element below the grid in the DOM structure. */
     fromBottom: boolean;
 }
 
+export type NavigateToNextHeader<TData = any, TContext = any> = (
+    params: NavigateToNextHeaderParams<TData, TContext>
+) => HeaderPosition | null;
 export interface NavigateToNextHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The key for the arrow key pressed,
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
@@ -97,6 +112,9 @@ export interface NavigateToNextHeaderParams<TData = any, TContext = any> extends
     event: KeyboardEvent;
 }
 
+export type TabToNextHeader<TData = any, TContext = any> = (
+    params: TabToNextHeaderParams<TData, TContext>
+) => HeaderPosition | boolean;
 export interface TabToNextHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** True if the Shift key is also down */
     backwards: boolean;
@@ -108,6 +126,9 @@ export interface TabToNextHeaderParams<TData = any, TContext = any> extends AgGr
     headerRowCount: number;
 }
 
+export type TabToNextCell<TData = any, TContext = any> = (
+    params: TabToNextCellParams<TData, TContext>
+) => CellPosition | boolean;
 export interface TabToNextCellParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** True if the Shift key is also down */
     backwards: boolean;
@@ -120,6 +141,9 @@ export interface TabToNextCellParams<TData = any, TContext = any> extends AgGrid
     nextCellPosition: CellPosition | null;
 }
 
+export type NavigateToNextCell<TData = any, TContext = any> = (
+    params: NavigateToNextCellParams<TData, TContext>
+) => CellPosition | null;
 export interface NavigateToNextCellParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The keycode for the arrow key pressed:
      *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
@@ -132,10 +156,16 @@ export interface NavigateToNextCellParams<TData = any, TContext = any> extends A
     event: KeyboardEvent | null;
 }
 
+export type PaginationNumberFormatter<TData = any, TContext = any> = (
+    params: PaginationNumberFormatterParams<TData, TContext>
+) => string;
 export interface PaginationNumberFormatterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: number;
 }
 
+export type IsGroupOpenByDefault<TData = any, TContext = any> = (
+    params: IsGroupOpenByDefaultParams<TData, TContext>
+) => boolean;
 export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The row node being considered. */
     rowNode: IRowNode<TData>;
@@ -149,6 +179,30 @@ export interface IsGroupOpenByDefaultParams<TData = any, TContext = any> extends
     key: string;
 }
 
+export type GetChildCount = (dataItem: any) => number;
+
+export interface ServerSideGroupLevelParams {
+    /**
+     * For Infinite Scroll only.
+     * How many blocks to keep in cache.
+     * If missing, defaults to grid options `maxBlocksInCache`.
+     */
+    maxBlocksInCache?: number;
+    /**
+     * For Infinite Scroll only.
+     * Cache block size.
+     * If missing, defaults to grid options `cacheBlockSize`.
+     */
+    cacheBlockSize?: number;
+}
+
+/**
+ * @deprecated use ServerSideGroupLevelParams instead */
+export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
+
+export type GetServerSideGroupLevelParams<TData = any, TContext = any> = (
+    params: GetServerSideGroupLevelParamsParams<TData, TContext>
+) => ServerSideGroupLevelParams;
 export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     /** The level of the store. Top level is 0. */
@@ -163,6 +217,9 @@ export interface GetServerSideGroupLevelParamsParams<TData = any, TContext = any
     pivotMode: boolean;
 }
 
+export type IsServerSideGroupOpenByDefault<TData = any, TContext = any> = (
+    params: IsServerSideGroupOpenByDefaultParams<TData, TContext>
+) => boolean;
 export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = any>
     extends AgGridCommon<TData, TContext> {
     data: any;
@@ -190,6 +247,8 @@ export interface GetRowIdParams<TData = any, TContext = any> extends AgGridCommo
 }
 
 export type RenderedRowEvent = 'virtualRowRemoved';
+
+export type ProcessRowPostCreate<TData = any, TContext = any> = (params: ProcessRowParams<TData, TContext>) => void;
 export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     eRow: HTMLElement;
     ePinnedLeftRow?: HTMLElement;
@@ -199,6 +258,7 @@ export interface ProcessRowParams<TData = any, TContext = any> extends AgGridCom
     addRenderedRowListener: (eventType: RenderedRowEvent, listener: (...args: any[]) => any) => void;
 }
 
+export type FillOperation<TData = any, TContext = any> = (params: FillOperationParams<TData, TContext>) => any;
 export interface FillOperationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The mouse event for the fill operation. */
     event: MouseEvent;
@@ -222,6 +282,9 @@ export interface FillOperationParams<TData = any, TContext = any> extends AgGrid
     direction: 'up' | 'down' | 'left' | 'right';
 }
 
+export type GetRowHeight<TData = any, TContext = any> = (
+    params: RowHeightParams<TData, TContext>
+) => number | undefined | null;
 export interface RowHeightParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The data associated with this row from rowData. Data is `undefined` for row groups. */
     data: TData | undefined;
@@ -229,25 +292,37 @@ export interface RowHeightParams<TData = any, TContext = any> extends AgGridComm
     node: IRowNode<TData>;
 }
 
+export type IsExternalFilterPresent<TData = any, TContext = any> = (
+    params: IsExternalFilterPresentParams<TData, TContext>
+) => boolean;
 export interface IsExternalFilterPresentParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
+export type DoesExternalFilterPass<TData = any> = (node: IRowNode<TData>) => boolean;
+
+export type InitialGroupOrderComparator<TData = any, TContext = any> = (
+    params: InitialGroupOrderComparatorParams<TData, TContext>
+) => number;
 export interface InitialGroupOrderComparatorParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     nodeA: IRowNode<TData>;
     nodeB: IRowNode<TData>;
 }
 
+export type GetGroupRowAgg<TData = any, TContext = any> = (params: GetGroupRowAggParams<TData, TContext>) => any;
 export interface GetGroupRowAggParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     nodes: IRowNode<TData>[];
 }
 
+export type PostSortRows<TData = any, TContext = any> = (params: PostSortRowsParams<TData, TContext>) => void;
 export interface PostSortRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     nodes: IRowNode<TData>[];
 }
 
+export type IsFullWidthRow<TData = any, TContext = any> = (params: IsFullWidthRowParams<TData, TContext>) => boolean;
 export interface IsFullWidthRowParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     rowNode: IRowNode<TData>;
 }
 
+export type GetLocaleText<TData = any, TContext = any> = (params: GetLocaleTextParams<TData, TContext>) => string;
 export interface GetLocaleTextParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     key: string;
     defaultValue: string;
@@ -274,3 +349,5 @@ export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCo
     /** The value, if a cell was clicked, otherwise null.  */
     value: any;
 }
+
+export type GetBusinessKeyForNode<TData = any> = (node: IRowNode<TData>) => string;

@@ -24,6 +24,4 @@ export interface IScalarFilterParams extends ISimpleFilterParams {
     includeBlanksInRange?: boolean;
 }
 
-export interface Comparator<T> {
-    (left: T, right: T): number;
-}
+export type Comparator<T> = (left: T, right: T) => number;

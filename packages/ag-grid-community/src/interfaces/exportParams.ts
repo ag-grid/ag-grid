@@ -148,6 +148,13 @@ export interface ShouldRowBeSkippedParams<TData = any, TContext = any> extends A
     node: IRowNode<TData>;
 }
 
+export type ProcessCellForClipboard<TData = any, TContext = any> = (
+    params: ProcessCellForExportParams<TData, TContext>
+) => any;
+export type ProcessCellFromClipboard<TData = any, TContext = any> = (
+    params: ProcessCellForExportParams<TData, TContext>
+) => any;
+
 export interface ProcessCellForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     value: any;
     accumulatedRowIndex?: number;
@@ -160,10 +167,16 @@ export interface ProcessCellForExportParams<TData = any, TContext = any> extends
     formatValue: (value: any) => string;
 }
 
+export type ProcessHeaderForClipboard<TData = any, TContext = any> = (
+    params: ProcessHeaderForExportParams<TData, TContext>
+) => any;
 export interface ProcessHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     column: Column;
 }
 
+export type ProcessGroupHeaderForClipboard<TData = any, TContext = any> = (
+    params: ProcessGroupHeaderForExportParams<TData, TContext>
+) => any;
 export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     columnGroup: ColumnGroup;
 }

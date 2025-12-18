@@ -122,6 +122,8 @@ export type IconName =
     | 'radioButtonOn' // deprecated v33
     | 'radioButtonOff'; // deprecated v33
 
+export type Icons = { [key: string]: ((...args: any[]) => any) | string };
+
 /**
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme.

@@ -37,9 +37,7 @@ export interface IDetailCellRendererParams<TData = any, TDetail = any>
     pinned: 'left' | 'right' | null | undefined;
 }
 
-export interface GetDetailRowData<TData = any, TDetail = any> {
-    (params: GetDetailRowDataParams<TData, TDetail>): void;
-}
+export type GetDetailRowData<TData = any, TDetail = any> = (params: GetDetailRowDataParams<TData, TDetail>) => void;
 
 export interface GetDetailRowDataParams<TData = any, TDetail = any> {
     /** Row node for the details request. */
@@ -50,9 +48,7 @@ export interface GetDetailRowDataParams<TData = any, TDetail = any> {
     successCallback(rowData: TDetail[]): void;
 }
 
-interface TemplateFunc<TData = any> {
-    (params: ICellRendererParams<TData>): string;
-}
+type TemplateFunc<TData = any> = (params: ICellRendererParams<TData>) => string;
 
 export interface IDetailCellRendererCtrl extends Bean {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;

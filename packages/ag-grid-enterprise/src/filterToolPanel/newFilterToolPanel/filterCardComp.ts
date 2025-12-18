@@ -115,7 +115,7 @@ export class FilterCardComp extends Component {
         };
         const createOrRefreshComp = <C extends FilterDetailComp | FilterSummaryComp>(
             comp: C | undefined,
-            FilterComp: { new (): C },
+            FilterComp: new () => C,
             postCreateFunc?: (comp: C) => void
         ) => {
             if (!comp) {
