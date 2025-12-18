@@ -66,7 +66,7 @@ export {
     PopupEventParams,
 } from './agStack/interfaces/iPopup';
 export { AgPromise } from './agStack/utils/promise';
-export type { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
+export { IDragAndDropImageComponent, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
 export type { RowDragComp } from './dragAndDrop/rowDragComp';
 export type {
     DropIndicatorPosition,
@@ -1022,7 +1022,8 @@ export {
 export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
 export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
 export type { StyleMaterialParams, ThemeDefaultParams } from './theming/parts/theme/themes';
-export type { IconName, Icons } from './utils/icon';
+export { IconName } from './utils/icon';
+export type { Icons } from './utils/icon';
 
 // Testing
 export { agTestIdFor, wrapAgTestIdFor } from './testing/testIdUtils';
