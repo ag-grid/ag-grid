@@ -172,7 +172,6 @@ export {
     ProvidedFilterParams,
 } from './filter/provided/iProvidedFilter';
 export { IScalarFilterParams, ScalarFilterParams } from './filter/provided/iScalarFilter';
-export { isCombinedFilterModel } from './filter/provided/iSimpleFilter';
 export {
     FilterPlaceholderFunction,
     ICombinedSimpleModel,
@@ -184,6 +183,7 @@ export {
     ISimpleFilterParams,
     JoinOperator,
     SimpleFilterParams,
+    isCombinedFilterModel,
     isCombinedFilterModel,
 } from './filter/provided/iSimpleFilter';
 export {
