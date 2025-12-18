@@ -207,10 +207,13 @@
     font-size: var(--text-fs-sm);
     font-weight: var(--text-medium);
     color: var(--color-link);
-    transition: background-color 0.15s ease;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 
     &:hover {
         background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-secondary) 50%);
+        color: var(--color-link);
     }
 
     &.expanded .expandIcon {
@@ -292,7 +295,9 @@
     margin-left: $spacing-size-2;
     border-radius: var(--radius-md);
     border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 
     svg {
         transition: transform 0.2s ease;
