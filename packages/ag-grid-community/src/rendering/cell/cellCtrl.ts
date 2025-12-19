@@ -530,6 +530,7 @@ export class CellCtrl extends BeanStub {
             refreshCell: this.refreshCell.bind(this),
             eGridCell: eGui,
             eParentOfValue: comp.getParentOfValue()!,
+            tooltipValue: this.tooltipFeature?.tooltip,
 
             registerRowDragger: (
                 rowDraggerElement: HTMLElement,

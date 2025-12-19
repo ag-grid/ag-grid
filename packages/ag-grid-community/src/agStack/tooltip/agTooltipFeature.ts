@@ -19,7 +19,7 @@ export class AgTooltipFeature<
     extends AgBeanStub<TBeanCollection, TProperties, TGlobalEvents, TCommon, TPropertiesService>
     implements ITooltipFeature
 {
-    private tooltip: any;
+    public tooltip: any;
 
     private tooltipManager:
         | BaseTooltipStateManager<

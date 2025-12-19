@@ -5,7 +5,14 @@ import type {
     IGroupCellRenderer,
     UserCompDetails,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _setAriaRole, _setDisplayed } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _isElementOverflowingCallback,
+    _isShowTooltipWhenTruncated,
+    _setAriaRole,
+    _setDisplayed,
+} from 'ag-grid-community';
 
 import { GroupCellRendererCtrl } from './groupCellRendererCtrl';
 
@@ -53,6 +60,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (fullWidth) {
             _setAriaRole(eGui, ctrl.getCellAriaRole());
+        }
+
+        if (params.tooltipValue && _isShowTooltipWhenTruncated(this.gos)) {
+            params.setTooltip(
+                params.tooltipValue,
+                _isElementOverflowingCallback(() => this.eValue as HTMLElement | undefined)
+            );
         }
     }
 
