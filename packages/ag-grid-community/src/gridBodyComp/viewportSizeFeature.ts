@@ -142,9 +142,10 @@ export class ViewportSizeFeature extends BeanStub {
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
     private onHorizontalViewportChanged(): void {
-        const scrollWidth = this.centerContainerCtrl.getCenterWidth();
-        const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
+        const { centerContainerCtrl, beans } = this;
+        const scrollWidth = centerContainerCtrl.getCenterWidth();
+        const scrollPosition = centerContainerCtrl.getViewportScrollLeft();
 
-        this.beans.colViewport.setScrollPosition(scrollWidth, scrollPosition);
+        beans.colViewport.setScrollPosition(scrollWidth, scrollPosition);
     }
 }
