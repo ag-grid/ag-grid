@@ -495,7 +495,7 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         super('react');
     }
 
-    private frameworkComponents: any = {
+    private readonly frameworkComponents: any = {
         agGroupCellRenderer: GroupCellRenderer,
         agGroupRowRenderer: GroupCellRenderer,
         agDetailCellRenderer: DetailCellRenderer,

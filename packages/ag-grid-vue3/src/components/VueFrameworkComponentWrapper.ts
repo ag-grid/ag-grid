@@ -9,7 +9,7 @@ interface VueWrappableInterface extends WrappableInterface {
 
 export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> {
     private parent: any | null;
-    private provides: any | null;
+    private readonly provides: any | null;
 
     constructor(parent: any, provides?: any) {
         super();

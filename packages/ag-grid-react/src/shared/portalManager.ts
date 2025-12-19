@@ -5,14 +5,14 @@ import type { ReactComponent } from './reactComponent';
 
 const MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 export class PortalManager {
-    private refresher: () => void;
-    private wrappingElement: string;
+    private readonly refresher: () => void;
+    private readonly wrappingElement: string;
     private destroyed = false;
 
     private portals: ReactPortal[] = [];
     private hasPendingPortalUpdate = false;
 
-    private maxComponentCreationTimeMs: number;
+    private readonly maxComponentCreationTimeMs: number;
 
     constructor(refresher: () => void, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
         this.wrappingElement = wrappingElement ? wrappingElement : 'div';
