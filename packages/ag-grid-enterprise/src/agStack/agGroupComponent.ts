@@ -301,7 +301,7 @@ export class AgGroupComponent<
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
         if (prepend) {
-            container.insertAdjacentElement('afterbegin', el);
+            container.prepend(el);
             this.items.unshift(el);
         } else {
             container.appendChild(el);

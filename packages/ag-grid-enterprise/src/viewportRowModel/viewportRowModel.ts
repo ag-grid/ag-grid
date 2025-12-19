@@ -228,8 +228,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
-    resetRowHeights() {}
-    onRowHeightChanged() {}
+    resetRowHeights() {
+        // not supported
+    }
+    /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
+    onRowHeightChanged() {
+        // not supported
+    }
 
     public getRowBounds(index: number): RowBounds {
         const rowHeight = this.rowHeight;

@@ -280,7 +280,7 @@ export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eC
     } else if (eContainer.firstChild && eContainer.firstChild !== eChild) {
         // otherwise put at start
         // insert it at the first location
-        eContainer.insertAdjacentElement('afterbegin', eChild);
+        eContainer.prepend(eChild);
     }
 }
 

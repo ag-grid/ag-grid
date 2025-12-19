@@ -83,6 +83,7 @@ export default [
 
             'sonarjs/use-type-alias': 0,
             'sonarjs/no-nested-template-literals': 0,
+            'unicorn/prefer-modern-dom-apis': 'error',
         },
     },
     {

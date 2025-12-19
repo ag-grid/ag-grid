@@ -248,7 +248,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
                 const hasExceededColMax = this.currentUniqueCount > this.maxUniqueValues;
                 if (doesGeneratedColMaxExist && hasExceededColMax) {
                     // throw an error to prevent all additional execution and escape the loops.
-                    throw Error(EXCEEDED_MAX_UNIQUE_VALUES);
+                    throw new Error(EXCEEDED_MAX_UNIQUE_VALUES);
                 }
             }
 

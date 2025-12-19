@@ -255,14 +255,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
-    private _nativeElement: any;
+    private readonly _nativeElement: any;
     private _initialised = false;
     private _destroyed = false;
 
     // in order to ensure firing of gridReady is deterministic
     private _holdEvents = true;
     private _resolveFullyReady: () => void;
-    private _fullyReady: Promise<void> = new Promise((resolve) => {
+    private readonly _fullyReady: Promise<void> = new Promise((resolve) => {
         this._resolveFullyReady = resolve;
     });
 
@@ -271,9 +271,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     constructor(
         elementDef: ElementRef,
-        private _viewContainerRef: ViewContainerRef,
-        private _angularFrameworkOverrides: AngularFrameworkOverrides,
-        private _frameworkCompWrapper: AngularFrameworkComponentWrapper
+        private readonly _viewContainerRef: ViewContainerRef,
+        private readonly _angularFrameworkOverrides: AngularFrameworkOverrides,
+        private readonly _frameworkCompWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
         this._fullyReady.then(() => {

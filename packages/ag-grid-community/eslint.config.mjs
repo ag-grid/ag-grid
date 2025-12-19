@@ -63,6 +63,8 @@ export default [
                 },
             ],
             'no-console': 'error',
+
+            'unicorn/prefer-modern-dom-apis': 'error',
         },
     },
     {

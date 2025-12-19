@@ -68,7 +68,7 @@ function _utf8_encode(s: string | null): string {
 
     function checkScalarValue(point: number) {
         if (point >= 0xd800 && point <= 0xdfff) {
-            throw Error(_errMsg(255, { point }));
+            throw new Error(_errMsg(255, { point }));
         }
     }
 
