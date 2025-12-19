@@ -1,103 +1,79 @@
 import { _getScrollbarWidth } from '../agStack/utils/browser';
 
+const AXES = {
+    horizontal: {
+        overflow: (el: HTMLElement) => el.scrollWidth - el.clientWidth,
+        scrollSize: (el: HTMLElement) => el.scrollWidth,
+        clientSize: (el: HTMLElement) => el.clientWidth,
+        opposite: 'vertical' as const,
+    },
+    vertical: {
+        overflow: (el: HTMLElement) => el.scrollHeight - el.clientHeight,
+        scrollSize: (el: HTMLElement) => el.scrollHeight,
+        clientSize: (el: HTMLElement) => el.clientHeight,
+        opposite: 'horizontal' as const,
+    },
+};
+
 export function _shouldShowHorizontalScroll(
     horizontalElement: HTMLElement,
     verticalScrollElement?: HTMLElement,
     scrollbarWidth: number = _getScrollbarWidth() || 0
 ): boolean {
-    const overflowWidth = getHorizontalOverflow(horizontalElement);
-    if (overflowWidth <= 0) {
-        return false;
-    }
-
-    if (!verticalScrollElement || scrollbarWidth === 0) {
-        return true;
-    }
-
-    const verticalOverflow = getVerticalOverflow(verticalScrollElement);
-    if (verticalOverflow <= 0) {
-        return true;
-    }
-
-    if (overflowWidth <= scrollbarWidth) {
-        const verticalCausedByHorizontal = isScrollbarCausedByOppositeAxis({
-            candidateScrollSize: verticalScrollElement.scrollHeight,
-            candidateClientSize: verticalScrollElement.clientHeight,
-            candidateOverflow: verticalOverflow,
-            scrollbarWidth,
-            oppositeOverflowing: overflowWidth > 0,
-        });
-
-        if (verticalCausedByHorizontal) {
-            // If the vertical scrollbar only exists because of the horizontal scrollbar,
-            // then the horizontal overflow we are seeing should not be there.
-            return false;
-        }
-
-        // At this point the vertical scrollbar should be rendered. Even if the content would fit
-        // without the vertical scrollbar, we still need to show the horizontal scrollbar
-        // because the reduced width is a real constraint.
-        const widthWithoutVerticalScrollbar = horizontalElement.clientWidth + scrollbarWidth;
-        return horizontalElement.scrollWidth <= widthWithoutVerticalScrollbar;
-    }
-
-    return true;
+    return shouldShowScroll(horizontalElement, verticalScrollElement, 'horizontal', scrollbarWidth);
 }
 
-/**
- * Determines vertical scrollbar visibility while accounting for the space taken by a horizontal scrollbar
- * that live on a different element.
- */
 export function _shouldShowVerticalScroll(
     verticalElement: HTMLElement,
     horizontalScrollElement?: HTMLElement,
     scrollbarWidth: number = _getScrollbarWidth() || 0
 ): boolean {
-    const overflowHeight = getVerticalOverflow(verticalElement);
-    if (overflowHeight <= 0) {
+    return shouldShowScroll(verticalElement, horizontalScrollElement, 'vertical', scrollbarWidth);
+}
+
+function shouldShowScroll(
+    primaryElement: HTMLElement,
+    oppositeElement: HTMLElement | undefined,
+    axis: 'horizontal' | 'vertical',
+    scrollbarWidth: number
+): boolean {
+    const primary = AXES[axis];
+    const opposite = AXES[primary.opposite];
+
+    const primaryOverflow = primary.overflow(primaryElement);
+    if (primaryOverflow <= 0) {
         return false;
     }
 
-    if (!horizontalScrollElement || scrollbarWidth === 0) {
+    if (!oppositeElement || scrollbarWidth === 0) {
         return true;
     }
 
-    const overflowWidth = getHorizontalOverflow(horizontalScrollElement);
-    if (overflowWidth <= 0) {
+    const oppositeOverflow = opposite.overflow(oppositeElement);
+    if (oppositeOverflow <= 0) {
         return true;
     }
 
-    if (overflowHeight <= scrollbarWidth) {
-        const horizontalCausedByVertical = isScrollbarCausedByOppositeAxis({
-            candidateScrollSize: horizontalScrollElement.scrollWidth,
-            candidateClientSize: horizontalScrollElement.clientWidth,
-            candidateOverflow: overflowWidth,
+    if (primaryOverflow <= scrollbarWidth) {
+        const oppositeCausedByPrimary = isScrollbarCausedByOppositeAxis({
+            candidateOverflow: oppositeOverflow,
+            candidateScrollSize: opposite.scrollSize(oppositeElement),
+            candidateClientSize: opposite.clientSize(oppositeElement),
             scrollbarWidth,
-            oppositeOverflowing: overflowHeight > 0,
         });
 
-        if (horizontalCausedByVertical) {
-            // If the horizontal scrollbar only exists because of the vertical scrollbar,
-            // then the horizontal overflow we are seeing should not be there.
+        if (oppositeCausedByPrimary) {
+            // The opposite scrollbar only exists because of this one, so suppress this scrollbar.
             return false;
         }
 
-        // At this point the horizontal scrollbar should be rendered. Even if the content would fit without
-        // the horizontal scrollbar, we still need to show the vertical scrollbar because the reduced
-        // height is a real constraint.
-        const heightWithoutHorizontalScrollbar = verticalElement.clientHeight + scrollbarWidth;
-        return verticalElement.scrollHeight <= heightWithoutHorizontalScrollbar;
+        // At this point the opposite scrollbar is real. Even if the content would fit without it,
+        // the reduced space is a real constraint, so show this scrollbar.
+        const sizeWithoutOppositeScrollbar = primary.clientSize(primaryElement) + scrollbarWidth;
+        return primary.scrollSize(primaryElement) <= sizeWithoutOppositeScrollbar;
     }
 
     return true;
-}
-
-function getHorizontalOverflow(el: HTMLElement): number {
-    return el.scrollWidth - el.clientWidth;
-}
-
-function getVerticalOverflow(el: HTMLElement): number {
-    return el.scrollHeight - el.clientHeight;
 }
 
 type ScrollbarCauseCheck = {
@@ -105,24 +81,18 @@ type ScrollbarCauseCheck = {
     candidateScrollSize: number;
     candidateClientSize: number;
     scrollbarWidth: number;
-    oppositeOverflowing: boolean;
 };
 
 /**
  * Returns true when a scrollbar on one axis only exists because the opposite-axis scrollbar
- * reduced the available space (overflow is small and the opposite scrollbar is actually showing).
+ * reduced the available space (overflow is small and fits once the opposite bar is removed).
  */
 function isScrollbarCausedByOppositeAxis({
     candidateOverflow,
     candidateScrollSize,
     candidateClientSize,
     scrollbarWidth,
-    oppositeOverflowing,
 }: ScrollbarCauseCheck): boolean {
-    if (!oppositeOverflowing) {
-        return false;
-    }
-
     if (candidateOverflow <= 0 || candidateOverflow > scrollbarWidth) {
         return false;
     }
