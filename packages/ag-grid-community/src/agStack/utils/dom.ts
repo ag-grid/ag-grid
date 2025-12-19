@@ -348,7 +348,7 @@ export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
 
-export function _isVerticalScrollShowing(element: HTMLElement): boolean {
+function _isVerticalScrollShowing(element: HTMLElement): boolean {
     return element.clientHeight < element.scrollHeight;
 }
 
