@@ -40,6 +40,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             displayedColumnsChanged: this.updateScrollVisible.bind(this),
             displayedColumnsWidthChanged: this.updateScrollVisible.bind(this),
+            columnEverythingChanged: this.updateScrollVisible.bind(this),
         });
     }
 

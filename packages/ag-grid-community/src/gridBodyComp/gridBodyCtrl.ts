@@ -1,5 +1,5 @@
 import { _isInvisibleScrollbar } from '../agStack/utils/browser';
-import { _isElementChildOfClass, _isVerticalScrollShowing, _requestAnimationFrame } from '../agStack/utils/dom';
+import { _isElementChildOfClass, _requestAnimationFrame } from '../agStack/utils/dom';
 import { _isEventFromThisInstance } from '../agStack/utils/event';
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -16,6 +16,7 @@ import type { PopupService } from '../widgets/popupService';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import { _getRowContainerClass, _getRowViewportClass } from './rowContainer/rowContainerCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
+import { _shouldShowVerticalScroll } from './scrollbarVisibilityHelper';
 
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
 
@@ -292,7 +293,8 @@ export class GridBodyCtrl extends BeanStub {
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
         const allowVerticalScroll = _isDomLayout(this.gos, 'normal');
         this.comp.setAlwaysVerticalScrollClass(cssClass, show);
-        return show || (allowVerticalScroll && _isVerticalScrollShowing(this.eBodyViewport));
+        const horizontalScrollElement = this.ctrlsSvc.get('center')?.eViewport;
+        return show || (allowVerticalScroll && _shouldShowVerticalScroll(this.eBodyViewport, horizontalScrollElement));
     }
 
     private setupRowAnimationCssClass(): void {
