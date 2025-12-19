@@ -1,9 +1,11 @@
 import type { ExcelStyle, GridApi, GridOptions } from 'ag-grid-community';
 import {
+    CellStyleModule,
     ClientSideRowModelModule,
     CsvExportModule,
     ModuleRegistry,
     NumberFilterModule,
+    TextEditorModule,
     TextFilterModule,
     ValidationModule,
     createGrid,
@@ -11,7 +13,9 @@ import {
 import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
+    CellStyleModule,
     TextFilterModule,
+    TextEditorModule,
     NumberFilterModule,
     ClientSideRowModelModule,
     CsvExportModule,
