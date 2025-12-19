@@ -480,7 +480,6 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setStickyTopHeight(height: number = 0): void {
-        // console.log('setting sticky top height ' + height);
         this.comp.setStickyTopHeight(`${height}px`);
         this.stickyTopHeight = height;
     }
