@@ -161,16 +161,19 @@ What sorting is applied is controlled via [Column State](./column-state/). The b
 
 {% gridExampleRunner title="Sorting API" name="sorting-api" /%}
 
-## Accented Sort
+## Locale-specific Sort
 
-By default, sorting doesn't take into consideration locale-specific characters. If you need to make your sort
-locale-specific you can configure this by setting the grid option `accentedSort = true`.
+By default, sorting is not locale-specific and strings are compared using their Unicode code point order. There is no language awareness and no locale rules are applied. If you need to make your sort locale-specific you can configure this by setting the grid option `accentedSort = true`.
 
-Please note, accented sort is slower than default sort; the effect is more noticeable when sorting a large number of rows.
 
-The following example is configured to use this feature.
+{% note %}
+Locale-specific sort is slower than default sort which may be noticeable when sorting a large number of rows.
+{% /note %}
 
-{% gridExampleRunner title="Accented Sort" name="accented-sort" exampleHeight=200 /%}
+
+Toggle the buttons in the following example to see the difference between default sorting and locale-aware sorting. Note that with locale-aware sorting, the order is `a à b c` instead of the default Unicode order of `a b c à`.
+
+{% gridExampleRunner title="Locale Aware Sort" name="locale-aware-sort" exampleHeight=300 /%}
 
 ## Post-Sort
 

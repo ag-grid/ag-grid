@@ -1901,8 +1901,8 @@
         },
         "accentedSort": {
             "more": {
-                "name": "Accented Sort",
-                "url": "./row-sorting/#accented-sort"
+                "name": "Locale-specific Sort",
+                "url": "./row-sorting/#locale-specific-sort"
             }
         },
         "suppressMultiSort": {

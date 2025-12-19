@@ -2751,4 +2751,5 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('global-style-customisation-sass-legacy', 'theming-v32-customisation-sass-legacy'),
     ...pageForAllFrameworks('tree-data-hierarchy', 'tree-data-paths'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-32-2', 'upgrading-to-ag-grid-32-2-1'),
+    ...pageForAllFrameworks('accented-sort', '#locale-specific-sort'),
 ];
