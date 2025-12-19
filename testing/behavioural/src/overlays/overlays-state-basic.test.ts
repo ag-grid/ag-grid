@@ -685,6 +685,27 @@ describe('ag-grid overlays state', () => {
             expect(hasLoadingOverlay()).toBeFalsy();
         });
 
+        test('no rows is shown when transactions remove all rows provided via rowData', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'One' }, { athlete: 'Two' }],
+                getRowId: (params) => {
+                    return params.data.athlete;
+                },
+            });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.applyTransaction({
+                remove: [{ athlete: 'One' }, { athlete: 'Two' }],
+            });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            // No Rows is still shown even gos.get('rowData') will return 2 rows
+            expect(hasNoRowsOverlay()).toBeTruthy();
+        });
+
         test('loading is hidden when data provided via applyTransactionAsync', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs,
