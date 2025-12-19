@@ -1,7 +1,7 @@
 import type { OverlayType } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager, isAgHtmlElementVisible } from '../test-utils';
+import { TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from '../test-utils';
 
 describe('ag-grid overlayComponent', () => {
     const gridsManager = new TestGridsManager({
@@ -475,6 +475,90 @@ describe('ag-grid overlayComponent', () => {
         api.setGridOption('activeOverlay', 'agNoRowsOverlay');
         expect(hasNoRowsOverlayWrapper()).toBeTruthy();
         expect(hasNoRowsOverlay()).toBeTruthy();
+    });
+
+    test('noRows is not shown while the grid is getting ready and has rowData', async () => {
+        const capturedCallbacks: Record<OverlayType, number> = {} as any;
+
+        gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: [{ athlete: 'Test' }],
+
+            overlayComponentSelector: (params) => {
+                updateCallbackCounts(capturedCallbacks, params.overlayType);
+                return undefined;
+            },
+        });
+
+        await asyncSetTimeout(10);
+
+        expect(capturedCallbacks).toEqual({
+            // loading should not be shown as columnDefs and rowData is provided
+            // noRows should not have been called
+        });
+    });
+
+    test('noRows or loading is not shown while the grid is getting ready and has rowData and empty columns', async () => {
+        const capturedCallbacks: Record<OverlayType, number> = {} as any;
+
+        gridsManager.createGrid('myGrid', {
+            rowData: [{ athlete: 'Test' }],
+            columnDefs: [],
+
+            overlayComponentSelector: (params) => {
+                updateCallbackCounts(capturedCallbacks, params.overlayType);
+                return undefined;
+            },
+        });
+
+        await asyncSetTimeout(10);
+
+        expect(capturedCallbacks).toEqual({
+            // loading should not be shown as columnDefs and rowData is provided
+            // noRows should not have been called
+        });
+    });
+
+    test('loading is shown while the grid is getting ready and has rowData but no columns', async () => {
+        const capturedCallbacks: Record<OverlayType, number> = {} as any;
+
+        gridsManager.createGrid('myGrid', {
+            columnDefs: undefined,
+            rowData: [{ athlete: 'Test' }],
+
+            overlayComponentSelector: (params) => {
+                updateCallbackCounts(capturedCallbacks, params.overlayType);
+                return undefined;
+            },
+        });
+
+        await asyncSetTimeout(10);
+
+        expect(capturedCallbacks).toEqual({
+            loading: 1,
+            // noRows should not have been called
+        });
+    });
+
+    test('loading is shown while the grid is getting ready and has columns but no rowData', async () => {
+        const capturedCallbacks: Record<OverlayType, number> = {} as any;
+
+        gridsManager.createGrid('myGrid', {
+            columnDefs,
+            rowData: undefined,
+
+            overlayComponentSelector: (params) => {
+                updateCallbackCounts(capturedCallbacks, params.overlayType);
+                return undefined;
+            },
+        });
+
+        await asyncSetTimeout(10);
+
+        expect(capturedCallbacks).toEqual({
+            loading: 1,
+            // noRows should not have been called
+        });
     });
 });
 

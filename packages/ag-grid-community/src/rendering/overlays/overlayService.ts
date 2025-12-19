@@ -375,7 +375,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private getOverlayDef(): OverlayDef | null {
         const { gos, beans } = this;
-        const { colModel, rowModel } = beans;
+        const { rowModel } = beans;
 
         const loading = gos.get('loading');
 
@@ -387,10 +387,7 @@ export class OverlayService extends BeanStub implements NamedBean {
                 return LoadingOverlayDef;
             }
         } else if (this.showInitialOverlay) {
-            if (
-                !this.isDisabled(LoadingOverlayDef) &&
-                (!gos.get('columnDefs') || !colModel.ready || !gos.get('rowData'))
-            ) {
+            if (!this.isDisabled(LoadingOverlayDef) && (!gos.get('columnDefs') || !gos.get('rowData'))) {
                 // if no columns or no row data, we show the initial loading overlay
                 return LoadingOverlayDef;
             }

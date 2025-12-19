@@ -1,13 +1,13 @@
 import { waitFor } from '@testing-library/dom';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
 
 import { TestGridsManager, applyTransactionChecked, isAgHtmlElementVisible, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [ClientSideRowModelModule, TextFilterModule],
     });
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     let consoleWarnSpy: MockInstance;
@@ -18,6 +18,10 @@ describe('ag-grid overlays state', () => {
 
     function hasNoRowsOverlay() {
         return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-rows-center'));
+    }
+
+    function hasNoMatchingRowsOverlay() {
+        return isAgHtmlElementVisible(document.querySelector('.ag-overlay-no-matching-rows-center'));
     }
 
     function hasLoadingOverlayWrapper() {
@@ -636,6 +640,112 @@ describe('ag-grid overlays state', () => {
 
             await waitFor(() => expect(hasNoRowsOverlay()).toBeTruthy());
             await waitFor(() => expect(getOverlayWrapperPadding()).toBe(headerHeight));
+        });
+    });
+
+    describe('Updating data transactions hide noRows when providing data', () => {
+        test('loading is hidden when data provided via applyTransaction', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: undefined,
+                defaultColDef: { filter: true },
+                getRowId: (params) => {
+                    return params.data.athlete;
+                },
+            });
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.applyTransaction({
+                add: [{ athlete: 'Test' }],
+            });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.applyTransaction({
+                remove: [{ athlete: 'Test' }],
+            });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            api.applyTransaction({
+                add: [{ athlete: 'One' }, { athlete: 'Two' }],
+            });
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            api.setFilterModel({ athlete: { type: 'contains', filter: 'NoMatch' } });
+
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
+        });
+
+        test('loading is hidden when data provided via applyTransactionAsync', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: undefined,
+                getRowId: (params) => {
+                    return params.data.athlete;
+                },
+                defaultColDef: {
+                    filter: true,
+                },
+            });
+
+            expect(hasLoadingOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            let transactionApplied: any = undefined;
+            let promise = new Promise((resolve) => (transactionApplied = resolve));
+
+            api.applyTransactionAsync(
+                {
+                    add: [{ athlete: 'Test' }],
+                },
+                () => {
+                    transactionApplied();
+                }
+            );
+            await promise;
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+
+            promise = new Promise((resolve) => (transactionApplied = resolve));
+            api.applyTransactionAsync(
+                {
+                    remove: [{ athlete: 'Test' }],
+                },
+                () => {
+                    transactionApplied();
+                }
+            );
+            await promise;
+
+            expect(hasLoadingOverlay()).toBeFalsy();
+            expect(hasNoRowsOverlay()).toBeTruthy();
+
+            promise = new Promise((resolve) => (transactionApplied = resolve));
+            api.applyTransactionAsync(
+                {
+                    add: [{ athlete: 'One' }, { athlete: 'Two' }],
+                },
+                () => {
+                    transactionApplied();
+                }
+            );
+            await promise;
+
+            api.setFilterModel({ athlete: { type: 'contains', filter: 'NoMatch' } });
+
+            expect(hasNoMatchingRowsOverlay()).toBeTruthy();
+            expect(hasNoRowsOverlay()).toBeFalsy();
+            expect(hasLoadingOverlay()).toBeFalsy();
         });
     });
 });

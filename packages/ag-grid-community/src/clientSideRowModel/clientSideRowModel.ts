@@ -588,11 +588,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public getOverlayType(): OverlayType | null {
-        if (this.isEmpty()) {
+        const { beans, gos } = this;
+        if (this.isEmpty() && (gos.get('rowData')?.length ?? 0) == 0) {
+            // isEmpty can return false while the grid is starting up but rowData is actually provided
+            // We don't just check rowData as data can be added via transactions.
             return 'noRows';
         }
 
-        if (this.beans.filterManager?.isAnyFilterPresent() && this.getRowCount() === 0) {
+        if (beans.filterManager?.isAnyFilterPresent() && this.getRowCount() === 0) {
             return 'noMatchingRows';
         }
 
