@@ -60,8 +60,8 @@ is a concern for your grid and dataset, try it out and check the performance.
 
 ### Auto Height with Custom Detail
 
-If you are providing your own [Detail Cell Renderer](./master-detail-custom-detail), then you need to make sure the top most element of the
-Detail Cell Renderer has the correct height, as this is what the grid checks and matches the row height to.
+If you are providing your own [Detail Cell Renderer](./master-detail-custom-detail), set `detailRowAutoHeight: true` in the master-level gridOptions 
+and ensure the content nested inside the detail cell renderer component sets a height value.
 
 {% if isFramework("angular") %}
 This can be a particular concern if providing a Detail Cell Renderer in Angular. Be aware that by default
