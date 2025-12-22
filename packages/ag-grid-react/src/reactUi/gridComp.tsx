@@ -111,7 +111,7 @@ const GridComp = ({ context }: GridCompProps) => {
         if (gridHeaderDropZonesSelector) {
             const headerDropZonesComp = context.createBean(new gridHeaderDropZonesSelector.component());
             const eGui = headerDropZonesComp.getGui();
-            eRootWrapper.insertAdjacentElement('afterbegin', eGui);
+            eRootWrapper.prepend(eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
         }
@@ -121,7 +121,7 @@ const GridComp = ({ context }: GridCompProps) => {
             const eGui = sideBarComp.getGui();
             const bottomTabGuard = eGridBodyParent.querySelector('.ag-tab-guard-bottom');
             if (bottomTabGuard) {
-                bottomTabGuard.insertAdjacentElement('beforebegin', eGui);
+                bottomTabGuard.before(eGui);
                 additionalEls.push(eGui);
             }
 
@@ -132,7 +132,7 @@ const GridComp = ({ context }: GridCompProps) => {
         const addComponentToDom = (component: ComponentSelector<Component>['component']) => {
             const comp = context.createBean(new component());
             const eGui = comp.getGui();
-            eRootWrapper.insertAdjacentElement('beforeend', eGui);
+            eRootWrapper.append(eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(comp);
             return comp;

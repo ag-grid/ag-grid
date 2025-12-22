@@ -8,7 +8,7 @@ const useReactCommentEffect = (comment: string, eForCommentRef: RefObject<HTMLEl
             const eParent = eForComment.parentElement;
             if (eParent) {
                 const eComment = document.createComment(comment);
-                eParent.insertBefore(eComment, eForComment);
+                eForComment.before(eComment);
 
                 return () => {
                     eComment.remove();

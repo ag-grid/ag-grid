@@ -13,6 +13,8 @@ export default [
             '@typescript-eslint/ban-types': 'error',
             '@typescript-eslint/no-var-requires': 'error',
             'no-console': 'error',
+
+            'unicorn/prefer-modern-dom-apis': 'error',
         },
     },
 ];
