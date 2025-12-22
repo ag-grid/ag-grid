@@ -158,7 +158,7 @@ When providing filter options, the default filter option (or the first option if
 
 When using the `inRange` filter type, the grid performs input validation to ensure the bounds of the range produce a valid filter; that is, where the start value is less than the end value.
 
-Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid value. 
+Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid value. While the filter is in an invalid state, the filter will not be applied.
 Screen readers that respond to the `aria-invalid` attribute or the `ValidityState` of the input will detect the input as invalid.
 
 ## Number Filter Values

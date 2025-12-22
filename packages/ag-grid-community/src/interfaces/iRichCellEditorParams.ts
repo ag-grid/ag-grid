@@ -39,9 +39,9 @@ export interface RichCellEditorValuesCallbackParams<TData = any, TValue = any>
     search?: string;
 }
 
-export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
-    (params: RichCellEditorValuesCallbackParams<TData, TValue>): TValue[] | Promise<TValue[]>;
-}
+export type RichCellEditorValuesCallback<TData = any, TValue = any> = (
+    params: RichCellEditorValuesCallbackParams<TData, TValue>
+) => TValue[] | Promise<TValue[]>;
 
 export interface IRichCellEditorParams<TData = any, TValue = any, GValue = any> {
     /** The list of values to be selected from. */

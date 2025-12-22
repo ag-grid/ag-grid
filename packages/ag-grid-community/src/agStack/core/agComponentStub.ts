@@ -227,6 +227,7 @@ export class AgComponentStub<
         childNode: Node
     ): void {
         const eComponent = newComponent.getGui();
+        // eslint-disable-next-line unicorn/prefer-modern-dom-apis
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
         this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
@@ -346,7 +347,7 @@ export class AgComponentStub<
             return;
         }
 
-        parent.insertAdjacentElement('afterbegin', element);
+        parent.prepend(element);
     }
 
     public appendChild(newChild: HTMLElement | AgBaseComponent<TBeanCollection>, container?: HTMLElement): void {

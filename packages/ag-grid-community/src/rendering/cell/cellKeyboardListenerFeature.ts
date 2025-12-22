@@ -229,9 +229,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
             editSvc.revertSingleCellEdit(cellCtrl);
         }
 
-        editSvc?.stopEditing(cellCtrl, {
-            event,
-            cancel: true,
+        // checkNavWithValidation stops and restarts the edit
+        // because React calls `setEditDetails` asynchronously
+        // by the time `stopEditing` is called, the new details
+        // have not been processed yet, so we call it async.
+        setTimeout(() => {
+            editSvc?.stopEditing(cellCtrl, {
+                event,
+                cancel: true,
+            });
         });
     }
 

@@ -65,8 +65,17 @@ export class AgInputTextField<
     }
 
     public setCustomValidity(message: string): void {
-        this.eInput.setCustomValidity(message);
-        _setAriaInvalid(this.eInput, message.length > 0);
+        const eInput = this.eInput;
+        const isInvalid = message.length > 0;
+        eInput.setCustomValidity(message);
+
+        // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
+        // so we need to call `reportValidity`.
+        if (isInvalid) {
+            eInput.reportValidity();
+        }
+
+        _setAriaInvalid(eInput, isInvalid);
     }
 
     private preventDisallowedCharacters(): void {

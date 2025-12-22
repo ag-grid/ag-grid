@@ -29,11 +29,13 @@ export interface IRangeService {
     onDragging(mouseEvent: MouseEvent): void;
     getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
+    handleCellMouseDown(event: MouseEvent, cell: CellPosition): void;
     intersectLastRange(fromMouseClick?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): CellRange | undefined;
     extendLatestRangeInDirection(event: KeyboardEvent): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
+    extendRangeToCell(cellRange: CellRange, cell: CellPosition): void;
     extendRangeRowCountBy(cellRange: CellRange, targetCount: number): void;
     extendRangeColumnCountBy(cellRange: CellRange, delta: number): void;
     updateRangeRowBoundary(params: CellRangeBoundaryParams): void;
@@ -75,6 +77,8 @@ export interface CellRange {
     columns: Column[];
     /** The start column for the range */
     startColumn: Column;
+    /** A custom color class to be applied to this range */
+    colorClass?: string | null;
 }
 
 export type PartialCellRange = Omit<CellRange, 'startColumn'> & Partial<Pick<CellRange, 'startColumn'>>;

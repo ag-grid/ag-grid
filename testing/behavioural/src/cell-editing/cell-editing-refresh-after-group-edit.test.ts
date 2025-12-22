@@ -88,17 +88,15 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         batchStoppedEvents.length = 0;
 
         const initialRows = new GridRows(api, 'initial', {
-            checkDom: true,
-            columns: ['value'],
             nodeDataProps: ['group'],
         });
         await initialRows.check(`
             ROOT id:ROOT_NODE_ID data.group:""
-            ├─┬ LEAF_GROUP id:row-group-group-A data.group:""
-            │ ├── LEAF id:1 value:"A1" data.group:"A"
-            │ └── LEAF id:2 value:"A2" data.group:"A"
-            └─┬ LEAF_GROUP id:row-group-group-B data.group:""
-            · └── LEAF id:3 value:"B1" data.group:"B"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" data.group:""
+            │ ├── LEAF id:1 group:"A" value:"A1" data.group:"A"
+            │ └── LEAF id:2 group:"A" value:"A2" data.group:"A"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B" data.group:""
+            · └── LEAF id:3 group:"B" value:"B1" data.group:"B"
         `);
 
         api.startBatchEdit();
@@ -139,17 +137,15 @@ describe('cell editing with refreshAfterGroupEdit', () => {
         expect(modelUpdatedEvents).toHaveLength(1);
 
         const finalRows = new GridRows(api, 'after commit', {
-            checkDom: true,
-            columns: ['value'],
             nodeDataProps: ['group'],
         });
         await finalRows.check(`
             ROOT id:ROOT_NODE_ID data.group:""
-            ├─┬ LEAF_GROUP id:row-group-group-A data.group:""
-            │ ├── LEAF id:1 value:"A1" data.group:"A"
-            │ └── LEAF id:3 value:"B1" data.group:"A"
-            └─┬ LEAF_GROUP id:row-group-group-B data.group:""
-            · └── LEAF id:2 value:"A2" data.group:"B"
+            ├─┬ LEAF_GROUP id:row-group-group-A ag-Grid-AutoColumn:"A" data.group:""
+            │ ├── LEAF id:1 group:"A" value:"A1" data.group:"A"
+            │ └── LEAF id:3 group:"A" value:"B1" data.group:"A"
+            └─┬ LEAF_GROUP id:row-group-group-B ag-Grid-AutoColumn:"B" data.group:""
+            · └── LEAF id:2 group:"B" value:"A2" data.group:"B"
         `);
 
         expect(api.getRowNode('2')?.parent?.key).toBe('B');

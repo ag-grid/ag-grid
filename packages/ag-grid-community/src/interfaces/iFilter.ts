@@ -8,8 +8,8 @@ import type { AgGridCommon } from './iCommon';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
 
-export type IFilterType = string | { new (): IFilterComp } | boolean;
-export type IFloatingFilterType = string | { new (): IFloatingFilterComp };
+export type IFilterType = string | (new () => IFilterComp) | boolean;
+export type IFloatingFilterType = string | (new () => IFloatingFilterComp);
 
 export interface DoesFilterPassParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends IDoesFilterPassParams<TData> {
@@ -24,7 +24,19 @@ export interface FilterHandlerBaseParams<TData = any, TContext = any, TModel = a
     extends SharedFilterParams<TData, TContext> {
     filterParams: TCustomParams;
     onModelChange: (model: TModel | null, additionalEventAttributes?: any) => void;
+    /**
+     * When using the read-only floating filter or the new filters tool panel,
+     * the display value is retrieved from the handler via `getModelAsString()`.
+     * This will automatically be called again when the filter model changes.
+     * If the display value needs to be updated without the filter model changing,
+     * this function can be called to trigger a refresh.
+     */
+    onModelAsStringChange: () => void;
 }
+
+export type QuickFilterParser = (quickFilter: string) => string[];
+export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
+export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolean;
 
 export type FilterHandlerSource = 'init' | 'ui' | 'api' | 'colDef' | 'floating' | 'handler';
 
@@ -53,8 +65,8 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
     doesFilterPass(params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>): boolean;
     /**
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
-     * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
-     * filter.
+     * associated for this filter. This will happen if you create a custom filter and NOT a custom floating
+     * filter. This is also used by the new filters tool panel to display the summary.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
     /**
@@ -72,11 +84,13 @@ export interface CreateFilterHandlerFuncParams<TData = any, TValue = any, TConte
     column: Column<TValue>;
 }
 
-export interface CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
-    (
-        params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
-    ): FilterHandler<TData, TContext, TModel, TCustomParams>;
-}
+export type CreateFilterHandlerFunc<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> = (
+    params: CreateFilterHandlerFuncParams<TData, TValue, TContext>
+) => FilterHandler<TData, TContext, TModel, TCustomParams>;
+
+export type FilterHandlers<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> = {
+    [key: string]: CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;
+};
 
 export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**

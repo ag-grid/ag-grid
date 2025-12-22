@@ -33,7 +33,7 @@ interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
 }
 
-type DataTypeDefinitions = {
+type DataTypeDefinitionMap = {
     [cellDataType: BaseCellDataType | string]: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter;
 };
 type CoreDataTypeDefMap = { [K in BaseCellDataType]: CoreDataTypeDefinition & { baseDataType: K } };
@@ -63,7 +63,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.colModel = beans.colModel;
     }
 
-    private dataTypeDefinitions: DataTypeDefinitions = {};
+    private dataTypeDefinitions: DataTypeDefinitionMap = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
     private formatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc };
     public isPendingInference: boolean = false;
@@ -86,7 +86,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private processDataTypeDefinitions(): void {
         const defaultDataTypes = this.getDefaultDataTypes();
-        const newDataTypeDefinitions: DataTypeDefinitions = {};
+        const newDataTypeDefinitions: DataTypeDefinitionMap = {};
         const newFormatValueFuncs: { [cellDataType: string]: DataTypeFormatValueFunc } = {};
         const generateFormatValueFunc = (
             dataTypeDefinition: (DataTypeDefinition | CoreDataTypeDefinition) & GroupSafeValueFormatter

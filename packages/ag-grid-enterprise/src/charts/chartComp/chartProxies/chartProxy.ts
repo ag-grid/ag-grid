@@ -208,12 +208,6 @@ export abstract class ChartProxy<
     }
 
     private getChartThemeDefaults(): AgChartThemeOverrides | undefined {
-        const seriesOverrides = this.getSeriesChartThemeDefaults();
-        const seriesChartOptions = seriesOverrides
-            ? {
-                  [this.standaloneChartType]: seriesOverrides,
-              }
-            : {};
         const crosshair: AgCrosshairOptions = {
             enabled: true,
             snap: true,
@@ -245,10 +239,19 @@ export abstract class ChartProxy<
             height: 18,
         };
         common.context = this.chartProxyParams.context;
-        return {
+        const overrides = {
             common,
-            ...seriesChartOptions,
         };
+        this.setSeriesChartThemeDefaults(overrides);
+        return overrides;
+    }
+
+    protected setSeriesChartThemeDefaults(overrides: AgChartThemeOverrides): void {
+        const seriesOverrides = this.getSeriesChartThemeDefaults();
+        if (!seriesOverrides) {
+            return;
+        }
+        overrides[this.standaloneChartType] = seriesOverrides;
     }
 
     protected getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {

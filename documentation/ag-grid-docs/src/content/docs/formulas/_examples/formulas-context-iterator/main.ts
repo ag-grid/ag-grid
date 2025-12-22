@@ -1,7 +1,9 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFunctionParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
+    CellApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
@@ -13,44 +15,51 @@ ModuleRegistry.registerModules([
     CellSelectionModule,
     ClientSideRowModelModule,
     FormulaModule,
+    CellApiModule,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
 const rowData = [
-    { rid: '1', A: 1, B: 2 },
-    { rid: '2', A: 2, B: 2 },
+    { rid: 'r1', gold: 1, silver: 2 },
+    { rid: 'r2', gold: 2, silver: 2 },
+    { rid: 'r3', gold: 1, silver: 20 },
+    { rid: 'r4', gold: 3, silver: 2 },
+    { rid: 'r5', gold: 5, silver: 7 },
+    { rid: 'r6', gold: 2, silver: 2 },
+    { rid: 'r7', gold: 1, silver: 2 },
     {
-        rid: '3',
-        A: 1,
-        B: 2,
-        C: '="Result of \'=COUNTEQ(A1:B3,2)\' is "&COUNTEQ(REF(COLUMN("0"),ROW("1"),COLUMN("1"),ROW("3")),2)',
+        rid: 'r8',
+        gold: 1,
+        silver: 2,
+        result: '=COUNTEQ($A$1:$B$8,2)',
     },
 ];
 
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'A', colId: '0', width: 150 },
-        { field: 'B', colId: '1', width: 150 },
-        { field: 'C', colId: '2', flex: 1, allowFormula: true },
+        { field: 'gold', colId: 'c0' },
+        { field: 'silver', colId: 'c1' },
+        { field: 'result', colId: 'c2', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params: GetRowIdParams) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
         },
     },
     defaultColDef: {
-        headerName: '',
         editable: true,
+        flex: 1,
     },
     rowData,
     formulaFuncs: {
         COUNTEQ: {
-            func: (params) => {
+            func: (params: FormulaFunctionParams) => {
                 const argsArr = Array.from(params.args);
                 if (argsArr.length != 2) {
                     throw 'COUNTEQ requires exactly 2 arguments';

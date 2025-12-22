@@ -8,7 +8,7 @@ import type {
 import { RowDragModule, RowSelectionModule } from 'ag-grid-community';
 import { ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { TestGridsManager, dragAndDropRow, ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils';
+import { RowDragDispatcher, TestGridsManager, ssrmExpandAndLoadAll, waitForNoLoadingRows } from '../../test-utils';
 import { createFakeServer, createServerSideDatasource, getSmallTreeDataSet } from './ssrmSmallTreeDataSet';
 
 describe('ag-grid SSRM treeData managed drag and drop', () => {
@@ -65,7 +65,10 @@ describe('ag-grid SSRM treeData managed drag and drop', () => {
 
         // Pick two leaf ids that exist in the small dataset and perform a managed drag
         // 105 and 107 are leaves in the sample dataset
-        await dragAndDropRow({ api, source: '105', target: '107' });
+        const dispatcher = new RowDragDispatcher({ api });
+        await dispatcher.start('105');
+        await dispatcher.move('107');
+        await dispatcher.finish();
 
         await waitForNoLoadingRows(api);
 

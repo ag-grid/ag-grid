@@ -77,8 +77,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         });
     }
 
-    // empty abstract method
-    protected resizeHeader(): void {}
+    protected resizeHeader(): void {
+        // empty abstract method
+    }
 
     protected override moveHeader(): void {
         // doesn't support move

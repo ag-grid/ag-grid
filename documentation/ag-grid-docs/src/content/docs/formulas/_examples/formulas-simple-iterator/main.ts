@@ -1,7 +1,8 @@
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FormulaFunctionParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     ValidationModule,
@@ -12,45 +13,34 @@ import { CellSelectionModule, FormulaModule } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([
     CellSelectionModule,
     ClientSideRowModelModule,
+    NumberEditorModule,
     TextEditorModule,
     TooltipModule,
     FormulaModule,
     ...(process.env.NODE_ENV !== 'production' ? [ValidationModule] : []),
 ]);
 
-let gridApi: GridApi<any>;
+let gridApi: GridApi;
 
-const rowData = [
-    { rid: '1', A: 1, B: 1, C: 1 },
-    { rid: '2', A: 1, B: 1, C: 1 },
-    {
-        rid: '3',
-        A: 1,
-        B: 1,
-        C: '="Result of \'=CUSTOMSUM(A1:B3, C1:C2)\' is "&CUSTOMSUM(REF(COLUMN("0"),ROW("1"),COLUMN("1"),ROW("3")),REF(COLUMN("2"),ROW("1"),COLUMN("2"),ROW("2")))',
-    },
-];
-
-const gridOptions: GridOptions<any> = {
+const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'A', colId: '0', width: 150 },
-        { field: 'B', colId: '1', width: 150 },
-        { field: 'C', colId: '2', flex: 1, allowFormula: true },
+        { field: 'gold', colId: 'c0' },
+        { field: 'silver', colId: 'c1' },
+        { field: 'totals', colId: 'c2', cellDataType: 'text', allowFormula: true },
     ],
-    getRowId: (params) => String(params.data.rid),
+    getRowId: (params: GetRowIdParams) => String(params.data.rid),
     cellSelection: {
         handle: {
             mode: 'fill',
         },
     },
     defaultColDef: {
-        headerName: '',
+        flex: 1,
         editable: true,
     },
-    rowData,
     formulaFuncs: {
         CUSTOMSUM: {
-            func: (params) => {
+            func: (params: FormulaFunctionParams) => {
                 let total = 0;
                 for (const value of params.values) {
                     const num = Number(value);
@@ -62,6 +52,16 @@ const gridOptions: GridOptions<any> = {
             },
         },
     },
+    rowData: [
+        { rid: '1', gold: 1, silver: 1, totals: '=CUSTOMSUM(A1:B1)' },
+        { rid: '2', gold: 1, silver: 2, totals: '=CUSTOMSUM(A2:B2)' },
+        { rid: '3', gold: 4, silver: 0, totals: '=CUSTOMSUM(A3:B3)' },
+        { rid: '4', gold: 0, silver: 0, totals: '=CUSTOMSUM(A4:B4)' },
+        { rid: '5', gold: 2, silver: 13, totals: '=CUSTOMSUM(A5:B5)' },
+        { rid: '6', gold: 0, silver: 1, totals: '=CUSTOMSUM(A6:B6)' },
+        { rid: '7', gold: 9, silver: 6, totals: '=CUSTOMSUM(A7:B7)' },
+        { rid: '8', gold: 0, silver: 11, totals: '=CUSTOMSUM(A1:B8, B1)' },
+    ],
 };
 
 // setup the grid after the page has finished loading

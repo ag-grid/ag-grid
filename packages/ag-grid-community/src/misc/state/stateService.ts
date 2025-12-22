@@ -241,6 +241,7 @@ export class StateService extends BeanStub implements NamedBean {
             ssrmRowGroupExpansion,
             rowSelection: rowSelectionState,
             pagination: paginationState,
+            rowPinning,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -256,6 +257,9 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('pagination', paginationState)) {
             this.setPaginationState(paginationState, source);
+        }
+        if (shouldSetState('rowPinning', rowPinning)) {
+            this.setRowPinningState(rowPinning);
         }
 
         const updateCachedState = this.updateCachedState.bind(this);
@@ -288,7 +292,7 @@ export class StateService extends BeanStub implements NamedBean {
         };
         const updateFilterState = () => updateCachedState('filter', this.getFilterState());
 
-        const { gos, colFilter } = this.beans;
+        const { gos, colFilter, selectableFilter } = this.beans;
         this.addManagedEventListeners({
             filterChanged: updateFilterState,
             rowExpansionStateChanged: this.onRowGroupOpenedDebounced,
@@ -310,10 +314,16 @@ export class StateService extends BeanStub implements NamedBean {
                     updateCachedState('pagination', this.getPaginationState());
                 }
             },
+            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
         if (colFilter) {
             this.addManagedListeners(colFilter, {
                 filterStateChanged: updateFilterState,
+            });
+        }
+        if (selectableFilter) {
+            this.addManagedListeners(selectableFilter, {
+                selectedFilterChanged: updateFilterState,
             });
         }
     }
@@ -328,7 +338,6 @@ export class StateService extends BeanStub implements NamedBean {
             cellSelection: cellSelectionState,
             focusedCell: focusedCellState,
             columnOrder: columnOrderState,
-            rowPinning,
         } = state;
         const shouldSetState = <TKey extends GridStateKey>(prop: TKey, propState: GridState[TKey]) =>
             !ignoreSet?.has(prop) && (propState || source === 'api');
@@ -341,9 +350,6 @@ export class StateService extends BeanStub implements NamedBean {
         }
         if (shouldSetState('scroll', scrollState)) {
             this.setScrollState(scrollState);
-        }
-        if (shouldSetState('rowPinning', rowPinning)) {
-            this.setRowPinningState(rowPinning);
         }
         this.setColumnPivotState(!!columnOrderState?.orderedColIds, source);
 
@@ -373,7 +379,6 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             },
             bodyScrollEnd: () => updateCachedState('scroll', this.getScrollState()),
-            pinnedRowsChanged: () => updateCachedState('rowPinning', this.getRowPinningState()),
         });
     }
 
@@ -617,25 +622,29 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getFilterState(): FilterState | undefined {
-        const filterManager = this.beans.filterManager;
+        const { filterManager, selectableFilter } = this.beans;
         let filterModel: FilterModel | undefined = filterManager?.getFilterModel();
         if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
         const columnFilterState = filterManager?.getFilterState();
         const advancedFilterModel = filterManager?.getAdvFilterModel() ?? undefined;
-        return filterModel || advancedFilterModel || columnFilterState
-            ? { filterModel, columnFilterState, advancedFilterModel }
+        const selectableFilters = selectableFilter?.getState();
+        return filterModel || advancedFilterModel || columnFilterState || selectableFilters
+            ? { filterModel, columnFilterState, advancedFilterModel, selectableFilters }
             : undefined;
     }
 
     private setFilterState(filterState?: FilterState): void {
-        const filterManager = this.beans.filterManager;
-        const { filterModel, columnFilterState, advancedFilterModel } = filterState ?? {
+        const { filterManager, selectableFilter } = this.beans;
+        const { filterModel, columnFilterState, advancedFilterModel, selectableFilters } = filterState ?? {
             filterModel: null,
             columnFilterState: null,
             advancedFilterModel: null,
         };
+        if (selectableFilters !== undefined) {
+            selectableFilter?.setState(selectableFilters ?? {});
+        }
         if (filterModel !== undefined || columnFilterState !== undefined) {
             filterManager?.setFilterState(filterModel ?? null, columnFilterState ?? null, 'columnFilter');
         }

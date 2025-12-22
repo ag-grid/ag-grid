@@ -81,9 +81,7 @@ export interface ICellRenderer<TData = any> {
 
 export interface ICellRendererComp<TData = any> extends IComponent<ICellRendererParams<TData>>, ICellRenderer<TData> {}
 
-export interface ICellRendererFunc<TData = any> {
-    (params: ICellRendererParams<TData>): HTMLElement | string;
-}
+export type ICellRendererFunc<TData = any> = (params: ICellRendererParams<TData>) => HTMLElement | string;
 
 export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {}
 

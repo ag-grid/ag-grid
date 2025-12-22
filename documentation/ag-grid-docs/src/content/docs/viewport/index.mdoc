@@ -67,7 +67,7 @@ It is possible to prevent unwanted row redraws when `setRowCount: (count: number
 
 ## Updating Data
 
-If your data changes, you should get a reference to the node by calling `params.getRowData(rowIndex)` and then call ONE of the following:
+If your data changes, you should get a reference to the node by calling `params.getRow(rowIndex)` and then call ONE of the following:
 
 * `rowNode.setData(newData)`: Call this to set the entire data into the node. The new data will be stored inside the `rowNode` replacing the old data. This will result in the grid removing the rendered row from the DOM and replacing with a new rendered row. If you have any custom `cellRenderers`, they will be destroyed and new ones created, so there is no way to achieve animation.
 

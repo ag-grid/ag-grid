@@ -723,10 +723,12 @@ export const AG_GRID_ERRORS = {
         `The grid was initialised detached from the DOM and was then inserted into a Shadow Root. Theme styles are probably broken. Pass the themeStyleContainer grid option to let the grid know where in the document to insert theme CSS.` as const,
     294: () =>
         `When using the \`agRichSelectCellEditor\` setting \`filterListAsync = true\` requires \`allowTyping = true\` and the \`values()\` callback must return a Promise of filtered values.` as const,
-    295: () =>
-        `'rowDragManaged' requires 'refreshAfterGroupEdit' to be true when row grouping columns are enabled.` as const,
-    296: ({ blockedService }: { blockedService: string }) =>
+    295: ({ blockedService }: { blockedService: string }) =>
         `colDef.allowFormula is not supported with ${blockedService}. Formulas has been turned off.`,
+    296: () =>
+        'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
+    297: () =>
+        '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
 };
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

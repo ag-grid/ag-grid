@@ -142,12 +142,7 @@ describe('csv exports for server-side grouping', () => {
         await ssrmExpandAndLoadAll(api);
         await waitForNoLoadingRows(api);
 
-        const gridRows = new GridRows(api, 'ssrm grouping state', {
-            checkDom: false,
-            columns: true,
-            ignoreUndefinedCells: true,
-        });
-
+        const gridRows = new GridRows(api, 'ssrm grouping state');
         await gridRows.check(unindentText`
             ROOT id:<no-id> ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-year:null
             ├─┬ GROUP id:"country:Ireland" ag-Grid-AutoColumn-country:"Ireland" ag-Grid-AutoColumn-year:null country:"Ireland"
@@ -235,12 +230,7 @@ describe('csv exports for server-side grouping', () => {
         await ssrmExpandAndLoadAll(api);
         await waitForNoLoadingRows(api);
 
-        const gridRows = new GridRows(api, 'ssrm grouping state', {
-            checkDom: false,
-            columns: true,
-            ignoreUndefinedCells: true,
-        });
-
+        const gridRows = new GridRows(api, 'ssrm grouping state');
         await gridRows.check(unindentText`
             ROOT id:<no-id> ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-year:null
             ├── LEAF id:ie-2000-1 ag-Grid-AutoColumn-country:"Ireland" ag-Grid-AutoColumn-year:"2000" country:"Ireland" year:"2000" medals:2
@@ -308,12 +298,7 @@ describe('csv exports for server-side grouping', () => {
         await ssrmExpandAndLoadAll(api);
         await waitForNoLoadingRows(api);
 
-        const gridRows = new GridRows(api, 'ssrm grouping state', {
-            checkDom: false,
-            columns: true,
-            ignoreUndefinedCells: true,
-        });
-
+        const gridRows = new GridRows(api, 'ssrm grouping state');
         await gridRows.check(unindentText`
             ROOT id:<no-id> ag-Grid-AutoColumn-country:null ag-Grid-AutoColumn-year:null
             ├─┬ GROUP id:"country:Ireland" ag-Grid-AutoColumn-country:"Ireland" ag-Grid-AutoColumn-year:null country:"Ireland"

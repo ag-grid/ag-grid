@@ -31,15 +31,18 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     public verticalScrollGap: boolean;
 
     public postConstruct(): void {
-        this.horizontalScrollShowing = this.gos.get('alwaysShowHorizontalScroll') === true;
-        this.verticalScrollShowing = this.gos.get('alwaysShowVerticalScroll') === true;
+        const { gos } = this;
+        this.horizontalScrollShowing = gos.get('alwaysShowHorizontalScroll') === true;
+        this.verticalScrollShowing = gos.get('alwaysShowVerticalScroll') === true;
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
+        const updateScrollVisible = this.updateScrollVisible.bind(this);
         this.addManagedEventListeners({
-            displayedColumnsChanged: this.updateScrollVisible.bind(this),
-            displayedColumnsWidthChanged: this.updateScrollVisible.bind(this),
+            displayedColumnsChanged: updateScrollVisible,
+            displayedColumnsWidthChanged: updateScrollVisible,
+            newColumnsLoaded: updateScrollVisible,
         });
     }
 

@@ -10,3 +10,4 @@ tsconfig-precheck.json
 tsconfig-src.json
 updateGridAndColumnProperties.js
 *.map
+osv-scanner.toml

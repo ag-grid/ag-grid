@@ -53,17 +53,20 @@ export class FilterPanelService
                 }
                 updateFilterStates();
             },
+            dataTypesInferred: updateFilterStates,
             filterChanged: updateFilterStates,
             filterDestroyed: onFilterDestroyed,
             filterHandlerDestroyed: onFilterDestroyed,
             filterOpened: updateApplyButton,
             filterClosed: updateApplyButton,
         });
+        const refreshForColumn = ({ column }: { column: AgColumn }) => {
+            this.states.get(column.getColId())?.refresh?.();
+            updateApplyButton();
+        };
         this.addManagedListeners(this.beans.colFilter!, {
-            filterStateChanged: ({ column }: { column: AgColumn }) => {
-                this.states.get(column.getColId())?.refresh?.();
-                updateApplyButton();
-            },
+            filterStateChanged: refreshForColumn,
+            filterModelAsStringChanged: refreshForColumn,
         });
     }
 

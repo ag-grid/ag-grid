@@ -1,6 +1,7 @@
 import { RefPlaceholder } from '../agStack/interfaces/agComponent';
 import { _clearElement, _setDisplayed } from '../agStack/utils/dom';
 import type { AgColumn } from '../entities/agColumn';
+import { _normalizeSortDirection, _normalizeSortType } from '../entities/agColumn';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { ElementParams } from '../utils/element';
 import type { IconName } from '../utils/icon';
@@ -22,6 +23,8 @@ const SortIndicatorElement: ElementParams = {
         makeIconParams('Asc', 'ascending-icon'),
         makeIconParams('Desc', 'descending-icon'),
         makeIconParams('Mixed', 'mixed-icon'),
+        makeIconParams('AbsoluteAsc', 'absolute-ascending-icon'),
+        makeIconParams('AbsoluteDesc', 'absolute-descending-icon'),
         makeIconParams('None', 'none-icon'),
     ],
 };
@@ -33,7 +36,8 @@ export class SortIndicatorComp extends Component {
     private eSortDesc?: HTMLElement = RefPlaceholder;
     private eSortMixed?: HTMLElement = RefPlaceholder;
     private eSortNone?: HTMLElement = RefPlaceholder;
-
+    private eSortAbsoluteAsc?: HTMLElement = RefPlaceholder;
+    private eSortAbsoluteDesc?: HTMLElement = RefPlaceholder;
     private column: AgColumn;
     private suppressOrder: boolean;
 
@@ -50,13 +54,17 @@ export class SortIndicatorComp extends Component {
         eSortAsc: HTMLElement | undefined,
         eSortDesc: HTMLElement | undefined,
         eSortMixed: HTMLElement | undefined,
-        eSortNone: HTMLElement | undefined
+        eSortNone: HTMLElement | undefined,
+        eSortAbsoluteAsc: HTMLElement | undefined,
+        eSortAbsoluteDesc: HTMLElement | undefined
     ) {
         this.eSortOrder = eSortOrder;
         this.eSortAsc = eSortAsc;
         this.eSortDesc = eSortDesc;
         this.eSortMixed = eSortMixed;
         this.eSortNone = eSortNone;
+        this.eSortAbsoluteAsc = eSortAbsoluteAsc;
+        this.eSortAbsoluteDesc = eSortAbsoluteDesc;
     }
 
     public setupSort(column: AgColumn, suppressOrder: boolean = false): void {
@@ -72,6 +80,8 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortAscending', this.eSortAsc, column);
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
+        this.addInIcon('sortAbsoluteAscending', this.eSortAbsoluteAsc, column);
+        this.addInIcon('sortAbsoluteDescending', this.eSortAbsoluteDesc, column);
 
         const updateIcons = this.updateIcons.bind(this);
         const sortUpdated = this.onSortChanged.bind(this);
@@ -106,24 +116,42 @@ export class SortIndicatorComp extends Component {
     }
 
     private updateIcons(): void {
-        const { eSortAsc, eSortDesc, eSortNone, column, gos, beans } = this;
+        const { eSortAsc, eSortDesc, eSortAbsoluteAsc, eSortAbsoluteDesc, eSortNone, column, gos, beans } = this;
 
-        const sortDirection = beans.sortSvc!.getDisplaySortForColumn(column);
+        const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+        const type = _normalizeSortType(sortDef?.type);
+        const direction = _normalizeSortDirection(sortDef?.direction);
+        const allowedSortTypes = column.getAvailableSortTypes();
+        const isDefaultSortAllowed = allowedSortTypes.has('default');
+        const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+        const isAbsoluteSort = type === 'absolute';
+        const isDefaultSort = type === 'default';
+        const isAscending = direction === 'asc';
+        const isDescending = direction === 'desc';
 
         if (eSortAsc) {
-            const isAscending = sortDirection === 'asc';
-            _setDisplayed(eSortAsc, isAscending, { skipAriaHidden: true });
+            _setDisplayed(eSortAsc, isAscending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
         }
 
         if (eSortDesc) {
-            const isDescending = sortDirection === 'desc';
-            _setDisplayed(eSortDesc, isDescending, { skipAriaHidden: true });
+            _setDisplayed(eSortDesc, isDescending && isDefaultSort && isDefaultSortAllowed, { skipAriaHidden: true });
         }
 
         if (eSortNone) {
             const alwaysHideNoSort = !column.getColDef().unSortIcon && !gos.get('unSortIcon');
-            const isNone = sortDirection === null || sortDirection === undefined;
-            _setDisplayed(eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
+            _setDisplayed(eSortNone, !alwaysHideNoSort && !direction, { skipAriaHidden: true });
+        }
+
+        if (eSortAbsoluteAsc) {
+            _setDisplayed(eSortAbsoluteAsc, isAscending && isAbsoluteSort && isAbsoluteSortAllowed, {
+                skipAriaHidden: true,
+            });
+        }
+
+        if (eSortAbsoluteDesc) {
+            _setDisplayed(eSortAbsoluteDesc, isDescending && isAbsoluteSort && isAbsoluteSortAllowed, {
+                skipAriaHidden: true,
+            });
         }
     }
 
@@ -147,7 +175,7 @@ export class SortIndicatorComp extends Component {
     private updateMultiSortIndicator() {
         const { eSortMixed, beans, column } = this;
         if (eSortMixed) {
-            const isMixedSort = beans.sortSvc!.getDisplaySortForColumn(column) === 'mixed';
+            const isMixedSort = beans.sortSvc!.getDisplaySortForColumn(column)?.direction === 'mixed';
             _setDisplayed(eSortMixed, isMixedSort, { skipAriaHidden: true });
         }
     }

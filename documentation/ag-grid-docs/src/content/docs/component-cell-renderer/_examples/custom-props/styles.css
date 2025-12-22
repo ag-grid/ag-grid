@@ -17,6 +17,10 @@
 }
 
 .missionIcon {
-    width: auto;
-    height: auto;
+    width: 20px;
+    height: 20px;
+}
+
+.btn-simple {
+    min-width: 150px;
 }

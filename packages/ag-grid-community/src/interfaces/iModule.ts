@@ -1,8 +1,9 @@
 import type { ClassImp } from '../agStack/interfaces/iContext';
+import type { IconValue } from '../agStack/interfaces/iIcon';
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
-import type { IconName, IconValue } from '../utils/icon';
+import type { IconName } from '../utils/icon';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 

@@ -1,8 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from '../test-utils';
 
 describe('ag-grid grouping aggregation', () => {
     const gridsManager = new TestGridsManager({
@@ -44,34 +43,24 @@ describe('ag-grid grouping aggregation', () => {
             groupTotalRow: 'bottom',
         });
 
-        const gridRowsOptionsFormatted: GridRowsOptions = {
-            columns: ['sport', 'gold', 'silver'],
-            checkDom: true,
-        };
-
-        const gridRowsOptionsUnformatted: GridRowsOptions = {
-            ...gridRowsOptionsFormatted,
-            useFormatter: false,
-        };
-
-        await new GridRows(api, 'initial', gridRowsOptionsFormatted).check(`
+        await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:1 sport:"Sailing" gold:1 silver:2
-            │ ├── LEAF id:2 sport:"Soccer" gold:2 silver:1
-            │ ├── LEAF id:3 sport:"Football" gold:1 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-Ireland gold:4 silver:{"count":3,"value":2}
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ ├── LEAF id:4 sport:"Soccer" gold:3 silver:1
-            │ ├── LEAF id:5 sport:"Football" gold:2 silver:2
-            │ └─ footer id:rowGroupFooter_row-group-country-Italy gold:5 silver:{"count":2,"value":1.5}
-            └─┬ LEAF_GROUP id:row-group-country-France
-            · ├── LEAF id:6 sport:"Tennis" gold:1 silver:1
-            · ├── LEAF id:7 sport:"Soccer" gold:2 silver:3
-            · └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" sport:"Sailing" gold:1 silver:2
+            │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2 silver:1
+            │ ├── LEAF id:3 country:"Ireland" sport:"Football" gold:1 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Total Ireland" gold:4 silver:{"count":3,"value":2}
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3 silver:1
+            │ ├── LEAF id:5 country:"Italy" sport:"Football" gold:2 silver:2
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Total Italy" gold:5 silver:{"count":2,"value":1.5}
+            └─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · ├── LEAF id:6 country:"France" sport:"Tennis" gold:1 silver:1
+            · ├── LEAF id:7 country:"France" sport:"Soccer" gold:2 silver:3
+            · └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"Total France" gold:3 silver:{"count":2,"value":2}
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '1', country: 'Ireland', sport: 'Swimming', gold: 12, silver: 7 }],
             add: [
                 { id: '8', country: 'United Kingdom', sport: 'Rowing', gold: 4, silver: 4 },
@@ -79,46 +68,46 @@ describe('ag-grid grouping aggregation', () => {
             ],
         });
 
-        await new GridRows(api, 'after update', gridRowsOptionsFormatted).check(`
+        await new GridRows(api, 'after update', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:1 sport:"Swimming" gold:12 silver:7
-            │ ├── LEAF id:2 sport:"Soccer" gold:2 silver:1
-            │ ├── LEAF id:3 sport:"Football" gold:1 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-Ireland gold:15 silver:{"count":3,"value":3.6666666666666665}
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ ├── LEAF id:4 sport:"Soccer" gold:3 silver:1
-            │ ├── LEAF id:5 sport:"Football" gold:2 silver:2
-            │ └─ footer id:rowGroupFooter_row-group-country-Italy gold:5 silver:{"count":2,"value":1.5}
-            ├─┬ LEAF_GROUP id:row-group-country-France
-            │ ├── LEAF id:6 sport:"Tennis" gold:1 silver:1
-            │ ├── LEAF id:7 sport:"Soccer" gold:2 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
-            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom"
-            · ├── LEAF id:8 sport:"Rowing" gold:4 silver:4
-            · ├── LEAF id:9 sport:"Athletics" gold:5 silver:3
-            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" gold:9 silver:{"count":2,"value":3.5}
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" sport:"Swimming" gold:12 silver:7
+            │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2 silver:1
+            │ ├── LEAF id:3 country:"Ireland" sport:"Football" gold:1 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:15 silver:{"count":3,"value":3.6666666666666665}
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3 silver:1
+            │ ├── LEAF id:5 country:"Italy" sport:"Football" gold:2 silver:2
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:5 silver:{"count":2,"value":1.5}
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:6 country:"France" sport:"Tennis" gold:1 silver:1
+            │ ├── LEAF id:7 country:"France" sport:"Soccer" gold:2 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"France" gold:3 silver:{"count":2,"value":2}
+            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom"
+            · ├── LEAF id:8 country:"United Kingdom" sport:"Rowing" gold:4 silver:4
+            · ├── LEAF id:9 country:"United Kingdom" sport:"Athletics" gold:5 silver:3
+            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" gold:9 silver:{"count":2,"value":3.5}
         `);
 
-        await new GridRows(api, 'after update', gridRowsOptionsUnformatted).check(`
+        await new GridRows(api, 'after update', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland
-            │ ├── LEAF id:1 sport:"Swimming" gold:12 silver:7
-            │ ├── LEAF id:2 sport:"Soccer" gold:2 silver:1
-            │ ├── LEAF id:3 sport:"Football" gold:1 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-Ireland gold:15 silver:{"count":3,"value":3.6666666666666665}
-            ├─┬ LEAF_GROUP id:row-group-country-Italy
-            │ ├── LEAF id:4 sport:"Soccer" gold:3 silver:1
-            │ ├── LEAF id:5 sport:"Football" gold:2 silver:2
-            │ └─ footer id:rowGroupFooter_row-group-country-Italy gold:5 silver:{"count":2,"value":1.5}
-            ├─┬ LEAF_GROUP id:row-group-country-France
-            │ ├── LEAF id:6 sport:"Tennis" gold:1 silver:1
-            │ ├── LEAF id:7 sport:"Soccer" gold:2 silver:3
-            │ └─ footer id:rowGroupFooter_row-group-country-France gold:3 silver:{"count":2,"value":2}
-            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom"
-            · ├── LEAF id:8 sport:"Rowing" gold:4 silver:4
-            · ├── LEAF id:9 sport:"Athletics" gold:5 silver:3
-            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" gold:9 silver:{"count":2,"value":3.5}
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" sport:"Swimming" gold:12 silver:7
+            │ ├── LEAF id:2 country:"Ireland" sport:"Soccer" gold:2 silver:1
+            │ ├── LEAF id:3 country:"Ireland" sport:"Football" gold:1 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-Ireland ag-Grid-AutoColumn:"Ireland" gold:15 silver:{"count":3,"value":3.6666666666666665}
+            ├─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            │ ├── LEAF id:4 country:"Italy" sport:"Soccer" gold:3 silver:1
+            │ ├── LEAF id:5 country:"Italy" sport:"Football" gold:2 silver:2
+            │ └─ footer id:rowGroupFooter_row-group-country-Italy ag-Grid-AutoColumn:"Italy" gold:5 silver:{"count":2,"value":1.5}
+            ├─┬ LEAF_GROUP id:row-group-country-France ag-Grid-AutoColumn:"France"
+            │ ├── LEAF id:6 country:"France" sport:"Tennis" gold:1 silver:1
+            │ ├── LEAF id:7 country:"France" sport:"Soccer" gold:2 silver:3
+            │ └─ footer id:rowGroupFooter_row-group-country-France ag-Grid-AutoColumn:"France" gold:3 silver:{"count":2,"value":2}
+            └─┬ LEAF_GROUP id:"row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom"
+            · ├── LEAF id:8 country:"United Kingdom" sport:"Rowing" gold:4 silver:4
+            · ├── LEAF id:9 country:"United Kingdom" sport:"Athletics" gold:5 silver:3
+            · └─ footer id:"rowGroupFooter_row-group-country-United Kingdom" ag-Grid-AutoColumn:"United Kingdom" gold:9 silver:{"count":2,"value":3.5}
         `);
     });
 
@@ -143,13 +132,13 @@ describe('ag-grid grouping aggregation', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api1, 'alwaysAggregateAtRootLevel=false', { columns: ['value'] }).check(`
+        await new GridRows(api1, 'alwaysAggregateAtRootLevel=false').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-category-A value:300
-            │ ├── LEAF id:1 value:100
-            │ └── LEAF id:2 value:200
-            └─┬ LEAF_GROUP id:row-group-category-B value:150
-            · └── LEAF id:3 value:150
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:300
+            │ ├── LEAF id:1 category:"A" value:100
+            │ └── LEAF id:2 category:"A" value:200
+            └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:150
+            · └── LEAF id:3 category:"B" value:150
         `);
 
         // Test alwaysAggregateAtRootLevel
@@ -166,13 +155,13 @@ describe('ag-grid grouping aggregation', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api2, 'alwaysAggregateAtRootLevel=true', { columns: ['value'] }).check(`
+        await new GridRows(api2, 'alwaysAggregateAtRootLevel=true').check(`
             ROOT id:ROOT_NODE_ID value:450
-            ├─┬ LEAF_GROUP id:row-group-category-A value:300
-            │ ├── LEAF id:1 value:100
-            │ └── LEAF id:2 value:200
-            └─┬ LEAF_GROUP id:row-group-category-B value:150
-            · └── LEAF id:3 value:150
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A" value:300
+            │ ├── LEAF id:1 category:"A" value:100
+            │ └── LEAF id:2 category:"A" value:200
+            └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B" value:150
+            · └── LEAF id:3 category:"B" value:150
         `);
     });
 
@@ -224,72 +213,62 @@ describe('ag-grid grouping aggregation', () => {
             getRowId: (params) => params.data.id,
         });
 
-        await new GridRows(api, 'custom aggregation functions (raw)', {
-            columns: ['scores', 'metadata'],
-            useFormatter: false,
-        }).check(`
+        await new GridRows(api, 'custom aggregation functions (raw)', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID scores:87.84 metadata:{"minPriority":null}
-            ├─ footer id:rowGroupFooter_ROOT_NODE_ID scores:87.84 metadata:{"minPriority":null}
-            ├─┬ LEAF_GROUP id:row-group-category-A
-            │ ├── LEAF id:1 scores:[80,90,85] metadata:{"priority":1}
-            │ ├── LEAF id:2 scores:[75,88,92] metadata:{"priority":2}
-            │ └─ footer id:rowGroupFooter_row-group-category-A scores:85 metadata:{"minPriority":1}
-            └─┬ LEAF_GROUP id:row-group-category-B
-            · ├── LEAF id:3 scores:[95,87,90] metadata:{"priority":1}
-            · └─ footer id:rowGroupFooter_row-group-category-B scores:90.67 metadata:{"minPriority":1}
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null scores:87.84 metadata:{"minPriority":null}
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 category:"A" scores:[80,90,85] metadata:{"priority":1}
+            │ ├── LEAF id:2 category:"A" scores:[75,88,92] metadata:{"priority":2}
+            │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"A" scores:85 metadata:{"minPriority":1}
+            └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
+            · ├── LEAF id:3 category:"B" scores:[95,87,90] metadata:{"priority":1}
+            · └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"B" scores:90.67 metadata:{"minPriority":1}
         `);
 
-        await new GridRows(api, 'custom aggregation functions (formatted)', {
-            columns: true,
-        }).check(`
+        await new GridRows(api, 'custom aggregation functions (formatted)').check(`
             ROOT id:ROOT_NODE_ID scores:"Avg: 87.84" metadata:"Min Priority: NaN"
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " scores:"Avg: 87.84" metadata:"Min Priority: NaN"
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 75,88,92" metadata:"Min Priority: -"
+            │ ├── LEAF id:1 category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
+            │ ├── LEAF id:2 category:"A" scores:"Avg: 75,88,92" metadata:"Min Priority: -"
             │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"Total A" scores:"Avg: 85" metadata:"Min Priority: 1"
             └─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
-            · ├── LEAF id:3 ag-Grid-AutoColumn:undefined category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
+            · ├── LEAF id:3 category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
             · └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"Total B" scores:"Avg: 90.67" metadata:"Min Priority: 1"
         `);
 
-        api.applyTransaction({
+        applyTransactionChecked(api, {
             update: [{ id: '2', category: 'A', scores: [82, 94, 88], metadata: { priority: 3 } }],
             add: [{ id: '4', category: 'C', scores: [70, 74, 78], metadata: { priority: 2 } }],
         });
 
-        await new GridRows(api, 'after transaction (raw)', {
-            columns: ['scores', 'metadata'],
-            useFormatter: false,
-        }).check(`
+        await new GridRows(api, 'after transaction (raw)', { useFormatter: false }).check(`
             ROOT id:ROOT_NODE_ID scores:83.72 metadata:{"minPriority":null}
-            ├─ footer id:rowGroupFooter_ROOT_NODE_ID scores:83.72 metadata:{"minPriority":null}
-            ├─┬ LEAF_GROUP id:row-group-category-A
-            │ ├── LEAF id:1 scores:[80,90,85] metadata:{"priority":1}
-            │ ├── LEAF id:2 scores:[82,94,88] metadata:{"priority":3}
-            │ └─ footer id:rowGroupFooter_row-group-category-A scores:86.5 metadata:{"minPriority":1}
-            ├─┬ LEAF_GROUP id:row-group-category-B
-            │ ├── LEAF id:3 scores:[95,87,90] metadata:{"priority":1}
-            │ └─ footer id:rowGroupFooter_row-group-category-B scores:90.67 metadata:{"minPriority":1}
-            └─┬ LEAF_GROUP id:row-group-category-C
-            · ├── LEAF id:4 scores:[70,74,78] metadata:{"priority":2}
-            · └─ footer id:rowGroupFooter_row-group-category-C scores:74 metadata:{"minPriority":2}
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null scores:83.72 metadata:{"minPriority":null}
+            ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
+            │ ├── LEAF id:1 category:"A" scores:[80,90,85] metadata:{"priority":1}
+            │ ├── LEAF id:2 category:"A" scores:[82,94,88] metadata:{"priority":3}
+            │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"A" scores:86.5 metadata:{"minPriority":1}
+            ├─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
+            │ ├── LEAF id:3 category:"B" scores:[95,87,90] metadata:{"priority":1}
+            │ └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"B" scores:90.67 metadata:{"minPriority":1}
+            └─┬ LEAF_GROUP id:row-group-category-C ag-Grid-AutoColumn:"C"
+            · ├── LEAF id:4 category:"C" scores:[70,74,78] metadata:{"priority":2}
+            · └─ footer id:rowGroupFooter_row-group-category-C ag-Grid-AutoColumn:"C" scores:74 metadata:{"minPriority":2}
         `);
 
-        await new GridRows(api, 'after transaction (formatted)', {
-            columns: true,
-        }).check(`
+        await new GridRows(api, 'after transaction (formatted)').check(`
             ROOT id:ROOT_NODE_ID scores:"Avg: 83.72" metadata:"Min Priority: NaN"
             ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " scores:"Avg: 83.72" metadata:"Min Priority: NaN"
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
-            │ ├── LEAF id:1 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
-            │ ├── LEAF id:2 ag-Grid-AutoColumn:undefined category:"A" scores:"Avg: 82,94,88" metadata:"Min Priority: -"
+            │ ├── LEAF id:1 category:"A" scores:"Avg: 80,90,85" metadata:"Min Priority: -"
+            │ ├── LEAF id:2 category:"A" scores:"Avg: 82,94,88" metadata:"Min Priority: -"
             │ └─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"Total A" scores:"Avg: 86.5" metadata:"Min Priority: 1"
             ├─┬ LEAF_GROUP id:row-group-category-B ag-Grid-AutoColumn:"B"
-            │ ├── LEAF id:3 ag-Grid-AutoColumn:undefined category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
+            │ ├── LEAF id:3 category:"B" scores:"Avg: 95,87,90" metadata:"Min Priority: -"
             │ └─ footer id:rowGroupFooter_row-group-category-B ag-Grid-AutoColumn:"Total B" scores:"Avg: 90.67" metadata:"Min Priority: 1"
             └─┬ LEAF_GROUP id:row-group-category-C ag-Grid-AutoColumn:"C"
-            · ├── LEAF id:4 ag-Grid-AutoColumn:undefined category:"C" scores:"Avg: 70,74,78" metadata:"Min Priority: -"
+            · ├── LEAF id:4 category:"C" scores:"Avg: 70,74,78" metadata:"Min Priority: -"
             · └─ footer id:rowGroupFooter_row-group-category-C ag-Grid-AutoColumn:"Total C" scores:"Avg: 74" metadata:"Min Priority: 2"
         `);
     });
@@ -320,9 +299,7 @@ describe('ag-grid grouping aggregation', () => {
         });
 
         await new GridRows(api, 'mixed data types with nulls (unformatted)', {
-            columns: true,
             useFormatter: false,
-            ignoreUndefinedCells: true,
         }).check(`
             ROOT id:ROOT_NODE_ID amount:450 quantity:{"count":3,"value":20} active:{"value":5}
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
@@ -337,10 +314,7 @@ describe('ag-grid grouping aggregation', () => {
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:null amount:450 quantity:{"count":3,"value":20} active:{"value":5}
         `);
 
-        await new GridRows(api, 'mixed data types with nulls (formatted)', {
-            columns: true,
-            ignoreUndefinedCells: true,
-        }).check(`
+        await new GridRows(api, 'mixed data types with nulls (formatted)').check(`
             ROOT id:ROOT_NODE_ID amount:450 quantity:{"count":3,"value":20} active:{"value":5}
             ├─┬ LEAF_GROUP id:row-group-category-A ag-Grid-AutoColumn:"A"
             │ ├─ footer id:rowGroupFooter_row-group-category-A ag-Grid-AutoColumn:"Total A" amount:300 quantity:{"count":2,"value":30} active:{"value":3}

@@ -20,7 +20,10 @@ export interface ExcelStyle {
     interior?: ExcelInterior;
     /** Use this property to customise the cell value as a formatted number. */
     numberFormat?: ExcelNumberFormat;
-    /** Use this property to setup cell protection. */
+    /**
+     * Use this property to configure cell locking and formula visibility for the exported worksheet.
+     * This must be used together with `ExcelExportParams.protectSheet`.
+     */
     protection?: ExcelProtection;
 }
 
@@ -198,6 +201,73 @@ export interface ExcelProtection {
      * @default false
      */
     hideFormula: boolean;
+}
+
+export interface ExcelSheetProtection {
+    /**
+     * Allow using AutoFilter when worksheet protection is enabled.
+     * @default false
+     */
+    autoFilter?: boolean;
+    /**
+     * Allow deleting columns when worksheet protection is enabled.
+     * @default false
+     */
+    deleteColumns?: boolean;
+    /**
+     * Allow deleting rows when worksheet protection is enabled.
+     * @default false
+     */
+    deleteRows?: boolean;
+    /**
+     * Allow formatting cells when worksheet protection is enabled.
+     * @default false
+     */
+    formatCells?: boolean;
+    /**
+     * Allow formatting columns when worksheet protection is enabled.
+     * @default false
+     */
+    formatColumns?: boolean;
+    /**
+     * Allow formatting rows when worksheet protection is enabled.
+     * @default false
+     */
+    formatRows?: boolean;
+    /**
+     * Allow inserting columns when worksheet protection is enabled.
+     * @default false
+     */
+    insertColumns?: boolean;
+    /**
+     * Allow inserting hyperlinks when worksheet protection is enabled.
+     * @default false
+     */
+    insertHyperlinks?: boolean;
+    /**
+     * Allow inserting rows when worksheet protection is enabled.
+     * @default false
+     */
+    insertRows?: boolean;
+    /**
+     * Allow using PivotTables when worksheet protection is enabled.
+     * @default false
+     */
+    pivotTables?: boolean;
+    /**
+     * Allow selecting locked cells when worksheet protection is enabled.
+     * @default true
+     */
+    selectLockedCells?: boolean;
+    /**
+     * Allow selecting unlocked cells when worksheet protection is enabled.
+     * @default true
+     */
+    selectUnlockedCells?: boolean;
+    /**
+     * Optional password required to unprotect the worksheet.
+     */
+    password?: string;
 }
 
 // Excel Structure
@@ -431,6 +501,12 @@ export interface ExcelWorksheetConfigParams {
      * @default 'ag-grid'
      */
     sheetName?: string | ExcelSheetNameGetter;
+    /**
+     * If `true`, protects the worksheet to enforce `ExcelStyle.protection` settings.
+     * Provide an `ExcelSheetProtection` config object to allow specific actions on the protected sheet.
+     * @default false
+     */
+    protectSheet?: boolean | ExcelSheetProtection;
     /**
      * The configuration for header and footers.
      */

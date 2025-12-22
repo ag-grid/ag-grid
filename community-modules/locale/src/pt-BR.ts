@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_BR = {
     searchOoo: 'Pesquisar...',
     blanks: '(Em Branco)',
     noMatches: 'Sem correspondências',
+    typeToSearchOoo: 'Digite para pesquisar...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtrar...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_BR = {
     maxLengthValidation: 'Deve ter ${variable} caracteres ou menos.',
     minValueValidation: 'Deve ser maior ou igual a ${variable}',
     maxValueValidation: 'Deve ser menor ou igual a ${variable}',
+    strictMinValueValidation: 'Deve ser maior que ${variable}',
+    strictMaxValueValidation: 'Deve ser menor que ${variable}',
     invalidSelectionValidation: 'Seleção inválida.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_BR = {
     loadingOoo: 'Carregando...',
     loadingError: 'ERR',
     noRowsToShow: 'Sem linhas para mostrar',
+    noMatchingRows: 'Nenhuma linha correspondente',
+    exportingOoo: 'Exportando...',
     enabled: 'Ativado',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_BR = {
     chooseColumns: 'Escolher Colunas',
     sortAscending: 'Ordenar Crescente',
     sortDescending: 'Ordenar Decrescente',
+    sortAbsoluteAscending: 'Ordenar Absoluto Ascendente',
+    sortAbsoluteDescending: 'Ordenar Absoluto Descendente',
     sortUnSort: 'Limpar Ordenação',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_BR = {
     ariaChecked: 'marcado',
     ariaColumn: 'Coluna',
     ariaColumnGroup: 'Grupo de Colunas',
+    ariaFilterActive: 'Filtro Ativo',
     ariaColumnFiltered: 'Coluna Filtrada',
     ariaColumnSelectAll: 'Alternar Visibilidade de Todas as Colunas',
     ariaDateFilterInput: 'Entrada de Filtro de Data',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_BR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' de ',
     ariaDropZoneColumnComponentSortAscending: 'crescente',
     ariaDropZoneColumnComponentSortDescending: 'decrescente',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'crescente absoluto',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'decrescente absoluto',
     ariaLabelDialog: 'Diálogo',
     ariaLabelColumnMenu: 'Menu de Coluna',
     ariaLabelColumnFilter: 'Filtro de Coluna',
@@ -675,10 +685,10 @@ export const AG_GRID_LOCALE_BR = {
     second: 'Segundo',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/AAAA',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/AAAA',
+    timeFormatSlashesDDMMYY: 'DD/MM/AA',
+    timeFormatSlashesMMDDYY: 'MM/DD/AA',
     timeFormatDotsDDMYY: 'DD.M.AA',
     timeFormatDotsMDDYY: 'M.DD.AA',
     timeFormatDashesYYYYMMDD: 'AAAA-MM-DD',

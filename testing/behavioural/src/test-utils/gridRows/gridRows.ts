@@ -3,7 +3,6 @@ import { expect } from 'vitest';
 
 import type { Column, GridApi, IRowNode, RowNode } from 'ag-grid-community';
 
-import { TestGridsManager } from '../testGridsManager';
 import { log, unindentText } from '../utils';
 import { GridRowsDiagramTree } from './gridRowsDiagramTree';
 import { GridRowsErrors } from './gridRowsErrors';
@@ -20,8 +19,9 @@ export interface GridRowsOptions<TData = any> {
     /**
      * Columns to include when making the diagram. If true, all columns will be included.
      * If an array, it must contain the id of the columns to include. Default is false, no columns.
+     * Default is true. There is usually no need to defined this.
      */
-    columns?: (string | Column)[] | boolean;
+    forcedColumns?: (string | Column)[] | boolean;
 
     /** If false, the id will not be shown in the diagram. Default is true */
     printIds?: boolean;
@@ -32,13 +32,13 @@ export interface GridRowsOptions<TData = any> {
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
 
-    /** If true, columns whose value resolves to undefined will be omitted from the diagram output. Default is false. */
+    /** If true, columns whose value resolves to undefined will be omitted from the diagram output. Default is true. */
     ignoreUndefinedCells?: boolean;
 
     errors?: GridRowsErrors<TData>;
 
-    /** Forces treeData to be checked as true or false */
-    treeData?: boolean;
+    /** Forces treeData to be checked as true or false. There is usually no need to set this. */
+    forcedTreeData?: boolean;
 
     /** Adds data field values to the snapshot, e.g. ['group'] -> data.group:"value" */
     nodeDataProps?: string[];
@@ -48,6 +48,7 @@ export interface GridRowsOptions<TData = any> {
 }
 
 export class GridRows<TData = any> {
+    public readonly api: GridApi<TData>;
     public readonly treeData: boolean;
     public readonly rowNodes: RowNode<TData>[];
     public readonly displayedRows: RowNode<TData>[];
@@ -56,22 +57,25 @@ export class GridRows<TData = any> {
     public readonly rootAllLeafChildren: RowNode<TData>[];
     public readonly errors: GridRowsErrors<TData>;
 
-    #gridHtmlElement: HTMLElement | null | undefined = undefined;
     #byIdMap: Map<string, RowNode<TData>> | null = null;
     #indexMap: Map<IRowNode<TData>, number> | null = null;
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
-    #rowsHtmlElements: HTMLElement[] | null = null;
-    #rowsHtmlElementsMap: Map<string, HTMLElement[]> | null = null;
     readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
+    /**
+     * @param api The grid API instance
+     * @param label A label to identify the grid in error messages and diagrams
+     * @param options Options to configure the GridRows instance - please try to not use this, the default options should be enough
+     */
     public constructor(
-        public readonly api: GridApi<TData>,
+        api: GridApi<TData>,
         public readonly label: string = '',
         public readonly options: GridRowsOptions<TData> = {}
     ) {
+        this.api = api;
         const errors = options.errors || new GridRowsErrors<TData>();
         this.errors = errors;
-        this.treeData = options.treeData ?? !!api.getGridOption('treeData');
+        this.treeData = options.forcedTreeData ?? !!api.getGridOption('treeData');
         const rowNodes: RowNode<TData>[] = [];
         const displayedRows: RowNode<TData>[] = [];
         const rootNodesSet = new Set<RowNode<TData>>();
@@ -96,7 +100,7 @@ export class GridRows<TData = any> {
                         const detailGridRow = new GridRows(api, label, {
                             ...options,
                             errors,
-                            columns: !!options.columns,
+                            forcedColumns: options.forcedColumns ?? true,
                         });
                         detailGridRows.set(row, detailGridRow);
                         detailGridRows.set(api, detailGridRow);
@@ -116,26 +120,6 @@ export class GridRows<TData = any> {
 
     public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
         return row ? this.#detailGridRows.get(row) : undefined;
-    }
-
-    public get gridHtmlElement(): HTMLElement | null {
-        let element = this.#gridHtmlElement;
-        if (element === undefined) {
-            element = TestGridsManager.getHTMLElement(this.api);
-            if (!element) {
-                // hack: we are accessing the beans here to obtain the html element
-                element = ((this.rootRowNode ?? this.rowNodes[0]) as any)?.beans?.eGridDiv ?? null;
-                if (element) {
-                    TestGridsManager.registerHTMLElement(this.api, element);
-                }
-            }
-            this.#gridHtmlElement = element;
-        }
-        return element ?? null;
-    }
-
-    public get rowsHtmlElements(): HTMLElement[] {
-        return (this.#rowsHtmlElements ??= Array.from(this.gridHtmlElement?.querySelectorAll('[row-id]') ?? []));
     }
 
     public getAllRowNodesData(): (TData | undefined)[] {
@@ -170,54 +154,6 @@ export class GridRows<TData = any> {
         return (this.#displayedRowsSet ??= new Set(this.displayedRows)).has(row as RowNode<TData>);
     }
 
-    public getRowHtmlElement(
-        id: string | { readonly id: string | null | undefined } | null | undefined
-    ): HTMLElement | null {
-        const elements = this.getRowHtmlElements(id);
-        return elements.length > 0 ? elements[0] : null;
-    }
-
-    public getRowHtmlElements(
-        id: string | { readonly id: string | null | undefined } | null | undefined
-    ): HTMLElement[] {
-        if (typeof id === 'object') {
-            id = id?.id ?? null;
-            if (id === null) {
-                return [];
-            }
-        }
-        id = String(id);
-        let map = this.#rowsHtmlElementsMap;
-        if (!map) {
-            map = new Map<string, HTMLElement[]>();
-            for (const rowElement of this.rowsHtmlElements) {
-                const rowId = rowElement.getAttribute('row-id');
-                if (rowId !== null) {
-                    const existing = map.get(rowId);
-                    if (existing) {
-                        const index = existing.indexOf(rowElement);
-                        const isMainRowElement = rowElement.closest('.ag-center-cols-container') !== null;
-                        if (index >= 0) {
-                            if (isMainRowElement && index > 0) {
-                                existing.splice(index, 1);
-                                existing.unshift(rowElement);
-                            }
-                        } else if (isMainRowElement) {
-                            existing.unshift(rowElement);
-                        } else {
-                            existing.push(rowElement);
-                        }
-                    } else {
-                        const rowElementArray = [rowElement];
-                        map.set(rowId, rowElementArray);
-                    }
-                }
-            }
-            this.#rowsHtmlElementsMap = map;
-        }
-        return map.get(id) ?? [];
-    }
-
     public loadErrors(): this {
         if (!this.errors.validated) {
             this.errors.validated = true;
@@ -232,10 +168,11 @@ export class GridRows<TData = any> {
 
     public makeDiagram(printErrors = false): string {
         let columns: Column[] | null = null;
-        if (this.options.columns) {
+        const optionsColumns = this.options.forcedColumns ?? true;
+        if (optionsColumns) {
             columns = this.api.getAllGridColumns();
-            if (Array.isArray(this.options.columns)) {
-                const set = new Set(this.options.columns);
+            if (Array.isArray(optionsColumns)) {
+                const set = new Set(optionsColumns);
                 columns = columns.filter((column) => set.has(column) || set.has(column.getColId()));
             }
         }

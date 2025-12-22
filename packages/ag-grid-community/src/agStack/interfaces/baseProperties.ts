@@ -10,7 +10,7 @@ export interface BaseProperties {
     loadThemeGoogleFonts?: boolean;
     themeCssLayer?: string;
     styleNonce?: string;
-    themeStyleContainer?: HTMLElement;
+    themeStyleContainer?: HTMLElement | (() => HTMLElement | void);
     enableBrowserTooltips?: boolean;
     tooltipTrigger?: 'hover' | 'focus';
     tooltipShowDelay?: number;

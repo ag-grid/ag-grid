@@ -70,12 +70,16 @@ export class SetFilterHandler<TValue = string>
                   )
               )
             : undefined;
-        this.valueModel = this.createManagedBean(
+        const valueModel = this.createManagedBean(
             new SetValueModel(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
                 handlerParams: params,
                 usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
             })
         );
+        this.addManagedListeners(valueModel, {
+            availableValuesChanged: params.onModelAsStringChange,
+        });
+        this.valueModel = valueModel;
 
         this.appliedModel = new SetFilterAppliedModel(this.caseFormat.bind(this));
 

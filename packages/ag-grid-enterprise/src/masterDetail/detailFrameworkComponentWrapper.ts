@@ -5,7 +5,7 @@ export class DetailFrameworkComponentWrapper implements FrameworkComponentWrappe
     constructor(private readonly parentWrapper: FrameworkComponentWrapper) {}
 
     public wrap<A extends IComponent<any>>(
-        frameworkComponent: { new (): any } | null,
+        frameworkComponent: (new () => any) | null,
         mandatoryMethods: string[] | undefined,
         optionalMethods: string[] | undefined,
         componentType: ComponentType

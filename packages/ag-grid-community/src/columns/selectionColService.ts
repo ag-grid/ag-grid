@@ -17,6 +17,7 @@ import {
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _updateColsMap,
     isColumnSelectionCol,
 } from './columnUtils';
@@ -93,11 +94,12 @@ export class SelectionColService extends BeanStub implements NamedBean, IColumnC
 
     public updateColumns(event: PropertyValueChangedEvent<'selectionColumnDef'>): void {
         const source = _convertColumnEventSourceType(event.source);
-
+        const { beans } = this;
         for (const col of this.columns?.list ?? []) {
-            const newColDef = this.createSelectionColDef(event.currentValue);
-            col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ ...newColDef, colId: col.getColId() }] }, source);
+            const colDef = this.createSelectionColDef(event.currentValue);
+            col.setColDef(colDef, null, source);
+
+            _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, col.colId)] }, source);
         }
     }
 

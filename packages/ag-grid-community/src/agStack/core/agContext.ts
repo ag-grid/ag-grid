@@ -29,9 +29,7 @@ export interface AgContextParams<
     destroyCallback?: () => void;
 }
 
-export interface AgSingletonBeanClass<TBeanCollection> {
-    new (): AgSingletonBean<TBeanCollection>;
-}
+export type AgSingletonBeanClass<TBeanCollection> = new () => AgSingletonBean<TBeanCollection>;
 
 interface DerivedBean<TBeanCollection, K extends keyof TBeanCollection> {
     beanName: K;

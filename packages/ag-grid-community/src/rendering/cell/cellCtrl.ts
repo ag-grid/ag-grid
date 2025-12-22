@@ -408,7 +408,7 @@ export class CellCtrl extends BeanStub {
 
         // Don't call expensive _requestAnimationFrame if we don't have to
         if (!skipRangeHandleRefresh && rangeFeature) {
-            _requestAnimationFrame(beans, () => rangeFeature?.refreshHandle());
+            _requestAnimationFrame(beans, () => rangeFeature?.refreshRangeStyleAndHandle());
         }
 
         this.rowResizeFeature?.refreshRowResizer();
@@ -1092,8 +1092,9 @@ export class CellCtrl extends BeanStub {
         return this.cellPosition;
     }
 
-    // used by spannedCellCtrl
-    public refreshAriaRowIndex(): void {}
+    public refreshAriaRowIndex(): void {
+        // noop, used by spannedCellCtrl
+    }
 
     /**
      * Returns the root element of the cell, could be a span container rather than the cell element.

@@ -1,11 +1,14 @@
 import { _setAriaInvalid } from '../../../agStack/utils/aria';
 import { _setDisplayed } from '../../../agStack/utils/dom';
+import { _debounce } from '../../../agStack/utils/function';
 import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';
 import type { ColDef } from '../../../entities/colDef';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+
+const CLASS_INPUT_FIELD = '.ag-input-field-input';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
@@ -14,7 +17,8 @@ export class DateCompWrapper {
     private tempValue: Date | null;
     private disabled: boolean | null;
     private alive = true;
-    private validityTimeout: number | undefined = undefined;
+    private readonly debouncedReport = _debounce({ isAlive: () => this.alive }, reportValidity, 500);
+    private timeoutHandle: number | null = null;
 
     constructor(
         private readonly context: Context,
@@ -58,10 +62,6 @@ export class DateCompWrapper {
     public destroy(): void {
         this.alive = false;
         this.dateComp = this.context.destroyBean(this.dateComp);
-        if (this.validityTimeout) {
-            clearTimeout(this.validityTimeout);
-            this.validityTimeout = undefined;
-        }
     }
 
     public getDate(): Date | null {
@@ -106,23 +106,35 @@ export class DateCompWrapper {
         this.dateComp?.refresh?.(params);
     }
 
-    public setCustomValidity(message: string): void {
-        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>('.ag-input-field-input');
+    public setCustomValidity(message: string, defer = false): void {
+        const eInput = this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD);
 
         if (eInput && 'setCustomValidity' in eInput) {
             const isInvalid = message.length > 0;
             eInput.setCustomValidity(message);
+
             // Firefox automatically displays tooltips when inputs are invalid, but chrome and safari do not,
-            // so we need to call `reportValidity`. However, we also need this to be delayed, otherwise it will
-            // interfere with user inputs
+            // so we need to call `reportValidity`.
+            // In some browsers, this needs to be debounced or it will interrupt user inputs.
             if (isInvalid) {
-                if (this.validityTimeout) {
-                    clearTimeout(this.validityTimeout);
+                if (defer) {
+                    this.timeoutHandle = this.debouncedReport(eInput);
+                } else {
+                    reportValidity(eInput);
                 }
-                this.validityTimeout = setTimeout(() => this.alive && eInput.reportValidity(), 1000);
+            } else if (this.timeoutHandle) {
+                window.clearTimeout(this.timeoutHandle);
             }
 
             _setAriaInvalid(eInput, isInvalid);
         }
     }
+
+    public getValidity(): ValidityState | undefined {
+        return this.dateComp?.getGui().querySelector<HTMLInputElement>(CLASS_INPUT_FIELD)?.validity;
+    }
+}
+
+function reportValidity(eInput: HTMLInputElement) {
+    eInput.reportValidity();
 }

@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="controls">
+        <label class="option">
+            Worksheet password (optional):
+            <input type="text" id="worksheetPassword" value="secret" />
+        </label>
+        <label class="option">
+            <input type="checkbox" id="allowAutoFilter" />
+            Allow filtering (autoFilter)
+        </label>
+        <label class="option">
+            <input type="checkbox" id="allowFormatCells" />
+            Allow formatting cells (formatCells)
+        </label>
+        <button onclick="onBtExport()" style="margin-bottom: 5px; font-weight: bold">Export to Excel</button>
+    </div>
+    <div class="grid-wrapper">
+        <div id="myGrid"></div>
+    </div>
+</div>

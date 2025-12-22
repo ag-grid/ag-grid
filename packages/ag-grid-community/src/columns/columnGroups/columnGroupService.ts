@@ -467,7 +467,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             let nextChild: AgColumn | AgProvidedColumnGroup = col;
 
             for (let i = depth - 1; i >= 0; i--) {
-                const autoGroup = new AgProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}}_${i}`, true, i);
+                const autoGroup = new AgProvidedColumnGroup(null, `FAKE_PATH_${col.getId()}_${i}`, true, i);
                 this.createBean(autoGroup);
                 autoGroup.setChildren([nextChild]);
                 nextChild.originalParent = autoGroup;

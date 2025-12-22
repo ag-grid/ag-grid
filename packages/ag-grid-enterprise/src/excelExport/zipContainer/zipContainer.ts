@@ -1,5 +1,5 @@
-import type { ProcessedZipFile } from './zipContainerHelper';
-import { buildCentralDirectoryEnd, getDeflatedHeaderAndContent, getHeaderAndContent } from './zipContainerHelper';
+import type { PreprocessedZipFile, ProcessedZipFile } from './zipContainerHelper';
+import { buildCentralDirectoryEnd, getHeaderAndContent, getHeaders, preprocessFileForZip } from './zipContainerHelper';
 
 export interface ZipFile {
     path: string;
@@ -98,17 +98,24 @@ export class ZipContainer {
 
     private async buildCompressedFileStream(): Promise<Uint8Array> {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
-        const readyFiles: ProcessedZipFile[] = [];
-        let lL = 0;
+        const preprocessed: PreprocessedZipFile[] = await Promise.all(totalFiles.map(preprocessFileForZip));
+        const processed: ProcessedZipFile[] = [];
 
-        for (const currentFile of totalFiles) {
-            const output = await getDeflatedHeaderAndContent(currentFile, lL);
-            const { localFileHeader, content } = output;
-            readyFiles.push(output);
-            lL += localFileHeader.length + content.length;
+        let offset = 0;
+        for (let i = 0; i < totalFiles.length; i++) {
+            const currentFile = totalFiles[i];
+            const { rawContent, rawSize, deflatedContent, deflatedSize, isCompressed } = preprocessed[i];
+            const headers = getHeaders(currentFile, isCompressed, offset, rawSize, rawContent, deflatedSize);
+            const contentToUse = deflatedContent ?? rawContent;
+            processed.push({
+                ...headers,
+                content: contentToUse,
+                isCompressed,
+            });
+            offset += headers.localFileHeader.length + contentToUse.length;
         }
 
-        return this.packageFiles(readyFiles);
+        return this.packageFiles(processed);
     }
 
     private buildFileStream(): Uint8Array {

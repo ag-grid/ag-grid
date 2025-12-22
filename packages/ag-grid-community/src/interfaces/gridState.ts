@@ -19,6 +19,10 @@ export interface FilterState {
      * Filter model for Advanced Filter
      */
     advancedFilterModel?: AdvancedFilterModel;
+    /**
+     * Currently selected filter when using new filter tool panel with `agSelectableColumnFilter`
+     */
+    selectableFilters?: { [colId: string]: number };
 }
 
 export interface CellSelectionCellState {

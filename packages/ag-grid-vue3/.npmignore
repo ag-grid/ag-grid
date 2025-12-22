@@ -21,3 +21,4 @@ vue.config.js
 !dist/types/src
 *.map
 updateGridAndColumnProperties.cjs
+osv-scanner.toml

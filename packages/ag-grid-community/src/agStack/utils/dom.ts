@@ -280,7 +280,7 @@ export function _ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eC
     } else if (eContainer.firstChild && eContainer.firstChild !== eChild) {
         // otherwise put at start
         // insert it at the first location
-        eContainer.insertAdjacentElement('afterbegin', eChild);
+        eContainer.prepend(eChild);
     }
 }
 
@@ -348,7 +348,7 @@ export function _isHorizontalScrollShowing(element: HTMLElement): boolean {
     return element.clientWidth < element.scrollWidth;
 }
 
-export function _isVerticalScrollShowing(element: HTMLElement): boolean {
+function _isVerticalScrollShowing(element: HTMLElement): boolean {
     return element.clientHeight < element.scrollHeight;
 }
 
@@ -428,7 +428,7 @@ type RoleType =
     | 'menu'
     | 'option'
     | 'presentation'
-    | 'role'
+    | 'group'
     | 'row'
     | 'rowgroup'
     | 'status'

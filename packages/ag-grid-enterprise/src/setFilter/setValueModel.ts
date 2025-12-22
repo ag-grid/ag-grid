@@ -360,6 +360,11 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             : allKeys;
 
         this.availableKeys = new Set(availableKeys);
-        this.dispatchLocalEvent({ type: 'availableValuesChanged' });
+        window.setTimeout(() => {
+            if (this.isAlive()) {
+                // event needs to be handled async
+                this.dispatchLocalEvent({ type: 'availableValuesChanged' });
+            }
+        });
     }
 }

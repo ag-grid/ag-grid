@@ -199,11 +199,11 @@
       }
     },
     "generate-docs-example": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "nx run ag-grid-docs-src_content_docs_{args.page}__examples_{args.example}_main.ts:generate-example --skip-nx-cache --writeFiles=true"
-        ]
+      "command": "nx run ag-grid-docs-src_content_docs_{args.page}__examples_{args.example}_main.ts:generate-example --skip-nx-cache --writeFiles=true",
+      "configurations": {
+        "production": {
+          "command": "nx run ag-grid-docs-src_content_docs_{args.page}__examples_{args.example}_main.ts:generate-example -c production --skip-nx-cache --writeFiles=true"
+        }
       }
     },
     "generate-doc-references": {

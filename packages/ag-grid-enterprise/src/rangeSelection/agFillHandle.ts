@@ -378,6 +378,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                                 const formattedValue = valueSvc.getValueForDisplay({
                                     column: sourceCol,
                                     node: sourceRowNode!,
+                                    includeValueFormatted: true,
                                 }).valueFormatted;
 
                                 if (formattedValue != null) {
@@ -505,7 +506,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             let processedValue: any;
 
-            if (formula?.isFormula(valueForFunctions)) {
+            if (sourceCol.isAllowFormula() && formula?.isFormula(valueForFunctions)) {
                 // Compute the row and column delta based on drag direction
                 const rowDelta = direction === 'up' ? -1 : direction === 'down' ? 1 : 0;
                 const columnDelta = direction === 'left' ? -1 : direction === 'right' ? 1 : 0;
@@ -757,15 +758,15 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
     }
 
-    public override refresh(cellCtrl: CellCtrl) {
-        const cellRange = this.beans.rangeSvc!.getCellRanges()[0];
-        const isColumnRange = !cellRange.startRow || !cellRange.endRow;
+    public override refresh(cellCtrl: CellCtrl, cellRange?: CellRange) {
+        const cellRangeToUse = cellRange ?? this.beans.rangeSvc!.getCellRanges()[0];
+        const isColumnRange = !cellRangeToUse.startRow || !cellRangeToUse.endRow;
 
         if (isColumnRange) {
             this.destroy();
             return;
         }
 
-        super.refresh(cellCtrl);
+        super.refresh(cellCtrl, cellRangeToUse);
     }
 }

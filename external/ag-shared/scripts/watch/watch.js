@@ -14,7 +14,15 @@ const { spawn, spawnSync } = require('child_process');
 const fsp = require('node:fs/promises');
 const fs = require('node:fs');
 const path = require('path');
-const { QUIET_PERIOD_MS, BATCH_LIMIT, PROJECT_ECHO_LIMIT, NX_ARGS, BUILD_QUEUE_EMPTY_FILE } = require('./constants');
+const {
+    QUIET_PERIOD_MS,
+    BATCH_LIMIT,
+    PROJECT_ECHO_LIMIT,
+    NX_ARGS,
+    BUILD_QUEUE_EMPTY_FILE,
+    WATCH_STATUS_FILE,
+    MAX_BUILD_HISTORY,
+} = require('./constants');
 const chartsConfig = require('./chartsWatch.config');
 const gridConfig = require('./gridWatch.config');
 
@@ -23,6 +31,29 @@ const GREEN = '\x1b[;32m';
 const YELLOW = '\x1b[;33m';
 const GRAY = '\x1b[90m';
 const RESET = '\x1b[m';
+
+// Status constants
+const STATUS = {
+    STARTING: 'STARTING',
+    RUNNING: 'RUNNING',
+    BUILDING: 'BUILDING',
+    IDLE: 'IDLE',
+    STOPPED: 'STOPPED',
+};
+
+// Status tracking state
+let statusData = {
+    status: STATUS.STARTING,
+    pid: process.pid,
+    timestamp: new Date().toISOString(),
+    library: null,
+    currentBuild: null,
+    recentBuilds: [],
+    targetHistory: {},
+};
+
+// Global config reference (set in main)
+let globalConfig = null;
 
 function info(msg, ...args) {
     console.log(`*** ${GRAY}${msg}${RESET}`, ...args);
@@ -46,6 +77,78 @@ function formatTime(timeDifference) {
         const minutes = Math.floor(timeDifference / 60000);
         const seconds = ((timeDifference % 60000) / 1000).toFixed(2);
         return `${minutes}min ${seconds}s`;
+    }
+}
+
+async function writeStatusFile(status, details = {}) {
+    statusData.status = status;
+    statusData.timestamp = new Date().toISOString();
+
+    if (details.currentBuild) {
+        statusData.currentBuild = details.currentBuild;
+    } else if (status !== STATUS.BUILDING) {
+        statusData.currentBuild = null;
+    }
+
+    try {
+        const dirPath = path.dirname(WATCH_STATUS_FILE);
+        await fsp.mkdir(dirPath, { recursive: true });
+        await fsp.writeFile(WATCH_STATUS_FILE, JSON.stringify(statusData, null, 2));
+    } catch (err) {
+        warning(`Failed to write status file: ${err.message}`);
+    }
+}
+
+async function removeStatusFile() {
+    try {
+        await fsp.unlink(WATCH_STATUS_FILE);
+    } catch (err) {
+        if (err.code !== 'ENOENT') {
+            warning(`Failed to remove status file: ${err.message}`);
+        }
+    }
+}
+
+function updateBuildHistory(target, config, projects, status, startTime, endTime, error = null) {
+    const duration = endTime - startTime;
+    const buildEntry = {
+        target,
+        config,
+        projects: Array.from(projects),
+        status,
+        startTime: new Date(Date.now() - (performance.now() - startTime)).toISOString(),
+        endTime: new Date(Date.now() - (performance.now() - endTime)).toISOString(),
+        duration,
+    };
+
+    if (error) {
+        buildEntry.error = error;
+    }
+
+    // Add to recent builds (keep only MAX_BUILD_HISTORY entries)
+    statusData.recentBuilds.unshift(buildEntry);
+    if (statusData.recentBuilds.length > MAX_BUILD_HISTORY) {
+        statusData.recentBuilds = statusData.recentBuilds.slice(0, MAX_BUILD_HISTORY);
+    }
+
+    // Update target history
+    if (!statusData.targetHistory[target]) {
+        statusData.targetHistory[target] = {
+            lastStatus: status,
+            lastTimestamp: buildEntry.endTime,
+            successCount: 0,
+            failureCount: 0,
+        };
+    }
+
+    const targetHistory = statusData.targetHistory[target];
+    targetHistory.lastStatus = status;
+    targetHistory.lastTimestamp = buildEntry.endTime;
+
+    if (status === 'completed') {
+        targetHistory.successCount++;
+    } else if (status === 'failed') {
+        targetHistory.failureCount++;
     }
 }
 
@@ -195,6 +298,19 @@ function getGitDir() {
     return gitDir;
 }
 
+function isNxDaemonDisabled() {
+    const disabledPath = path.join('.nx', 'workspace-data', 'd', 'disabled');
+    try {
+        if (fs.existsSync(disabledPath)) {
+            const content = fs.readFileSync(disabledPath, 'utf-8').trim();
+            return content === 'true';
+        }
+    } catch {
+        // If we can't read the file, assume daemon is not disabled
+    }
+    return false;
+}
+
 function isBuildBlocked() {
     return (
         fs.existsSync(path.join(getGitDir(), 'index.lock')) ||
@@ -218,7 +334,11 @@ function processWatchOutput({ project: rawProject, getProjectBuildTargets }) {
 }
 
 function countReloadTargets() {
-    const reloadableTargets = new Set(config.devServerReloadTargets);
+    if (!globalConfig || !globalConfig.devServerReloadTargets) {
+        return 0;
+    }
+
+    const reloadableTargets = new Set(globalConfig.devServerReloadTargets);
 
     let count = 0;
     for (const [, , target] of buildBuffer) {
@@ -233,6 +353,12 @@ function countReloadTargets() {
 let buildRunning = false;
 async function build() {
     if (buildRunning) return;
+
+    if (isNxDaemonDisabled()) {
+        warning('Nx daemon is disabled, build paused; will retry in 10 seconds.');
+        scheduleBuild(10_000);
+        return;
+    }
 
     if (isBuildBlocked()) {
         warning('Git operation in progress, build paused; will retry in 10 seconds.');
@@ -260,6 +386,18 @@ async function build() {
     if (projects.size > PROJECT_ECHO_LIMIT) {
         targetMsg += ` (+${projects.size - PROJECT_ECHO_LIMIT} targets)`;
     }
+
+    // Update status to BUILDING
+    await writeStatusFile(STATUS.BUILDING, {
+        currentBuild: {
+            target,
+            config,
+            projects: Array.from(projects),
+            queueLength: buildBuffer.length,
+        },
+    });
+
+    const buildStartTime = performance.now();
     try {
         timeManager.start(`${targetMsg} build`);
         success(`Starting build for: ${targetMsg}`);
@@ -268,6 +406,9 @@ async function build() {
         success(`Build queue has ${buildBuffer.length} remaining.`);
         timeManager.stop(`${targetMsg} build`);
         info(timeManager.timeString(`${targetMsg} build`));
+
+        // Update build history with success
+        updateBuildHistory(target, config, projects, 'completed', buildStartTime, performance.now());
 
         if (beforeReloadableCount > 0 && afterReloadableCount === 0) {
             success(`Reloading dev server...`);
@@ -282,9 +423,21 @@ async function build() {
                 .split('\n')
                 .forEach((str) => info(str));
             timeManager.clear();
+
+            // Update status to IDLE when queue is empty
+            await writeStatusFile(STATUS.IDLE);
         }
     } catch (e) {
-        error(`Build failed for: ${targetMsg}: ${e}`);
+        const errorMsg = e instanceof Error ? e.message : String(e ?? 'Unknown error');
+        error(`Build failed for: ${targetMsg}: ${errorMsg}`);
+
+        // Update build history with failure
+        updateBuildHistory(target, config, projects, 'failed', buildStartTime, performance.now(), errorMsg);
+
+        // Update status if queue is empty
+        if (buildBuffer.length === 0) {
+            await writeStatusFile(STATUS.IDLE);
+        }
     } finally {
         buildRunning = false;
         scheduleBuild();
@@ -325,8 +478,26 @@ async function run(config) {
     let lastRespawn;
     let consecutiveRespawns = 0;
     while (true) {
+        // Check if Nx daemon has been disabled before starting watch
+        if (isNxDaemonDisabled()) {
+            error(`Nx daemon has been disabled!
+
+The watch script requires the Nx daemon to be enabled.
+
+Run these commands to reset the workspace:
+  yarn nx reset
+  yarn
+`);
+            await writeStatusFile(STATUS.STOPPED);
+            process.exit(1);
+        }
+
         lastRespawn = Date.now();
         success('Starting watch...');
+
+        // Update status to RUNNING
+        await writeStatusFile(STATUS.RUNNING);
+
         await spawnNxWatch((project) => {
             if (ignoredProjects.includes(project)) return;
 
@@ -341,6 +512,7 @@ async function run(config) {
 
         if (consecutiveRespawns > 5) {
             respawnError();
+            await writeStatusFile(STATUS.STOPPED);
             return;
         }
 
@@ -352,7 +524,7 @@ function respawnError() {
     error(`Repeated respawn detected!
         
     The Nx Daemon maybe erroring, try restarting it to resolve with either:
-    - \`nx daemon --stop\`
+    - \`yarn nx daemon --stop\`
     - \`yarn\`
 
     Or alternatively view its logs at:
@@ -366,11 +538,25 @@ function waitMs(timeMs) {
     return new Promise((r) => (resolveWait = r));
 }
 
-process.on('beforeExit', () => {
+process.on('beforeExit', async () => {
     for (const child of spawnedChildren) {
         child.kill();
     }
     spawnedChildren.clear();
+
+    // Write STOPPED status and clean up
+    await writeStatusFile(STATUS.STOPPED);
+    await removeStatusFile();
+});
+
+// Handle other exit signals
+['SIGINT', 'SIGTERM', 'SIGHUP'].forEach((signal) => {
+    process.on(signal, async () => {
+        // Write STOPPED status before exiting
+        await writeStatusFile(STATUS.STOPPED);
+        await removeStatusFile();
+        process.exit(0);
+    });
 });
 
 const library = process.argv[2];
@@ -379,5 +565,26 @@ if (!['charts', 'grid'].includes(library)) {
     error(msg);
     throw new Error(msg);
 }
-const config = library === 'charts' ? chartsConfig : gridConfig;
-run(config);
+
+// Set library in statusData
+statusData.library = library;
+
+// Check if Nx daemon is disabled before starting
+if (isNxDaemonDisabled()) {
+    error(`Nx daemon is disabled!
+
+The watch script requires the Nx daemon to be enabled.
+
+Run these commands to reset the workspace:
+  yarn nx reset
+  yarn
+`);
+    writeStatusFile(STATUS.STOPPED).then(() => process.exit(1));
+} else {
+    // Write initial STARTING status
+    writeStatusFile(STATUS.STARTING).then(() => {
+        const config = library === 'charts' ? chartsConfig : gridConfig;
+        globalConfig = config; // Set global config reference
+        run(config);
+    });
+}

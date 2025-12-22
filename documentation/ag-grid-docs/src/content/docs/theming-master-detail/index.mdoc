@@ -45,22 +45,30 @@ You can set CSS variables on detail grids, but be aware of a difference in how t
 
 Some high-level variables control the behaviour of many lower-level variables by providing default values. This is the case for general colors like --ag-background-color and for --ag-spacing.
 
-In this example we set the background color to red. Normally this would cause the odd row background color to be red too, because the value of --ag-odd-row-background-color defaults to the background color. But the master grid has already set a default value for --ag-odd-row-background-color, and this is inherited by the detail grid.
+In this example we set the background color on the master grid to red. Setting `--ag-background-color` to red sets _default_ values for `--ag-data-background-color`, `--ag-odd-row-background-color` and `--ag-header-background-color`, so because these variables have no values defined, they are set to red. We attempt to set the detail grid to green using the same technique, but now these three variables already have values defined - the red color inherited from the master grid, so the default value provided by `--ag-background-color` has no effect.
 
 ```css
+body {
+    --ag-background-color: IndianRed;
+}
 .ag-details-grid {
-    --ag-background-color: #f004;
+    --ag-background-color: MediumSeaGreen;
 }
 ```
 
 {% gridExampleRunner title="Custom Properties and Detail Grids" name="custom-properties" /%}
 
-In order to avoid this, you need to set the lower-level variable explicitly too:
+In order to avoid this, you need to set all the lower-level variable explicitly:
 
 ```css
+body {
+    --ag-background-color: IndianRed;
+}
 .ag-details-grid {
-    --ag-background-color: #f004;
-    --ag-odd-row-background-color: var(--ag-background-color);
+    --ag-background-color: MediumSeaGreen;
+    --ag-data-background-color: MediumSeaGreen;
+    --ag-odd-row-background-color: MediumSeaGreen;
+    --ag-header-background-color: SeaGreen;
 }
 ```
 

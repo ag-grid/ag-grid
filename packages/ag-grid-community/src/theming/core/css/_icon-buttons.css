@@ -26,8 +26,22 @@
     }
 }
 
-.ag-filter-active {
+:where(.ag-filter-active, .ag-filter-toolpanel-group-instance-header-icon, .ag-filter-toolpanel-instance-header-icon) {
     position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        top: -1px;
+        right: -1px;
+        border-radius: 50%;
+        background-color: var(--ag-icon-button-active-indicator-color);
+    }
+}
+
+.ag-filter-active {
     border-radius: 1px;
 
     /* Apply active background color with a background-image so that it
@@ -41,17 +55,6 @@
         overlays on top of the existing background spread (which uses a
         box-shadow) */
     outline: solid var(--ag-icon-button-background-spread) var(--ag-icon-button-active-background-color);
-
-    &::after {
-        content: '';
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        top: -1px;
-        right: -1px;
-        border-radius: 50%;
-        background-color: var(--ag-icon-button-active-indicator-color);
-    }
 
     :where(.ag-icon-filter) {
         clip-path: path('M8,0C8,4.415 11.585,8 16,8L16,16L0,16L0,0L8,0Z');

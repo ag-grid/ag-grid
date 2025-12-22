@@ -1,0 +1,28 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+}
+
+.button-row button {
+    padding: 4px 12px;
+}
+
+.grid-wrapper {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.my-custom-overlay {
+    padding: 16px;
+    font-size: 32px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+}

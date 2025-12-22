@@ -139,13 +139,21 @@ export function _refreshFilterUi(
 export function getAndRefreshFilterUi(
     getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
     getModel: () => any,
-    getState: () => FilterDisplayState | undefined
+    getState: () => FilterDisplayState | undefined,
+    additionalEventAttributes?: any
 ): void {
     const filterUi = getFilterUi();
     if (filterUi?.created) {
         filterUi.promise.then((filter) => {
             const model = getModel();
-            _refreshFilterUi(filter, filterUi.filterParams, model, getState() ?? { model }, 'ui');
+            _refreshFilterUi(
+                filter,
+                filterUi.filterParams,
+                model,
+                getState() ?? { model },
+                'ui',
+                additionalEventAttributes
+            );
         });
     }
 }
@@ -216,7 +224,7 @@ export function _updateFilterModel(params: {
     if (shouldUpdateModel) {
         updateModel(model);
     } else {
-        getAndRefreshFilterUi(getFilterUi, getModel, getState);
+        getAndRefreshFilterUi(getFilterUi, getModel, getState, { fromAction: action });
     }
 }
 

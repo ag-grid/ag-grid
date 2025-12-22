@@ -32,6 +32,9 @@ let activePointerDrags: WeakMap<Document | ShadowRoot, Dragging> | undefined;
  */
 let handledDragEvents: WeakSet<Event> | undefined;
 
+const PASSIVE_TRUE = { passive: true } as const;
+const PASSIVE_FALSE = { passive: false } as const;
+
 const addHandledDragEvent = (event: Event): boolean => {
     if (!handledDragEvents) {
         handledDragEvents = new WeakSet<Event>();
@@ -122,7 +125,7 @@ export class BaseDragService<
         const mouseListener = (event: MouseEvent) => this.onMouseDown(params, event);
         addTempEventHandlers(
             handlers,
-            [eElement, 'pointerdown', pointerDownListener, { passive: false }],
+            [eElement, 'pointerdown', pointerDownListener, PASSIVE_FALSE],
             [eElement, 'mousedown', mouseListener]
         );
 
@@ -132,7 +135,7 @@ export class BaseDragService<
             const touchListener = (touchEvent: TouchEvent) => this.onTouchStart(params, touchEvent);
 
             // we set passive=false, as we want to prevent default on this event
-            addTempEventHandlers(handlers, [eElement, 'touchstart', touchListener, { passive: false }]);
+            addTempEventHandlers(handlers, [eElement, 'touchstart', touchListener, PASSIVE_FALSE]);
         }
     }
 
@@ -250,13 +253,15 @@ export class BaseDragService<
             }
         };
 
+        const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
+
         this.initDrag(
             pointerDrag,
             [rootEl, 'pointerup', onUp],
             [rootEl, 'pointercancel', onCancel],
-            [rootEl, 'pointermove', onPointerMove, { passive: false }],
-            [rootEl, 'touchmove', preventEventDefault, { passive: false }],
-            [eElement, 'mousemove', preventEventDefault, { passive: false }]
+            [rootEl, 'pointermove', onPointerMove, PASSIVE_FALSE],
+            [rootEl, 'touchmove', dragPreventEventDefault, PASSIVE_FALSE],
+            [eElement, 'mousemove', dragPreventEventDefault, PASSIVE_FALSE]
         );
 
         // start immediately if threshold is zero
@@ -287,7 +292,9 @@ export class BaseDragService<
         }
 
         if (this.isPointer()) {
-            preventEventDefault(touchEvent);
+            if (this.dragging) {
+                preventEventDefault(touchEvent);
+            }
             return; // Active pointer drag in progress, ignore legacy touch start
         }
 
@@ -299,19 +306,31 @@ export class BaseDragService<
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e);
+        const touchCancelEvent = (e: TouchEvent) => this.onTouchCancel(e);
+        const dragPreventEventDefault = (e: Event) => this.draggingPreventDefault(e);
 
+        const rootNode = _getRootNode(beans);
         const target = touchEvent.target ?? params.eElement;
         this.initDrag(
             touchDrag,
-            [_getRootNode(beans), 'touchmove', preventEventDefault, { passive: false }],
-            [target, 'touchmove', touchMoveEvent, { passive: true }],
-            [target, 'touchend', touchEndEvent, { passive: true }],
-            [target, 'touchcancel', touchEndEvent, { passive: true }]
+            [target, 'touchmove', touchMoveEvent, PASSIVE_TRUE],
+            [target, 'touchend', touchEndEvent, PASSIVE_TRUE],
+            [target, 'touchcancel', touchCancelEvent, PASSIVE_TRUE],
+            [rootNode, 'touchmove', dragPreventEventDefault, PASSIVE_FALSE],
+            [rootNode, 'touchend', touchEndEvent, PASSIVE_FALSE],
+            [rootNode, 'touchcancel', touchCancelEvent, PASSIVE_FALSE]
         );
 
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
             this.onMove(touchDrag.start);
+        }
+    }
+
+    /** preventEventDefault on the event while dragging only and if the event is cancellable */
+    private draggingPreventDefault(e: Event): void {
+        if (this.dragging) {
+            preventEventDefault(e);
         }
     }
 
@@ -378,6 +397,17 @@ export class BaseDragService<
         this.onMove(mouseEvent);
     }
 
+    private onTouchCancel(touchEvent: TouchEvent): void {
+        const drag = this.drag;
+        if (!drag || !addHandledDragEvent(touchEvent)) {
+            return;
+        }
+        if (!_getFirstActiveTouch(drag.start as Touch, touchEvent.changedTouches)) {
+            return; // cancel not for this drag
+        }
+        this.cancelDrag();
+    }
+
     private onTouchMove(touchEvent: TouchEvent): void {
         const drag = this.drag;
         if (!drag || !addHandledDragEvent(touchEvent)) {
@@ -385,8 +415,8 @@ export class BaseDragService<
         }
         const touch = _getFirstActiveTouch(drag.start as Touch, touchEvent.touches);
         if (touch) {
-            touchEvent.preventDefault();
             this.onMove(touch);
+            this.draggingPreventDefault(touchEvent);
         }
     }
 

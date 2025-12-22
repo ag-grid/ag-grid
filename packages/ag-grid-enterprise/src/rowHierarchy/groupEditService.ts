@@ -3,7 +3,6 @@ import type {
     CellValueChangedEvent,
     IClientSideRowModel,
     IRowNode,
-    RowDropTargetPosition,
     RowNode,
     _IGroupEditService,
     _RowsDrop,
@@ -17,7 +16,6 @@ import {
     _getCellByPosition,
     _isClientSideRowModel,
     _prevOrNextDisplayedRow,
-    _warn,
 } from 'ag-grid-community';
 
 export class GroupEditService extends BeanStub implements _IGroupEditService {
@@ -27,48 +25,20 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
     private dropGroupTarget: IRowNode | null = null;
     private dropGroupTimer: number | null = null;
     private dropGroupThrottled = false;
+    private draggingGroups: Map<IRowNode, RowNode[]> | null = null;
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
-            let groupManagedWarnTimer = 0;
-
-            // Debounced warning, to avoid false positives
-            const groupManagedWarn = () => {
-                if (groupManagedWarnTimer || !this.isGroupManagedWarn()) {
-                    return;
-                }
-                groupManagedWarnTimer = window.setTimeout(() => {
-                    if (!this.isGroupManagedWarn()) {
-                        groupManagedWarnTimer = 0; // reset timer
-                        return;
-                    }
-                    _warn(295); // rowDragManaged and grouping needs refreshAfterGroupEdit
-                }, 1);
-            };
-
             this.addManagedListeners(this.eventSvc, {
-                gridReady: groupManagedWarn,
-                columnRowGroupChanged: groupManagedWarn,
                 cellValueChanged: (event) => this.onCsrmCellChange(event),
                 batchEditingStopped: () => this.flushGroupEdits(),
             });
-
-            this.addManagedPropertyListeners(['rowDragManaged', 'refreshAfterGroupEdit'], groupManagedWarn);
         }
     }
 
     public override destroy(): void {
-        this.resetDrag();
+        this.stopDragging(true);
         super.destroy();
-    }
-
-    private isGroupManagedWarn(): boolean {
-        const gos = this.gos;
-        return (
-            gos.get('rowDragManaged') &&
-            !gos.get('refreshAfterGroupEdit') &&
-            !!this.beans.rowGroupColsSvc?.columns?.length
-        );
     }
 
     /** Checks if the drop operation described by `rowsDrop` is a grouping edit */
@@ -79,7 +49,32 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         if (!this.gos.get('refreshAfterGroupEdit')) {
             return false;
         }
-        return !!this.beans.rowGroupColsSvc?.columns?.length;
+        return !!this.beans.rowGroupColsSvc?.columns?.length && !this.beans.colModel.isPivotMode();
+    }
+
+    private initDraggingGroups(rowsDrop: _RowsDrop): void {
+        const structure = new Map<IRowNode, RowNode[]>();
+
+        // Let's make a copy of all the children being dragged
+        const recurse = (row: RowNode) => {
+            const childrenAfterGroup = row.childrenAfterGroup;
+            if (childrenAfterGroup) {
+                if (structure.has(row)) {
+                    return;
+                }
+                const children = childrenAfterGroup.slice();
+                structure.set(row, children);
+                for (const child of children) {
+                    recurse(child);
+                }
+            }
+        };
+        for (const row of rowsDrop.rows) {
+            if (row.group) {
+                recurse(row as RowNode);
+            }
+        }
+        this.draggingGroups = structure;
     }
 
     /** Checks if the drop operation described by `rowsDrop` can set a new parent */
@@ -108,58 +103,65 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             return false;
         }
 
-        if (position !== 'inside') {
-            if (newParent && newParent !== currentParent) {
-                return newParent !== rootNode || currentParent === rootNode;
-            }
+        if (position === 'inside') {
+            return true;
+        }
+        if (newParent && newParent !== currentParent) {
+            return newParent !== rootNode || currentParent === rootNode;
+        }
 
-            const comparisonParent = newParent ?? target?.parent ?? rootNode;
-            if (comparisonParent !== currentParent) {
-                return false;
-            }
+        const comparisonParent = newParent ?? target?.parent ?? rootNode;
+        if (comparisonParent !== currentParent) {
+            return false;
+        }
 
-            const sourceLevel = rowNode.group ? rowNode.level : currentParent.level ?? -1;
-            const targetLevel = target
-                ? target.group
-                    ? target.level
-                    : target.parent?.level ?? -1
-                : comparisonParent?.level ?? -1;
+        const sourceLevel = rowNode.group ? rowNode.level : currentParent.level ?? -1;
+        const targetLevel = target
+            ? target.group
+                ? target.level
+                : target.parent?.level ?? -1
+            : comparisonParent?.level ?? -1;
 
-            if (sourceLevel >= 0 && targetLevel >= 0 && targetLevel !== sourceLevel) {
-                return false;
-            }
+        if (sourceLevel >= 0 && targetLevel >= 0 && targetLevel !== sourceLevel) {
+            return false;
         }
 
         return true;
     }
 
-    public fixRowsDrop(rowsDrop: _RowsDrop, canSetParent: boolean, moving: boolean, yDelta: number): void {
-        let target = rowsDrop.target as IRowNode | null;
+    public fixRowsDrop(rowsDrop: _RowsDrop, canSetParent: boolean, fromNudge: boolean, yDelta: number): void {
+        const treeData = !!this.beans.groupStage?.treeData;
+        rowsDrop.treeData = treeData;
+
+        const isRowGrouping = !!this.beans.rowGroupColsSvc?.columns?.length || this.gos.get('pivotMode');
+        if (!isRowGrouping && !treeData) {
+            return; // Early exit, no grouping (managed or unmanaged) and no treeData
+        }
+
+        if (!this.draggingGroups && this.isGroupingDrop(rowsDrop) && !rowsDrop.suppressMoveWhenRowDragging) {
+            this.initDraggingGroups(rowsDrop);
+        }
+
+        let target = rowsDrop.target;
         let newParent: IRowNode | null = null;
         let inside = false;
 
         const rootNode = rowsDrop.rootNode as IRowNode;
         const rowModel = this.beans.rowModel;
-        const fromNudge = moving;
         const canStartGroup = target ? this.canDropStartGroup(target) : false;
 
-        this.updateDropTarget(canStartGroup ? target : null, fromNudge);
+        this.updateDropTarget(canStartGroup ? target : null, fromNudge, rowsDrop);
 
         const lastRowIndex = this.beans.pageBounds?.getLastRow?.() ?? rowModel.getRowCount() - 1;
         if (canSetParent) {
             if (!target || (yDelta >= 0.5 && target.rowIndex === lastRowIndex)) {
                 newParent = rootNode;
-            } else if (
-                rowsDrop.moved &&
-                target &&
-                this.dropGroupThrottled &&
-                this.shouldDropTargetBeParent(target, rowsDrop.pointerPos, rowsDrop.rows)
-            ) {
+            } else if (rowsDrop.moved && target && this.dropGroupThrottled && this.shouldDropTargetBeParent(rowsDrop)) {
                 newParent = target;
             }
 
             if (!newParent) {
-                newParent = (target?.parent as IRowNode) ?? rootNode;
+                newParent = target?.parent ?? rootNode;
             }
 
             if (
@@ -200,34 +202,59 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         rowsDrop.inside = inside;
     }
 
-    private updateDropTarget(target: IRowNode | null, canExpand: boolean): void {
+    public clearNewSameParent(rowsDrop: _RowsDrop, canSetParent: boolean): void {
+        const newParent = rowsDrop.newParent;
+        if (newParent && (!canSetParent || rowsHaveSameParent(rowsDrop.rows, newParent))) {
+            rowsDrop.newParent = null;
+        }
+    }
+
+    private updateDropTarget(target: IRowNode | null, canExpand: boolean, rowsDrop: _RowsDrop): void {
         if (this.dropGroupTarget && this.dropGroupTarget !== target) {
-            this.resetDrag();
+            this.resetDragGroup();
         }
 
-        if (!target) {
+        if (!target?.childrenAfterSort?.length) {
             return;
         }
 
-        if (
-            canExpand &&
-            this.dropGroupThrottled &&
-            !target.expanded &&
-            target.childrenAfterSort?.length &&
-            target.isExpandable?.()
-        ) {
+        if (canExpand && this.dropGroupThrottled && !target.expanded && target.isExpandable?.()) {
             target.setExpanded(true, undefined, true);
         }
 
-        if (target.expanded && target.childrenAfterSort?.length) {
+        if (this.canDropInTarget(target, rowsDrop)) {
             this.dropGroupThrottled = true;
             this.dropGroupTarget = target;
         }
     }
 
+    private canDropInTarget(target: IRowNode, rowsDrop: _RowsDrop): boolean {
+        if (target.expanded) {
+            return true;
+        }
+        if (!target.group) {
+            return false;
+        }
+        if (rowsDrop.pointerPos === 'inside') {
+            return true;
+        }
+        if (rowsDrop.treeData) {
+            return false;
+        }
+        const rows = rowsDrop.rows;
+        const targetLevel = target.level;
+        for (let i = 0, len = rows.length; i < len; ++i) {
+            const row = rows[i];
+            if (row !== target && row.group && row.level !== targetLevel) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private startDropGroupDelay(target: IRowNode): void {
         if (this.dropGroupTarget && this.dropGroupTarget !== target) {
-            this.resetDrag();
+            this.resetDragGroup();
         }
 
         this.dropGroupTarget = target;
@@ -244,7 +271,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }, delay);
     }
 
-    public resetDrag(): void {
+    public resetDragGroup(): void {
         if (this.dropGroupTimer !== null) {
             window.clearTimeout(this.dropGroupTimer);
             this.dropGroupTimer = null;
@@ -253,18 +280,26 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         this.dropGroupThrottled = false;
     }
 
-    private shouldDropTargetBeParent(
-        target: IRowNode | null,
-        pointerPosition: RowDropTargetPosition,
-        rows: IRowNode[]
-    ): boolean {
-        if (!target || pointerPosition === 'none' || pointerPosition === 'above') {
+    public stopDragging(final: boolean): void {
+        if (final) {
+            this.draggingGroups = null;
+        }
+        this.resetDragGroup();
+    }
+
+    private shouldDropTargetBeParent({ target, rows, pointerPos, treeData }: _RowsDrop): boolean {
+        if (!target || pointerPos === 'none') {
             return false;
         }
-        if (pointerPosition === 'inside') {
+        if (pointerPos === 'inside') {
             return true;
         }
-
+        if (!treeData && target.group && !target.expanded) {
+            return true;
+        }
+        if (pointerPos === 'above') {
+            return false;
+        }
         const rowModel = this.beans.rowModel;
         const targetRowIndex = target.rowIndex!;
         let nextRowIndex = targetRowIndex + 1;
@@ -273,10 +308,11 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             nextRow = rowModel.getRow(nextRowIndex++);
         } while (nextRow?.footer);
 
-        const childrenAfterGroup = target.childrenAfterGroup;
+        const childrenAfterGroup = this.draggingGroups?.get(target) ?? target.childrenAfterGroup;
         if (nextRow && nextRow.parent === target && childrenAfterGroup?.length) {
             const rowsSet = new Set(rows);
-            for (const child of childrenAfterGroup) {
+            for (let i = 0, len = childrenAfterGroup.length; i < len; ++i) {
+                const child = childrenAfterGroup[i];
                 if (child.rowIndex !== null && !rowsSet.has(child)) {
                     return true;
                 }
@@ -315,16 +351,16 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         };
 
         const visitGroupedChildren = (groupNode: RowNode): void => {
-            const children = groupNode.childrenAfterGroup;
-            if (!children?.length) {
-                return;
-            }
-            for (let i = 0; i < children.length; ++i) {
-                const child = children[i] as RowNode;
-                if (child.sourceRowIndex >= 0) {
-                    processLeaf(child);
-                } else {
-                    visitGroupedChildren(child);
+            const children = this.draggingGroups?.get(groupNode) ?? groupNode.childrenAfterGroup;
+            const childrenLen = children?.length;
+            if (childrenLen) {
+                for (let i = 0; i < childrenLen; ++i) {
+                    const child = children[i] as RowNode;
+                    if (child.sourceRowIndex >= 0) {
+                        processLeaf(child);
+                    } else {
+                        visitGroupedChildren(child);
+                    }
                 }
             }
         };
@@ -333,7 +369,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             if (row.group) {
                 visitGroupedChildren(row);
             } else {
-                const firstLeaf = row.sourceRowIndex >= 0 ? row : _csrmFirstLeaf(row);
+                const firstLeaf = row.sourceRowIndex >= 0 && !row.destroyed ? row : this.csrmFirstLeaf(row);
                 if (firstLeaf) {
                     processLeaf(firstLeaf);
                 }
@@ -341,7 +377,8 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
         }
 
         const reorderPosition = position === 'inside' ? 'above' : position;
-        const reorderTarget = position === 'inside' ? findFirstLeafForParent(parentForValues, leafs) ?? target : target;
+        const reorderTarget =
+            position === 'inside' ? this.findFirstLeafForParent(parentForValues, leafs) ?? target : target;
         let orderChanged = false;
         if (leafs.size && reorderPosition !== 'none') {
             orderChanged = _csrmReorderAllLeafs(rootNode._leafs, leafs, reorderTarget, reorderPosition === 'above');
@@ -483,30 +520,64 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
             this.csrmRefresh(changedRowNodes);
         }
     }
+
+    public csrmFirstLeaf(parent: IRowNode | null): RowNode | null {
+        if (!parent) {
+            return null;
+        }
+        const draggingGroups = this.draggingGroups;
+        let children: IRowNode[] | null | undefined = draggingGroups?.get(parent) ?? parent.childrenAfterGroup;
+        while (children?.length) {
+            const child: IRowNode = children[0];
+            if (child.sourceRowIndex >= 0) {
+                if (!child.destroyed) {
+                    return child as RowNode;
+                }
+                return this.firstAliveChildLeaf(child);
+            }
+            children = draggingGroups?.get(child) ?? child.childrenAfterGroup;
+        }
+        return _csrmFirstLeaf(parent) as RowNode | null;
+    }
+
+    private firstAliveChildLeaf(parent: IRowNode): RowNode | null {
+        const children = this.draggingGroups?.get(parent) ?? parent.childrenAfterGroup;
+        if (children) {
+            for (const grandChild of children) {
+                if (grandChild.sourceRowIndex >= 0 && !grandChild.destroyed) {
+                    return grandChild as RowNode;
+                }
+            }
+        }
+        return null;
+    }
+
+    private findFirstLeafForParent(parent: IRowNode | null, exclude: ReadonlySet<RowNode>): RowNode | null {
+        if (!parent) {
+            return null;
+        }
+        const children = this.draggingGroups?.get(parent) ?? parent?.childrenAfterGroup;
+        if (!children) {
+            return null;
+        }
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[i] as RowNode;
+            if (child.sourceRowIndex >= 0 && !exclude.has(child)) {
+                return child;
+            }
+            const found = this.findFirstLeafForParent(child, exclude);
+            if (found !== null) {
+                return found;
+            }
+        }
+        return null;
+    }
 }
 
 const newEditChangedRowNodes = (): _ChangedRowNodes => {
     const result = new _ChangedRowNodes();
     result.reordered = true; // Force grouping to follow _leafs order
     return result;
-};
-
-const findFirstLeafForParent = (parent: IRowNode | null, exclude: ReadonlySet<RowNode>): RowNode | null => {
-    const children = parent?.childrenAfterGroup;
-    if (!children) {
-        return null;
-    }
-    for (let i = 0, len = children.length; i < len; ++i) {
-        const child = children[i] as RowNode;
-        if (child.sourceRowIndex >= 0 && !exclude.has(child)) {
-            return child;
-        }
-        const found = findFirstLeafForParent(child, exclude);
-        if (found !== null) {
-            return found;
-        }
-    }
-    return null;
 };
 
 interface GroupValues {
@@ -546,4 +617,13 @@ const wouldCycle = (row: IRowNode, newParent: IRowNode | null | undefined): bool
         current = current.parent;
     }
     return false;
+};
+
+const rowsHaveSameParent = (rows: IRowNode<any>[], newParent: IRowNode): boolean => {
+    for (let i = 0, len = rows.length; i < len; ++i) {
+        if (rows[i].parent !== newParent) {
+            return false;
+        }
+    }
+    return true;
 };

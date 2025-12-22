@@ -44,13 +44,9 @@ export interface TextMatcherParams extends BaseColDefParams {
     textFormatter?: TextFormatter;
 }
 
-export interface TextMatcher {
-    (params: TextMatcherParams): boolean;
-}
+export type TextMatcher = (params: TextMatcherParams) => boolean;
 
-export interface TextFormatter {
-    (from?: string | null): string | null;
-}
+export type TextFormatter = (from?: string | null) => string | null;
 
 /**
  * Parameters provided by the grid to the `init` method of a `TextFilter`.

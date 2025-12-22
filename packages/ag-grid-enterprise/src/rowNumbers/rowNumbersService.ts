@@ -10,6 +10,7 @@ import {
     _createElement,
     _debounce,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
@@ -129,13 +130,19 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
+        // If click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
         if (
             !this.isIntegratedWithSelection ||
             (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
         ) {
+            if (this.beans.rangeSvc) {
+                mouseEvent.preventDefault();
+            }
+            mouseEvent.stopImmediatePropagation();
             return false;
         }
 
+        // If we're not extending the range, focus the first cell
         if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
@@ -146,11 +153,11 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
         this.refreshSelectionIntegration();
-
         for (const col of this.columns?.list ?? []) {
-            const newColDef = this.createRowNumbersColDef();
-            col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
+            const colDef = this.createRowNumbersColDef();
+            col.setColDef(colDef, null, source);
+
+            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.getColId())] }, source);
         }
     }
 

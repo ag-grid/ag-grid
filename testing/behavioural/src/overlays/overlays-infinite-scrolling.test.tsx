@@ -2,7 +2,7 @@ import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, InfiniteRowModelModule } from 'ag-grid-community';
 
-import { TestGridsManager } from '../test-utils';
+import { TestGridsManager, setRowDataChecked } from '../test-utils';
 
 describe('ag-grid overlays infinite scrolling state', () => {
     const gridsManager = new TestGridsManager({
@@ -53,7 +53,7 @@ describe('ag-grid overlays infinite scrolling state', () => {
         consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
-        api.setGridOption('rowData', []);
+        setRowDataChecked(api, []);
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             "AG Grid: rowData is not supported with the 'infinite' row model. It is only valid with: clientSide."

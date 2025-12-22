@@ -23,6 +23,8 @@ export interface ChartOptionsProxy {
     getValue<T = string>(expression: string, calculated?: boolean): T;
     setValue<T = string>(expression: string, value: T): void;
     setValues<T = string>(properties: { expression: string; value: T }[]): void;
+    /** only used for chart options (not theme overrides) */
+    clearValue?(parentExpression: string, key: string): void;
 }
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
@@ -71,6 +73,7 @@ export class ChartOptionsService extends BeanStub {
             getValue: (expression) => this.getCartesianAxisProperty(axisType, expression),
             setValue: (expression, value) => this.setCartesianAxisOptions(axisType, [{ expression, value }]),
             setValues: (properties) => this.setCartesianAxisOptions(axisType, properties),
+            clearValue: (parentExpression, key) => this.clearCartesianAxisOptions(axisType, parentExpression, key),
         };
     }
 
@@ -385,7 +388,7 @@ export class ChartOptionsService extends BeanStub {
 
     private setCartesianAxisOptions<T = string>(
         axisType: 'xAxis' | 'yAxis',
-        properties: Array<{ expression: string; value: T }>
+        properties: Array<{ expression: string; value?: T }>
     ): void {
         this.updateCartesianAxisOptions(axisType, (chartOptions) => {
             // assign the provided axis options onto the combined chart options object
@@ -393,6 +396,13 @@ export class ChartOptionsService extends BeanStub {
             for (const { expression, value } of properties) {
                 this.assignChartOption(chartOptions, `axes.${axisId}.${expression}`, value);
             }
+        });
+    }
+
+    private clearCartesianAxisOptions(axisType: 'xAxis' | 'yAxis', parentExpression: string, key: string): void {
+        this.updateCartesianAxisOptions(axisType, (chartOptions) => {
+            const axisId = axisType === 'yAxis' ? 'y' : 'x';
+            this.clearChartOption(chartOptions, `axes.${axisId}.${parentExpression}`, key);
         });
     }
 
@@ -649,6 +659,13 @@ export class ChartOptionsService extends BeanStub {
 
     private assignChartOption<T>(chartOptions: AgChartOptions, expression: string, value: T): void {
         set(chartOptions, expression, value);
+    }
+
+    private clearChartOption(chartOptions: AgChartOptions, parentExpression: string, key: string): void {
+        const parentObject = get(chartOptions, parentExpression, undefined);
+        if (parentObject) {
+            delete parentObject[key];
+        }
     }
 
     private raiseChartOptionsChangedEvent(): void {

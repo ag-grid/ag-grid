@@ -4,8 +4,7 @@ import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import type { GridRowsOptions } from '../../test-utils';
-import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, setRowDataChecked } from '../../test-utils';
 
 describe('ag-grid hierarchical immutable tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -66,12 +65,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'data', gridRowsOptions);
+        let gridRows = new GridRows(api, 'data');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -122,9 +116,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         const rows1 = gridRows.displayedRows;
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
-        gridRows = new GridRows(api, 'update some values', gridRowsOptions);
+        gridRows = new GridRows(api, 'update some values');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" v:1
@@ -186,9 +180,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData3);
+        setRowDataChecked(api, rowData3);
 
-        gridRows = new GridRows(api, 'add, update nodes', gridRowsOptions);
+        gridRows = new GridRows(api, 'add, update nodes');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" v:1000
@@ -261,9 +255,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData4);
+        setRowDataChecked(api, rowData4);
 
-        gridRows = new GridRows(api, 'add, reorder, move some nodes', gridRowsOptions);
+        gridRows = new GridRows(api, 'add, reorder, move some nodes');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" v:3
@@ -323,9 +317,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData5);
+        setRowDataChecked(api, rowData5);
 
-        gridRows = new GridRows(api, 'remove groups', gridRowsOptions);
+        gridRows = new GridRows(api, 'remove groups');
 
         const rows5 = gridRows.displayedRows;
 
@@ -364,9 +358,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData6);
+        setRowDataChecked(api, rowData6);
 
-        gridRows = new GridRows(api, 'swap groups children', gridRowsOptions);
+        gridRows = new GridRows(api, 'swap groups children');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -417,11 +411,11 @@ describe('ag-grid hierarchical immutable tree data', () => {
             { id: 'X', v: 100 },
         ]);
 
-        api.setGridOption('rowData', rowData8);
+        setRowDataChecked(api, rowData8);
 
         const rows8 = gridRows.displayedRows;
 
-        gridRows = new GridRows(api, 'change a group and add a new node', gridRowsOptions);
+        gridRows = new GridRows(api, 'change a group and add a new node');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -486,12 +480,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
-        let gridRows = new GridRows(api, 'data', gridRowsOptions);
+        let gridRows = new GridRows(api, 'data');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -542,9 +531,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         const rows1 = gridRows.displayedRows;
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
-        gridRows = new GridRows(api, 'update some values', gridRowsOptions);
+        gridRows = new GridRows(api, 'update some values');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" v:1
@@ -606,9 +595,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData3);
+        setRowDataChecked(api, rowData3);
 
-        gridRows = new GridRows(api, 'add, update nodes', gridRowsOptions);
+        gridRows = new GridRows(api, 'add, update nodes');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" v:1000
@@ -681,9 +670,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData4);
+        setRowDataChecked(api, rowData4);
 
-        gridRows = new GridRows(api, 'add, reorder, move some nodes', gridRowsOptions);
+        gridRows = new GridRows(api, 'add, reorder, move some nodes');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ C GROUP id:C ag-Grid-AutoColumn:"C" v:3
@@ -743,9 +732,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData5);
+        setRowDataChecked(api, rowData5);
 
-        gridRows = new GridRows(api, 'remove groups', gridRowsOptions);
+        gridRows = new GridRows(api, 'remove groups');
 
         const rows5 = gridRows.displayedRows;
 
@@ -784,9 +773,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData6);
+        setRowDataChecked(api, rowData6);
 
-        gridRows = new GridRows(api, 'swap groups children', gridRowsOptions);
+        gridRows = new GridRows(api, 'swap groups children');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -813,7 +802,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         api.setGridOption('treeData', false);
 
-        gridRows = new GridRows(api, 'disable treeData', gridRowsOptions);
+        gridRows = new GridRows(api, 'disable treeData');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -856,9 +845,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             { id: 'X', v: 100 },
         ]);
 
-        api.setGridOption('rowData', rowData8);
+        setRowDataChecked(api, rowData8);
 
-        gridRows = new GridRows(api, 'change a group and add a new node while treeData is false', gridRowsOptions);
+        gridRows = new GridRows(api, 'change a group and add a new node while treeData is false');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -878,7 +867,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         api.setGridOption('treeData', true);
 
-        gridRows = new GridRows(api, 're-enable treeData', gridRowsOptions);
+        gridRows = new GridRows(api, 're-enable treeData');
 
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
@@ -949,12 +938,7 @@ describe('ag-grid hierarchical immutable tree data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: true,
-            columns: true,
-        };
-
-        const gridRows1 = new GridRows(api, 'data', gridRowsOptions);
+        const gridRows1 = new GridRows(api, 'data');
 
         await gridRows1.check(`
             ROOT id:ROOT_NODE_ID
@@ -1014,9 +998,9 @@ describe('ag-grid hierarchical immutable tree data', () => {
             },
         ]);
 
-        api.setGridOption('rowData', rowData2);
+        setRowDataChecked(api, rowData2);
 
-        const gridRows2 = new GridRows(api, 'change the order, insert some nodes', gridRowsOptions);
+        const gridRows2 = new GridRows(api, 'change the order, insert some nodes');
 
         await gridRows2.check(`
             ROOT id:ROOT_NODE_ID

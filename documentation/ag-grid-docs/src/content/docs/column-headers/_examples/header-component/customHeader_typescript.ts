@@ -77,7 +77,7 @@ export class CustomHeader {
             toActivate.className = toActivate.className + ' active';
         };
 
-        const sort = this.agParams.column.getSort();
+        const sort = this.agParams.column.getSortDef()?.direction;
         if (sort === 'asc') {
             deactivate([this.eSortUpButton, this.eSortRemoveButton]);
             activate(this.eSortDownButton);

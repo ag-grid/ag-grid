@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_HU = {
     searchOoo: 'Keresés...',
     blanks: '(Üres)',
     noMatches: 'Nincs találat',
+    typeToSearchOoo: 'Írja be a keresendő szöveget...',
 
     // Number Filter & Text Filter
     filterOoo: 'Szűrő...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_HU = {
     maxDateValidation: 'A dátumnak korábbinak kell lennie, mint ${variable}',
     maxLengthValidation: 'Legfeljebb ${variable} karakter hosszú lehet.',
     minValueValidation: 'Az értéknek nagyobbnak vagy egyenlőnek kell lennie ${variable}-val/vel',
-    maxValueValidation: 'Az értéknek kisebbnek vagy egyenlőnek kell lennie ${variable}-val/vel',
+    maxValueValidation: 'Kisebbnek vagy egyenlőnek kell lennie, mint ${variable}',
+    strictMinValueValidation: 'Nagyobbnak kell lennie, mint ${variable}',
+    strictMaxValueValidation: 'Kisebbnek kell lennie, mint ${variable}',
     invalidSelectionValidation: 'Érvénytelen kiválasztás.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_HU = {
     loadingOoo: 'Betöltés...',
     loadingError: 'HIBA',
     noRowsToShow: 'Nincs megjeleníthető sor',
+    noMatchingRows: 'Nincs egyező sor',
+    exportingOoo: 'Exportálás...',
     enabled: 'Engedélyezve',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_HU = {
     chooseColumns: 'Oszlopok kiválasztása',
     sortAscending: 'Rendezés növekvő sorrendben',
     sortDescending: 'Rendezés csökkenő sorrendben',
+    sortAbsoluteAscending: 'Abszolút növekvő sorrendben rendez',
+    sortAbsoluteDescending: 'Abszolút csökkenő sorrendben rendez',
     sortUnSort: 'Rendezés törlése',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_HU = {
     ariaChecked: 'kiválasztva',
     ariaColumn: 'Oszlop',
     ariaColumnGroup: 'Oszlop csoport',
+    ariaFilterActive: 'Szűrés aktív',
     ariaColumnFiltered: 'Szűrt oszlop',
     ariaColumnSelectAll: 'Az összes oszlop láthatóságának váltása',
     ariaDateFilterInput: 'Dátum szűrő bevitel',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_HU = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' közül ',
     ariaDropZoneColumnComponentSortAscending: 'növekvő',
     ariaDropZoneColumnComponentSortDescending: 'csökkenő',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'abszolút növekvő',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'abszolút csökkenő',
     ariaLabelDialog: 'Párbeszédpanel',
     ariaLabelColumnMenu: 'Oszlop menü',
     ariaLabelColumnFilter: 'Oszlop szűrő',

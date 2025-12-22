@@ -65,9 +65,6 @@ export function doesMovePassMarryChildren(
         if (spread > maxSpread) {
             rulePassed = false;
         }
-
-        // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
-        // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
     });
 
     return rulePassed;

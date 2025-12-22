@@ -180,7 +180,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private removeColumnsFromList(columnList: AgColumn[], predicate: (col: AgColumn) => boolean): AgColumn[] {
-        return columnList.filter((col) => predicate(col) && this.columns.includes(col));
+        return columnList.filter((col) => predicate(col) && !this.columns.includes(col));
     }
 
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {

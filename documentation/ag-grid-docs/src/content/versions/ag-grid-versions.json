@@ -1,5 +1,34 @@
 [
     {
+        "version": "35.0.0",
+        "date": "10th December 2025",
+        "landingPageHighlight": "Formulas, Row Group Dragging, Absolute Sorting, Column Selection, Filtering & Export Overlays",
+        "highlights": [
+            {
+                "text": "Formulas",
+                "path": "./formulas/"
+            },
+            {
+                "text": "Row Group Dragging",
+                "path": "./grouping-row-dragging/"
+            },
+            {
+                "text": "Absolute Sorting",
+                "path": "./row-sorting/#absolute-sorting"
+            },
+            {
+                "text": "Column Selection",
+                "path": "./cell-selection/#selecting-cells-via-column-headers"
+            },
+            {
+                "text": "Filtering & Export Overlays",
+                "path": "./overlays-overview/"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-35",
+        "hideBlogPostLink": false
+    },
+    {
         "version": "34.3.1",
         "date": "29th October 2025"
     },
@@ -131,6 +160,14 @@
         ],
         "notesPath": "./upgrading-to-ag-grid-34",
         "hideBlogPostLink": false
+    },
+    {
+        "version": "33.3.2",
+        "date": "4th June 2025"
+    },
+    {
+        "version": "33.3.1",
+        "date": "28th May 2025"
     },
     {
         "version": "33.3.0",

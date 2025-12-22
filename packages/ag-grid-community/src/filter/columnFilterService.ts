@@ -106,6 +106,10 @@ export interface FilterGlobalButtonsEvent extends AgEvent<'filterGlobalButtons'>
     isGlobal: boolean;
 }
 
+interface FilterModelAsStringChangedEvent extends AgEvent<'filterModelAsStringChanged'> {
+    column: AgColumn;
+}
+
 /** Used for non-CSRM handlers */
 const DUMMY_HANDLER = {
     filterHandler: () => ({
@@ -114,7 +118,13 @@ const DUMMY_HANDLER = {
 };
 
 export class ColumnFilterService
-    extends BeanStub<'filterParamsChanged' | 'filterStateChanged' | 'filterAction' | 'filterGlobalButtons'>
+    extends BeanStub<
+        | 'filterParamsChanged'
+        | 'filterStateChanged'
+        | 'filterAction'
+        | 'filterGlobalButtons'
+        | 'filterModelAsStringChanged'
+    >
     implements NamedBean
 {
     beanName: BeanName = 'colFilter';
@@ -1082,6 +1092,13 @@ export class ColumnFilterService
                     filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' });
                 });
             },
+            onModelAsStringChange: () => {
+                column.dispatchColEvent('filterChanged', 'filterChanged');
+                this.dispatchLocalEvent<FilterModelAsStringChangedEvent>({
+                    type: 'filterModelAsStringChanged',
+                    column,
+                });
+            },
             filterParams,
         });
     }
@@ -1719,7 +1736,8 @@ export class ColumnFilterService
             getModel: () => _getFilterModel(this.model, colId),
             getState: () => this.state.get(colId),
             updateState: (state) => this.updateState(column, state),
-            updateModel: (model) => getFilterUi()?.filterParams?.onModelChange(model, additionalEventAttributes),
+            updateModel: (model) =>
+                getFilterUi()?.filterParams?.onModelChange(model, { ...additionalEventAttributes, fromAction: action }),
             processModelToApply: filterWrapper?.isHandler
                 ? filterWrapper.handler.processModelToApply?.bind(filterWrapper.handler)
                 : undefined,

@@ -8,6 +8,7 @@ import type {
     ExcelRow,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
+    ExcelSheetProtection,
     ExcelWorksheet,
     XmlElement,
 } from 'ag-grid-community';
@@ -297,6 +298,82 @@ const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
     };
 };
 
+const getPasswordHash = (password: string): string => {
+    const passwordLength = password.length;
+    if (!passwordLength) {
+        return '';
+    }
+
+    const passwordArray = new Array<number>(passwordLength + 1);
+    passwordArray[0] = passwordLength;
+    for (let i = 1; i <= passwordLength; i++) {
+        passwordArray[i] = password.charCodeAt(i - 1) & 0xff;
+    }
+
+    let verifier = 0x0000;
+    for (let i = passwordArray.length - 1; i >= 0; i--) {
+        const passwordByte = passwordArray[i];
+        const intermediate1 = (verifier & 0x4000) === 0x0000 ? 0 : 1;
+        const intermediate2 = (verifier << 1) & 0x7fff;
+        verifier = (intermediate1 | intermediate2) ^ passwordByte;
+    }
+
+    return (verifier ^ 0xce4b).toString(16).toUpperCase().padStart(4, '0');
+};
+
+const addSheetProtection = (protectSheet?: boolean | ExcelSheetProtection) => {
+    return (params: ComposedWorksheetParams) => {
+        if (!protectSheet) {
+            return params;
+        }
+
+        const sheetProtection: ExcelSheetProtection = typeof protectSheet === 'boolean' ? {} : protectSheet;
+
+        const rawMap: Record<string, string | number | undefined> = {
+            sheet: 1,
+        };
+
+        const passwordHash = sheetProtection.password ? getPasswordHash(sheetProtection.password) : '';
+        if (passwordHash) {
+            rawMap.password = passwordHash;
+        }
+
+        const defaults: Record<Exclude<keyof ExcelSheetProtection, 'password'>, boolean> = {
+            autoFilter: false,
+            deleteColumns: false,
+            deleteRows: false,
+            formatCells: false,
+            formatColumns: false,
+            formatRows: false,
+            insertColumns: false,
+            insertHyperlinks: false,
+            insertRows: false,
+            pivotTables: false,
+            selectLockedCells: true,
+            selectUnlockedCells: true,
+        };
+
+        (Object.keys(defaults) as Exclude<keyof ExcelSheetProtection, 'password'>[]).forEach(
+            (key: Exclude<keyof ExcelSheetProtection, 'password'>) => {
+                const allow = sheetProtection[key];
+                if (allow == null || allow === defaults[key]) {
+                    return;
+                }
+
+                rawMap[key] = allow ? 0 : 1;
+            }
+        );
+
+        params.children.push({
+            name: 'sheetProtection',
+            properties: {
+                rawMap,
+            },
+        });
+        return params;
+    };
+};
+
 const addMergeCells = (mergeCells: string[]) => {
     return (params: ComposedWorksheetParams) => {
         if (mergeCells.length) {
@@ -532,6 +609,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             rightToLeft,
             frozenRowCount,
             frozenColumnCount,
+            protectSheet,
         } = config;
 
         const { table } = worksheet;
@@ -548,6 +626,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addSheetFormatPr(rows),
             addColumns(columns),
             addSheetData(rows, currentSheet + 1),
+            addSheetProtection(protectSheet),
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),

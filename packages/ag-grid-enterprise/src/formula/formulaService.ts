@@ -117,31 +117,31 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     private checkForIncompatibleServices(cols: _ColumnCollections): boolean {
         if (this.gos.get('masterDetail')) {
-            _warn(296, { blockedService: 'Master Detail' });
+            _warn(295, { blockedService: 'Master Detail' });
             return false;
         }
 
         if (this.gos.get('treeData')) {
-            _warn(296, { blockedService: 'Tree Data' });
+            _warn(295, { blockedService: 'Tree Data' });
             return false;
         }
 
         if (this.gos.get('enableCellExpressions')) {
-            _warn(296, { blockedService: 'Cell Expressions' });
+            _warn(295, { blockedService: 'Cell Expressions' });
             return false;
         }
 
         return cols.list.every((col) => {
             if (col.isAllowPivot() || col.isPivotActive()) {
-                _warn(296, { blockedService: 'Column Pivoting' });
+                _warn(295, { blockedService: 'Column Pivoting' });
                 return false;
             }
             if (col.isAllowRowGroup() || col.isRowGroupActive()) {
-                _warn(296, { blockedService: 'Row Groups' });
+                _warn(295, { blockedService: 'Row Groups' });
                 return false;
             }
             if (col.isAllowValue() || col.isValueActive() || col.getAggFunc()) {
-                _warn(296, { blockedService: 'Value Aggregation' });
+                _warn(295, { blockedService: 'Value Aggregation' });
                 return false;
             }
             return true;
@@ -188,12 +188,16 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         useRefFormat?: boolean;
     }): string {
         const { value, rowDelta = 0, columnDelta = 0, useRefFormat = true } = params;
-        const unsafe = !useRefFormat;
-        const ast = parseFormula(this.beans, value, unsafe);
-        shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
+        try {
+            const unsafe = !useRefFormat;
+            const ast = parseFormula(this.beans, value, unsafe);
+            shiftNode(this.beans, ast, rowDelta, columnDelta, unsafe);
 
-        // Serialize back to a formula string (REF format)
-        return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
+            // Serialize back to a formula string (REF format)
+            return serializeFormula(this.beans, ast, /*useRefFormat*/ useRefFormat, unsafe);
+        } catch {
+            return value;
+        }
     }
 
     private setupFunctions() {
@@ -319,7 +323,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return cf;
         }
 
-        const str = this.fetchRawValue(col, row);
+        const str = this.getFormulaFromDataSource(row, col) ?? this.fetchRawValue(col, row);
         if (typeof str !== 'string' || str[0] !== '=') {
             return null;
         }
@@ -332,6 +336,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         rowMap.set(col, cf);
 
         return cf;
+    }
+
+    private getFormulaFromDataSource(row: RowNode, col: AgColumn): string | undefined {
+        const dataSource = this.beans.formulaDataSvc;
+        if (!dataSource?.hasDataSource()) {
+            return undefined;
+        }
+        return dataSource.getFormula({ column: col, rowNode: row });
     }
 
     /** Fetch a non-formula value from the grid without triggering nested formula calc. */

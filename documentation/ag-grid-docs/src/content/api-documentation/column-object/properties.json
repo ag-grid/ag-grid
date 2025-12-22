@@ -139,6 +139,7 @@
             "displayName": "Sorting"
         },
         "getSort": {},
+        "getSortDef": {},
         "isSortable": {},
         "getSortIndex": {}
     },

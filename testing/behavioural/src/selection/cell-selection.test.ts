@@ -690,20 +690,63 @@ describe('Cell Selection', () => {
 
             assertColumnsSelected([], api);
 
-            await new GridRows(api, 'grid', {
-                printIds: false,
-                printRowIndices: false,
-                columns: ['sport'],
-            }).check(`
-                ROOT
-                ├── LEAF sport:"cricket"
-                ├── LEAF sport:"football"
-                ├── LEAF sport:"golf"
-                ├── LEAF sport:"rowing"
-                ├── LEAF sport:"rugby"
-                ├── LEAF sport:"swimming"
-                └── LEAF sport:"tennis"
+            await new GridRows(api, 'grid').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:3 sport:"cricket" year:2003 amount:11 day:"friday"
+                ├── LEAF id:0 sport:"football" year:2021 amount:43 day:"monday"
+                ├── LEAF id:4 sport:"golf" year:2021 amount:7 day:"monday"
+                ├── LEAF id:6 sport:"rowing" year:2019 amount:32 day:"saturday"
+                ├── LEAF id:1 sport:"rugby" year:2020 amount:102 day:"sunday"
+                ├── LEAF id:5 sport:"swimming" year:2020 amount:93 day:"tuesday"
+                └── LEAF id:2 sport:"tennis" year:2018 amount:235 day:"thursday"
             `);
+        });
+
+        test('CTRL-click group header de-selects children from existing spanning range', async () => {
+            const userSession = userEvent.setup();
+
+            const [api] = await createGrid({
+                columnDefs: [
+                    {
+                        field: 'sport',
+                    },
+                    {
+                        headerName: 'Category A1',
+                        children: [
+                            {
+                                headerName: 'Category A2',
+                                children: [{ field: 'year' }, { field: 'amount' }],
+                            },
+                        ],
+                    },
+                    {
+                        headerName: 'Category B1',
+                        children: [{ field: 'day' }],
+                    },
+                ],
+                rowData,
+                cellSelection: { enableColumnSelection: true },
+            });
+
+            const gridDiv = getGridElement(api)! as HTMLElement;
+
+            const sportHeader = getByTestId(gridDiv, agTestIdFor.headerCell('sport'));
+            const catA1Header = getByTestId(gridDiv, agTestIdFor.headerGroupCell('1_0'));
+            const dayHeader = getByTestId(gridDiv, agTestIdFor.headerCell('day'));
+
+            await userSession.click(sportHeader.querySelector('.ag-header-cell-label')!);
+
+            await userSession.keyboard('{Shift>}');
+            await userSession.click(dayHeader.querySelector('.ag-header-cell-label')!);
+            await userSession.keyboard('{/Shift}');
+
+            assertColumnsSelected([['sport', 'year', 'amount', 'day']], api);
+
+            await userSession.keyboard('{Control>}');
+            await userSession.click(catA1Header.querySelector('.ag-header-group-cell-label')!);
+            await userSession.keyboard('{/Control}');
+
+            assertColumnsSelected([['sport', 'day']], api);
         });
     });
 });

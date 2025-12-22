@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_CN = {
     searchOoo: '搜索...',
     blanks: '(空白)',
     noMatches: '无匹配项',
+    typeToSearchOoo: '输入内容进行搜索...',
 
     // Number Filter & Text Filter
     filterOoo: '过滤...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_CN = {
     maxDateValidation: '日期必须在 ${variable} 之前',
     maxLengthValidation: '必须少于或等于 ${variable} 个字符',
     minValueValidation: '必须大于或等于 ${variable}',
-    maxValueValidation: '必须小于或等于 ${variable}',
+    maxValueValidation: '必须小于或等于${variable}',
+    strictMinValueValidation: '必须大于${variable}',
+    strictMaxValueValidation: '必须小于${variable}',
     invalidSelectionValidation: '无效的选择',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_CN = {
     loadingOoo: '加载中...',
     loadingError: '错误',
     noRowsToShow: '无显示行',
+    noMatchingRows: '无匹配行',
+    exportingOoo: '正在导出...',
     enabled: '启用',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_CN = {
     chooseColumns: '选择列',
     sortAscending: '升序排列',
     sortDescending: '降序排列',
+    sortAbsoluteAscending: '绝对升序排序',
+    sortAbsoluteDescending: '绝对降序排序',
     sortUnSort: '清除排序',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_CN = {
     ariaChecked: '已选中',
     ariaColumn: '列',
     ariaColumnGroup: '列组',
+    ariaFilterActive: '筛选已激活',
     ariaColumnFiltered: '列已过滤',
     ariaColumnSelectAll: '切换所有列的可见性',
     ariaDateFilterInput: '日期过滤器输入',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_CN = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' 的 ',
     ariaDropZoneColumnComponentSortAscending: '升序',
     ariaDropZoneColumnComponentSortDescending: '降序',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '绝对升序',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '绝对降序',
     ariaLabelDialog: '对话框',
     ariaLabelColumnMenu: '列菜单',
     ariaLabelColumnFilter: '列过滤器',

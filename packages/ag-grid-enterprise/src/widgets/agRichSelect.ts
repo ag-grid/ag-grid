@@ -221,7 +221,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         });
     }
 
-    private renderSelectedValue(): void {
+    private renderSelectedValue(fromPicker?: boolean): void {
         const { value, eDisplayField, config, gos } = this;
         const {
             allowTyping,
@@ -232,12 +232,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             suppressDeselectAll,
             suppressMultiSelectPillRenderer,
             valueFormatter,
+            onSearch,
         } = config;
 
         const valueFormatted = formatValueFn(value, valueFormatter);
 
         if (allowTyping) {
-            this.eInput.setValue(initialInputValue ?? valueFormatted);
+            /**
+             * Suppress event in full async mode when item is selected to prevent redundant async filtering call for valid options.
+             */
+            this.eInput.setValue(initialInputValue ?? valueFormatted, !!fromPicker && !!onSearch);
             return;
         }
 
@@ -370,7 +374,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         this.listComponent?.setIsLoading();
         valueList.then((values) => {
-            this.setValueListInternal({ ...params, valueList: values });
+            if (values) {
+                this.setValueListInternal({ ...params, valueList: values });
+            }
         });
     }
 
@@ -670,7 +676,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         super.setValue(value, silent);
 
         if (!skipRendering) {
-            this.renderSelectedValue();
+            this.renderSelectedValue(fromPicker);
         }
 
         return this;

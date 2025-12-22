@@ -121,74 +121,86 @@ import type { EditStrategyType } from '../interfaces/editStrategyType';
 import type { EditValidationCommitType } from '../interfaces/editValidationCommitType';
 import type {
     CsvExportParams,
-    ProcessCellForExportParams,
-    ProcessGroupHeaderForExportParams,
-    ProcessHeaderForExportParams,
+    ProcessCellForClipboard,
+    ProcessCellFromClipboard,
+    ProcessGroupHeaderForClipboard,
+    ProcessHeaderForClipboard,
 } from '../interfaces/exportParams';
-import type { FormulaFunctionParams } from '../interfaces/formulas';
+import type { FormulaDataSource, FormulaFuncs } from '../interfaces/formulas';
 import type { GridState } from '../interfaces/gridState';
 import type { IAdvancedFilterBuilderParams } from '../interfaces/iAdvancedFilterBuilderParams';
 import type { IAdvancedFilterParams } from '../interfaces/iAdvancedFilterParams';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type {
+    DoesExternalFilterPass,
+    FillOperation,
     FillOperationParams,
-    FocusGridInnerElementParams,
+    FocusGridInnerElement,
     FullRowEditValidationParams,
+    GetBusinessKeyForNode,
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
+    GetChildCount,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
     GetGroupIncludeTotalRowParams,
-    GetGroupRowAggParams,
-    GetLocaleTextParams,
+    GetGroupRowAgg,
+    GetLocaleText,
     GetMainMenuItemsParams,
+    GetRowHeight,
     GetRowIdParams,
-    GetServerSideGroupLevelParamsParams,
-    InitialGroupOrderComparatorParams,
+    GetServerSideGroupLevelParams,
+    InitialGroupOrderComparator,
     IsApplyServerSideTransactionParams,
-    IsExternalFilterPresentParams,
-    IsFullWidthRowParams,
-    IsGroupOpenByDefaultParams,
-    IsServerSideGroupOpenByDefaultParams,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    PostProcessPopupParams,
-    PostSortRowsParams,
-    ProcessDataFromClipboardParams,
-    ProcessRowParams,
-    ProcessUnpinnedColumnsParams,
-    RowHeightParams,
-    SendToClipboardParams,
-    TabToNextCellParams,
-    TabToNextHeaderParams,
+    IsExternalFilterPresent,
+    IsFullWidthRow,
+    IsGroupOpenByDefault,
+    IsServerSideGroupOpenByDefault,
+    NavigateToNextCell,
+    NavigateToNextHeader,
+    PaginationNumberFormatter,
+    PostProcessPopup,
+    PostSortRows,
+    ProcessDataFromClipboard,
+    ProcessRowPostCreate,
+    ProcessUnpinnedColumns,
+    SendToClipboard,
+    TabToNextCell,
+    TabToNextHeader,
 } from '../interfaces/iCallbackParams';
-import type { CellPosition } from '../interfaces/iCellPosition';
 import type {
     ChartToolPanelsDef,
     ChartToolbarMenuItemOptions,
     DefaultChartMenuItem,
 } from '../interfaces/iChartOptions';
-import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
-import type { CreateFilterHandlerFunc } from '../interfaces/iFilter';
+import type { AlwaysPassFilter, FilterHandlers, QuickFilterMatcher, QuickFilterParser } from '../interfaces/iFilter';
 import type { FindOptions } from '../interfaces/iFind';
-import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
-import type { IRowDragItem } from '../interfaces/iRowDragItem';
+import type { RowDragTextFunc } from '../interfaces/iRowDragItem';
 import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
-import type { StatusPanelDef } from '../interfaces/iStatusPanel';
+import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
-import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
-import type { DataTypeDefinition } from './dataType';
+import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
+import type { Icons } from '../utils/icon';
+import type {
+    CheckboxSelectionCallback,
+    ColDef,
+    ColGroupDef,
+    ColTypeDefs,
+    GroupHierarchyConfig,
+    IAggFuncs,
+    SortDirection,
+} from './colDef';
+import type { DataTypeDefinitions } from './dataType';
 
 export interface GridOptions<TData = any> {
     // ******************************************************************************************************
@@ -200,7 +212,7 @@ export interface GridOptions<TData = any> {
      * Specifies the status bar components to use in the status bar.
      * @agModule `StatusBarModule`
      */
-    statusBar?: { statusPanels: StatusPanelDef[] };
+    statusBar?: StatusBar;
     /**
      * Specifies the side bar components.
      * @agModule `SideBarModule`
@@ -369,16 +381,14 @@ export interface GridOptions<TData = any> {
     /**
      * An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.
      */
-    columnTypes?: { [key: string]: ColTypeDef<TData> };
+    columnTypes?: ColTypeDefs<TData>;
     /**
      * An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
      * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
      * or can be custom data types.
      */
-    dataTypeDefinitions?: {
-        [cellDataType: string]: DataTypeDefinition<TData>;
-    };
+    dataTypeDefinitions?: DataTypeDefinitions<TData>;
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *
@@ -514,7 +524,7 @@ export interface GridOptions<TData = any> {
      * A map of component names to components.
      * @initial
      */
-    components?: { [p: string]: any };
+    components?: Components;
 
     // *** Editing *** //
     /**
@@ -665,12 +675,12 @@ export interface GridOptions<TData = any> {
      * Changes how the Quick Filter splits the Quick Filter text into search terms.
      * @agModule `QuickFilterModule`
      */
-    quickFilterParser?: (quickFilter: string) => string[];
+    quickFilterParser?: QuickFilterParser;
     /**
      * Changes the matching logic for whether a row passes the Quick Filter.
      * @agModule `QuickFilterModule`
      */
-    quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
+    quickFilterMatcher?: QuickFilterMatcher;
     /**
      * When pivoting, Quick Filter is only applied on the pivoted data
      * (or aggregated data if `groupAggFiltering = true`).
@@ -697,7 +707,7 @@ export interface GridOptions<TData = any> {
      * Only works with the Client-Side Row Model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
      */
-    alwaysPassFilter?: (rowNode: IRowNode<TData>) => boolean;
+    alwaysPassFilter?: AlwaysPassFilter<TData>;
 
     /**
      * Hidden columns are excluded from the Advanced Filter by default.
@@ -751,7 +761,7 @@ export interface GridOptions<TData = any> {
      * Allows for filter handler keys to be used in `colDef.filter.handler`.
      * @initial
      */
-    filterHandlers?: { [key: string]: CreateFilterHandlerFunc<TData> };
+    filterHandlers?: FilterHandlers<TData>;
 
     // *** Integrated Charts *** //
     /**
@@ -772,7 +782,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    customChartThemes?: { [name: string]: AgChartTheme };
+    customChartThemes?: CustomChartThemes;
     /**
      * Chart theme overrides applied to all themes.
      * @initial
@@ -814,7 +824,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `LocaleModule`
      */
-    localeText?: { [key: string]: string };
+    localeText?: LocaleText;
 
     // *** Master Detail *** //
     /**
@@ -950,25 +960,34 @@ export interface GridOptions<TData = any> {
     // *** Overlays *** //
     /**
      * Show or hide the loading overlay.
+     * - `true`: the loading overlay is shown.
+     * - `false`: the loading overlay is hidden.
+     * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
+     * @default undefined
      */
     loading?: boolean;
 
     /**
      * Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * @initial
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
+     *
+     * - **Prefer using `overlayComponentParams`**
      */
     loadingOverlayComponentParams?: any;
     /**
      * Disables the 'loading' overlay.
-     * @deprecated v32 - Deprecated. Use `loading=false` instead.
+     * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
      * @default false
      * @initial
      */
@@ -976,23 +995,69 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     overlayNoRowsTemplate?: string;
     /**
      * Provide a custom no-rows overlay component.
-     * @initial
+     *
+     * - **Prefer `overlayComponent` / `overlayComponentSelector`**
      */
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no-rows overlay component.
+     *
+     * - **Prefer using `overlayComponentParams`**
      */
     noRowsOverlayComponentParams?: any;
     /**
      * Set to `true` to prevent the no-rows overlay being shown when there is no row data.
+     *
+     * - **Prefer `suppressOverlays=['noRows']`**
+     *
      * @default false
      * @initial
      */
     suppressNoRowsOverlay?: boolean;
+
+    /**
+     * List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+     */
+    suppressOverlays?: OverlayType[];
+
+    /**
+     * Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
+     * @initial
+     */
+    overlayComponent?: any;
+
+    /**
+     * Customise the parameters provided to the `overlayComponent`.
+     * Provided overlays accept parameters specified on the `OverlayComponentUserParams` interface.
+     * Any custom parameters can also be provided for custom overlay components.
+     */
+    overlayComponentParams?: any;
+
+    /**
+     * Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.
+     * @initial
+     */
+    overlayComponentSelector?: OverlaySelectorFunc<TData>;
+
+    /**
+     * Display an overlay on demand. If provided takes precedence over the grid provided overlays.
+     * - name of a provided overlay, i.e `agLoadingOverlay`, `agNoRowsOverlay`, `agNoMatchingRowsOverlay`, `agExportingOverlay`
+     * - component class/function.
+     * - key of a custom component registered in the `components` map.
+     * - `undefined` to clear.
+     */
+    activeOverlay?: any;
+
+    /**
+     * Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
+     */
+    activeOverlayParams?: any;
 
     // *** Pagination *** //
     /**
@@ -1101,14 +1166,22 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
-    aggFuncs?: { [key: string]: IAggFunc<TData> };
+    aggFuncs?: IAggFuncs<TData>;
+
+    /**
+     * Provide a data source to control where formulas are stored and retrieved.
+     * If not supplied, formulas are read from and written to the row data.
+     * @initial
+     * @agModule `FormulaModule`
+     */
+    formulaDataSource?: FormulaDataSource;
 
     /**
      * A map of 'function name' to 'function' for custom functions that are used for formulas.
      * @initial
      * @agModule `FormulaModule`
      */
-    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } };
+    formulaFuncs?: FormulaFuncs;
 
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
@@ -1267,7 +1340,7 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `RowDragModule`
      */
-    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
+    rowDragText?: RowDragTextFunc;
     /**
      * Provide a custom drag and drop image component.
      * @initial
@@ -1324,6 +1397,7 @@ export interface GridOptions<TData = any> {
     autoGroupColumnDef?: AutoGroupColumnDef<TData>;
     /**
      * When `true`, preserves the current group order when sorting on non-group columns.
+     * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
      * @default false
      * @agModule `RowGroupingModule`
      */
@@ -1479,7 +1553,7 @@ export interface GridOptions<TData = any> {
      * Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
      * @agModule `RowGroupingModule`
      */
-    groupHierarchyConfig?: { [k: string]: ColDef };
+    groupHierarchyConfig?: GroupHierarchyConfig;
 
     // *** Row Pinning *** //
     /**
@@ -1860,7 +1934,7 @@ export interface GridOptions<TData = any> {
      * Icons to use inside the grid instead of the grid's default icons.
      * @initial
      */
-    icons?: { [key: string]: ((...args: any[]) => any) | string };
+    icons?: Icons;
     /**
      * Default row height in pixels.
      * @default 25
@@ -1963,10 +2037,13 @@ export interface GridOptions<TData = any> {
     loadThemeGoogleFonts?: boolean;
 
     /**
-     * The CSS layer that this theme should be rendered onto. If your
-     * application loads its styles into a CSS layer, use this to load the grid
-     * styles into a previous layer so that application styles can override grid
-     * styles.
+     * The CSS layer that this theme should be rendered onto. When specified,
+     * grid CSS will be wrapped in a `@layer ${themeCssLayer} { ... }` block.
+     *
+     * NOTE: when specifying `themeCssLayer` we recommend setting
+     * `themeStyleContainer` to `document.body` to ensure that the grid CSS
+     * comes after your application CSS, allowing your application to set the
+     * order of layers.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
      */
@@ -1985,14 +2062,16 @@ export interface GridOptions<TData = any> {
 
     /**
      * An element to insert style elements into when injecting styles into the
-     * grid. If undefined, styles will be added to the document head for grids
+     * grid. Styles are inserted at the start of the element.
+     *
+     * If undefined, styles will be added to the document head for grids
      * rendered in the main document fragment, or to the grid wrapper element
      * for other grids (e.g. those rendered in a shadow DOM or detached from the
      * document).
      *
      * @initial
      */
-    themeStyleContainer?: HTMLElement;
+    themeStyleContainer?: HTMLElement | (() => HTMLElement | void);
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
@@ -2013,7 +2092,7 @@ export interface GridOptions<TData = any> {
     /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
-    postProcessPopup?: (params: PostProcessPopupParams<TData>) => void;
+    postProcessPopup?: PostProcessPopup<TData>;
 
     // *** Columns *** //
     /**
@@ -2021,51 +2100,51 @@ export interface GridOptions<TData = any> {
      * Returns an array of columns to be removed from the pinned areas.
      * @initial
      */
-    processUnpinnedColumns?: (params: ProcessUnpinnedColumnsParams<TData>) => Column[];
+    processUnpinnedColumns?: ProcessUnpinnedColumns<TData>;
 
     // *** Clipboard *** //
     /**
      * Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.
      * @agModule `ClipboardModule`
      */
-    processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any;
+    processCellForClipboard?: ProcessCellForClipboard<TData>;
     /**
      * Allows you to process header values for the clipboard.
      * @agModule `ClipboardModule`
      */
-    processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any;
+    processHeaderForClipboard?: ProcessHeaderForClipboard<TData>;
     /**
      * Allows you to process group header values for the clipboard.
      * @agModule `ClipboardModule`
      */
-    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
+    processGroupHeaderForClipboard?: ProcessGroupHeaderForClipboard<TData>;
     /**
      * Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
      * @agModule `ClipboardModule`
      */
-    processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
+    processCellFromClipboard?: ProcessCellFromClipboard<TData>;
     /**
      * Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.
      * @agModule `ClipboardModule`
      */
-    sendToClipboard?: (params: SendToClipboardParams<TData>) => void;
+    sendToClipboard?: SendToClipboard<TData>;
     /**
      * Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
      * @agModule `ClipboardModule`
      */
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData>) => string[][] | null;
+    processDataFromClipboard?: ProcessDataFromClipboard<TData>;
 
     // *** Filtering *** //
     /**
      * Grid calls this method to know if an external filter is present.
      * @agModule `ExternalFilterModule`
      */
-    isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean;
+    isExternalFilterPresent?: IsExternalFilterPresent<TData>;
     /**
      * Should return `true` if external filter passes, otherwise `false`.
      * @agModule `ExternalFilterModule`
      */
-    doesExternalFilterPass?: (node: IRowNode<TData>) => boolean;
+    doesExternalFilterPass?: DoesExternalFilterPass<TData>;
 
     // *** Integrated Charts *** //
     /**
@@ -2079,34 +2158,34 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `IntegratedChartsModule`
      */
-    createChartContainer?: (params: ChartRefParams<TData>) => void;
+    createChartContainer?: CreateChartContainer<TData>;
 
     // *** Keyboard Navigation *** //
     /**
      * Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
      * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
      */
-    focusGridInnerElement?: (params: FocusGridInnerElementParams<TData>) => boolean;
+    focusGridInnerElement?: FocusGridInnerElement<TData>;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
      */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null;
+    navigateToNextHeader?: NavigateToNextHeader<TData>;
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
      * Return the next header position to navigate to, `true` to stay on the current header,
      * or `false` to let the browser handle the tab behaviour.
      */
-    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean;
+    tabToNextHeader?: TabToNextHeader<TData>;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
      */
-    navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => CellPosition | null;
+    navigateToNextCell?: NavigateToNextCell<TData>;
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
      * Return the next cell position to navigate to, `true` to stay on the current cell,
      * or `false` to let the browser handle the tab behaviour.
      */
-    tabToNextCell?: (params: TabToNextCellParams<TData>) => CellPosition | boolean;
+    tabToNextCell?: TabToNextCell<TData>;
 
     // *** Localisation *** //
     /**
@@ -2114,13 +2193,13 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `LocaleModule`
      */
-    getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
+    getLocaleText?: GetLocaleText<TData>;
 
     // *** Miscellaneous *** //
     /**
      * Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)
      */
-    getDocument?: () => Document;
+    getDocument?: GetDocument;
 
     // *** Pagination *** //
     /**
@@ -2128,19 +2207,19 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `PaginationModule`
      */
-    paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
+    paginationNumberFormatter?: PaginationNumberFormatter<TData>;
 
     // *** Row Grouping and Pivoting *** //
     /**
      * Callback to use when you need access to more then the current column for aggregation.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
-    getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
+    getGroupRowAgg?: GetGroupRowAgg<TData>;
     /**
      * (Client-side Row Model only) Allows groups to be open by default.
      * @agModule `RowGroupingModule` / `TreeDataModule`
      */
-    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
+    isGroupOpenByDefault?: IsGroupOpenByDefault<TData>;
     /**
      * Controls how expand/collapse operations affect all rows and group interactions.
      * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
@@ -2152,17 +2231,17 @@ export interface GridOptions<TData = any> {
      * Allows default sorting of groups.
      * @agModule `RowGroupingModule`
      */
-    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
+    initialGroupOrderComparator?: InitialGroupOrderComparator<TData>;
     /**
      * Callback for the mutation of the generated pivot result column definitions
      * @agModule `PivotModule`
      */
-    processPivotResultColDef?: (colDef: ColDef<TData>) => void;
+    processPivotResultColDef?: ProcessPivotResultColDef<TData>;
     /**
      * Callback for the mutation of the generated pivot result column group definitions
      * @agModule `PivotModule`
      */
-    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
+    processPivotResultColGroupDef?: ProcessPivotResultColGroupDef<TData>;
     /**
      * Callback to be used when working with Tree Data when `treeData = true`.
      * @initial
@@ -2176,18 +2255,18 @@ export interface GridOptions<TData = any> {
      * @initial
      * @agModule `ServerSideRowModelModule`
      */
-    getChildCount?: (dataItem: any) => number;
+    getChildCount?: GetChildCount;
     /**
      * Allows providing different params for different levels of grouping.
      * @initial
      * @agModule `ServerSideRowModelModule`
      */
-    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams;
+    getServerSideGroupLevelParams?: GetServerSideGroupLevelParams<TData>;
     /**
      * Allows groups to be open by default.
      * @agModule `ServerSideRowModelModule`
      */
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean;
+    isServerSideGroupOpenByDefault?: IsServerSideGroupOpenByDefault<TData>;
     /**
      * Allows cancelling transactions.
      * @agModule `ServerSideRowModelModule`
@@ -2209,7 +2288,7 @@ export interface GridOptions<TData = any> {
      * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
-    getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
+    getBusinessKeyForNode?: GetBusinessKeyForNode<TData>;
 
     /**
      * Provide a pure function that returns a string ID to uniquely identify a given row. This enables the grid to work optimally with data changes and updates.
@@ -2225,7 +2304,7 @@ export interface GridOptions<TData = any> {
     /**
      * Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
      */
-    processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
+    processRowPostCreate?: ProcessRowPostCreate<TData>;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
      * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
@@ -2240,33 +2319,33 @@ export interface GridOptions<TData = any> {
      * Callback to fill values instead of simply copying values or increasing number values using linear progression.
      * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
      */
-    fillOperation?: (params: FillOperationParams<TData>) => any;
+    fillOperation?: FillOperation<TData>;
 
     // *** Sorting *** //
     /**
      * Callback to perform additional sorting after the grid has sorted the rows.
      */
-    postSortRows?: (params: PostSortRowsParams<TData>) => void;
+    postSortRows?: PostSortRows<TData>;
 
     // *** Styling *** //
     /**
      * Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
      * @agModule `RowStyleModule`
      */
-    getRowStyle?: (params: RowClassParams<TData>) => RowStyle | undefined;
+    getRowStyle?: GetRowStyle<TData>;
     /**
      * Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.
      * @agModule `RowStyleModule`
      */
-    getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
+    getRowClass?: GetRowClass<TData>;
     /**
      * Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.
      */
-    getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
+    getRowHeight?: GetRowHeight<TData>;
     /**
      * Tells the grid if this row should be rendered as full width.
      */
-    isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
+    isFullWidthRow?: IsFullWidthRow<TData>;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -2778,51 +2857,50 @@ export interface GridOptions<TData = any> {
     onSortChanged?(event: SortChangedEvent<TData>): void;
 }
 
+/**
+ * Map of locale key to localized value
+ */
+export type LocaleText = { [key: string]: string };
+/**
+ * Map of custom chart themes
+ */
+export type CustomChartThemes = { [name: string]: AgChartTheme };
+/**
+ * Map of custom components keyed by string
+ */
+export type Components = { [p: string]: any };
+
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
 export type TreeDataDisplayType = 'auto' | 'custom';
 
-export interface GetDataPath<TData = any> {
-    (data: TData): string[];
-}
+export type GetDataPath<TData = any> = (data: TData) => string[];
 
-export interface IsServerSideGroup {
-    (dataItem: any): boolean;
-}
+export type IsServerSideGroup = (dataItem: any) => boolean;
 
-export interface IsRowFilterable<TData = any, TContext = any> {
-    (params: GetGroupAggFilteringParams<TData, TContext>): boolean;
-}
+export type IsRowFilterable<TData = any, TContext = any> = (
+    params: GetGroupAggFilteringParams<TData, TContext>
+) => boolean;
 
-export interface UseGroupFooter<TData = any, TContext = any> {
-    (params: GetGroupIncludeFooterParams<TData, TContext>): boolean;
-}
+export type UseGroupFooter<TData = any, TContext = any> = (
+    params: GetGroupIncludeFooterParams<TData, TContext>
+) => boolean;
 
-export interface UseGroupTotalRow<TData = any, TContext = any> {
-    (params: GetGroupIncludeTotalRowParams<TData, TContext>): 'top' | 'bottom' | undefined;
-}
+export type UseGroupTotalRow<TData = any, TContext = any> = (
+    params: GetGroupIncludeTotalRowParams<TData, TContext>
+) => 'top' | 'bottom' | undefined;
 
-export interface IsApplyServerSideTransaction<TData = any, TContext = any> {
-    (params: IsApplyServerSideTransactionParams<TData, TContext>): boolean;
-}
-export interface GetServerSideGroupKey {
-    (dataItem: any): string;
-}
+export type IsApplyServerSideTransaction<TData = any, TContext = any> = (
+    params: IsApplyServerSideTransactionParams<TData, TContext>
+) => boolean;
+export type GetServerSideGroupKey = (dataItem: any) => string;
 
-export interface IsRowMaster<TData = any> {
-    (dataItem: TData): boolean;
-}
+export type IsRowMaster<TData = any> = (dataItem: TData) => boolean;
 
-export interface IsRowSelectable<TData = any> {
-    (node: IRowNode<TData>): boolean;
-}
+export type IsRowSelectable<TData = any> = (node: IRowNode<TData>) => boolean;
 
-export interface IsRowPinnable<TData = any> {
-    (node: IRowNode<TData>): boolean;
-}
+export type IsRowPinnable<TData = any> = (node: IRowNode<TData>) => boolean;
 
-export interface IsRowPinned<TData = any> {
-    (node: IRowNode<TData>): RowPinnedType;
-}
+export type IsRowPinned<TData = any> = (node: IRowNode<TData>) => RowPinnedType;
 
 export interface RowClassRules<TData = any, TContext = any> {
     [cssClassName: string]: ((params: RowClassParams<TData, TContext>) => boolean) | string;
@@ -2832,6 +2910,12 @@ export interface RowStyle {
     [cssProperty: string]: string | number;
 }
 
+export type GetRowStyle<TData = any, TContext = any> = (
+    params: RowClassParams<TData, TContext>
+) => RowStyle | undefined;
+export type GetRowClass<TData = any, TContext = any> = (
+    params: RowClassParams<TData, TContext>
+) => string | string[] | undefined;
 export interface RowClassParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * The data associated with this row from rowData. Data is `undefined` for row groups.
@@ -2850,37 +2934,29 @@ type MenuCallbackReturn<TMenuItem extends string, TData = any, TContext = any> =
     | MenuItemDef<TData, TContext>
 )[];
 
-export interface GetContextMenuItems<TData = any, TContext = any> {
-    (
-        params: GetContextMenuItemsParams<TData, TContext>
-    ):
-        | MenuCallbackReturn<DefaultMenuItem, TData, TContext>
-        | Promise<MenuCallbackReturn<DefaultMenuItem, TData, TContext>>;
-}
+export type GetContextMenuItems<TData = any, TContext = any> = (
+    params: GetContextMenuItemsParams<TData, TContext>
+) =>
+    | MenuCallbackReturn<DefaultMenuItem, TData, TContext>
+    | Promise<MenuCallbackReturn<DefaultMenuItem, TData, TContext>>;
 
-export interface GetFullRowEditValidationErrors {
-    (params: FullRowEditValidationParams): string[] | null;
-}
+export type GetFullRowEditValidationErrors = (params: FullRowEditValidationParams) => string[] | null;
 
-export interface GetChartToolbarItems<TData = any, TContext = any> {
-    (params: GetChartToolbarItemsParams<TData, TContext>): ChartToolbarMenuItemOptions[];
-}
+export type GetChartToolbarItems<TData = any, TContext = any> = (
+    params: GetChartToolbarItemsParams<TData, TContext>
+) => ChartToolbarMenuItemOptions[];
 
-export interface GetMainMenuItems<TData = any, TContext = any> {
-    (params: GetMainMenuItemsParams<TData, TContext>): MenuCallbackReturn<DefaultMenuItem, TData, TContext>;
-}
+export type GetMainMenuItems<TData = any, TContext = any> = (
+    params: GetMainMenuItemsParams<TData, TContext>
+) => MenuCallbackReturn<DefaultMenuItem, TData, TContext>;
 
-export interface GetChartMenuItems<TData = any, TContext = any> {
-    (params: GetChartMenuItemsParams<TData, TContext>): MenuCallbackReturn<DefaultChartMenuItem, TData, TContext>;
-}
+export type GetChartMenuItems<TData = any, TContext = any> = (
+    params: GetChartMenuItemsParams<TData, TContext>
+) => MenuCallbackReturn<DefaultChartMenuItem, TData, TContext>;
 
-export interface GetRowNodeIdFunc<TData = any> {
-    (data: TData): string;
-}
+export type GetRowNodeIdFunc<TData = any> = (data: TData) => string;
 
-export interface GetRowIdFunc<TData = any, TContext = any> {
-    (params: GetRowIdParams<TData, TContext>): string;
-}
+export type GetRowIdFunc<TData = any, TContext = any> = (params: GetRowIdParams<TData, TContext>) => string;
 
 export interface ChartRef {
     /**
@@ -2910,30 +2986,14 @@ export interface ChartRef {
     setMaximized: (maximized: boolean) => void;
 }
 
+export type CreateChartContainer<TData = any, TContext = any> = (params: ChartRefParams<TData, TContext>) => void;
 export interface ChartRefParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, ChartRef {}
 
-export interface ServerSideGroupLevelParams {
-    /**
-     * For Infinite Scroll only.
-     * How many blocks to keep in cache.
-     * If missing, defaults to grid options `maxBlocksInCache`.
-     */
-    maxBlocksInCache?: number;
-    /**
-     * For Infinite Scroll only.
-     * Cache block size.
-     * If missing, defaults to grid options `cacheBlockSize`.
-     */
-    cacheBlockSize?: number;
-}
+export type GetDocument = () => Document;
 
-/**
- * @deprecated use ServerSideGroupLevelParams instead */
-export interface ServerSideStoreParams extends ServerSideGroupLevelParams {}
-
-export interface LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> {
-    (params: ILoadingCellRendererParams<TData, TValue, TContext>): LoadingCellRendererSelectorResult | undefined;
-}
+export type LoadingCellRendererSelectorFunc<TData = any, TValue = any, TContext = any> = (
+    params: ILoadingCellRendererParams<TData, TValue, TContext>
+) => LoadingCellRendererSelectorResult | undefined;
 export interface LoadingCellRendererSelectorResult {
     /**
      * Equivalent of setting `loadingCellRenderer` */
@@ -3184,3 +3244,6 @@ export type CheckboxLocation = 'selectionColumn' | 'autoGroupColumn';
 export type MasterSelectionMode = NonNullable<CommonRowSelectionOptions['masterSelects']>;
 
 export type AgPublicEventHandlerType = `on${Capitalize<AgPublicEventType>}` & keyof GridOptions;
+
+export type ProcessPivotResultColDef<TData = any, TValue = any> = (colDef: ColDef<TData, TValue>) => void;
+export type ProcessPivotResultColGroupDef<TData = any> = (colDef: ColGroupDef<TData>) => void;

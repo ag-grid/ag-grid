@@ -283,14 +283,12 @@ export class PaginationService extends BeanStub implements NamedBean {
         }
 
         this.topDisplayedRowIndex = rowModel.getTopLevelRowDisplayedIndex(masterPageStartIndex);
-        // masterRows[masterPageStartIndex].rowIndex;
 
         if (masterPageEndIndex === masterLastRowIndex) {
             // if showing the last master row, then we want to show the very last row of the model
             this.bottomDisplayedRowIndex = rowModel.getRowCount() - 1;
         } else {
             const firstIndexNotToShow = rowModel.getTopLevelRowDisplayedIndex(masterPageEndIndex + 1);
-            //masterRows[masterPageEndIndex + 1].rowIndex;
             // this gets the index of the last child - eg current row is open, we want to display all children,
             // the index of the last child is one less than the index of the next parent row.
             this.bottomDisplayedRowIndex = firstIndexNotToShow - 1;

@@ -340,6 +340,7 @@
         },
         {
             "name": "Accessories",
+            "isEnterprise": true,
             "children": [
                 {
                     "name": "Tool Panels",
@@ -393,6 +394,7 @@
         },
         {
             "name": "AI Features",
+            "isEnterprise": true,
             "children": [
                 {
                     "moduleName": "AiToolkitModule",

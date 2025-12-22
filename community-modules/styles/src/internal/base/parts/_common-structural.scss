@@ -299,7 +299,9 @@
     .ag-floating-bottom-full-width-container,
     .ag-virtual-list-container,
     .ag-sticky-top-container,
-    .ag-sticky-bottom-container {
+    .ag-sticky-bottom-container,
+    .ag-pinned-left-sticky-bottom,
+    .ag-pinned-right-sticky-bottom {
         position: relative;
     }
 
@@ -1054,7 +1056,9 @@
         text-align: center;
     }
 
-    .ag-overlay-loading-wrapper {
+    .ag-overlay-loading-wrapper,
+    .ag-overlay-exporting-wrapper,
+    .ag-overlay-modal-wrapper {
         // prevent interaction with grid while it's loading
         pointer-events: all;
     }

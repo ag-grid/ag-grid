@@ -865,13 +865,49 @@
             "displayName": "Overlays",
             "page": {
                 "name": "Overlays",
-                "url": "./overlays/"
+                "url": "./overlays-overview/"
             }
         },
         "loading": {
             "more": {
                 "name": "Loading Overlay",
-                "url": "./overlays/#loading-overlay"
+                "url": "./overlays-provided/#loading"
+            }
+        },
+        "overlayComponent": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "overlayComponentParams": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "overlayComponentSelector": {
+            "more": {
+                "name": "Overlay Component",
+                "url": "./overlays-provided/#customisation"
+            }
+        },
+        "suppressOverlays": {
+            "more": {
+                "name": "Suppress Overlays",
+                "url": "./overlays-provided/#suppress-overlays"
+            }
+        },
+        "activeOverlay": {
+            "more": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        },
+        "activeOverlayParams": {
+            "more": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
             }
         },
         "overlayLoadingTemplate": {
@@ -881,7 +917,6 @@
             }
         },
         "loadingOverlayComponent": {
-            "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
                 "url": "./overlays/"
@@ -906,7 +941,6 @@
             }
         },
         "noRowsOverlayComponent": {
-            "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
                 "url": "./overlays/"
@@ -1067,7 +1101,17 @@
         },
         "suppressStickyTotalRow": {},
         "alwaysAggregateAtRootLevel": {},
-        "getGroupRowAgg": {},
+        "getGroupRowAgg": {}
+    },
+    "formulas": {
+        "meta": {
+            "displayName": "Formulas",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
+        "formulaDataSource": {},
         "formulaFuncs": {}
     },
     "rowPivoting": {
@@ -1438,6 +1482,12 @@
             "more": {
                 "name": "Row Grouping - Expand All / Collapse All",
                 "url": "./server-side-model-grouping/#expand-all--collapse-all"
+            }
+        },
+        "refreshAfterGroupEdit": {
+            "more": {
+                "name": "Row Grouping - Editing Groups",
+                "url": "./grouping-edit"
             }
         }
     },
@@ -1851,8 +1901,8 @@
         },
         "accentedSort": {
             "more": {
-                "name": "Accented Sort",
-                "url": "./row-sorting/#accented-sort"
+                "name": "Locale-specific Sort",
+                "url": "./row-sorting/#locale-specific-sort"
             }
         },
         "suppressMultiSort": {
@@ -1985,7 +2035,7 @@
         "themeCssLayer": {
             "more": {
                 "name": "CSS Layers",
-                "url": "./theming-css/#css-layers"
+                "url": "./theming/#css-layers"
             }
         },
         "styleNonce": {

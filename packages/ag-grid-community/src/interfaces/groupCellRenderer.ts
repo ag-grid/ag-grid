@@ -2,20 +2,16 @@ import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { UserCompDetails } from './iUserCompDetails';
 
-export interface FooterValueGetterFunc {
-    (params: GroupCellRendererParams): any;
-}
+export type FooterValueGetterFunc<TData = any, TValue = any> = (params: GroupCellRendererParams<TData, TValue>) => any;
 
-export interface TotalValueGetterFunc {
-    (params: GroupCellRendererParams): any;
-}
+export type TotalValueGetterFunc<TData = any, TValue = any> = (params: GroupCellRendererParams<TData, TValue>) => any;
 
 export type GroupCheckboxSelectionCallbackParams<TData = any, TValue = any> = ColumnFunctionCallbackParams<TData> &
     GroupCellRendererParams<TData, TValue>;
 
-export interface GroupCheckboxSelectionCallback<TData = any, TValue = any> {
-    (params: GroupCheckboxSelectionCallbackParams<TData, TValue>): boolean;
-}
+export type GroupCheckboxSelectionCallback<TData = any, TValue = any> = (
+    params: GroupCheckboxSelectionCallbackParams<TData, TValue>
+) => boolean;
 
 /**
  * Parameters used in `colDef.cellRendererParams` to configure a  Group Cell Renderer (`agGroupCellRenderer`).
@@ -76,7 +72,7 @@ export interface IGroupCellRenderer {
     toggleCss(cssClassName: string, on: boolean): void;
 }
 
-export interface IGroupCellRendererCtrl {
+export interface IGroupCellRendererCtrl<TData = any, TValue = any> {
     init(
         comp: IGroupCellRenderer,
         eGui: HTMLElement,
@@ -84,7 +80,7 @@ export interface IGroupCellRendererCtrl {
         eExpanded: HTMLElement,
         eContracted: HTMLElement,
         compClass: any,
-        params: GroupCellRendererParams
+        params: GroupCellRendererParams<TData, TValue>
     ): void;
     destroy(): void;
     getCellAriaRole(): string;

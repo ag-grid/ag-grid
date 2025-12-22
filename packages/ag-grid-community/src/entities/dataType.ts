@@ -7,18 +7,18 @@ export type ValueParserLiteParams<TData, TValue, TContext = any> = Omit<
     'data' | 'node' | 'oldValue'
 >;
 
-export interface ValueParserLiteFunc<TData, TValue, TContext = any> {
-    (params: ValueParserLiteParams<TData, TValue, TContext>): TValue | null | undefined;
-}
+export type ValueParserLiteFunc<TData, TValue, TContext = any> = (
+    params: ValueParserLiteParams<TData, TValue, TContext>
+) => TValue | null | undefined;
 
 export type ValueFormatterLiteParams<TData, TValue, TContext = any> = Omit<
     ValueFormatterParams<TData, TValue, TContext>,
     'data' | 'node'
 >;
 
-export interface ValueFormatterLiteFunc<TData, TValue, TContext = any> {
-    (params: ValueFormatterLiteParams<TData, TValue, TContext>): string;
-}
+export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (
+    params: ValueFormatterLiteParams<TData, TValue, TContext>
+) => string;
 
 /**
  * The pre-defined base data types.
@@ -159,6 +159,10 @@ export type DataTypeDefinition<TData = any, TValue = any, TContext = any> =
     | DateTimeDataTypeDefinition<TData, TContext>
     | DateTimeStringDataTypeDefinition<TData, TContext>
     | ObjectDataTypeDefinition<TData, TValue, TContext>;
+
+export type DataTypeDefinitions<TData = any, TValue = any, TContext = any> = {
+    [cellDataType: string]: DataTypeDefinition<TData, TValue, TContext>;
+};
 
 /** Configuration options for pre-defined data types. */
 export type CoreDataTypeDefinition<TData = any, TValue = any, TContext = any> = Omit<

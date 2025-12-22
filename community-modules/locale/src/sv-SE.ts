@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_SE = {
     searchOoo: 'Sök...',
     blanks: '(Tomma)',
     noMatches: 'Inga matchningar',
+    typeToSearchOoo: 'Skriv för att söka...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_SE = {
     maxLengthValidation: 'Måste vara ${variable} tecken eller färre.',
     minValueValidation: 'Måste vara större än eller lika med ${variable}',
     maxValueValidation: 'Måste vara mindre än eller lika med ${variable}',
+    strictMinValueValidation: 'Måste vara större än ${variable}',
+    strictMaxValueValidation: 'Måste vara mindre än ${variable}',
     invalidSelectionValidation: 'Ogiltigt val.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_SE = {
     loadingOoo: 'Laddar...',
     loadingError: 'FEL',
     noRowsToShow: 'Inga rader att visa',
+    noMatchingRows: 'Inga matchande rader',
+    exportingOoo: 'Exporterar...',
     enabled: 'Aktiverad',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_SE = {
     chooseColumns: 'Välj kolumner',
     sortAscending: 'Sortera Stigande',
     sortDescending: 'Sortera Fallande',
+    sortAbsoluteAscending: 'Sortera Absolut Stigande',
+    sortAbsoluteDescending: 'Sortera Absolut Fallande',
     sortUnSort: 'Rensa Sortering',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -556,6 +563,7 @@ export const AG_GRID_LOCALE_SE = {
     ariaChecked: 'markerad',
     ariaColumn: 'Kolumn',
     ariaColumnGroup: 'Kolumngrupp',
+    ariaFilterActive: 'Filter aktiv',
     ariaColumnFiltered: 'Kolumn filtrerad',
     ariaColumnSelectAll: 'Växla alla kolumners synlighet',
     ariaDateFilterInput: 'Datumfilterinmatning',
@@ -609,6 +617,8 @@ export const AG_GRID_LOCALE_SE = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' av ',
     ariaDropZoneColumnComponentSortAscending: 'stigande',
     ariaDropZoneColumnComponentSortDescending: 'fallande',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigande',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut fallande',
     ariaLabelDialog: 'Dialogruta',
     ariaLabelColumnMenu: 'Kolumnmeny',
     ariaLabelColumnFilter: 'Kolumnfilter',
@@ -674,14 +684,14 @@ export const AG_GRID_LOCALE_SE = {
     second: 'Sekund',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.M.YY',
-    timeFormatDotsMDDYY: 'M.DD.YY',
-    timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
-    timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
-    timeFormatHHMMSS: 'HH:MM:SS',
-    timeFormatHHMMSSAmPm: 'HH:MM:SS FM/EM',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/ÅÅÅÅ',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/ÅÅÅÅ',
+    timeFormatSlashesDDMMYY: 'DD/MM/ÅÅ',
+    timeFormatSlashesMMDDYY: 'MM/DD/ÅÅ',
+    timeFormatDotsDDMYY: 'DD.M.ÅÅ',
+    timeFormatDotsMDDYY: 'M.DD.ÅÅ',
+    timeFormatDashesYYYYMMDD: 'ÅÅÅÅ-MM-DD',
+    timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
+    timeFormatHHMMSS: 'TT:MM:SS',
+    timeFormatHHMMSSAmPm: 'TT:MM:SS FM/EM',
 };

@@ -275,7 +275,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // go through each list of displayed columns
         const allColumns = colModel.getCols().slice(0);
 
-        // let totalColumnWidth = this.getWidthOfColsInList()
         const doingRtl = this.gos.get('enableRtl');
 
         for (const columns of [this.leftCols, this.rightCols, this.centerCols]) {

@@ -4,7 +4,6 @@ import React, {
     useContext,
     useEffect,
     useImperativeHandle,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -39,6 +38,7 @@ import {
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
+import { CustomOverlayComponentWrapper } from '../shared/customComp/customOverlayComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
 import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
@@ -46,9 +46,7 @@ import { FilterDisplayComponentWrapper } from '../shared/customComp/filterDispla
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
 import { FloatingFilterDisplayComponentWrapper } from '../shared/customComp/floatingFilterDisplayComponentWrapper';
 import { InnerHeaderComponentWrapper } from '../shared/customComp/innerHeaderComponentWrapper';
-import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
 import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
-import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
@@ -58,6 +56,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
@@ -119,7 +118,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         }
     };
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         updateClassName(props.className);
     }, [props.className]);
 
@@ -334,9 +333,9 @@ class ReactFrameworkComponentWrapper
                     case 'dragAndDropImageComponent':
                         return DragAndDropImageComponentWrapper;
                     case 'loadingOverlayComponent':
-                        return LoadingOverlayComponentWrapper;
                     case 'noRowsOverlayComponent':
-                        return NoRowsOverlayComponentWrapper;
+                    case 'activeOverlay':
+                        return CustomOverlayComponentWrapper;
                     case 'statusPanel':
                         return StatusPanelComponentWrapper;
                     case 'toolPanel':
@@ -361,6 +360,7 @@ class ReactFrameworkComponentWrapper
                 case 'dragAndDropImageComponent':
                 case 'loadingOverlayComponent':
                 case 'noRowsOverlayComponent':
+                case 'activeOverlay':
                 case 'statusPanel':
                 case 'toolPanel':
                 case 'menuItem':
@@ -495,7 +495,7 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         super('react');
     }
 
-    private frameworkComponents: any = {
+    private readonly frameworkComponents: any = {
         agGroupCellRenderer: GroupCellRenderer,
         agGroupRowRenderer: GroupCellRenderer,
         agDetailCellRenderer: DetailCellRenderer,

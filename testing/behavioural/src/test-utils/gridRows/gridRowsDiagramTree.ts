@@ -319,7 +319,7 @@ export class GridRowsDiagramTree {
 
         if (columns) {
             const rootRowNode = gridRows.rootRowNode;
-            const omitUndefined = gridRows.options.ignoreUndefinedCells ?? false;
+            const omitUndefined = gridRows.options.ignoreUndefinedCells ?? true;
             for (const column of columns) {
                 const columnId = column.getColId();
                 if (row === rootRowNode && isRowNumberCol(columnId)) {

@@ -1,7 +1,7 @@
 import { ensureGridReady, expect, test } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
-    // Values captured versus 33.3.0
+    // Values captured versus 33.3.0 but with updated valueChange for bug fix
     [
         {
             editFinishKey: 'Enter',
@@ -18,7 +18,7 @@ test.agExample(import.meta, () => {
                         newValue: 1234,
                         oldValue: 7,
                         value: 7,
-                        valueChanged: false,
+                        valueChanged: true,
                     },
                 ],
             ],
@@ -58,7 +58,7 @@ test.agExample(import.meta, () => {
                         newValue: 1234,
                         oldValue: 7,
                         value: 7,
-                        valueChanged: false,
+                        valueChanged: true,
                     },
                 ],
                 [
@@ -146,7 +146,7 @@ test.agExample(import.meta, () => {
                         newValue: 1234,
                         oldValue: 7,
                         value: 7,
-                        valueChanged: false,
+                        valueChanged: true,
                     },
                 ],
             ],
@@ -186,7 +186,7 @@ test.agExample(import.meta, () => {
                         newValue: 1234,
                         oldValue: 7,
                         value: 7,
-                        valueChanged: false,
+                        valueChanged: true,
                     },
                 ],
                 [

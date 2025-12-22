@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_UA = {
     searchOoo: 'Пошук...',
     blanks: '(Пусті)',
     noMatches: 'Співпадінь не знайдено',
+    typeToSearchOoo: 'Введіть текст для пошуку...',
 
     // Number Filter & Text Filter
     filterOoo: 'Фільтр...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_UA = {
     maxDateValidation: 'Дата повинна бути до ${variable}',
     maxLengthValidation: 'Повинно бути ${variable} символів або менше.',
     minValueValidation: 'Повинно бути більше або дорівнювати ${variable}',
-    maxValueValidation: 'Повинно бути менше або дорівнювати ${variable}',
+    maxValueValidation: 'Має бути меншим або дорівнювати ${variable}',
+    strictMinValueValidation: 'Має бути більшим за ${variable}',
+    strictMaxValueValidation: 'Має бути меншим за ${variable}',
     invalidSelectionValidation: 'Неправильний вибір.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_UA = {
     loadingOoo: 'Завантаження...',
     loadingError: 'ПОМИЛКА',
     noRowsToShow: 'Немає рядків для відображення',
+    noMatchingRows: 'Немає відповідних рядків',
+    exportingOoo: 'Експорт...',
     enabled: 'Увімкнено',
 
     // Menu
@@ -228,6 +233,8 @@ export const AG_GRID_LOCALE_UA = {
     chooseColumns: 'Виберіть стовпці',
     sortAscending: 'Сортувати за Зростанням',
     sortDescending: 'Сортувати за Спаданням',
+    sortAbsoluteAscending: 'Сортувати за зростанням',
+    sortAbsoluteDescending: 'Сортувати за спаданням',
     sortUnSort: 'Очистити Сортування',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -557,6 +564,7 @@ export const AG_GRID_LOCALE_UA = {
     ariaChecked: 'відмічено',
     ariaColumn: 'Колонка',
     ariaColumnGroup: 'Група колонок',
+    ariaFilterActive: 'Фільтр активний',
     ariaColumnFiltered: 'Колонка відфільтрована',
     ariaColumnSelectAll: 'Перемкнути видимість усіх стовпців',
     ariaDateFilterInput: 'Ввід фільтру за датою',
@@ -610,6 +618,8 @@ export const AG_GRID_LOCALE_UA = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' з ',
     ariaDropZoneColumnComponentSortAscending: 'спадання',
     ariaDropZoneColumnComponentSortDescending: 'зростання',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'абсолютне зростання',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'абсолютне спадання',
     ariaLabelDialog: 'Діалог',
     ariaLabelColumnMenu: 'Меню стовпця',
     ariaLabelColumnFilter: 'Фільтр стовпця',
@@ -684,5 +694,5 @@ export const AG_GRID_LOCALE_UA = {
     timeFormatDashesYYYYMMDD: 'РРРР-ММ-ДД',
     timeFormatSpacesDDMMMMYYYY: 'ДД ММММ РРРР',
     timeFormatHHMMSS: 'ГГ:ХХ:СС',
-    timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС ДП/ПП',
+    timeFormatHHMMSSAmPm: 'ГГ:ХХ:СС AM/PM',
 };

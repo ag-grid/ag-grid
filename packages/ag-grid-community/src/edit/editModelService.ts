@@ -22,7 +22,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { UNEDITED } from './utils/editors';
 
 export class EditModelService extends BeanStub implements NamedBean, IEditModelService {
-    beanName = 'editModelSvc' as const;
+    public beanName = 'editModelSvc' as const;
 
     private readonly edits: EditMap = new Map();
     private cellValidations: IEditCellValidationModel = new EditCellValidationModel();
@@ -370,7 +370,7 @@ export class EditCellValidationModel implements IEditCellValidationModel {
         this.cellValidations.get(rowNode)?.delete(column);
     }
 
-    setCellValidationMap(validationMap: EditValidationMap): void {
+    public setCellValidationMap(validationMap: EditValidationMap): void {
         this.cellValidations = validationMap;
     }
 
@@ -378,7 +378,7 @@ export class EditCellValidationModel implements IEditCellValidationModel {
         return this.cellValidations;
     }
 
-    clearCellValidationMap(): void {
+    public clearCellValidationMap(): void {
         this.cellValidations.clear();
     }
 }
