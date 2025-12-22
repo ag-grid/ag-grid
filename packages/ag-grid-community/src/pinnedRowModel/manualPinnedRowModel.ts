@@ -89,9 +89,11 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public reset(dispatch = true): void {
         this.forContainers((container) => {
             const nodesToUnpin: RowNode[] = [];
-            container.forEach((n) => nodesToUnpin.push(n));
+            container.for((n) => nodesToUnpin.push(n));
             // Have to collect up the nodes to unpin because unpinning mutates the container
-            nodesToUnpin.forEach((n) => this.pinRow(n, null));
+            for (const n of nodesToUnpin) {
+                this.pinRow(n, null);
+            }
             container.clear();
         });
         if (dispatch) {
@@ -136,7 +138,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // cell-span pinning/unpinning
         const spannedRows = column && getSpannedRows(this.beans, rowNode, column);
         if (spannedRows) {
-            spannedRows.forEach((node) => this.pinRow(node, float));
+            for (const node of spannedRows) {
+                this.pinRow(node, float);
+            }
             return;
         }
 
@@ -195,9 +199,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 anyChange = true;
             }
         };
-        this.bottom.forEach(updateRowHeight);
+        this.bottom.for(updateRowHeight);
         rowTop = 0;
-        this.top.forEach(updateRowHeight);
+        this.top.for(updateRowHeight);
 
         this.eventSvc.dispatchEvent({
             type: 'pinnedHeightChanged',
@@ -238,7 +242,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         floating: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
     ): void {
-        this.getContainer(floating).forEach(callback);
+        this.getContainer(floating).for(callback);
     }
 
     public getPinnedState(): RowPinningState {
@@ -331,7 +335,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged) {
             this.forContainers((container) =>
-                container.forEach((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
+                container.for((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
             );
         }
     }
@@ -379,7 +383,7 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows): bool
     let rowTop = 0;
     let changed = false;
 
-    container.forEach((node, index) => {
+    container.for((node, index) => {
         changed ||= node.rowTop !== rowTop;
         node.setRowTop(rowTop);
 
@@ -440,13 +444,15 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
 
 function removeGroupRows(set: PinnedRows) {
     const rowsToRemove = new Set<RowNode>();
-    set.forEach((node) => {
+    set.for((node) => {
         if (node.group) {
             rowsToRemove.add(node);
         }
     });
 
-    rowsToRemove.forEach((node) => set.delete(node));
+    for (const node of rowsToRemove) {
+        set.delete(node);
+    }
 }
 
 function getSpannedRows(beans: BeanCollection, rowNode: RowNode, column: AgColumn) {

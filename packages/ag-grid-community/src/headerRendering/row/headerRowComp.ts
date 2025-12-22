@@ -62,10 +62,10 @@ export class HeaderRowComp extends Component {
             this.headerComps[id] = comp;
         }
 
-        Object.values(oldComps).forEach((comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
+        for (const comp of Object.values(oldComps)) {
             comp.getGui().remove();
             this.destroyBean(comp);
-        });
+        }
 
         if (forceOrder) {
             const comps = Object.values(this.headerComps);

@@ -198,18 +198,18 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private selectRange(nodesToSelect: readonly RowNode[], value: boolean, source: SelectionEventSourceType): number {
         let updatedCount = 0;
 
-        nodesToSelect.forEach((node) => {
+        for (const node of nodesToSelect) {
             const rowNode = _normaliseSiblingRef(node);
 
             if (rowNode.group && this.groupSelectsDescendants) {
-                return;
+                continue;
             }
 
             const nodeWasSelected = this.selectRowNode(rowNode, value, undefined, source);
             if (nodeWasSelected) {
                 updatedCount++;
             }
-        });
+        }
 
         if (updatedCount > 0) {
             this.updateGroupsFromChildrenSelections(source);
@@ -242,7 +242,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     public getSelectedRows(): any[] {
         const selectedRows: any[] = [];
-        this.selectedNodes.forEach((rowNode) => rowNode.data && selectedRows.push(rowNode.data));
+        for (const rowNode of this.selectedNodes.values()) {
+            if (rowNode.data) {
+                selectedRows.push(rowNode.data);
+            }
+        }
         return selectedRows;
     }
 
@@ -256,11 +260,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
      */
     public filterFromSelection(predicate: (node: RowNode) => boolean): void {
         const newSelectedNodes: Map<string, RowNode> = new Map();
-        this.selectedNodes.forEach((rowNode, key) => {
+        for (const [key, rowNode] of this.selectedNodes) {
             if (predicate(rowNode)) {
                 newSelectedNodes.set(key, rowNode);
             }
-        });
+        }
         this.selectedNodes = newSelectedNodes;
     }
 
@@ -310,7 +314,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const groupsToRefresh = new Map<string, RowNode>();
         let updatedCount = 0;
 
-        this.selectedNodes.forEach((otherRowNode) => {
+        for (const otherRowNode of this.selectedNodes.values()) {
             const isNodeToKeep = otherRowNode.id == rowNodeToKeepSelected.id;
             const shouldClearDescendant = keepDescendants ? !isDescendantOf(rowNodeToKeepSelected, otherRowNode) : true;
             if (shouldClearDescendant && !isNodeToKeep) {
@@ -327,12 +331,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     groupsToRefresh.set(otherRowNode.parent.id!, otherRowNode.parent);
                 }
             }
-        });
+        }
 
-        groupsToRefresh.forEach((group) => {
+        for (const group of groupsToRefresh.values()) {
             const selected = this.calculateSelectedFromChildren(group);
             this.selectRowNode(group, selected === null ? false : selected, undefined, source);
-        });
+        }
 
         return updatedCount;
     }
@@ -411,9 +415,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     private resetNodes(): void {
-        this.selectedNodes.forEach((node) => {
+        for (const node of this.selectedNodes.values()) {
             this.selectRowNode(node, false);
-        });
+        }
         this.selectedNodes.clear();
     }
 
@@ -474,9 +478,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 _error(102);
                 return;
             }
-            this.getNodesToSelect(selectAll).forEach(callback);
+            for (const node of this.getNodesToSelect(selectAll)) {
+                callback(node);
+            }
         } else {
-            this.selectedNodes.forEach(callback);
+            for (const rowNode of this.selectedNodes.values()) {
+                callback(rowNode);
+            }
             // this clears down the map (whereas above only sets the items in map to 'undefined')
             this.reset(source);
         }
@@ -501,9 +509,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let selectedCount = 0;
         let notSelectedCount = 0;
 
-        this.getNodesToSelect(selectAll).forEach((node) => {
+        for (const node of this.getNodesToSelect(selectAll)) {
             if (this.groupSelectsDescendants && node.group) {
-                return;
+                continue;
             }
 
             if (node.isSelected()) {
@@ -512,7 +520,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 // don't count non-selectable nodes!
                 notSelectedCount++;
             }
-        });
+        }
 
         return { selectedCount, notSelectedCount };
     }
@@ -550,7 +558,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                     // are considered as the current page
                     const recursivelyAddChildren = (child: RowNode) => {
                         addToResult(child);
-                        child.childrenAfterFilter?.forEach(recursivelyAddChildren);
+                        const { childrenAfterFilter } = child;
+                        if (childrenAfterFilter) {
+                            for (const c of childrenAfterFilter) {
+                                recursivelyAddChildren(c);
+                            }
+                        }
                     };
                     recursivelyAddChildren(node);
                     return;
@@ -604,10 +617,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const { source, selectAll } = params;
         let updatedNodes = false;
 
-        this.getNodesToSelect(selectAll).forEach((rowNode) => {
+        for (const rowNode of this.getNodesToSelect(selectAll)) {
             const updated = this.selectRowNode(_normaliseSiblingRef(rowNode), true, undefined, source);
             updatedNodes ||= updated;
-        });
+        }
 
         selectionCtx.selectAll = true;
 

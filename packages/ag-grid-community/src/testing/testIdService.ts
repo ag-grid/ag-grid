@@ -67,11 +67,11 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Headers */
 
-        root.querySelectorAll('.ag-header-group-cell').forEach((groupCell) => {
+        for (const groupCell of root.querySelectorAll('.ag-header-group-cell')) {
             setTestId(groupCell, agTestIdFor.headerGroupCell(groupCell.getAttribute('col-id')));
-        });
+        }
 
-        root.querySelectorAll('.ag-header-cell').forEach((cell) => {
+        for (const cell of root.querySelectorAll('.ag-header-cell')) {
             const colId = cell.getAttribute('col-id');
 
             const isFloatingFilter = cell.classList.contains('ag-floating-filter');
@@ -92,7 +92,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 source: 'floating-filter',
                 colId,
             });
-        });
+        }
 
         /** Column Filter */
 
@@ -103,35 +103,32 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         setTestId(root.querySelector('.ag-advanced-filter input[type=text]'), agTestIdFor.advancedFilterInput());
 
-        root.querySelectorAll('.ag-advanced-filter-buttons button').forEach((button) => {
+        for (const button of root.querySelectorAll('.ag-advanced-filter-buttons button')) {
             setTestId(button, agTestIdFor.advancedFilterButton(button.textContent));
-        });
+        }
 
         setTestId(
             root.querySelector('button.ag-advanced-filter-builder-button'),
             agTestIdFor.advancedFilterBuilderButton()
         );
 
-        root.querySelectorAll('.ag-panel[aria-label="Advanced Filter"] .ag-panel-title-bar-button').forEach(
-            (button, i) => {
-                setTestId(
-                    button,
-                    i === 0
-                        ? agTestIdFor.advancedFilterPanelMaximiseButton()
-                        : agTestIdFor.advancedFilterPanelCloseButton()
-                );
-            }
-        );
+        const buttons = root.querySelectorAll('.ag-panel[aria-label="Advanced Filter"] .ag-panel-title-bar-button');
+        for (let i = 0; i < buttons.length; i++) {
+            const button = buttons[i];
+            setTestId(
+                button,
+                i === 0 ? agTestIdFor.advancedFilterPanelMaximiseButton() : agTestIdFor.advancedFilterPanelCloseButton()
+            );
+        }
 
-        root.querySelectorAll('.ag-panel[aria-lable="Advanced Filter"] .ag-advanced-filter-builder-pill').forEach(
-            (pill) => {
-                setTestId(
-                    pill,
-                    agTestIdFor.advancedFilterPill(pill.querySelector('.ag-picker-field-display')?.textContent)
-                );
-            }
-        );
-
+        for (const pill of root.querySelectorAll(
+            '.ag-panel[aria-label="Advanced Filter"] .ag-advanced-filter-builder-pill'
+        )) {
+            setTestId(
+                pill,
+                agTestIdFor.advancedFilterPill(pill.querySelector('.ag-picker-field-display')?.textContent)
+            );
+        }
         setTestId(
             root.querySelector('.ag-panel[aria-label="Advanced Filter"] .ag-advanced-filter-builder-item-button'),
             agTestIdFor.advancedFilterBuilderAddItemButton()
@@ -139,13 +136,13 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Rows */
 
-        root.querySelectorAll('.ag-row').forEach((row) => {
+        for (const row of root.querySelectorAll('.ag-row')) {
             const rowId = row.getAttribute('row-id');
             setTestId(row, agTestIdFor.rowNode(rowId));
 
             /** Cells */
 
-            row.querySelectorAll('.ag-cell').forEach((cell) => {
+            for (const cell of row.querySelectorAll('.ag-cell')) {
                 const colId = cell.getAttribute('col-id');
                 setTestId(cell, agTestIdFor.cell(rowId, colId));
 
@@ -159,36 +156,36 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 setTestId(cell.querySelector('.ag-group-contracted'), agTestIdFor.groupContracted(rowId, colId));
 
                 setTestId(cell.querySelector('.ag-group-expanded'), agTestIdFor.groupExpanded(rowId, colId));
-            });
-        });
+            }
+        }
 
         /** Menu */
 
-        root.querySelectorAll('.ag-menu-list').forEach((menu) => {
+        for (const menu of root.querySelectorAll('.ag-menu-list')) {
             setTestId(menu, agTestIdFor.menu());
 
-            menu.querySelectorAll('.ag-menu-option').forEach((option) => {
+            for (const option of menu.querySelectorAll('.ag-menu-option')) {
                 setTestId(option, agTestIdFor.menuOption(option.querySelector('.ag-menu-option-text')?.textContent));
-            });
-        });
+            }
+        }
 
         /** SideBar */
 
-        root.querySelectorAll('.ag-side-bar').forEach((sideBar) => {
+        for (const sideBar of root.querySelectorAll('.ag-side-bar')) {
             setTestId(sideBar, agTestIdFor.sideBar());
 
             /** SideBar buttons */
 
-            sideBar.querySelectorAll('.ag-side-button button').forEach((button) => {
+            for (const button of sideBar.querySelectorAll('.ag-side-button button')) {
                 setTestId(
                     button,
                     agTestIdFor.sideBarButton(button.querySelector('.ag-side-button-label')?.textContent)
                 );
-            });
+            }
 
             /** Column Tool Panel */
 
-            sideBar.querySelectorAll('.ag-column-panel').forEach((panel) => {
+            for (const panel of sideBar.querySelectorAll('.ag-column-panel')) {
                 setTestId(panel, agTestIdFor.columnToolPanel());
 
                 setTestId(
@@ -206,8 +203,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     agTestIdFor.columnPanelSelectHeaderFilter()
                 );
 
-                panel.querySelectorAll('.ag-column-select-list').forEach((list) => {
-                    list.querySelectorAll('.ag-column-select-virtual-list-item').forEach((item) => {
+                for (const list of panel.querySelectorAll('.ag-column-select-list')) {
+                    for (const item of list.querySelectorAll('.ag-column-select-virtual-list-item')) {
                         const label = item.getAttribute('aria-label');
 
                         setTestId(
@@ -224,15 +221,15 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                             item.querySelector('.ag-drag-handle'),
                             agTestIdFor.columnSelectListItemDragHandle(label)
                         );
-                    });
-                });
+                    }
+                }
 
                 this.setupColumnDropArea(panel, 'toolbar');
-            });
+            }
 
             /** Filter Tool Panel (New) */
 
-            sideBar.querySelectorAll('.ag-filter-panel').forEach((panel) => {
+            for (const panel of sideBar.querySelectorAll('.ag-filter-panel')) {
                 setTestId(panel, agTestIdFor.filterToolPanel());
 
                 setTestId(
@@ -240,29 +237,27 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     agTestIdFor.filterToolPanelAddFilterButton()
                 );
 
-                panel.querySelectorAll('.ag-filter-card').forEach((filterCard) => {
+                for (const filterCard of panel.querySelectorAll('.ag-filter-card')) {
                     const colLabel = filterCard.querySelector('.ag-filter-card-title')?.textContent;
 
                     const typeSelector = filterCard.querySelector('.ag-filter-type-select');
                     setTestId(typeSelector, agTestIdFor.filterToolPanelFilterTypeSelector(colLabel));
 
-                    filterCard
-                        .querySelectorAll('.ag-filter')
-                        .forEach((filter) =>
-                            this.setupFilterInstance(filter, { source: 'filter-toolpanel', colLabel })
-                        );
-                });
-            });
+                    for (const filter of filterCard.querySelectorAll('.ag-filter')) {
+                        this.setupFilterInstance(filter, { source: 'filter-toolpanel', colLabel });
+                    }
+                }
+            }
 
             /** Filter Tool Panel (Old) */
 
-            sideBar.querySelectorAll('.ag-filter-toolpanel').forEach((panel) => {
+            for (const panel of sideBar.querySelectorAll('.ag-filter-toolpanel')) {
                 setTestId(
                     panel.querySelector('.ag-filter-toolpanel-search-input input[type=text]'),
                     agTestIdFor.filterToolPanelSearchInput()
                 );
 
-                panel.querySelectorAll('.ag-filter-toolpanel-group').forEach((group) => {
+                for (const group of panel.querySelectorAll('.ag-filter-toolpanel-group')) {
                     const title = group.querySelector('.ag-filter-toolpanel-group-title')?.textContent;
 
                     setTestId(group, agTestIdFor.filterToolPanelGroup(title));
@@ -276,9 +271,9 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     if (filterRoot) {
                         this.setupFilterInstance(filterRoot, { source: 'filter-toolpanel', colLabel: title });
                     }
-                });
-            });
-        });
+                }
+            }
+        }
 
         /** Status Bar */
 
@@ -305,7 +300,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
 
         /** Pagination */
 
-        root.querySelectorAll('.ag-paging-panel').forEach((pagingPanel) => {
+        for (const pagingPanel of root.querySelectorAll('.ag-paging-panel')) {
             setTestId(
                 pagingPanel.querySelector('.ag-paging-page-size .ag-picker-field-display'),
                 agTestIdFor.paginationPanelSizePickerDisplay(
@@ -313,7 +308,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 )
             );
 
-            pagingPanel.querySelectorAll('.ag-paging-row-summary-panel-number').forEach((panelNumber) => {
+            for (const panelNumber of pagingPanel.querySelectorAll('.ag-paging-row-summary-panel-number')) {
                 const dataRef = panelNumber.getAttribute('data-ref');
                 switch (dataRef) {
                     case 'lbFirstRowOnPage':
@@ -326,16 +321,18 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                         setTestId(panelNumber, agTestIdFor.paginationPanelRecordCount(panelNumber.textContent));
                         break;
                 }
-            });
+            }
 
-            pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-button').forEach((pagingButton) => {
+            for (const pagingButton of pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-button')) {
                 setTestId(
                     pagingButton,
                     agTestIdFor.paginationSummaryPanelButton(pagingButton.getAttribute('aria-label')?.toLowerCase())
                 );
-            });
+            }
 
-            pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-paging-number').forEach((pagingNumber) => {
+            for (const pagingNumber of pagingPanel.querySelectorAll(
+                '.ag-paging-page-summary-panel .ag-paging-number'
+            )) {
                 const dataRef = pagingNumber.getAttribute('data-ref');
                 switch (dataRef) {
                     case 'lbCurrent':
@@ -348,14 +345,14 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                         setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent));
                         break;
                 }
-            });
-        });
+            }
+        }
 
         setTestId(root.querySelector('.ag-fill-handle'), agTestIdFor.fillHandle());
 
         /** Column Chooser */
 
-        root.querySelectorAll('.ag-panel[aria-label="Choose Columns"]').forEach((panel) => {
+        for (const panel of root.querySelectorAll('.ag-panel[aria-label="Choose Columns"]')) {
             setTestId(panel.querySelector('.ag-panel-title-bar-button-icon'), agTestIdFor.columnChooserCloseButton());
             setTestId(
                 panel.querySelector('.ag-column-select-header-checkbox input[type="checkbox"]'),
@@ -365,8 +362,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 panel.querySelector('.ag-column-select-header-filter-wrapper input[type="text"]'),
                 agTestIdFor.columnChooserSearchBarFilter()
             );
-            panel.querySelectorAll('.ag-column-select-list').forEach((list) => {
-                list.querySelectorAll('.ag-column-select-virtual-list-item').forEach((item) => {
+            for (const list of panel.querySelectorAll('.ag-column-select-list')) {
+                for (const item of list.querySelectorAll('.ag-column-select-virtual-list-item')) {
                     const label = item.getAttribute('aria-label');
                     setTestId(
                         item.querySelector('.ag-column-group-closed-icon'),
@@ -382,9 +379,9 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                         item.querySelector('.ag-drag-handle'),
                         agTestIdFor.columnChooserListItemDragHandle(label)
                     );
-                });
-            });
-        });
+                }
+            }
+        }
 
         /** Overlay */
 
@@ -403,9 +400,9 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
             return;
         }
 
-        filterRoot.querySelectorAll('.ag-filter-select .ag-picker-field-display').forEach((fieldDisplay) => {
+        for (const fieldDisplay of filterRoot.querySelectorAll('.ag-filter-select .ag-picker-field-display')) {
             setTestId(fieldDisplay, agTestIdFor.filterInstancePickerDisplay(spec));
-        });
+        }
 
         const filterClass = spec.source === 'floating-filter' ? '.ag-floating-filter-body' : '.ag-filter-body';
 
@@ -421,30 +418,30 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
         const setMiniFilterInput = filterRoot.querySelector('.ag-mini-filter input[type="text"]');
         setTestId(setMiniFilterInput, agTestIdFor.setFilterInstanceMiniFilterInput(spec));
 
-        filterRoot.querySelectorAll('.ag-set-filter-list .ag-set-filter-item').forEach((item) => {
+        for (const item of filterRoot.querySelectorAll('.ag-set-filter-list .ag-set-filter-item')) {
             const label = item.querySelector('.ag-checkbox-label')?.textContent;
             const checkbox = item.querySelector('input[type="checkbox"]');
             setTestId(checkbox, agTestIdFor.setFilterInstanceItem(spec, label));
-        });
+        }
 
-        filterRoot.querySelectorAll('.ag-filter-apply-panel button').forEach((button) => {
+        for (const button of filterRoot.querySelectorAll('.ag-filter-apply-panel button')) {
             setTestId(button, agTestIdFor.setFilterApplyPanelButton(spec, button.textContent));
-        });
+        }
 
-        filterRoot.querySelectorAll('.ag-filter-condition .ag-radio-button').forEach((radioButton) => {
+        for (const radioButton of filterRoot.querySelectorAll('.ag-filter-condition .ag-radio-button')) {
             const label = radioButton.querySelector('.ag-radio-button-label')?.textContent;
             setTestId(
                 radioButton.querySelector('input[type=radio]'),
                 agTestIdFor.filterConditionRadioButton(spec, label)
             );
-        });
+        }
     }
 
     private setupColumnDropArea(root: ParentNode, source: 'panel' | 'toolbar'): void {
-        root.querySelectorAll('.ag-column-drop').forEach((columnDrop) => {
+        for (const columnDrop of root.querySelectorAll('.ag-column-drop')) {
             const dropAreaName = columnDrop.querySelector('.ag-column-drop-list')?.getAttribute('aria-label');
             setTestId(columnDrop, agTestIdFor.columnDropArea(source, dropAreaName));
-            columnDrop.querySelectorAll('.ag-column-drop-cell').forEach((columnDropCell) => {
+            for (const columnDropCell of columnDrop.querySelectorAll('.ag-column-drop-cell')) {
                 const label = columnDropCell.querySelector('.ag-column-drop-cell-text')?.textContent;
                 setTestId(
                     columnDropCell.querySelector('.ag-drag-handle'),
@@ -455,7 +452,7 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                     columnDropCell.querySelector('.ag-column-drop-cell-button .ag-icon-cancel'),
                     agTestIdFor.columnDropCellCancelButton(source, dropAreaName, label)
                 );
-            });
-        });
+            }
+        }
     }
 }

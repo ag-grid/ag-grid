@@ -145,10 +145,11 @@ export abstract class SimpleFilter<
     }
 
     private setTypeFromFloatingFilter(type?: string | null): void {
-        this.eTypes.forEach((eType, position) => {
+        for (let position = 0; position < this.eTypes.length; position++) {
+            const eType = this.eTypes[position];
             const value = position === 0 ? type : this.optionsFactory.defaultOption;
             eType.setValue(value, true);
-        });
+        }
     }
 
     public getModelFromUi(): FilterModelOrCombined<M> {
@@ -251,13 +252,18 @@ export abstract class SimpleFilter<
             }
 
             const orChecked = combinedModel.operator === 'OR';
-            this.eJoinAnds.forEach((eJoinOperatorAnd) => eJoinOperatorAnd.setValue(!orChecked, true));
-            this.eJoinOrs.forEach((eJoinOperatorOr) => eJoinOperatorOr.setValue(orChecked, true));
+            for (const eJoinOperatorAnd of this.eJoinAnds) {
+                eJoinOperatorAnd.setValue(!orChecked, true);
+            }
+            for (const eJoinOperatorOr of this.eJoinOrs) {
+                eJoinOperatorOr.setValue(orChecked, true);
+            }
 
-            conditions.forEach((condition, position) => {
+            for (let position = 0; position < conditions.length; position++) {
+                const condition = conditions[position];
                 this.eTypes[position].setValue(condition.type, true);
                 this.setConditionIntoUi(condition, position);
-            });
+            }
         } else {
             const simpleModel = model as M;
 
@@ -433,20 +439,20 @@ export abstract class SimpleFilter<
     }
 
     private updateConditionStatusesAndValues(lastUiCompletePosition: number, joinOperator?: JoinOperator): void {
-        this.eTypes.forEach((eType, position) => {
+        for (let position = 0; position < this.eTypes.length; position++) {
             const disabled = this.isConditionDisabled(position, lastUiCompletePosition);
 
-            eType.setDisabled(disabled || this.filterListOptions.length <= 1);
+            this.eTypes[position].setDisabled(disabled || this.filterListOptions.length <= 1);
             if (position === 1) {
                 _setDisabled(this.eJoinPanels[0], disabled);
                 this.eJoinAnds[0].setDisabled(disabled);
                 this.eJoinOrs[0].setDisabled(disabled);
             }
-        });
+        }
 
-        this.eConditionBodies.forEach((element, index) => {
-            _setDisplayed(element, this.isConditionBodyVisible(index));
-        });
+        for (let i = 0; i < this.eConditionBodies.length; i++) {
+            _setDisplayed(this.eConditionBodies[i], this.isConditionBodyVisible(i));
+        }
 
         const orChecked = (joinOperator ?? this.getJoinOperator()) === 'OR';
         for (const eJoinOperatorAnd of this.eJoinAnds) {
@@ -649,9 +655,10 @@ export abstract class SimpleFilter<
     }
 
     protected forEachInput(cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
-        this.getConditionTypes().forEach((type, position) => {
-            this.forEachPositionTypeInput(position, type, cb);
-        });
+        const types = this.getConditionTypes();
+        for (let position = 0; position < types.length; position++) {
+            this.forEachPositionTypeInput(position, types[position], cb);
+        }
     }
 
     protected forEachPositionInput(
@@ -747,14 +754,16 @@ export abstract class SimpleFilter<
     private resetUiToDefaults(silent?: boolean): void {
         this.removeConditionsAndOperators(this.isReadOnly() ? 1 : this.numAlwaysVisibleConditions);
 
-        this.eTypes.forEach((eType) => this.resetType(eType));
-
-        this.eJoinAnds.forEach((eJoinOperatorAnd, index) =>
-            this.resetJoinOperatorAnd(eJoinOperatorAnd, index, this.joinOperatorId + index)
-        );
-        this.eJoinOrs.forEach((eJoinOperatorOr, index) =>
-            this.resetJoinOperatorOr(eJoinOperatorOr, index, this.joinOperatorId + index)
-        );
+        for (const eType of this.eTypes) {
+            this.resetType(eType);
+        }
+        const { eJoinAnds, eJoinOrs } = this;
+        for (let index = 0; index < eJoinAnds.length; index++) {
+            this.resetJoinOperatorAnd(eJoinAnds[index], index, this.joinOperatorId + index);
+        }
+        for (let index = 0; index < eJoinOrs.length; index++) {
+            this.resetJoinOperatorOr(eJoinOrs[index], index, this.joinOperatorId + index);
+        }
         this.joinOperatorId++;
 
         this.forEachInput((element) => this.resetInput(element));
@@ -819,8 +828,14 @@ export abstract class SimpleFilter<
     private updateJoinOperatorsDisabled(): void {
         const updater = (eJoinOperator: GridRadioButton, index: number) =>
             this.updateJoinOperatorDisabled(eJoinOperator, index);
-        this.eJoinAnds.forEach(updater);
-        this.eJoinOrs.forEach(updater);
+
+        const { eJoinAnds, eJoinOrs } = this;
+        for (let index = 0; index < eJoinAnds.length; index++) {
+            updater(eJoinAnds[index], index);
+        }
+        for (let index = 0; index < eJoinOrs.length; index++) {
+            updater(eJoinOrs[index], index);
+        }
     }
 
     private updateJoinOperatorDisabled(eJoinOperator: GridRadioButton, index: number): void {

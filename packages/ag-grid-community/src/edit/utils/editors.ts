@@ -301,18 +301,21 @@ function _createEditorParams(
 
 export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boolean): void {
     const { editModelSvc } = beans;
-    editModelSvc?.getEditMap().forEach((editRow, rowNode) => {
-        editRow.forEach((edit, column) => {
-            if (!includeEditing && (edit.state === 'editing' || edit.pendingValue === UNEDITED)) {
-                return;
-            }
+    const map = editModelSvc?.getEditMap();
+    if (map) {
+        for (const [rowNode, editRow] of map) {
+            for (const [column, edit] of editRow) {
+                if (!includeEditing && (edit.state === 'editing' || edit.pendingValue === UNEDITED)) {
+                    return;
+                }
 
-            if (!_sourceAndPendingDiffer(edit) && (edit.state !== 'editing' || includeEditing)) {
-                // remove edits where the pending is equal to the old value
-                editModelSvc?.removeEdits({ rowNode, column });
+                if (!_sourceAndPendingDiffer(edit) && (edit.state !== 'editing' || includeEditing)) {
+                    // remove edits where the pending is equal to the old value
+                    editModelSvc?.removeEdits({ rowNode, column });
+                }
             }
-        });
-    });
+        }
+    }
 }
 
 export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -733,16 +736,16 @@ export function _validateEdit(beans: BeanCollection): ICellEditorValidationError
     }
 
     const validations: ICellEditorValidationError[] = [];
-    map.forEach((rowValidations, rowNode) => {
-        rowValidations.forEach(({ errorMessages }, column) => {
+    for (const [rowNode, rowValidations] of map) {
+        for (const [column, { errorMessages }] of rowValidations) {
             validations.push({
                 column,
                 rowIndex: rowNode.rowIndex!,
                 rowPinned: rowNode.rowPinned,
                 messages: errorMessages ?? null,
             });
-        });
-    });
+        }
+    }
 
     return validations;
 }

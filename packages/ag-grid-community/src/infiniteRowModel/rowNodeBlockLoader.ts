@@ -89,10 +89,10 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
 
     public getBlockState() {
         const result: { [key: string]: any } = {};
-        this.blocks.forEach((block: InfiniteBlock) => {
+        for (const block of this.blocks) {
             const { id, state } = block.getBlockStateJson();
             result[id] = state;
-        });
+        }
         return result;
     }
 

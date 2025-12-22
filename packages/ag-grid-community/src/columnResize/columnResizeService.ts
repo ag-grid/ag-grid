@@ -148,7 +148,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 let subsetRatioTotal = 0;
                 let pixelsToDistribute = width;
 
-                columns.forEach((col, index) => {
+                for (let index = 0; index < columns.length; index++) {
+                    const col = columns[index];
                     const thisColFinished = finishedCols[col.getId()];
                     if (thisColFinished) {
                         pixelsToDistribute -= newWidths[col.getId()];
@@ -157,14 +158,15 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                         const ratioThisCol = ratios[index];
                         subsetRatioTotal += ratioThisCol;
                     }
-                });
+                }
 
                 // because we are not using all of the ratios (cols can be missing),
                 // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
                 // and so the ratioScale will be 1.
                 const ratioScale = 1 / subsetRatioTotal;
 
-                subsetCols.forEach((col, index) => {
+                for (let index = 0; index < subsetCols.length; index++) {
+                    const col = subsetCols[index];
                     const lastCol = index === subsetCols.length - 1;
                     let colNewWidth: number;
 
@@ -189,7 +191,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                     }
 
                     newWidths[col.getId()] = colNewWidth;
-                });
+                }
             }
 
             for (const col of columns) {

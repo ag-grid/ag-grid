@@ -655,11 +655,14 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             if (position.rowNode && position.column) {
                 this.refCell(position as Required<EditPosition>, this.model.getEdit(position), params);
             } else if (editMap) {
-                editModelSvc?.getEditMap(false)?.forEach((editRow, rowNode) => {
-                    for (const column of editRow.keys()) {
-                        this.refCell({ rowNode, column }, editRow.get(column), params);
+                const mapToUse = editModelSvc?.getEditMap(false);
+                if (mapToUse) {
+                    for (const [rowNode, editRow] of mapToUse) {
+                        for (const column of editRow.keys()) {
+                            this.refCell({ rowNode, column }, editRow.get(column), params);
+                        }
                     }
-                });
+                }
             }
         }
     }
@@ -1046,7 +1049,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
         const isFormula = formula?.isFormula(editValue) ?? false;
 
-        ranges.forEach((range: CellRange) => {
+        for (const range of ranges) {
             const hasFormulaColumnsInRange = range.columns.some((col) => col?.isAllowFormula());
             rangeSvc?.forEachRowInRange(range, (position) => {
                 const rowNode = _getRowNode(beans, position);
@@ -1117,7 +1120,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
             this.committing = false;
 
             this.eventSvc.dispatchEvent({ type: 'bulkEditingStopped', changes: this.toEventChangeList(edits) });
-        });
+        }
 
         this.bulkRefresh();
 

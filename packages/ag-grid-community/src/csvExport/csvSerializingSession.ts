@@ -40,9 +40,10 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
             this.result += content;
         } else {
-            content.forEach((row) => {
+            for (const row of content) {
                 this.beginNewLine();
-                row.forEach((cell, index) => {
+                for (let index = 0; index < row.length; index++) {
+                    const cell = row[index];
                     if (index !== 0) {
                         this.result += this.columnSeparator;
                     }
@@ -50,8 +51,8 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
                     if (cell.mergeAcross) {
                         this.appendEmptyCells(cell.mergeAcross);
                     }
-                });
-            });
+                }
+            }
         }
     }
 

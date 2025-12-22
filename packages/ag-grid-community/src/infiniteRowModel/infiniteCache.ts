@@ -132,7 +132,8 @@ export class InfiniteCache extends BeanStub {
         const blocksToKeep = maxBlocksProvided ? this.params.maxBlocksInCache! - 1 : null;
         const emptyBlocksToKeep = MAX_EMPTY_BLOCKS_TO_KEEP - 1;
 
-        blocksForPurging.forEach((block: InfiniteBlock, index: number) => {
+        for (let index = 0; index < blocksForPurging.length; index++) {
+            const block = blocksForPurging[index];
             const purgeBecauseBlockEmpty = block.state === 'needsLoading' && index >= emptyBlocksToKeep;
 
             const purgeBecauseCacheFull = maxBlocksProvided ? index >= blocksToKeep! : false;
@@ -153,7 +154,7 @@ export class InfiniteCache extends BeanStub {
                 // at this point, block is not needed, so burn baby burn
                 this.removeBlockFromCache(block);
             }
-        });
+        }
     }
 
     private isBlockFocused(block: InfiniteBlock): boolean {

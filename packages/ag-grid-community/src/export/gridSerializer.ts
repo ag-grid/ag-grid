@@ -110,9 +110,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
         }
 
         const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow(node);
-        columnsToExport.forEach((column: AgColumn, index: number) => {
-            rowAccumulator.onColumn(column, index, node);
-        });
+        for (let i = 0; i < columnsToExport.length; i++) {
+            rowAccumulator.onColumn(columnsToExport[i], i, node);
+        }
 
         if (params.getCustomContentBelowRow) {
             const content = params.getCustomContentBelowRow(_addGridCommonParams(this.gos, { node }));
@@ -189,9 +189,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return (gridSerializingSession) => {
             if (!params.skipColumnHeaders) {
                 const gridRowIterator = gridSerializingSession.onNewHeaderRow();
-                columnsToExport.forEach((column, index) => {
-                    gridRowIterator.onColumn(column, index, undefined);
-                });
+                for (let i = 0; i < columnsToExport.length; i++) {
+                    gridRowIterator.onColumn(columnsToExport[i], i, undefined);
+                }
             }
             return gridSerializingSession;
         };
@@ -205,12 +205,16 @@ export class GridSerializer extends BeanStub implements NamedBean {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
             if (params.rowPositions) {
-                params.rowPositions
+                const rows = params.rowPositions
                     // only pinnedTop rows, other models are processed by `processRows` and `processPinnedBottomsRows`
                     .filter((position) => position.rowPinned === 'top')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => this.pinnedRowModel?.getPinnedTopRow(position.rowIndex))
-                    .forEach(processRow);
+                    .map((position) => this.pinnedRowModel?.getPinnedTopRow(position.rowIndex));
+                for (const row of rows) {
+                    if (row) {
+                        processRow(row);
+                    }
+                }
             } else if (!this.pinnedRowModel?.isManual()) {
                 // only process pinned rows if they are statically pinned
                 this.pinnedRowModel?.forEachPinnedRow('top', processRow);
@@ -233,12 +237,16 @@ export class GridSerializer extends BeanStub implements NamedBean {
             const { exportedRows = 'filteredAndSorted' } = params;
 
             if (params.rowPositions) {
-                params.rowPositions
+                const rows = params.rowPositions
                     // pinnedRows are processed by `processPinnedTopRows` and `processPinnedBottomsRows`
                     .filter((position) => position.rowPinned == null)
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => rowModel.getRow(position.rowIndex))
-                    .forEach(processRow);
+                    .map((position) => rowModel.getRow(position.rowIndex));
+                for (const row of rows) {
+                    if (row) {
+                        processRow(row);
+                    }
+                }
             } else if (this.colModel.isPivotMode()) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processRow, true, exportedRows === 'filteredAndSorted');
@@ -257,7 +265,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 const selectedNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
                 this.replicateSortedOrder(selectedNodes);
                 // serialize each node
-                selectedNodes.forEach(processRow);
+                for (const rowNode of selectedNodes) {
+                    processRow(rowNode);
+                }
             }
             // here is everything else - including standard row model and selected. we don't use
             // the selection model even when just using selected, so that the result is the order
@@ -326,12 +336,16 @@ export class GridSerializer extends BeanStub implements NamedBean {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
             if (params.rowPositions) {
-                params.rowPositions
+                const rows = params.rowPositions
                     // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
                     .filter((position) => position.rowPinned === 'bottom')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => this.pinnedRowModel?.getPinnedBottomRow(position.rowIndex))
-                    .forEach(processRow);
+                    .map((position) => this.pinnedRowModel?.getPinnedBottomRow(position.rowIndex));
+                for (const row of rows) {
+                    if (row) {
+                        processRow(row);
+                    }
+                }
             } else if (!this.pinnedRowModel?.isManual()) {
                 // only process pinned rows if they are statically pinned
                 this.pinnedRowModel?.forEachPinnedRow('bottom', processRow);

@@ -123,9 +123,9 @@ export class FullRowEditStrategy extends BaseEditStrategy {
 
         const changedRows: IRowNode[] = [];
         if (!cancel) {
-            this.model.getEditMap().forEach((rowEdits, rowNode) => {
+            for (const [rowNode, rowEdits] of this.model.getEditMap()) {
                 if (!rowEdits || rowEdits.size === 0) {
-                    return;
+                    continue;
                 }
 
                 for (const edit of rowEdits.values()) {
@@ -135,7 +135,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                         break;
                     }
                 }
-            });
+            }
         }
 
         // rerun validation, new values might have triggered row validations
@@ -280,8 +280,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
     private restoreEditors(): void {
         // check all cells that should have an editor have one - in the case of small viewports,
         // editors might have been destroyed along with their corresponding cellCtrl
-        this.model.getEditMap().forEach((rowEdits, rowNode) =>
-            rowEdits.forEach(({ state }, column) => {
+        for (const [rowNode, rowEdits] of this.model.getEditMap()) {
+            for (const [column, { state }] of rowEdits) {
                 if (state !== 'editing') {
                     return;
                 }
@@ -294,8 +294,8 @@ export class FullRowEditStrategy extends BaseEditStrategy {
                 if (cellCtrl && !cellCtrl.comp?.getCellEditor()) {
                     _setupEditor(this.beans, cellCtrl, { silent: true });
                 }
-            })
-        );
+            }
+        }
     }
 
     public override destroy(): void {

@@ -174,12 +174,13 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
         sequence: { value: number },
         rowCount: number
     ): void {
-        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
+        for (let index = 0; index < this.rowNodes.length; index++) {
+            const rowNode = this.rowNodes[index];
             const rowIndex = this.startRow + index;
             if (rowIndex < rowCount) {
                 callback(rowNode, sequence.value++);
             }
-        });
+        }
     }
 
     public getRow(rowIndex: number, dontTouchLastAccessed = false): RowNode {
@@ -192,7 +193,8 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
 
     private processServerResult(params: LoadSuccessParams): void {
         const { rowNodes, beans } = this;
-        rowNodes.forEach((rowNode: RowNode, index: number) => {
+        for (let index = 0; index < rowNodes.length; index++) {
+            const rowNode = rowNodes[index];
             const data = params.rowData ? params.rowData[index] : undefined;
 
             if (!rowNode.id && rowNode.alreadyRendered && data) {
@@ -208,7 +210,7 @@ export class InfiniteBlock extends BeanStub<RowNodeBlockEvent> {
                 rowNode._destroy(true);
             }
             this.setDataAndId(rowNodes[index], data, this.startRow + index);
-        });
+        }
         const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
         this.parentCache.pageLoaded(this, finalRowCount);
     }

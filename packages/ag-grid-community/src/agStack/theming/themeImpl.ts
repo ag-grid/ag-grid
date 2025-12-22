@@ -241,7 +241,9 @@ const getGoogleFontsUsed = (theme: ThemeImpl): string[] => {
     const visitParamValue = (paramValue: any) => {
         // font value can be a font object or array of font objects
         if (Array.isArray(paramValue)) {
-            paramValue.forEach(visitParamValue);
+            for (const item of paramValue) {
+                visitParamValue(item);
+            }
         } else {
             const googleFont = paramValue?.googleFont;
             if (typeof googleFont === 'string') {
@@ -251,7 +253,9 @@ const getGoogleFontsUsed = (theme: ThemeImpl): string[] => {
     };
     const allModeValues = Object.values(theme._getModeParams());
     const allValues = allModeValues.flatMap((mv) => Object.values(mv));
-    allValues.forEach(visitParamValue);
+    for (const value of allValues) {
+        visitParamValue(value);
+    }
     // NOSONAR - these are not localised
     return Array.from(googleFontsUsed).sort();
 };

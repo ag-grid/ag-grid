@@ -200,7 +200,8 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const rangeSvc = this.beans.rangeSvc!;
 
         rangeSvc.removeAllCellRanges(true);
-        ranges.forEach((range, idx) => {
+        for (let idx = 0; idx < ranges.length; idx++) {
+            const range = ranges[idx];
             if (!range) {
                 return;
             }
@@ -228,7 +229,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             };
 
             rangeSvc.addCellRange(cellRangeParams);
-        });
+        }
     }
 
     private processCell(cellValueChanges: CellValueChange[]) {

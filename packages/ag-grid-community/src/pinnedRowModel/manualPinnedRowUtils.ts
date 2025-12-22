@@ -48,8 +48,10 @@ export class PinnedRows {
         return this.visible.has(item);
     }
 
-    public forEach(fn: (node: RowNode, i: number) => void): void {
-        this.order.forEach(fn);
+    public for(fn: (node: RowNode, i: number) => void): void {
+        for (let i = 0; i < this.order.length; i++) {
+            fn(this.order[i], i);
+        }
     }
 
     public getByIndex(i: number): RowNode | undefined {
@@ -96,7 +98,14 @@ export class PinnedRows {
         const { all, visible } = this;
         const sizeBefore = visible.size;
 
-        all.forEach((node) => (shouldHide(node) ? visible.delete(node) : visible.add(node)));
+        for (const node of all) {
+            if (shouldHide(node)) {
+                visible.delete(node);
+            } else {
+                visible.add(node);
+            }
+        }
+
         this.order = Array.from(visible);
         this.sort();
 
@@ -112,7 +121,9 @@ export class PinnedRows {
     }
 
     public forEachQueued(fn: (id: string) => void): void {
-        this.queued.forEach(fn);
+        for (const id of this.queued) {
+            fn(id);
+        }
     }
 }
 

@@ -57,7 +57,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
         this.startedByEnter = eventKey != null ? eventKey === KeyCode.ENTER : false;
 
         let hasValue = false;
-        values.forEach((currentValue: any) => {
+        for (const currentValue of values) {
             const option: ListOption = { value: currentValue };
             const valueFormatted = valueSvc.formatValue(params.column as AgColumn, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
@@ -65,7 +65,7 @@ export class SelectCellEditor extends AgAbstractCellEditor<SelectCellEditorParam
 
             eEditor.addOption(option);
             hasValue = hasValue || value === currentValue;
-        });
+        }
 
         if (hasValue) {
             eEditor.setValue(params.value, true);

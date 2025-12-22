@@ -131,7 +131,9 @@ export class AgContext<
             instance.preConstruct?.();
         }
         if (afterPreCreateCallback) {
-            beanInstances.forEach(afterPreCreateCallback);
+            for (const instance of beanInstances) {
+                afterPreCreateCallback(instance);
+            }
         }
         for (const instance of beanInstances) {
             instance.postConstruct?.();

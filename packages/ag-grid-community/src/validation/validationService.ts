@@ -136,7 +136,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         const warnings = new Set<string>();
 
         const optionKeys = Object.keys(options) as (keyof T)[];
-        optionKeys.forEach((key: keyof T) => {
+        for (const key of optionKeys) {
             const deprecation = deprecations[key];
             if (deprecation) {
                 const { message, version } = deprecation;
@@ -190,7 +190,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                     return;
                 }
             }
-        });
+        }
         if (warnings.size > 0) {
             for (const warning of warnings) {
                 _warnOnce(warning);

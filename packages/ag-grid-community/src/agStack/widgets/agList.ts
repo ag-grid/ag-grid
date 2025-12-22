@@ -311,9 +311,9 @@ export class AgList<
         const listItems = this.listItems;
         const len = listItems.length;
 
-        listItems.forEach((item, idx) => {
-            item.setIndex(idx + 1, len);
-        });
+        for (let idx = 0; idx < len; idx++) {
+            listItems[idx].setIndex(idx + 1, len);
+        }
     }
 
     private fireChangeEvent(): void {

@@ -66,7 +66,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
     protected updateIndexMap = (): void => {
         this.columnIndexMap = {};
-        this.columns.forEach((col, index) => (this.columnIndexMap[col.getId()] = index));
+        for (let index = 0; index < this.columns.length; index++) {
+            this.columnIndexMap[this.columns[index].getId()] = index;
+        }
     };
 
     private setColList(
@@ -85,7 +87,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         const changes: Map<AgColumn, number> = new Map();
         // store all original cols and their index.
-        masterList.forEach((col, idx) => changes.set(col, idx));
+        for (let idx = 0; idx < masterList.length; idx++) {
+            changes.set(masterList[idx], idx);
+        }
 
         masterList.length = 0;
 
@@ -96,7 +100,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             }
         }
 
-        masterList.forEach((col, idx) => {
+        for (let idx = 0; idx < masterList.length; idx++) {
+            const col = masterList[idx];
             const oldIndex = changes.get(col);
             // if the column was not in the list, we add it as it's a change
             // idx is irrelevant now.
@@ -112,7 +117,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
             // otherwise remove this col, as it's unchanged.
             changes.delete(col);
-        });
+        }
 
         this.updateIndexMap();
 
@@ -280,7 +285,9 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         };
 
         // Columns with an index specified need to have any virtual hierarchical columns expanded
-        colsWithIndex.forEach(addCol);
+        for (const col of colsWithIndex) {
+            addCol(col);
+        }
 
         // next, add columns that were there before and in the same order as they were before,
         // so we are preserving order of current grouping of columns that simply have rowGroup=true...

@@ -216,7 +216,9 @@ export function _applyColumnState(
         const applyDefaultsFunc = (col: AgColumn) =>
             syncColumnWithStateItem(col, null, rowGroupIndexes, pivotIndexes, false);
 
-        columnsWithNoState.forEach(applyDefaultsFunc);
+        for (const col of columnsWithNoState) {
+            applyDefaultsFunc(col);
+        }
 
         rowGroupColsSvc?.sortColumns(comparatorByIndex.bind(rowGroupColsSvc, rowGroupIndexes, previousRowGroupCols));
         pivotColsSvc?.sortColumns(comparatorByIndex.bind(pivotColsSvc, pivotIndexes, previousPivotCols));
@@ -233,7 +235,9 @@ export function _applyColumnState(
                 _removeFromArray(columns, col);
                 syncColumnWithStateItem(col, stateItem, null, null, true);
             }
-            columns.forEach(applyDefaultsFunc);
+            for (const col of columns) {
+                applyDefaultsFunc(col);
+            }
         };
 
         // sync newly created auto group columns with ColumnState
@@ -318,10 +322,14 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
 
         columnStates.push(stateItem);
     };
-
-    autoColSvc?.getColumns()?.forEach(addColState);
-    selectionColSvc?.getColumns()?.forEach(addColState);
-    primaryColumns?.forEach(addColState);
+    const colsToAdd = [
+        ...(autoColSvc?.getColumns() ?? []),
+        ...(selectionColSvc?.getColumns() ?? []),
+        ...(primaryColumns ?? []),
+    ];
+    for (const col of colsToAdd) {
+        addColState(col);
+    }
 
     // apply state before ordering, as changes in row grouping will introduce new columns
     _applyColumnState(beans, { state: columnStates }, source);
@@ -663,7 +671,8 @@ function normaliseColumnMovedEventForColumnState(
     // see if any cols are in a different location
     const movedColumns: AgColumn[] = [];
 
-    afterFiltered.forEach((csAfter: ColumnState, index: number) => {
+    for (let index = 0; index < afterFiltered.length; index++) {
+        const csAfter = afterFiltered[index];
         const csBefore = beforeFiltered?.[index];
         if (csBefore && csBefore.colId !== csAfter.colId) {
             const gridCol = colModel.getCol(csBefore.colId);
@@ -671,7 +680,7 @@ function normaliseColumnMovedEventForColumnState(
                 movedColumns.push(gridCol);
             }
         }
-    });
+    }
 
     if (!movedColumns.length) {
         return;

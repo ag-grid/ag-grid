@@ -199,15 +199,15 @@ export class ColumnFilterService
             // mark the filters as we set them, so any active filters left over we stop
             const modelKeys = new Set(Object.keys(model));
 
-            this.allColumnFilters.forEach((filterWrapper, colId) => {
+            for (const [colId, filterWrapper] of this.allColumnFilters) {
                 const newModel = model[colId];
 
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
                 modelKeys.delete(colId);
-            });
+            }
 
             // at this point, processedFields contains data for which we don't have a filter working yet
-            modelKeys.forEach((colId) => {
+            for (const colId of modelKeys) {
                 const column = colModel.getColDefCol(colId) || colModel.getCol(colId);
 
                 if (!column) {
@@ -226,26 +226,26 @@ export class ColumnFilterService
                     return;
                 }
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
-            });
+            }
         } else {
             this.model = {};
-            this.allColumnFilters.forEach((filterWrapper) => {
+            for (const filterWrapper of this.allColumnFilters.values()) {
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
-            });
+            }
         }
 
         AgPromise.all(allPromises).then(() => {
             const currentModel = this.getModel(true);
 
             const columns: AgColumn[] = [];
-            this.allColumnFilters.forEach((filterWrapper, colId) => {
+            for (const [colId, filterWrapper] of this.allColumnFilters) {
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
 
                 if (!_jsonEquals(before, after)) {
                     columns.push(filterWrapper.column);
                 }
-            });
+            }
 
             if (columns.length > 0) {
                 filterManager?.onFilterChanged({ columns, source });
@@ -264,13 +264,13 @@ export class ColumnFilterService
             beans: { colModel },
         } = this;
 
-        allColumnFilters.forEach((filterWrapper, key) => {
+        for (const [key, filterWrapper] of allColumnFilters) {
             const model = this.getModelFromFilterWrapper(filterWrapper);
 
             if (_exists(model)) {
                 result[key] = model;
             }
-        });
+        }
 
         if (!excludeInitialState) {
             for (const colId of Object.keys(initialModel)) {
@@ -309,13 +309,13 @@ export class ColumnFilterService
         }
         const newState: ColumnFilterState = {};
         let hasNewState = false;
-        state.forEach((colState, colId) => {
+        for (const [colId, colState] of state) {
             const actualState = colState.state;
             if (actualState != null) {
                 hasNewState = true;
                 newState[colId] = actualState;
             }
-        });
+        }
         return hasNewState ? newState : undefined;
     }
 
@@ -350,9 +350,9 @@ export class ColumnFilterService
         this.initialModel = {};
         const { allColumnFilters } = this;
         if (allColumnFilters.size) {
-            allColumnFilters.forEach((filterWrapper) =>
-                this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled')
-            );
+            for (const filterWrapper of allColumnFilters.values()) {
+                this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled');
+            }
             return true;
         }
         return false;
@@ -412,7 +412,7 @@ export class ColumnFilterService
         };
 
         const promises: AgPromise<void>[] = [];
-        this.allColumnFilters.forEach((filterWrapper) => {
+        for (const filterWrapper of this.allColumnFilters.values()) {
             const column = filterWrapper.column;
             const colId = column.getColId();
             if (filterWrapper.isHandler) {
@@ -440,7 +440,7 @@ export class ColumnFilterService
                     );
                 }
             }
-        });
+        }
         return AgPromise.all(promises).then(() => {
             this.activeAggregateFilters = activeAggregateFilters;
             this.activeColumnFilters = activeColumnFilters;
@@ -452,7 +452,7 @@ export class ColumnFilterService
         additionalEventAttributes?: any
     ): AgPromise<(void | null)[]> {
         const promises: AgPromise<void>[] = [];
-        this.allColumnFilters.forEach((filterWrapper) => {
+        for (const filterWrapper of this.allColumnFilters.values()) {
             const column = filterWrapper.column;
             if (filterWrapper.isHandler) {
                 promises.push(
@@ -480,7 +480,7 @@ export class ColumnFilterService
                     );
                 }
             }
-        });
+        }
         this.beans.groupFilter?.updateFilterFlags(source, additionalEventAttributes);
         return AgPromise.all(promises);
     }
@@ -569,10 +569,10 @@ export class ColumnFilterService
         const colId = column?.getColId();
         return this.updateActiveFilters().then(() =>
             this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes).then(() => {
-                this.allColumnFilters.forEach((filterWrapper) => {
+                for (const filterWrapper of this.allColumnFilters.values()) {
                     const { column: filterColumn, isHandler } = filterWrapper;
                     if (colId === filterColumn.getColId()) {
-                        return;
+                        continue;
                     }
                     if (isHandler) {
                         filterWrapper.handler.onAnyFilterChanged?.();
@@ -582,7 +582,7 @@ export class ColumnFilterService
                             filter.onAnyFilterChanged();
                         }
                     });
-                });
+                }
 
                 // because internal events are not async in ag-grid, when the dispatchEvent
                 // method comes back, we know all listeners have finished executing.
@@ -604,7 +604,7 @@ export class ColumnFilterService
 
     private onNewRowsLoaded(source: ColumnEventType): void {
         const promises: AgPromise<void>[] = [];
-        this.allColumnFilters.forEach((filterWrapper) => {
+        for (const filterWrapper of this.allColumnFilters.values()) {
             const isHandler = filterWrapper.isHandler;
             if (isHandler) {
                 filterWrapper.handler.onNewRowsLoaded?.();
@@ -617,7 +617,7 @@ export class ColumnFilterService
                     })
                 );
             }
-        });
+        }
         AgPromise.all(promises).then(() => this.updateActive(source, { afterDataChange: true }));
     }
 
@@ -1107,7 +1107,7 @@ export class ColumnFilterService
         const columns: AgColumn[] = [];
         const { colModel, filterManager, groupFilter } = this.beans;
 
-        this.allColumnFilters.forEach((wrapper, colId) => {
+        for (const [colId, wrapper] of this.allColumnFilters) {
             let currentColumn: AgColumn | null;
             if (wrapper.column.isPrimary()) {
                 currentColumn = colModel.getColDefCol(colId);
@@ -1116,13 +1116,13 @@ export class ColumnFilterService
             }
             // group columns can be recreated with the same colId
             if (currentColumn && currentColumn === wrapper.column) {
-                return;
+                continue;
             }
 
             columns.push(wrapper.column);
             this.disposeFilterWrapper(wrapper, 'columnChanged');
             this.disposeColumnListener(colId);
-        });
+        }
 
         const allFiltersAreGroupFilters = groupFilter && columns.every((col) => groupFilter.isGroupFilter(col));
         // don't call `onFilterChanged` if only group column filter is present as it has no model
@@ -1533,11 +1533,13 @@ export class ColumnFilterService
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.modelUpdates.forEach(({ model, source }) => this.setModel(model, source));
+        for (const { model, source } of this.modelUpdates) {
+            this.setModel(model, source);
+        }
         this.modelUpdates = [];
-        this.columnModelUpdates.forEach(({ key, model, resolve }) => {
+        for (const { key, model, resolve } of this.columnModelUpdates) {
             this.setModelForColumn(key, model).then(() => resolve());
-        });
+        }
         this.columnModelUpdates = [];
     }
 
@@ -1746,7 +1748,7 @@ export class ColumnFilterService
 
     public updateAllModels(action: FilterAction, additionalEventAttributes?: any): void {
         const promises: AgPromise<void>[] = [];
-        this.allColumnFilters.forEach((filter, colId) => {
+        for (const [colId, filter] of this.allColumnFilters) {
             const column = this.beans.colModel.getColDefCol(colId);
             if (column) {
                 _updateFilterModel({
@@ -1770,7 +1772,7 @@ export class ColumnFilterService
                         : undefined,
                 });
             }
-        });
+        }
         if (promises.length) {
             AgPromise.all(promises).then(() => {
                 this.callOnFilterChangedOutsideRenderCycle({
@@ -1858,7 +1860,9 @@ export class ColumnFilterService
 
     public override destroy() {
         super.destroy();
-        this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
+        for (const filterWrapper of this.allColumnFilters.values()) {
+            this.disposeFilterWrapper(filterWrapper, 'gridDestroyed');
+        }
         // don't need to destroy the listeners as they are managed listeners
         this.allColumnListeners.clear();
         this.state.clear();

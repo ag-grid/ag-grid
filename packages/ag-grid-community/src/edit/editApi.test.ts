@@ -63,7 +63,9 @@ describe('Edit API', () => {
                 getEditMap: jest.fn(() => editMap),
                 setEditMap: jest.fn((em) => {
                     editMap?.clear();
-                    em.forEach((value, key) => editMap!.set(key, value));
+                    for (const [key, value] of em) {
+                        editMap!.set(key, value);
+                    }
                 }),
                 hasEdits: jest.fn(() => editMap && editMap.size > 0),
             } as unknown as IEditModelService,

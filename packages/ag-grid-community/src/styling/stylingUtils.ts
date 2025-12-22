@@ -61,7 +61,11 @@ export function processClassRules(
     // in case a class appears in more than one rule, this means it will be added
     // if appears in at least one truthy rule
     if (onNotApplicableClass) {
-        Object.keys(classesToRemove).forEach(onNotApplicableClass);
+        for (const className of Object.keys(classesToRemove)) {
+            onNotApplicableClass(className);
+        }
     }
-    Object.keys(classesToApply).forEach(onApplicableClass);
+    for (const className of Object.keys(classesToApply)) {
+        onApplicableClass(className);
+    }
 }

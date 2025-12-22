@@ -81,10 +81,12 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     private destroyEventListeners(map: Map<AgEventType, Set<AgEventListener>>, async: boolean): void {
-        map.forEach((listeners, eventType) => {
-            listeners.forEach((listener) => this.eventSvc.removeListener(eventType, listener, async));
+        for (const [eventType, listeners] of map) {
+            for (const listener of listeners) {
+                this.eventSvc.removeListener(eventType, listener, async);
+            }
             listeners.clear();
-        });
+        }
         map.clear();
     }
 
@@ -102,10 +104,10 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
         this.destroyEventListeners(this.asyncListeners, true);
         this.destroyGlobalListeners(this.syncGlobalListeners, false);
         const { globalListenerPairs, eventSvc } = this;
-        globalListenerPairs.forEach(({ syncListener, asyncListener }) => {
+        for (const { syncListener, asyncListener } of globalListenerPairs.values()) {
             eventSvc.removeGlobalListener(syncListener, false);
             eventSvc.removeGlobalListener(asyncListener, true);
-        });
+        }
         globalListenerPairs.clear();
     }
 }

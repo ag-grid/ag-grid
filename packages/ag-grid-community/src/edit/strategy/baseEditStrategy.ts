@@ -321,13 +321,13 @@ export abstract class BaseEditStrategy extends BeanStub {
 
         // Identify incoming editing cells
         const cells: (EditValue & Required<EditPosition>)[] = [];
-        edits.forEach((editRow, rowNode) => {
-            editRow.forEach((cellData, column) => {
+        for (const [rowNode, editRow] of edits) {
+            for (const [column, cellData] of editRow) {
                 if (cellData.state === 'editing') {
                     cells.push({ ...cellData, rowNode, column });
                 }
-            });
-        });
+            }
+        }
 
         if (params?.update) {
             edits = new Map([...this.model.getEditMap(), ...edits]);

@@ -193,7 +193,11 @@ export class GridCoreCreator {
     ): Module[] {
         _registerModule(CommunityCoreModule, undefined, true);
 
-        params?.modules?.forEach((m) => _registerModule(m, gridId));
+        if (params?.modules) {
+            for (const m of params.modules) {
+                _registerModule(m, gridId);
+            }
+        }
 
         return _getRegisteredModules(gridId, getDefaultRowModelType(rowModelType));
     }

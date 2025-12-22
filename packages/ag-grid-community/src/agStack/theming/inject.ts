@@ -74,9 +74,13 @@ export const _injectCoreAndModuleCSS = (
     moduleCss: Map<string, string[]> | undefined
 ) => {
     _injectGlobalCSS(sharedCSS, styleContainer, 'shared', layer, 0, nonce);
-    moduleCss?.forEach((css, debugId) =>
-        css.forEach((singleCss) => _injectGlobalCSS(singleCss, styleContainer, debugId, layer, 0, nonce))
-    );
+    if (moduleCss) {
+        for (const [debugId, cssList] of moduleCss) {
+            for (const singleCss of cssList) {
+                _injectGlobalCSS(singleCss, styleContainer, debugId, layer, 0, nonce);
+            }
+        }
+    }
 };
 
 export const _registerInstanceUsingThemingAPI = (environment: IEnvironment) => {

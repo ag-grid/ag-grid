@@ -432,12 +432,14 @@ export class StateService extends BeanStub implements NamedBean {
         const defaultState: ColumnStateParams = {};
 
         const shouldSetSortState = shouldSetState('sort', sortState);
-        if (shouldSetSortState) {
-            sortState?.sortModel.forEach(({ colId, sort }, sortIndex) => {
+        if (shouldSetSortState && sortState?.sortModel) {
+            const { sortModel } = sortState;
+            for (let sortIndex = 0; sortIndex < sortModel.length; sortIndex++) {
+                const { colId, sort } = sortModel[sortIndex];
                 const columnState = getColumnState(colId);
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
-            });
+            }
         }
         if (shouldSetSortState || !partialColumnState) {
             defaultState.sort = null;
@@ -445,12 +447,13 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetGroupState = shouldSetState('rowGroup', groupState);
-        if (shouldSetGroupState) {
-            groupState?.groupColIds.forEach((colId, rowGroupIndex) => {
-                const columnState = getColumnState(colId);
+        if (shouldSetGroupState && groupState?.groupColIds) {
+            const { groupColIds } = groupState;
+            for (let rowGroupIndex = 0; rowGroupIndex < groupColIds.length; rowGroupIndex++) {
+                const columnState = getColumnState(groupColIds[rowGroupIndex]);
                 columnState.rowGroup = true;
                 columnState.rowGroupIndex = rowGroupIndex;
-            });
+            }
         }
         if (shouldSetGroupState || !partialColumnState) {
             defaultState.rowGroup = null;
@@ -458,10 +461,10 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetAggregationState = shouldSetState('aggregation', aggregationState);
-        if (shouldSetAggregationState) {
-            aggregationState?.aggregationModel.forEach(({ colId, aggFunc }) => {
+        if (shouldSetAggregationState && aggregationState?.aggregationModel) {
+            for (const { colId, aggFunc } of aggregationState.aggregationModel) {
                 getColumnState(colId).aggFunc = aggFunc;
-            });
+            }
         }
         if (shouldSetAggregationState || !partialColumnState) {
             defaultState.aggFunc = null;
@@ -469,11 +472,15 @@ export class StateService extends BeanStub implements NamedBean {
 
         const shouldSetPivotState = shouldSetState('pivot', pivotState);
         if (shouldSetPivotState) {
-            pivotState?.pivotColIds.forEach((colId, pivotIndex) => {
-                const columnState = getColumnState(colId);
-                columnState.pivot = true;
-                columnState.pivotIndex = pivotIndex;
-            });
+            if (pivotState?.pivotColIds) {
+                const { pivotColIds } = pivotState;
+                for (let pivotIndex = 0; pivotIndex < pivotColIds.length; pivotIndex++) {
+                    const columnState = getColumnState(pivotColIds[pivotIndex]);
+                    columnState.pivot = true;
+                    columnState.pivotIndex = pivotIndex;
+                }
+            }
+
             this.gos.updateGridOptions({
                 options: { pivotMode: !!pivotState?.pivotMode },
                 source: source as any,
@@ -485,12 +492,17 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetColumnPinningState = shouldSetState('columnPinning', columnPinningState);
-        if (shouldSetColumnPinningState) {
-            for (const colId of columnPinningState?.leftColIds ?? []) {
-                getColumnState(colId).pinned = 'left';
+        if (shouldSetColumnPinningState && columnPinningState) {
+            const { leftColIds, rightColIds } = columnPinningState;
+            if (leftColIds) {
+                for (const colId of leftColIds) {
+                    getColumnState(colId).pinned = 'left';
+                }
             }
-            for (const colId of columnPinningState?.rightColIds ?? []) {
-                getColumnState(colId).pinned = 'right';
+            if (rightColIds) {
+                for (const colId of rightColIds) {
+                    getColumnState(colId).pinned = 'right';
+                }
             }
         }
         if (shouldSetColumnPinningState || !partialColumnState) {
@@ -498,8 +510,8 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetColumnVisibilityState = shouldSetState('columnVisibility', columnVisibilityState);
-        if (shouldSetColumnVisibilityState) {
-            for (const colId of columnVisibilityState?.hiddenColIds ?? []) {
+        if (shouldSetColumnVisibilityState && columnVisibilityState?.hiddenColIds) {
+            for (const colId of columnVisibilityState.hiddenColIds) {
                 getColumnState(colId).hide = true;
             }
         }
@@ -508,8 +520,8 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const shouldSetColumnSizingState = shouldSetState('columnSizing', columnSizingState);
-        if (shouldSetColumnSizingState) {
-            for (const { colId, flex, width } of columnSizingState?.columnSizingModel ?? []) {
+        if (shouldSetColumnSizingState && columnSizingState?.columnSizingModel) {
+            for (const { colId, flex, width } of columnSizingState.columnSizingModel) {
                 const columnState = getColumnState(colId);
                 columnState.flex = flex ?? null;
                 columnState.width = width;

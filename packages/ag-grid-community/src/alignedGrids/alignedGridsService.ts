@@ -127,9 +127,9 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     private extractDataFromEvent<T extends AgColumn | string>(event: ColumnEvent, func: (col: AgColumn) => T): T[] {
         const result: T[] = [];
         if (event.columns) {
-            event.columns.forEach((column: AgColumn) => {
-                result.push(func(column));
-            });
+            for (const column of event.columns) {
+                result.push(func(column as AgColumn));
+            }
         } else if (event.column) {
             result.push(func(event.column as AgColumn));
         }

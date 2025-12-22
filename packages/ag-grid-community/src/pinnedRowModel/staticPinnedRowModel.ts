@@ -251,10 +251,13 @@ function forEach<T extends { id: string | undefined }>(
     cache: OrderedCache<T>,
     callback: (item: T, index: number) => void
 ): void {
-    cache.order.forEach((id, index) => {
+    for (let index = 0; index < cache.order.length; index++) {
+        const id = cache.order[index];
         const node = getById(cache, id);
-        node && callback(node, index);
-    });
+        if (node) {
+            callback(node, index);
+        }
+    }
 }
 
 function getSize<T extends { id: string | undefined }>(cache: OrderedCache<T>): number {

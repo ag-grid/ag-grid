@@ -930,12 +930,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
         let colIdsMap: any;
         if (_exists(columns)) {
             colIdsMap = {};
-            columns.forEach((colKey: string | AgColumn) => {
+            for (const colKey of columns) {
                 const column: AgColumn | null = this.colModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
-            });
+            }
         }
 
         const res: CellCtrl[] = [];

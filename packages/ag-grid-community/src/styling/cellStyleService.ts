@@ -59,8 +59,8 @@ export class CellStyleService extends BeanStub implements NamedBean {
     ) {
         const classOrClasses = this.getStaticCellClasses(colDef, params);
 
-        classOrClasses.forEach((cssClassItem: string) => {
+        for (const cssClassItem of classOrClasses) {
             onApplicableClass(cssClassItem);
-        });
+        }
     }
 }

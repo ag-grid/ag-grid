@@ -26,7 +26,8 @@ export class AgPromise<T> {
                   let remainingToResolve = promises.length;
                   const combinedValues = new Array<T | null>(remainingToResolve);
 
-                  promises.forEach((promise, index) => {
+                  for (let index = 0; index < promises.length; index++) {
+                      const promise = promises[index];
                       promise.then((value) => {
                           combinedValues[index] = value;
                           remainingToResolve--;
@@ -35,7 +36,7 @@ export class AgPromise<T> {
                               resolve(combinedValues);
                           }
                       });
-                  });
+                  }
               })
             : AgPromise.resolve();
     }

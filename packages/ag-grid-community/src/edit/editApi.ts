@@ -28,37 +28,39 @@ export function getEditRowValues(beans: BeanCollection, rowNode: IRowNode): Reco
 export function getEditingCells(beans: BeanCollection): EditingCellPosition[] {
     const edits = beans.editModelSvc?.getEditMap();
     const positions: EditingCellPosition[] = [];
-    edits?.forEach((editRow, rowNode) => {
-        const { rowIndex, rowPinned } = rowNode as RowNode;
-        editRow.forEach((editValue, column) => {
-            const { editorValue, pendingValue, sourceValue: oldValue, state } = editValue;
-            const diff = _sourceAndPendingDiffer(editValue);
+    if (edits) {
+        for (const [rowNode, editRow] of edits) {
+            const { rowIndex, rowPinned } = rowNode as RowNode;
+            for (const [column, editValue] of editRow) {
+                const { editorValue, pendingValue, sourceValue: oldValue, state } = editValue;
+                const diff = _sourceAndPendingDiffer(editValue);
 
-            let newValue = editorValue ?? pendingValue;
+                let newValue = editorValue ?? pendingValue;
 
-            if (newValue === UNEDITED) {
-                newValue = undefined;
+                if (newValue === UNEDITED) {
+                    newValue = undefined;
+                }
+
+                const edit: EditingCellPosition = {
+                    newValue,
+                    oldValue,
+                    state,
+                    column,
+                    colId: column.getColId(),
+                    colKey: column.getColId(),
+                    rowIndex: rowIndex!,
+                    rowPinned,
+                };
+
+                const changed = state === 'changed' && diff;
+                const editing = state === 'editing';
+
+                if (editing || changed) {
+                    positions.push(edit);
+                }
             }
-
-            const edit: EditingCellPosition = {
-                newValue,
-                oldValue,
-                state,
-                column,
-                colId: column.getColId(),
-                colKey: column.getColId(),
-                rowIndex: rowIndex!,
-                rowPinned,
-            };
-
-            const changed = state === 'changed' && diff;
-            const editing = state === 'editing';
-
-            if (editing || changed) {
-                positions.push(edit);
-            }
-        });
-    });
+        }
+    }
     return positions;
 }
 

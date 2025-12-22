@@ -94,12 +94,13 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
 
         const data: any = Object.assign({}, rowNode.data);
 
-        const applyEdits = (edits: EditRow, data: any) =>
-            edits.forEach(({ pendingValue }, column) => {
+        const applyEdits = (edits: EditRow, data: any) => {
+            for (const [column, { pendingValue }] of edits) {
                 if (pendingValue !== UNEDITED) {
                     data[column.getColId()] = pendingValue;
                 }
-            });
+            }
+        };
 
         if (editRow) {
             applyEdits(editRow, data);
@@ -139,27 +140,27 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
 
         const map = new Map<IRowNode, Map<Column, EditValue>>();
-        this.edits.forEach((editRow, rowNode) => {
+        for (const [rowNode, editRow] of this.edits) {
             const newEditRow = new Map<Column, EditValue>();
-            editRow.forEach(({ editorState: _, ...cellData }, column) =>
+            for (const [column, { editorState: _, ...cellData }] of editRow) {
                 // Ensure we copy the cell data to avoid reference issues
-                newEditRow.set(column, { ...cellData } as EditValue)
-            );
+                newEditRow.set(column, { ...cellData } as EditValue);
+            }
             map.set(rowNode, newEditRow);
-        });
+        }
         return map;
     }
 
     public setEditMap(newEdits: EditMap): void {
         this.edits.clear();
-        newEdits.forEach((editRow, rowNode) => {
+        for (const [rowNode, editRow] of newEdits) {
             const newRow = new Map<Column, EditValue>();
-            editRow.forEach((cellData, column) =>
+            for (const [column, cellData] of editRow) {
                 // Ensure we copy the cell data to avoid reference issues
-                newRow.set(column, { ...cellData })
-            );
+                newRow.set(column, { ...cellData });
+            }
             this.edits.set(rowNode, newRow);
-        });
+        }
     }
 
     public setEdit(position: Required<EditPosition>, edit: Partial<EditValue>): Readonly<EditValue> {
@@ -192,11 +193,14 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                     edit.state = 'changed';
                 }
             } else {
-                this.getEditRow(rowNode)?.forEach((cellData) => {
-                    cellData.editorValue = undefined;
-                    cellData.pendingValue = cellData.sourceValue;
-                    cellData.state = 'changed';
-                });
+                const editRow = this.getEditRow(rowNode);
+                if (editRow) {
+                    for (const cellData of editRow.values()) {
+                        cellData.editorValue = undefined;
+                        cellData.pendingValue = cellData.sourceValue;
+                        cellData.state = 'changed';
+                    }
+                }
             }
         }
     }
@@ -215,7 +219,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
         }
 
         const positions: EditPositionValue[] = [];
-        (editMap ?? this.edits).forEach((editRow, rowNode) => {
+        for (const [rowNode, editRow] of editMap ?? this.edits) {
             for (const column of editRow.keys()) {
                 const { editorState: _, ...rest } = editRow.get(column)!;
                 positions.push({
@@ -224,7 +228,7 @@ export class EditModelService extends BeanStub implements NamedBean, IEditModelS
                     ...rest,
                 } as EditPositionValue);
             }
-        });
+        }
 
         return positions;
     }

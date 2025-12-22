@@ -105,7 +105,9 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
             clearTimeout(this.modelTimeout);
         }
 
-        this.spanningColumns.forEach((cache) => cache.buildCache('center'));
+        for (const cache of this.spanningColumns.values()) {
+            cache.buildCache('center');
+        }
         this.debounceModelEvent();
     }
 
@@ -114,10 +116,10 @@ export class RowSpanService extends BeanStub<'spannedCellsUpdated'> implements N
             clearTimeout(this.pinnedTimeout);
         }
 
-        this.spanningColumns.forEach((cache) => {
+        for (const cache of this.spanningColumns.values()) {
             cache.buildCache('top');
             cache.buildCache('bottom');
-        });
+        }
         this.debouncePinnedEvent();
     }
 
