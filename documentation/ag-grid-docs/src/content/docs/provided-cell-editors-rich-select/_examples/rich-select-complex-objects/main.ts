@@ -56,7 +56,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         width: 200,
         editable: true,
-        filter: true,
         cellEditor: 'agRichSelectCellEditor',
     },
     columnDefs: columnDefs,
