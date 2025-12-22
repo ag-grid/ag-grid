@@ -153,6 +153,7 @@ columnDefs: [
         cellEditor: 'agRichSelectCellEditor',
         valueFormatter: (p) => `${p.value.name} (${p.value.code})`,
         valueParser: (p) => p.newValue,
+        cellDataType: 'object',
         cellEditorParams: {
             values: colors,
             formatValue: (v) => v.name,
