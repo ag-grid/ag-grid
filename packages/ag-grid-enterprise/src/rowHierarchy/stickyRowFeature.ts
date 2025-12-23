@@ -426,7 +426,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                 anyChange = true;
             }
         };
-        for (const ctrl of this.stickyBottomRowCtrls) {
+        for (const ctrl of this.stickyTopRowCtrls) {
             updateRowHeight(ctrl);
         }
         for (const ctrl of this.stickyBottomRowCtrls) {
