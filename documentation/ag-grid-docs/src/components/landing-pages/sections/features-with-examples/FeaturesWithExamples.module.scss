@@ -13,45 +13,45 @@
 
 .tabContainer {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     gap: $spacing-size-2;
-    background: var(--color-brand-200);
-    border-radius: var(--radius-4xl);
-    padding: $spacing-size-1;
     margin-bottom: $spacing-size-8;
-    width: auto;
-
-    #{$selector-darkmode} & {
-        background: var(--color-bg-secondary);
-    }
+    width: fit-content;
+    border-bottom: 1px solid var(--color-border-secondary);
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: flex-start;
     }
 }
 
 .tab {
+    // Reset default button styling from style guide
+    --icon-size: unset;
+    --icon-color: unset;
     padding: $spacing-size-2 $spacing-size-4;
     min-width: 120px;
     height: 44px;
-    color: var(--color-fg-primary);
-    border-radius: var(--radius-4xl);
+    color: var(--color-fg-secondary);
+    opacity: 0.6;
     border: none;
+    border-bottom: 2px solid transparent;
     appearance: none;
     background-color: transparent;
     box-shadow: none;
-    font-weight: var(--text-regular);
-    font-size: var(--text-fs-sm);
+    font-weight: var(--text-semibold);
+    font-size: 16px;
+    white-space: nowrap;
+    border-radius: 0;
     cursor: pointer;
-    transition: all 0.2s ease;
+    outline: none;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease, opacity 0.3s ease;
 
     &:hover {
-        background-color: rgba(255, 255, 255, 0.5);
-
-        #{$selector-darkmode} & {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+        background: transparent;
+        color: var(--color-fg-primary);
+        border-bottom-color: var(--color-border-secondary);
+        opacity: 0.8;
     }
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
@@ -61,20 +61,34 @@
 }
 
 .activeTab {
+    // Reset default button styling from style guide
+    --icon-size: unset;
+    --icon-color: unset;
     padding: $spacing-size-2 $spacing-size-4;
     min-width: 120px;
     height: 44px;
-    border-radius: var(--radius-4xl);
-    background: white;
-    color: var(--color-brand-600);
+    color: var(--color-fg-primary);
+    opacity: 1;
     border: none;
-    box-shadow: var(--shadow-lg);
+    border-bottom: 2px solid var(--color-brand-500);
+    appearance: none;
+    background-color: var(--color-bg-primary) !important;
+    box-shadow: none;
     font-weight: var(--text-semibold);
-    font-size: var(--text-fs-sm);
+    font-size: 16px;
+    white-space: nowrap;
+    border-radius: 0;
     cursor: pointer;
+    outline: none;
+    transition: border-bottom-color 0.3s ease;
 
     #{$selector-darkmode} & {
-        background-color: var(--color-fg-secondary);
+        border-bottom-color: var(--color-link);
+    }
+
+    &:hover {
+        background-color: var(--color-bg-primary) !important;
+        color: var(--color-fg-primary) !important;
     }
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
