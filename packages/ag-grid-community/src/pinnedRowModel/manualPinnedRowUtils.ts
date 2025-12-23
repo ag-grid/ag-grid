@@ -48,7 +48,7 @@ export class PinnedRows {
         return this.visible.has(item);
     }
 
-    public for(fn: (node: RowNode, i: number) => void): void {
+    public forEachNode(fn: (node: RowNode, i: number) => void): void {
         for (let i = 0; i < this.order.length; i++) {
             fn(this.order[i], i);
         }

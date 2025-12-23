@@ -89,7 +89,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     public reset(dispatch = true): void {
         this.forContainers((container) => {
             const nodesToUnpin: RowNode[] = [];
-            container.for((n) => nodesToUnpin.push(n));
+            container.forEachNode((n) => nodesToUnpin.push(n));
             // Have to collect up the nodes to unpin because unpinning mutates the container
             for (const n of nodesToUnpin) {
                 this.pinRow(n, null);
@@ -199,9 +199,9 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
                 anyChange = true;
             }
         };
-        this.bottom.for(updateRowHeight);
+        this.bottom.forEachNode(updateRowHeight);
         rowTop = 0;
-        this.top.for(updateRowHeight);
+        this.top.forEachNode(updateRowHeight);
 
         this.eventSvc.dispatchEvent({
             type: 'pinnedHeightChanged',
@@ -242,7 +242,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         floating: NonNullable<RowPinnedType>,
         callback: (node: RowNode, index: number) => void
     ): void {
-        this.getContainer(floating).for(callback);
+        this.getContainer(floating).forEachNode(callback);
     }
 
     public getPinnedState(): RowPinningState {
@@ -335,7 +335,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
     private onGridStylesChanges(e: StylesChangedEvent) {
         if (e.rowHeightChanged) {
             this.forContainers((container) =>
-                container.for((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
+                container.forEachNode((rowNode) => rowNode.setRowHeight(rowNode.rowHeight, true))
             );
         }
     }
@@ -383,7 +383,7 @@ function refreshRowPositions(beans: BeanCollection, container: PinnedRows): bool
     let rowTop = 0;
     let changed = false;
 
-    container.for((node, index) => {
+    container.forEachNode((node, index) => {
         changed ||= node.rowTop !== rowTop;
         node.setRowTop(rowTop);
 
@@ -444,7 +444,7 @@ function _destroyRowNodeSibling(rowNode: RowNode): void {
 
 function removeGroupRows(set: PinnedRows) {
     const rowsToRemove = new Set<RowNode>();
-    set.for((node) => {
+    set.forEachNode((node) => {
         if (node.group) {
             rowsToRemove.add(node);
         }

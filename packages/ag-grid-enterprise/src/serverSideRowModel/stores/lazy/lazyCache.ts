@@ -136,7 +136,7 @@ export class LazyCache extends BeanStub {
     public override destroy() {
         this.lazyBlockLoadingSvc.unsubscribe(this);
         this.numberOfRows = 0;
-        this.nodeMap.for((node) => this.blockUtils.destroyRowNode(node.node));
+        this.nodeMap.forEachNode((node) => this.blockUtils.destroyRowNode(node.node));
         this.nodeMap.clear();
         this.nodeDisplayIndexMap.clear();
         this.nodesToRefresh.clear();
@@ -302,7 +302,7 @@ export class LazyCache extends BeanStub {
         // create an object indexed by store index, as this will sort all of the nodes when we iterate
         // the object
         const orderedMap: { [key: number]: RowNode } = {};
-        this.nodeMap.for((lazyNode) => {
+        this.nodeMap.forEachNode((lazyNode) => {
             orderedMap[lazyNode.index] = lazyNode.node;
         });
 
@@ -386,7 +386,7 @@ export class LazyCache extends BeanStub {
     public getSurroundingNodesByDisplayIndex(displayIndex: number) {
         let nextNode: LazyStoreNode | undefined;
         let previousNode: LazyStoreNode | undefined;
-        this.nodeMap.for((lazyNode) => {
+        this.nodeMap.forEachNode((lazyNode) => {
             // previous node
             if (displayIndex > lazyNode.node.rowIndex!) {
                 // get the largest previous node
@@ -420,7 +420,7 @@ export class LazyCache extends BeanStub {
 
         let nextNode: LazyStoreNode | undefined;
         let previousNode: LazyStoreNode | undefined;
-        this.nodeMap.for((lazyNode) => {
+        this.nodeMap.forEachNode((lazyNode) => {
             // previous node
             if (storeIndex > lazyNode.index) {
                 // get the largest previous node
@@ -561,7 +561,7 @@ export class LazyCache extends BeanStub {
         const blockCounts: { [key: string]: number } = {};
         const blockStates: { [key: string]: Set<string> } = {};
 
-        this.nodeMap.for(({ node, index }) => {
+        this.nodeMap.forEachNode(({ node, index }) => {
             const blockStart = this.getBlockStartIndex(index);
 
             if (!node.stub && !node.failedLoad) {
@@ -674,7 +674,7 @@ export class LazyCache extends BeanStub {
         const firstRowBlockStart = this.getBlockStartIndex(firstRenderedRow);
         const [, lastRowBlockEnd] = this.getBlockBounds(lastRenderedRow);
 
-        this.nodeMap.for((lazyNode) => {
+        this.nodeMap.forEachNode((lazyNode) => {
             // failed loads are still useful, so we don't purge them
             if (this.lazyBlockLoadingSvc.isRowLoading(this, lazyNode.index) || lazyNode.node.failedLoad) {
                 return;
@@ -722,7 +722,7 @@ export class LazyCache extends BeanStub {
         const allLoadedBlocks: Set<number> = new Set();
         // the start storeIndex of every displayed block in this store
         const blocksInViewport: Set<number> = new Set();
-        this.nodeMap.for(({ index, node }) => {
+        this.nodeMap.forEachNode(({ index, node }) => {
             const blockStart = this.getBlockStartIndex(index);
             allLoadedBlocks.add(blockStart);
 
@@ -996,7 +996,7 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
-        this.nodeMap.for((lazyNode) => {
+        this.nodeMap.forEachNode((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
             }
@@ -1041,7 +1041,7 @@ export class LazyCache extends BeanStub {
 
     public getOrderedNodeMap() {
         const obj: { [key: number]: LazyStoreNode } = {};
-        this.nodeMap.for((node) => (obj[node.index] = node));
+        this.nodeMap.forEachNode((node) => (obj[node.index] = node));
         return obj;
     }
 
@@ -1061,7 +1061,7 @@ export class LazyCache extends BeanStub {
 
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
-        this.nodeMap.for((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
+        this.nodeMap.forEachNode((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
         this.nodeMap.clear();
 
         const sortedNodes = this.rowNodeSorter.doFullSort(allNodes, sortOptions);
