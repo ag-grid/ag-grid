@@ -360,11 +360,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
             const columnStateUpdates = this.columnStateUpdatesPendingInference[colId];
             const column = this.colModel.getCol(colId);
             if (!column) {
-                return;
+                continue;
             }
             const oldColDef = column.getColDef();
             if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
-                return;
+                continue;
             }
             const newColDef = column.getColDef();
             if (columnTypeOverridesExist && newColDef.type && newColDef.type !== oldColDef.type) {
