@@ -48,7 +48,7 @@ export class MultiFilterHandler
             this.handlerWrappers.push(wrapper);
             if (!wrapper) {
                 _warn(278, { colId: params.column.getColId() });
-                return;
+                continue;
             }
             const { handler, handlerParams } = wrapper;
             handler.init?.({

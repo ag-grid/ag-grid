@@ -55,7 +55,7 @@ export class FormatPanel extends Component {
         for (const { type: group, isOpen: isExpandedOnInit = false } of groups) {
             // ensure the group should be displayed for the current series type
             if (!this.isGroupPanelShownInSeries(group, seriesType)) {
-                return;
+                continue;
             }
 
             if (isExpandedOnInit) {

@@ -227,7 +227,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (list) {
             for (const col of list) {
                 if (!col.isPrimary()) {
-                    return;
+                    continue;
                 }
                 let label = '';
                 let n = idx++;

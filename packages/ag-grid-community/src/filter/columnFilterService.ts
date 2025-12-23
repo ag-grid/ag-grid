@@ -212,18 +212,18 @@ export class ColumnFilterService
 
                 if (!column) {
                     _warn(62, { colId });
-                    return;
+                    continue;
                 }
 
                 if (!column.isFilterAllowed()) {
                     _warn(63, { colId });
-                    return;
+                    continue;
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column, true);
                 if (!filterWrapper) {
                     _warn(64, { colId });
-                    return;
+                    continue;
                 }
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
             }

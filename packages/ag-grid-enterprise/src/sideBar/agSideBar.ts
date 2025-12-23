@@ -456,17 +456,17 @@ class AgSideBar extends Component implements ISideBar {
             for (const toolPanelDef of sideBarDef.toolPanels) {
                 const { id } = toolPanelDef;
                 if (!id) {
-                    return;
+                    continue;
                 }
                 const existingToolPanelDef = this.sideBar!.toolPanels?.find(
                     (toolPanelDefToCheck: ToolPanelDef) => toolPanelDefToCheck.id === id
                 ) as ToolPanelDef | undefined;
                 if (!existingToolPanelDef || toolPanelDef.toolPanel !== existingToolPanelDef.toolPanel) {
-                    return;
+                    continue;
                 }
                 const toolPanelWrapper = this.toolPanelWrappers.find((toolPanel) => toolPanel.getToolPanelId() === id);
                 if (!toolPanelWrapper) {
-                    return;
+                    continue;
                 }
                 const params = _addGridCommonParams<IToolPanelParams>(this.gos, {
                     ...(toolPanelDef.toolPanelParams ?? {}),
@@ -475,7 +475,7 @@ class AgSideBar extends Component implements ISideBar {
                 });
                 const hasRefreshed = toolPanelWrapper.getToolPanelInstance()?.refresh(params);
                 if (hasRefreshed !== true) {
-                    return;
+                    continue;
                 }
                 this.toolPanelWrappers = this.toolPanelWrappers.filter((toolPanel) => toolPanel !== toolPanelWrapper);
                 _removeFromParent(toolPanelWrapper.getGui());

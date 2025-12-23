@@ -517,7 +517,7 @@ export class ChartDataModel extends BeanStub {
             // use first dimension column in range by default, or all dimension columns for hierarchical charts
             for (const col of dimensionCols) {
                 if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) {
-                    return;
+                    continue;
                 }
                 selectedCols.push(col);
             }

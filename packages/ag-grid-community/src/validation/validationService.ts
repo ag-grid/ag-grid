@@ -146,12 +146,12 @@ export class ValidationService extends BeanStub implements NamedBean {
             const value = options[key];
             if (value == null || value === false) {
                 // false implies feature is disabled, don't validate.
-                return;
+                continue;
             }
 
             const rules = validations[key];
             if (!rules) {
-                return;
+                continue;
             }
 
             const { dependencies, validate, supportedRowModels, expectedType } = rules;
@@ -162,7 +162,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                     warnings.add(
                         `${String(key)} should be of type '${expectedType}' but received '${actualType}' (${value}).`
                     );
-                    return;
+                    continue;
                 }
             }
 
@@ -172,7 +172,7 @@ export class ValidationService extends BeanStub implements NamedBean {
                     warnings.add(
                         `${String(key)} is not supported with the '${rowModel}' row model. It is only valid with: ${supportedRowModels.join(', ')}.`
                     );
-                    return;
+                    continue;
                 }
             }
 
@@ -180,14 +180,14 @@ export class ValidationService extends BeanStub implements NamedBean {
                 const warning = this.checkForRequiredDependencies(key, dependencies, options);
                 if (warning) {
                     warnings.add(warning);
-                    return;
+                    continue;
                 }
             }
             if (validate) {
                 const warning = validate(options, this.gridOptions, this.beans);
                 if (warning) {
                     warnings.add(warning);
-                    return;
+                    continue;
                 }
             }
         }

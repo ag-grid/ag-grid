@@ -306,7 +306,7 @@ export function _purgeUnchangedEdits(beans: BeanCollection, includeEditing?: boo
         for (const [rowNode, editRow] of map) {
             for (const [column, edit] of editRow) {
                 if (!includeEditing && (edit.state === 'editing' || edit.pendingValue === UNEDITED)) {
-                    return;
+                    continue;
                 }
 
                 if (!_sourceAndPendingDiffer(edit) && (edit.state !== 'editing' || includeEditing)) {

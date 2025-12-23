@@ -107,12 +107,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             // idx is irrelevant now.
             if (oldIndex === undefined) {
                 changes.set(col, 0);
-                return;
+                continue;
             }
 
             if (detectOrderChange && oldIndex !== idx) {
                 // if we're detecting order changes, and the indexes differ, we retain this as it's changed
-                return;
+                continue;
             }
 
             // otherwise remove this col, as it's unchanged.

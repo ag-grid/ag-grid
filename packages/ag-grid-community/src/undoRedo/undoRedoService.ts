@@ -203,7 +203,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         for (let idx = 0; idx < ranges.length; idx++) {
             const range = ranges[idx];
             if (!range) {
-                return;
+                continue;
             }
 
             const startRow = range.startRow;

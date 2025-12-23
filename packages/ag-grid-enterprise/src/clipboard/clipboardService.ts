@@ -567,7 +567,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     for (let index = 0; index < columns.length; index++) {
                         const column = columns[index] as AgColumn;
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
-                            return;
+                            continue;
                         }
 
                         const isFormula = column.isAllowFormula() && formula?.isFormula(firstRowValues[index]);

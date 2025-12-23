@@ -1112,7 +1112,7 @@ export class EditService extends BeanStub implements NamedBean, IEditService {
 
                 // force refresh of all row cells as custom renderers may depend on multiple cell values
                 this.bulkRefresh();
-                return;
+                continue;
             }
 
             this.committing = true;

@@ -143,12 +143,12 @@ export class InfiniteCache extends BeanStub {
                 // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
                 // but the screen is showing 20 rows, so at least 4 blocks are needed.
                 if (this.isBlockCurrentlyDisplayed(block)) {
-                    return;
+                    continue;
                 }
 
                 // don't want to loose keyboard focus, so keyboard navigation can continue. so keep focused blocks.
                 if (this.isBlockFocused(block)) {
-                    return;
+                    continue;
                 }
 
                 // at this point, block is not needed, so burn baby burn

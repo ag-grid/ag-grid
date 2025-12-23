@@ -283,7 +283,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.forContainers((pinned, container) => {
             const nodesToPin = new Set<RowNode>();
 
-            pinned.forEachQueued((id) => {
+            pinned.forQueued((id) => {
                 const node = this.beans.rowModel.getRowNode(id);
                 if (node) {
                     nodesToPin.add(node);

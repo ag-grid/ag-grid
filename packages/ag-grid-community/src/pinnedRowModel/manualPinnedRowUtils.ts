@@ -120,7 +120,7 @@ export class PinnedRows {
         this.queued.delete(id);
     }
 
-    public forEachQueued(fn: (id: string) => void): void {
+    public forQueued(fn: (id: string) => void): void {
         for (const id of this.queued) {
             fn(id);
         }

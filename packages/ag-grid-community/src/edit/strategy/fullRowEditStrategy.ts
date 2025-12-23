@@ -283,7 +283,7 @@ export class FullRowEditStrategy extends BaseEditStrategy {
         for (const [rowNode, rowEdits] of this.model.getEditMap()) {
             for (const [column, { state }] of rowEdits) {
                 if (state !== 'editing') {
-                    return;
+                    continue;
                 }
 
                 const cellCtrl = _getCellCtrl(this.beans, {
