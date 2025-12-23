@@ -15,46 +15,44 @@ import { themeQuartz } from './theming/parts/theme/themes';
 import { _error, _warn } from './validation/logging';
 
 const CELL_HORIZONTAL_PADDING: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-cell-horizontal-padding',
-    changeKey: 'cellHorizontalPaddingChanged',
+    changeKey: 'cellHorizontalPadding',
+    type: 'length',
     defaultValue: 16,
 };
 
 const INDENTATION_LEVEL: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-indentation-level',
-    changeKey: 'indentationLevelChanged',
+    changeKey: 'indentationLevel',
+    type: 'length',
     defaultValue: 0,
     noWarn: true,
     cacheDefault: true,
 };
 
 const ROW_GROUP_INDENT_SIZE: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-row-group-indent-size',
-    changeKey: 'rowGroupIndentSizeChanged',
+    changeKey: 'rowGroupIndentSize',
+    type: 'length',
     defaultValue: 0,
 };
 
 const ROW_HEIGHT: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-row-height',
-    changeKey: 'rowHeightChanged',
+    changeKey: 'rowHeight',
+    type: 'length',
     defaultValue: 42,
 };
 const HEADER_HEIGHT: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-header-height',
-    changeKey: 'headerHeightChanged',
+    changeKey: 'headerHeight',
+    type: 'length',
     defaultValue: 48,
 };
 const ROW_BORDER_WIDTH: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-row-border',
-    changeKey: 'rowBorderWidthChanged',
+    changeKey: 'rowBorderWidth',
+    type: 'border',
     defaultValue: 1,
-    border: true,
 };
 const PINNED_BORDER_WIDTH: CssVariable<CssChangeKeys> = {
-    cssName: '--ag-pinned-row-border',
-    changeKey: 'pinnedRowBorderWidthChanged',
+    changeKey: 'pinnedRowBorderWidth',
+    type: 'border',
     defaultValue: 1,
-    border: true,
 };
 
 export function _addAdditionalCss(cssMap: Map<string, string[]>, modules: Module[]): void {
@@ -152,7 +150,7 @@ export class Environment
     }
 
     protected override fireStylesChangedEvent(change: keyof CssChangeKeys): void {
-        if (change === 'rowBorderWidthChanged') {
+        if (change === 'rowBorderWidth') {
             this.refreshRowBorderWidthVariable();
         }
         super.fireStylesChangedEvent(change);
@@ -192,8 +190,8 @@ export class Environment
         return themeQuartz;
     }
 
-    protected override varError(variable: CssVariable<CssChangeKeys>): void {
-        _warn(9, { variable });
+    protected override varError(cssName: string, defaultValue: number): void {
+        _warn(9, { variable: { cssName, defaultValue } });
     }
 
     protected override themeError(theme: Theme | 'legacy'): void {
@@ -206,11 +204,11 @@ export class Environment
 }
 
 interface CssChangeKeys extends BaseCssChangeKeys {
-    headerHeightChanged: true;
-    rowHeightChanged: true;
-    rowBorderWidthChanged: true;
-    pinnedRowBorderWidthChanged: true;
-    cellHorizontalPaddingChanged: true;
-    indentationLevelChanged: true;
-    rowGroupIndentSizeChanged: true;
+    headerHeight: true;
+    rowHeight: true;
+    rowBorderWidth: true;
+    pinnedRowBorderWidth: true;
+    cellHorizontalPadding: true;
+    indentationLevel: true;
+    rowGroupIndentSize: true;
 }

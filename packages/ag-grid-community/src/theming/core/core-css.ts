@@ -120,16 +120,6 @@ export interface CoreParams extends SharedThemeParams {
     columnSelectIndentSize: LengthValue;
 
     /**
-     * Border color popup dialogs such as the integrated charts and the advanced filter builder.
-     */
-    dialogBorder: BorderValue;
-
-    /**
-     * Shadow for popup dialogs such as the integrated charts and the advanced filter builder.
-     */
-    dialogShadow: ShadowValue;
-
-    /**
      * Border around cells being edited
      */
     cellEditingBorder: BorderValue;
@@ -195,19 +185,9 @@ export interface CoreParams extends SharedThemeParams {
     findActiveMatchBackgroundColor: ColorValue;
 
     /**
-     * Font size for data in grid rows
-     */
-    dataFontSize: LengthValue;
-
-    /**
      * Horizontal borders above footer components like the pagination and status bars
      */
     footerRowBorder: BorderValue;
-
-    /**
-     * Background color for header and header-like.
-     */
-    headerBackgroundColor: ColorValue;
 
     /**
      * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set.
@@ -250,44 +230,14 @@ export interface CoreParams extends SharedThemeParams {
     headerColumnResizeHandleWidth: LengthValue;
 
     /**
-     * Font family of text in the header
-     */
-    headerFontFamily: FontFamilyValue;
-
-    /**
      * Font family of text in grid cells
      */
     cellFontFamily: FontFamilyValue;
 
     /**
-     * Size of text in the header
-     */
-    headerFontSize: LengthValue;
-
-    /**
-     * Font weight of text in the header
-     */
-    headerFontWeight: FontWeightValue;
-
-    /**
-     * Height of header rows. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use rowVerticalPaddingScale to change padding.
-     */
-    headerHeight: LengthValue;
-
-    /**
      * Borders between and below header rows.
      */
     headerRowBorder: BorderValue;
-
-    /**
-     * Color of text in the header
-     */
-    headerTextColor: ColorValue;
-
-    /**
-     * Multiply the header vertical padding by a number, e.g. 1.5 to increase by 50%
-     */
-    headerVerticalPaddingScale: ScaleValue;
 
     /**
      * Default color for clickable icons
@@ -373,41 +323,6 @@ export interface CoreParams extends SharedThemeParams {
      * Alternative background colour applied to every other row to create a striped effect
      */
     oddRowBackgroundColor: ColorValue;
-
-    /**
-     * Background color for panels and dialogs such as the integrated charts and the advanced filter builder.
-     */
-    panelBackgroundColor: ColorValue;
-
-    /**
-     * The height of the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
-     */
-    panelTitleBarHeight: LengthValue;
-
-    /**
-     * Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
-     */
-    panelTitleBarBackgroundColor: ColorValue;
-
-    /**
-     * Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
-     */
-    panelTitleBarTextColor: ColorValue;
-
-    /**
-     * Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
-     */
-    panelTitleBarIconColor: ColorValue;
-
-    /**
-     * Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
-     */
-    panelTitleBarFontWeight: FontWeightValue;
-
-    /**
-     * Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
-     */
-    panelTitleBarBorder: BorderValue;
 
     /**
      * Vertical borders between columns that are pinned to the left or right and the rest of the grid
@@ -680,26 +595,6 @@ export interface CoreParams extends SharedThemeParams {
     valueChangeValueHighlightBackgroundColor: ColorValue;
 
     /**
-     * The horizontal padding of containers that contain stacked widgets, such as menus and tool panels
-     */
-    widgetContainerHorizontalPadding: LengthValue;
-
-    /**
-     * The vertical padding of containers that contain stacked widgets, such as menus and tool panels
-     */
-    widgetContainerVerticalPadding: LengthValue;
-
-    /**
-     * The spacing between widgets in containers arrange widgets horizontally
-     */
-    widgetHorizontalSpacing: LengthValue;
-
-    /**
-     * The spacing between widgets in containers arrange widgets vertically
-     */
-    widgetVerticalSpacing: LengthValue;
-
-    /**
      * Borders around the outside of the grid
      */
     wrapperBorder: BorderValue;
@@ -769,24 +664,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     sideButtonLeftPadding: { ref: 'spacing' },
     sideButtonRightPadding: { ref: 'spacing' },
     sideButtonVerticalPadding: { calc: 'spacing * 3' },
-    headerBackgroundColor: {
-        ref: 'chromeBackgroundColor',
-    },
-    headerFontFamily: {
-        ref: 'fontFamily',
-    },
     cellFontFamily: {
         ref: 'fontFamily',
-    },
-    headerFontWeight: 500,
-    headerFontSize: {
-        ref: 'fontSize',
-    },
-    dataFontSize: {
-        ref: 'fontSize',
-    },
-    headerTextColor: {
-        ref: 'textColor',
     },
     headerCellHoverBackgroundColor: 'transparent',
     headerCellMovingBackgroundColor: { ref: 'headerCellHoverBackgroundColor' },
@@ -829,10 +708,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         calc: 'max(iconSize, dataFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
     },
     rowVerticalPaddingScale: 1,
-    headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
-    },
-    headerVerticalPaddingScale: 1,
     paginationPanelHeight: {
         ref: 'rowHeight',
         calc: 'max(rowHeight, 22px)',
@@ -842,18 +717,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     headerColumnResizeHandleWidth: 2,
     headerColumnResizeHandleColor: {
         ref: 'borderColor',
-    },
-    widgetContainerHorizontalPadding: {
-        calc: 'spacing * 1.5',
-    },
-    widgetContainerVerticalPadding: {
-        calc: 'spacing * 1.5',
-    },
-    widgetHorizontalSpacing: {
-        calc: 'spacing * 1.5',
-    },
-    widgetVerticalSpacing: {
-        ref: 'spacing',
     },
     iconButtonColor: { ref: 'iconColor' },
     iconButtonBackgroundColor: 'transparent',
@@ -880,9 +743,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     chartMenuPanelWidth: 260,
     chartMenuLabelColor: foregroundMix(0.8),
-    dialogShadow: {
-        ref: 'popupShadow',
-    },
     cellEditingBorder: {
         color: accentColor,
     },
@@ -892,24 +752,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         onto: 'backgroundColor',
         mix: 0.25,
     },
-    dialogBorder: {
-        color: foregroundMix(0.2),
-    },
-    panelBackgroundColor: backgroundColor,
-    panelTitleBarHeight: { ref: 'headerHeight' },
-    panelTitleBarBackgroundColor: {
-        ref: 'headerBackgroundColor',
-    },
-    panelTitleBarIconColor: {
-        ref: 'headerTextColor',
-    },
-    panelTitleBarTextColor: {
-        ref: 'headerTextColor',
-    },
-    panelTitleBarFontWeight: {
-        ref: 'headerFontWeight',
-    },
-    panelTitleBarBorder: true,
     columnSelectIndentSize: {
         ref: 'iconSize',
     },

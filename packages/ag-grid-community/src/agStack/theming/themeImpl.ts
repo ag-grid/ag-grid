@@ -16,8 +16,11 @@ export const _asThemeImpl = <TParams>(theme: Theme<TParams>): ThemeImpl => {
     return theme;
 };
 
-export const createSharedTheme = <TParams extends SharedThemeParams>(themeLogger: ThemeLogger): Theme<TParams> =>
-    new ThemeImpl(themeLogger);
+export const createSharedTheme = <TParams extends SharedThemeParams>(
+    themeLogger: ThemeLogger,
+    overridePrefix?: string
+): Theme<TParams> => new ThemeImpl({ themeLogger, overridePrefix });
+
 type themeUseArgs = {
     loadThemeGoogleFonts: boolean | undefined;
     styleContainer: HTMLElement;
@@ -28,7 +31,14 @@ type themeUseArgs = {
 
 export class ThemeImpl {
     constructor(
-        private readonly themeLogger: ThemeLogger,
+        private readonly params: {
+            themeLogger: ThemeLogger;
+            /**
+             * If a theme element is nested inside another theme element,
+             * this allows the child to inherit different variables than the parent
+             */
+            overridePrefix?: string;
+        },
         readonly parts: PartImpl[] = []
     ) {}
 
@@ -38,10 +48,10 @@ export class ThemeImpl {
         }
         if (!(part instanceof PartImpl)) {
             // Can't use validation service as this is API is designed to be used before modules are registered
-            this.themeLogger.preInitErr(259, 'Invalid part', { part });
+            this.params.themeLogger.preInitErr(259, 'Invalid part', { part });
             return this;
         }
-        return new ThemeImpl(this.themeLogger, [...this.parts, part]);
+        return new ThemeImpl(this.params, [...this.parts, part]);
     }
 
     withoutPart(feature: string): ThemeImpl {
@@ -182,6 +192,8 @@ export class ThemeImpl {
             let variablesCss = '';
             let inheritanceCss = '';
             const modeParams = this._getModeParams();
+            const { overridePrefix, themeLogger } = this.params;
+            const cssOverridePrefix = overridePrefix ? `--ag-${overridePrefix}-` : undefined;
             for (const mode of Object.keys(modeParams)) {
                 const params = modeParams[mode];
                 if (mode !== defaultModeName) {
@@ -193,14 +205,15 @@ export class ThemeImpl {
                 // NOSONAR - these are not localised
                 for (const key of Object.keys(params).sort()) {
                     const value = params[key];
-                    const cssValue = paramValueToCss(key, value, this.themeLogger);
+                    const cssValue = paramValueToCss(key, value, themeLogger);
                     if (cssValue === false) {
-                        this.themeLogger.error(107, { key, value });
+                        themeLogger.error(107, { key, value });
                     } else {
                         const cssName = paramToVariableName(key);
+                        const overrideName = cssOverridePrefix ? cssName.replace('--ag-', cssOverridePrefix) : cssName;
                         const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
                         variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
-                        inheritanceCss += `\t${inheritedName}: var(${cssName});\n`;
+                        inheritanceCss += `\t${inheritedName}: var(${overrideName});\n`;
                     }
                 }
                 if (mode !== defaultModeName) {

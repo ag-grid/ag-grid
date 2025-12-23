@@ -3,7 +3,9 @@ import type {
     ColorSchemeValue,
     ColorValue,
     FontFamilyValue,
+    FontWeightValue,
     LengthValue,
+    ScaleValue,
     ShadowValue,
 } from '../themeTypes';
 import {
@@ -47,9 +49,29 @@ export interface SharedThemeParams {
     browserColorScheme: ColorSchemeValue;
 
     /**
+     * Default shadow for elements that float above the grid and are intended to appear elevated byt still attached e.g. dropdowns and cell editors
+     */
+    cardShadow: ShadowValue;
+
+    /**
      * Background color for non-data areas of the grid. Headers, tool panels and menus use this color by default.
      */
     chromeBackgroundColor: ColorValue;
+
+    /**
+     * Font size for data in grid rows
+     */
+    dataFontSize: LengthValue;
+
+    /**
+     * Border color popup dialogs such as the integrated charts and the advanced filter builder.
+     */
+    dialogBorder: BorderValue;
+
+    /**
+     * Shadow for popup dialogs such as the integrated charts and the advanced filter builder.
+     */
+    dialogShadow: ShadowValue;
 
     /**
      * Background color of the drag and drop image component element when dragging columns or rows
@@ -102,9 +124,39 @@ export interface SharedThemeParams {
     foregroundColor: ColorValue;
 
     /**
-     * Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.
+     * Background color for header and header-like components
      */
-    spacing: LengthValue;
+    headerBackgroundColor: ColorValue;
+
+    /**
+     * Font family of text in the header and header-like components
+     */
+    headerFontFamily: FontFamilyValue;
+
+    /**
+     * Size of text in the header and header-like components
+     */
+    headerFontSize: LengthValue;
+
+    /**
+     * Font weight of text in the header and header-like components
+     */
+    headerFontWeight: FontWeightValue;
+
+    /**
+     * Height of header and header-like components. NOTE: by default this value is calculated to leave enough room for text, icons and padding. Most applications should leave it as is and use headerVerticalPaddingScale to change padding.
+     */
+    headerHeight: LengthValue;
+
+    /**
+     * Color of text in the header and header-like components
+     */
+    headerTextColor: ColorValue;
+
+    /**
+     * Multiply the header vertical padding by a number, e.g. 1.5 to increase by 50%
+     */
+    headerVerticalPaddingScale: ScaleValue;
 
     /**
      * Color for icons, or `inherit` to take on the text color of the containing component
@@ -127,14 +179,59 @@ export interface SharedThemeParams {
     listItemHeight: LengthValue;
 
     /**
+     * Background color for panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelBackgroundColor: ColorValue;
+
+    /**
+     * The height of the title bar of panels and dialogs such as the integrated charts panel and the advanced filter builder.
+     */
+    panelTitleBarHeight: LengthValue;
+
+    /**
+     * Background color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarBackgroundColor: ColorValue;
+
+    /**
+     * Text color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarTextColor: ColorValue;
+
+    /**
+     * Icon color for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarIconColor: ColorValue;
+
+    /**
+     * Font family for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarFontFamily: LengthValue;
+
+    /**
+     * Size of text for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarFontSize: LengthValue;
+
+    /**
+     * Font weight for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarFontWeight: FontWeightValue;
+
+    /**
+     * Border below the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
+     */
+    panelTitleBarBorder: BorderValue;
+
+    /**
      * Default shadow for elements that float above the grid and are intended to appear separated from it e.g. dialogs and menus
      */
     popupShadow: ShadowValue;
 
     /**
-     * Default shadow for elements that float above the grid and are intended to appear elevated byt still attached e.g. dropdowns and cell editors
+     * Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.
      */
-    cardShadow: ShadowValue;
+    spacing: LengthValue;
 
     /**
      * Color of text and UI elements that should stand out less than the default.
@@ -205,6 +302,26 @@ export interface SharedThemeParams {
      * Text color for tooltips showing errors
      */
     tooltipErrorTextColor: ColorValue;
+
+    /**
+     * The horizontal padding of containers that contain stacked widgets, such as menus and tool panels
+     */
+    widgetContainerHorizontalPadding: LengthValue;
+
+    /**
+     * The vertical padding of containers that contain stacked widgets, such as menus and tool panels
+     */
+    widgetContainerVerticalPadding: LengthValue;
+
+    /**
+     * The spacing between widgets in containers arrange widgets horizontally
+     */
+    widgetHorizontalSpacing: LengthValue;
+
+    /**
+     * The spacing between widgets in containers arrange widgets vertically
+     */
+    widgetVerticalSpacing: LengthValue;
 }
 
 export const defaultLightColorSchemeParams = {
@@ -299,4 +416,63 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
             mix: 0.25,
         },
     },
+    panelBackgroundColor: backgroundColor,
+    panelTitleBarHeight: { ref: 'headerHeight' },
+    panelTitleBarBackgroundColor: {
+        ref: 'headerBackgroundColor',
+    },
+    panelTitleBarIconColor: {
+        ref: 'headerTextColor',
+    },
+    panelTitleBarTextColor: {
+        ref: 'headerTextColor',
+    },
+    panelTitleBarFontFamily: {
+        ref: 'headerFontFamily',
+    },
+    panelTitleBarFontSize: {
+        ref: 'headerFontSize',
+    },
+    panelTitleBarFontWeight: {
+        ref: 'headerFontWeight',
+    },
+    panelTitleBarBorder: true,
+    dialogShadow: {
+        ref: 'popupShadow',
+    },
+    dialogBorder: {
+        color: foregroundMix(0.2),
+    },
+    widgetContainerHorizontalPadding: {
+        calc: 'spacing * 1.5',
+    },
+    widgetContainerVerticalPadding: {
+        calc: 'spacing * 1.5',
+    },
+    widgetHorizontalSpacing: {
+        calc: 'spacing * 1.5',
+    },
+    widgetVerticalSpacing: {
+        ref: 'spacing',
+    },
+    dataFontSize: {
+        ref: 'fontSize',
+    },
+    headerBackgroundColor: {
+        ref: 'chromeBackgroundColor',
+    },
+    headerFontFamily: {
+        ref: 'fontFamily',
+    },
+    headerFontSize: {
+        ref: 'fontSize',
+    },
+    headerFontWeight: 500,
+    headerTextColor: {
+        ref: 'textColor',
+    },
+    headerHeight: {
+        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
+    },
+    headerVerticalPaddingScale: 1,
 };
