@@ -5,6 +5,9 @@ test.agExample(import.meta, () => {
         test.eachFramework(`Copydown`, async ({ page, remoteGrid, agIdFor }) => {
             const remoteApi = remoteGrid(page, '1');
 
+            const cell = agIdFor.cell('0', 'a');
+            await expect(cell).toHaveText('a-0');
+
             await remoteApi.logEvent('cellValueChanged', ['newValue', 'oldValue', 'source']);
 
             const cells = [1, 2, 3, 4].map((i) => agIdFor.cell(`${i}`, 'a'));
