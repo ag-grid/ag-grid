@@ -273,9 +273,8 @@ export class AgComponentStub<
         this.eGui = element;
         this.suppressDataRefValidation = suppressDataRefValidation;
         if (components) {
-            for (let i = 0; i < components.length; i++) {
-                const component = components[i];
-                this.componentSelectors.set(component.selector, component);
+            for (const comp of components) {
+                this.componentSelectors.set(comp.selector, comp);
             }
         }
         this.wireTemplate(element, paramsMap);

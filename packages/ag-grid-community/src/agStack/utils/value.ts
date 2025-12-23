@@ -12,11 +12,11 @@ export function _getValueUsingField(data: any, field: string, fieldContainsDots:
     const fields = field.split('.');
     let currentObject = data;
 
-    for (let i = 0; i < fields.length; i++) {
+    for (const part of fields) {
         if (currentObject == null) {
             return undefined;
         }
-        currentObject = currentObject[fields[i]];
+        currentObject = currentObject[part];
     }
 
     return currentObject;

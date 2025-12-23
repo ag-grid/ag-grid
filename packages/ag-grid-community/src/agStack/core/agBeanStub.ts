@@ -74,8 +74,8 @@ export abstract class AgBeanStub<
 
     public destroy(): void {
         const { destroyFunctions } = this;
-        for (let i = 0; i < destroyFunctions.length; i++) {
-            destroyFunctions[i]();
+        for (const destroyFunc of destroyFunctions) {
+            destroyFunc();
         }
         destroyFunctions.length = 0;
         this.destroyed = true;

@@ -187,8 +187,8 @@ export class AgContext<
      */
     public destroyBeans<T extends AgBaseBean<TBeanCollection>>(beans: (T | null | undefined)[]): T[] {
         if (beans) {
-            for (let i = 0; i < beans.length; i++) {
-                this.destroyBean(beans[i]);
+            for (const bean of beans) {
+                this.destroyBean(bean);
             }
         }
         return [];

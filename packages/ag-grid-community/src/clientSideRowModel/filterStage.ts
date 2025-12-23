@@ -81,7 +81,7 @@ export class FilterStage extends BeanStub implements IRowNodeFilterStage, NamedB
                         const foundInParent =
                             alreadyFoundInParent || this.filterManager!.doesRowPassFilter({ rowNode: childNode });
                         if (childNode.childrenAfterGroup) {
-                            treeDataDepthFirstFilter(rowNode.childrenAfterGroup[i], foundInParent);
+                            treeDataDepthFirstFilter(childNode, foundInParent);
                         } else {
                             filterCallback(childNode, foundInParent);
                         }

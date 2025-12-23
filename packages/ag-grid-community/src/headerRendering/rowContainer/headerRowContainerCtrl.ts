@@ -179,9 +179,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
 
-        for (let i = 0; i < this.groupsRowCtrls.length; i++) {
-            const ctrl = findCtrl(this.groupsRowCtrls[i]);
-
+        for (const groupRowCtrl of this.groupsRowCtrls) {
+            const ctrl = findCtrl(groupRowCtrl);
             if (ctrl) {
                 return ctrl;
             }
