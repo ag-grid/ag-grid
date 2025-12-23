@@ -109,60 +109,66 @@ export type BorderValue =
       }
     | { ref: string };
 
+export type ShadowValueParams = {
+    /**
+     * Positive values move the shadow to the right, negative values move left
+     *
+     * @default 0
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+     */
+    offsetX?: LengthValue;
+    /**
+     * Positive values move the shadow downwards, negative values move up
+     *
+     * @default 0
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+     */
+    offsetY?: LengthValue;
+    /**
+     * Softness of the shadow. 0 = hard edge, 10 = 10px wide blur.
+     *
+     * @default 0
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+     */
+    radius?: LengthValue;
+    /**
+     * Size of the shadow. 0 = same size as the shadow-casting element. 10 = 10px wider in all directions.
+     *
+     * @default 0
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+     */
+    spread?: LengthValue;
+    /**
+     * Shadow color. Can accept any value that is valid for a color parameter, e.g. 'red' or {ref: 'accentColor'}
+     *
+     * @default {ref: 'foregroundColor'}
+     */
+    color?: ColorValue;
+    /**
+     * Whether shadow is inset (an inner shadow instead of an outer shadow).
+     *
+     * @default false
+     * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+     */
+    inset?: boolean;
+};
+
 /**
- * A CSS box shadow value e.g. "10px 5px 5px red;". Alternatively an object containing optional properties:
+ * A CSS box shadow value e.g. "10px 5px 5px red;". Alternatively an object or array of objects containing optional properties:
  *
  * - `offsetX` -> number of pixels to move the shadow to the right, or a negative value to move left, default 0
  * - `offsetY` -> number of pixels to move the shadow downwards, or a negative value to move up, default 0
  * - `radius` -> softness of the shadow. 0 = hard edge, 10 = 10px wide blur
  * - `spread` -> size of the shadow. 0 = same size as the shadow-casting element. 10 = 10px wider in all directions.
  * - `color` -> color of the shadow e.g. `"red"`. Default `{ref: "foregroundColor"}`
+ * - `inset` -> whether shadow is inset, default false
  *
  * Or a reference:
  * - `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
  */
-export type ShadowValue =
-    | string
-    | false
-    | {
-          /**
-           * Positive values move the shadow to the right, negative values move left
-           *
-           * @default 0
-           * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
-           */
-          offsetX?: LengthValue;
-          /**
-           * Positive values move the shadow downwards, negative values move up
-           *
-           * @default 0
-           * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
-           */
-          offsetY?: LengthValue;
-          /**
-           * Softness of the shadow. 0 = hard edge, 10 = 10px wide blur.
-           *
-           * @default 0
-           * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
-           */
-          radius?: LengthValue;
-          /**
-           * Size of the shadow. 0 = same size as the shadow-casting element. 10 = 10px wider in all directions.
-           *
-           * @default 0
-           * @see https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
-           */
-          spread?: LengthValue;
-          /**
-           * Shadow color. Can accept any value that is valid for a color parameter, e.g. 'red' or {ref: 'accentColor'}
-           *
-           * @default {ref: 'foregroundColor'}
-           */
-          color?: ColorValue;
-      }
-    | { ref: string };
+export type ShadowValue = string | false | ShadowValueParams | ShadowValueParams[] | { ref: string };
 
 /**
  * A CSS line-style value e.g. "solid" or "dashed".

@@ -977,6 +977,7 @@ export type {
     LengthValue,
     ScaleValue,
     ShadowValue,
+    ShadowValueParams,
     WithParamTypes,
 } from './agStack/theming/themeTypes';
 
