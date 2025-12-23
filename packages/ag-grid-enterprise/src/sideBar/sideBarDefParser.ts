@@ -31,7 +31,7 @@ const DEFAULT_BY_KEY: { [p: string]: ToolPanelDef } = {
     'filters-new': DEFAULT_NEW_FILTER_COMP,
 };
 
-export interface ParsedSideBarDef extends SideBarDef {
+interface ParsedSideBarDef extends SideBarDef {
     /**
      * A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom.
      */
