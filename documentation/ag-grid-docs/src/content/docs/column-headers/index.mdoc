@@ -185,17 +185,19 @@ You can provide an HTML template to the Default Header Component for simple layo
 
 When you provide your own template, everything should work as expected as long as you re-use the same `data-ref` attribute names.
 
-| Ref | Description |
-|-|-|
-| `eMenu` | The container where the column menu icon will appear to enable opening the column menu (in AG Grid Community, this is only used when `columnMenu = 'legacy'`). |
-| `eFilterButton` | The container where the column filter icon will appear to enable opening the filter (not used when `columnMenu = 'legacy'`). |
-| `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
-| `eText` | The text displayed on the column. |
-| `eFilter` | The container with the icon that will appear if the user filters this column (only used when `columnMenu = 'legacy'` or `suppressHeaderFilterButton = true`). |
-| `eSortOrder` | If multiple columns are sorted, this shows the index that represents the position of this column in the order. |
-| `eSortAsc` | If the column is sorted ascending, this shows the ascending icon. |
-| `eSortDesc` | If the column is sorted descending, this shows the descending icon. |
-| `eSortNone` | If no sort is applied, this shows the no sort icon. Note this icon by default is empty. |
+| Ref                 | Description                                                                                                                                                    |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `eMenu`             | The container where the column menu icon will appear to enable opening the column menu (in AG Grid Community, this is only used when `columnMenu = 'legacy'`). |
+| `eFilterButton`     | The container where the column filter icon will appear to enable opening the filter (not used when `columnMenu = 'legacy'`).                                   |
+| `eLabel`            | The container where there is going to be an onClick mouse listener to trigger the sort.                                                                        |
+| `eText`             | The text displayed on the column.                                                                                                                              |
+| `eFilter`           | The container with the icon that will appear if the user filters this column (only used when `columnMenu = 'legacy'` or `suppressHeaderFilterButton = true`).  |
+| `eSortOrder`        | If multiple columns are sorted, this shows the index that represents the position of this column in the order.                                                 |
+| `eSortAsc`          | If the column is sorted ascending, this shows the ascending icon.                                                                                              |
+| `eSortDesc`         | If the column is sorted descending, this shows the descending icon.                                                                                            |
+| `eSortNone`         | If no sort is applied, this shows the no sort icon. Note this icon by default is empty.                                                                        |
+| `eSortAbsoluteAsc`  | If the column is sorted absolute ascending, this shows the absolute ascending icon.                                                                            |
+| `eSortAbsoluteDesc` | If the column is sorted absolute descending, this shows the absolute descending icon.                                                                          |
 
 The `data-ref` parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
