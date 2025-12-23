@@ -136,7 +136,7 @@ export class LazyCache extends BeanStub {
     public override destroy() {
         this.lazyBlockLoadingSvc.unsubscribe(this);
         this.numberOfRows = 0;
-        this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));
+        this.nodeMap.for((node) => this.blockUtils.destroyRowNode(node.node));
         this.nodeMap.clear();
         this.nodeDisplayIndexMap.clear();
         this.nodesToRefresh.clear();
@@ -302,7 +302,7 @@ export class LazyCache extends BeanStub {
         // create an object indexed by store index, as this will sort all of the nodes when we iterate
         // the object
         const orderedMap: { [key: number]: RowNode } = {};
-        this.nodeMap.forEach((lazyNode) => {
+        this.nodeMap.for((lazyNode) => {
             orderedMap[lazyNode.index] = lazyNode.node;
         });
 
@@ -386,7 +386,7 @@ export class LazyCache extends BeanStub {
     public getSurroundingNodesByDisplayIndex(displayIndex: number) {
         let nextNode: LazyStoreNode | undefined;
         let previousNode: LazyStoreNode | undefined;
-        this.nodeMap.forEach((lazyNode) => {
+        this.nodeMap.for((lazyNode) => {
             // previous node
             if (displayIndex > lazyNode.node.rowIndex!) {
                 // get the largest previous node
@@ -420,7 +420,7 @@ export class LazyCache extends BeanStub {
 
         let nextNode: LazyStoreNode | undefined;
         let previousNode: LazyStoreNode | undefined;
-        this.nodeMap.forEach((lazyNode) => {
+        this.nodeMap.for((lazyNode) => {
             // previous node
             if (storeIndex > lazyNode.index) {
                 // get the largest previous node
@@ -561,7 +561,7 @@ export class LazyCache extends BeanStub {
         const blockCounts: { [key: string]: number } = {};
         const blockStates: { [key: string]: Set<string> } = {};
 
-        this.nodeMap.forEach(({ node, index }) => {
+        this.nodeMap.for(({ node, index }) => {
             const blockStart = this.getBlockStartIndex(index);
 
             if (!node.stub && !node.failedLoad) {
@@ -653,9 +653,9 @@ export class LazyCache extends BeanStub {
     private markBlockForVerify(rowIndex: number) {
         const [start, end] = this.getBlockBounds(rowIndex);
         const lazyNodesInRange = this.nodeMap.filter((lazyNode) => lazyNode.index >= start && lazyNode.index < end);
-        lazyNodesInRange.forEach(({ node }) => {
+        for (const { node } of lazyNodesInRange) {
             node.__needsRefreshWhenVisible = true;
-        });
+        }
     }
 
     private doesNodeMatch(data: any, node: RowNode): boolean {
@@ -674,7 +674,7 @@ export class LazyCache extends BeanStub {
         const firstRowBlockStart = this.getBlockStartIndex(firstRenderedRow);
         const [, lastRowBlockEnd] = this.getBlockBounds(lastRenderedRow);
 
-        this.nodeMap.forEach((lazyNode) => {
+        this.nodeMap.for((lazyNode) => {
             // failed loads are still useful, so we don't purge them
             if (this.lazyBlockLoadingSvc.isRowLoading(this, lazyNode.index) || lazyNode.node.failedLoad) {
                 return;
@@ -687,10 +687,10 @@ export class LazyCache extends BeanStub {
 
     private getBlocksDistanceFromRow(nodes: LazyStoreNode[], otherDisplayIndex: number) {
         const blockDistanceToMiddle: { [key: number]: number } = {};
-        nodes.forEach(({ node, index }) => {
+        for (const { node, index } of nodes) {
             const [blockStart, blockEnd] = this.getBlockBounds(index);
             if (blockStart in blockDistanceToMiddle) {
-                return;
+                continue;
             }
             const distStart = Math.abs(node.rowIndex! - otherDisplayIndex);
             let distEnd;
@@ -702,7 +702,7 @@ export class LazyCache extends BeanStub {
             const farthest = distEnd == null || distStart < distEnd ? distStart : distEnd;
 
             blockDistanceToMiddle[blockStart] = farthest;
-        });
+        }
         // eslint-disable-next-line no-restricted-properties
         return Object.entries(blockDistanceToMiddle);
     }
@@ -722,7 +722,7 @@ export class LazyCache extends BeanStub {
         const allLoadedBlocks: Set<number> = new Set();
         // the start storeIndex of every displayed block in this store
         const blocksInViewport: Set<number> = new Set();
-        this.nodeMap.forEach(({ index, node }) => {
+        this.nodeMap.for(({ index, node }) => {
             const blockStart = this.getBlockStartIndex(index);
             allLoadedBlocks.add(blockStart);
 
@@ -745,7 +745,7 @@ export class LazyCache extends BeanStub {
         // the first and last block in the viewport
         let firstRowBlockStart = Number.MAX_SAFE_INTEGER;
         let lastRowBlockStart = Number.MIN_SAFE_INTEGER;
-        blocksInViewport.forEach((blockStart) => {
+        for (const blockStart of blocksInViewport) {
             if (firstRowBlockStart > blockStart) {
                 firstRowBlockStart = blockStart;
             }
@@ -753,7 +753,7 @@ export class LazyCache extends BeanStub {
             if (lastRowBlockStart < blockStart) {
                 lastRowBlockStart = blockStart;
             }
-        });
+        }
 
         // all nodes which aren't cached or in the viewport, and so can be removed
         const disposableNodes = this.nodeMap.filter(({ node, index }) => {
@@ -817,14 +817,14 @@ export class LazyCache extends BeanStub {
 
         const newIds = new Set();
         const duplicates = new Set();
-        rows.forEach((data) => {
+        for (const data of rows) {
             const id = this.getRowId(data);
             if (newIds.has(id)) {
                 duplicates.add(id);
-                return;
+                continue;
             }
             newIds.add(id);
-        });
+        }
 
         return [...duplicates];
     }
@@ -852,14 +852,15 @@ export class LazyCache extends BeanStub {
         }
 
         const wasRefreshing = this.nodesToRefresh.size > 0;
-        response.rowData.forEach((data, responseRowIndex) => {
+        for (let responseRowIndex = 0; responseRowIndex < response.rowData.length; responseRowIndex++) {
+            const data = response.rowData[responseRowIndex];
             const rowIndex = firstRowIndex + responseRowIndex;
             const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
 
             // if stub, overwrite
             if (nodeFromCache?.node?.stub) {
                 this.createRowAtIndex(rowIndex, data);
-                return;
+                continue;
             }
 
             // node already exists, and same as node at designated position, update data
@@ -867,11 +868,11 @@ export class LazyCache extends BeanStub {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
                 this.nodesToRefresh.delete(nodeFromCache.node);
                 nodeFromCache.node.__needsRefreshWhenVisible = false;
-                return;
+                continue;
             }
             // create row will handle deleting the overwritten row
             this.createRowAtIndex(rowIndex, data);
-        });
+        }
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
@@ -892,7 +893,9 @@ export class LazyCache extends BeanStub {
         if (this.isLastRowKnown) {
             // delete any rows after the last index
             const lazyNodesAfterStoreEnd = this.nodeMap.filter((lazyNode) => lazyNode.index >= this.numberOfRows);
-            lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
+            for (const lazyNode of lazyNodesAfterStoreEnd) {
+                this.destroyRowAtIndex(lazyNode.index);
+            }
         }
 
         this.fireStoreUpdatedEvent();
@@ -913,9 +916,9 @@ export class LazyCache extends BeanStub {
 
         // any nodes left in the map need to be cleaned up, this prevents us preserving nodes
         // indefinitely
-        this.removedNodeCache.forEach((node) => {
+        for (const node of this.removedNodeCache.values()) {
             this.blockUtils.destroyRowNode(node);
-        });
+        }
         this.removedNodeCache = new Map();
 
         this.store.fireRefreshFinishedEvent();
@@ -993,7 +996,7 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
-        this.nodeMap.forEach((lazyNode) => {
+        this.nodeMap.for((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
             }
@@ -1038,7 +1041,7 @@ export class LazyCache extends BeanStub {
 
     public getOrderedNodeMap() {
         const obj: { [key: number]: LazyStoreNode } = {};
-        this.nodeMap.forEach((node) => (obj[node.index] = node));
+        this.nodeMap.for((node) => (obj[node.index] = node));
         return obj;
     }
 
@@ -1058,17 +1061,18 @@ export class LazyCache extends BeanStub {
 
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
-        this.nodeMap.forEach((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
+        this.nodeMap.for((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
         this.nodeMap.clear();
 
         const sortedNodes = this.rowNodeSorter.doFullSort(allNodes, sortOptions);
-        sortedNodes.forEach((node, index) => {
+        for (let index = 0; index < sortedNodes.length; index++) {
+            const node = sortedNodes[index];
             this.nodeMap.set({
                 id: node.id!,
                 node,
                 index,
             });
-        });
+        }
     }
 
     /**
@@ -1076,14 +1080,14 @@ export class LazyCache extends BeanStub {
      */
     public updateRowNodes(updates: any[]): RowNode[] {
         const updatedNodes: RowNode[] = [];
-        updates.forEach((data) => {
+        for (const data of updates) {
             const id = this.getRowId(data);
             const lazyNode = this.nodeMap.getBy('id', id);
             if (lazyNode) {
                 this.blockUtils.updateDataIntoRowNode(lazyNode.node, data);
                 updatedNodes.push(lazyNode.node);
             }
-        });
+        }
         return updatedNodes;
     }
 
@@ -1101,14 +1105,14 @@ export class LazyCache extends BeanStub {
 
         const uniqueInsertsMap: { [id: string]: any } = {};
 
-        inserts.forEach((data) => {
+        for (const data of inserts) {
             const dataId = this.getRowId(data)!;
             if (dataId && this.isNodeInCache(dataId)) {
-                return;
+                continue;
             }
 
             uniqueInsertsMap[dataId] = data;
-        });
+        }
 
         const uniqueInserts = Object.values(uniqueInsertsMap);
 
@@ -1119,15 +1123,17 @@ export class LazyCache extends BeanStub {
 
         const nodesToMove = this.nodeMap.filter((node) => node.index >= addIndex);
         // delete all nodes which need moved first, so they don't get overwritten
-        nodesToMove.forEach((lazyNode) => this.nodeMap.delete(lazyNode));
+        for (const lazyNode of nodesToMove) {
+            this.nodeMap.delete(lazyNode);
+        }
         // then move the nodes to their new locations
-        nodesToMove.forEach((lazyNode) => {
+        for (const lazyNode of nodesToMove) {
             this.nodeMap.set({
                 node: lazyNode.node,
                 index: lazyNode.index + numberOfInserts,
                 id: lazyNode.id,
             });
-        });
+        }
 
         // increase the store size to accommodate
         this.numberOfRows += numberOfInserts;
@@ -1187,7 +1193,9 @@ export class LazyCache extends BeanStub {
         this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
-            nodesToVerify.forEach((node) => (node.__needsRefreshWhenVisible = true));
+            for (const node of nodesToVerify) {
+                node.__needsRefreshWhenVisible = true;
+            }
             this.lazyBlockLoadingSvc.queueLoadCheck();
         }
 

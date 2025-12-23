@@ -86,7 +86,9 @@ export class AgFormulaInputField extends AgContentEditableField<
     public override destroy(): void {
         super.destroy();
         // Remove any ranges we created while editing so they don't linger after the editor closes.
-        this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
+        for (const ref of this.trackedRangeRefs) {
+            this.removeRangeForRef(ref);
+        }
         this.trackedRangeRefs.clear();
         this.trackedRanges.clear();
     }
@@ -513,13 +515,15 @@ export class AgFormulaInputField extends AgContentEditableField<
             }
         }
 
-        toRemove.forEach((ref) => this.removeRangeForRef(ref));
+        for (const ref of toRemove) {
+            this.removeRangeForRef(ref);
+        }
 
-        refs.forEach((ref) => {
+        for (const ref of refs) {
             if (ref !== this.editingCellRef) {
                 this.addRangeForRef(ref);
             }
-        });
+        }
 
         // Drop any range mappings that no longer exist after syncing.
         for (const [range, storedRef] of this.trackedRanges.entries()) {
@@ -911,9 +915,9 @@ const getOffsetBeforeNode = (container: HTMLElement, node: Node, useValueLength:
 const serializeContent = (contentElement: HTMLElement): string => {
     let output = '';
 
-    contentElement.childNodes.forEach((child) => {
+    for (const child of contentElement.childNodes) {
         output += getNodeText(child);
-    });
+    }
 
     return output;
 };

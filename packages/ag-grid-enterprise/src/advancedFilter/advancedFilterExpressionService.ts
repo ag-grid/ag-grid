@@ -317,14 +317,17 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
         const { filterParams } = column.getColDef();
         if (filterParams) {
-            ['caseSensitive', 'includeBlanksInEquals', 'includeBlanksInLessThan', 'includeBlanksInGreaterThan'].forEach(
-                (param: keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>) => {
-                    const paramValue = filterParams[param];
-                    if (paramValue) {
-                        params[param] = paramValue;
-                    }
+            for (const param of [
+                'caseSensitive',
+                'includeBlanksInEquals',
+                'includeBlanksInLessThan',
+                'includeBlanksInGreaterThan',
+            ] as (keyof FilterExpressionEvaluatorParams<ConvertedTValue, TValue>)[]) {
+                const paramValue = filterParams[param];
+                if (paramValue) {
+                    params[param] = paramValue;
                 }
-            );
+            }
         }
         this.expressionEvaluatorParams[colId] = params;
 

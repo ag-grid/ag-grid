@@ -96,7 +96,8 @@ export class MiniBoxPlotClass extends MiniChartWithAxes {
     updateColors(fills: string[], strokes: string[], isCustomTheme?: boolean) {
         const { _Theme } = this.agChartsExports;
 
-        this.boxPlotGroups.forEach((group, i) => {
+        for (let i = 0; i < this.boxPlotGroups.length; i++) {
+            const group = this.boxPlotGroups[i];
             for (const node of group.children() as Iterable<any>) {
                 const fill = fills[i % fills.length];
                 node.fill = isCustomTheme
@@ -104,7 +105,7 @@ export class MiniBoxPlotClass extends MiniChartWithAxes {
                     : _Theme.resolveOperation({ $mix: [fill, { $ref: 'backgroundColor' }, 0.7] });
                 node.stroke = strokes[i % strokes.length];
             }
-        });
+        }
     }
 
     setLineProperties(line: any, x1: number, x2: number, y1: number, y2: number) {

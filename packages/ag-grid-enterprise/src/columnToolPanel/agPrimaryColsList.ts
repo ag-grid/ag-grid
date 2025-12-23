@@ -424,12 +424,16 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
             this.displayedColsList.push(item);
             if (item.group && item.expanded) {
-                item.children.forEach(recursiveFunc);
+                for (const child of item.children) {
+                    recursiveFunc(child);
+                }
             }
         };
 
         const virtualList = this.virtualList;
-        this.allColsTree.forEach(recursiveFunc);
+        for (const col of this.allColsTree) {
+            recursiveFunc(col);
+        }
         virtualList.setModel(new UIColumnModel(this.displayedColsList));
         let focusedRow: number | null = null;
 

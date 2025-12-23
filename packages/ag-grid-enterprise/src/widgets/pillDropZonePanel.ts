@@ -571,13 +571,12 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.appendChild(this.ePillDropList);
 
-        itemsToAddToGui.forEach((itemComponent, index) => {
+        for (let index = 0; index < itemsToAddToGui.length; index++) {
             if (index > 0) {
                 this.addArrow(this.ePillDropList);
             }
-
-            this.ePillDropList.appendChild(itemComponent.getGui());
-        });
+            this.ePillDropList.appendChild(itemsToAddToGui[index].getGui());
+        }
 
         this.addAriaLabelsToComponents();
     }

@@ -390,7 +390,7 @@ export class ChartDataModel extends BeanStub {
         const rowGroupCols = usingTreeData ? null : this.chartColSvc.getRowGroupColumns();
         const groupingActive = usingTreeData || (rowGroupCols && rowGroupCols.length > 0);
 
-        dimensionCols.forEach((column) => {
+        for (const column of dimensionCols) {
             const autoGroup = isColumnGroupAutoCol(column);
 
             const selected =
@@ -410,7 +410,7 @@ export class ChartDataModel extends BeanStub {
             if (selected) {
                 hasSelectedDimension = true;
             }
-        });
+        }
 
         const defaultCategory = {
             colId: DEFAULT_CHART_CATEGORY,
@@ -425,7 +425,7 @@ export class ChartDataModel extends BeanStub {
             valueCols.has(c)
         );
 
-        valueCols.forEach((column) => {
+        for (let column of valueCols) {
             // first time the value cell range is set, preserve the column order from the supplied range
             if (isInitialising && this.referenceCellRange.columns.includes(column)) {
                 column = valueColumnsFromReferenceRange.shift()!;
@@ -438,7 +438,7 @@ export class ChartDataModel extends BeanStub {
                 selected: allCols.has(column),
                 order: order++,
             });
-        });
+        }
     }
 
     private updateColumnState(updatedCol: ColState, resetOrder?: boolean): void {
@@ -460,7 +460,9 @@ export class ChartDataModel extends BeanStub {
                           .filter((cs) => cs !== matchedDimensionColState)
                           .find(({ selected }) => selected);
                 // Update the selection state of all dimension columns
-                dimensionColState.forEach((cs) => (cs.selected = cs === selectedColumnState));
+                for (const cs of dimensionColState) {
+                    cs.selected = cs === selectedColumnState;
+                }
             } else {
                 // Update the selection state of the specified dimension column
                 matchedDimensionColState.selected = updatedCol.selected;
@@ -475,7 +477,8 @@ export class ChartDataModel extends BeanStub {
 
         if (!resetOrder) {
             // calculate new order
-            allColumns.forEach((col: ColState, i: number) => {
+            for (let i = 0; i < allColumns.length; i++) {
+                const col = allColumns[i];
                 if (i === updatedCol.order) {
                     orderedColIds.push(updatedCol.colId);
                 }
@@ -483,13 +486,13 @@ export class ChartDataModel extends BeanStub {
                 if (col.colId !== updatedCol.colId) {
                     orderedColIds.push(col.colId);
                 }
-            });
+            }
 
             // update col state with new order
-            allColumns.forEach((col) => {
+            for (const col of allColumns) {
                 const order = orderedColIds.indexOf(col.colId);
                 col.order = order >= 0 ? orderedColIds.indexOf(col.colId) : allColumns.length - 1;
-            });
+            }
         }
 
         this.reorderColState();
@@ -512,12 +515,12 @@ export class ChartDataModel extends BeanStub {
         if (!updatedColState && !this.dimensionColState.length) {
             const selectedCols = new Array<AgColumn>();
             // use first dimension column in range by default, or all dimension columns for hierarchical charts
-            dimensionCols.forEach((col) => {
+            for (const col of dimensionCols) {
                 if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) {
                     return;
                 }
                 selectedCols.push(col);
-            });
+            }
             if (selectedCols.length > 0) {
                 this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
             }
@@ -558,7 +561,7 @@ export class ChartDataModel extends BeanStub {
         const maxSelection = getMaxNumSeries(this.chartType);
         let numSelected = 0;
 
-        valueCols.forEach((col) => {
+        for (const col of valueCols) {
             if (setColsFromRange) {
                 if ((maxSelection == null || numSelected < maxSelection) && colsInRange.has(col)) {
                     selectedValueCols.push(col);
@@ -567,7 +570,7 @@ export class ChartDataModel extends BeanStub {
             } else if (this.valueColState.some((colState) => colState.selected && colState.colId === col.getColId())) {
                 selectedValueCols.push(col);
             }
-        });
+        }
 
         if (selectedValueCols.length > 0) {
             let orderedColIds: string[] = [];
@@ -575,7 +578,9 @@ export class ChartDataModel extends BeanStub {
             if (this.valueColState.length > 0) {
                 orderedColIds = this.valueColState.map((c) => c.colId);
             } else {
-                colsInRange.forEach((c) => orderedColIds.push(c.getColId()));
+                for (const c of colsInRange) {
+                    orderedColIds.push(c.getColId());
+                }
             }
 
             selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
@@ -643,12 +648,12 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getCrossFilteringSort(): SortOption[] | boolean {
-        const sort = this.crossFilteringSort;
-        if (typeof sort === 'boolean') {
-            return sort;
+        const sorts = this.crossFilteringSort;
+        if (typeof sorts === 'boolean') {
+            return sorts;
         }
         const sortOptions: SortOption[] = [];
-        sort.forEach(({ sort, colId }) => {
+        for (const { sort, colId } of sorts) {
             const column = this.chartColSvc.getColumn(colId);
             if (column) {
                 sortOptions.push({
@@ -657,7 +662,7 @@ export class ChartDataModel extends BeanStub {
                     type: _normalizeSortType(column.getSortDef()?.type),
                 });
             }
-        });
+        }
         return sortOptions;
     }
 }

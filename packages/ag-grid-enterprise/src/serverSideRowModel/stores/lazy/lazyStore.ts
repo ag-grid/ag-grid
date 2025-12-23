@@ -221,7 +221,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.cache.getNodes().forEach((lazyNode) => this.blockUtils.clearDisplayIndex(lazyNode.node));
+        this.cache.getNodes().for((lazyNode) => this.blockUtils.clearDisplayIndex(lazyNode.node));
 
         if (this.parentRowNode.sibling) {
             this.blockUtils.clearDisplayIndex(this.parentRowNode.sibling);
@@ -316,7 +316,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     forEachStoreDeep(callback: (store: LazyStore, index: number) => void, sequence = { value: 0 }): void {
         callback(this, sequence.value++);
-        this.cache.getNodes().forEach((lazyNode) => {
+        this.cache.getNodes().for((lazyNode) => {
             const childCache = lazyNode.node.childStore as LazyStore | undefined;
             if (childCache) {
                 childCache.forEachStoreDeep(callback, sequence);
@@ -330,7 +330,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
     forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = { value: 0 }): void {
-        this.cache.getNodes().forEach((lazyNode) => {
+        this.cache.getNodes().for((lazyNode) => {
             callback(lazyNode.node, sequence.value++);
             const childCache = lazyNode.node.childStore as LazyStore | undefined;
             if (childCache) {
@@ -373,7 +373,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * Removes the failed status from all nodes, and marks them as stub to encourage reloading
      */
     retryLoads(): void {
-        this.cache.getNodes().forEach(({ node }) => {
+        this.cache.getNodes().for(({ node }) => {
             if (node.failedLoad) {
                 node.failedLoad = false;
                 node.__needsRefreshWhenVisible = true;
@@ -483,7 +483,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let distToNextNodeTop: number = Number.MAX_SAFE_INTEGER;
         let nextNode: RowNode | null = null;
 
-        this.cache.getNodes().forEach(({ node }) => {
+        this.cache.getNodes().for(({ node }) => {
             const distBetween = Math.abs(pixel - node.rowTop!);
 
             // previous node
@@ -549,7 +549,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param cb the callback to execute
      */
     private forEachChildStoreShallow(cb: (store: LazyStore) => void) {
-        this.cache.getNodes().forEach(({ node }) => {
+        this.cache.getNodes().for(({ node }) => {
             if (node.childStore) {
                 cb(node.childStore as LazyStore);
             }

@@ -70,6 +70,7 @@ export class MiniSunburstClass extends MiniChartWithPolarAxes {
 
             let previousAngle = startAngle;
 
+            // eslint-disable-next-line unicorn/no-array-for-each
             data.forEach((child, childIndex, children) => {
                 let childGroup = group;
                 if (!childGroup) {
@@ -111,12 +112,13 @@ export class MiniSunburstClass extends MiniChartWithPolarAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.series.forEach((group, i) => {
+        for (let i = 0; i < this.series.length; i++) {
+            const group = this.series[i];
             for (const sector of group.children() as Iterable<any>) {
                 sector.fill = fills[i % fills.length];
                 sector.stroke = strokes[i % strokes.length];
             }
-        });
+        }
     }
 }
 

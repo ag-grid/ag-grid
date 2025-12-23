@@ -45,10 +45,11 @@ export class MiniBarClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.bars.forEach((bar, i) => {
+        for (let i = 0; i < this.bars.length; i++) {
+            const bar = this.bars[i];
             bar.fill = fills[i];
             bar.stroke = strokes[i];
-        });
+        }
     }
 }
 

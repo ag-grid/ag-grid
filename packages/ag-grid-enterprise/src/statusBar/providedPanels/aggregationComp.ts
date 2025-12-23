@@ -169,9 +169,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         break;
                     }
 
-                    cellRange.columns.forEach((col: AgColumn) => {
+                    for (const col of cellRange.columns as AgColumn[]) {
                         if (currentRow === null) {
-                            return;
+                            continue;
                         }
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
@@ -181,20 +181,20 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             rowIndex: currentRow.rowIndex,
                         });
                         if (cellsSoFar[cellId]) {
-                            return;
+                            continue;
                         }
                         cellsSoFar[cellId] = true;
 
                         const rowNode = _getRowNode(beans, currentRow);
                         if (_missing(rowNode)) {
-                            return;
+                            continue;
                         }
 
                         let value = valueSvc.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {
-                            return;
+                            continue;
                         }
 
                         count++;
@@ -205,7 +205,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                             // ensure that the new value wouldn't have been skipped by the previous check
                             if (value === '') {
-                                return;
+                                continue;
                             }
                         }
 
@@ -226,7 +226,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                             numberCount++;
                         }
-                    });
+                    }
 
                     currentRow = _getRowBelow(beans, currentRow);
                 }

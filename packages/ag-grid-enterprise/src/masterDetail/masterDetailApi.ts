@@ -30,11 +30,11 @@ export function forEachDetailGridInfo(
 ) {
     operateOnStore(beans, (store) => {
         let index = 0;
-        Object.values(store).forEach((gridInfo: DetailGridInfo) => {
+        for (const gridInfo of Object.values(store)) {
             // check for undefined, as old references will still be lying around
             if (gridInfo) {
                 callback(gridInfo, index++);
             }
-        });
+        }
     });
 }

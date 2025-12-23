@@ -55,10 +55,11 @@ export class MiniDonutClass extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.sectors.forEach((sector, i) => {
+        for (let i = 0; i < this.sectors.length; i++) {
+            const sector = this.sectors[i];
             sector.fill = fills[i % fills.length];
             sector.stroke = strokes[i % strokes.length];
-        });
+        }
     }
 }
 

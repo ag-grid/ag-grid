@@ -56,9 +56,11 @@ export class MiniAreaColumnComboClass extends MiniChartWithAxes {
         const yZero = yScale.convert(0);
         const firstX = xScale.convert(0);
 
-        areaData.forEach((series, i) => {
+        for (let i = 0; i < areaData.length; i++) {
+            const series = areaData[i];
             const points = pathData[i] || (pathData[i] = []);
-            series.forEach((data, j) => {
+            for (let j = 0; j < series.length; j++) {
+                const data = series[j];
                 const yDatum = data;
                 const xDatum = j;
 
@@ -66,7 +68,7 @@ export class MiniAreaColumnComboClass extends MiniChartWithAxes {
                 const y = yScale.convert(yDatum);
 
                 points[j] = { x, y };
-            });
+            }
 
             const lastX = xScale.convert(series.length - 1);
 
@@ -80,7 +82,7 @@ export class MiniAreaColumnComboClass extends MiniChartWithAxes {
                     y: yZero,
                 }
             );
-        });
+        }
 
         this.areas = pathData.map((points) => {
             const area = new _Scene.Path();
@@ -88,7 +90,10 @@ export class MiniAreaColumnComboClass extends MiniChartWithAxes {
             area.fillOpacity = 0.8;
 
             const path = area.path;
-            points.forEach((point, i) => path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y));
+            for (let i = 0; i < points.length; i++) {
+                const point = points[i];
+                path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y);
+            }
 
             return area;
         });
@@ -109,15 +114,16 @@ export class MiniAreaColumnComboClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.areas.forEach((area, i) => {
+        for (let i = 0; i < this.areas.length; i++) {
+            const area = this.areas[i];
             area.fill = fills[i];
             area.stroke = strokes[i];
-        });
-
-        this.columns.forEach((bar: any, i: number) => {
+        }
+        for (let i = 0; i < this.columns.length; i++) {
+            const bar = this.columns[i];
             bar.fill = fills[i + 1];
             bar.stroke = strokes[i + 1];
-        });
+        }
     }
 }
 

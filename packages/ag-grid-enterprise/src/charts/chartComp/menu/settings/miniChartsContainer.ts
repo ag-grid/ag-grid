@@ -293,7 +293,7 @@ export class MiniChartsContainer extends Component {
 
     public updateSelectedMiniChart(): void {
         const selectedChartType = this.chartController.getChartType();
-        this.wrappers.forEach((miniChart, miniChartType) => {
+        for (const [miniChartType, miniChart] of this.wrappers) {
             const selected = miniChartType === selectedChartType;
             miniChart.classList.toggle('ag-selected', selected);
 
@@ -302,7 +302,7 @@ export class MiniChartsContainer extends Component {
                 ? `${chartName}. ${this.chartTranslation.translate('ariaChartSelected')}`
                 : chartName;
             _setAriaLabel(miniChart, ariaLabel);
-        });
+        }
     }
 
     public override destroy(): void {

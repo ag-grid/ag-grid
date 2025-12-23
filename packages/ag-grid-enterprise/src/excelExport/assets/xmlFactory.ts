@@ -1,4 +1,4 @@
-import type { HeaderElement, PrefixedXmlAttributes, XmlElement } from 'ag-grid-community';
+import type { HeaderElement, XmlElement } from 'ag-grid-community';
 
 const LINE_SEPARATOR = '\r\n';
 
@@ -40,7 +40,7 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
     let props: string = '';
     if (xmlElement.properties) {
         if (xmlElement.properties.prefixedAttributes) {
-            xmlElement.properties.prefixedAttributes.forEach((prefixedSet: PrefixedXmlAttributes) => {
+            for (const prefixedSet of xmlElement.properties.prefixedAttributes) {
                 for (const key of Object.keys(prefixedSet.map)) {
                     props += returnAttributeIfPopulated(
                         prefixedSet.prefix + key,
@@ -48,7 +48,7 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
                         booleanTransformer
                     );
                 }
-            });
+            }
         }
 
         if (xmlElement.properties.rawMap) {

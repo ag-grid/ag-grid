@@ -238,7 +238,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
         const beans = this.beans;
 
-        changedValueColumns.forEach((valueColumn, index) => {
+        for (let index = 0; index < changedValueColumns.length; index++) {
+            const valueColumn = changedValueColumns[index];
             result[valueColumn.getId()] = _aggregateValues(
                 beans,
                 values2d[index],
@@ -246,7 +247,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 valueColumn,
                 rowNode
             );
-        });
+        }
 
         if (notChangedValueColumns && oldValues) {
             for (const valueColumn of notChangedValueColumns) {
@@ -278,7 +279,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {
         // create 2d array, of all values for all valueColumns
         const values: any[][] = [];
-        valueColumns.forEach(() => values.push([]));
+        for (const _ of valueColumns) {
+            values.push([]);
+        }
 
         const valueColumnCount = valueColumns.length;
 

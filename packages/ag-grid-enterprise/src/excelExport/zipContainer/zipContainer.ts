@@ -14,7 +14,9 @@ export class ZipContainer {
     private files: ZipFile[] = [];
 
     public addFolders(paths: string[]): void {
-        paths.forEach(this.addFolder.bind(this));
+        for (const path of paths) {
+            this.addFolder(path);
+        }
     }
 
     private addFolder(path: string): void {

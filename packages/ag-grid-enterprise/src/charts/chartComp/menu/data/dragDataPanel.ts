@@ -111,9 +111,9 @@ export abstract class DragDataPanel extends Component {
         let updatedColState: ColState | undefined;
         let resetOrder: boolean | undefined;
         const updateOrder = () => {
-            selected.forEach((col, index) => {
-                col.order = index;
-            });
+            for (let index = 0; index < selected.length; index++) {
+                selected[index].order = index;
+            }
             resetOrder = true;
         };
         if (added.length) {

@@ -51,27 +51,30 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private setParams(compDetailsList: UserCompDetails[]): AgPromise<void> {
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
-        compDetailsList.forEach((compDetails) => {
+        for (const compDetails of compDetailsList) {
             const floatingFilterPromise = compDetails?.newAgStackInstance();
 
             if (floatingFilterPromise != null) {
                 this.compDetailsList.push(compDetails);
                 floatingFilterPromises.push(floatingFilterPromise);
             }
-        });
+        }
 
         return AgPromise.all(floatingFilterPromises).then((floatingFilters) => {
-            floatingFilters!.forEach((floatingFilter, index) => {
-                this.floatingFilters.push(floatingFilter!);
+            if (floatingFilters) {
+                for (let index = 0; index < floatingFilters.length; index++) {
+                    const floatingFilter = floatingFilters[index];
+                    this.floatingFilters.push(floatingFilter!);
 
-                const gui = floatingFilter!.getGui();
+                    const gui = floatingFilter!.getGui();
 
-                this.appendChild(gui);
+                    this.appendChild(gui);
 
-                if (index > 0) {
-                    _setDisplayed(gui, false);
+                    if (index > 0) {
+                        _setDisplayed(gui, false);
+                    }
                 }
-            });
+            }
         });
     }
 
@@ -86,25 +89,27 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             );
 
         if (allFloatingFilterCompsUnchanged) {
-            floatingFilterParamsList.forEach((floatingFilterParams, index) => {
-                const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
+            const { floatingFilters } = this;
+            for (let index = 0; index < floatingFilterParamsList.length; index++) {
+                const floatingFilterParams = floatingFilterParamsList[index];
+                const floatingFilter = floatingFilters[index] as IFloatingFilterComp<IFilter>;
                 floatingFilter.refresh?.(floatingFilterParams);
-            });
+            }
             if (this.gos.get('enableFilterHandlers')) {
                 const reactiveParams = params as unknown as FloatingFilterDisplayParams;
                 if (reactiveParams.model == null) {
-                    this.floatingFilters.forEach((filter, i) => {
-                        _setDisplayed(filter.getGui(), i === 0);
-                    });
+                    for (let i = 0; i < floatingFilters.length; i++) {
+                        _setDisplayed(floatingFilters[i].getGui(), i === 0);
+                    }
                 } else {
                     const lastActiveFloatingFilterIndex = (
                         reactiveParams.getHandler() as MultiFilterHandler
                     )?.getLastActiveFilterIndex?.();
-                    this.floatingFilters.forEach((filter, i) => {
+                    for (let i = 0; i < floatingFilters.length; i++) {
                         const shouldShow =
                             lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
-                        _setDisplayed(filter.getGui(), shouldShow);
-                    });
+                        _setDisplayed(floatingFilters[i].getGui(), shouldShow);
+                    }
                 }
             }
         } else {
@@ -126,7 +131,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const currentParentModel = params.currentParentModel;
 
         const filterDefs = getMultiFilterDefs(filterParams);
-        filterDefs.forEach((filterDef, index) => {
+        for (let index = 0; index < filterDefs.length; index++) {
+            const filterDef = filterDefs[index];
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
@@ -169,7 +175,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 compDetailsList.push(compDetails);
                 floatingFilterParamsList.push(floatingFilterParams);
             }
-        });
+        }
         return { compDetailsList, floatingFilterParamsList };
     }
 
@@ -182,15 +188,18 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         }
 
         this.parentMultiFilterInstance((parent) => {
+            const floatingFilters = this.floatingFilters;
             if (model == null) {
-                this.floatingFilters.forEach((filter, i) => {
+                for (let i = 0; i < floatingFilters.length; i++) {
+                    const filter = floatingFilters[i];
                     filter.onParentModelChanged(null, event);
                     _setDisplayed(filter.getGui(), i === 0);
-                });
+                }
             } else {
                 const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
 
-                this.floatingFilters.forEach((filter, i) => {
+                for (let i = 0; i < floatingFilters.length; i++) {
+                    const filter = floatingFilters[i];
                     const filterModel = model.filterModels!.length > i ? model.filterModels![i] : null;
 
                     filter.onParentModelChanged(filterModel, event);
@@ -199,7 +208,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                         lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
 
                     _setDisplayed(filter.getGui(), shouldShow);
-                });
+                }
             }
         });
     }

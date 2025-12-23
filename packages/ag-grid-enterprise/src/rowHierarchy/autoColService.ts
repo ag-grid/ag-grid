@@ -127,7 +127,12 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
     public updateColumns(event: PropertyValueChangedEvent<'autoGroupColumnDef'>) {
         const source = _convertColumnEventSourceType(event.source);
-        this.columns?.list.forEach((col, index) => this.updateOneAutoCol(col, index, source));
+        if (this.columns) {
+            const colList = this.columns.list;
+            for (let index = 0; index < colList.length; index++) {
+                this.updateOneAutoCol(colList[index], index, source);
+            }
+        }
     }
 
     public getColumn(key: ColKey): AgColumn | null {
@@ -153,9 +158,9 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         // if doing groupDisplayType = "multipleColumns", then we call the method multiple times, once
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
-            rowGroupCols.forEach((rowGroupCol, index) => {
-                autoCols.push(this.createOneAutoCol(rowGroupCol, index));
-            });
+            for (let index = 0; index < rowGroupCols.length; index++) {
+                autoCols.push(this.createOneAutoCol(rowGroupCols[index], index));
+            }
         } else {
             autoCols.push(this.createOneAutoCol());
         }

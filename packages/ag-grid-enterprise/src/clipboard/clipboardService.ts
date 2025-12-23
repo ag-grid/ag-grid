@@ -506,9 +506,16 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, range: CellRange) => {
             updatedRowNodes.push(rowNode);
-            range.columns.forEach((column: AgColumn) =>
-                this.updateCellValue(rowNode, column, value, cellsToFlash, EXPORT_TYPE_CLIPBOARD, changedPath)
-            );
+            for (const column of range.columns) {
+                this.updateCellValue(
+                    rowNode,
+                    column as AgColumn,
+                    value,
+                    cellsToFlash,
+                    EXPORT_TYPE_CLIPBOARD,
+                    changedPath
+                );
+            }
         };
 
         this.iterateActiveRanges(rowCallback);
@@ -540,12 +547,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 // take reference of first row, this is the one we will be using to copy from
                 if (!firstRowValues.length) {
                     // two reasons for looping through columns
-                    columns.forEach((column: AgColumn) => {
+                    for (const column of columns) {
                         // get the initial values to copy down
                         const value = this.processCell(
                             rowNode,
-                            column,
-                            valueSvc.getValue(column, rowNode),
+                            column as AgColumn,
+                            valueSvc.getValue(column as AgColumn, rowNode),
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -553,11 +560,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         );
 
                         firstRowValues.push(value);
-                    });
+                    }
                 } else {
                     // otherwise we are not the first row, so copy
                     updatedRowNodes.push(rowNode);
-                    columns.forEach((column: AgColumn, index) => {
+                    for (let index = 0; index < columns.length; index++) {
+                        const column = columns[index] as AgColumn;
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                             return;
                         }
@@ -589,7 +597,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const { rowIndex, rowPinned } = currentRow;
                         const cellId = _createCellId({ rowIndex, column, rowPinned });
                         cellsToFlash[cellId] = true;
-                    });
+                    }
                 }
             };
 
@@ -682,9 +690,16 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 continue;
             }
 
-            clipboardRowData.forEach((value, index) =>
-                this.updateCellValue(rowNode, columnsToPasteInto[index], value, cellsToFlash, type, changedPath)
-            );
+            for (let index = 0; clipboardRowData.length > index; index++) {
+                this.updateCellValue(
+                    rowNode,
+                    columnsToPasteInto[index],
+                    clipboardRowData[index],
+                    cellsToFlash,
+                    type,
+                    changedPath
+                );
+            }
 
             updatedRowNodes.push(rowNode);
         }
@@ -937,7 +952,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         for (const range of ranges) {
-            range.columns.forEach((col: AgColumn) => columnsSet.add(col));
+            for (const col of range.columns) {
+                columnsSet.add(col as AgColumn);
+            }
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             for (const rowPosition of rowPositions) {
                 const isInCache = flatCache.has(rowPosition.rowIndex);

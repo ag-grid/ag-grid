@@ -414,9 +414,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
         };
 
         if (isVertical) {
-            initialRange.columns.forEach((col: AgColumn) => {
-                iterateAcrossCells(col);
-            });
+            for (const col of initialRange.columns) {
+                iterateAcrossCells(col as AgColumn);
+            }
         } else {
             const columns = (this.isLeft ? [...finalRange.columns].reverse() : finalRange.columns) as AgColumn[];
             iterateAcrossCells(undefined, columns);

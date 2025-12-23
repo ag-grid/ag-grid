@@ -133,7 +133,11 @@ export class ChartDataPanel extends Component {
 
         const isCategorySeriesSwitched = this.chartController.isCategorySeriesSwitched();
 
-        this.getDataPanelDef().groups?.forEach(({ type, isOpen }) => {
+        const groups = this.getDataPanelDef().groups;
+        if (!groups) {
+            return;
+        }
+        for (const { type, isOpen } of groups) {
             if (type === (isCategorySeriesSwitched ? 'series' : 'categories')) {
                 this.categoriesDataPanel = this.createBean(
                     new CategoriesDataPanel(
@@ -171,7 +175,7 @@ export class ChartDataPanel extends Component {
             } else {
                 _warn(144, { type });
             }
-        });
+        }
 
         (isCategorySeriesSwitched ? this.categoriesDataPanel : this.seriesDataPanel)?.addItem(
             this.switchCategorySeriesToggle.getGui()

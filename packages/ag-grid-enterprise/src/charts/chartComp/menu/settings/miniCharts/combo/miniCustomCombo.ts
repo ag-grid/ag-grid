@@ -70,14 +70,16 @@ export class MiniCustomComboClass extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.columns.forEach((bar: any, i: number) => {
+        for (let i = 0; i < this.columns.length; i++) {
+            const bar = this.columns[i];
             bar.fill = fills[i];
             bar.stroke = strokes[i];
-        });
+        }
 
-        this.lines.forEach((line: any, i: number) => {
+        for (let i = 0; i < this.lines.length; i++) {
+            const line = this.lines[i];
             line.stroke = fills[i + 2];
-        });
+        }
     }
 
     buildPenIconPath(penIcon: any) {

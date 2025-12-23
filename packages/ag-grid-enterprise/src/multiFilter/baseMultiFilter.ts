@@ -82,16 +82,20 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 return filterGuiPromise;
             })
         ).then((filterGuis) => {
-            filterGuis!.forEach((filterGui, index) => {
+            if (!filterGuis) {
+                return;
+            }
+            for (let index = 0; index < filterGuis.length; index++) {
+                const filterGui = filterGuis[index];
                 if (!filterGui) {
-                    return;
+                    continue;
                 }
                 if (index > 0) {
                     this.appendChild(_createElement({ tag: 'div', cls: 'ag-filter-separator' }));
                 }
                 this.appendChild(filterGui);
-            });
-            this.filterGuis = filterGuis!;
+            }
+            this.filterGuis = filterGuis;
             this.lastOpenedInContainer = container;
         });
     }

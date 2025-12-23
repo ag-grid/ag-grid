@@ -31,7 +31,9 @@ export class MultiIndexMap<K, I extends keyof K> {
     }
 
     public clear() {
-        this.maps.forEach((map) => map.clear());
+        for (const map of this.maps.values()) {
+            map.clear();
+        }
     }
 
     private getIterator(index: I) {
@@ -39,7 +41,7 @@ export class MultiIndexMap<K, I extends keyof K> {
         return map.values();
     }
 
-    public forEach(callback: (item: K) => void) {
+    public for(callback: (item: K) => void) {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;
         while ((pointer = iterator.next())) {

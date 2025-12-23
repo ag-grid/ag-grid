@@ -39,8 +39,8 @@ export class MiniBubbleClass extends MiniChartWithAxes {
 
         const points: any[] = [];
 
-        data.forEach((series) => {
-            series.forEach(([x, y, radius]) => {
+        for (const series of data) {
+            for (const [x, y, radius] of series) {
                 const arc = new _Scene.Arc();
                 arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
@@ -48,8 +48,8 @@ export class MiniBubbleClass extends MiniChartWithAxes {
                 arc.radius = radius;
                 arc.fillOpacity = 0.7;
                 points.push(arc);
-            });
-        });
+            }
+        }
 
         this.points = points;
         this.updateColors(fills, strokes);
@@ -61,10 +61,11 @@ export class MiniBubbleClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.points.forEach((line, i) => {
+        for (let i = 0; i < this.points.length; i++) {
+            const line = this.points[i];
             line.stroke = strokes[i % strokes.length];
             line.fill = fills[i % fills.length];
-        });
+        }
     }
 }
 

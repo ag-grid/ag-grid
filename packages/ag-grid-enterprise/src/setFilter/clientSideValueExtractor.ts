@@ -117,9 +117,9 @@ export class ClientSideValuesExtractor<V> extends BeanStub {
             return null;
         }
         const existingFormattedKeys: Map<string | null, string | null> = new Map();
-        existingValues.forEach((_value, key) => {
+        for (const key of existingValues.keys()) {
             existingFormattedKeys.set(this.caseFormat(key), key);
-        });
+        }
         return existingFormattedKeys;
     }
 }

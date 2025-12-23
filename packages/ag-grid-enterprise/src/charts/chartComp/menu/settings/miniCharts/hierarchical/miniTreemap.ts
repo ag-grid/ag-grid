@@ -85,12 +85,13 @@ export class MiniTreemapClass extends MiniChart {
     updateColors(fills: string[], strokes: string[], isCustomTheme?: boolean) {
         const { _Theme } = this.agChartsExports;
 
-        this.rects.forEach((rect, i) => {
+        for (let i = 0; i < this.rects.length; i++) {
+            const rect = this.rects[i];
             rect.fill = fills[i % strokes.length];
             rect.stroke = isCustomTheme
                 ? strokes[i % strokes.length]
                 : _Theme.resolveOperation({ $ref: 'backgroundColor' });
-        });
+        }
     }
 }
 

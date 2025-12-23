@@ -305,7 +305,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
         };
 
-        this.filterGroupComps.forEach(recursiveGetExpansionState);
+        for (const filterComp of this.filterGroupComps) {
+            recursiveGetExpansionState(filterComp);
+        }
 
         return expansionState;
     }
@@ -346,7 +348,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
         };
 
-        this.filterGroupComps.forEach(updateGroupExpandState);
+        for (const filterGroupComp of this.filterGroupComps) {
+            updateGroupExpandState(filterGroupComp);
+        }
 
         // update header expand / collapse icon
         this.onGroupExpanded();
@@ -391,7 +395,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             return updateFilterExpandState;
         };
 
-        this.filterGroupComps.forEach(updateGroupExpandState);
+        for (const filterGroupComp of this.filterGroupComps) {
+            updateGroupExpandState(filterGroupComp);
+        }
 
         // update header expand / collapse icon
         this.onGroupExpanded();
@@ -430,7 +436,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
         };
 
-        this.filterGroupComps.forEach(updateExpandCounts);
+        for (const filterGroup of this.filterGroupComps) {
+            updateExpandCounts(filterGroup);
+        }
 
         let state: EXPAND_STATE;
         if (expandedCount > 0 && notExpandedCount > 0) {
@@ -478,13 +486,14 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
             // hide group item filters
             let anyChildPasses = false;
-            children.forEach((child: ToolPanelFilterItem, index: number) => {
+            for (let index = 0; index < children.length; index++) {
+                const child = children[index];
                 const childPasses = recursivelySearch(child, parentPasses);
                 filterItem.hideGroupItem(!childPasses, index);
                 if (childPasses) {
                     anyChildPasses = true;
                 }
-            });
+            }
 
             // hide group if no children pass
             filterItem.hideGroup(!anyChildPasses);
@@ -495,7 +504,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         let firstVisible: number | undefined;
         let lastVisible: number | undefined;
 
-        this.filterGroupComps.forEach((filterGroup, idx) => {
+        for (let idx = 0; idx < this.filterGroupComps.length; idx++) {
+            const filterGroup = this.filterGroupComps[idx];
             recursivelySearch(filterGroup, false);
             const isHidden = filterGroup.getGui()?.classList.contains('ag-hidden');
             if (firstVisible === undefined) {
@@ -506,14 +516,15 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             } else if (!isHidden && lastVisible !== idx) {
                 lastVisible = idx;
             }
-        });
+        }
 
         this.setFirstAndLastVisible(firstVisible, lastVisible);
         this.refreshAriaLabel();
     }
 
     private setFirstAndLastVisible(firstIdx?: number, lastIdx?: number) {
-        this.filterGroupComps.forEach((filterGroup, idx) => {
+        for (let idx = 0; idx < this.filterGroupComps.length; idx++) {
+            const filterGroup = this.filterGroupComps[idx];
             filterGroup.removeCss('ag-first-group-visible');
             filterGroup.removeCss('ag-last-group-visible');
 
@@ -523,7 +534,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             if (idx === lastIdx) {
                 filterGroup.addCss('ag-last-group-visible');
             }
-        });
+        }
     }
 
     private onPanelHidden(): void {
@@ -550,7 +561,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
         };
 
-        this.filterGroupComps.forEach(getExpandedFiltersAndGroups);
+        for (const filterGroup of this.filterGroupComps) {
+            getExpandedFiltersAndGroups(filterGroup);
+        }
 
         return { expandedGroupIds, expandedColIds: Array.from(expandedColIds) };
     }

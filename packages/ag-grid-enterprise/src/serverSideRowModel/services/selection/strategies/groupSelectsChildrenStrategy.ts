@@ -64,10 +64,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             // omit toggledNodes if empty
             if (state.toggledNodes.size) {
                 const toggledNodes: IServerSideGroupSelectionState[] = [];
-                state.toggledNodes.forEach((value, key) => {
+                for (const [key, value] of state.toggledNodes) {
                     const newState = recursivelySerializeState(value, level + 1, key);
                     toggledNodes.push(newState);
-                });
+                }
                 normalisedState.toggledNodes = toggledNodes;
             }
 
@@ -239,9 +239,9 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         ) => {
             // clean up lowest level state first in order to calculate this levels state
             // from updated child state
-            state.toggledNodes.forEach((value, key) => {
+            for (const [key, value] of state.toggledNodes) {
                 forEachNodeStateDepthFirst(value, key, state);
-            });
+            }
 
             if (thisKey) {
                 const thisRow = this.rowModel.getRowNode(thisKey);

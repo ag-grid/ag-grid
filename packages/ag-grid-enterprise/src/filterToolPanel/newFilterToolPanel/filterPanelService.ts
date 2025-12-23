@@ -239,12 +239,12 @@ export class FilterPanelService
 
     public getGridState(): NewFiltersToolPanelState {
         const filters: NewFiltersToolPanelFilterState[] = [];
-        this.states.forEach((stateWrapper, colId) => {
+        for (const [colId, stateWrapper] of this.states) {
             filters.push({
                 colId,
                 expanded: stateWrapper.state.expanded,
             });
-        });
+        }
         return {
             filters,
         };
@@ -290,12 +290,12 @@ export class FilterPanelService
             }
             processedIds.add(id);
         }
-        this.states.forEach((state, id) => {
+        for (const [id, state] of this.states) {
             if (!processedIds.has(id)) {
                 // filters which have no model
                 state.refresh?.();
             }
-        });
+        }
         this.dispatchStatesUpdates();
     }
 
@@ -401,7 +401,9 @@ export class FilterPanelService
 
     public clear() {
         const { states, orderedStates } = this;
-        states.forEach((state) => state.destroy?.());
+        for (const state of states.values()) {
+            state.destroy?.();
+        }
         states.clear();
         orderedStates.length = 0;
     }

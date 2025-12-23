@@ -30,15 +30,18 @@ export class GroupFilterService extends BeanStub implements NamedBean, IGroupFil
 
     public updateFilterFlags(source: ColumnEventType, additionalEventAttributes?: any): void {
         const { autoColSvc, colFilter } = this.beans;
-        autoColSvc?.getColumns()?.forEach((groupColumn) => {
-            if (this.isGroupFilter(groupColumn)) {
-                colFilter?.setColFilterActive(
-                    groupColumn,
-                    this.isFilterActive(groupColumn),
-                    source,
-                    additionalEventAttributes
-                );
+        const columns = autoColSvc?.getColumns();
+        if (columns) {
+            for (const groupColumn of columns) {
+                if (this.isGroupFilter(groupColumn)) {
+                    colFilter?.setColFilterActive(
+                        groupColumn,
+                        this.isFilterActive(groupColumn),
+                        source,
+                        additionalEventAttributes
+                    );
+                }
             }
-        });
+        }
     }
 }

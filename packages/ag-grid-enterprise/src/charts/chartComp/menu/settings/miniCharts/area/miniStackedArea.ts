@@ -20,10 +20,11 @@ export class MiniStackedAreaClass extends MiniAreaClass {
     }
 
     override updateColors(fills: string[], strokes: string[]) {
-        this.areas.forEach((area, i) => {
+        for (let i = 0; i < this.areas.length; i++) {
+            const area = this.areas[i];
             area.fill = fills[i];
             area.stroke = strokes[i];
-        });
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 import type {
-    ExcelCell,
     ExcelColumn,
     ExcelFont,
     ExcelHeaderFooterConfig,
@@ -35,12 +34,14 @@ const getMergedCellsAndAddColumnGroups = (
     const mergedCells: string[] = [];
     const cellsWithCollapsibleGroups: number[][] = [];
 
-    rows.forEach((currentRow, rowIdx) => {
+    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+        const currentRow = rows[rowIdx];
         const cells = currentRow.cells;
         let merges = 0;
         let lastCol: ExcelColumn;
 
-        cells.forEach((currentCell: ExcelCell, cellIdx: number) => {
+        for (let cellIdx = 0; cellIdx < cells.length; cellIdx++) {
+            const currentCell = cells[cellIdx];
             const min = cellIdx + merges + 1;
             const start = getExcelColumnName(min);
             const outputRow = rowIdx + 1;
@@ -59,17 +60,17 @@ const getMergedCellsAndAddColumnGroups = (
             const { collapsibleRanges } = currentCell;
 
             if (collapsibleRanges) {
-                collapsibleRanges.forEach((range) => {
+                for (const range of collapsibleRanges) {
                     cellsWithCollapsibleGroups.push([min + range[0], min + range[1]]);
-                });
+                }
             }
 
             lastCol = cols[min - 1];
             lastCol.min = min;
             lastCol.max = min;
             currentCell.ref = `${start}${outputRow}`;
-        });
-    });
+        }
+    }
 
     cellsWithCollapsibleGroups.sort((a, b) => {
         if (a[0] !== b[0]) {
@@ -81,30 +82,29 @@ const getMergedCellsAndAddColumnGroups = (
     const rangeMap = new Map<string, boolean>();
     const outlineLevel = new Map<number, number>();
 
-    cellsWithCollapsibleGroups
-        .filter((currentRange) => {
-            const rangeString = currentRange.toString();
-            const inMap = rangeMap.get(rangeString);
+    const ranges = cellsWithCollapsibleGroups.filter((currentRange) => {
+        const rangeString = currentRange.toString();
+        const inMap = rangeMap.get(rangeString);
 
-            if (inMap) {
-                return false;
-            }
-            rangeMap.set(rangeString, true);
+        if (inMap) {
+            return false;
+        }
+        rangeMap.set(rangeString, true);
 
-            return true;
-        })
-        .forEach((range) => {
-            const refCol = cols.find((col) => col.min == range[0] && col.max == range[1]);
-            const currentOutlineLevel = outlineLevel.get(range[0]);
-            cols.push({
-                min: range[0],
-                max: range[1],
-                outlineLevel: suppressColumnOutline ? undefined : currentOutlineLevel || 1,
-                width: (refCol || { width: 100 }).width,
-            });
-
-            outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
+        return true;
+    });
+    for (const range of ranges) {
+        const refCol = cols.find((col) => col.min == range[0] && col.max == range[1]);
+        const currentOutlineLevel = outlineLevel.get(range[0]);
+        cols.push({
+            min: range[0],
+            max: range[1],
+            outlineLevel: suppressColumnOutline ? undefined : currentOutlineLevel || 1,
+            width: (refCol || { width: 100 }).width,
         });
+
+        outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
+    }
 
     return mergedCells;
 };
@@ -244,12 +244,12 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
     const headersAndFooters = [] as XmlElement[];
 
-    rules.forEach((rule) => {
+    for (const rule of rules) {
         const headerFooter = headerFooterConfig[rule];
         const namePrefix = rule === 'all' ? 'odd' : rule;
 
         if (!headerFooter) {
-            return;
+            continue;
         }
 
         for (const key of Object.keys(headerFooter)) {
@@ -269,7 +269,7 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
                 });
             }
         }
-    });
+    }
 
     return headersAndFooters;
 };
@@ -353,16 +353,14 @@ const addSheetProtection = (protectSheet?: boolean | ExcelSheetProtection) => {
             selectUnlockedCells: true,
         };
 
-        (Object.keys(defaults) as Exclude<keyof ExcelSheetProtection, 'password'>[]).forEach(
-            (key: Exclude<keyof ExcelSheetProtection, 'password'>) => {
-                const allow = sheetProtection[key];
-                if (allow == null || allow === defaults[key]) {
-                    return;
-                }
-
-                rawMap[key] = allow ? 0 : 1;
+        for (const key of Object.keys(defaults) as Exclude<keyof ExcelSheetProtection, 'password'>[]) {
+            const allow = sheetProtection[key];
+            if (allow == null || allow === defaults[key]) {
+                continue;
             }
-        );
+
+            rawMap[key] = allow ? 0 : 1;
+        }
 
         params.children.push({
             name: 'sheetProtection',

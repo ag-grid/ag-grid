@@ -31,10 +31,11 @@ export class MiniColumnClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.columns.forEach((column: any, i) => {
+        for (let i = 0; i < this.columns.length; i++) {
+            const column = this.columns[i];
             column.fill = fills[i];
             column.stroke = strokes[i];
-        });
+        }
     }
 }
 

@@ -70,7 +70,11 @@ export class PivotColsSvc extends BaseColsService implements NamedBean, IColsSer
 
             if (pivot) {
                 const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-                addedCols?.forEach((c) => this.setColPivotActive(c, pivot, source));
+                if (addedCols) {
+                    for (const c of addedCols) {
+                        this.setColPivotActive(c, pivot, source);
+                    }
+                }
             }
 
             column.dispatchColEvent('columnPivotChanged', source);

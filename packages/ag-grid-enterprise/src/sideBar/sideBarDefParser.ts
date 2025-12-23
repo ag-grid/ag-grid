@@ -31,9 +31,16 @@ const DEFAULT_BY_KEY: { [p: string]: ToolPanelDef } = {
     'filters-new': DEFAULT_NEW_FILTER_COMP,
 };
 
+export interface ParsedSideBarDef extends SideBarDef {
+    /**
+     * A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom.
+     */
+    toolPanels?: ToolPanelDef[];
+}
+
 export function parseSideBarDef(
     toParse: SideBarDef | string | string[] | boolean | null | undefined
-): SideBarDef | undefined {
+): ParsedSideBarDef | undefined {
     if (!toParse) {
         return undefined;
     }
@@ -86,13 +93,13 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
         return result;
     }
 
-    from.forEach((it: ToolPanelDef | string) => {
+    for (const it of from) {
         const parsed = parseOneComponent(it);
         if (!parsed) {
-            return;
+            continue;
         }
         result.push(parsed);
-    });
+    }
 
     return result;
 }

@@ -452,8 +452,8 @@ class AgSideBar extends Component implements ISideBar {
         const sideBarDef = parseSideBarDef(this.gos.get('sideBar'));
 
         const existingToolPanelWrappers: { [id: string]: ToolPanelWrapper } = {};
-        if (sideBarDef && this.sideBar) {
-            sideBarDef.toolPanels?.forEach((toolPanelDef: ToolPanelDef) => {
+        if (sideBarDef?.toolPanels && this.sideBar) {
+            for (const toolPanelDef of sideBarDef.toolPanels) {
                 const { id } = toolPanelDef;
                 if (!id) {
                     return;
@@ -480,7 +480,7 @@ class AgSideBar extends Component implements ISideBar {
                 this.toolPanelWrappers = this.toolPanelWrappers.filter((toolPanel) => toolPanel !== toolPanelWrapper);
                 _removeFromParent(toolPanelWrapper.getGui());
                 existingToolPanelWrappers[id] = toolPanelWrapper;
-            });
+            }
         }
 
         this.clearDownUi();

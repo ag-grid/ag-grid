@@ -37,11 +37,12 @@ export class MiniPyramidClass extends MiniFunnelClass {
     }
 
     override updateColors(fills: string[], strokes: string[]): void {
-        this.shapes.forEach((bar, i) => {
+        for (let i = 0; i < this.shapes.length; i++) {
+            const bar = this.shapes[i];
             bar.fill = fills[i];
             bar.stroke = strokes[i];
             bar.strokeWidth = 0;
-        });
+        }
     }
 }
 

@@ -48,7 +48,11 @@ export class FormatPanel extends Component {
 
     private createPanels(seriesType: ChartSeriesType) {
         let panelExpandedOnInit = false;
-        this.getFormatPanelDef().groups?.forEach(({ type: group, isOpen: isExpandedOnInit = false }) => {
+        const groups = this.getFormatPanelDef().groups;
+        if (!groups) {
+            return;
+        }
+        for (const { type: group, isOpen: isExpandedOnInit = false } of groups) {
             // ensure the group should be displayed for the current series type
             if (!this.isGroupPanelShownInSeries(group, seriesType)) {
                 return;
@@ -102,7 +106,7 @@ export class FormatPanel extends Component {
                 default:
                     _warn(147, { group });
             }
-        });
+        }
     }
 
     private getFormatPanelDef() {

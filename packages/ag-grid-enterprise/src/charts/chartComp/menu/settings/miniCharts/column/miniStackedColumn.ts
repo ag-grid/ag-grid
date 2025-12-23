@@ -46,12 +46,13 @@ export class MiniStackedColumnClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.stackedColumns.forEach((series: any[], i: number) => {
+        for (let i = 0; i < this.stackedColumns.length; i++) {
+            const series = this.stackedColumns[i];
             for (const column of series) {
                 column.fill = fills[i];
                 column.stroke = strokes[i];
             }
-        });
+        }
     }
 }
 

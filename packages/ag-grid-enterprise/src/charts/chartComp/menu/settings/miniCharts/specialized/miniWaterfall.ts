@@ -36,11 +36,12 @@ export class MiniWaterfallClass extends MiniChartWithAxes {
             fill: isCustomTheme ? fills[1] : _Theme.resolveOperation({ $palette: 'altDown.fill' }),
             stroke: isCustomTheme ? strokes[1] : _Theme.resolveOperation({ $palette: 'altDown.stroke' }),
         };
-        this.bars.forEach((bar, i) => {
+        for (let i = 0; i < this.bars.length; i++) {
+            const bar = this.bars[i];
             const isPositive = data[i] >= 0;
             bar.fill = isPositive ? positive.fill : negative.fill;
             bar.stroke = isPositive ? positive.stroke : negative.stroke;
-        });
+        }
     }
 
     createWaterfall(

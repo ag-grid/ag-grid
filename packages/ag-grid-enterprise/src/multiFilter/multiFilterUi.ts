@@ -88,14 +88,15 @@ export class MultiFilterUi
 
         const newAllStateState = state.state;
 
-        this.filters.forEach((filter, index) => {
+        for (let index = 0; index < this.filters.length; index++) {
+            const filter = this.filters[index];
             const modelForFilter = getFilterModelForIndex(model, index);
             const stateForFilter = {
                 state: newAllStateState?.[index],
                 model: getFilterModelForIndex(state.model, index),
             };
             _refreshFilterUi(filter, filterParams[index], modelForFilter, stateForFilter, source);
-        });
+        }
         return true;
     }
 
@@ -177,12 +178,13 @@ export class MultiFilterUi
             : { model: filterModel };
         const onAnyFilterChanged = () => {
             const handler = this.getHandler();
-            this.filters.forEach((filter, otherIndex) => {
+            for (let otherIndex = 0; otherIndex < this.filters.length; otherIndex++) {
+                const filter = this.filters[otherIndex];
                 if (index !== otherIndex) {
                     handler.getHandler<FilterHandler>(otherIndex)?.onAnyFilterChanged?.();
                     filter?.onAnyFilterChanged?.();
                 }
-            });
+            }
         };
         const colFilter = this.beans.colFilter!;
         return {

@@ -88,12 +88,13 @@ export class MiniRadialColumnClass extends MiniChartWithPolarAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.series.forEach((group, i) => {
+        for (let i = 0; i < this.series.length; i++) {
+            const group = this.series[i];
             for (const sector of group.children() as Iterable<any>) {
                 sector.fill = fills[i % fills.length];
                 sector.stroke = strokes[i % strokes.length];
             }
-        });
+        }
     }
 }
 

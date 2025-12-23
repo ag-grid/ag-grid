@@ -207,9 +207,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         // Register custom functions, not reactive.
         const customFuncs = this.gos.get('formulaFuncs');
         if (customFuncs) {
-            Object.keys(customFuncs).forEach((name) => {
+            for (const name of Object.keys(customFuncs)) {
                 this.supportedOperations.set(name.toUpperCase(), customFuncs[name].func);
-            });
+            }
         }
     }
 
@@ -224,26 +224,28 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         const map = new Map<string, AgColumn>();
 
         let idx = 0;
-        list?.forEach((col) => {
-            if (!col.isPrimary()) {
-                return;
-            }
-            let label = '';
-            let n = idx++;
-            // generate a column label (A, B, C, ..., Z, AA, AB, ...)
-            while (true) {
-                label = alphabet[n % base] + label;
-                if (n < base) {
-                    break;
+        if (list) {
+            for (const col of list) {
+                if (!col.isPrimary()) {
+                    return;
                 }
-                n = Math.floor(n / base) - 1;
+                let label = '';
+                let n = idx++;
+                // generate a column label (A, B, C, ..., Z, AA, AB, ...)
+                while (true) {
+                    label = alphabet[n % base] + label;
+                    if (n < base) {
+                        break;
+                    }
+                    n = Math.floor(n / base) - 1;
+                }
+                if (col.formulaRef !== label.toUpperCase()) {
+                    col.formulaRef = label.toUpperCase();
+                    col.dispatchColEvent('formulaRefChanged', 'api');
+                }
+                map.set(label.toUpperCase(), col);
             }
-            if (col.formulaRef !== label.toUpperCase()) {
-                col.formulaRef = label.toUpperCase();
-                col.dispatchColEvent('formulaRefChanged', 'api');
-            }
-            map.set(label.toUpperCase(), col);
-        });
+        }
 
         this.colRefMap = map;
 

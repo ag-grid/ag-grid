@@ -32,7 +32,8 @@ export abstract class StatisticalChartProxy<
         return Array.from(groupedData).map(([categoryValue, categoryData]) => {
             const categoryResult = { [category.id]: categoryValue };
 
-            fields.forEach((field, seriesIndex) => {
+            for (let seriesIndex = 0; seriesIndex < fields.length; seriesIndex++) {
+                const field = fields[seriesIndex];
                 // `null` & `NaN` values are omitted from calculations
                 const seriesValues = categoryData
                     .map((datum) => datum[field.colId])
@@ -44,7 +45,7 @@ export abstract class StatisticalChartProxy<
                     // when no data exists, stat properties are added to results with `null` values!
                     categoryResult[propertyKey] = seriesValues.length > 0 ? computed[statKey] : null;
                 }
-            });
+            }
 
             return categoryResult;
         });

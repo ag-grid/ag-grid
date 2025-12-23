@@ -30,13 +30,14 @@ export class MiniAreaClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.areas.forEach((area, i) => {
+        for (let i = 0; i < this.areas.length; i++) {
+            const area = this.areas[i];
             area.fill = fills[i];
             area.stroke = strokes[i];
             area.strokeWidth = 1;
             area.strokeOpacity = 0.75;
             area.fillOpacity = 0.7;
-        });
+        }
     }
 }
 

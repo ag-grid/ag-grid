@@ -1077,7 +1077,7 @@ export class SetFilter<V = string>
                 this.selectedKeys.clear();
             }
 
-            this.displayValueModel.forEachDisplayedKey((key) => this.selectedKeys.add(key));
+            this.displayValueModel.forDisplayedKeys((key) => this.selectedKeys.add(key));
         }
     }
 
@@ -1087,7 +1087,7 @@ export class SetFilter<V = string>
             this.selectedKeys.clear();
         } else {
             // ensure everything that matches the mini filter is deselected
-            this.displayValueModel.forEachDisplayedKey((key) => this.selectedKeys.delete(key));
+            this.displayValueModel.forDisplayedKeys((key) => this.selectedKeys.delete(key));
         }
     }
 
@@ -1149,17 +1149,17 @@ export class SetFilter<V = string>
                 this.selectedKeys.clear();
 
                 const existingFormattedKeys: Map<string | null, string | null> = new Map();
-                valueModel.allValues.forEach((_value, key) => {
+                for (const key of valueModel.allValues.keys()) {
                     existingFormattedKeys.set(handler.caseFormat(key), key);
-                });
+                }
 
-                model.forEach((unformattedKey) => {
+                for (const unformattedKey of model) {
                     const formattedKey = handler.caseFormat(_makeNull(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectedKeys.add(existingUnformattedKey);
                     }
-                });
+                }
             }
         });
     }

@@ -42,16 +42,16 @@ export class MiniScatterClass extends MiniChartWithAxes {
 
         const points: any[] = [];
 
-        data.forEach((series) => {
-            series.forEach(([x, y]) => {
+        for (const series of data) {
+            for (const [x, y] of series) {
                 const arc = new _Scene.Arc();
                 arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
                 arc.radius = 2.5;
                 points.push(arc);
-            });
-        });
+            }
+        }
 
         this.points = points;
         this.updateColors(fills, strokes);
@@ -63,10 +63,11 @@ export class MiniScatterClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.points.forEach((line, i) => {
+        for (let i = 0; i < this.points.length; i++) {
+            const line = this.points[i];
             line.stroke = strokes[i % strokes.length];
             line.fill = fills[i % fills.length];
-        });
+        }
     }
 }
 

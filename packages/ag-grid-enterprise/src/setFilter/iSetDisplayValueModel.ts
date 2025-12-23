@@ -25,7 +25,7 @@ export interface ISetDisplayValueModel<V> {
 
     getDisplayedKeys(): (string | null)[];
 
-    forEachDisplayedKey(func: (key: string | null) => void): void;
+    forDisplayedKeys(func: (key: string | null) => void): void;
 
     someDisplayedKey(func: (key: string | null) => boolean): boolean;
 

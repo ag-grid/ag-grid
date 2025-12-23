@@ -23,9 +23,9 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         const headerFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.size;
         const imageTypesObject: { [key in ImageExtension]?: boolean } = {};
 
-        XLSX_WORKBOOK_IMAGE_IDS.forEach((v) => {
+        for (const v of XLSX_WORKBOOK_IMAGE_IDS.values()) {
             imageTypesObject[_normaliseImageExtension(v.type)] = true;
-        });
+        }
 
         const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({
             name: 'Override',
@@ -35,13 +35,13 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
 
         const tableDocs: { name: string; ContentType: string; PartName: string }[] = [];
 
-        XLSX_WORKSHEET_DATA_TABLES.forEach(({ name }) => {
+        for (const { name } of XLSX_WORKSHEET_DATA_TABLES.values()) {
             tableDocs.push({
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',
                 PartName: `/xl/tables/${name}.xml`,
             });
-        });
+        }
 
         const imageTypes = Object.keys(imageTypesObject).map((ext) => ({
             name: 'Default',

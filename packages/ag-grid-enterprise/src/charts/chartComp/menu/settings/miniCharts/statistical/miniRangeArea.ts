@@ -38,15 +38,16 @@ export class MiniRangeAreaClass extends MiniChartWithAxes {
         fills = swapArrayItems(fills, 1, 2);
         strokes = swapArrayItems(strokes, 1, 2);
 
-        this.lines.forEach(([highLine, lowLine], i) => {
+        for (let i = 0; i < this.lines.length; i++) {
+            const [highLine, lowLine] = this.lines[i];
             highLine.fill = undefined;
             highLine.stroke = strokes[i];
             lowLine.fill = undefined;
             lowLine.stroke = strokes[i];
-        });
-        this.areas.forEach((area, i) => {
-            area.fill = fills[i];
-        });
+        }
+        for (let i = 0; i < this.areas.length; i++) {
+            this.areas[i].fill = fills[i];
+        }
     }
 
     createRangeArea(
@@ -112,14 +113,15 @@ export class MiniRangeAreaClass extends MiniChartWithAxes {
             });
         });
 
-        lowPoints.forEach((seriesLowPoints, seriesIndex) => {
+        for (let seriesIndex = 0; seriesIndex < lowPoints.length; seriesIndex++) {
+            const seriesLowPoints = lowPoints[seriesIndex];
             const n = seriesLowPoints.length - 1;
             const area = areas[seriesIndex];
             for (let datumIndex = n; datumIndex >= 0; datumIndex--) {
                 const [x, y] = seriesLowPoints[datumIndex];
                 area.path['lineTo'](x, y);
             }
-        });
+        }
 
         root.append(areas.concat(...lines));
 

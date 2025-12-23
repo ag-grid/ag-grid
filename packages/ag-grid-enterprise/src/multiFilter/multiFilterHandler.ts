@@ -42,7 +42,8 @@ export class MultiFilterHandler
 
         const filterDefs = getMultiFilterDefs(params.filterParams);
         this.filterDefs = filterDefs;
-        filterDefs.forEach((def, index) => {
+        for (let index = 0; index < filterDefs.length; index++) {
+            const def = filterDefs[index];
             const wrapper = this.beans.colFilter!.createHandler(params.column as AgColumn, def, 'agTextColumnFilter');
             this.handlerWrappers.push(wrapper);
             if (!wrapper) {
@@ -55,7 +56,7 @@ export class MultiFilterHandler
                 model: getFilterModelForIndex(params.model, index),
                 source: 'init',
             });
-        });
+        }
         this.resetActiveList(params.model);
     }
 
@@ -64,7 +65,8 @@ export class MultiFilterHandler
         const { model, source, filterParams } = params;
         const filters = filterParams?.filters;
 
-        this.handlerWrappers.forEach((wrapper, index) => {
+        for (let index = 0; index < this.handlerWrappers.length; index++) {
+            const wrapper = this.handlerWrappers[index];
             if (wrapper) {
                 const handlerParams = this.updateHandlerParams(params, index, false);
                 const originalFilterParams = handlerParams.filterParams;
@@ -83,7 +85,7 @@ export class MultiFilterHandler
                     source,
                 });
             }
-        });
+        }
         if (params.source !== 'floating' && params.source !== 'ui') {
             this.resetActiveList(params.model);
         }

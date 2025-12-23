@@ -347,7 +347,9 @@ export const registerStyles = (styles: ExcelStyle[], _currentSheet: number): voi
         resetStylesheetValues();
     }
 
-    styles.forEach(registerStyle);
+    for (const style of styles) {
+        registerStyle(style);
+    }
 };
 
 export default stylesheetFactory;

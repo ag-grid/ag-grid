@@ -120,12 +120,12 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             // have to recalculate height after each row has been added, to allow
             // calculating the next sticky row
             newStickyContainerHeight = 0;
-            newStickyRows.forEach((rowNode) => {
+            for (const rowNode of newStickyRows) {
                 const thisRowLastPx = rowNode.stickyRowTop + rowNode.rowHeight!;
                 if (newStickyContainerHeight < thisRowLastPx) {
                     newStickyContainerHeight = thisRowLastPx;
                 }
-            });
+            }
         };
 
         const suppressFootersSticky = this.areFooterRowsStickySuppressed();
@@ -213,9 +213,9 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
 
         if (!isTop) {
             // Because sticky bottom rows are calculated inverted, we need to invert the top position
-            newStickyRows.forEach((rowNode) => {
+            for (const rowNode of newStickyRows) {
                 rowNode.stickyRowTop = newStickyContainerHeight - (rowNode.stickyRowTop + rowNode.rowHeight!);
-            });
+            }
         }
 
         return this.refreshNodesAndContainerHeight(container, newStickyRows, newStickyContainerHeight);
@@ -343,14 +343,14 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
 
         // find the new ctrls to add
         const newCtrls: RowCtrl[] = [];
-        newStickyNodes.forEach((node) => {
+        for (const node of newStickyNodes) {
             if (existingNodes.has(node)) {
-                return;
+                continue;
             }
             // ensure new node is set to sticky and create the new ctrl
             node.sticky = true;
             newCtrls.push(this.createRowCon(node, false, false));
-        });
+        }
 
         // check if anything has changed
         let hasSomethingChanged = !!newCtrls.length || remainingCtrls.length !== previousCtrls.length;
@@ -426,8 +426,12 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                 anyChange = true;
             }
         };
-        this.stickyTopRowCtrls.forEach(updateRowHeight);
-        this.stickyBottomRowCtrls.forEach(updateRowHeight);
+        for (const ctrl of this.stickyBottomRowCtrls) {
+            updateRowHeight(ctrl);
+        }
+        for (const ctrl of this.stickyBottomRowCtrls) {
+            updateRowHeight(ctrl);
+        }
         return anyChange;
     }
 }

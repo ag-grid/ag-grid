@@ -309,7 +309,9 @@ export class AgVirtualList<
     }
 
     public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
-        this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
+        for (const [key, value] of this.renderedRows) {
+            func(value.rowComponent, key);
+        }
     }
 
     private getItemHeight(): number {
@@ -436,7 +438,9 @@ export class AgVirtualList<
     }
 
     private clearVirtualRows() {
-        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
+        for (const key of this.renderedRows.keys()) {
+            this.removeRow(key);
+        }
     }
 
     protected drawVirtualRows(softRefresh?: boolean) {
@@ -463,11 +467,11 @@ export class AgVirtualList<
 
     private ensureRowsRendered(start: number, finish: number, softRefresh?: boolean) {
         // remove any rows that are no longer required
-        this.renderedRows.forEach((_, rowIndex) => {
+        for (const rowIndex of this.renderedRows.keys()) {
             if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRowIndex) {
                 this.removeRow(rowIndex);
             }
-        });
+        }
 
         if (softRefresh) {
             // refresh any existing rows
@@ -531,7 +535,7 @@ export class AgVirtualList<
 
     private refreshRows(): void {
         const rowCount = this.model.getRowCount();
-        this.renderedRows.forEach((row, rowIndex) => {
+        for (const [rowIndex, row] of this.renderedRows) {
             if (rowIndex >= rowCount) {
                 this.removeRow(rowIndex);
             } else {
@@ -543,7 +547,7 @@ export class AgVirtualList<
                     this.removeRow(rowIndex);
                 }
             }
-        });
+        }
     }
 
     private addScrollListener() {

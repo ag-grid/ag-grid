@@ -1,5 +1,4 @@
 import type {
-    AbstractColDef,
     AgColumn,
     AgProvidedColumnGroup,
     BeanCollection,
@@ -137,7 +136,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         }
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
-            colDefs2.forEach((abstractColDef: AbstractColDef) => {
+            for (const abstractColDef of colDefs2) {
                 const isGroup = _exists((abstractColDef as any).children);
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
@@ -151,7 +150,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
                         columnCallback(colDef);
                     }
                 }
-            });
+            }
         };
 
         if (colDefs) {

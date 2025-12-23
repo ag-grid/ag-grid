@@ -33,9 +33,9 @@ export class MiniLineClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], _strokes: string[]) {
-        this.lines.forEach((line: any, i: number) => {
-            line.stroke = fills[i];
-        });
+        for (let i = 0; i < this.lines.length; i++) {
+            this.lines[i].stroke = fills[i];
+        }
     }
 }
 

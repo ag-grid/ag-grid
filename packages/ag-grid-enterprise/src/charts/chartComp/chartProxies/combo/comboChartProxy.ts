@@ -28,11 +28,11 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
         }
 
         if (secondaryYKeys.length > 0) {
-            secondaryYKeys.forEach((secondaryYKey: string) => {
+            for (const secondaryYKey of secondaryYKeys) {
                 const field = fieldsMap.get(secondaryYKey);
                 const secondaryAxisIsVisible = field && field.colId === secondaryYKey;
                 if (!secondaryAxisIsVisible) {
-                    return;
+                    continue;
                 }
 
                 const secondaryAxisOptions: AgCartesianAxisOptions = {
@@ -41,7 +41,7 @@ export class ComboChartProxy extends CartesianChartProxy<'line' | 'bar' | 'area'
                 };
 
                 axes[`y_${secondaryYKey}`] = secondaryAxisOptions;
-            });
+            }
         }
 
         return axes;

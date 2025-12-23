@@ -301,7 +301,9 @@ export class SetFilterHandler<TValue = string>
                     addKey(key);
                 }
             } else {
-                valueModel.allValues.forEach((_value, key) => addKey(key));
+                for (const key of valueModel.allValues.keys()) {
+                    addKey(key);
+                }
             }
             const newValues: SetFilterModelValue = [];
             let updated = false;

@@ -75,13 +75,14 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.createPivotColumnsFromUniqueValues(uniqueValues);
 
         function extractColDefs(input: (ColDef | ColGroupDef)[], arr: ColDef[] = []): ColDef[] {
-            input.forEach((def: any) => {
-                if (def.children !== undefined) {
-                    extractColDefs(def.children, arr);
+            for (const def of input) {
+                const groupDef = def as ColGroupDef;
+                if (groupDef.children !== undefined) {
+                    extractColDefs(groupDef.children, arr);
                 } else {
                     arr.push(def);
                 }
-            });
+            }
             return arr;
         }
         const pivotColumnDefs = extractColDefs(pivotColumnGroupDefs);
@@ -205,9 +206,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 const { columns: valueCols = [] } = valueColsSvc ?? {};
                 const childAcc = new Map();
 
-                def.children.forEach((grp: ColDef | ColGroupDef) => {
+                for (const grp of def.children) {
                     recursivelyAddSubTotals(grp, currentPivotColumnDefs, childAcc);
-                });
+                }
 
                 const leafGroup = !def.children.some((child) => (child as ColGroupDef).children);
                 const hasCollapsedLeafGroup =
@@ -251,9 +252,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             }
         };
 
-        pivotColumnGroupDefs.forEach((groupDef: ColGroupDef | ColDef) => {
+        for (const groupDef of pivotColumnGroupDefs) {
             recursivelyAddSubTotals(groupDef, pivotColumnDefs, new Map());
-        });
+        }
     }
 
     private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
@@ -276,9 +277,9 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             // arbitrarily select a value column to use as a template for pivot columns
             const valueColumn = valueCols[0];
 
-            pivotColumnGroupDefs.forEach((groupDef: ColGroupDef | ColDef) => {
+            for (const groupDef of pivotColumnGroupDefs) {
                 this.recursivelyAddPivotTotal(groupDef, pivotColumnDefs, valueColumn, insertAfter);
-            });
+            }
         }
     }
 
@@ -297,12 +298,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         let colIds: string[] = [];
 
         // need to recurse children first to obtain colIds used in the aggregation stage
-        group.children.forEach((grp: ColDef | ColGroupDef) => {
+        for (const grp of group.children) {
             const childColIds = this.recursivelyAddPivotTotal(grp, pivotColumnDefs, valueColumn, insertAfter);
             if (childColIds) {
                 colIds = colIds.concat(childColIds);
             }
-        });
+        }
 
         // only add total colDef if there is more than 1 child node
         if (group.children.length > 1) {
@@ -458,11 +459,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     private merge(m1: Map<string, string[]>, m2: Map<any, any>) {
-        m2.forEach((value, key) => {
+        for (const [key, value] of m2) {
             const existingList = m1.has(key) ? m1.get(key) : [];
             const updatedList = [...existingList!, ...value];
             m1.set(key, updatedList);
-        });
+        }
     }
 
     private generateColumnGroupId(pivotKeys: string[]): string {

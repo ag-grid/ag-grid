@@ -62,12 +62,13 @@ export class MiniStackedBarClass extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.bars.forEach((series, i) =>
-            series.forEach((bar) => {
+        for (let i = 0; i < this.bars.length; i++) {
+            const series = this.bars[i];
+            for (const bar of series) {
                 bar.fill = fills[i];
                 bar.stroke = strokes[i];
-            })
-        );
+            }
+        }
     }
 }
 

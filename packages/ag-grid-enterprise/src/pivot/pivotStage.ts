@@ -20,7 +20,9 @@ const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.
 
 const mapToObject = (map: Map<string, any>): Record<string, any> => {
     const obj: Record<string, any> = {};
-    map.forEach((value, key) => (obj[key] = value instanceof Map ? mapToObject(value) : value));
+    for (const [key, value] of map) {
+        obj[key] = value instanceof Map ? mapToObject(value) : value;
+    }
     return obj;
 };
 
@@ -197,8 +199,10 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const recursivelyBucketFilteredChildren = (node: RowNode) => {
             if (node.leafGroup) {
                 this.bucketRowNode(node, uniqueValues);
-            } else {
-                node.childrenAfterFilter?.forEach(recursivelyBucketFilteredChildren);
+            } else if (node.childrenAfterFilter) {
+                for (const child of node.childrenAfterFilter) {
+                    recursivelyBucketFilteredChildren(child);
+                }
             }
         };
 
@@ -233,7 +237,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
-        children.forEach((child: RowNode) => {
+        for (const child of children) {
             let key: string = this.valueSvc.getKeyForNode(pivotColumn, child);
 
             if (_missing(key)) {
@@ -256,7 +260,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
                 mappedChildren.set(key, []);
             }
             mappedChildren.get(key)!.push(child);
-        });
+        }
 
         // if it's the last pivot column, return as is, otherwise go one level further in the map
         if (pivotIndex === pivotColumns.length - 1) {

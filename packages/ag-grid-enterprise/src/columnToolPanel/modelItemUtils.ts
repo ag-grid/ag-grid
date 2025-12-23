@@ -119,7 +119,9 @@ function setAllPivotActive(
 
     const action = value ? turnOnAction : turnOffAction;
 
-    columns.forEach(action);
+    for (const col of columns) {
+        action(col);
+    }
 
     if (colStateItems.length > 0) {
         _applyColumnState(beans, { state: colStateItems }, eventType);

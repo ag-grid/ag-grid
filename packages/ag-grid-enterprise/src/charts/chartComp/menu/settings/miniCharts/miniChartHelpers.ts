@@ -151,7 +151,9 @@ export function closePath(commandSegments: CommandSegment[]): CommandSegment[] {
 
 export function createPath(_Scene: AgChartsExports['_Scene'], commands: CommandSegment[]): any {
     const path = new _Scene.Path();
-    commands.forEach(([command, x, y]: CommandSegment) => path.path[command](x, y));
+    for (const [command, x, y] of commands) {
+        path.path[command](x, y);
+    }
     return path;
 }
 
@@ -308,7 +310,8 @@ export function createPolarPaths(
         path.fill = undefined;
         path.fillOpacity = 0.8;
 
-        series.forEach((datum: number, i: number) => {
+        for (let i = 0; i < series.length; i++) {
+            const datum = series[i];
             const angle = angleScale.convert(i);
             const r = radius + innerRadius - radiusScale.convert(datum);
 
@@ -324,7 +327,7 @@ export function createPolarPaths(
                 marker.size = markerSize;
                 markers.push(marker);
             }
-        });
+        }
 
         path.path.closePath();
         return path;
@@ -344,7 +347,8 @@ export function accumulateData(data: number[][]): { processedData: number[][]; m
         const previous = currIndex > 0 ? acc[currIndex - 1] : undefined;
         acc[currIndex] ??= [];
         const current = acc[currIndex];
-        curr.forEach((datum, datumIndex) => {
+        for (let datumIndex = 0; datumIndex < curr.length; datumIndex++) {
+            let datum = curr[datumIndex];
             if (previous) {
                 datum += previous[datumIndex];
             }
@@ -358,7 +362,7 @@ export function accumulateData(data: number[][]): { processedData: number[][]; m
             if (current[datumIndex] > max) {
                 max = current[datumIndex];
             }
-        });
+        }
         return acc;
     }, [] as number[][]);
 

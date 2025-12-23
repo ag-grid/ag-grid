@@ -38,12 +38,13 @@ export class MiniConeFunnelClass extends MiniFunnelClass {
     }
 
     override updateColors(fills: string[], strokes: string[]): void {
-        this.shapes.forEach((bar, i) => {
+        for (let i = 0; i < this.shapes.length; i++) {
+            const bar = this.shapes[i];
             bar.fill = fills[0];
             bar.fillOpacity = 1 - i * 0.2;
             bar.stroke = strokes[0];
             bar.strokeWidth = 0;
-        });
+        }
     }
 }
 

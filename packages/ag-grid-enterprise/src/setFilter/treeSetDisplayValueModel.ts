@@ -249,11 +249,11 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     public getDisplayedKeys(): (string | null)[] {
         const displayedKeys: (string | null)[] = [];
-        this.forEachDisplayedKey((key) => displayedKeys.push(key));
+        this.forDisplayedKeys((key) => displayedKeys.push(key));
         return displayedKeys;
     }
 
-    public forEachDisplayedKey(func: (key: string | null) => void): void {
+    public forDisplayedKeys(func: (key: string | null) => void): void {
         const recursiveForEachItem = (item: SetFilterModelTreeItem, topParentExpanded: boolean) => {
             const children = item.children;
             if (children) {

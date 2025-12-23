@@ -193,9 +193,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         const promises: AgPromise<void>[] = [];
 
-        this.wrappers.forEach((wrapper, index) => {
+        for (let index = 0; index < this.wrappers.length; index++) {
+            const wrapper = this.wrappers[index];
             if (!wrapper) {
-                return;
+                continue;
             }
             const modelForFilter = getFilterModelForIndex(model, index);
             const { filter, filterParams, handler, handlerParams, state } = wrapper;
@@ -225,7 +226,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                     })
                 );
             }
-        });
+        }
         return AgPromise.all(promises).then(() => {});
     }
 
@@ -522,9 +523,10 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private filterChanged(index: number, additionalEventAttributes: any): void {
         this.filterChangedCallback!(additionalEventAttributes);
 
-        this.wrappers.forEach((wrapper, childIndex) => {
+        for (let childIndex = 0; childIndex < this.wrappers.length; childIndex++) {
+            const wrapper = this.wrappers[childIndex];
             if (index === childIndex || !wrapper) {
-                return;
+                continue;
             }
 
             const { filter, handler } = wrapper;
@@ -533,7 +535,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             if (typeof filter.onAnyFilterChanged === 'function') {
                 filter.onAnyFilterChanged();
             }
-        });
+        }
     }
 
     public getModelAsString(model: IMultiFilterModel): string {

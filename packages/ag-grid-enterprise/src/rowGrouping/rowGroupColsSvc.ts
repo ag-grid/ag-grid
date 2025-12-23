@@ -113,7 +113,11 @@ export class RowGroupColsSvc extends BaseColsService implements NamedBean, ICols
 
             if (rowGroup) {
                 const addedCols = this.beans.groupHierarchyColSvc?.insertVirtualColumnsForCol(this.columns, column);
-                addedCols?.forEach((c) => this.setColRowGroupActive(c, rowGroup, source));
+                if (addedCols) {
+                    for (const c of addedCols) {
+                        this.setColRowGroupActive(c, rowGroup, source);
+                    }
+                }
             }
 
             column.dispatchColEvent('columnRowGroupChanged', source);

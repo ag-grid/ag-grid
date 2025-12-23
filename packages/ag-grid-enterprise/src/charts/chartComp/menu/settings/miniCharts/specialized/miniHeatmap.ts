@@ -80,10 +80,11 @@ export class MiniHeatmapClass extends MiniChart {
         const stroke = isCustomTheme ? strokes[0] : _Theme.resolveOperation({ $ref: 'backgroundColor' });
 
         const fillFn = _Util.interpolateColor(colorRange[0], colorRange[1]);
-        this.rects.forEach((rect, i) => {
+        for (let i = 0; i < this.rects.length; i++) {
+            const rect = this.rects[i];
             rect.fill = fillFn(i * 0.2);
             rect.stroke = stroke;
-        });
+        }
     }
 }
 

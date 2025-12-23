@@ -31,15 +31,18 @@ export function set(target: any, expression: string, value: any) {
 
     let objectToUpdate = target;
     // Create empty objects
-    keys.filter((key) => !SKIP_JS_BUILTINS.has(key)).forEach((key, i) => {
+    for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (SKIP_JS_BUILTINS.has(key)) {
+            continue;
+        }
         if (!objectToUpdate[key]) {
             objectToUpdate[key] = {};
         }
-
         if (i < keys.length - 1) {
             objectToUpdate = objectToUpdate[key];
         }
-    });
+    }
 
     objectToUpdate[keys[keys.length - 1]] = value;
 }

@@ -487,14 +487,17 @@ const reorderSheetSpecificMap = <T>(map: Map<number, T>, order: number[]) => {
 
     const remapped = new Map<number, T>();
 
-    order.forEach((originalIdx, newIdx) => {
+    for (let newIdx = 0; newIdx < order.length; newIdx++) {
+        const originalIdx = order[newIdx];
         if (map.has(originalIdx)) {
             remapped.set(newIdx, map.get(originalIdx)!);
         }
-    });
+    }
 
     map.clear();
-    remapped.forEach((value, key) => map.set(key, value));
+    for (const [key, value] of remapped) {
+        map.set(key, value);
+    }
 };
 
 const registerSheetXml = (worksheetXml: string): void => {
@@ -548,7 +551,10 @@ const getSheetOrderFromData = (data: string[]): number[] | null => {
 
 const reorderSheetState = (order: number[]) => {
     const indexRemap = new Map<number, number>();
-    order.forEach((originalIdx, newIdx) => indexRemap.set(originalIdx, newIdx));
+    for (let newIdx = 0; newIdx < order.length; newIdx++) {
+        const originalIdx = order[newIdx];
+        indexRemap.set(originalIdx, newIdx);
+    }
 
     XLSX_SHEET_NAMES = order.map((idx) => XLSX_SHEET_NAMES[idx]);
     XLSX_SHEET_DATA = order.map((idx) => XLSX_SHEET_DATA[idx]);
@@ -558,22 +564,23 @@ const reorderSheetState = (order: number[]) => {
     reorderSheetSpecificMap(XLSX_WORKSHEET_DATA_TABLES, order);
     reorderSheetSpecificMap(XLSX_WORKSHEET_IMAGE_IDS, order);
 
-    XLSX_IMAGES.forEach((sheetImages) => {
-        sheetImages.forEach((entry) => {
+    for (const sheetImages of XLSX_IMAGES.values()) {
+        for (const entry of sheetImages) {
             const remappedId = indexRemap.get(entry.sheetId);
             if (remappedId != null) {
                 entry.sheetId = remappedId;
             }
-        });
-    });
+        }
+    }
 
     // Rebuild content index map to reflect new ordering for any subsequent lookups.
     XLSX_SHEET_CONTENT_INDICES = new Map();
-    XLSX_SHEET_DATA.forEach((xml, idx) => {
+    for (let idx = 0; idx < XLSX_SHEET_DATA.length; idx++) {
+        const xml = XLSX_SHEET_DATA[idx];
         const indices = XLSX_SHEET_CONTENT_INDICES.get(xml) ?? [];
         indices.push(idx);
         XLSX_SHEET_CONTENT_INDICES.set(xml, indices);
-    });
+    }
 };
 
 // Align sheet-scoped factory state with the order provided by consumers of getSheetDataForExcel.

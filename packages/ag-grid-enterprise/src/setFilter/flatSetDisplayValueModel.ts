@@ -71,8 +71,10 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         return this.displayedKeys;
     }
 
-    public forEachDisplayedKey(func: (key: string | null) => void): void {
-        this.displayedKeys.forEach(func);
+    public forDisplayedKeys(func: (key: string | null) => void): void {
+        for (const key of this.displayedKeys) {
+            func(key);
+        }
     }
 
     public someDisplayedKey(func: (key: string | null) => boolean): boolean {

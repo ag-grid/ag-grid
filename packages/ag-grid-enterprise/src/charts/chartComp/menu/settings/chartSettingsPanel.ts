@@ -113,7 +113,8 @@ export class ChartSettingsPanel extends Component {
 
         const { themes } = this;
 
-        this.palettes.forEach((palette, index) => {
+        for (let index = 0; index < this.palettes.length; index++) {
+            const palette = this.palettes[index];
             const isActivePalette = this.activePaletteIndex === index;
             const { fills = [], strokes = [] } = palette;
             const themeName = themes[index];
@@ -131,7 +132,7 @@ export class ChartSettingsPanel extends Component {
             } else {
                 miniChartsContainer.setDisplayed(false);
             }
-        });
+        }
 
         _setDisplayed(this.eNavBar, this.palettes.length > 1);
         _radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');

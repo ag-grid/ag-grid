@@ -103,13 +103,13 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, _IRowN
     /* for grid data, we only count the leafs */
     private setAllChildrenCountGridGrouping(rowNode: RowNode) {
         let allChildrenCount = 0;
-        rowNode.childrenAfterAggFilter!.forEach((child: RowNode) => {
+        for (const child of rowNode.childrenAfterAggFilter!) {
             if (child.group) {
                 allChildrenCount += child.allChildrenCount as any;
             } else {
                 allChildrenCount++;
             }
-        });
+        }
         rowNode.setAllChildrenCount(allChildrenCount);
     }
 

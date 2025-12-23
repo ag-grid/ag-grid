@@ -85,12 +85,12 @@ export class FilterPanel extends Component {
         this.filters = newFilters;
 
         const compsToDestroy: Component[] = [];
-        existingFilters.forEach((existingFilter, id) => {
+        for (const [id, existingFilter] of existingFilters) {
             ePrevItems.push(existingFilter.getGui());
             if (!newFilters.has(id)) {
                 compsToDestroy.push(existingFilter);
             }
-        });
+        }
 
         let addFilterComp = this.addFilterComp;
         if (addFilterComp) {
@@ -162,7 +162,9 @@ export class FilterPanel extends Component {
         this.addFilterComp = this.destroyBean(this.addFilterComp);
         this.buttonComp = this.destroyBean(this.buttonComp);
         const filters = this.filters;
-        filters.forEach((filter) => this.destroyBean(filter));
+        for (const filter of filters.values()) {
+            this.destroyBean(filter);
+        }
         filters.clear();
         super.destroy();
     }

@@ -43,7 +43,8 @@ export class MiniRadarLineClass extends MiniChartWithPolarAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.lines.forEach((line: any, i: number) => {
+        for (let i = 0; i < this.lines.length; i++) {
+            const line = this.lines[i];
             const n = this.data[i].length;
             line.stroke = fills[i];
             const startIdx = i * n;
@@ -53,7 +54,7 @@ export class MiniRadarLineClass extends MiniChartWithPolarAxes {
                 marker.stroke = strokes[i];
                 marker.fill = fills[i];
             }
-        });
+        }
     }
 }
 export const MiniRadarLine: MiniChartSelector = {

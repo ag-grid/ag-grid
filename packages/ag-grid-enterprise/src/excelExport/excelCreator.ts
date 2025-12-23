@@ -55,12 +55,12 @@ const createExcelXMLCoreFolderStructure = (zipContainer: ZipContainer): void => 
 
     let imgCounter = 0;
 
-    XLSX_IMAGES.forEach((value) => {
+    for (const value of XLSX_IMAGES.values()) {
         const firstImage = value[0].image[0];
         const { base64, imageType } = firstImage;
 
         zipContainer.addFile(`xl/media/image${++imgCounter}.${_normaliseImageExtension(imageType)}`, base64, true);
-    });
+    }
 };
 
 const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): void => {

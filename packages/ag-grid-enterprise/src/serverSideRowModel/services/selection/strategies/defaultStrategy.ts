@@ -67,13 +67,13 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             toggledNodes: new Set(),
         };
 
-        state.toggledNodes.forEach((key: any) => {
+        for (const key of state.toggledNodes) {
             if (typeof key === 'string') {
                 newState.toggledNodes.add(key);
             } else {
                 _warn(196, { key });
             }
-        });
+        }
 
         const isSelectingMultipleRows = newState.selectAll || newState.toggledNodes.size > 1;
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
