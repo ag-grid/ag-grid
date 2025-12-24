@@ -37,6 +37,7 @@ import { LandingPageSection } from '@ag-website-shared/components/landing-pages/
 import { Video } from '@ag-website-shared/components/video/Video';
 
 // Site-specific components
+import { getHeadingWithLogo } from '@utils/framework-landing-page-utils';
 import { InstallText } from '@ag-website-shared/components/install-text';
 import { Finance } from '@components/demos/examples/finance';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
@@ -64,6 +65,11 @@ const heroSection = content.sections.find(s => s.type === 'hero') as HeroSection
 const isEnterprise = heroSection?.variant === 'enterprise';
 const styles = isEnterprise ? enterpriseStyles : frameworkStyles;
 
+// For framework pages, add logo to headings (only for specific framework landing pages)
+const frameworkLandingPageSlugs = ['react-data-grid', 'javascript-data-grid', 'vue-data-grid', 'angular-data-grid'];
+const isFrameworkLandingPage = !isEnterprise && content.framework && frameworkLandingPageSlugs.includes(content.docsPath);
+const frameworkKey = isFrameworkLandingPage ? (content.framework || '') : '';
+
 // Get theme builder video for enterprise pages
 const themeBuilderVideo = isEnterprise ? await getPageImages({
     pageName: 'key-features',
@@ -82,9 +88,16 @@ const themeBuilderVideo = isEnterprise ? await getPageImages({
             case 'hero':
                 // Unified hero section for both enterprise and framework variants
                 // All content comes from JSON - no hardcoded text
+                // Add logo to heading for framework landing pages only
+                const heroSectionWithLogo = isFrameworkLandingPage && frameworkKey
+                    ? {
+                          ...section,
+                          headingHtml: getHeadingWithLogo(frameworkKey, section.heading, urlWithBaseUrl),
+                      }
+                    : section;
                 return (
                     <HeroSection
-                        section={section}
+                        section={heroSectionWithLogo}
                         pageContent={content}
                         latestVersion={latestVersion}
                         urlWithBaseUrl={urlWithBaseUrl}
@@ -111,9 +124,20 @@ const themeBuilderVideo = isEnterprise ? await getPageImages({
                 );
 
             case 'features':
+                // Add logo to heading for framework landing pages only
+                const featuresSectionWithLogo = isFrameworkLandingPage && frameworkKey
+                    ? {
+                          ...section,
+                          headingHtml: getHeadingWithLogo(
+                              frameworkKey,
+                              section.heading || 'Build, Customise and Expand your Data Grid',
+                              urlWithBaseUrl
+                          ),
+                      }
+                    : section;
                 return (
                     <FeaturesSection
-                        section={section}
+                        section={featuresSectionWithLogo}
                         pageContent={content}
                     >
                         <FeaturesWithExamples features={section.items} framework={content.framework} />

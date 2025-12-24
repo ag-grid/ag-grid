@@ -68,7 +68,13 @@ const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
                     )
                 }
                 <h1 class={styles.heroSectionTag}>{section.tag}</h1>
-                <h2 class={styles.heroSectionHeading}>{section.heading}</h2>
+                {
+                    section.headingHtml ? (
+                        <h2 class={styles.heroSectionHeading} set:html={section.headingHtml} />
+                    ) : (
+                        <h2 class={styles.heroSectionHeading}>{section.heading}</h2>
+                    )
+                }
                 {
                     section.subHeadingHtml ? (
                         <h3 class={styles.heroSectionSubHeading} set:html={section.subHeadingHtml} />

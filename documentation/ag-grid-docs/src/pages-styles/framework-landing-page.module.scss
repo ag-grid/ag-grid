@@ -202,17 +202,6 @@
     }
 }
 
-@keyframes logoFadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.7);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
 .heroSectionHeading {
     font-size: 72px;
     text-align: center;
@@ -227,22 +216,7 @@
         line-height: 55px;
     }
 
-    img {
-        display: inline-block;
-        vertical-align: middle;
-        height: 56px;
-        width: auto;
-        margin: 0 0.2em;
-        animation: logoFadeInScale 300ms ease;
-        opacity: 0;
-        animation-fill-mode: forwards;
-    }
-
-    .frameworkLogoGroup {
-        display: inline-block;
-        white-space: nowrap;
-        vertical-align: baseline;
-    }
+    @include frameworkShared.framework-logo-hero-heading;
 }
 
 .heroSectionSubHeading {
@@ -484,19 +458,6 @@
     // Style framework logos in section headings
     h3[class*='heading'] {
         max-width: 600px;
-
-        img {
-            display: inline-block;
-            vertical-align: middle;
-            height: 40px;
-            width: auto;
-            margin: 0 0.2em;
-        }
-
-        span[style*='display: inline-block'] {
-            display: inline-block;
-            white-space: nowrap;
-            vertical-align: baseline;
-        }
+        @include frameworkShared.framework-logo-heading;
     }
 }
