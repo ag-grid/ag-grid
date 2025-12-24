@@ -206,7 +206,7 @@ export interface SharedThemeParams {
     /**
      * Font family for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
      */
-    panelTitleBarFontFamily: LengthValue;
+    panelTitleBarFontFamily: FontFamilyValue;
 
     /**
      * Size of text for the title bar of panels and dialogs such as the integrated charts and the advanced filter builder.
