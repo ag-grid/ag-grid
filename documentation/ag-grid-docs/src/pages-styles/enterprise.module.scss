@@ -27,6 +27,11 @@
     border-right: 1px solid linear-gradient(0deg, #dde9f9 -61.34%, #0e449126 89.79%);
     border-bottom: 1px solid #0e449126;
 
+    // Limit height on very tall screens to prevent overlap with customer logos
+    @media screen and (min-height: 1200px) {
+        max-height: 100px;
+    }
+
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         position: absolute;
         bottom: 0;
@@ -66,6 +71,11 @@
     justify-content: center;
     gap: $spacing-size-8;
     max-width: 100%;
+
+    // Add padding on very tall screens to push customer logos below blue rectangle
+    @media screen and (min-height: 1200px) {
+        padding-bottom: $spacing-size-12;
+    }
 }
 
 .heroSectionHeadingContainer {
