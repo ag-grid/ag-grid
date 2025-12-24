@@ -59,7 +59,10 @@ export function getHeadingWithLogo(
 
     // Replace framework name with logo + text
     const logoHtml = `<span style="display: inline-block; white-space: nowrap; vertical-align: baseline;"><img src="${logoUrl}" alt="${frameworkName}" style="display: inline-block; vertical-align: middle; height: 56px; width: auto; margin: 0 0.2em;"/> ${frameworkName}</span>`;
-    const heading = headingTemplate.replace(frameworkName, logoHtml);
+    let heading = headingTemplate.replace(frameworkName, logoHtml);
+
+    // Add <br> before "Data Grids" or "Data Grid"
+    heading = heading.replace(/\s+(Data Grids?)/i, '<br>$1');
 
     return heading;
 }

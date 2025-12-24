@@ -16,7 +16,7 @@
     justify-content: flex-start;
     gap: $spacing-size-2;
     margin-bottom: $spacing-size-8;
-    width: fit-content;
+    width: 100%;
     border-bottom: 1px solid var(--color-border-secondary);
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
@@ -67,7 +67,7 @@
     padding: $spacing-size-2 $spacing-size-4;
     min-width: 120px;
     height: 44px;
-    color: var(--color-fg-primary);
+    color: var(--color-brand-500);
     opacity: 1;
     border: none;
     border-bottom: 2px solid var(--color-brand-500);
@@ -83,12 +83,17 @@
     transition: border-bottom-color 0.3s ease;
 
     #{$selector-darkmode} & {
+        color: var(--color-link);
         border-bottom-color: var(--color-link);
     }
 
     &:hover {
         background-color: var(--color-bg-primary) !important;
-        color: var(--color-fg-primary) !important;
+        color: var(--color-brand-500) !important;
+
+        #{$selector-darkmode} & {
+            color: var(--color-link) !important;
+        }
     }
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
