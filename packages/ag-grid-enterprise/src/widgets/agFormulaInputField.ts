@@ -81,6 +81,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const res = this.setEditorValue(text, silent);
         this.syncRangesFromFormula(text);
         if (colorsChanged && this.trackedRangeRefs.size) {
+            // Keep overlays in sync with any new ref→color mapping.
             this.refreshRangeStyling();
         }
         return res;
@@ -186,6 +187,11 @@ export class AgFormulaInputField extends AgContentEditableField<
             return hadColors;
         }
 
+        // Walk the formula left-to-right, capture the first occurrence of each distinct ref,
+        // and assign colors in encounter order so token colors stay stable every time the
+        // user re-enters the editor (A1 -> color1, next ref -> color2, etc.).
+        // If the order/size changes (tokens added/removed/reordered) we return `true` and
+        // callers re-render tokens and re-style tracked ranges so overlays stay in sync.
         const refsInOrder: string[] = [];
         const seen = new Set<string>();
         CELL_OR_RANGE_REGEX.lastIndex = 0;
@@ -245,12 +251,10 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         const retagged = this.ensureTrackedRangeColors();
 
-        if (this.suppressRangeEvents && !retagged) {
-            return;
-        }
-
-        if (this.suppressRangeEvents && retagged) {
-            this.refreshRangeStyling();
+        if (this.suppressRangeEvents) {
+            if (retagged) {
+                this.refreshRangeStyling();
+            }
             return;
         }
 
@@ -465,6 +469,8 @@ export class AgFormulaInputField extends AgContentEditableField<
                 continue;
             }
 
+            // Restore any known color index for the ref (from formulaColorByRef) or infer from the range's class
+            // so overlays stay consistent even if the grid recreated range objects.
             const existingColorIndex = this.formulaColorByRef.get(ref);
             const inferredColorIndex = getColorIndexFromClass(range.colorClass);
             const colorIndex = existingColorIndex ?? inferredColorIndex ?? this.getColorIndexForRef(ref);
@@ -477,11 +483,13 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.formulaColorByRef.set(ref, colorIndex);
 
             if (range.colorClass !== rangeClass) {
+                // Re-tag the range with the desired class when it doesn't match our mapping.
                 tagRangeWithFormulaColor(range, ref, colorIndex);
                 retagged = true;
             }
 
             if (!this.trackedRanges.has(range)) {
+                // Keep the mapping between the current CellRange object and its ref so resize moves can update tokens.
                 this.trackedRanges.set(range, ref);
             }
         }
@@ -496,6 +504,8 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
 
         // Re-tag in case the range objects were replaced by the grid.
+        // ensureTrackedRangeColors pulls color indices from formulaColorByRef (which updateFormulaColorsFromValue
+        // rebuilds whenever the formula text changes) and reapplies the range classes so overlays track token colors.
         this.ensureTrackedRangeColors();
         this.ignoreNextRangeEvent = true;
         eventSvc.dispatchEvent({
@@ -556,6 +566,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const text = value ?? this.getCurrentValue() ?? '';
         const refs = getRefsFromText(text);
 
+        // Remove any tracked ranges whose refs were deleted from the formula text.
         const toRemove: string[] = [];
         for (const tracked of this.trackedRangeRefs) {
             if (!refs.has(tracked)) {
@@ -565,13 +576,14 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         toRemove.forEach((ref) => this.removeRangeForRef(ref));
 
+        // Ensure ranges exist (and are tracked) for all refs currently present in the formula text.
         refs.forEach((ref) => {
             if (ref !== this.editingCellRef) {
                 this.addRangeForRef(ref);
             }
         });
 
-        // Drop any range mappings that no longer exist after syncing.
+        // Drop any range mappings that no longer exist after syncing (e.g. grid recreated range objects).
         for (const [range, storedRef] of this.trackedRanges.entries()) {
             const rangeWasReplaced = !this.beans.rangeSvc?.getCellRanges().includes(range);
             if (!this.trackedRangeRefs.has(storedRef) || rangeWasReplaced) {
@@ -596,11 +608,13 @@ export class AgFormulaInputField extends AgContentEditableField<
                 continue;
             }
 
+            // Convert the current range shape to a ref and update the token if it changed (e.g. drag handle).
             const nextRef = rangeToRef(this.beans, range);
             if (!nextRef || nextRef === previousRef || nextRef === this.editingCellRef) {
                 continue;
             }
 
+            // Keep the color with the moved ref, preferring any existing class-derived index.
             const colorIndex = this.moveColorToRef(
                 previousRef,
                 nextRef,
@@ -611,6 +625,7 @@ export class AgFormulaInputField extends AgContentEditableField<
                 continue;
             }
 
+            // Re-tag the range and update mappings so future events use the new ref.
             tagRangeWithFormulaColor(range, nextRef, colorIndex);
             this.trackedRanges.set(range, nextRef);
             this.trackedRangeRefs.delete(previousRef);
