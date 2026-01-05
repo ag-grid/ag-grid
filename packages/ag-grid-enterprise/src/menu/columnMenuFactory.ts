@@ -2,11 +2,10 @@ import type { AgColumn, AgProvidedColumnGroup, DefaultMenuItem, MenuItemDef, Nam
 import {
     BeanStub,
     _addGridCommonParams,
+    _getDisplaySortForColumn,
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
-    _normalizeSortDirection,
-    _normalizeSortType,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
@@ -127,16 +126,15 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             !isPrimary || (aggFuncSvc && column.isAllowValue() && (doingGrouping || grandTotalRow || treeData));
 
         if (sortSvc && !isLegacyMenuEnabled && column.isSortable()) {
-            const sortDef = column.getSortDef();
-            const type = _normalizeSortType(sortDef?.type);
-            const direction = _normalizeSortDirection(sortDef?.direction);
-            const allowedSortTypes = column.getAvailableSortTypes();
-            const isDefaultSortAllowed = allowedSortTypes.has('default');
-            const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
-            const isAbsoluteSort = type === 'absolute';
-            const isDefaultSort = type === 'default';
-            const isAscending = direction === 'asc';
-            const isDescending = direction === 'desc';
+            const {
+                isDefaultSortAllowed,
+                isAbsoluteSortAllowed,
+                isAbsoluteSort,
+                isDefaultSort,
+                isAscending,
+                isDescending,
+                direction,
+            } = _getDisplaySortForColumn(column, beans);
 
             if (isDefaultSortAllowed && !(isAscending && isDefaultSort)) {
                 result.push('sortAscending');

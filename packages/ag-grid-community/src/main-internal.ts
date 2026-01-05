@@ -268,6 +268,7 @@ export {
     _isSortTypeValid,
     _normalizeSortDirection,
     _normalizeSortType,
+    _getDisplaySortForColumn,
 } from './entities/agColumn';
 export { AgColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
