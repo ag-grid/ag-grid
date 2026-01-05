@@ -132,7 +132,7 @@ function extractNestedTypes<T extends ts.Node>(
     }
 
     if (ts.isIdentifier(node)) {
-        const ref = silentFindNode(node.getFullText(), srcFile, auxSrcFiles);
+        const ref = silentFindNode(node.getText(), srcFile, auxSrcFiles);
         if (ref) {
             extractNestedTypes(ref, srcFile, includeQuestionMark, results, visited, auxSrcFiles);
         }
