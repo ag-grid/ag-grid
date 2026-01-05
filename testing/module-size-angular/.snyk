@@ -42,4 +42,17 @@ ignore:
               reason: Only used for testing
               expires: 2026-06-08T00:00:00.000Z
               created: 2025-12-03T12:11:00.007Z
+    SNYK-JS-QS-14724253:
+        - '@angular-devkit/build-angular@19.2.19 > webpack-dev-server@5.2.2 > express@4.21.2 > qs@6.13.0':
+              reason: >-
+                  qs is only used during testing so an attack would only affect
+                  developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-05T10:10:00.000Z
+        - '@angular-devkit/build-angular@19.2.19 > webpack-dev-server@5.2.2 > express@4.21.2 > body-parser@1.20.3 > qs@6.13.0':
+              reason: >-
+                  qs is only used during testing so an attack would only affect
+                  developer machines
+              expires: 2026-06-08T00:00:00.000Z
+              created: 2025-01-05T10:10:00.000Z
 patch: {}
