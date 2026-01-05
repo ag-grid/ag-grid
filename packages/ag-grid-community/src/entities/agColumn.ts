@@ -1,4 +1,3 @@
-import { AgBeanStub } from '../agStack/core/agBeanStub';
 import { LocalEventService } from '../agStack/events/localEventService';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
@@ -6,7 +5,7 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { _escapeString } from '../agStack/utils/string';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
-import { BeanCollection } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
