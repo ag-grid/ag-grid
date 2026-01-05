@@ -28,11 +28,11 @@ suite('sorting', () => {
 
             api ??= gridsManager.createGrid('G', {
                 columnDefs: [
-                    { field: 'group1', sort: 'asc' },
-                    { field: 'group2', sort: 'asc' },
-                    { field: 'group3', sort: 'asc' },
-                    { field: 'group4', sort: 'asc' },
-                    { field: 'group5', sort: 'asc' },
+                    { field: 'group1', sort: 'asc', rowGroup: true },
+                    { field: 'group2', sort: 'asc', rowGroup: true },
+                    { field: 'group3', sort: 'asc', rowGroup: true },
+                    { field: 'group4', sort: 'asc', rowGroup: true },
+                    { field: 'group5', sort: 'asc', rowGroup: true },
                     { field: 'value', aggFunc: 'sum' },
                     { field: 'count', aggFunc: 'count' },
                 ].map((colDef, index) => ({ ...colDef, sort: index < sortCount && index < 5 ? 'asc' : undefined })),
