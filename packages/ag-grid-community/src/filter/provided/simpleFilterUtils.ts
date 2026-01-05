@@ -42,6 +42,21 @@ export function validateAndUpdateConditions<M>(conditions: M[], maxNumConditions
     }
     return numConditions;
 }
+export const presetDateFilterModelTypes: ISimpleFilterModelType[] = [
+    'today',
+    'yesterday',
+    'lastWeek',
+    'thisWeek',
+    'lastMonth',
+    'thisMonth',
+    'thisYear',
+    'lastYear',
+    'yearToDate',
+    'last7Days',
+    'last30Days',
+    'last90Days',
+];
+const zeroInputTypes: ISimpleFilterModelType[] = ['empty', 'notBlank', 'blank', ...presetDateFilterModelTypes];
 
 export function getNumberOfInputs(
     type: ISimpleFilterModelType | null | undefined,
@@ -52,8 +67,6 @@ export function getNumberOfInputs(
         const { numberOfInputs } = customOpts;
         return numberOfInputs != null ? numberOfInputs : 1;
     }
-
-    const zeroInputTypes: ISimpleFilterModelType[] = ['empty', 'notBlank', 'blank'];
 
     if (type && zeroInputTypes.indexOf(type) >= 0) {
         return 0;

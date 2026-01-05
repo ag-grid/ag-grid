@@ -95,7 +95,20 @@ export type ISimpleFilterModelType =
     | 'startsWith'
     | 'endsWith'
     | 'blank'
-    | 'notBlank';
+    | 'notBlank'
+    // date filters
+    | 'today'
+    | 'yesterday'
+    | 'lastWeek'
+    | 'thisWeek'
+    | 'lastMonth'
+    | 'thisMonth'
+    | 'thisYear'
+    | 'lastYear'
+    | 'yearToDate'
+    | 'last7Days'
+    | 'last30Days'
+    | 'last90Days';
 export interface ISimpleFilterModel extends ProvidedFilterModel {
     /** One of the filter options, e.g. `'equals'` */
     type?: ISimpleFilterModelType | null;
