@@ -21,6 +21,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
     private firstLeaf: (row: RowNode) => RowNode | undefined;
+    private primaryColumnsSortGroups: boolean;
     private readonly comparatorOptions: DefaultComparatorOptions = {
         accentedCompare: false,
     };
@@ -29,12 +30,19 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
         this.addManagedPropertyListener('accentedSort', this.updateComparatorOptions.bind(this));
+        this.addManagedPropertyListener('autoGroupColumnDef', this.updatePrimaryColumnsSortGroups.bind(this));
+        this.addManagedPropertyListener('treeData', this.updatePrimaryColumnsSortGroups.bind(this));
 
         this.updateComparatorOptions();
+        this.updatePrimaryColumnsSortGroups();
     }
 
     private updateComparatorOptions(): void {
         this.comparatorOptions.accentedCompare = !!this.gos.get('accentedSort');
+    }
+
+    private updatePrimaryColumnsSortGroups(): void {
+        this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
@@ -136,7 +144,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
-        if (_isColumnsSortingCoupledToGroup(this.gos) && node.rowGroupColumn === column) {
+        if (this.primaryColumnsSortGroups && node.rowGroupColumn === column) {
             return this.getGroupDataValue(node, column);
         }
 
