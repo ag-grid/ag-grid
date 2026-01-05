@@ -149,11 +149,11 @@ describe('ag-grid grouping selection', () => {
 
         await new GridRows(api, 'initial').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP id:row-group-country-Ireland 
-            │ ├── LEAF id:1 athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF id:2 athlete:"Jane Doe" sport:"Soccer"
-            └─┬ LEAF_GROUP id:row-group-country-Italy 
-            · └── LEAF id:3 athlete:"Mario Rossi" sport:"Soccer"
+            ├─┬ LEAF_GROUP id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Select Ireland group - should select all its children
@@ -164,11 +164,11 @@ describe('ag-grid grouping selection', () => {
 
         await new GridRows(api, 'select Ireland group').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP selected id:row-group-country-Ireland 
-            │ ├── LEAF selected id:1 athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF selected id:2 athlete:"Jane Doe" sport:"Soccer"
-            └─┬ LEAF_GROUP id:row-group-country-Italy 
-            · └── LEAF id:3 athlete:"Mario Rossi" sport:"Soccer"
+            ├─┬ LEAF_GROUP selected id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF selected id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF selected id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
 
         // Deselect one child - group should become unselected
@@ -179,11 +179,11 @@ describe('ag-grid grouping selection', () => {
 
         await new GridRows(api, 'deselect one child').check(`
             ROOT id:ROOT_NODE_ID
-            ├─┬ LEAF_GROUP indeterminate id:row-group-country-Ireland 
-            │ ├── LEAF id:1 athlete:"John Smith" sport:"Sailing"
-            │ └── LEAF selected id:2 athlete:"Jane Doe" sport:"Soccer"
-            └─┬ LEAF_GROUP id:row-group-country-Italy 
-            · └── LEAF id:3 athlete:"Mario Rossi" sport:"Soccer"
+            ├─┬ LEAF_GROUP indeterminate id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF id:1 country:"Ireland" athlete:"John Smith" sport:"Sailing"
+            │ └── LEAF selected id:2 country:"Ireland" athlete:"Jane Doe" sport:"Soccer"
+            └─┬ LEAF_GROUP id:row-group-country-Italy ag-Grid-AutoColumn:"Italy"
+            · └── LEAF id:3 country:"Italy" athlete:"Mario Rossi" sport:"Soccer"
         `);
     });
 
