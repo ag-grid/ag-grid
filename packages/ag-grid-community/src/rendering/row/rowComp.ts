@@ -148,13 +148,13 @@ export class RowComp extends Component {
         for (const cellComp of cellComps.values()) {
             // could be old reference, ie removed cell
             if (!cellComp) {
-                return;
+                continue;
             }
 
             // check cellComp belongs in this container
             const instanceId = cellComp.cellCtrl.instanceId;
             if (this.cellComps.get(instanceId) !== cellComp) {
-                return;
+                continue;
             }
 
             cellComp.detach();
