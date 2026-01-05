@@ -8,7 +8,7 @@ import type {
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgContentEditableField, KeyCode, _createElement, _last } from 'ag-grid-community';
+import { AgContentEditableField, _createElement, _last } from 'ag-grid-community';
 
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 
@@ -62,7 +62,6 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         this.addManagedElementListeners(this.getContentElement(), {
             input: this.onContentInput.bind(this),
-            keydown: this.onTokenKeyDown.bind(this),
         });
 
         this.addManagedEventListeners({
@@ -72,6 +71,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value ?? '';
+        const colorsChanged = this.updateFormulaColorsFromValue(text);
         this.renderFormula({
             value: text,
             currentValue: this.getCurrentValue(),
@@ -80,6 +80,9 @@ export class AgFormulaInputField extends AgContentEditableField<
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
         this.syncRangesFromFormula(text);
+        if (colorsChanged && this.trackedRangeRefs.size) {
+            this.refreshRangeStyling();
+        }
         return res;
     }
 
@@ -153,7 +156,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             return existing;
         }
 
-        const next = getFormulaColorIndex(ref);
+        const next = this.formulaColorByRef.size % FORMULA_TOKEN_COLOR_COUNT;
         this.formulaColorByRef.set(ref, next);
         return next;
     }
@@ -162,7 +165,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const colorIndex =
             fromRef && this.formulaColorByRef.has(fromRef)
                 ? this.getColorIndexForRef(fromRef)
-                : fallback ?? this.formulaColorByRef.get(toRef) ?? getFormulaColorIndex(toRef);
+                : fallback ?? this.formulaColorByRef.get(toRef) ?? this.getColorIndexForRef(toRef);
 
         if (fromRef && fromRef !== toRef) {
             this.formulaColorByRef.delete(fromRef);
@@ -176,11 +179,50 @@ export class AgFormulaInputField extends AgContentEditableField<
         return colorIndex;
     }
 
+    private updateFormulaColorsFromValue(value: string): boolean {
+        if (!shouldUseTokenColors(this.beans)) {
+            const hadColors = this.formulaColorByRef.size > 0;
+            this.formulaColorByRef.clear();
+            return hadColors;
+        }
+
+        const refsInOrder: string[] = [];
+        const seen = new Set<string>();
+        CELL_OR_RANGE_REGEX.lastIndex = 0;
+        let match: RegExpExecArray | null;
+        while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
+            const ref = match[0];
+            if (seen.has(ref)) {
+                continue;
+            }
+            seen.add(ref);
+            refsInOrder.push(ref);
+        }
+
+        let changed = refsInOrder.length !== this.formulaColorByRef.size;
+        const nextColors = new Map<string, number>();
+        refsInOrder.forEach((ref, index) => {
+            const colorIndex = index % FORMULA_TOKEN_COLOR_COUNT;
+            nextColors.set(ref, colorIndex);
+            if (this.formulaColorByRef.get(ref) !== colorIndex) {
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            this.formulaColorByRef.clear();
+            nextColors.forEach((colorIndex, ref) => this.formulaColorByRef.set(ref, colorIndex));
+        }
+
+        return changed;
+    }
+
     private onContentInput(): void {
         const contentElement = this.getContentElement();
         const currentValue = this.getCurrentValue();
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
+        const colorsChanged = this.updateFormulaColorsFromValue(serialized);
 
         this.renderFormula({
             currentValue,
@@ -189,6 +231,10 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
         this.setEditorValue(serialized);
         this.syncRangesFromFormula(serialized);
+
+        if (colorsChanged && this.trackedRangeRefs.size) {
+            this.refreshRangeStyling();
+        }
     }
 
     private cellSelectionChanged(event: CellSelectionChangedEvent): void {
@@ -257,11 +303,12 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         const previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
 
+        const colorsChanged = this.updateFormulaColorsFromValue(updatedValue);
         this.setEditorValue(updatedValue);
         this.renderFormula({
             currentValue: value,
             value: updatedValue,
-            caret: caretOffset + 1,
+            caret: caretOffset + ref.length,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
         if (manageRanges) {
@@ -277,14 +324,17 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.trackedRangeRefs.add(ref);
         }
 
-        this.refreshRangeStyling();
+        if (colorsChanged && this.trackedRangeRefs.size) {
+            this.refreshRangeStyling();
+        }
     }
 
     private restoreCaretAfterToken(): void {
-        const caret =
-            (this.lastTokenCaretOffset ??
-                getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
-                this.currentValue.length) + 1;
+        const caretBase =
+            this.lastTokenCaretOffset ??
+            getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
+            this.currentValue.length;
+        const caret = caretBase + (this.lastTokenValueLength ?? 0);
         this.selectionCaretOffset = null;
 
         setTimeout(() => {
@@ -531,62 +581,6 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
     }
 
-    private onTokenKeyDown(event: KeyboardEvent): void {
-        const token = getTokenElement(event.target);
-
-        if (!token) {
-            return;
-        }
-
-        const contentElement = this.getContentElement();
-        const caretOffset = getOffsetBeforeNode(contentElement, token);
-        const valueOffset = getOffsetBeforeNode(contentElement, token, true);
-        if (caretOffset == null || valueOffset == null) {
-            return;
-        }
-
-        const tokenRef = getTokenRef(token);
-        const value = this.getCurrentValue();
-        const tokenLength = tokenRef.length || 1;
-
-        switch (event.key) {
-            case KeyCode.BACKSPACE:
-            case KeyCode.DELETE: {
-                event.preventDefault();
-                const updated = value.slice(0, valueOffset) + value.slice(valueOffset + tokenLength);
-                this.setEditorValue(updated);
-                this.renderFormula({
-                    currentValue: value,
-                    value: updated,
-                    caret: caretOffset,
-                });
-                this.removeRangeForRef(tokenRef);
-                this.syncRangesFromFormula(updated);
-                break;
-            }
-            case KeyCode.LEFT:
-            case KeyCode.RIGHT: {
-                break;
-            }
-            default: {
-                if (event.key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
-                    event.preventDefault();
-                    const replacement = formatForValue(event.key);
-                    const updated = value.slice(0, valueOffset) + replacement + value.slice(valueOffset + tokenLength);
-                    const nextCaret = caretOffset + replacement.length;
-                    this.setEditorValue(updated);
-                    this.renderFormula({
-                        currentValue: value,
-                        value: updated,
-                        caret: nextCaret,
-                    });
-                    this.syncRangesFromFormula(updated);
-                }
-                break;
-            }
-        }
-    }
-
     private updateTrackedRangeTokens(): boolean {
         const rangeSvc = this.beans.rangeSvc;
         if (!rangeSvc) {
@@ -653,6 +647,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.formulaColorByRef.set(nextRef, colorIndex);
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
+        const colorsChanged = this.updateFormulaColorsFromValue(updated);
         this.setEditorValue(updated);
         this.renderFormula({
             currentValue: value,
@@ -660,6 +655,9 @@ export class AgFormulaInputField extends AgContentEditableField<
             caret: caretOffset + nextRef.length,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });
+        if (colorsChanged && this.trackedRangeRefs.size) {
+            this.refreshRangeStyling();
+        }
 
         return true;
     }
@@ -673,22 +671,11 @@ const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     return canCreateRanges;
 };
 
-const getFormulaColorIndex = (ref: string): number => {
-    let hash = 0;
-
-    for (let i = 0; i < ref.length; i++) {
-        hash = (hash << 5) - hash + ref.charCodeAt(i);
-        hash |= 0;
-    }
-
-    return Math.abs(hash) % FORMULA_TOKEN_COLOR_COUNT;
-};
-
 const getFormulaColorClasses = (
     ref: string,
     colorIndexOverride?: number | null
 ): { tokenClass: string; rangeClass: string; colorIndex: number } => {
-    const index = (colorIndexOverride ?? getFormulaColorIndex(ref)) + 1;
+    const index = (colorIndexOverride ?? 0) + 1;
 
     return {
         tokenClass: `ag-formula-token-color-${index}`,
@@ -754,9 +741,7 @@ const tokenize = (value: string, getColorIndexForRef: (ref: string) => number | 
 
 const createReferenceNode = (ref: string, colorIndex: number | null, useTokenColors: boolean): HTMLElement => {
     const attrs: Record<string, string> = {
-        contenteditable: 'false',
         'aria-label': ref,
-        tabIndex: '-1',
         'data-formula-ref': ref,
     };
     let tokenClass: string | undefined;
@@ -879,12 +864,6 @@ const findNodeAtOffset = (root: Node, offset: number): { node: Node | null; loca
             return { node: child, localOffset: remaining };
         }
 
-        if (child.nodeType === Node.ELEMENT_NODE && isTokenElement(child)) {
-            const parent = child.parentNode;
-            const position = remaining === 0 ? i : i + 1;
-            return { node: parent, localOffset: position };
-        }
-
         return findNodeAtOffset(child, remaining);
     }
 
@@ -924,13 +903,6 @@ const getNodeText = (node: Node): string => {
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-
-        if (isTokenElement(el)) {
-            // Token nodes serialize back to their stored ref string (not the placeholder).
-            return getTokenRef(el);
-        }
-
         return Array.from(node.childNodes)
             .map((child) => getNodeText(child))
             .join('');
@@ -945,12 +917,6 @@ const getNodeTextLength = (node: Node): number => {
     }
 
     if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-
-        if (isTokenElement(el)) {
-            return 1;
-        }
-
         return Array.from(node.childNodes).reduce((sum, child) => sum + getNodeTextLength(child), 0);
     }
 
@@ -1052,13 +1018,8 @@ const getRefsFromText = (text: string): Set<string> => {
 };
 
 // Token helpers
-const getTokenElement = (target: EventTarget | null): HTMLElement | null =>
-    (target as HTMLElement | null)?.closest?.('.ag-formula-token') ?? null;
-
-const isTokenElement = (node: Node | null): node is HTMLElement =>
-    !!node && node instanceof HTMLElement && node.classList.contains('ag-formula-token');
-
-const getTokenRef = (tokenEl: HTMLElement): string => tokenEl.dataset.formulaRef ?? tokenEl.textContent ?? '';
+const getTokenRef = (tokenEl: HTMLElement): string =>
+    formatForValue(tokenEl.textContent ?? tokenEl.dataset.formulaRef ?? '');
 
 // Text formatting helpers
 const formatForDisplay = (text: string): string =>
