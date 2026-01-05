@@ -573,7 +573,7 @@ function parseImportedDefinitions(
         if (ts.isImportDeclaration(child)) {
             const modulePath = child.moduleSpecifier.getFullText().trim().replaceAll("'", '');
             // only look at local imports for now
-            if (modulePath.startsWith('.') || !modulePath.includes('css-GENERATED')) {
+            if (modulePath.startsWith('.') && !modulePath.includes('css-GENERATED')) {
                 const absPath = require.resolve(path.resolve(dir, `${modulePath}.ts`));
                 if (definitions.has(absPath)) {
                     return;
