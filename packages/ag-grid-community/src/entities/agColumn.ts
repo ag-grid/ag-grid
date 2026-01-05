@@ -259,18 +259,7 @@ export class AgColumn<TValue = any>
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        let width: number;
-        const colDefWidth = colDef.width;
-        const colDefInitialWidth = colDef.initialWidth;
-
-        if (colDefWidth != null) {
-            width = colDefWidth;
-        } else if (colDefInitialWidth != null) {
-            width = colDefInitialWidth;
-        } else {
-            width = 200;
-        }
-
+        const width = colDef.width ?? colDef.initialWidth ?? 200;
         return Math.max(Math.min(width, this.maxWidth), this.minWidth);
     }
 

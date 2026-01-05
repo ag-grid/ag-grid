@@ -1,6 +1,8 @@
 import { type AgGridFixtures, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 import type { Locator, Page } from 'playwright/test';
 
+import type { ColDef } from 'ag-grid-community';
+
 async function getWidth(locator: Locator): Promise<number | undefined> {
     return (await locator.boundingBox())?.width;
 }
@@ -159,5 +161,71 @@ test.agExample(import.meta, () => {
             // +50 for the selection column
             expect(pinnedWidth + mainWidth).toEqual((await totalHeaderWidth(headers)) + 50);
         });
+
+        test.eachFramework(
+            'fitCellToContents + scaleUpToFitGridWidth wide screen, no down-scaling',
+            async ({ agIdFor, page, remoteGrid }) => {
+                await page.setViewportSize({ width: 1600, height: 800 });
+
+                await waitForGridContent(page);
+
+                const remoteApi = remoteGrid(page, '1');
+                const colDefs: ColDef[] = [
+                    { field: 'athlete', width: 150, suppressAutoSize: true },
+                    {
+                        field: 'age',
+                        headerName: 'Age of Athlete',
+                        width: 90,
+                        minWidth: 50,
+                        maxWidth: 150,
+                    },
+                    { field: 'country', width: 120 },
+                    { field: 'year', width: 90 },
+                    { field: 'date', width: 110 },
+                    { field: 'bronze', width: 90 },
+                    { field: 'silver', width: 90 },
+                    { field: 'gold', width: 90 },
+                    { field: 'total', width: 90 },
+                    { field: 'test', width: 200 },
+                ];
+                await remoteApi.setGridOption('columnDefs', colDefs);
+
+                const rowData = await remoteApi.getGridOption('rowData');
+                await remoteApi.setGridOption(
+                    'rowData',
+                    rowData.map((d: any) => {
+                        d['test'] = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.';
+                        return d;
+                    })
+                );
+                await remoteApi.autoSizeAllColumns({});
+
+                const columnWidths = Object.fromEntries(
+                    await Promise.all(
+                        colDefs.map(async (c) => {
+                            return [c.field, await getWidth(agIdFor.headerCell(c.field!))];
+                        })
+                    )
+                );
+
+                await page.locator('#toggle-scale-up').click(); // on
+                await page.locator('button.resize-button').click();
+                await waitForAnimation(page);
+
+                const newColumnWidths = Object.fromEntries(
+                    await Promise.all(
+                        colDefs.map(async (c) => {
+                            return [c.field, await getWidth(agIdFor.headerCell(c.field!))];
+                        })
+                    )
+                );
+
+                for (const header in columnWidths) {
+                    expect(newColumnWidths[header], `${header} should not get smaller`).toBeGreaterThanOrEqual(
+                        columnWidths[header]
+                    );
+                }
+            }
+        );
     });
 });
