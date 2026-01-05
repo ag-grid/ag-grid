@@ -20,24 +20,21 @@ export interface SortedRowNode {
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private isAccentedSort: boolean;
-    private primaryColumnsSortGroups: boolean;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
+    private comparatorOptions: DefaultComparatorOptions = {
+        accentedCompare: false,
+    };
 
     public postConstruct(): void {
-        const { gos } = this;
-        this.isAccentedSort = gos.get('accentedSort');
-        this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
-        this.firstLeaf = _isClientSideRowModel(gos) ? _csrmFirstLeaf : defaultGetLeaf;
+        this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
-        this.addManagedPropertyListener(
-            'accentedSort',
-            (propChange) => (this.isAccentedSort = propChange.currentValue)
-        );
-        this.addManagedPropertyListener(
-            'autoGroupColumnDef',
-            () => (this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos))
-        );
+        this.addManagedPropertyListener('accentedSort', this.updateComparatorOptions.bind(this));
+
+        this.updateComparatorOptions();
+    }
+
+    private updateComparatorOptions(): void {
+        this.comparatorOptions.accentedCompare = !!this.gos.get('accentedSort');
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
@@ -52,16 +49,17 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
-        const nodeA: RowNode = sortedNodeA.rowNode;
-        const nodeB: RowNode = sortedNodeB.rowNode;
+        const opts = this.comparatorOptions;
+        const nodeA = sortedNodeA.rowNode;
+        const nodeB = sortedNodeB.rowNode;
 
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
-            const valueA = this.getValue(nodeA, sortOption.column as AgColumn);
-            const valueB = this.getValue(nodeB, sortOption.column as AgColumn);
+            let valueA = this.getValue(nodeA, sortOption.column as AgColumn);
+            let valueB = this.getValue(nodeB, sortOption.column as AgColumn);
 
             let comparatorResult: number;
             const providedComparator = this.getComparator(sortOption, nodeA);
@@ -70,10 +68,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                const opts = { accentedCompare: this.isAccentedSort } as DefaultComparatorOptions;
+
                 if (sortOption.type === 'absolute') {
-                    opts.transform = _absoluteValueTransformer;
+                    valueA = _absoluteValueTransformer(valueA);
+                    valueB = _absoluteValueTransformer(valueB);
                 }
+
                 comparatorResult = _defaultComparator(valueA, valueB, opts);
             }
 
@@ -136,18 +136,21 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
-        if (this.primaryColumnsSortGroups && node.rowGroupColumn === column) {
+        if (_isColumnsSortingCoupledToGroup(this.gos) && node.rowGroupColumn === column) {
             return this.getGroupDataValue(node, column);
         }
 
-        if (node.group && column.getColDef().showRowGroup) {
+        const beans = this.beans;
+        if (node.group && column.getColDef().showRowGroup && !beans.groupStage?.treeData) {
             return undefined;
         }
 
-        const { valueSvc, formula } = this.beans;
-        const value = valueSvc.getValue(column, node, false, 'api');
-        if (column.isAllowFormula() && formula?.isFormula(value)) {
-            return formula.resolveValue(column, node);
+        const value = beans.valueSvc.getValue(column, node, false, 'api');
+        if (column.isAllowFormula()) {
+            const formula = beans.formula;
+            if (formula?.isFormula(value)) {
+                return formula.resolveValue(column, node);
+            }
         }
         return value;
     }
@@ -192,10 +195,10 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
     }
 };
 
-function _absoluteValueTransformer(value: any): number | null {
+const _absoluteValueTransformer = (value: any): number | null => {
     if (!value) {
         return value;
     }
     const numberValue = Number(value);
     return isNaN(numberValue) ? value : Math.abs(numberValue);
-}
+};
