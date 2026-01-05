@@ -1,3 +1,4 @@
+import { AgBeanStub } from '../agStack/core/agBeanStub';
 import { LocalEventService } from '../agStack/events/localEventService';
 import type { AgEvent } from '../agStack/interfaces/agEvent';
 import type { IAgEventEmitter } from '../agStack/interfaces/iEventEmitter';
@@ -5,6 +6,7 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { _escapeString } from '../agStack/utils/string';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
+import { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
@@ -856,4 +858,26 @@ export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirect
 
 export function _normalizeSortType(sortTypeLike?: unknown): SortType {
     return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
+}
+
+export function _getDisplaySortForColumn(column: AgColumn, beans: BeanCollection) {
+    const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+    const type = _normalizeSortType(sortDef?.type);
+    const direction = _normalizeSortDirection(sortDef?.direction);
+    const allowedSortTypes = column.getAvailableSortTypes();
+    const isDefaultSortAllowed = allowedSortTypes.has('default');
+    const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+    const isAbsoluteSort = type === 'absolute';
+    const isDefaultSort = type === 'default';
+    const isAscending = direction === 'asc';
+    const isDescending = direction === 'desc';
+    return {
+        isDefaultSortAllowed,
+        isAbsoluteSortAllowed,
+        isAbsoluteSort,
+        isDefaultSort,
+        isAscending,
+        isDescending,
+        direction,
+    };
 }
