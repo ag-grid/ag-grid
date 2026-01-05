@@ -8,7 +8,7 @@ import { _warn } from '../../validation/logging';
  */
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(
-        frameworkComponent: { new (): any } | null,
+        frameworkComponent: (new () => any) | null,
         mandatoryMethods: string[] | undefined,
         optionalMethods: string[] | undefined,
         componentType: ComponentType
@@ -25,7 +25,7 @@ export interface WrappableInterface {
 
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
     public wrap<A extends IComponent<any>>(
-        OriginalConstructor: { new (): any },
+        OriginalConstructor: new () => any,
         mandatoryMethods: string[] | undefined,
         optionalMethods: string[] | undefined,
         componentType: ComponentType
@@ -43,7 +43,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
         return wrapper as any as A;
     }
 
-    protected abstract createWrapper(OriginalConstructor: { new (): any }, componentType: ComponentType): F;
+    protected abstract createWrapper(OriginalConstructor: new () => any, componentType: ComponentType): F;
 
     private createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));

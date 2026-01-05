@@ -1,11 +1,4 @@
-import {
-    _getInnerWidth,
-    _getScrollLeft,
-    _isHorizontalScrollShowing,
-    _isInDOM,
-    _observeResize,
-    _setScrollLeft,
-} from '../../agStack/utils/dom';
+import { _getInnerWidth, _getScrollLeft, _isInDOM, _observeResize, _setScrollLeft } from '../../agStack/utils/dom';
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
@@ -15,6 +8,7 @@ import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
+import { _shouldShowHorizontalScroll } from '../scrollbarVisibilityHelper';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
@@ -468,7 +462,8 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gos.get('alwaysShowHorizontalScroll');
-        return isAlwaysShowHorizontalScroll || _isHorizontalScrollShowing(this.eViewport);
+        const verticalScrollElement = this.beans.ctrlsSvc.getGridBodyCtrl()?.eBodyViewport;
+        return isAlwaysShowHorizontalScroll || _shouldShowHorizontalScroll(this.eViewport, verticalScrollElement);
     }
 
     public setHorizontalScroll(offset: number): void {

@@ -19,12 +19,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
     protected key: string;
     protected ref?: (element: any) => void;
-    private portalKey: string;
+    private readonly portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
     protected instanceCreated: AgPromise<boolean> | AgPromise<false>;
     private resolveInstanceCreated?: (value: boolean) => void;
-    private suppressFallbackMethods: boolean;
+    private readonly suppressFallbackMethods: boolean;
 
     constructor(
         reactComponent: any,

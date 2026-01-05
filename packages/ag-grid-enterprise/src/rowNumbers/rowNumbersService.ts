@@ -10,6 +10,7 @@ import {
     _createElement,
     _debounce,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _getFirstRow,
     _getRowNode,
     _interpretAsRightClick,
@@ -64,7 +65,6 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
         });
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
-            this.refreshSelectionIntegration();
             this.updateColumns(e);
         });
 
@@ -88,8 +88,9 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
             _destroyColumnTree(this.beans, this.columns?.tree);
             this.columns = null;
         };
+        const { beans } = this;
 
-        if (!_isRowNumbers(this.gos)) {
+        if (!_isRowNumbers(beans)) {
             destroyCollection();
             return;
         }
@@ -129,13 +130,19 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public handleMouseDownOnCell(cellPosition: CellPosition, mouseEvent: MouseEvent): boolean {
+        // If click interaction can't produce an outcome (i.e. no cell selection, no row-resizing), do nothing
         if (
             !this.isIntegratedWithSelection ||
             (mouseEvent.target as HTMLElement).classList.contains('ag-row-numbers-resizer')
         ) {
+            if (this.beans.rangeSvc) {
+                mouseEvent.preventDefault();
+            }
+            mouseEvent.stopImmediatePropagation();
             return false;
         }
 
+        // If we're not extending the range, focus the first cell
         if (!mouseEvent.shiftKey && !_interpretAsRightClick(this.beans, mouseEvent)) {
             this.focusFirstRenderedCellAtRowPosition(cellPosition);
         }
@@ -145,13 +152,12 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
-
         this.refreshSelectionIntegration();
-
         for (const col of this.columns?.list ?? []) {
-            const newColDef = this.createRowNumbersColDef();
-            col.setColDef(newColDef, null, source);
-            _applyColumnState(this.beans, { state: [{ colId: col.getColId(), ...newColDef }] }, source);
+            const colDef = this.createRowNumbersColDef();
+            col.setColDef(colDef, null, source);
+
+            _applyColumnState(this.beans, { state: [_getColumnStateFromColDef(colDef, col.getColId())] }, source);
         }
     }
 
@@ -180,7 +186,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     public createRowNumbersRowResizerFeature(ctrl: CellCtrl): IRowNumbersRowResizeFeature | undefined {
-        if (!_isRowNumbersResizerEnabled(this.gos)) {
+        if (!_isRowNumbersResizerEnabled(this.beans)) {
             return undefined;
         }
 
@@ -197,7 +203,7 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private refreshRowNumberOverrides(): void {
-        const rowNumbers = this.gos.get('rowNumbers');
+        const rowNumbers = _isRowNumbers(this.beans);
         this.rowNumberOverrides = {};
 
         if (!rowNumbers || typeof rowNumbers !== 'object') {
@@ -348,16 +354,16 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
 
     private valueGetter(params: ValueGetterParams): string {
         const node = params.node as RowNode | null;
-        const enableFormulas = this.gos.get('enableFormulas');
+        const isFormulasActive = this.beans.formula?.active;
 
         // Rows that are in the pinned container take the row numbers of their pinned sibling rows
         const pinnedSibling = node?.pinnedSibling;
         if (node?.rowPinned && pinnedSibling) {
-            const rowIndex = enableFormulas ? pinnedSibling.formulaRowIndex : pinnedSibling.rowIndex;
+            const rowIndex = isFormulasActive ? pinnedSibling.formulaRowIndex : pinnedSibling.rowIndex;
             return `${rowIndex == null ? '-' : rowIndex + 1}`;
         }
 
-        return String(((enableFormulas ? node?.formulaRowIndex : node?.rowIndex) || 0) + 1);
+        return String(((isFormulasActive ? node?.formulaRowIndex : node?.rowIndex) || 0) + 1);
     }
 
     private getHeaderClass(): string[] {
@@ -411,8 +417,8 @@ export class RowNumbersService extends BeanStub implements NamedBean, IRowNumber
     }
 
     private generateRowNumberCols(): AgColumn[] {
-        const { gos } = this;
-        if (!_isRowNumbers(gos)) {
+        const { gos, beans } = this;
+        if (!_isRowNumbers(beans)) {
             return [];
         }
 

@@ -69,15 +69,15 @@ describe('Row Selection Grid Options', () => {
         });
 
         await new GridRows(api).check(`
-        ROOT id:ROOT_NODE_ID
-        ├── LEAF id:0
-        ├── LEAF id:6
-        ├── LEAF id:1
-        ├── LEAF id:2
-        ├── LEAF selected id:3
-        ├── LEAF selected id:4
-        └── LEAF selected id:5
-        `);
+    ROOT id:ROOT_NODE_ID
+    ├── LEAF id:0 sport:"football"
+    ├── LEAF id:6 sport:"rowing"
+    ├── LEAF id:1 sport:"rugby"
+    ├── LEAF id:2 sport:"tennis"
+    ├── LEAF selected id:3 sport:"cricket"
+    ├── LEAF selected id:4 sport:"golf"
+    └── LEAF selected id:5 sport:"swimming"
+    `);
     });
 
     test('Selection column width and pinning is updated when `selectionColDef` changes', () => {

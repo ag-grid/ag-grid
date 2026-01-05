@@ -45,7 +45,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
         callback?: (res: RowNodeTransaction<TData>) => void
     ): void;
     flushAsyncTransactions(): void;
-    doAggregate(changedPath?: ChangedPath): void;
+    doAggregate(changedPath: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
     getFormulaRow(index: number): RowNode;
 

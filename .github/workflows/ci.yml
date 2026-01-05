@@ -28,6 +28,11 @@ on:
         type: boolean
         default: false
         required: true
+      run_bundle_tests:
+        description: 'Force run package tests'
+        type: boolean
+        default: false
+        required: true
       nx_command:
         type: 'choice'
         required: true
@@ -38,11 +43,12 @@ on:
 env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
+  NX_COMMAND_TYPE: ${{ github.event.inputs.nx_command }}
   BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
-  YARN_REGISTRY: "http://52.50.158.57:4873"
+  YARN_REGISTRY: "https://registry.ag-grid.com"
   CI: true
 
 concurrency:
@@ -54,22 +60,11 @@ permissions:
   actions: read
 
 jobs:
-  build_lint:
-    name: Build & Lint
+  init:
+    name: Initialise Workflow
     if: github.event.pull_request.draft == false
     outputs:
       nx_base: ${{ steps.setup.outputs.base }}
-      build: ${{ steps.build.outcome || '' }}
-      lint: ${{ steps.lint.outcome || '' }}
-      format: ${{ steps.format.outcome || '' }}
-      test_count: ${{ steps.matrix.outputs.test_count }}
-      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
-      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
-      test_angular_pkg_matrix: ${{ steps.matrix.outputs.angular_pkg_matrix }}
-      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
-      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
-      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
-      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
       build_type: ${{ steps.setup.outputs.type }}
     runs-on: ubuntu-latest
     steps:
@@ -90,35 +85,37 @@ jobs:
         with:
           cache_mode: 'rw'
 
-      - name: nx format:check
-        id: format
-        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+  calc_matrix:
+    name: Calculate Github Matrix
+    needs: init
+    outputs:
+      test_count: ${{ steps.matrix.outputs.test_count }}
+      test_matrix: ${{ steps.matrix.outputs.test_matrix }}
+      test_pkg_matrix: ${{ steps.matrix.outputs.pkg_matrix }}
+      e2e_test_count: ${{ steps.matrix.outputs.e2e_test_count }}
+      e2e_test_matrix: ${{ steps.matrix.outputs.e2e_test_matrix }}
+      bundle_test_count: ${{ steps.matrix.outputs.bundle_test_count }}
+      bundle_test_matrix: ${{ steps.matrix.outputs.bundle_test_matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Fetch Refs
         run: |
-          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
-            yarn nx format:check --all
-          else
-            yarn nx format:check --base ${{ steps.setup.outputs.base }}
-          fi
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
 
-      - name: nx lint
-        id: lint
-        run: |
-          yarn nx lint
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
 
-      - name: update base url
-        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
-
-      - name: nx build
-        id: build
-        run: |
-          yarn nx generate-doc-references
-          yarn nx generate-examples -c staging
-          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
-
-      - name: validate base url
-        run: node scripts/deployments/sanityCheckBaseUrl.js staging
-
-      - name: calculate matrix
+      - name: Calculate Matrix
         id: matrix
         run: |
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
@@ -127,10 +124,10 @@ jobs:
             count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | wc -l)
           fi
           
-          matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
+          matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${count} --max 1)
           echo "test_matrix=${matrix}" >> $GITHUB_OUTPUT
           echo "test_count=${count}" >> $GITHUB_OUTPUT
-          echo "Test matrix determined to be: ${matrix}"
+          echo "Test matrix determined to be: ${matrix} (test_count=${count})"
           
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             e2e_count=10
@@ -142,44 +139,31 @@ jobs:
           e2e_matrix={"shard":[0]}
           echo "e2e_test_matrix=${e2e_matrix}" >> $GITHUB_OUTPUT
           echo "e2e_test_count=${e2e_count}" >> $GITHUB_OUTPUT
-          echo "e2e Test matrix determined to be: ${e2e_matrix}"
+          echo "e2e Test matrix determined to be: ${e2e_matrix} (e2e_test_count=${e2e_count})"
           
           # 3 is optimal atm for bundle tests
           bundle_count=3
           
-          bundle_matrix=$(node ./scripts/ci/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
+          bundle_matrix=$(node ./external/ag-shared/scripts/shard/calculate-shards.js eval --ratio 1 --zero ${bundle_count})
           echo "bundle_test_matrix=${bundle_matrix}" >> $GITHUB_OUTPUT
           echo "bundle_test_count=${bundle_count}" >> $GITHUB_OUTPUT
-          echo "bundle Test matrix determined to be: ${bundle_matrix}"
+          echo "bundle Test matrix determined to be: ${bundle_matrix} (bundle_test_count=${bundle_count})"
 
           pkg_matrix=$(node ./external/ag-shared/scripts/shard/calculate-pkg-shards.js)
           echo "pkg_matrix=${pkg_matrix}" >> $GITHUB_OUTPUT
           echo "Package test matrix determined to be: ${pkg_matrix}"
 
-          angular_pkg_matrix=$(node ./testing/angular-package-tests/calculate-angular-pkg-shards.js)
-          echo "angular_pkg_matrix=${angular_pkg_matrix}" >> $GITHUB_OUTPUT
-          echo "Angular package test matrix determined to be: ${angular_pkg_matrix}"
-
-      - name: Perist build outputs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-init-outputs
-          path: |
-            dist/
-            packages/*/dist/
-            external/*/dist/
   test:
     runs-on: ubuntu-24.04
     name: Unit Tests (${{ matrix.shard }}/${{ strategy.job-total }})
-    needs: build_lint
-    if: needs.build_lint.outputs.test_count > 0
+    needs: calc_matrix
+    if: needs.calc_matrix.outputs.test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.build_lint.outputs.test_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
@@ -228,25 +212,20 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     name: e2e Tests
-    needs: build_lint
-    if: needs.build_lint.outputs.e2e_test_count > 0
+    needs: calc_matrix
+    if: needs.calc_matrix.outputs.e2e_test_count > 0
     strategy:
-      matrix: ${{ fromJson(needs.build_lint.outputs.e2e_test_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.e2e_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1 # shallow copy
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
 
       - name: Setup
         id: setup
@@ -269,25 +248,20 @@ jobs:
   bundle_size:
     runs-on: ubuntu-latest
     name: Bundle Size Tests
-    needs: build_lint
-    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_bundle_size }}
+    needs: calc_matrix
+    if: (needs.init.outputs.build_type == 'latest' && needs.calc_matrix.result == 'success' && !inputs.skip_bundle_size) || (needs.init.outputs.build_type == 'release' && inputs.run_bundle_tests)
     strategy:
-      matrix: ${{ fromJson(needs.build_lint.outputs.bundle_test_matrix )}}
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.bundle_test_matrix )}}
       fail-fast: false
     env:
       NX_PARALLEL: 1
-      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1 # shallow copy
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
 
       - name: Setup
         id: setup
@@ -312,15 +286,57 @@ jobs:
           path: |
             reports/
 
+  format_lint_build:
+    runs-on: ubuntu-latest
+    name: Format, Lint and Build
+    needs: init
+    if: ${{ needs.init.result == 'success' }}
+    outputs:
+      format: ${{ steps.format.outcome || '' }}
+      lint: ${{ steps.lint.outcome || '' }}
+      build: ${{ steps.build.outcome || '' }}
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # shallow copy
+
+      - name: Setup
+        id: setup
+        uses: ./.github/actions/setup-nx
+        with:
+          cache_mode: ro
+
+      - name: nx format:check
+        id: format
+        if: steps.setup.outcome == 'success' || steps.setup.outcome == 'skipped'
+        run: |
+          if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
+            yarn nx format:check --all
+          else
+            yarn nx format:check --base ${{ steps.setup.outputs.base }}
+          fi
+
+      - name: nx lint
+        id: lint
+        run: |
+          yarn nx lint
+
+      - name: nx build
+        id: build
+        run: |
+          yarn nx run-many --t build -c staging --exclude ag-grid-docs --exclude all
+
   docs:
     runs-on: ubuntu-latest
     name: Docs Build & Link Checker
-    needs: build_lint
-    if: ${{ needs.build_lint.result == 'success' && !inputs.skip_docs }}
+    needs: init
+    if: ${{ needs.init.result == 'success' && !inputs.skip_docs }}
     strategy:
       fail-fast: false
     env:
-      NX_BASE: ${{ needs.build_lint.outputs.nx_base }}
+      NX_BASE: ${{ needs.init.outputs.nx_base }}
     outputs:
       docs_deployed: ${{ steps.deploy_to_staging.outcome }}
     steps:
@@ -330,21 +346,23 @@ jobs:
         with:
           fetch-depth: 1 # shallow copy
 
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
 
+      - name: update base url
+        run: node scripts/deployments/prep_and_archive/updateBaseUrl.js staging
+
       - name: validate grid modules
         run: node scripts/deployments/validateGridModulesList.js
+
       - name: docs build and link checker
         run: CHECK_LINKS=true CHECK_REDIRECTS=true yarn nx run ag-grid-docs:build -c staging
+
+      - name: validate base url
+        run: node scripts/deployments/sanityCheckBaseUrl.js staging
 
       - name: Deploy to Staging
         id: deploy_to_staging
@@ -372,11 +390,11 @@ jobs:
   fw_pkg_test:
     runs-on: ubuntu-24.04
     name: Framework Package Tests (${{ matrix.framework }})
-    needs: build_lint
+    needs: calc_matrix
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build_lint.outputs.test_pkg_matrix )}}
-    if: (needs.build_lint.outputs.build_type == 'latest' || needs.build_lint.outputs.build_type == 'release') || inputs.run_package_tests
+      matrix: ${{ fromJson(needs.calc_matrix.outputs.test_pkg_matrix )}}
+    if: (needs.init.outputs.build_type == 'latest' || needs.init.outputs.build_type == 'release') || inputs.run_package_tests
     env:
       NX_BASE: ${{ needs.init.outputs.nx_base }}
     steps:
@@ -386,11 +404,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-
-      - name: Restore Init Build Outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: e2e-init-outputs
 
       - name: Setup
         id: setup
@@ -406,7 +419,7 @@ jobs:
 
   report:
     runs-on: ubuntu-24.04
-    needs: [ build_lint, test, e2e, docs, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
+    needs: [ init, test, e2e, format_lint_build, docs, calc_matrix, bundle_size, fw_pkg_test, sonar_community, sonar_enterprise ]
     if: cancelled() != true && github.event.pull_request.draft == false
     permissions:
       contents: write
@@ -419,16 +432,16 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Fetch Refs
-        run: |
-          git fetch origin --depth 1 latest
-          git fetch origin --depth 1 tag latest-success
-
       - name: Setup
         id: setup
         uses: ./.github/actions/setup-nx
         with:
           cache_mode: ro
+
+      - name: Fetch Refs
+        run: |
+          git fetch origin --depth 1 latest
+          git fetch origin --depth 1 tag latest-success
 
       - uses: actions/download-artifact@v4
         with:
@@ -436,6 +449,7 @@ jobs:
 
       - name: Merge JUnit Report XMLs
         run: |
+          YARN_REGISTRY=
           yarn global add junit-report-merger
           reports=$(find test-results/ -name \*.xml -type f -exec basename \{\} \; | sort | uniq)
           mkdir -p reports/
@@ -460,17 +474,19 @@ jobs:
         if: always()
         run: |
           WORKFLOW_STATUS="success"
-          if [[ "${{ needs.build_lint.result }}" == "failure" ]] ; then
+          if [[ "${{ needs.init.result }}" == "failure" ]] ; then
+            WORKFLOW_STATUS="failure"
+          elif [[ "${{ needs.calc_matrix.result }}" == "failure" ]] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.e2e.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
+          elif [ "${{ needs.format_lint_build.result }}" == "failure" ] ; then
+            WORKFLOW_STATUS="failure"
           elif [ "${{ needs.docs.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.fw_pkg_test.result }}" == "failure" ] ; then
-            WORKFLOW_STATUS="failure"
-          elif [ "${{ needs.angular_fw_pkg_test.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
           elif [ "${{ needs.bundle_size.result }}" == "failure" ] ; then
             WORKFLOW_STATUS="failure"
@@ -501,7 +517,7 @@ jobs:
         id: commits
         if: always() && job.status != 'cancelled' && github.ref == 'refs/heads/latest' && steps.lastJobStatus.outputs.changedState == 'true'
         run: |
-          GIT_LOG=$(git log HEAD ^${{ needs.build_lint.outputs.nx_base }} --format="%an (%h) %s")
+          GIT_LOG=$(git log HEAD ^${{ needs.init.outputs.nx_base }} --format="%an (%h) %s")
           echo "GIT_LOG<<EOF" >> $GITHUB_ENV
           echo "$GIT_LOG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -544,11 +560,11 @@ jobs:
               "changedState": ${{ steps.lastJobStatus.outputs.changedState == 'true' }},
               "jobStatuses":
                 {
-                    "Build": "${{ needs.build_lint.outputs.build }}",
-                    "Lint": "${{ needs.build_lint.outputs.lint }}",
-                    "Format": "${{ needs.build_lint.outputs.format }}",
+                    "Format": "${{ needs.format_lint_build.outputs.format }}",
+                    "Lint": "${{ needs.format_lint_build.outputs.lint }}",
+                    "Build": "${{ needs.format_lint_build.outputs.build }}",
                     "Test": "${{ needs.test.result }}",
-                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",            
+                    "FW_Pkg": "${{ needs.fw_pkg_test.result }}",
                     "e2e": "${{ needs.e2e.result }}",
                     "Docs": "${{ needs.docs.result }}",
                     "Bundle": "${{ needs.bundle_size.result }}",

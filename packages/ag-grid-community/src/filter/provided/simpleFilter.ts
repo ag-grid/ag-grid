@@ -1,6 +1,6 @@
 import { _isComponent } from '../../agStack/interfaces/agComponent';
 import { _areEqual } from '../../agStack/utils/array';
-import { _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
+import { _addOrRemoveAttribute, _removeFromParent, _setDisabled, _setDisplayed } from '../../agStack/utils/dom';
 import { AgPromise } from '../../agStack/utils/promise';
 import { AgAbstractInputField } from '../../agStack/widgets/agAbstractInputField';
 import type { ListOption } from '../../agStack/widgets/agList';
@@ -28,6 +28,7 @@ import type {
 } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import { ProvidedFilter } from './providedFilter';
+import { getPlaceholderText } from './providedFilterUtils';
 import {
     getDefaultJoinOperator,
     getNumberOfInputs,
@@ -131,14 +132,9 @@ export abstract class SimpleFilter<
 
         this.createFilterListOptions();
 
-        const eGui = this.getGui();
-        if (this.isReadOnly()) {
-            // only do this when read only (so no other focusable elements), otherwise the tab order breaks
-            // as the tabbed layout managed focus feature will focus the body when it shouldn't
-            eGui.setAttribute('tabindex', '-1');
-        } else {
-            eGui.removeAttribute('tabindex');
-        }
+        // only set tabindex when read only (so no other focusable elements), otherwise the tab order breaks
+        // as the tabbed layout managed focus feature will focus the body when it shouldn't
+        _addOrRemoveAttribute(this.getGui(), 'tabindex', this.isReadOnly() ? '-1' : null);
     }
 
     // floating filter calls this when user applies filter from floating filter
@@ -472,7 +468,7 @@ export abstract class SimpleFilter<
         return areAllConditionsUiComplete && this.getNumConditions() < this.maxNumConditions && !this.isReadOnly();
     }
 
-    private removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
+    protected removeConditionsAndOperators(startPosition: number, deleteCount?: number): void {
         if (startPosition >= this.getNumConditions()) {
             return;
         }
@@ -533,12 +529,16 @@ export abstract class SimpleFilter<
         }
     }
 
+    protected shouldKeepInvalidInputState(): boolean {
+        return false;
+    }
+
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
 
         const params = this.params;
 
-        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column)) {
+        if (this.beans.colFilter?.shouldKeepStateOnDetach(params.column) || this.shouldKeepInvalidInputState()) {
             return;
         }
 
@@ -596,33 +596,17 @@ export abstract class SimpleFilter<
         return this.params.getHandler()?.getModelAsString?.(model) ?? '';
     }
 
-    private getPlaceholderText(defaultPlaceholder: FilterLocaleTextKey, position: number): string {
-        let placeholder = this.translate(defaultPlaceholder);
-        if (typeof this.filterPlaceholder === 'function') {
-            const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
-            const filterOption = this.translate(filterOptionKey);
-            placeholder = this.filterPlaceholder({
-                filterOptionKey,
-                filterOption,
-                placeholder,
-            });
-        } else if (typeof this.filterPlaceholder === 'string') {
-            placeholder = this.filterPlaceholder;
-        }
-
-        return placeholder;
-    }
-
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
         const globalTranslate = this.getLocaleTextFunc();
+        const { filterPlaceholder, eTypes } = this;
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
                 return;
             }
 
-            const placeholder =
+            const placeholderKey =
                 index === 0 && numberOfInputs > 1 ? 'inRangeStart' : index === 0 ? 'filterOoo' : 'inRangeEnd';
             const ariaLabel =
                 index === 0 && numberOfInputs > 1
@@ -631,7 +615,10 @@ export abstract class SimpleFilter<
                       ? globalTranslate('ariaFilterValue', 'Filter Value')
                       : globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-            element.setInputPlaceholder(this.getPlaceholderText(placeholder, position));
+            const filterOptionKey = eTypes[position].getValue() as ISimpleFilterModelType;
+            const placeholderText = getPlaceholderText(this, filterPlaceholder, placeholderKey, filterOptionKey);
+
+            element.setInputPlaceholder(placeholderText);
             element.setInputAriaLabel(ariaLabel);
         });
     }
@@ -723,6 +710,10 @@ export abstract class SimpleFilter<
         }
 
         if (this.getValues(position).some((v) => v == null)) {
+            return false;
+        }
+
+        if (this.positionHasInvalidInputs(position)) {
             return false;
         }
 
@@ -874,6 +865,10 @@ export abstract class SimpleFilter<
     }
 
     protected hasInvalidInputs(): boolean {
+        return false;
+    }
+
+    protected positionHasInvalidInputs(_position: number): boolean {
         return false;
     }
 

@@ -2,7 +2,6 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
-import type { GridRowsOptions } from '../../test-utils';
 
 describe('ag-grid grouping parentId tree data with groupRows', () => {
     const gridsManager = new TestGridsManager({
@@ -41,12 +40,7 @@ describe('ag-grid grouping parentId tree data with groupRows', () => {
             getRowId: (params) => params.data.x,
         });
 
-        const gridRowsOptions: GridRowsOptions = {
-            checkDom: false,
-            columns: true,
-        };
-
-        const gridRows = new GridRows(api, '', gridRowsOptions);
+        const gridRows = new GridRows(api, '');
         await gridRows.check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A x:"A"

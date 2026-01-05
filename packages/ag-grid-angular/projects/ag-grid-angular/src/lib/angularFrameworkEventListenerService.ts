@@ -7,10 +7,10 @@ export class AngularFrameworkEventListenerService<
     TGlobalEventListener extends (name: string, e: any) => void,
 > {
     // Map from user listener to wrapped listener so we can remove listener provided by user
-    private wrappedListeners: Map<EventTypeToWrap, Map<TEventListener, TEventListener>> = new Map();
-    private wrappedGlobalListeners: Map<TGlobalEventListener, TGlobalEventListener> = new Map();
+    private readonly wrappedListeners: Map<EventTypeToWrap, Map<TEventListener, TEventListener>> = new Map();
+    private readonly wrappedGlobalListeners: Map<TGlobalEventListener, TGlobalEventListener> = new Map();
 
-    constructor(private frameworkOverrides: AngularFrameworkOverrides) {}
+    constructor(private readonly frameworkOverrides: AngularFrameworkOverrides) {}
 
     public wrap(eventType: EventTypeToWrap, userListener: TEventListener): TEventListener {
         const { frameworkOverrides, wrappedListeners } = this;

@@ -7,17 +7,14 @@ export class WaterfallChartProxy extends CartesianChartProxy<'waterfall'> {
     protected override getAxes(
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions
-    ): AgCartesianAxisOptions[] {
-        return [
-            {
-                type: this.getXAxisType(params),
-                position: this.isHorizontal(commonChartOptions) ? 'left' : 'bottom',
-            },
-            {
-                type: 'number',
-                position: this.isHorizontal(commonChartOptions) ? 'bottom' : 'left',
-            },
-        ];
+    ): Record<string, AgCartesianAxisOptions> {
+        const isHorizontal = this.isHorizontal(commonChartOptions);
+        const crossAxis = isHorizontal ? 'y' : 'x';
+        const valueAxis = isHorizontal ? 'x' : 'y';
+        return {
+            [crossAxis]: { type: this.getXAxisType(params), position: isHorizontal ? 'left' : 'bottom' },
+            [valueAxis]: { type: 'number', position: isHorizontal ? 'bottom' : 'left' },
+        };
     }
 
     protected override getSeries(params: UpdateParams): AgWaterfallSeriesOptions[] {

@@ -1,12 +1,5 @@
 import type { Column, GridOptions, IFooterService, IRowNode, NamedBean, RowNode } from 'ag-grid-community';
-import {
-    BeanStub,
-    _addGridCommonParams,
-    _getGrandTotalRow,
-    _getGroupTotalRowCallback,
-    _isTreeData,
-    _warn,
-} from 'ag-grid-community';
+import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback, _warn } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
 
@@ -74,13 +67,13 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         }
 
         // if tree data and a footer, always include the footer prefix
-        if (_isTreeData(this.gos)) {
+        if (this.gos.get('treeData')) {
             return true;
         }
 
         // if grand total row footer, heading shown in first group column
         if (node.level === -1) {
-            return this.beans.showRowGroupCols?.getShowRowGroupCols()[0] === col;
+            return this.beans.showRowGroupCols?.columns[0] === col;
         }
 
         // otherwise, show in relevant group column

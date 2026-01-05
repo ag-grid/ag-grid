@@ -3,8 +3,16 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export interface RowGroupExpansionState {
+    /**
+     * By default, all group nodes in a grid are collapsed.
+     * This array would contain row IDs that were explicitly expanded.
+     */
     expandedRowGroupIds: string[];
-    collapsedRowGroupIds: string[];
+    /**
+     * Collapsed Row Group Ids array is only used in SSRM when bulk expansion feature is not used.
+     * It contains row IDs that were explicitly collapsed.
+     */
+    collapsedRowGroupIds?: string[];
 }
 
 export interface RowGroupBulkExpansionState {

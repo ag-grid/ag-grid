@@ -14,4 +14,3 @@ else
   echo "Building DEVELOPMENT UMDs for $NX_TASK_TARGET_PROJECT"
   npx webpack
 fi
-

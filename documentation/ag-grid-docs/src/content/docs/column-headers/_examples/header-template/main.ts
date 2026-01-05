@@ -26,6 +26,7 @@ const columnDefs: ColDef[] = [
     { field: 'silver', sortable: false },
     { field: 'bronze', suppressHeaderFilterButton: true },
     { field: 'total', sortable: false },
+    { field: 'prevYearTotalDiff', sort: { type: 'absolute', direction: null } },
 ];
 
 let gridApi: GridApi<IOlympicData>;
@@ -43,6 +44,8 @@ const gridOptions: GridOptions<IOlympicData> = {
                         <span data-ref="eSortOrder" class="ag-header-icon ag-sort-order ag-hidden"></span>
                         <span data-ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden"></span>
                         <span data-ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon ag-hidden"></span>
+                        <span data-ref="eSortAbsoluteAsc" class="ag-header-icon ag-sort-absolute-ascending-icon ag-hidden"></span>
+                        <span data-ref="eSortAbsoluteDesc" class="ag-header-icon ag-sort-absolute-descending-icon ag-hidden"></span>
                         <span data-ref="eSortMixed" class="ag-header-icon ag-sort-mixed-icon ag-hidden"></span>
                         <span data-ref="eSortNone" class="ag-header-icon ag-sort-none-icon ag-hidden"></span>
                         ** <span data-ref="eText" class="ag-header-cell-text" role="columnheader"></span>
@@ -60,5 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: IOlympicData[]) =>
+            gridApi!.setGridOption(
+                'rowData',
+                data.map((d) => ({
+                    ...d,
+                    prevYearTotalDiff: Math.floor((2 * window.agRandom() - 1) * d.total),
+                }))
+            )
+        );
 });

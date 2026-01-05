@@ -92,6 +92,4 @@ export interface IDateFilterParams extends IScalarFilterParams {
     useIsoSeparator?: boolean;
 }
 
-export interface IDateComparatorFunc {
-    (filterLocalDateAtMidnight: Date, cellValue: any): number;
-}
+export type IDateComparatorFunc = (filterLocalDateAtMidnight: Date, cellValue: any) => number;

@@ -12,8 +12,6 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<IOlympicData>;
 
-let suppressColumnSelection = false;
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete', minWidth: 150 },
@@ -47,16 +45,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     cellSelection: {
-        suppressColumnSelection,
+        enableColumnSelection: true,
     },
 };
-
-function toggleSuppressColumnSelection() {
-    const suppressColumnSelection = document.querySelector<HTMLInputElement>(
-        '#toggle-suppress-column-selection'
-    )?.checked;
-    gridApi.setGridOption('cellSelection', { suppressColumnSelection });
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

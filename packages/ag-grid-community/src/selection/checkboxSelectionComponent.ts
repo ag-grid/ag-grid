@@ -82,13 +82,17 @@ export class CheckboxSelectionComponent extends Component {
 
         this.onSelectionChanged();
 
-        this.addManagedListeners(this.eCheckbox.getInputElement(), {
+        this.addManagedListeners(this.eCheckbox.getWrapperElement(), {
             // we don't want double click on this icon to open a group
             dblclick: _stopPropagationForAgGrid,
             click: (event: MouseEvent) => {
                 // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
                 // would possibly get selected twice
                 _stopPropagationForAgGrid(event);
+
+                if (this.eCheckbox.isDisabled()) {
+                    return;
+                }
 
                 this.beans.selectionSvc?.handleSelectionEvent(event, this.rowNode, 'checkboxSelected');
             },

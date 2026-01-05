@@ -15,7 +15,7 @@ export class FilterComponentWrapper
     private hasBeenActive = false;
     // this is used for the initial component setup
     private resolveSetMethodsCallback!: () => void;
-    private awaitSetMethodsCallback = new AgPromise<void>((resolve) => {
+    private readonly awaitSetMethodsCallback = new AgPromise<void>((resolve) => {
         this.resolveSetMethodsCallback = resolve;
     });
     // this is used to sync up every time the model changes

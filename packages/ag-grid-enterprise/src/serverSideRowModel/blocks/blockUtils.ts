@@ -14,8 +14,6 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
-    _isMasterDetail,
-    _isTreeData,
     _warn,
 } from 'ag-grid-community';
 
@@ -86,16 +84,15 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
-
-        // if this has a footer, destroy that too
-        if (rowNode.sibling && !rowNode.footer) {
-            this.destroyRowNode(rowNode.sibling, false);
+        const sibling = rowNode.sibling;
+        if (sibling && !rowNode.footer) {
+            this.destroyRowNode(sibling, false);
         }
 
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
-        rowNode.clearRowTopAndRowIndex();
+        rowNode._destroy(true);
         if (rowNode.id != null) {
             this.nodeManager.removeNode(rowNode);
         }
@@ -156,7 +153,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (_isTreeData(this.gos)) {
+        if (this.gos.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
@@ -166,7 +163,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (_isMasterDetail(this.gos)) {
+        } else if (this.gos.get('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -199,12 +196,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         cachedRowHeight: number | undefined
     ): void {
         rowNode.stub = false;
-        const treeData = _isTreeData(this.gos);
+        const treeData = this.gos.get('treeData');
 
         rowNode.setDataAndId(data, defaultId);
         const group = rowNode.group;
 
-        if ((treeData || !group) && _isMasterDetail(this.gos)) {
+        if ((treeData || !group) && this.gos.get('masterDetail')) {
             this.setMasterDetailInfo(rowNode);
         }
 
@@ -238,19 +235,28 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         // set group value for full width rows.
-        rowNode.groupValue = rowNode.key;
+        const key = rowNode.key!;
+        rowNode.groupValue = key;
+        if (rowNode.sibling) {
+            rowNode.sibling.groupValue = key;
+        }
 
-        const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
-        const usingTreeData = _isTreeData(this.gos);
+        const groupDisplayCols = this.showRowGroupCols?.columns;
+        if (!groupDisplayCols) {
+            return;
+        }
+        const usingTreeData = this.gos.get('treeData');
         for (const col of groupDisplayCols) {
-            if (rowNode.groupData == null) {
-                rowNode.groupData = {};
+            let groupData = rowNode._groupData;
+            if (!groupData) {
+                groupData = {};
+                rowNode._groupData = groupData;
             }
             if (usingTreeData) {
-                rowNode.groupData[col.getColId()] = rowNode.key;
+                groupData[col.getColId()] = key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
                 const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
-                rowNode.groupData[col.getColId()] = groupValue;
+                groupData[col.getColId()] = groupValue;
             }
         }
     }

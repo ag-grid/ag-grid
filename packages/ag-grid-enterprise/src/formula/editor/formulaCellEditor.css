@@ -1,0 +1,11 @@
+.ag-formula-token {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    padding: 0 0.25rem;
+    margin: 0 1px;
+    border-radius: var(--ag-border-radius, 2px);
+    background-color: var(--ag-selected-row-background-color, rgb(64 139 251 / 12%));
+    border: 1px solid var(--ag-border-color, #c6c6c6);
+    line-height: normal;
+}

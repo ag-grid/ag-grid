@@ -181,6 +181,8 @@ export abstract class BaseSelectionService extends BeanStub {
                     atLeastOneDeSelected = true;
                     break;
                 default:
+                    // If any child node has an indeterminate selection state, then its parent must also have an indeterminate state
+                    // regardless of the state of the other children, so we can return early here
                     return undefined;
             }
         }
@@ -210,6 +212,10 @@ export abstract class BaseSelectionService extends BeanStub {
         e?: Event,
         source: SelectionEventSourceType = 'api'
     ): boolean {
+        if (newValue && rowNode.destroyed) {
+            return false; // cannot select destroyed nodes
+        }
+
         // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
         // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
         const selectionNotAllowed = !rowNode.selectable && newValue;

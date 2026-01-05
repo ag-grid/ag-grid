@@ -4,8 +4,8 @@ const { makeCompressionStream } = require('compression-streams-polyfill/ponyfill
 const { Blob } = require('blob-polyfill');
 const { TextEncoder } = require('text-encoding-polyfill');
 
-window.Blob = Blob;
-window.WritableStream = WritableStream;
-window.ReadableStream = ReadableStream;
-window.CompressionStream = makeCompressionStream(TransformStream);
-window.TextEncoder = TextEncoder;
+globalThis.Blob = Blob;
+globalThis.WritableStream = WritableStream;
+globalThis.ReadableStream = ReadableStream;
+globalThis.CompressionStream = makeCompressionStream(TransformStream);
+globalThis.TextEncoder = TextEncoder;

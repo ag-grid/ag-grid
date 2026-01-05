@@ -1,10 +1,13 @@
+import type { DefaultComparatorOptions } from '../agStack/utils/generic';
 import { _defaultComparator } from '../agStack/utils/generic';
+import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import { _normalizeSortType } from '../entities/agColumn';
+import type { ColDef, SortComparatorFn } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { _firstLeaf } from '../entities/rowNodeUtils';
-import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
+import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
 
 export interface SortedRowNode {
@@ -19,11 +22,13 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private isAccentedSort: boolean;
     private primaryColumnsSortGroups: boolean;
+    private firstLeaf: (row: RowNode) => RowNode | undefined;
 
     public postConstruct(): void {
         const { gos } = this;
         this.isAccentedSort = gos.get('accentedSort');
         this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
+        this.firstLeaf = _isClientSideRowModel(gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
         this.addManagedPropertyListener(
             'accentedSort',
@@ -65,7 +70,11 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isDescending);
             } else {
                 //otherwise do our own comparison
-                comparatorResult = _defaultComparator(valueA, valueB, this.isAccentedSort);
+                const opts = { accentedCompare: this.isAccentedSort } as DefaultComparatorOptions;
+                if (sortOption.type === 'absolute') {
+                    opts.transform = _absoluteValueTransformer;
+                }
+                comparatorResult = _defaultComparator(valueA, valueB, opts);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -80,24 +89,29 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getComparator(
-        sortOption: SortOption,
-        rowNode: RowNode
-    ): ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isDescending: boolean) => number) | undefined {
-        const column = sortOption.column;
+    /**
+     * if user defines a comparator as a function then use that.
+     * if user defines a dictionary of comparators, then use the one matching the sort type.
+     * if no comparator provided, or no matching comparator found in dictionary, then return undefined.
+     *
+     * grid checks later if undefined is returned here and falls back to a default comparator corresponding to sort type on the coldef.
+     * @private
+     */
+    private getComparator(sortOption: SortOption, rowNode: RowNode): SortComparatorFn | undefined {
+        const colDef = sortOption.column.getColDef();
 
         // comparator on col get preference over everything else
-        const comparatorOnCol = column.getColDef().comparator;
-        if (comparatorOnCol != null) {
+        const comparatorOnCol = this.getComparatorFromColDef(colDef, sortOption);
+        if (comparatorOnCol) {
             return comparatorOnCol;
         }
 
-        if (!column.getColDef().showRowGroup) {
+        if (!colDef.showRowGroup) {
             return;
         }
 
         // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-        const groupLeafField = !rowNode.group && column.getColDef().field;
+        const groupLeafField = !rowNode.group && colDef.field;
         if (!groupLeafField) {
             return;
         }
@@ -106,37 +120,82 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         if (!primaryColumn) {
             return;
         }
+        // comparator on col get preference over everything else
+        return this.getComparatorFromColDef(primaryColumn.getColDef(), sortOption);
+    }
 
-        return primaryColumn.getColDef().comparator;
+    private getComparatorFromColDef(colDef: ColDef, sortOption: SortOption): SortComparatorFn | undefined {
+        const comparator = colDef.comparator;
+        if (comparator == null) {
+            return;
+        }
+        if (typeof comparator === 'object') {
+            return comparator[_normalizeSortType(sortOption.type)];
+        }
+        return comparator;
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
-        const { valueSvc, colModel, showRowGroupCols, gos } = this.beans;
-        if (!this.primaryColumnsSortGroups) {
-            return valueSvc.getValue(column, node, false);
-        }
-
-        const isNodeGroupedAtLevel = node.rowGroupColumn === column;
-        if (isNodeGroupedAtLevel) {
-            const isGroupRows = _isGroupUseEntireRow(gos, colModel.isPivotActive());
-            // because they're group rows, no display cols exist, so groupData never populated.
-            // instead delegate to getting value from leaf child.
-            if (isGroupRows) {
-                const leafChild = node.data ? node : _firstLeaf(node.childrenAfterGroup);
-                return leafChild && valueSvc.getValue(column, leafChild, false);
-            }
-
-            const displayCol = showRowGroupCols?.getShowRowGroupCol(column.getId());
-            if (!displayCol) {
-                return undefined;
-            }
-            return node.groupData?.[displayCol.getId()];
+        if (this.primaryColumnsSortGroups && node.rowGroupColumn === column) {
+            return this.getGroupDataValue(node, column);
         }
 
         if (node.group && column.getColDef().showRowGroup) {
             return undefined;
         }
 
-        return valueSvc.getValue(column, node, false);
+        const { valueSvc, formula } = this.beans;
+        const value = valueSvc.getValue(column, node, false, 'api');
+        if (column.isAllowFormula() && formula?.isFormula(value)) {
+            return formula.resolveValue(column, node);
+        }
+        return value;
     }
+
+    private getGroupDataValue(node: RowNode, column: AgColumn): any {
+        const { gos, valueSvc, colModel, showRowGroupCols } = this.beans;
+        const isGroupRows = _isGroupUseEntireRow(gos, colModel.isPivotActive());
+        // because they're group rows, no display cols exist, so groupData never populated.
+        // instead delegate to getting value from leaf child.
+        if (isGroupRows) {
+            const leafChild = this.firstLeaf(node);
+            return leafChild && valueSvc.getValue(column, leafChild, false, 'api');
+        }
+
+        const displayCol = showRowGroupCols?.getShowRowGroupCol(column.getId());
+        if (!displayCol) {
+            return undefined;
+        }
+        return node.groupData?.[displayCol.getId()];
+    }
+}
+
+/**
+ * _csrmFirstLeaf gets the first lead child of the row node for CSRM,
+ * it uses sourceRowIndex to identify if the row comes from row data or transaction or not.
+ * Groups and filler nodes have negative sourceRowIndex.
+ *
+ * For SSRM and other view model however we don't have any other way to identify
+ * if the row comes from data or not, so we simply check if data exists on the node.
+ */
+const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
+    if (row.data) {
+        return row;
+    }
+    let childrenAfterGroup = row.childrenAfterGroup;
+    while (childrenAfterGroup?.length) {
+        const node = childrenAfterGroup[0];
+        if (node.data) {
+            return node;
+        }
+        childrenAfterGroup = node.childrenAfterGroup;
+    }
+};
+
+function _absoluteValueTransformer(value: any): number | null {
+    if (!value) {
+        return value;
+    }
+    const numberValue = Number(value);
+    return isNaN(numberValue) ? value : Math.abs(numberValue);
 }

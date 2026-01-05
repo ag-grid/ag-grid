@@ -127,12 +127,6 @@ describe('GridWrapperComponent', () => {
     });
 
     beforeEach(async () => {
-        // await TestBed.configureTestingModule({
-        //     imports: [GridWrapperComponent, AgGridAngular],
-        // }).compileComponents();
-    });
-
-    beforeEach(async () => {
         fixture = TestBed.createComponent(GridWrapperComponent);
         component = fixture.componentInstance;
         component.zoneStatus = {};

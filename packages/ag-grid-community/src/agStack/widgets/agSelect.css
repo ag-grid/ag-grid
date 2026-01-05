@@ -9,7 +9,7 @@
 
 :where(.ag-select) {
     .ag-picker-field-wrapper {
-        padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
+        padding-left: var(--ag-spacing);
         padding-right: var(--ag-spacing);
         cursor: default;
     }
@@ -43,7 +43,7 @@
 }
 
 .ag-select-list-item {
-    padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
+    padding-left: var(--ag-spacing);
     user-select: none;
     cursor: default;
 

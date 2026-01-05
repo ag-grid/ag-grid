@@ -1,6 +1,6 @@
 import type { ColorValue } from './themeTypes';
 
-const kebabCase = (str: string) => str.replace(/[A-Z]/g, (m) => `-${m}`).toLowerCase();
+const kebabCase = (str: string) => str.replace(/[A-Z]|\d+/g, (m) => `-${m}`).toLowerCase();
 
 export const paramToVariableName = (paramName: string) => `--ag-${kebabCase(paramName)}`;
 

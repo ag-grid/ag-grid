@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_HR = {
     searchOoo: 'Traži...',
     blanks: '(Praznine)',
     noMatches: 'Nema podudaranja',
+    typeToSearchOoo: 'Upišite za pretraživanje...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filtriraj...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_HR = {
     maxLengthValidation: 'Mora imati ${variable} znakova ili manje.',
     minValueValidation: 'Mora biti veće ili jednako ${variable}',
     maxValueValidation: 'Mora biti manje ili jednako ${variable}',
+    strictMinValueValidation: 'Mora biti veće od ${variable}',
+    strictMaxValueValidation: 'Mora biti manje od ${variable}',
     invalidSelectionValidation: 'Nevažeći odabir.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_HR = {
     loadingOoo: 'Učitavanje...',
     loadingError: 'GREŠKA',
     noRowsToShow: 'Nema redaka za prikaz',
+    noMatchingRows: 'Nema podudarnih redaka',
+    exportingOoo: 'Izvoz...',
     enabled: 'Omogućeno',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_HR = {
     pinLeft: 'Prikvači lijevo',
     pinRight: 'Prikvači desno',
     noPin: 'Bez prikvačivanja',
+    pinRow: 'Prikvači redak',
+    pinTop: 'Prikvači na vrh',
+    pinBottom: 'Prikvači na dno',
+    unpinRow: 'Otpikvači redak',
     valueAggregation: 'Agregacija vrijednosti',
     noAggregation: 'Nema',
     autosizeThisColumn: 'Automatski prilagodi ovaj stupac',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_HR = {
     chooseColumns: 'Odaberi stupce',
     sortAscending: 'Sortiraj uzlazno',
     sortDescending: 'Sortiraj silazno',
+    sortAbsoluteAscending: 'Sortiraj apsolutno uzlazno',
+    sortAbsoluteDescending: 'Sortiraj apsolutno silazno',
     sortUnSort: 'Očisti sortiranje',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_HR = {
     ariaChecked: 'označeno',
     ariaColumn: 'Stupac',
     ariaColumnGroup: 'Grupa stupaca',
+    ariaFilterActive: 'Aktivan filtar',
     ariaColumnFiltered: 'Stupac filtriran',
     ariaColumnSelectAll: 'Uključi/isključi vidljivost svih stupaca',
     ariaDateFilterInput: 'Unos filtera datuma',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_HR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' od ',
     ariaDropZoneColumnComponentSortAscending: 'uzlazno',
     ariaDropZoneColumnComponentSortDescending: 'silazno',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutni uzlazno',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutni silazno',
     ariaLabelDialog: 'Dijalog',
     ariaLabelColumnMenu: 'Izbornik stupca',
     ariaLabelColumnFilter: 'Filtar stupca',

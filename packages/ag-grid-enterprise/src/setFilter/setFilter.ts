@@ -196,9 +196,10 @@ export class SetFilter<V = string>
         return handler;
     }
 
-    // unlike the simple filters, nothing in the set filter UI shows/hides.
-    // maybe this method belongs in abstractSimpleFilter???
-    protected updateUiVisibility(): void {}
+    protected updateUiVisibility(): void {
+        // unlike the simple filters, nothing in the set filter UI shows/hides.
+        // maybe this method belongs in abstractSimpleFilter???
+    }
 
     protected createBodyTemplate(): ElementParams | null {
         return {

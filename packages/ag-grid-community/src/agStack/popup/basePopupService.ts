@@ -823,9 +823,9 @@ export abstract class BasePopupService<
             }
 
             if (i === 0) {
-                parent.insertAdjacentElement('afterbegin', currentPopup);
+                parent.prepend(currentPopup);
             } else {
-                targetList[i - 1].insertAdjacentElement('afterend', currentPopup);
+                targetList[i - 1].after(currentPopup);
             }
         }
 

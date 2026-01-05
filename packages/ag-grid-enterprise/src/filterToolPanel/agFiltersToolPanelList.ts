@@ -310,8 +310,9 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         return expansionState;
     }
 
-    // we don't support refreshing, but must implement because it's on the tool panel interface
-    public refresh(): void {}
+    public refresh(): void {
+        // we don't support refreshing, but must implement because it's on the tool panel interface
+    }
 
     // lazy initialise the panel
     public override setVisible(visible: boolean): void {

@@ -1,4 +1,10 @@
-import type { ColDef, GridApi, GridOptions, ICellEditorParams, IRichCellEditorParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    GridApi,
+    GridOptions,
+    IRichCellEditorParams,
+    RichCellEditorValuesCallbackParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ModuleRegistry,
@@ -22,7 +28,7 @@ function getRandomNumber(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function getValueFromServer(_params: ICellEditorParams): Promise<string[]> {
+function getValueFromServer(_params: RichCellEditorValuesCallbackParams): Promise<string[]> {
     return new Promise((resolve) => {
         setTimeout(() => resolve(languages), 1000);
     });

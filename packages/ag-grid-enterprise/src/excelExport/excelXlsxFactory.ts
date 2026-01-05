@@ -10,7 +10,7 @@ import type {
     ExcelWorksheet,
     RowHeightCallbackParams,
 } from 'ag-grid-community';
-import { _escapeString, _getHeaderRowCount, _warn } from 'ag-grid-community';
+import { _escapeString, _warn } from 'ag-grid-community';
 
 import type {
     ExcelCalculatedImage,
@@ -40,7 +40,10 @@ import worksheetFactory from './files/ooxml/worksheet';
  */
 
 const XLSX_SHARED_STRINGS: Map<string, number> = new Map();
+// Registry that keeps sheet names, XML, and content-to-index mapping in sync.
 let XLSX_SHEET_NAMES: string[] = [];
+let XLSX_SHEET_DATA: string[] = [];
+let XLSX_SHEET_CONTENT_INDICES: Map<string, number[]> = new Map();
 
 /** Maps images to sheet */
 export const XLSX_IMAGES: Map<
@@ -81,15 +84,17 @@ export function createXlsxExcel(
     const newConfig = Object.assign({}, config);
 
     // Table export is not compatible with pivot mode nor master/detail features
-    if (config.exportAsExcelTable) {
-        if (config.colModel.isPivotActive()) {
-            _warn(163, { featureName: 'pivot mode' });
-            newConfig.exportAsExcelTable = false;
-        }
+    if (config.exportAsExcelTable && config.pivotModeActive) {
+        _warn(163, { featureName: 'pivot mode' });
+        newConfig.exportAsExcelTable = false;
     }
 
     processTableConfig(worksheet, newConfig);
-    return createWorksheet(worksheet, newConfig);
+    const worksheetXml = createWorksheet(worksheet, newConfig);
+
+    registerSheetXml(worksheetXml);
+
+    return worksheetXml;
 }
 
 function getXlsxSanitizedTableName(name: string) {
@@ -109,7 +114,7 @@ function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
 }
 
 function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializingParams & ExcelExportParams) {
-    const { exportAsExcelTable, prependContent, appendContent, colModel } = config;
+    const { exportAsExcelTable, prependContent, appendContent, headerRowCount = 0 } = config;
     if (!exportAsExcelTable) {
         return;
     }
@@ -124,7 +129,6 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
     const sheetIndex = XLSX_SHEET_NAMES.length - 1;
     const { table } = worksheet;
     const { rows, columns } = table;
-    const headerRowCount = _getHeaderRowCount(colModel);
     const skipTopRows = prependContent ? prependContent.length : 0;
     const removeFromBottom = appendContent ? appendContent.length : 0;
     const tableRowCount = rows.length;
@@ -296,6 +300,8 @@ export function resetXlsxFactory(): void {
     XLSX_WORKSHEET_DATA_TABLES.clear();
 
     XLSX_SHEET_NAMES = [];
+    XLSX_SHEET_DATA = [];
+    XLSX_SHEET_CONTENT_INDICES = new Map();
     XLSX_FACTORY_MODE = 'SINGLE_SHEET';
 }
 
@@ -472,4 +478,159 @@ function createWorksheet(worksheet: ExcelWorksheet, config: ExcelGridSerializing
             config,
         })
     );
+}
+
+const reorderSheetSpecificMap = <T>(map: Map<number, T>, order: number[]) => {
+    if (!map.size) {
+        return;
+    }
+
+    const remapped = new Map<number, T>();
+
+    order.forEach((originalIdx, newIdx) => {
+        if (map.has(originalIdx)) {
+            remapped.set(newIdx, map.get(originalIdx)!);
+        }
+    });
+
+    map.clear();
+    remapped.forEach((value, key) => map.set(key, value));
+};
+
+const registerSheetXml = (worksheetXml: string): void => {
+    const indices = XLSX_SHEET_CONTENT_INDICES.get(worksheetXml) ?? [];
+    indices.push(XLSX_SHEET_NAMES.length - 1);
+    XLSX_SHEET_CONTENT_INDICES.set(worksheetXml, indices);
+
+    XLSX_SHEET_DATA.push(worksheetXml);
+};
+
+const getSheetOrderFromRefs = (data: string[]): number[] | null => {
+    const refMap = new Map<string, number[]>(XLSX_SHEET_CONTENT_INDICES);
+    const order: number[] = [];
+
+    for (const sheetData of data) {
+        const indices = refMap.get(sheetData);
+
+        if (!indices?.length) {
+            return null;
+        }
+
+        const idx = indices.shift()!;
+        order.push(idx);
+        refMap.set(sheetData, indices);
+    }
+
+    return order;
+};
+
+const getSheetOrderFromData = (data: string[]): number[] | null => {
+    if (!data.length || XLSX_SHEET_DATA.length === 0) {
+        return null;
+    }
+
+    const consumed = new Set<number>();
+    const order: number[] = [];
+
+    for (const sheetData of data) {
+        const matchIndex = XLSX_SHEET_DATA.findIndex((value, idx) => !consumed.has(idx) && value === sheetData);
+
+        if (matchIndex === -1) {
+            return null;
+        }
+
+        consumed.add(matchIndex);
+        order.push(matchIndex);
+    }
+
+    return order;
+};
+
+const reorderSheetState = (order: number[]) => {
+    const indexRemap = new Map<number, number>();
+    order.forEach((originalIdx, newIdx) => indexRemap.set(originalIdx, newIdx));
+
+    XLSX_SHEET_NAMES = order.map((idx) => XLSX_SHEET_NAMES[idx]);
+    XLSX_SHEET_DATA = order.map((idx) => XLSX_SHEET_DATA[idx]);
+
+    reorderSheetSpecificMap(XLSX_WORKSHEET_IMAGES, order);
+    reorderSheetSpecificMap(XLSX_WORKSHEET_HEADER_FOOTER_IMAGES, order);
+    reorderSheetSpecificMap(XLSX_WORKSHEET_DATA_TABLES, order);
+    reorderSheetSpecificMap(XLSX_WORKSHEET_IMAGE_IDS, order);
+
+    XLSX_IMAGES.forEach((sheetImages) => {
+        sheetImages.forEach((entry) => {
+            const remappedId = indexRemap.get(entry.sheetId);
+            if (remappedId != null) {
+                entry.sheetId = remappedId;
+            }
+        });
+    });
+
+    // Rebuild content index map to reflect new ordering for any subsequent lookups.
+    XLSX_SHEET_CONTENT_INDICES = new Map();
+    XLSX_SHEET_DATA.forEach((xml, idx) => {
+        const indices = XLSX_SHEET_CONTENT_INDICES.get(xml) ?? [];
+        indices.push(idx);
+        XLSX_SHEET_CONTENT_INDICES.set(xml, indices);
+    });
+};
+
+// Align sheet-scoped factory state with the order provided by consumers of getSheetDataForExcel.
+export const syncXlsxOrderWithSheetData = (data: string[]) => {
+    if (data.length <= 1) {
+        return;
+    }
+
+    const order = getSheetOrderFromRefs(data) ?? getSheetOrderFromData(data);
+
+    if (!order) {
+        return;
+    }
+
+    reorderSheetState(order);
+};
+
+export class Workbook {
+    public getStringPosition(str: string): number {
+        return getXlsxStringPosition(str);
+    }
+
+    public addBodyImageToMap(
+        image: ExcelImage,
+        rowIndex: number,
+        col: AgColumn,
+        columnsToExport?: AgColumn[],
+        rowHeight?: number | ((params: RowHeightCallbackParams) => number)
+    ): void {
+        addXlsxBodyImageToMap(image, rowIndex, col, columnsToExport, rowHeight);
+    }
+
+    public addHeaderFooterImageToMap(image: ExcelHeaderFooterImage, position: ExcelHeaderFooterPosition): void {
+        addXlsxHeaderFooterImageToMap(image, position);
+    }
+
+    public addWorksheet(styles: ExcelStyle[], worksheet: ExcelWorksheet, config: ExcelGridSerializingParams): string {
+        return createXlsxExcel(styles, worksheet, config);
+    }
+
+    public syncOrderWithSheetData(data: string[]): void {
+        syncXlsxOrderWithSheetData(data);
+    }
+
+    public reset(): void {
+        resetXlsxFactory();
+    }
+
+    public setFactoryMode(factoryMode: ExcelFactoryMode): void {
+        setXlsxFactoryMode(factoryMode);
+    }
+
+    public getFactoryMode(): ExcelFactoryMode {
+        return getXlsxFactoryMode();
+    }
+
+    public getSheetNames(): string[] {
+        return [...XLSX_SHEET_NAMES];
+    }
 }

@@ -9,7 +9,7 @@ export class FilterDisplayComponentWrapper
     implements FilterDisplay
 {
     private resolveSetMethodsCallback!: () => void;
-    private awaitSetMethodsCallback = new AgPromise<void>((resolve) => {
+    private readonly awaitSetMethodsCallback = new AgPromise<void>((resolve) => {
         this.resolveSetMethodsCallback = resolve;
     });
 

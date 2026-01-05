@@ -8,7 +8,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
-import { _addGridCommonParams, _getSuppressColumnSelection } from '../../../gridOptionsUtils';
+import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _getActiveDomElement } from '../../../main';
@@ -69,7 +69,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
 
         this.setupUserComp();
-        this.addHeaderMouseListeners(compBean);
+        this.addHeaderMouseListeners(compBean, eHeaderCompWrapper);
 
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
@@ -247,12 +247,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
-    private addHeaderMouseListeners(compBean: BeanStub): void {
+    private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
+        const {
+            column,
+            comp,
+            beans: { rangeSvc },
+            gos,
+        } = this;
+
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () =>
-            this.dispatchColumnMouseEvent('columnHeaderClicked', this.column.getProvidedColumnGroup());
+            this.dispatchColumnMouseEvent('columnHeaderClicked', column.getProvidedColumnGroup());
         const contextMenuListener = (event: MouseEvent) =>
-            this.handleContextMenuMouseEvent(event, undefined, this.column.getProvidedColumnGroup());
+            this.handleContextMenuMouseEvent(event, undefined, column.getProvidedColumnGroup());
 
         compBean.addManagedListeners(this.eGui, {
             mouseenter: listener,
@@ -260,6 +267,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             click: clickListener,
             contextmenu: contextMenuListener,
         });
+
+        comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(gos));
+        const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(this.column, eHeaderCompWrapper);
+        if (mouseListener) {
+            this.createManagedBean(mouseListener);
+        }
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
@@ -370,26 +383,32 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             return;
         }
 
-        const column = this.column;
-        if (e.key === KeyCode.ENTER && this.expandable) {
+        const { column, expandable, gos, beans } = this;
+        const enableColumnSelection = _getEnableColumnSelection(gos);
+
+        if (e.key != KeyCode.ENTER) {
+            return;
+        }
+
+        if (enableColumnSelection && !e.altKey) {
+            beans.rangeSvc?.handleColumnSelection(column, e);
+        } else if (expandable) {
             const newExpandedValue = !column.isExpanded();
 
-            this.beans.colGroupSvc!.setColumnGroupOpened(
+            beans.colGroupSvc!.setColumnGroupOpened(
                 column.getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'
             );
-        } else if (e.key === KeyCode.SPACE && (e.ctrlKey || e.metaKey)) {
-            this.beans.rangeSvc?.handleColumnSelection(column, e);
         }
     }
 
     private refreshAnnouncement(): void {
         let description: string | undefined;
         const { gos, column, beans } = this;
-        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const enableColumnSelection = _getEnableColumnSelection(gos);
 
-        if (!suppressColumnSelection) {
+        if (enableColumnSelection) {
             const translate = this.getLocaleTextFunc();
             const colSelected = beans.rangeSvc?.isColumnInAnyRange(column);
             description = translate(

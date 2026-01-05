@@ -166,6 +166,11 @@
         color: var(--ag-secondary-foreground-color);
     }
 
+    .ag-drag-handle-disabled {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
     .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         // assign internal variables to simplify the `height` value
         --ag-internal-calculated-line-height: var(

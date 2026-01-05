@@ -1,0 +1,28 @@
+.controls {
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+.option {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.option input[type='text'] {
+    width: 160px;
+}
+.grid-wrapper {
+    display: flex;
+    flex: 1 1 0px;
+}
+.grid-wrapper > div {
+    width: 100%;
+    height: 100%;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

@@ -6,7 +6,7 @@ import type { RowsDropParams } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
-import type { AgEventType, AgInternalEventType, AgPublicEventType } from './eventTypes';
+import type { AgEventType, AgInternalEventType, AgPublicEventType, BuildEventTypeMap } from './eventTypes';
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
@@ -20,10 +20,6 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { CellValueChange } from './interfaces/iUndoRedo';
 import type { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 import type { ServerSideTransactionResult } from './interfaces/serverSideTransaction';
-
-export const ALWAYS_SYNC_GLOBAL_EVENTS: Set<AgEventType> = new Set(['gridPreDestroyed', 'fillStart', 'pasteStart']);
-
-export type BuildEventTypeMap<TEventTypes extends string, T extends { [K in TEventTypes]: AgEvent<K> }> = T;
 
 export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
     AgPublicEventType | AgInternalEventType,
@@ -189,6 +185,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         bulkEditingStopped: BulkEditingStoppedEvent<TData, TContext>;
         headerRowsChanged: AgEvent<'headerRowsChanged'>;
         rowExpansionStateChanged: AgEvent<'rowExpansionStateChanged'>;
+        showRowGroupColsSetChanged: AgEvent<'showRowGroupColsSetChanged'>;
+        rowDragVisibilityChanged: AgEvent<'rowDragVisibilityChanged'>;
     }
 >;
 
@@ -542,6 +540,8 @@ export interface RowDragCancelEvent<TData = any, TContext = any>
 export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragMove'> {}
 
 export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext, 'rowDragLeave'> {}
+
+// rowDragVisibilityChanged uses the base AgGlobalEvent
 
 export interface CutStartEvent<TData = any, TContext = any> extends AgGlobalEvent<'cutStart', TData, TContext> {
     source: 'api' | 'ui' | 'contextMenu';

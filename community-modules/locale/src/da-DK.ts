@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_DK = {
     searchOoo: 'Søg...',
     blanks: '(Tomt)',
     noMatches: 'Ingen resultater',
+    typeToSearchOoo: 'Skriv for at søge...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_DK = {
     maxLengthValidation: 'Må ikke have flere end ${variable} tegn.',
     minValueValidation: 'Skal være større end eller lig med ${variable}',
     maxValueValidation: 'Skal være mindre end eller lig med ${variable}',
+    strictMinValueValidation: 'Skal være større end ${variable}',
+    strictMaxValueValidation: 'Skal være mindre end ${variable}',
     invalidSelectionValidation: 'Ugyldigt valg.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_DK = {
     loadingOoo: 'Indlæser...',
     loadingError: 'FEJL',
     noRowsToShow: 'Ingen rækker at vise',
+    noMatchingRows: 'Ingen matchende rækker',
+    exportingOoo: 'Eksporterer...',
     enabled: 'Aktiveret',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_DK = {
     pinLeft: 'Fastgør Venstre',
     pinRight: 'Fastgør Højre',
     noPin: 'Ingen Fastgørelse',
+    pinRow: 'Fastgør række',
+    pinTop: 'Fastgør til toppen',
+    pinBottom: 'Fastgør til bunden',
+    unpinRow: 'Fjern fastgørelse af række',
     valueAggregation: 'Værdi Aggregering',
     noAggregation: 'Ingen',
     autosizeThisColumn: 'Autosize Denne Kolonne',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_DK = {
     chooseColumns: 'Vælg kolonner',
     sortAscending: 'Sorter Stigende',
     sortDescending: 'Sorter Faldende',
+    sortAbsoluteAscending: 'Sorter Absolut Stigende',
+    sortAbsoluteDescending: 'Sorter Absolut Faldende',
     sortUnSort: 'Ryd Sortering',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_DK = {
     ariaChecked: 'markeret',
     ariaColumn: 'Kolonne',
     ariaColumnGroup: 'Kolonnegruppe',
+    ariaFilterActive: 'Filter Aktiv',
     ariaColumnFiltered: 'Kolonne Filtreret',
     ariaColumnSelectAll: 'Skift synlighed for alle kolonner',
     ariaDateFilterInput: 'Dato Filter Input',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_DK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'stigende',
     ariaDropZoneColumnComponentSortDescending: 'faldende',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigende',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut faldende',
     ariaLabelDialog: 'Dialog',
     ariaLabelColumnMenu: 'Kolonnemenu',
     ariaLabelColumnFilter: 'Kolonnefilter',
@@ -671,14 +685,14 @@ export const AG_GRID_LOCALE_DK = {
     second: 'Sekund',
 
     // Time formats
-    timeFormatSlashesDDMMYYYY: 'DD/MM/YYYY',
-    timeFormatSlashesMMDDYYYY: 'MM/DD/YYYY',
-    timeFormatSlashesDDMMYY: 'DD/MM/YY',
-    timeFormatSlashesMMDDYY: 'MM/DD/YY',
-    timeFormatDotsDDMYY: 'DD.M.YY',
-    timeFormatDotsMDDYY: 'M.DD.YY',
-    timeFormatDashesYYYYMMDD: 'YYYY-MM-DD',
-    timeFormatSpacesDDMMMMYYYY: 'DD MMMM YYYY',
+    timeFormatSlashesDDMMYYYY: 'DD/MM/ÅÅÅÅ',
+    timeFormatSlashesMMDDYYYY: 'MM/DD/ÅÅÅÅ',
+    timeFormatSlashesDDMMYY: 'DD/MM/ÅÅ',
+    timeFormatSlashesMMDDYY: 'MM/DD/ÅÅ',
+    timeFormatDotsDDMYY: 'DD.M.ÅÅ',
+    timeFormatDotsMDDYY: 'M.DD.ÅÅ',
+    timeFormatDashesYYYYMMDD: 'ÅÅÅÅ-MM-DD',
+    timeFormatSpacesDDMMMMYYYY: 'DD MMMM ÅÅÅÅ',
     timeFormatHHMMSS: 'TT:MM:SS',
     timeFormatHHMMSSAmPm: 'TT:MM:SS AM/PM',
 };

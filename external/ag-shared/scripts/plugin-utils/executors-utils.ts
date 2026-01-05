@@ -7,6 +7,14 @@ import * as os from 'os';
 import * as path from 'path';
 import * as ts from 'typescript';
 
+import {
+    createProgressState,
+    displayProgress,
+    finishProgress,
+    setInProgressTasks,
+    updateProgress,
+} from './progress-tracker';
+
 export type TaskResult = {
     success: boolean;
     terminalOutput: string;
@@ -132,7 +140,11 @@ export function batchExecutor<ExecutorOptions>(
     };
 }
 
-export function batchWorkerExecutor<ExecutorOptions>(workerModule: string, extraMsgContent?: () => object) {
+export function batchWorkerExecutor<ExecutorOptions>(
+    workerModule: string,
+    extraMsgContent?: () => object,
+    timeout?: number // Optional timeout (includes queue time + execution time)
+) {
     return async function* (
         taskGraph: TaskGraph,
         inputs: Record<string, ExecutorOptions>,
@@ -145,7 +157,8 @@ export function batchWorkerExecutor<ExecutorOptions>(workerModule: string, extra
         if (process.env.CI == null) {
             threadCount = Math.round(os.cpus().length / 2);
         } else {
-            threadCount = 2;
+            // GitHub Actions ubuntu runners have 4 vCPUs
+            threadCount = Math.min(4, os.cpus().length);
         }
         const { Tinypool } = await import('tinypool');
         const pool = new Tinypool({
@@ -161,7 +174,26 @@ export function batchWorkerExecutor<ExecutorOptions>(workerModule: string, extra
 
         const tasks = Object.keys(inputs);
 
-        console.info(`Batched execution of ${tasks.length} tasks, using ${pool.threads.length} threads...`);
+        const timeoutMsg = timeout != null ? ` (${timeout}ms timeout per task)` : '';
+        console.info(`Batched execution of ${tasks.length} tasks, using ${threadCount} threads${timeoutMsg}...`);
+        const inProgressTasks = new Set<string>(tasks.slice(0, threadCount));
+        const progressState = createProgressState(tasks.length);
+        const progressOptions = {
+            isTTY: process.stdout.isTTY,
+            maxInProgressToShow: threadCount,
+        };
+        let nextTaskIndex = threadCount;
+        const finished = (result: BatchExecutorTaskResult) => {
+            inProgressTasks.delete(result.task);
+            if (tasks[nextTaskIndex]) {
+                // FIFO queue, so next sequential task is always the next in the list
+                inProgressTasks.add(tasks[nextTaskIndex++]);
+            }
+            updateProgress(progressState, result.result.success, [...inProgressTasks]);
+            displayProgress(progressState, progressOptions, false, result.result.success);
+            return result;
+        };
+
         const start = performance.now();
         const contents = extraMsgContent?.() ?? {};
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
@@ -177,16 +209,30 @@ export function batchWorkerExecutor<ExecutorOptions>(workerModule: string, extra
                     configurationName: task.target.configuration,
                 },
                 taskName,
+                ...(timeout != null ? { timeout } : {}), // Only pass timeout to worker if defined
                 ...contents,
             };
-            results.set(taskName, pool.run(opts));
+
+            results.set(
+                taskName,
+                pool
+                    .run(opts)
+                    .then((r) => finished(r))
+                    .catch((e) => finished({ task: taskName, result: { success: false, terminalOutput: `${e}` } }))
+            );
         }
 
-        // Run yield loop after dispatch to avoid serializing execution.
+        // Initial progress display
+        setInProgressTasks(progressState, [...inProgressTasks]);
+        displayProgress(progressState, progressOptions, true, true);
+
         for (let taskIndex = 0; taskIndex < tasks.length; taskIndex++) {
             const taskName = tasks[taskIndex];
             yield results.get(taskName)!;
         }
+
+        // Finish progress display
+        finishProgress(progressOptions);
 
         await Promise.allSettled(results.values());
 

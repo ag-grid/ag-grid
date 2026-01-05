@@ -6,6 +6,7 @@ export const AG_GRID_LOCALE_EN = {
     searchOoo: 'Search...',
     blanks: '(Blanks)',
     noMatches: 'No matches',
+    typeToSearchOoo: 'Type to search...',
 
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
@@ -149,7 +150,9 @@ export const AG_GRID_LOCALE_EN = {
     maxDateValidation: 'Date must be before ${variable}',
     maxLengthValidation: 'Must be ${variable} characters or fewer.',
     minValueValidation: 'Must be greater than or equal to ${variable}',
-    maxValueValidation: 'Must be less than or equal to  ${variable}',
+    maxValueValidation: 'Must be less than or equal to ${variable}',
+    strictMinValueValidation: 'Must be greater than ${variable}',
+    strictMaxValueValidation: 'Must be less than ${variable}',
     invalidSelectionValidation: 'Invalid selection.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -177,6 +180,8 @@ export const AG_GRID_LOCALE_EN = {
     loadingOoo: 'Loading...',
     loadingError: 'ERR',
     noRowsToShow: 'No Rows To Show',
+    noMatchingRows: 'No Matching Rows',
+    exportingOoo: 'Exporting...',
     enabled: 'Enabled',
 
     // Menu
@@ -184,6 +189,10 @@ export const AG_GRID_LOCALE_EN = {
     pinLeft: 'Pin Left',
     pinRight: 'Pin Right',
     noPin: 'No Pin',
+    pinRow: 'Pin Row',
+    pinTop: 'Pin to Top',
+    pinBottom: 'Pin to Bottom',
+    unpinRow: 'Unpin Row',
     valueAggregation: 'Value Aggregation',
     noAggregation: 'None',
     autosizeThisColumn: 'Autosize This Column',
@@ -214,6 +223,8 @@ export const AG_GRID_LOCALE_EN = {
     chooseColumns: 'Choose Columns',
     sortAscending: 'Sort Ascending',
     sortDescending: 'Sort Descending',
+    sortAbsoluteAscending: 'Sort Absolute Ascending',
+    sortAbsoluteDescending: 'Sort Absolute Descending',
     sortUnSort: 'Clear Sort',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -554,6 +565,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaChecked: 'checked',
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
+    ariaFilterActive: 'Filter Active',
     ariaColumnFiltered: 'Column Filtered',
     ariaColumnSelectAll: 'Toggle All Columns Visibility',
     ariaDateFilterInput: 'Date Filter Input',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_EN = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' of ',
     ariaDropZoneColumnComponentSortAscending: 'ascending',
     ariaDropZoneColumnComponentSortDescending: 'descending',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolute ascending',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute descending',
 
     ariaLabelDialog: 'Dialog',
 

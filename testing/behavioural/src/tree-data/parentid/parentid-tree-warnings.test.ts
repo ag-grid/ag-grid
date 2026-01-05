@@ -50,7 +50,7 @@ describe('ag-grid parentId tree data warnings', () => {
             'AG Grid: getRowId callback not provided, tree data with parent id cannot be built.'
         );
 
-        await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check('empty');
+        await new GridRows(api, 'rowData').check('empty');
     });
 
     test('treeDataParentIdField with treeDataChildrenField', async () => {
@@ -104,7 +104,7 @@ describe('ag-grid parentId tree data warnings', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check(`
+        await new GridRows(api, 'rowData').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ 1 GROUP id:1 ag-Grid-AutoColumn:"1" x:"1"
             │ └── 2 LEAF id:2 ag-Grid-AutoColumn:"2" x:"2"
@@ -147,13 +147,13 @@ describe('ag-grid parentId tree data warnings', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check(`
+        await new GridRows(api, 'rowData').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ KjDhf3D1 GROUP id:KjDhf3D1 ag-Grid-AutoColumn:"KjDhf3D1" x:"1" parentId:"KjDhf3D4"
             │ └─┬ 2 GROUP id:2 ag-Grid-AutoColumn:"2" x:"2" parentId:"KjDhf3D1"
             │ · └─┬ 3 GROUP id:3 ag-Grid-AutoColumn:"3" x:"3" parentId:"2"
             │ · · └── KjDhf3D4 LEAF id:KjDhf3D4 ag-Grid-AutoColumn:"KjDhf3D4" x:"4" parentId:"3"
-            └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:"5" parentId:undefined
+            └─┬ 5 GROUP id:5 ag-Grid-AutoColumn:"5" x:"5"
             · └── 6 LEAF id:6 ag-Grid-AutoColumn:"6" x:"6" parentId:"5"
         `);
 
@@ -196,7 +196,7 @@ describe('ag-grid parentId tree data warnings', () => {
             treeDataParentIdField: 'parentId',
         });
 
-        await new GridRows(api, 'rowData', { checkDom: true, columns: true }).check(`
+        await new GridRows(api, 'rowData').check(`
             ROOT id:ROOT_NODE_ID
             ├── Dj0FPsX0 LEAF id:Dj0FPsX0 ag-Grid-AutoColumn:"Dj0FPsX0" x:"0" parentId:"Dj0FPsX0"
             └─┬ Dj0FPsX1 GROUP id:Dj0FPsX1 ag-Grid-AutoColumn:"Dj0FPsX1" x:"1" parentId:"Dj0FPsX4"

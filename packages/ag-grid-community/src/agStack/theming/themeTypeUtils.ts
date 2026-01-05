@@ -7,6 +7,7 @@ import type {
     ImageValue,
     LengthValue,
     ShadowValue,
+    ShadowValueParams,
 } from './themeTypes';
 import { clamp, memoize, paramToVariableExpression } from './themeUtils';
 
@@ -108,6 +109,17 @@ export const borderValueToCss = (value: BorderValue, param: string): string => {
     );
 };
 
+const shadowValueParamsToCss = (value: ShadowValueParams): string => {
+    return [
+        lengthValueToCss(value.offsetX ?? 0),
+        lengthValueToCss(value.offsetY ?? 0),
+        lengthValueToCss(value.radius ?? 0),
+        lengthValueToCss(value.spread ?? 0),
+        colorValueToCss(value.color ?? { ref: 'foregroundColor' }),
+        ...(value.inset ? ['inset'] : []),
+    ].join(' ');
+};
+
 export const shadowValueToCss = (value: ShadowValue): string | false => {
     if (typeof value === 'string') {
         return value;
@@ -118,13 +130,10 @@ export const shadowValueToCss = (value: ShadowValue): string | false => {
     if (value && 'ref' in value) {
         return paramToVariableExpression(value.ref);
     }
-    return [
-        lengthValueToCss(value.offsetX ?? 0),
-        lengthValueToCss(value.offsetY ?? 0),
-        lengthValueToCss(value.radius ?? 0),
-        lengthValueToCss(value.spread ?? 0),
-        colorValueToCss(value.color ?? { ref: 'foregroundColor' }),
-    ].join(' ');
+    if (Array.isArray(value)) {
+        return value.map(shadowValueParamsToCss).join(', ');
+    }
+    return shadowValueParamsToCss(value);
 };
 
 export const borderStyleValueToCss = literalToCSS;

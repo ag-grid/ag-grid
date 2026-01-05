@@ -11,6 +11,7 @@ import type {
     FilterHandlerBaseParams,
     FilterHandlerParams,
     FilterModel,
+    FilterWrapperParams,
     IFilterComp,
     IFilterParams,
 } from '../interfaces/iFilter';
@@ -138,29 +139,41 @@ export function _refreshFilterUi(
 export function getAndRefreshFilterUi(
     getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
     getModel: () => any,
-    getState: () => FilterDisplayState | undefined
+    getState: () => FilterDisplayState | undefined,
+    additionalEventAttributes?: any
 ): void {
     const filterUi = getFilterUi();
     if (filterUi?.created) {
         filterUi.promise.then((filter) => {
             const model = getModel();
-            _refreshFilterUi(filter, filterUi.filterParams, model, getState() ?? { model }, 'ui');
+            _refreshFilterUi(
+                filter,
+                filterUi.filterParams,
+                model,
+                getState() ?? { model },
+                'ui',
+                additionalEventAttributes
+            );
         });
     }
 }
 
-export function _updateFilterModel(
-    action: FilterAction,
-    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined,
-    getModel: () => any,
-    getState: () => FilterDisplayState | undefined,
-    updateState: (state: FilterDisplayState) => void,
-    updateModel: (model: any) => void,
-    processModelToApply?: (model: any) => any
-): void {
+export function _updateFilterModel(params: {
+    action: FilterAction;
+    filterParams?: FilterWrapperParams;
+    getFilterUi: () => FilterUi<FilterDisplayComp, FilterDisplayParams> | undefined;
+    getModel: () => any;
+    getState: () => FilterDisplayState | undefined;
+    updateState: (state: FilterDisplayState) => void;
+    updateModel: (model: any) => void;
+    processModelToApply?: (model: any) => any;
+}): void {
     let state: FilterDisplayState;
     let shouldUpdateModel = false;
     let model: any;
+
+    const { action, filterParams, getFilterUi, getModel, getState, updateState, updateModel, processModelToApply } =
+        params;
 
     switch (action) {
         case 'apply': {
@@ -182,6 +195,11 @@ export function _updateFilterModel(
                 // wipe other UI state
                 model: null,
             };
+            if (!filterParams?.buttons?.includes('apply')) {
+                // if no apply button, equivalent to reset
+                shouldUpdateModel = true;
+                model = null;
+            }
             break;
         }
         case 'reset': {
@@ -206,7 +224,7 @@ export function _updateFilterModel(
     if (shouldUpdateModel) {
         updateModel(model);
     } else {
-        getAndRefreshFilterUi(getFilterUi, getModel, getState);
+        getAndRefreshFilterUi(getFilterUi, getModel, getState, { fromAction: action });
     }
 }
 

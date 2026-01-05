@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_HK = {
     searchOoo: '搜索...',
     blanks: '(空白)',
     noMatches: '未找到匹配項',
+    typeToSearchOoo: '鍵入以搜尋...',
 
     // Number Filter & Text Filter
     filterOoo: '篩選...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_HK = {
     maxDateValidation: '日期必須在 ${variable} 之前',
     maxLengthValidation: '必須少於或等於 ${variable} 個字符。',
     minValueValidation: '必須大於或等於 ${variable}',
-    maxValueValidation: '必須小於或等於 ${variable}',
+    maxValueValidation: '必須小於或等於${variable}',
+    strictMinValueValidation: '必須大於${variable}',
+    strictMaxValueValidation: '必須小於${variable}',
     invalidSelectionValidation: '選擇無效。',
     tooltipValidationErrorSeparator: "。 '",
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_HK = {
     loadingOoo: '載入中...',
     loadingError: '錯誤',
     noRowsToShow: '沒有行顯示',
+    noMatchingRows: '無匹配的行',
+    exportingOoo: '正在匯出...',
     enabled: '已啟用',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_HK = {
     pinLeft: '固定到左邊',
     pinRight: '固定到右邊',
     noPin: '不固定',
+    pinRow: '固定行',
+    pinTop: '固定至頂部',
+    pinBottom: '固定至底部',
+    unpinRow: '取消固定行',
     valueAggregation: '值聚合',
     noAggregation: '無',
     autosizeThisColumn: '自動調整此列的寬度',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_HK = {
     chooseColumns: '選擇列',
     sortAscending: '升序排序',
     sortDescending: '降序排序',
+    sortAbsoluteAscending: '絕對升序排序',
+    sortAbsoluteDescending: '絕對降序排序',
     sortUnSort: '清除排序',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -552,6 +563,7 @@ export const AG_GRID_LOCALE_HK = {
     ariaChecked: '已選中',
     ariaColumn: '列',
     ariaColumnGroup: '列組',
+    ariaFilterActive: '篩選已啟用',
     ariaColumnFiltered: '列被篩選',
     ariaColumnSelectAll: '切換所有欄的可見性',
     ariaDateFilterInput: '日期篩選器輸入',
@@ -605,6 +617,8 @@ export const AG_GRID_LOCALE_HK = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' 的 ',
     ariaDropZoneColumnComponentSortAscending: '升序',
     ariaDropZoneColumnComponentSortDescending: '降序',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '「絕對升序」',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '「絕對降序」',
     ariaLabelDialog: '對話框',
     ariaLabelColumnMenu: '列選單',
     ariaLabelColumnFilter: '列篩選',

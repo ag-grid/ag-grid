@@ -50,9 +50,10 @@ const heroHeading = contactResultsData[type].heroHeading;
                         <h2 class={styles.heroTag}>{heroTag}</h2>
                         <h1 class={styles.heroHeading} set:html={heroHeading} />
                     </div>
+                    <!-- prettier-ignore -->
                     <p class={styles.heroDescription}>
-                        In the meantime, check out our resources and see why <b>AG Grid</b> and <b>AG Charts</b> are used
-                        by millions every day
+                        In the meantime, check out our resources and see why <b>AG Grid</b> and <b>AG Charts</b> are
+                        used by millions every day
                     </p>
                     <div class={styles.heroCustomerLogos}>
                         <CustomerLogos client:load />

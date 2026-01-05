@@ -1,5 +1,19 @@
-import type { IRowModel, IViewportDatasource, NamedBean, RowBounds, RowModelType } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
+import type {
+    IRowModel,
+    IViewportDatasource,
+    NamedBean,
+    OverlayType,
+    RowBounds,
+    RowModelType,
+} from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _addGridCommonParams,
+    _getRowHeightAsNumber,
+    _getRowIdCallback,
+    _warn,
+} from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -168,11 +182,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         if (!viewportDatasource.init) {
             _warn(226);
         } else {
-            viewportDatasource.init({
-                setRowCount: this.setRowCount.bind(this),
-                setRowData: this.setRowData.bind(this),
-                getRow: this.getRow.bind(this),
-            });
+            viewportDatasource.init(
+                _addGridCommonParams(this.gos, {
+                    setRowCount: this.setRowCount.bind(this),
+                    setRowData: this.setRowData.bind(this),
+                    getRow: this.getRow.bind(this),
+                })
+            );
         }
     }
 
@@ -212,8 +228,13 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
-    resetRowHeights() {}
-    onRowHeightChanged() {}
+    resetRowHeights() {
+        // not supported
+    }
+    /** Viewport row model does not support dynamic row heights by design and while it is possible to implement this feature, it leads to view-model desync due to data being not isotropic in time */
+    onRowHeightChanged() {
+        // not supported
+    }
 
     public getRowBounds(index: number): RowBounds {
         const rowHeight = this.rowHeight;
@@ -249,6 +270,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     public isEmpty(): boolean {
         return this.rowCount > 0;
+    }
+    public getOverlayType(): OverlayType | null {
+        // not supported for the viewport row model
+        return null;
     }
 
     public isRowsToRender(): boolean {

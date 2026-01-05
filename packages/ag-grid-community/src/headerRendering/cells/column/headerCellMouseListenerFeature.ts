@@ -1,6 +1,6 @@
 import { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
-import { _getSuppressColumnSelection } from '../../../gridOptionsUtils';
+import { _getEnableColumnSelection } from '../../../gridOptionsUtils';
 
 export class HeaderCellMouseListenerFeature extends BeanStub {
     private lastMovingChanged = 0;
@@ -25,19 +25,14 @@ export class HeaderCellMouseListenerFeature extends BeanStub {
     }
 
     public onClick(event: MouseEvent): void {
-        const { gos, editSvc, sortSvc, rangeSvc } = this.beans;
-        const suppressColumnSelection = _getSuppressColumnSelection(gos);
+        const { sortSvc, rangeSvc, gos } = this.beans;
+        // When column selection is enabled, we require users to use the ALT modifier
+        // to access sorting functionality.
+        const sortFromClick = _getEnableColumnSelection(gos) ? event.altKey : true;
 
-        const editingFormulas = gos.get('enableFormulas') && editSvc?.isEditing();
-        const usingModifierKey = event.ctrlKey || event.metaKey;
-
-        // When editing formulas, we don't require modifier keys to select columns (i.e. click selects the column)
-        // Otherwise, we require CTRL/CMD-click
-        const allowColumnSelection = !suppressColumnSelection && (editingFormulas || usingModifierKey);
-
-        if (allowColumnSelection) {
+        if (!sortFromClick) {
             rangeSvc?.handleColumnSelection(this.column, event);
-        } else {
+        } else if (this.column.isSortable()) {
             // sometimes when moving a column via dragging, this was also firing a clicked event.
             // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
             // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)

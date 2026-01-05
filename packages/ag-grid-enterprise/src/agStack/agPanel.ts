@@ -283,11 +283,11 @@ export class AgPanel<
         const eGui = button.getGui();
 
         if (position === 0) {
-            eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
+            eTitleBarButtons.prepend(eGui);
         } else if (position === len) {
-            eTitleBarButtons.insertAdjacentElement('beforeend', eGui);
+            eTitleBarButtons.append(eGui);
         } else {
-            buttons[position - 1].insertAdjacentElement('afterend', eGui);
+            buttons[position - 1].after(eGui);
         }
 
         button.setParentComponent(this);

@@ -109,10 +109,12 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
         }
 
         if (
-            editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true }) &&
-            event.type === 'cellFocused'
+            event.type == 'cellFocused' &&
+            (editSvc?.isRangeSelectionEnabledWhileEditing() ||
+                editSvc?.isEditing({ rowNode, column: curCol as AgColumn }, { withOpenEditor: true }))
         ) {
-            // editor is already active, so we don't need to do anything
+            // if editor is a formula selecting a range or if the
+            // editor is already active, we don't need to do anything
             return;
         }
 
@@ -215,7 +217,7 @@ export class SingleCellEditStrategy extends BaseEditStrategy {
             nextCell.focusCell(false, event);
             if (suppressStartEditOnTab) {
                 nextCell.focusCell(true, event);
-            } else if (!nextCell.editCompDetails) {
+            } else if (!nextCell.comp?.getCellEditor()) {
                 // Two possibilities:
                 // * Editor should be visible (but was destroyed due to column virtualisation)
                 //   = we shouldn't re-emit a startEdit event, so stay silent

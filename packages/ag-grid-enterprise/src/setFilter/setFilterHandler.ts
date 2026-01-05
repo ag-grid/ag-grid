@@ -18,7 +18,6 @@ import {
     _debounce,
     _error,
     _isClientSideRowModel,
-    _isTreeData,
     _last,
     _makeNull,
     _toStringOrNull,
@@ -71,12 +70,16 @@ export class SetFilterHandler<TValue = string>
                   )
               )
             : undefined;
-        this.valueModel = this.createManagedBean(
+        const valueModel = this.createManagedBean(
             new SetValueModel(clientSideValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
                 handlerParams: params,
                 usingComplexObjects: !!(params.filterParams.keyCreator ?? params.colDef.keyCreator),
             })
         );
+        this.addManagedListeners(valueModel, {
+            availableValuesChanged: params.onModelAsStringChange,
+        });
+        this.valueModel = valueModel;
 
         this.appliedModel = new SetFilterAppliedModel(this.caseFormat.bind(this));
 
@@ -107,7 +110,7 @@ export class SetFilterHandler<TValue = string>
         } = params;
         this.caseSensitive = !!caseSensitive;
         const isGroupCol = !!colDef.showRowGroup;
-        this.treeDataTreeList = _isTreeData(this.gos) && !!treeList && isGroupCol;
+        this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());

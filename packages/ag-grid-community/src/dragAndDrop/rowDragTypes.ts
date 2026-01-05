@@ -12,6 +12,8 @@ import type { DragItem } from '../interfaces/iDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { DragAndDropIcon, DragSourceType } from './dragAndDropService';
 
+export type RowDragVisibility = 'suppress' | 'visible' | 'hidden' | 'disabled';
+
 export type RowDropTargetPosition = 'above' | 'inside' | 'below' | 'none';
 
 export interface IsRowValidDropPositionResult<TData = any> {
@@ -114,6 +116,8 @@ export interface IsRowValidDropPositionParams<TData = any, TContext = any> exten
     overNode: IRowNode<TData> | undefined;
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
+    /** The pointer position relative to the current over node */
+    pointerPos: RowDropTargetPosition;
     /** The position of the rows relative to the target row */
     position: RowDropTargetPosition;
     /** The source row node that was dragged, if any */
@@ -138,8 +142,21 @@ export interface RowsDrop<TData = any, TContext = any>
     extends Omit<IsRowValidDropPositionParams<TData, TContext>, 'draggingEvent'> {
     /** The dragging event that originated this drop operation */
     draggingEvent: RowDraggingEvent<TData, TContext> | null;
+
+    /** True if the grid is using tree data mode. */
+    treeData: boolean;
+
     /** True if the drop target can be highlighted while moving, matching the `position` value. */
     highlight: boolean;
+
+    /** The vertical pixel offset relative to the target row */
+    yDelta: number;
+
+    /** True if the drop needs to happen as a child of the target node */
+    inside: boolean;
+
+    /** True when executing a managed drop and rows were moved */
+    droppedManaged: boolean;
 }
 
 // This is the external-facing version of `RowsDrop`

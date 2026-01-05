@@ -1,7 +1,7 @@
+import { _getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
-import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/mergeDeep';
 import { _errMsg, toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, RequiredModule, Validations } from '../validationTypes';
@@ -144,6 +144,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowClassRules: 'RowStyle',
     rowData: 'ClientSideRowModel',
     rowDragManaged: 'RowDrag',
+    refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
     rowSelection: 'SharedRowSelection',
@@ -155,7 +156,6 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
-    enableFormulas: 'Formula',
 };
 
 /**
@@ -426,11 +426,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const sortingOrder = _options.sortingOrder;
 
                 if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                    const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                    const invalidItems = sortingOrder.filter((a) => !_getSortDefFromInput(a));
                     if (invalidItems.length > 0) {
-                        return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                        return `sortingOrder must be an array of type (SortDirection | SortDef)[], incorrect items are: ${invalidItems.map(
+                            (item) =>
+                                typeof item === 'string' || item == null
+                                    ? toStringWithNullUndefined(item)
+                                    : JSON.stringify(item)
+                        )}]`;
                     }
-                } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                } else if (!Array.isArray(sortingOrder) || !sortingOrder.length) {
                     return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
                 }
                 return null;
@@ -544,40 +549,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 }
                 if (type === 'fitProvidedWidth' && typeof autoSizeStrategy.width != 'number') {
                     return `When using the 'fitProvidedWidth' auto-size strategy, must provide a numeric \`width\`. You provided ${autoSizeStrategy.width}`;
-                }
-                return null;
-            },
-        },
-        enableFormulas: {
-            supportedRowModels: ['clientSide'],
-            validate: (options) => {
-                const unsupported: (keyof GridOptions)[] = [
-                    'treeData', // no tree data
-                    'pivotMode', // no row grouping
-                    'masterDetail', // breaks row indices
-                    'grandTotalRow', // no aggregations
-                ];
-                const error = unsupported.find((key) => options[key]);
-                if (error) {
-                    return `${error} is not supported with enableFormulas.`;
-                }
-
-                const required: (keyof GridOptions)[] = ['getRowId'];
-                const req = required.find((key) => !options[key]);
-                if (req) {
-                    return `${req} is required when enableFormulas is true.`;
-                }
-
-                return null;
-            },
-        },
-        multiSortKey: {
-            validate: (options) => {
-                const suppressColumnSelection =
-                    (typeof options.cellSelection === 'object' && options.cellSelection.suppressColumnSelection) ??
-                    false;
-                if (options.multiSortKey === 'ctrl' && !suppressColumnSelection) {
-                    return 'Cannot set `multiSortKey = "ctrl" without also setting `cellSelection.suppressColumnSelection = true`. Column selection disabled';
                 }
                 return null;
             },

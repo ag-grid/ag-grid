@@ -57,6 +57,7 @@ const gridOptions: GridOptions = {
     rowData: getRowData(),
     pivotMode: true,
     groupDefaultExpanded: 1,
+    allowShowChangeAfterFilter: true,
     getRowId: (params: GetRowIdParams) => String(params.data.student),
     onGridReady: (params: GridReadyEvent) => {
         (document.getElementById('pivot-mode') as HTMLInputElement).checked = true;

@@ -78,6 +78,11 @@
             "isRequired": true
         }
     },
+    "ExcelSheetProtection": {
+        "meta": {
+            "description": "Configuration for worksheet protection, used by `ExcelExportParams.protectSheet`."
+        }
+    },
     "ExcelHeaderFooterImage": {
         "meta": {},
         "id": {

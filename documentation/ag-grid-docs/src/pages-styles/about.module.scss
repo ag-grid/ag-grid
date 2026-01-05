@@ -1124,3 +1124,16 @@
         color: var(--color-brand-700);
     }
 }
+
+.strongAddress {
+    color: var(--color-fg-primary);
+}
+
+.contactOffice svg {
+    width: 16px;
+    height: 16px;
+}
+
+.officeButton {
+    margin-top: $spacing-size-3;
+}

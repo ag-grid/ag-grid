@@ -22,7 +22,7 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
 export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends ReactComponent {
     private updateCallback?: () => AgPromise<void>;
     private resolveUpdateCallback!: () => void;
-    private awaitUpdateCallback = new AgPromise<void>((resolve) => {
+    private readonly awaitUpdateCallback = new AgPromise<void>((resolve) => {
         this.resolveUpdateCallback = resolve;
     });
 

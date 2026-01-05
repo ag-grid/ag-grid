@@ -1,5 +1,5 @@
 import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
-import { AllCommunityModule, createGrid } from 'ag-grid-community';
+import { AllCommunityModule, _doOnce, createGrid, getGridElement } from 'ag-grid-community';
 import { ServerSideRowModelApiModule } from 'ag-grid-enterprise';
 
 import { mockGridLayout } from './polyfills/mockGridLayout';
@@ -74,6 +74,7 @@ export class TestGridsManager {
      */
     public reset(): void {
         this.destroyAllGrids();
+        _doOnce._set.clear(); // Clear warnings and doOnce calls
     }
 
     public createGrid<TData = any>(
@@ -150,11 +151,13 @@ export class TestGridsManager {
         // Wait for the first data rendered event to ensure the grid is fully initialized
         await waitForEvent('firstDataRendered', api);
 
-        return Promise.resolve(api);
+        return api;
     }
 
     public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {
-        return (api && gridApiHtmlElementsMap.get(api)) ?? null;
+        return (api && gridApiHtmlElementsMap.get(api)) ?? api
+            ? (getGridElement(api) as HTMLElement | undefined) ?? null
+            : null;
     }
 
     public static registerHTMLElement(api: GridApi, element: HTMLElement) {

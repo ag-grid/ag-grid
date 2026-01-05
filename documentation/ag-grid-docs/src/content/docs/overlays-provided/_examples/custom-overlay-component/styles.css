@@ -1,0 +1,28 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+}
+
+label.checkbox {
+    display: inline-block;
+    user-select: none;
+    margin: 20px;
+}
+
+.fa-hourglass-half {
+    color: navy;
+    font-size: 18px;
+}
+
+.overlay-center {
+    background: var(--ag-background-color);
+    border: solid var(--ag-border-width) var(--ag-border-color);
+    border-radius: var(--ag-border-radius);
+    box-shadow: var(--ag-popup-shadow);
+    padding: var(--ag-spacing);
+}

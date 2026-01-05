@@ -310,7 +310,7 @@
         "cellRendererSelector": {
             "more": {
                 "name": "Many Renderers One Column",
-                "url": "./component-cell-renderer/#dynamic-component-selection"
+                "url": "./component-cell-renderer/#providing-custom-components-dynamically"
             }
         },
         "loadingCellRenderer": {
@@ -645,5 +645,15 @@
                 "url": "./find/#using-find-with-cell-components"
             }
         }
+    },
+    "formulas": {
+        "meta": {
+            "displayName": "Columns: Formulas",
+            "page": {
+                "name": "Formulas",
+                "url": "./formulas/"
+            }
+        },
+        "allowFormula": {}
     }
 }

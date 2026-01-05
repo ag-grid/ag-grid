@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_BG = {
     searchOoo: 'Търсене...',
     blanks: '(Празни)',
     noMatches: 'Няма съвпадения',
+    typeToSearchOoo: 'Въведете за търсене...',
 
     // Number Filter & Text Filter
     filterOoo: 'Филтър...',
@@ -160,6 +161,8 @@ export const AG_GRID_LOCALE_BG = {
     maxLengthValidation: 'Трябва да бъде ${variable} символа или по-малко.',
     minValueValidation: 'Трябва да бъде по-голямо или равно на ${variable}',
     maxValueValidation: 'Трябва да бъде по-малко или равно на ${variable}',
+    strictMinValueValidation: 'Трябва да бъде по-голямо от ${variable}',
+    strictMaxValueValidation: 'Трябва да бъде по-малко от ${variable}',
     invalidSelectionValidation: 'Невалиден избор.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_BG = {
     loadingOoo: 'Зареждане...',
     loadingError: 'ГРЕШКА',
     noRowsToShow: 'Няма редове за показване',
+    noMatchingRows: 'Няма съответстващи редове',
+    exportingOoo: 'Експортиране...',
     enabled: 'Активиран',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_BG = {
     pinLeft: 'Закрепване наляво',
     pinRight: 'Закрепване надясно',
     noPin: 'Без закрепване',
+    pinRow: 'Закрепи ред',
+    pinTop: 'Закрепи най-отгоре',
+    pinBottom: 'Закрепи най-отдолу',
+    unpinRow: 'Открепи ред',
     valueAggregation: 'Агрегиране на стойности',
     noAggregation: 'Няма',
     autosizeThisColumn: 'Автоматично оразмеряване на тази колона',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_BG = {
     chooseColumns: 'Изберете колони',
     sortAscending: 'Сортиране във възходящ ред',
     sortDescending: 'Сортиране в низходящ ред',
+    sortAbsoluteAscending: 'Абсолютно сортиране възходящо',
+    sortAbsoluteDescending: 'Абсолютно сортиране низходящо',
     sortUnSort: 'Изчистване на сортирането',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_BG = {
     ariaChecked: 'маркирано',
     ariaColumn: 'Колона',
     ariaColumnGroup: 'Група колони',
+    ariaFilterActive: 'Активен филтър',
     ariaColumnFiltered: 'Колоната е филтрирана',
     ariaColumnSelectAll: 'Превключване на видимостта на всички колони',
     ariaDateFilterInput: 'Вход за филтър по дата',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_BG = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' от ',
     ariaDropZoneColumnComponentSortAscending: 'възходящо',
     ariaDropZoneColumnComponentSortDescending: 'низходящо',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: '„абсолютно възходящо“',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: '„абсолютно низходящо“',
     ariaLabelDialog: 'Диалог',
     ariaLabelColumnMenu: 'Меню на колона',
     ariaLabelColumnFilter: 'Филтър на колона',
@@ -679,7 +693,7 @@ export const AG_GRID_LOCALE_BG = {
     timeFormatDotsDDMYY: 'ДД.М.ГГ',
     timeFormatDotsMDDYY: 'М.ДД.ГГ',
     timeFormatDashesYYYYMMDD: 'ГГГГ-ММ-ДД',
-    timeFormatSpacesDDMMMMYYYY: 'ДД МMMM ГГГГ',
+    timeFormatSpacesDDMMMMYYYY: 'ДД ММММ ГГГГ',
     timeFormatHHMMSS: 'ЧЧ:ММ:СС',
     timeFormatHHMMSSAmPm: 'ЧЧ:ММ:СС AM/PM',
 };

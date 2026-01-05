@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
         {
             headerName: 'Total',
             type: 'totalColumn',
-            // we use getValue() instead of data.a so that it gets the aggregated values at the group level
+            aggFunc: 'sum',
             valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")',
         },
     ],
@@ -67,13 +67,9 @@ const gridOptions: GridOptions = {
     rowData: getRowData(),
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
-    onCellValueChanged: onCellValueChanged,
+    allowShowChangeAfterFilter: true,
+    refreshAfterGroupEdit: true,
 };
-
-function onCellValueChanged(params: CellValueChangedEvent) {
-    const changedData = [params.data];
-    params.api.applyTransaction({ update: changedData });
-}
 
 function getRowData() {
     const rowData = [];

@@ -16,6 +16,7 @@ export const AG_GRID_LOCALE_IR = {
     searchOoo: 'جستجو...',
     blanks: '(خالی)',
     noMatches: 'موردی یافت نشد',
+    typeToSearchOoo: 'برای جستجو تایپ کنید...',
 
     // Number Filter & Text Filter
     filterOoo: 'فیلتر...',
@@ -159,7 +160,9 @@ export const AG_GRID_LOCALE_IR = {
     maxDateValidation: 'تاریخ باید قبل از ${variable} باشد',
     maxLengthValidation: 'باید ${variable} کاراکتر یا کمتر باشد.',
     minValueValidation: 'باید بیشتر یا مساوی با ${variable} باشد',
-    maxValueValidation: 'باید کمتر یا مساوی با ${variable} باشد',
+    maxValueValidation: 'باید کمتر یا مساوی ${variable} باشد',
+    strictMinValueValidation: 'باید بیشتر از ${variable} باشد',
+    strictMaxValueValidation: 'باید کمتر از ${variable} باشد',
     invalidSelectionValidation: 'انتخاب نامعتبر.',
     tooltipValidationErrorSeparator: '. ',
 
@@ -187,6 +190,8 @@ export const AG_GRID_LOCALE_IR = {
     loadingOoo: 'در حال بارگذاری...',
     loadingError: 'خطا',
     noRowsToShow: 'ردیفی برای نمایش وجود ندارد',
+    noMatchingRows: 'هیچ سطری تطابق ندارد',
+    exportingOoo: 'در حال صادر کردن...',
     enabled: 'فعال',
 
     // Menu
@@ -194,6 +199,10 @@ export const AG_GRID_LOCALE_IR = {
     pinLeft: 'سنجاق کردن به چپ',
     pinRight: 'سنجاق کردن به راست',
     noPin: 'بدون سنجاق',
+    pinRow: 'پین کردن سطر',
+    pinTop: 'پین کردن در بالا',
+    pinBottom: 'پین کردن در پایین',
+    unpinRow: 'برداشتن پین سطر',
     valueAggregation: 'تجمع ارزش',
     noAggregation: 'هیچ',
     autosizeThisColumn: 'اندازه خودکار این ستون',
@@ -224,6 +233,8 @@ export const AG_GRID_LOCALE_IR = {
     chooseColumns: 'انتخاب ستون‌ها',
     sortAscending: 'مرتب‌سازی صعودی',
     sortDescending: 'مرتب‌سازی نزولی',
+    sortAbsoluteAscending: 'مرتب‌سازی مطلق به صورت صعودی',
+    sortAbsoluteDescending: 'مرتب‌سازی مطلق به صورت نزولی',
     sortUnSort: 'پاک کردن مرتب‌سازی',
 
     // Enterprise Menu Aggregation and Status Bar
@@ -553,6 +564,7 @@ export const AG_GRID_LOCALE_IR = {
     ariaChecked: 'انتخاب شده',
     ariaColumn: 'ستون',
     ariaColumnGroup: 'گروه ستون',
+    ariaFilterActive: 'فیلتر فعال',
     ariaColumnFiltered: 'ستون فیلتر شده',
     ariaColumnSelectAll: 'تغییر وضعیت نمایش تمام ستون‌ها',
     ariaDateFilterInput: 'ورودی فیلتر تاریخ',
@@ -606,6 +618,8 @@ export const AG_GRID_LOCALE_IR = {
     ariaDropZoneColumnComponentAggFuncSeparator: ' از ',
     ariaDropZoneColumnComponentSortAscending: 'صعودی',
     ariaDropZoneColumnComponentSortDescending: 'نزولی',
+    ariaDropZoneColumnComponentSortAbsoluteAscending: 'صعودی مطلق',
+    ariaDropZoneColumnComponentSortAbsoluteDescending: 'نزولی مطلق',
     ariaLabelDialog: 'گفتگو',
     ariaLabelColumnMenu: 'منوی ستون',
     ariaLabelColumnFilter: 'فیلتر ستون',
@@ -680,5 +694,5 @@ export const AG_GRID_LOCALE_IR = {
     timeFormatDashesYYYYMMDD: 'سال-ماه-روز',
     timeFormatSpacesDDMMMMYYYY: 'روز ماه سال',
     timeFormatHHMMSS: 'ساعت:دقیقه:ثانیه',
-    timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه قبل/بعد از ظهر',
+    timeFormatHHMMSSAmPm: 'ساعت:دقیقه:ثانیه ق.ظ/ب.ظ',
 };

@@ -43,6 +43,7 @@ import type {
     GetCellEditorInstancesParams,
     ICellEditor,
     ICellEditorValidationError,
+    StartEditingCellParams,
 } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
@@ -63,41 +64,13 @@ import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
+import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { StructuredSchemaParams } from '../interfaces/structuredSchemaParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
-
-export interface DetailGridInfo {
-    /**
-     * Id of the detail grid, the format is `detail_{ROW-ID}`,
-     * where `ROW-ID` is the `id` of the parent row.
-     */
-    id: string;
-    /** Grid api of the detail grid. */
-    api?: GridApi;
-}
-
-export interface StartEditingCellParams {
-    /** The row index of the row to start editing */
-    rowIndex: number;
-    /** The column key of the row to start editing */
-    colKey: string | Column;
-    /** Set to `'top'` or `'bottom'` to start editing a pinned row */
-    rowPinned?: RowPinnedType;
-    /** The key to pass to the cell editor */
-    key?: string;
-}
-
-export interface GetCellValueParams<TValue = any> {
-    /** The row node to get the value from */
-    rowNode: IRowNode;
-    /** The column to get the value from */
-    colKey: string | Column<TValue>;
-    /** If `true` formatted value will be returned. */
-    useFormatter?: boolean;
-}
+import type { GetCellValueParams } from '../valueService/cellApi';
 
 export interface _CoreGridApi<TData = any> {
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
@@ -210,14 +183,22 @@ export interface _RowSelectionGridApi<TData = any> {
 export interface _OverlayGridApi {
     /**
      * Show the 'loading' overlay.
-     * @deprecated v32 `showLoadingOverlay` is deprecated. Use the grid option "loading"=true instead or setGridOption("loading", true).
+     * @deprecated v32 `showLoadingOverlay` is deprecated. Use the grid option "loading"=true or setGridOption("loading", true) instead.
      */
     showLoadingOverlay(): void;
 
-    /** Show the no-rows overlay. If `suppressNoRowsOverlay` is set, or if `loading` is true, this will not do anything. */
+    /**
+     * Show the no-rows overlay. If `loading` is true, this will not do anything.
+     *
+     *  - **Prefer  `setGridOption('activeOverlay', 'agNoRowsOverlay')` .**
+     */
     showNoRowsOverlay(): void;
 
-    /** Hide the no-rows overlay if it is showing. */
+    /**
+     * Hide the no-rows overlay if it is showing.
+     *
+     * - **Prefer  `setGridOption('activeOverlay', undefined)` .**
+     */
     hideOverlay(): void;
 }
 
@@ -1838,7 +1819,9 @@ export interface _AdvancedFilterGridApi {
     getAdvancedFilterModel(): AdvancedFilterModel | null;
 
     /**
-     * Set the state of the Advanced Filter. Used for restoring Advanced Filter state
+     * Set the state of the Advanced Filter or used for restoring Advanced Filter state.
+     * If inferring cell data types, and row data is initially empty or yet to be set, the filter model will be applied asynchronously after row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition, or provide cell data types for every column.
      * @agModule `AdvancedFilterModule`
      */
     setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void;

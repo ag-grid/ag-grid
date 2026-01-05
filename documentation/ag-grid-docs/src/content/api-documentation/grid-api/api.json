@@ -469,7 +469,7 @@
     },
     "batch-editing": {
         "meta": {
-            "displayName": "Batch Editing",
+            "displayName": "Editing: Batch",
             "page": {
                 "name": "Batch Editing",
                 "url": "./cell-editing-batch/"
@@ -520,7 +520,19 @@
                 "url": "./cell-editing-start-stop/#editing-api"
             }
         },
+        "isEditing": {
+            "more": {
+                "name": "Editing API",
+                "url": "./cell-editing-start-stop/#editing-api"
+            }
+        },
         "getEditingCells": {
+            "more": {
+                "name": "Editing API",
+                "url": "./cell-editing-start-stop/#editing-api"
+            }
+        },
+        "getEditRowValues": {
             "more": {
                 "name": "Editing API",
                 "url": "./cell-editing-start-stop/#editing-api"
@@ -749,7 +761,12 @@
             }
         },
         "getSizesForCurrentTheme": {},
-
+        "resetRowHeights": {
+            "more": {
+                "name": "Changing Row Height",
+                "url": "./row-height/#changing-row-height"
+            }
+        },
         "onRowHeightChanged": {
             "more": {
                 "name": "Changing Row Height",
@@ -804,8 +821,18 @@
                 "url": "./overlays/"
             }
         },
-        "showNoRowsOverlay": {},
-        "hideOverlay": {}
+        "showNoRowsOverlay": {
+            "page": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        },
+        "hideOverlay": {
+            "page": {
+                "name": "Active Overlay",
+                "url": "./overlays-active/"
+            }
+        }
     },
     "clipboard": {
         "meta": {

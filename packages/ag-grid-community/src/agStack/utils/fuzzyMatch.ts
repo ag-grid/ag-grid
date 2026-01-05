@@ -46,61 +46,99 @@ export function _fuzzySuggestions(params: {
 /**
  * This uses Levenshtein Distance to match strings.
  * Lower values mean more similar strings.
+ *
+ * This function is often being called, so it must be performant.
+ * {@link|https://github.com/ag-grid/ag-grid/issues/12473}
  */
-export function _getLevenshteinSimilarityDistance(inputText: string, suggestion: string): number {
-    // Always use the shorter string for columns to reduce space
-    if (inputText.length < suggestion.length) {
-        [inputText, suggestion] = [suggestion, inputText];
+export function _getLevenshteinSimilarityDistance(source: string, target: string): number {
+    const sourceLength = source.length;
+    const targetLength = target.length;
+
+    if (targetLength === 0) {
+        return sourceLength ? sourceLength : 0;
     }
 
-    let previousRow: number[] = [];
-    let currentRow: number[] = [];
+    let inputLower = source.toLocaleLowerCase();
+    let targetLower = target.toLocaleLowerCase();
+    let swapTmp;
 
-    const sourceLength = inputText.length;
-    const targetLength = suggestion.length;
+    // Always use the shorter string for columns to reduce space
+    if (source.length < target.length) {
+        swapTmp = targetLower;
+        targetLower = inputLower;
+        inputLower = swapTmp;
+        swapTmp = target;
+        target = source;
+        source = swapTmp;
+    }
 
-    // Initialize previousRow with 0..targetLength
+    // Typed arrays → faster and avoid realloc
+    let previousRow = new Uint16Array(targetLength + 1);
+    let currentRow = new Uint16Array(targetLength + 1);
+
+    // Initialize first row
     for (let j = 0; j <= targetLength; j++) {
         previousRow[j] = j;
     }
 
     let secondaryScore = 0;
 
+    const earlyMatchLimit = sourceLength / 2 - 10;
+
     for (let i = 1; i <= sourceLength; i++) {
+        const inputChar = source[i - 1];
+        const inputCharLower = inputLower[i - 1];
+
         currentRow[0] = i;
 
         for (let j = 1; j <= targetLength; j++) {
-            const sourceChar = inputText[i - 1];
-            const targetChar = suggestion[j - 1];
+            const targetChar = target[j - 1];
+            const targetCharLower = targetLower[j - 1];
 
-            if (sourceChar.toLocaleLowerCase() === targetChar.toLocaleLowerCase()) {
-                ++secondaryScore; // Favor case-insensitive matches;
-                if (sourceChar === targetChar) {
-                    ++secondaryScore; // Favor exact matches
-                }
-                if (i > 1 && j > 1) {
-                    if (inputText[i - 2].toLocaleLowerCase() === suggestion[j - 2].toLocaleLowerCase()) {
-                        ++secondaryScore; // Favor case-insensitive consecutive matches
-                        if (inputText[i - 2] === suggestion[j - 2]) {
-                            ++secondaryScore; // Favor case-sensitive consecutive matches
-                        }
-                    }
-                }
-                if (i < sourceLength / 2 - 10) {
-                    ++secondaryScore;
-                } // Favor matches at the start of the string
-                currentRow[j] = previousRow[j - 1]; // No cost
-            } else {
+            // Fast mismatch branch (most common)
+            if (inputCharLower !== targetCharLower) {
                 const insertCost = currentRow[j - 1];
                 const deleteCost = previousRow[j];
                 const replaceCost = previousRow[j - 1];
 
-                currentRow[j] = 1 + Math.min(insertCost, deleteCost, replaceCost);
+                let cost = insertCost < deleteCost ? insertCost : deleteCost;
+                if (replaceCost < cost) {
+                    cost = replaceCost;
+                }
+
+                currentRow[j] = (cost + 1) | 0;
+                continue;
             }
+
+            secondaryScore++; // Favor case-insensitive matches;
+            if (inputChar === targetChar) {
+                secondaryScore++; // Favor exact matches
+            }
+
+            if (i > 1 && j > 1) {
+                const prevSourceChar = source[i - 2];
+                const prevSourceCharLower = inputLower[i - 2];
+                const prevTargetChar = target[j - 2];
+                const prevTargetCharLower = targetLower[j - 2];
+
+                if (prevSourceCharLower === prevTargetCharLower) {
+                    secondaryScore++; // Favor case-insensitive consecutive matches
+                    if (prevSourceChar === prevTargetChar) {
+                        secondaryScore++; // Favor case-sensitive consecutive matches
+                    }
+                }
+            }
+
+            if (i < earlyMatchLimit) {
+                secondaryScore++; // Favor matches at the start of the string
+            }
+
+            currentRow[j] = previousRow[j - 1]; // No cost
         }
 
-        // Swap rows for next iteration
-        [previousRow, currentRow] = [currentRow, previousRow];
+        swapTmp = previousRow;
+        previousRow = currentRow;
+        currentRow = swapTmp;
     }
 
     return previousRow[targetLength] / (secondaryScore + 1); // negatives divided by positives, ensure no division by zero

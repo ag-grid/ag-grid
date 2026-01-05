@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public changeEventsDispatching = false;
 
     public postConstruct(): void {
-        this.pivotMode = this.gos.get('pivotMode') && !this.gos.get('enableFormulas');
+        this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
             [
@@ -129,15 +129,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // so that any groupable date columns exist beforehand.
         this.createColumnsForService([groupHierarchyColSvc], this.colDefCols, source);
 
-        if (!this.gos.get('enableFormulas')) {
-            rowGroupColsSvc?.extractCols(source, oldCols);
-            pivotColsSvc?.extractCols(source, oldCols);
-            valueColsSvc?.extractCols(source, oldCols);
-        }
+        rowGroupColsSvc?.extractCols(source, oldCols);
+        pivotColsSvc?.extractCols(source, oldCols);
+        valueColsSvc?.extractCols(source, oldCols);
 
         this.ready = true;
 
+        this.changeEventsDispatching = true;
         this.refreshCols(true, source);
+        this.changeEventsDispatching = false;
 
         visibleCols.refresh(source);
 
@@ -191,9 +191,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
             visibleCols,
             colViewport,
             eventSvc,
+            formula,
         } = this.beans;
 
         const cols = this.selectCols(pivotResultCols, this.colDefCols);
+        // we need to initialise the formula service before
+        // attempting to create the column services as currently
+        // the rowNumbers will automatically activate with formulas
+        formula?.setFormulasActive(cols);
 
         this.createColumnsForService([autoColSvc, selectionColSvc, rowNumbersSvc], cols, source);
 
@@ -216,8 +221,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         visibleCols.clear();
         colViewport.clear();
 
-        const dispatchChangedEvent = !_areEqual(prevColTree, this.cols!.tree);
-        if (dispatchChangedEvent) {
+        if (!_areEqual(prevColTree, this.cols!.tree)) {
             eventSvc.dispatchEvent({
                 type: 'gridColumnsChanged',
             });
@@ -279,14 +283,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on and possibly the selection/row numbers column
+        const { beans, showingPivotResult, cols } = this;
 
-        const { valueColsSvc, selectionColSvc, gos } = this.beans;
-        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
+        const { valueColsSvc, selectionColSvc } = beans;
+        const showAutoGroupAndValuesOnly = this.isPivotMode() && !showingPivotResult;
         const showSelectionColumn = selectionColSvc?.isSelectionColumnEnabled();
-        const showRowNumbers = _isRowNumbers(gos);
+        const showRowNumbers = _isRowNumbers(beans);
         const valueColumns = valueColsSvc?.columns;
 
-        const res = this.cols.list.filter((col) => {
+        const res = cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
                 const isValueCol = valueColumns?.includes(col);
@@ -535,11 +540,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
-        if (this.gos.get('enableFormulas')) {
-            this.pivotMode = false;
-            return;
-        }
-
         if (pivotMode === this.pivotMode) {
             return;
         }
@@ -610,13 +610,26 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.cols?.list ?? [];
     }
 
-    public forAllCols(callback: (column: AgColumn) => void): void {
+    /**
+     * If callback returns true, exit early.
+     */
+    public forAllCols(callback: (column: AgColumn) => boolean | void): void {
         const { pivotResultCols, autoColSvc, selectionColSvc, groupHierarchyColSvc } = this.beans;
-        _forAll(this.colDefCols?.list, callback);
-        _forAll(autoColSvc?.columns?.list, callback);
-        _forAll(selectionColSvc?.columns?.list, callback);
-        _forAll(groupHierarchyColSvc?.columns?.list, callback);
-        _forAll(pivotResultCols?.getPivotResultCols()?.list, callback);
+        if (_forAll(this.colDefCols?.list, callback)) {
+            return;
+        }
+        if (_forAll(autoColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(selectionColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(groupHierarchyColSvc?.columns?.list, callback)) {
+            return;
+        }
+        if (_forAll(pivotResultCols?.getPivotResultCols()?.list, callback)) {
+            return;
+        }
     }
 
     public getColsForKeys(keys: ColKey[]): AgColumn[] {

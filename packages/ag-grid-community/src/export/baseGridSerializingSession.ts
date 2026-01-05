@@ -3,7 +3,7 @@ import type { ColumnNameService } from '../columns/columnNameService';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _addGridCommonParams, _isFullWidthGroupRow, _isTreeData } from '../gridOptionsUtils';
+import { _addGridCommonParams, _isFullWidthGroupRow } from '../gridOptionsUtils';
 import type {
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -67,18 +67,20 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return value ?? '';
     }
 
-    public extractRowCellValue(
-        column: AgColumn,
-        currentColumnIndex: number,
-        accumulatedRowIndex: number,
-        type: string,
-        node: RowNode
-    ): { value: any; valueFormatted?: string | null } {
+    public extractRowCellValue(params: {
+        column: AgColumn;
+        node: RowNode;
+        currentColumnIndex: number;
+        accumulatedRowIndex: number;
+        type: string;
+        useRawFormula: boolean;
+    }): { value: any; valueFormatted?: string | null } {
+        const { column, node, currentColumnIndex, accumulatedRowIndex, type, useRawFormula } = params;
         const isFullWidthGroup =
             currentColumnIndex === 0 && _isFullWidthGroupRow(this.gos, node, this.colModel.isPivotMode());
         if (
             this.processRowGroupCallback &&
-            (_isTreeData(this.gos) || node.group) &&
+            (this.gos.get('treeData') || node.group) &&
             (column.isRowGroupDisplayed(node.rowGroupColumn?.getColId() ?? '') || isFullWidthGroup)
         ) {
             return { value: this.processRowGroupCallback(_addGridCommonParams(this.gos, { column, node })) ?? '' };
@@ -92,7 +94,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             accumulatedRowIndex,
                             column,
                             node,
-                            value: this.valueSvc.getValueForDisplay(column, node, undefined, undefined).value,
+                            value: this.valueSvc.getValueForDisplay({ column, node }).value,
                             type,
                             parseValue: (valueToParse: string) =>
                                 this.valueSvc.parseValue(
@@ -108,7 +110,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const isTreeData = _isTreeData(this.gos);
+        const isTreeData = this.gos.get('treeData');
         const valueService = this.valueSvc;
 
         const isGrandTotalRow = node.level === -1 && node.footer;
@@ -118,12 +120,12 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             let concatenatedGroupValue: string = '';
             let pointer: RowNode | null = node;
             while (pointer && pointer.level !== -1) {
-                const { value, valueFormatted } = valueService.getValueForDisplay(
-                    isFullWidthGroup ? undefined : column, // full width group doesn't have a column
-                    pointer,
-                    true,
-                    true
-                );
+                const { value, valueFormatted } = valueService.getValueForDisplay({
+                    column: isFullWidthGroup ? undefined : column, // full width group doesn't have a column
+                    node: pointer,
+                    includeValueFormatted: true,
+                    exporting: true,
+                });
                 concatenatedGroupValue = ` -> ${valueFormatted ?? value ?? ''}${concatenatedGroupValue}`;
                 pointer = pointer.parent;
             }
@@ -134,7 +136,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             };
         }
 
-        const { value, valueFormatted } = valueService.getValueForDisplay(column, node, true, true);
+        const { value, valueFormatted } = valueService.getValueForDisplay({
+            column,
+            node,
+            includeValueFormatted: true,
+            exporting: true,
+            useRawFormula,
+        });
         return {
             value: value ?? '',
             valueFormatted,

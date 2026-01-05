@@ -28,7 +28,7 @@ export const TEST_ID_REGEX = getSnippetRegex({ startDelimiter: TEST_ID_START, en
 export function getSnippetRegex({ startDelimiter, endDelimiter }: { startDelimiter: string; endDelimiter: string }) {
     const escapedStart = startDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const escapedEnd = endDelimiter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`\\s*${escapedStart}[\\s\\S]*?${escapedEnd}\\s*`, 'g');
+    const regex = new RegExp(`\\s*${escapedStart}[\\s\\S]*?${escapedEnd} *`, 'g');
 
     return regex;
 }

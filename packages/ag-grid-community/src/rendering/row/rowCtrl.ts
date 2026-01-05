@@ -39,9 +39,7 @@ import {
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
-    _isMasterDetail,
     _isRowSelection,
-    _isTreeData,
     _setDomData,
 } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
@@ -456,7 +454,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const isStub =
             rowNode.stub && !gos.get('suppressServerSideFullWidthLoadingRow') && !gos.get('groupHideOpenParents');
         const isFullWidthCell = this.isNodeFullWidthCell();
-        const isDetailCell = _isMasterDetail(gos) && rowNode.detail;
+        const isDetailCell = gos.get('masterDetail') && rowNode.detail;
         const pivotMode = colModel.isPivotMode();
         const isFullWidthGroup = _isFullWidthGroupRow(gos, rowNode, pivotMode);
 
@@ -950,18 +948,20 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const aboveOn = highlighted === 'above';
         const insideOn = highlighted === 'inside';
         const belowOn = highlighted === 'below';
-        const treeData = _isTreeData(this.gos);
-        const indented = treeData && (belowOn || aboveOn);
-        const uiLevel = this.rowNode.uiLevel.toString();
+        const highlightActive = highlighted !== 'none';
+        const dropEdge = aboveOn || belowOn;
+        const uiLevel = this.rowNode.uiLevel;
+        const shouldIndent = dropEdge && uiLevel > 0;
+        const highlightLevel = shouldIndent ? uiLevel.toString() : '0';
 
         for (const gui of this.allRowGuis) {
             const rowComp = gui.rowComp;
             rowComp.toggleCss('ag-row-highlight-above', aboveOn);
             rowComp.toggleCss('ag-row-highlight-inside', insideOn);
             rowComp.toggleCss('ag-row-highlight-below', belowOn);
-            rowComp.toggleCss('ag-row-highlight-indent', indented);
-            if (indented) {
-                gui.element.style.setProperty('--ag-row-highlight-level', uiLevel);
+            rowComp.toggleCss('ag-row-highlight-indent', shouldIndent);
+            if (highlightActive) {
+                gui.element.style.setProperty('--ag-row-highlight-level', highlightLevel);
             } else {
                 gui.element.style.removeProperty('--ag-row-highlight-level');
             }
@@ -1317,7 +1317,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params)!;
             case 'FullWidthGroup': {
-                const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(undefined, this.rowNode, true);
+                const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay({
+                    node: this.rowNode,
+                    includeValueFormatted: true,
+                });
                 params.value = value;
                 params.valueFormatted = valueFormatted;
                 return _getFullWidthGroupCellRendererDetails(compFactory, params)!;

@@ -72,6 +72,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     private readonly eSortDesc?: HTMLElement = RefPlaceholder;
     private readonly eSortMixed?: HTMLElement = RefPlaceholder;
     private readonly eSortNone?: HTMLElement = RefPlaceholder;
+    private readonly eSortAbsoluteAsc?: HTMLElement = RefPlaceholder;
+    private readonly eSortAbsoluteDesc?: HTMLElement = RefPlaceholder;
 
     public params: IHeaderParams;
 
@@ -118,14 +120,13 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(params: IHeaderParams, isSorting: boolean): string | ElementParams {
+        const { formula } = this.beans;
         const paramsTemplate = params.template;
         if (paramsTemplate) {
             // take account of any newlines & whitespace before/after the actual template
             return paramsTemplate?.trim ? paramsTemplate.trim() : paramsTemplate;
-        } else {
-            const isFormulas = this.beans.gos.get('enableFormulas');
-            return getHeaderCompElementParams(isFormulas, isSorting);
         }
+        return getHeaderCompElementParams(!!formula?.active, isSorting);
     }
 
     public init(params: IHeaderParams): void {
@@ -282,8 +283,25 @@ export class HeaderComp extends Component implements IHeaderComp {
         // manually create eSortIndicator.
         if (!this.eSortIndicator) {
             this.eSortIndicator = this.createBean(sortSvc.createSortIndicator(true));
-            const { eSortIndicator, eSortOrder, eSortAsc, eSortDesc, eSortMixed, eSortNone } = this;
-            eSortIndicator.attachCustomElements(eSortOrder, eSortAsc, eSortDesc, eSortMixed, eSortNone);
+            const {
+                eSortIndicator,
+                eSortOrder,
+                eSortAsc,
+                eSortDesc,
+                eSortMixed,
+                eSortNone,
+                eSortAbsoluteAsc,
+                eSortAbsoluteDesc,
+            } = this;
+            eSortIndicator.attachCustomElements(
+                eSortOrder,
+                eSortAsc,
+                eSortDesc,
+                eSortMixed,
+                eSortNone,
+                eSortAbsoluteAsc,
+                eSortAbsoluteDesc
+            );
         }
         this.eSortIndicator.setupSort(column as AgColumn);
 
@@ -298,13 +316,28 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupColumnRefIndicator(): void {
-        const { eColRef, params } = this;
+        const {
+            eColRef,
+            beans: { editModelSvc },
+            params,
+        } = this;
         if (!eColRef) {
             return;
         }
         this.currentRef = (params.column as AgColumn).formulaRef;
         eColRef.textContent = this.currentRef;
-        _setDisplayed(eColRef, !!this.currentRef);
+        _setDisplayed(eColRef, false);
+        this.addManagedEventListeners({
+            cellEditingStarted: () => {
+                const editPositions = editModelSvc?.getEditPositions();
+                const shouldDisplay =
+                    !!this.currentRef && !!editPositions?.some((position) => position.column.isAllowFormula());
+                _setDisplayed(eColRef, shouldDisplay);
+            },
+            cellEditingStopped: () => {
+                _setDisplayed(eColRef, false);
+            },
+        });
     }
 
     private setupFilterIcon(): void {

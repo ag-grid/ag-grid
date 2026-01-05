@@ -8,6 +8,7 @@ import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefi
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
@@ -78,6 +79,12 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                     {licenseData.map((license, i) => {
                         const isCommunity = license.id === 'community';
+                        const ctaId =
+                            license.id === 'community'
+                                ? 'get-started'
+                                : license.id.includes('enterprise')
+                                  ? 'buy-now'
+                                  : 'bundle-buy-now';
 
                         return (
                             <div className={styles.fullWidthBarItem} key={i}>
@@ -96,6 +103,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                                     </span>
 
                                     <a
+                                        id={ctaId}
                                         className={classnames(
                                             styles.fwAction,
                                             isCommunity ? 'button-tertiary' : 'button'
@@ -172,7 +180,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </div>
                         <div ref={contactSalesRef} className={styles.salesForm}>
                             <div className={styles.salesFormCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3 className="text-2xl">
                                     <span>Contact Our Sales Team</span>
                                 </h3>
 
@@ -199,21 +207,25 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.trialLicence}>
                             <div className={styles.trialLicenceCopy}>
-                                <h3 className="text-2xl" id="request-trial-licence">
+                                <h3
+                                    className={classnames(styles.trialLicenceHeader, 'text-2xl')}
+                                    id="request-trial-licence"
+                                >
                                     <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />
-                                    <span>Enterprise Bundle Trial</span>
+                                    <p style={{ maxWidth: '16ch' }}>Start Your 30-Day Enterprise Bundle Trial</p>
                                 </h3>
 
-                                <p>
-                                    See the differences between our community and enterprise versions and request a
-                                    trial license
+                                <p style={{ maxWidth: '48ch' }}>
+                                    Explore the full enterprise capabilities of AG Grid and AG Charts with a free 30-day
+                                    trial licence — no restrictions, no watermarks.
                                 </p>
 
                                 <a
+                                    id="request-trial-licence"
                                     className={classnames('button', styles.trialButton)}
-                                    href={gridUrlWithPrefix({
+                                    href={urlWithPrefix({
                                         framework,
-                                        url: './community-vs-enterprise/#request-an-enterprise-bundle-trial-licence',
+                                        url: './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence',
                                     })}
                                 >
                                     Get a trial license
@@ -224,36 +236,36 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                             <div className={classnames(styles.trialLicenceCopy, 'trial-licence-form')}>
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="alarm" svgClasses={styles.alarmIcon} />
+                                    <Icon name="pricingFeatures" />
                                     <p>
-                                        <b>Two Week Trial</b>
+                                        <b>Full enterprise features</b>
                                         <br />
-                                        Trial licences are valid for two weeks from the date of issue, or{' '}
-                                        <a href="mailto:info@ag-grid.com">contact&nbsp;us</a> to extend.
+                                        Access all advanced grid and charts features without console warnings or
+                                        watermarks.
                                     </p>
                                 </div>
 
                                 <div className={styles.trialLicenceSeparator}></div>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="terminal" svgClasses={styles.terminalIcon} />
+                                    <Icon name="alarm" />
                                     <p>
-                                        <b>Suppresses Console Warnings</b>
+                                        <b>30 days of access</b>
                                         <br />
-                                        Removes console errors and watermarks from AG Grid and
-                                        AG&nbsp;Chart&nbsp;components.
+                                        Enough time to evaluate integration, performance, and fit.
                                     </p>
                                 </div>
 
                                 <div className={styles.trialLicenceSeparator}></div>
 
                                 <div className={styles.trialLicenceCopyItem}>
-                                    <Icon name="support" svgClasses={styles.supportIcon} />
+                                    <Icon name="support" />
                                     <p>
-                                        <b>Access Support</b>
+                                        <b>Engineering support</b>
                                         <br />
-                                        Access dedicated support from our engineering team via{' '}
-                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a>.
+                                        Get direct assistance from our developers via{' '}
+                                        <a href="https://ag-grid.zendesk.com/hc/en-us">Zendesk</a> throughout your
+                                        trial.
                                     </p>
                                 </div>
                             </div>
@@ -264,11 +276,17 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <p>
                                 Read our documentation on{' '}
                                 {defaultSelection === 'grid' ? (
-                                    <a href={gridUrlWithPrefix({ framework, url: './license-install' })}>
+                                    <a
+                                        id="licence-install-cta"
+                                        href={gridUrlWithPrefix({ framework, url: './license-install' })}
+                                    >
                                         Installing Your Licence Key
                                     </a>
                                 ) : (
-                                    <a href={chartsUrlWithPrefix({ framework, url: './license-install' })}>
+                                    <a
+                                        id="licence-install-cta"
+                                        href={chartsUrlWithPrefix({ framework, url: './license-install' })}
+                                    >
                                         Installing Your Licence Key
                                     </a>
                                 )}
@@ -278,6 +296,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
                         <div className={styles.videoPrompt}>
                             <a
+                                id="licence-explainer-video-thumbnail"
                                 href="https://www.youtube.com/watch?v=VPr__OKxH50"
                                 target="_blank"
                                 className={styles.thumbnail}
@@ -291,7 +310,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             <div>
                                 <h3>Which licences do I need?</h3>
                                 <p>
-                                    <a href="https://www.youtube.com/watch?v=VPr__OKxH50" target="_blank">
+                                    <a
+                                        id="licence-explainer-video-text"
+                                        href="https://www.youtube.com/watch?v=VPr__OKxH50"
+                                        target="_blank"
+                                    >
                                         <span className="icon"></span>
                                         Watch our short explainer video
                                     </a>

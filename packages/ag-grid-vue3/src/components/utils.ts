@@ -2,54 +2,63 @@
 // @START_IMPORTS@
 import type {
     AlignedGrid,
+    AlwaysPassFilter,
+    AutoGroupColumnDef,
     AutoSizeStrategy,
-    CellPosition,
     CellSelectionOptions,
-    ChartRefParams,
     ChartToolPanelsDef,
     ColDef,
     ColGroupDef,
-    ColTypeDef,
-    Column,
-    CreateFilterHandlerFunc,
+    ColTypeDefs,
+    Components,
+    CreateChartContainer,
     CsvExportParams,
-    DataTypeDefinition,
+    CustomChartThemes,
+    DataTypeDefinitions,
     DefaultChartMenuItem,
+    DoesExternalFilterPass,
     DomLayoutType,
     EditStrategyType,
     EditValidationCommitType,
     ExcelExportParams,
     ExcelStyle,
-    FillOperationParams,
+    FillOperation,
+    FilterHandlers,
     FindOptions,
-    FocusGridInnerElementParams,
-    FormulaFunctionParams,
+    FocusGridInnerElement,
+    FormulaDataSource,
+    FormulaFuncs,
+    GetBusinessKeyForNode,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetChildCount,
     GetContextMenuItems,
     GetDataPath,
+    GetDocument,
     GetFullRowEditValidationErrors,
-    GetGroupRowAggParams,
-    GetLocaleTextParams,
+    GetGroupRowAgg,
+    GetLocaleText,
     GetMainMenuItems,
+    GetRowClass,
+    GetRowHeight,
     GetRowIdFunc,
+    GetRowStyle,
     GetServerSideGroupKey,
-    GetServerSideGroupLevelParamsParams,
+    GetServerSideGroupLevelParams,
     GridState,
-    HeaderPosition,
+    GroupHierarchyConfig,
     IAdvancedFilterBuilderParams,
     IAdvancedFilterParams,
-    IAggFunc,
+    IAggFuncs,
     IDatasource,
-    IRowDragItem,
-    IRowNode,
     IServerSideDatasource,
     IViewportDatasource,
-    InitialGroupOrderComparatorParams,
+    Icons,
+    InitialGroupOrderComparator,
     IsApplyServerSideTransaction,
-    IsExternalFilterPresentParams,
-    IsFullWidthRowParams,
-    IsGroupOpenByDefaultParams,
+    IsExternalFilterPresent,
+    IsFullWidthRow,
+    IsGroupOpenByDefault,
     IsRowFilterable,
     IsRowMaster,
     IsRowPinnable,
@@ -57,36 +66,42 @@ import type {
     IsRowSelectable,
     IsRowValidDropPositionCallback,
     IsServerSideGroup,
-    IsServerSideGroupOpenByDefaultParams,
+    IsServerSideGroupOpenByDefault,
     LoadingCellRendererSelectorFunc,
+    LocaleText,
     MenuItemDef,
-    NavigateToNextCellParams,
-    NavigateToNextHeaderParams,
-    PaginationNumberFormatterParams,
-    PostProcessPopupParams,
-    PostSortRowsParams,
-    ProcessCellForExportParams,
-    ProcessDataFromClipboardParams,
-    ProcessGroupHeaderForExportParams,
-    ProcessHeaderForExportParams,
-    ProcessRowParams,
-    ProcessUnpinnedColumnsParams,
-    RowClassParams,
+    NavigateToNextCell,
+    NavigateToNextHeader,
+    OverlaySelectorFunc,
+    OverlayType,
+    PaginationNumberFormatter,
+    PostProcessPopup,
+    PostSortRows,
+    ProcessCellForClipboard,
+    ProcessCellFromClipboard,
+    ProcessDataFromClipboard,
+    ProcessGroupHeaderForClipboard,
+    ProcessHeaderForClipboard,
+    ProcessPivotResultColDef,
+    ProcessPivotResultColGroupDef,
+    ProcessRowPostCreate,
+    ProcessUnpinnedColumns,
+    QuickFilterMatcher,
+    QuickFilterParser,
     RowClassRules,
+    RowDragTextFunc,
     RowGroupingDisplayType,
-    RowHeightParams,
     RowModelType,
     RowNumbersOptions,
     RowSelectionOptions,
     RowStyle,
     SelectionColumnDef,
-    SendToClipboardParams,
-    ServerSideGroupLevelParams,
+    SendToClipboard,
     SideBarDef,
     SortDirection,
-    StatusPanelDef,
-    TabToNextCellParams,
-    TabToNextHeaderParams,
+    StatusBar,
+    TabToNextCell,
+    TabToNextHeader,
     Theme,
     TreeDataDisplayType,
     UseGroupTotalRow
@@ -207,7 +222,7 @@ import type {
 // @END_EVENTS_IMPORTS@
 
 import type { GridOptions, Module } from 'ag-grid-community';
-import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 import { isProxy, isReactive, isRef, toRaw } from 'vue';
 
 export interface Properties {
@@ -227,7 +242,7 @@ export interface Props<TData> {
     /** Specifies the status bar components to use in the status bar.
          * @agModule `StatusBarModule`
          */
-    statusBar?: { statusPanels: StatusPanelDef[] },
+    statusBar?: StatusBar,
     /** Specifies the side bar components.
          * @agModule `SideBarModule`
          */
@@ -365,15 +380,13 @@ export interface Props<TData> {
     defaultColGroupDef?: Partial<ColGroupDef<TData>>,
     /** An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.
          */
-    columnTypes?: { [key: string]: ColTypeDef<TData> },
+    columnTypes?: ColTypeDefs<TData>,
     /** An object map of cell data types to their definitions.
          * Cell data types can either override/update the pre-defined data types
          * (`'text'`, `'number'`, `'boolean'`, `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` or `'object'`),
          * or can be custom data types.
          */
-    dataTypeDefinitions?: {
-        [cellDataType: string]: DataTypeDefinition<TData>;
-    },
+    dataTypeDefinitions?: DataTypeDefinitions<TData>,
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
          *
          * @default false
@@ -420,10 +433,6 @@ export interface Props<TData> {
          * @default false
          */
     suppressColumnMoveAnimation?: boolean,
-    /** If `true`, the `ag-animate-autosize` class is not added to the grid while autosizing columns. In the default themes, this results in no animation when autosizing column widths.
-         * @default false
-         */
-    suppressColumnResizeAnimation?: boolean,
     /** Set to `true` to suppress moving columns while dragging the Column Header. This option highlights the position where the column will be placed and it will only move it on mouse up.
          * @default false
          */
@@ -470,10 +479,14 @@ export interface Props<TData> {
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy,
+    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+         * @default false
+         */
+    animateColumnResizing?: boolean,
     /** A map of component names to components.
          * @initial
          */
-    components?: { [p: string]: any },
+    components?: Components,
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
          * @agModule `TextEditorModule` / `LargeTextEditorModule` / `NumberEditorModule` / `DateEditorModule` / `CheckboxEditorModule` / `CustomEditorModule` / `SelectEditorModule` / `RichSelectModule`
          */
@@ -586,11 +599,11 @@ export interface Props<TData> {
     /** Changes how the Quick Filter splits the Quick Filter text into search terms.
          * @agModule `QuickFilterModule`
          */
-    quickFilterParser?: (quickFilter: string) => string[],
+    quickFilterParser?: QuickFilterParser,
     /** Changes the matching logic for whether a row passes the Quick Filter.
          * @agModule `QuickFilterModule`
          */
-    quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean,
+    quickFilterMatcher?: QuickFilterMatcher,
     /** When pivoting, Quick Filter is only applied on the pivoted data
          * (or aggregated data if `groupAggFiltering = true`).
          * Set to `true` to apply Quick Filter before pivoting (/aggregating) instead.
@@ -613,7 +626,7 @@ export interface Props<TData> {
          * Only works with the Client-Side Row Model.
          * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule` / `QuickFilterModule` / `ExternalFilterModule` / `AdvancedFilterModule`
          */
-    alwaysPassFilter?: (rowNode: IRowNode<TData>) => boolean,
+    alwaysPassFilter?: AlwaysPassFilter<TData>,
     /** Hidden columns are excluded from the Advanced Filter by default.
          * To include hidden columns, set to `true`.
          * @default false
@@ -658,7 +671,7 @@ export interface Props<TData> {
          * Allows for filter handler keys to be used in `colDef.filter.handler`.
          * @initial
          */
-    filterHandlers?: { [key: string]: CreateFilterHandlerFunc<TData> },
+    filterHandlers?: FilterHandlers<TData>,
     /** Set to `true` to Enable Charts.
          * @default false
          * @agModule `IntegratedChartsModule`
@@ -674,7 +687,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `IntegratedChartsModule`
          */
-    customChartThemes?: { [name: string]: AgChartTheme },
+    customChartThemes?: CustomChartThemes,
     /** Chart theme overrides applied to all themes.
          * @initial
          * @agModule `IntegratedChartsModule`
@@ -704,7 +717,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `LocaleModule`
          */
-    localeText?: { [key: string]: string },
+    localeText?: LocaleText,
     /** Set to `true` to enable Master Detail.
          * @default false
          * @agModule `MasterDetailModule`
@@ -809,39 +822,82 @@ export interface Props<TData> {
          */
     debug?: boolean,
     /** Show or hide the loading overlay.
+         * - `true`: the loading overlay is shown.
+         * - `false`: the loading overlay is hidden.
+         * - `undefined`: the grid will automatically show the loading overlay until `rowData` and `columnDefs` are provided. (Client Side Row Model only)
+         * @default undefined
          */
     loading?: boolean,
     /** Provide a HTML string to override the default loading overlay. Supports non-empty plain text or HTML with a single root element.
+         *
+         * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
          */
     overlayLoadingTemplate?: string,
     /** Provide a custom loading overlay component.
-         * @initial
+         *
+         * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
          */
     loadingOverlayComponent?: any,
     /** Customise the parameters provided to the loading overlay component.
+         *
+         * -     **Prefer using `overlayComponentParams`**
          */
     loadingOverlayComponentParams?: any,
     /** Disables the 'loading' overlay.
-         * @deprecated v32 - Deprecated. Use `loading=false` instead.
+         * @deprecated v32 - Deprecated. Use `suppressOverlays=['loading']` or `loading=false` instead.
          * @default false
          * @initial
          */
     suppressLoadingOverlay?: boolean,
     /** Provide a HTML string to override the default no-rows overlay. Supports non-empty plain text or HTML with a single root element.
+         *
+         * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
          */
     overlayNoRowsTemplate?: string,
     /** Provide a custom no-rows overlay component.
-         * @initial
+         *
+         * -     **Prefer `overlayComponent` / `overlayComponentSelector`**
          */
     noRowsOverlayComponent?: any,
     /** Customise the parameters provided to the no-rows overlay component.
+         *
+         * -     **Prefer using `overlayComponentParams`**
          */
     noRowsOverlayComponentParams?: any,
     /** Set to `true` to prevent the no-rows overlay being shown when there is no row data.
+         *
+         * -     **Prefer `suppressOverlays=['noRows']`**
+         *
          * @default false
          * @initial
          */
     suppressNoRowsOverlay?: boolean,
+    /** List of provided overlay names to suppress. One of `loading`, `noRows`, `noMatchingRows`, `exporting`.
+         */
+    suppressOverlays?: OverlayType[],
+    /** Provide a custom overlay component to be used for all grid provided overlays (loading, no rows, no matching rows, exporting etc).
+         * @initial
+         */
+    overlayComponent?: any,
+    /** Customise the parameters provided to the `overlayComponent`.
+         * Provided overlays accept parameters specified on the `OverlayComponentUserParams` interface.
+         * Any custom parameters can also be provided for custom overlay components.
+         */
+    overlayComponentParams?: any,
+    /** Callback to dynamically provide a custom overlay component complete with custom params based on the selector params.
+         * @initial
+         */
+    overlayComponentSelector?: OverlaySelectorFunc<TData>,
+    /** Display an overlay on demand. If provided takes precedence over the grid provided overlays.
+         * - name of a provided overlay, i.e `agLoadingOverlay`, `agNoRowsOverlay`, `agNoMatchingRowsOverlay`, `agExportingOverlay`
+         * - component class/function.
+         * - key of a custom component registered in the `components` map.
+         * - `undefined` to clear.
+         */
+    activeOverlay?: any,
+    /** Custom parameters to be supplied to the `activeOverlay` component in addition to `IOverlayParams`. Updating the params will trigger a refresh of the active overlay.
+         */
+    activeOverlayParams?: any,
     /** Set whether pagination is enabled.
          * @default false
          * @agModule `PaginationModule`
@@ -930,17 +986,18 @@ export interface Props<TData> {
          * @initial
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
-    aggFuncs?: { [key: string]: IAggFunc<TData> },
+    aggFuncs?: IAggFuncs<TData>,
+    /** Provide a data source to control where formulas are stored and retrieved.
+         * If not supplied, formulas are read from and written to the row data.
+         * @initial
+         * @agModule `FormulaModule`
+         */
+    formulaDataSource?: FormulaDataSource,
     /** A map of 'function name' to 'function' for custom functions that are used for formulas.
          * @initial
          * @agModule `FormulaModule`
          */
-    formulaFuncs?: { [key: string]: { func: (params: FormulaFunctionParams) => any } },
-    /** Enable or disable the processing of cell formulas
-         * @initial
-         * @agModule `FormulaModule`
-         */
-    enableFormulas?: boolean,
+    formulaFuncs?: FormulaFuncs,
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
          * @default false
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
@@ -1028,6 +1085,12 @@ export interface Props<TData> {
          * @agModule `RowDragModule`
          */
     rowDragManaged?: boolean,
+    /** When `true`, managed row dragging updates grouped column values so rows can move between groups. When `false`,
+         * managed dragging only reorders rows inside their existing group.
+         * @default false
+         * @agModule `RowDragModule`
+         */
+    refreshAfterGroupEdit?: boolean,
     /** Used if rowDragManaged is enabled and treeData is enabled,
          * - If the row is already a group, but is not expanded, it will be expanded after rowDragInsertDelay milliseconds of dragging over it.
          * - If the row is a leaf (no children), it will be converted to a group and the row inserted into it after rowDragInsertDelay milliseconds of dragging over it.
@@ -1061,7 +1124,7 @@ export interface Props<TData> {
          * @initial
          * @agModule `RowDragModule`
          */
-    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string,
+    rowDragText?: RowDragTextFunc,
     /** Provide a custom drag and drop image component.
          * @initial
          * @agModule `RowDragModule`
@@ -1100,8 +1163,9 @@ export interface Props<TData> {
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
-    autoGroupColumnDef?: ColDef<TData>,
+    autoGroupColumnDef?: AutoGroupColumnDef<TData>,
     /** When `true`, preserves the current group order when sorting on non-group columns.
+         * If a user explicitly resets the current group sort direction, then the current group column order is not preserved.
          * @default false
          * @agModule `RowGroupingModule`
          */
@@ -1223,7 +1287,7 @@ export interface Props<TData> {
     /** Custom group hierarchy components can be defined here for later use in `colDef.groupHierarchy`
          * @agModule `RowGroupingModule`
          */
-    groupHierarchyConfig?: { [k: string]: ColDef },
+    groupHierarchyConfig?: GroupHierarchyConfig,
     /** Data to be displayed as pinned top rows in the grid.
          * @agModule `PinnedRowModule`
          */
@@ -1519,7 +1583,7 @@ export interface Props<TData> {
     /** Icons to use inside the grid instead of the grid's default icons.
          * @initial
          */
-    icons?: { [key: string]: ((...args: any[]) => any) | string },
+    icons?: Icons,
     /** Default row height in pixels.
          * @default 25
          */
@@ -1578,10 +1642,13 @@ export interface Props<TData> {
     /** If your theme uses a font that is available on Google Fonts, pass true to load it from Google's CDN.
          */
     loadThemeGoogleFonts?: boolean,
-    /** The CSS layer that this theme should be rendered onto. If your
-         * application loads its styles into a CSS layer, use this to load the grid
-         * styles into a previous layer so that application styles can override grid
-         * styles.
+    /** The CSS layer that this theme should be rendered onto. When specified,
+         * grid CSS will be wrapped in a `@layer ${themeCssLayer} { ... }` block.
+         *
+         * NOTE: when specifying `themeCssLayer` we recommend setting
+         * `themeStyleContainer` to `document.body` to ensure that the grid CSS
+         * comes after your application CSS, allowing your application to set the
+         * order of layers.
          *
          * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer
          */
@@ -1596,14 +1663,16 @@ export interface Props<TData> {
          */
     styleNonce?: string,
     /** An element to insert style elements into when injecting styles into the
-         * grid. If undefined, styles will be added to the document head for grids
+         * grid. Styles are inserted at the start of the element.
+         *
+         * If undefined, styles will be added to the document head for grids
          * rendered in the main document fragment, or to the grid wrapper element
          * for other grids (e.g. those rendered in a shadow DOM or detached from the
          * document).
          *
          * @initial
          */
-    themeStyleContainer?: HTMLElement,
+    themeStyleContainer?: HTMLElement | (() => HTMLElement | void),
     /** For customising the context menu.
          * @agModule `ContextMenuModule`
          */
@@ -1615,44 +1684,44 @@ export interface Props<TData> {
     getMainMenuItems?: GetMainMenuItems<TData>,
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
-    postProcessPopup?: (params: PostProcessPopupParams<TData>) => void,
+    postProcessPopup?: PostProcessPopup<TData>,
     /** Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
          * Returns an array of columns to be removed from the pinned areas.
          * @initial
          */
-    processUnpinnedColumns?: (params: ProcessUnpinnedColumnsParams<TData>) => Column[],
+    processUnpinnedColumns?: ProcessUnpinnedColumns<TData>,
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.
          * @agModule `ClipboardModule`
          */
-    processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any,
+    processCellForClipboard?: ProcessCellForClipboard<TData>,
     /** Allows you to process header values for the clipboard.
          * @agModule `ClipboardModule`
          */
-    processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any,
+    processHeaderForClipboard?: ProcessHeaderForClipboard<TData>,
     /** Allows you to process group header values for the clipboard.
          * @agModule `ClipboardModule`
          */
-    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any,
+    processGroupHeaderForClipboard?: ProcessGroupHeaderForClipboard<TData>,
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
          * @agModule `ClipboardModule`
          */
-    processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any,
+    processCellFromClipboard?: ProcessCellFromClipboard<TData>,
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.
          * @agModule `ClipboardModule`
          */
-    sendToClipboard?: (params: SendToClipboardParams<TData>) => void,
+    sendToClipboard?: SendToClipboard<TData>,
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
          * @agModule `ClipboardModule`
          */
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData>) => string[][] | null,
+    processDataFromClipboard?: ProcessDataFromClipboard<TData>,
     /** Grid calls this method to know if an external filter is present.
          * @agModule `ExternalFilterModule`
          */
-    isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean,
+    isExternalFilterPresent?: IsExternalFilterPresent<TData>,
     /** Should return `true` if external filter passes, otherwise `false`.
          * @agModule `ExternalFilterModule`
          */
-    doesExternalFilterPass?: (node: IRowNode<TData>) => boolean,
+    doesExternalFilterPass?: DoesExternalFilterPass<TData>,
     /** Callback to be used to customise the chart toolbar items.
          * @initial
          * @agModule `IntegratedChartsModule`
@@ -1662,48 +1731,48 @@ export interface Props<TData> {
          * @initial
          * @agModule `IntegratedChartsModule`
          */
-    createChartContainer?: (params: ChartRefParams<TData>) => void,
+    createChartContainer?: CreateChartContainer<TData>,
     /** Allows overriding the element that will be focused when the grid receives focus from outside elements (tabbing into the grid).
          * @returns `True` if this function should override the grid's default behavior, `False` to allow the grid's default behavior.
          */
-    focusGridInnerElement?: (params: FocusGridInnerElementParams<TData>) => boolean,
+    focusGridInnerElement?: FocusGridInnerElement<TData>,
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
          */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => HeaderPosition | null,
+    navigateToNextHeader?: NavigateToNextHeader<TData>,
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
          * Return the next header position to navigate to, `true` to stay on the current header,
          * or `false` to let the browser handle the tab behaviour.
          */
-    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean,
+    tabToNextHeader?: TabToNextHeader<TData>,
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
          */
-    navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => CellPosition | null,
+    navigateToNextCell?: NavigateToNextCell<TData>,
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
          * Return the next cell position to navigate to, `true` to stay on the current cell,
          * or `false` to let the browser handle the tab behaviour.
          */
-    tabToNextCell?: (params: TabToNextCellParams<TData>) => CellPosition | boolean,
+    tabToNextCell?: TabToNextCell<TData>,
     /** A callback for localising text within the grid.
          * @initial
          * @agModule `LocaleModule`
          */
-    getLocaleText?: (params: GetLocaleTextParams<TData>) => string,
+    getLocaleText?: GetLocaleText<TData>,
     /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)
          */
-    getDocument?: () => Document,
+    getDocument?: GetDocument,
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.
          * @initial
          * @agModule `PaginationModule`
          */
-    paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string,
+    paginationNumberFormatter?: PaginationNumberFormatter<TData>,
     /** Callback to use when you need access to more then the current column for aggregation.
          * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
          */
-    getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any,
+    getGroupRowAgg?: GetGroupRowAgg<TData>,
     /** (Client-side Row Model only) Allows groups to be open by default.
          * @agModule `RowGroupingModule` / `TreeDataModule`
          */
-    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean,
+    isGroupOpenByDefault?: IsGroupOpenByDefault<TData>,
     /** Controls how expand/collapse operations affect all rows and group interactions.
          * If `true`, expandAll / collapseAll applies to all rows (not just loaded ones),
          * and interacting with the group overrides the default expansion state set by `isServerSideGroupOpenByDefault`.
@@ -1713,15 +1782,15 @@ export interface Props<TData> {
     /** Allows default sorting of groups.
          * @agModule `RowGroupingModule`
          */
-    initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number,
+    initialGroupOrderComparator?: InitialGroupOrderComparator<TData>,
     /** Callback for the mutation of the generated pivot result column definitions
          * @agModule `PivotModule`
          */
-    processPivotResultColDef?: (colDef: ColDef<TData>) => void,
+    processPivotResultColDef?: ProcessPivotResultColDef<TData>,
     /** Callback for the mutation of the generated pivot result column group definitions
          * @agModule `PivotModule`
          */
-    processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void,
+    processPivotResultColGroupDef?: ProcessPivotResultColGroupDef<TData>,
     /** Callback to be used when working with Tree Data when `treeData = true`.
          * @initial
          * @agModule `TreeDataModule`
@@ -1731,16 +1800,16 @@ export interface Props<TData> {
          * @initial
          * @agModule `ServerSideRowModelModule`
          */
-    getChildCount?: (dataItem: any) => number,
+    getChildCount?: GetChildCount,
     /** Allows providing different params for different levels of grouping.
          * @initial
          * @agModule `ServerSideRowModelModule`
          */
-    getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams<TData>) => ServerSideGroupLevelParams,
+    getServerSideGroupLevelParams?: GetServerSideGroupLevelParams<TData>,
     /** Allows groups to be open by default.
          * @agModule `ServerSideRowModelModule`
          */
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams<TData>) => boolean,
+    isServerSideGroupOpenByDefault?: IsServerSideGroupOpenByDefault<TData>,
     /** Allows cancelling transactions.
          * @agModule `ServerSideRowModelModule`
          */
@@ -1756,7 +1825,7 @@ export interface Props<TData> {
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
-    getBusinessKeyForNode?: (node: IRowNode<TData>) => string,
+    getBusinessKeyForNode?: GetBusinessKeyForNode<TData>,
     /** Provide a pure function that returns a string ID to uniquely identify a given row. This enables the grid to work optimally with data changes and updates.
          * @initial
          */
@@ -1768,7 +1837,7 @@ export interface Props<TData> {
     resetRowDataOnUpdate?: boolean,
     /** Callback fired after the row is rendered into the DOM. Should not be used to initiate side effects.
          */
-    processRowPostCreate?: (params: ProcessRowParams<TData>) => void,
+    processRowPostCreate?: ProcessRowPostCreate<TData>,
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
          * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
          */
@@ -1780,24 +1849,24 @@ export interface Props<TData> {
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.
          * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
          */
-    fillOperation?: (params: FillOperationParams<TData>) => any,
+    fillOperation?: FillOperation<TData>,
     /** Callback to perform additional sorting after the grid has sorted the rows.
          */
-    postSortRows?: (params: PostSortRowsParams<TData>) => void,
+    postSortRows?: PostSortRows<TData>,
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
          * @agModule `RowStyleModule`
          */
-    getRowStyle?: (params: RowClassParams<TData>) => RowStyle | undefined,
+    getRowStyle?: GetRowStyle<TData>,
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.
          * @agModule `RowStyleModule`
          */
-    getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined,
+    getRowClass?: GetRowClass<TData>,
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.
          */
-    getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null,
+    getRowHeight?: GetRowHeight<TData>,
     /** Tells the grid if this row should be rendered as full width.
          */
-    isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean,
+    isFullWidthRow?: IsFullWidthRow<TData>,
     /** Called by drag and drop when rows are dragged over another row to conditionally prevent dropping the dragged row on the hovered row.
          * The user can cancel the drop by returning `false` or customize the operation by returning a `IsRowValidDropPositionResult`.
          * @agModule `RowDragModule`
@@ -1966,7 +2035,6 @@ export function getProps() {
         allowDragFromColumnsToolPanel: undefined,
         suppressMovableColumns: undefined,
         suppressColumnMoveAnimation: undefined,
-        suppressColumnResizeAnimation: undefined,
         suppressMoveWhenColumnDragging: undefined,
         suppressDragLeaveHidesColumns: undefined,
         suppressGroupChangesColumnVisibility: undefined,
@@ -1977,6 +2045,7 @@ export function getProps() {
         autoSizePadding: undefined,
         skipHeaderOnAutoSize: undefined,
         autoSizeStrategy: undefined,
+        animateColumnResizing: undefined,
         components: undefined,
         editType: undefined,
         suppressStartEditOnTab: undefined,
@@ -2054,6 +2123,12 @@ export function getProps() {
         noRowsOverlayComponent: undefined,
         noRowsOverlayComponentParams: undefined,
         suppressNoRowsOverlay: undefined,
+        suppressOverlays: undefined,
+        overlayComponent: undefined,
+        overlayComponentParams: undefined,
+        overlayComponentSelector: undefined,
+        activeOverlay: undefined,
+        activeOverlayParams: undefined,
         pagination: undefined,
         paginationPageSize: undefined,
         paginationPageSizeSelector: undefined,
@@ -2070,8 +2145,8 @@ export function getProps() {
         suppressExpandablePivotGroups: undefined,
         functionsReadOnly: undefined,
         aggFuncs: undefined,
+        formulaDataSource: undefined,
         formulaFuncs: undefined,
-        enableFormulas: undefined,
         suppressAggFuncInHeader: undefined,
         alwaysAggregateAtRootLevel: undefined,
         aggregateOnlyChangedColumns: undefined,
@@ -2089,6 +2164,7 @@ export function getProps() {
         suppressMaxRenderedRowRestriction: undefined,
         suppressRowVirtualisation: undefined,
         rowDragManaged: undefined,
+        refreshAfterGroupEdit: undefined,
         rowDragInsertDelay: undefined,
         suppressRowDrag: undefined,
         suppressMoveWhenRowDragging: undefined,

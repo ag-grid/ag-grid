@@ -33,7 +33,7 @@ export default {
 
         onSortChanged() {
             this.ascSort = this.descSort = this.noSort = 'inactive';
-            const sort = this.params.column.getSort();
+            const sort = this.params.column.getSortDef()?.direction;
             if (sort === 'asc') {
                 this.ascSort = 'active';
             } else if (sort === 'desc') {

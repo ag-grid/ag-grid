@@ -28,7 +28,6 @@ import {
     _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
-    _isTreeData,
     _last,
     _removeFromArray,
     _warn,
@@ -36,13 +35,9 @@ import {
     isSpecialCol,
 } from 'ag-grid-community';
 
-interface RowCallback {
-    (gridRow: RowPosition, rowNode: RowNode, range: CellRange, rangeIndex: number): void;
-}
+type RowCallback = (gridRow: RowPosition, rowNode: RowNode, range: CellRange, rangeIndex: number) => void;
 
-interface RangeCallback {
-    (callRange: CellRange): void;
-}
+type RangeCallback = (callRange: CellRange) => void;
 
 type CellsToFlashType = { [key: string]: boolean };
 type DataForCellRangesType = { data: string; cellsToFlash: CellsToFlashType };
@@ -434,7 +429,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     true
                 );
 
-                this.beans.editSvc?.commitNextEdit();
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
                 changedPath?.addParentNode(rowNode.parent, [column]);
 
@@ -568,10 +562,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             return;
                         }
 
-                        const isFormula = formula?.isFormula(firstRowValues[index]);
+                        const isFormula = column.isAllowFormula() && formula?.isFormula(firstRowValues[index]);
 
                         if (isFormula) {
-                            firstRowValues[index] = formula?.updateFormulaByOffset(firstRowValues[index], 'down');
+                            firstRowValues[index] = formula?.updateFormulaByOffset({
+                                value: firstRowValues[index],
+                                rowDelta: 1,
+                            });
                         }
 
                         const firstRowValue = this.processCell(
@@ -583,7 +580,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                             true
                         );
 
-                        this.beans.editSvc?.commitNextEdit();
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
                         if (changedPath) {
@@ -649,7 +645,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !_isTreeData(gos);
+        const skipGroupRows = this.clientSideRowModel != null && !gos.get('enableGroupEdit') && !gos.get('treeData');
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -715,7 +711,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             true
         );
 
-        this.beans.editSvc?.commitNextEdit();
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
 
         const { rowIndex, rowPinned } = rowNode;
@@ -1095,7 +1090,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { gos, csvCreator } = this.beans;
 
         const processRowGroupCallback = ({ node, column }: ProcessRowGroupForExportParams) => {
-            const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay(column as AgColumn, node, true);
+            const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay({
+                column: column as AgColumn,
+                node,
+                includeValueFormatted: true,
+            });
 
             const val = valueFormatted ?? value ?? '';
             const cb = gos.getCallback('processCellForClipboard');
@@ -1149,7 +1148,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         canParse?: boolean,
         canFormat?: boolean
     ): T {
-        const valueSvc = this.beans.valueSvc;
+        const { valueSvc, formula } = this.beans;
         if (func) {
             const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
@@ -1170,6 +1169,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
+            if (formula?.isFormula(value)) {
+                return value;
+            }
             return valueSvc.formatValue(column, rowNode ?? null, value) ?? (value as any);
         }
 

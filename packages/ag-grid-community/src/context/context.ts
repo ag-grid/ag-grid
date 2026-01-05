@@ -30,7 +30,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { RowDropHighlightService } from '../dragAndDrop/rowDropHighlightService';
 import type { GridOptions } from '../entities/gridOptions';
-import type { RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { AgEventTypeParams, AgGlobalEventListener } from '../events';
 import type { GridSerializer } from '../export/gridSerializer';
@@ -47,7 +46,7 @@ import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader'
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { EditStrategyType } from '../interfaces/editStrategyType';
-import type { IFormulaService } from '../interfaces/formulas';
+import type { IFormulaDataService, IFormulaService } from '../interfaces/formulas';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -64,6 +63,7 @@ import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IGroupEditService } from '../interfaces/iGroupEditService';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
@@ -74,7 +74,15 @@ import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { IRowGroupStage, IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type {
+    IRowNodeAggregationStage,
+    IRowNodeFilterAggregateStage,
+    IRowNodeFilterStage,
+    IRowNodeFlattenStage,
+    IRowNodeGroupStage,
+    IRowNodePivotStage,
+    IRowNodeSortStage,
+} from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
@@ -165,7 +173,9 @@ export type UserComponentName =
     | 'agSkeletonCellRenderer'
     | 'agCheckboxCellRenderer'
     | 'agLoadingOverlay'
+    | 'agExportingOverlay'
     | 'agNoRowsOverlay'
+    | 'agNoMatchingRowsOverlay'
     | 'agTooltipComponent'
     | 'agReadOnlyFloatingFilter'
     | 'agTextColumnFilter'
@@ -189,6 +199,7 @@ export type UserComponentName =
     | 'agDateStringCellEditor'
     | 'agCheckboxCellEditor'
     | 'agLargeTextCellEditor'
+    | 'agFormulaCellEditor'
     | 'agRichSelect'
     | 'agRichSelectCellEditor'
     | 'agMenuItem'
@@ -320,13 +331,13 @@ interface CoreBeanCollection
     ssrmTxnManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;
     advancedFilter: IAdvancedFilterService;
-    filterStage?: IRowNodeStage;
-    sortStage?: IRowNodeStage;
-    flattenStage?: IRowNodeStage<RowNode[]>;
-    groupStage?: IRowGroupStage<boolean>;
-    aggStage?: IRowNodeStage;
-    pivotStage?: IRowNodeStage;
-    filterAggStage?: IRowNodeStage;
+    filterStage?: IRowNodeFilterStage;
+    sortStage?: IRowNodeSortStage;
+    flattenStage?: IRowNodeFlattenStage;
+    groupStage?: IRowNodeGroupStage;
+    aggStage?: IRowNodeAggregationStage;
+    pivotStage?: IRowNodePivotStage;
+    filterAggStage?: IRowNodeFilterAggregateStage;
     rowNodeSorter?: RowNodeSorter;
     pivotColDefSvc?: IPivotColDefService;
     chartSvc?: IChartService;
@@ -334,6 +345,7 @@ interface CoreBeanCollection
     renderStatus?: IRenderStatusService;
     rowDropHighlightSvc?: RowDropHighlightService;
     rowDragSvc?: RowDragService;
+    groupEditSvc?: IGroupEditService;
     stickyRowSvc?: IStickyRowService;
     filterValueSvc?: FilterValueService;
     cellFlashSvc?: CellFlashService;
@@ -358,6 +370,7 @@ interface CoreBeanCollection
     changeDetectionSvc?: ChangeDetectionService;
     iconSvc: IconService;
     groupHierarchyColSvc?: IGroupHierarchyColService;
+    formulaDataSvc?: IFormulaDataService;
     formula?: IFormulaService;
 }
 

@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import { AgColumn } from '../entities/agColumn';
 import { AgProvidedColumnGroup, isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { ColDef, ColGroupDef, SortDirection } from '../entities/colDef';
+import type { ColDef, ColGroupDef, SortDef, SortDirection } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
@@ -233,7 +233,7 @@ export function updateSomeColumnState(
     beans: BeanCollection,
     column: AgColumn,
     hide: boolean | null | undefined,
-    sort: SortDirection | undefined,
+    sort: SortDirection | SortDef | undefined,
     sortIndex: number | null | undefined,
     pinned: boolean | 'left' | 'right' | null | undefined,
     flex: number | null | undefined,
@@ -353,12 +353,7 @@ export function _addColumnDefaultAndTypes(
     const defaultColDef = gos.get('defaultColDef');
     _mergeDeep(res, defaultColDef, false, true);
 
-    let def = colDef;
-    if (beans.gos.get('enableFormulas')) {
-        def = { ...def, cellDataType: false };
-    }
-
-    const columnType = updateColDefAndGetColumnType(beans, res, def, colId);
+    const columnType = updateColDefAndGetColumnType(beans, res, colDef, colId);
 
     if (columnType) {
         assignColumnTypes(beans, columnType, res);
@@ -380,16 +375,17 @@ export function _addColumnDefaultAndTypes(
         // override the sort for row group columns where the autoGroupColDef defines these values.
         _mergeDeep(
             res,
-            { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef,
+            {
+                sort: autoGroupColDef.sort,
+                initialSort: autoGroupColDef.initialSort,
+            } as ColDef,
             false,
             true
         );
     }
 
-    if (dataTypeSvc) {
-        dataTypeSvc.postProcess(res);
-        dataTypeSvc.validateColDef(res);
-    }
+    dataTypeSvc?.postProcess(res);
+    dataTypeSvc?.validateColDef(res);
 
     gos.validateColDef(res, colId, isAutoCol);
 

@@ -11,7 +11,7 @@ import type {
     RowNode,
     RowRangeSelectionContext,
 } from 'ag-grid-community';
-import { BeanStub, _error, _isMultiRowSelection, _isTreeData, _warn } from 'ag-grid-community';
+import { BeanStub, _error, _isMultiRowSelection, _warn } from 'ag-grid-community';
 
 import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import type { ISelectionStrategy } from './iSelectionStrategy';
@@ -51,7 +51,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public getSelectedState(): IServerSideGroupSelectionState {
         const { gos, rowGroupColsSvc, selectedState } = this;
-        const treeData = _isTreeData(gos);
+        const treeData = gos.get('treeData');
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,

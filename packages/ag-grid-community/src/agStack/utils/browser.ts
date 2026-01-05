@@ -3,7 +3,6 @@
  * unit tests and we don't have references to window or document in the unit tests
  */
 let isSafari: boolean;
-// let isChrome: boolean;
 let isFirefox: boolean;
 let isMacOs: boolean;
 let isIOS: boolean;
@@ -17,20 +16,6 @@ export function _isBrowserSafari(): boolean {
     }
     return isSafari;
 }
-
-/**
- * Returns true for Chrome and also for Edge (Chromium)
- */
-// export function _isBrowserChrome(): boolean {
-//     if (isChrome === undefined) {
-//         const win = window as any;
-//         isChrome =
-//             (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
-//             (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
-//     }
-
-//     return isChrome;
-// }
 
 export function _isBrowserFirefox(): boolean {
     if (isFirefox === undefined) {

@@ -2,16 +2,24 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { execSync } = require('child_process');
 
+const nxCommandType = process.env.NX_COMMAND_TYPE || 'affected';
 const matches = {
     'ag-grid-angular': 'angular',
 };
 
 const result = { framework: [] };
-const affectedProjects = execSync('yarn nx show projects --affected  -t pack', { encoding: 'utf-8' }).split('\n');
 
-for (const packageName in matches) {
-    if (affectedProjects.includes(packageName)) {
+if (nxCommandType === 'run-many') {
+    for (const packageName in matches) {
         result.framework.push(matches[packageName]);
+    }
+} else {
+    const affectedProjects = execSync('yarn nx show projects --affected  -t pack', { encoding: 'utf-8' }).split('\n');
+
+    for (const packageName in matches) {
+        if (affectedProjects.includes(packageName)) {
+            result.framework.push(matches[packageName]);
+        }
     }
 }
 

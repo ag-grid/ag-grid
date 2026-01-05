@@ -4,44 +4,67 @@ import type { AgColumn, IShowRowGroupColsService, NamedBean } from 'ag-grid-comm
 export class ShowRowGroupColsService extends BeanStub implements NamedBean, IShowRowGroupColsService {
     beanName = 'showRowGroupCols' as const;
 
-    private showRowGroupCols: AgColumn[];
-    private showRowGroupColsMap: { [originalColumnId: string]: AgColumn };
+    public readonly columns: AgColumn[] = [];
+    private readonly colsSet = new Set<AgColumn>();
+    private readonly colsMap = new Map<string, AgColumn>();
+
+    public override destroy(): void {
+        super.destroy();
+        this.columns.length = 0;
+        this.colsSet.clear();
+        this.colsMap.clear();
+    }
 
     public refresh(): void {
-        this.showRowGroupCols = [];
-        this.showRowGroupColsMap = {};
-
         const { colModel, rowGroupColsSvc } = this.beans;
 
-        for (const col of colModel.getCols()) {
+        const showRowGroupCols = this.columns;
+
+        const showRowGroupColsSet = this.colsSet;
+        const showRowGroupColsMap = this.colsMap;
+        showRowGroupColsMap.clear();
+
+        const oldShowRowGroupColsLLen = showRowGroupCols.length;
+        let showRowGroupColsCount = 0;
+        let showRowGroupColsSetChanged = false;
+
+        const cols = colModel.getCols();
+        for (let colIdx = 0, colsLen = cols.length; colIdx < colsLen; ++colIdx) {
+            const col = cols[colIdx];
             const colDef = col.getColDef();
             const showRowGroup = colDef.showRowGroup;
 
-            const isString = typeof showRowGroup === 'string';
-            const isTrue = showRowGroup === true;
-
-            if (!isString && !isTrue) {
-                continue;
-            }
-
-            this.showRowGroupCols.push(col);
-
-            if (isString) {
-                this.showRowGroupColsMap[showRowGroup] = col;
-            } else if (rowGroupColsSvc) {
-                for (const rowGroupCol of rowGroupColsSvc.columns) {
-                    this.showRowGroupColsMap[rowGroupCol.getId()] = col;
+            if (typeof showRowGroup === 'string') {
+                showRowGroupColsMap.set(showRowGroup, col);
+            } else if (showRowGroup === true) {
+                const groupColumns = rowGroupColsSvc?.columns;
+                if (groupColumns) {
+                    for (let grpColIdx = 0, grpColsLen = groupColumns.length; grpColIdx < grpColsLen; ++grpColIdx) {
+                        showRowGroupColsMap.set(groupColumns[grpColIdx].getId(), col);
+                    }
                 }
+            } else {
+                continue; // skipping this column
             }
+
+            showRowGroupColsSetChanged ||=
+                showRowGroupColsCount >= oldShowRowGroupColsLLen || !showRowGroupColsSet.has(col);
+            showRowGroupCols[showRowGroupColsCount++] = col;
+        }
+
+        showRowGroupColsSetChanged ||= showRowGroupColsCount !== oldShowRowGroupColsLLen;
+        if (showRowGroupColsSetChanged) {
+            showRowGroupCols.length = showRowGroupColsCount; // trim array size
+            showRowGroupColsSet.clear();
+            for (let j = 0; j < showRowGroupColsCount; ++j) {
+                showRowGroupColsSet.add(showRowGroupCols[j]);
+            }
+            this.eventSvc.dispatchEvent({ type: 'showRowGroupColsSetChanged' });
         }
     }
 
-    public getShowRowGroupCols(): AgColumn[] {
-        return this.showRowGroupCols;
-    }
-
     public getShowRowGroupCol(id: string): AgColumn | undefined {
-        return this.showRowGroupColsMap[id];
+        return this.colsMap.get(id);
     }
 
     public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
@@ -52,22 +75,15 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
 
         const { rowGroupColsSvc, colModel } = this.beans;
         if (sourceColumnId === true && rowGroupColsSvc) {
-            return rowGroupColsSvc.columns.slice(0);
+            return rowGroupColsSvc.columns;
         }
 
         const column = colModel.getColDefCol(sourceColumnId as string);
         return column ? [column] : null;
     }
 
-    public isRowGroupDisplayed(column: AgColumn, colId: string): boolean {
-        const { colDef } = column;
-        if (colDef?.showRowGroup == null) {
-            return false;
-        }
-
-        const showingAllGroups = colDef.showRowGroup === true;
-        const showingThisGroup = colDef.showRowGroup === colId;
-
-        return showingAllGroups || showingThisGroup;
+    public isRowGroupDisplayed(column: AgColumn, colId: string | null): boolean {
+        const showRowGroup = column.getColDef()?.showRowGroup;
+        return showRowGroup === true || (showRowGroup != null && showRowGroup === colId);
     }
 }

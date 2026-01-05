@@ -202,9 +202,9 @@ export class AgInputNumberField<
         return setValueFunc(value);
     }
 
-    public override getValue(): string | null | undefined {
+    public override getValue(ignoreValidity = false): string | null | undefined {
         const eInput = this.eInput;
-        if (!eInput.validity.valid) {
+        if (!eInput.validity.valid && !ignoreValidity) {
             return undefined;
         }
         const inputValue = eInput.value;

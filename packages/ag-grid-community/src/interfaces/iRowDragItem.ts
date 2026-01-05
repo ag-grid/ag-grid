@@ -4,3 +4,5 @@ export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
     defaultTextValue: string;
 }
+
+export type RowDragTextFunc = (params: IRowDragItem, dragItemCount: number) => string;

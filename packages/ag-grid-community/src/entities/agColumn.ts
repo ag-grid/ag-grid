@@ -5,6 +5,7 @@ import { _exists, _missing } from '../agStack/utils/generic';
 import { _escapeString } from '../agStack/utils/string';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
@@ -32,7 +33,9 @@ import type {
     ColumnFunctionCallbackParams,
     IAggFunc,
     RowSpanParams,
+    SortDef,
     SortDirection,
+    SortType,
 } from './colDef';
 
 const COL_DEF_DEFAULTS: Partial<ColDef> = {
@@ -48,6 +51,13 @@ export function getNextColInstanceId(): ColumnInstanceId {
 export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col is AgColumn {
     return col instanceof AgColumn;
 }
+
+const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
+const DEFAULT_ABSOLUTE_SORTING_ORDER: (SortDef | SortDirection)[] = [
+    { type: 'absolute', direction: 'asc' },
+    { type: 'absolute', direction: 'desc' },
+    null,
+];
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -79,7 +89,8 @@ export class AgColumn<TValue = any>
     private left: number | null;
     private oldLeft: number | null;
     public aggFunc: string | IAggFunc | null | undefined;
-    public sort: SortDirection | undefined;
+    private sortDef: SortDef = _getSortDefFromInput();
+    private _wasSortExplicitlyRemoved: boolean = false;
     public sortIndex: number | null | undefined;
     public moving = false;
     public resizing = false;
@@ -132,7 +143,7 @@ export class AgColumn<TValue = any>
         return this.instanceId;
     }
 
-    private setState(): void {
+    private initState(): void {
         const {
             colDef,
             beans: { sortSvc, pinnedCols, colFlex },
@@ -185,7 +196,7 @@ export class AgColumn<TValue = any>
 
     // this is done after constructor as it uses gridOptionsService
     public postConstruct(): void {
-        this.setState();
+        this.initState();
 
         this.initMinAndMaxWidths();
 
@@ -248,18 +259,7 @@ export class AgColumn<TValue = any>
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
-        let width: number;
-        const colDefWidth = colDef.width;
-        const colDefInitialWidth = colDef.initialWidth;
-
-        if (colDefWidth != null) {
-            width = colDefWidth;
-        } else if (colDefInitialWidth != null) {
-            width = colDefInitialWidth;
-        } else {
-            width = 200;
-        }
-
+        const width = colDef.width ?? colDef.initialWidth ?? 200;
         return Math.max(Math.min(width, this.maxWidth), this.minWidth);
     }
 
@@ -424,8 +424,67 @@ export class AgColumn<TValue = any>
         return this.moving;
     }
 
-    public getSort(): SortDirection | undefined {
-        return this.sort;
+    public getSort(): SortDirection {
+        // soft deprecation as of v35 - use getSortDef instead
+        return this.sortDef.direction;
+    }
+
+    /**
+     * Returns null if no sort direction applied
+     */
+    public getSortDef(): SortDef | null {
+        if (!this.sortDef.direction) {
+            return null;
+        }
+        return this.sortDef;
+    }
+
+    private getColDefAllowedSortTypes(): SortType[] {
+        const res: SortType[] = [];
+        const { sort, initialSort } = this.colDef;
+
+        const colDefSortType = sort === null ? sort : _normalizeSortType((sort as SortDef)?.type);
+        const colDefInitialSortType =
+            initialSort === null ? initialSort : _normalizeSortType((initialSort as SortDef)?.type);
+
+        if (colDefSortType) {
+            res.push(colDefSortType);
+        }
+        if (colDefInitialSortType) {
+            res.push(colDefInitialSortType);
+        }
+        return res;
+    }
+
+    public getSortingOrder() {
+        const defaultSortingOrder = this.getColDefAllowedSortTypes().includes('absolute')
+            ? DEFAULT_ABSOLUTE_SORTING_ORDER
+            : DEFAULT_SORTING_ORDER;
+
+        return (this.colDef.sortingOrder ?? this.gos.get('sortingOrder') ?? defaultSortingOrder).map(
+            (objOrDirection: unknown) => _getSortDefFromInput(objOrDirection)
+        );
+    }
+
+    public getAvailableSortTypes() {
+        const explicitSortTypesFromSortingOrder = this.getSortingOrder().reduce<string[]>((acc, so) => {
+            if (so.direction) {
+                acc.push(so.type);
+            }
+            return acc;
+        }, this.getColDefAllowedSortTypes());
+        return new Set(explicitSortTypesFromSortingOrder);
+    }
+
+    get wasSortExplicitlyRemoved(): boolean {
+        return this._wasSortExplicitlyRemoved;
+    }
+
+    public setSortDef(sortDef: SortDef, initial = false): void {
+        if (!initial) {
+            this._wasSortExplicitlyRemoved = !sortDef.direction;
+        }
+        this.sortDef = sortDef;
     }
 
     public isSortable(): boolean {
@@ -434,21 +493,21 @@ export class AgColumn<TValue = any>
 
     /** @deprecated v32 use col.getSort() === 'asc */
     public isSortAscending(): boolean {
-        return this.sort === 'asc';
+        return this.getSort() === 'asc';
     }
 
     /** @deprecated v32 use col.getSort() === 'desc */
     public isSortDescending(): boolean {
-        return this.sort === 'desc';
+        return this.getSort() === 'desc';
     }
     /** @deprecated v32 use col.getSort() === undefined */
     public isSortNone(): boolean {
-        return _missing(this.sort);
+        return _missing(this.getSort());
     }
 
     /** @deprecated v32 use col.getSort() !== undefined */
     public isSorting(): boolean {
-        return _exists(this.sort);
+        return _exists(this.getSort());
     }
 
     public getSortIndex(): number | null | undefined {
@@ -709,15 +768,19 @@ export class AgColumn<TValue = any>
     }
 
     public isAllowPivot(): boolean {
-        return this.colDef.enablePivot === true && !this.gos.get('enableFormulas');
+        return this.colDef.enablePivot === true;
     }
 
     public isAllowValue(): boolean {
-        return this.colDef.enableValue === true && !this.gos.get('enableFormulas');
+        return this.colDef.enableValue === true;
     }
 
     public isAllowRowGroup(): boolean {
-        return this.colDef.enableRowGroup === true && !this.gos.get('enableFormulas');
+        return this.colDef.enableRowGroup === true;
+    }
+
+    public isAllowFormula(): boolean {
+        return this.colDef.allowFormula === true;
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
@@ -734,4 +797,75 @@ export class AgColumn<TValue = any>
             key,
         } as AgEvent<'columnStateUpdated'>);
     }
+}
+
+/**
+ * Helper to convert input into SortDef, does normalisation of direction and type.
+ *
+ * If input is already a valid SortDef, we pluck the direction and type from it.
+ * Otherwise, we normalise the direction and type from input.
+ */
+export function _getSortDefFromInput(input?: unknown): SortDef {
+    if (_isSortDefValid(input)) {
+        return { direction: input.direction, type: input.type };
+    }
+    return { direction: _normalizeSortDirection(input), type: _normalizeSortType(input) };
+}
+
+export function _isSortDirectionValid(maybeSortDir: unknown): maybeSortDir is SortDirection {
+    return maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;
+}
+
+export function _isSortTypeValid(maybeSortType: unknown): maybeSortType is SortType {
+    return maybeSortType === 'default' || maybeSortType === 'absolute';
+}
+
+export function _isSortDefValid(maybeSortDef: unknown): maybeSortDef is SortDef {
+    if (!maybeSortDef || typeof maybeSortDef !== 'object') {
+        return false;
+    }
+
+    const maybeSortDefT = maybeSortDef as { type?: unknown; direction?: unknown };
+    return _isSortTypeValid(maybeSortDefT.type) && _isSortDirectionValid(maybeSortDefT.direction);
+}
+
+export function _areSortDefsEqual(sortDef1: SortDef | null | undefined, sortDef2: SortDef | null | undefined): boolean {
+    if (!sortDef1) {
+        return sortDef2 ? sortDef2.direction === null : true;
+    }
+    if (!sortDef2) {
+        return sortDef1 ? sortDef1.direction === null : true;
+    }
+
+    return sortDef1.type === sortDef2.type && sortDef1.direction === sortDef2.direction;
+}
+
+export function _normalizeSortDirection(sortDirectionLike?: unknown): SortDirection {
+    return _isSortDirectionValid(sortDirectionLike) ? sortDirectionLike : null;
+}
+
+export function _normalizeSortType(sortTypeLike?: unknown): SortType {
+    return _isSortTypeValid(sortTypeLike) ? sortTypeLike : 'default';
+}
+
+export function _getDisplaySortForColumn(column: AgColumn, beans: BeanCollection) {
+    const sortDef = beans.sortSvc!.getDisplaySortForColumn(column);
+    const type = _normalizeSortType(sortDef?.type);
+    const direction = _normalizeSortDirection(sortDef?.direction);
+    const allowedSortTypes = column.getAvailableSortTypes();
+    const isDefaultSortAllowed = allowedSortTypes.has('default');
+    const isAbsoluteSortAllowed = allowedSortTypes.has('absolute');
+    const isAbsoluteSort = type === 'absolute';
+    const isDefaultSort = type === 'default';
+    const isAscending = direction === 'asc';
+    const isDescending = direction === 'desc';
+    return {
+        isDefaultSortAllowed,
+        isAbsoluteSortAllowed,
+        isAbsoluteSort,
+        isDefaultSort,
+        isAscending,
+        isDescending,
+        direction,
+    };
 }

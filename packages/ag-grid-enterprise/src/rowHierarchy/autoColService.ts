@@ -17,10 +17,10 @@ import {
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
+    _getColumnStateFromColDef,
     _isColumnsSortingCoupledToGroup,
     _isGroupMultiAutoColumn,
     _isGroupUseEntireRow,
-    _isTreeData,
     _mergeDeep,
     _missing,
     _updateColsMap,
@@ -66,7 +66,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
 
         const rowGroupCols = rowGroupColsSvc?.columns;
 
-        const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || _isTreeData(gos);
+        const groupingActive = (rowGroupCols && rowGroupCols.length > 0) || gos.get('treeData');
 
         const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
 
@@ -142,7 +142,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const autoCols: AgColumn[] = [];
         const { gos } = this;
 
-        const doingTreeData = _isTreeData(gos);
+        const doingTreeData = gos.get('treeData');
         let doingMultiAutoColumn = _isGroupMultiAutoColumn(gos);
 
         if (doingTreeData && doingMultiAutoColumn) {
@@ -205,7 +205,8 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
-        _applyColumnState(beans, { state: [{ colId, ...colDef }] }, source);
+
+        _applyColumnState(beans, { state: [_getColumnStateFromColDef(colDef, colId)] }, source);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {
@@ -218,7 +219,7 @@ export class AutoColService extends BeanStub implements NamedBean, IColumnCollec
         res = _addColumnDefaultAndTypes(this.beans, res, colId, true);
 
         // For tree data the filter is always allowed
-        if (!_isTreeData(this.gos)) {
+        if (!this.gos.get('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
