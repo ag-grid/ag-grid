@@ -21,7 +21,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
     private firstLeaf: (row: RowNode) => RowNode | undefined;
-    private comparatorOptions: DefaultComparatorOptions = {
+    private readonly comparatorOptions: DefaultComparatorOptions = {
         accentedCompare: false,
     };
 
