@@ -19,27 +19,26 @@ export interface SortedRowNode {
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private primaryColumnsSortGroups: boolean = false;
     private accentedSort: boolean = false;
+    private primaryColumnsSortGroups: boolean = false;
+    private treeData: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
 
     public postConstruct(): void {
         this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
 
-        this.addManagedPropertyListener('accentedSort', this.updateComparatorOptions.bind(this));
-        this.addManagedPropertyListener('autoGroupColumnDef', this.updatePrimaryColumnsSortGroups.bind(this));
-        this.addManagedPropertyListener('treeData', this.updatePrimaryColumnsSortGroups.bind(this));
+        this.addManagedPropertyListeners(
+            ['accentedSort', 'autoGroupColumnDef', 'treeData'],
+            this.updateOptions.bind(this)
+        );
 
-        this.updateComparatorOptions();
-        this.updatePrimaryColumnsSortGroups();
+        this.updateOptions();
     }
 
-    private updateComparatorOptions(): void {
+    private updateOptions(): void {
         this.accentedSort = !!this.gos.get('accentedSort');
-    }
-
-    private updatePrimaryColumnsSortGroups(): void {
         this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
+        this.treeData = !!this.gos.get('treeData');
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
@@ -88,8 +87,16 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 return sortOption.sort === 'asc' ? comparatorResult : -comparatorResult;
             }
         }
+
         // All matched, we make is so that the original sort order is kept:
-        return sortedNodeA.currentPos - sortedNodeB.currentPos;
+        const leafA = this.firstLeaf(nodeA);
+        const leafB = this.firstLeaf(nodeB);
+
+        if (leafA && leafB) {
+            return leafA.sourceRowIndex - leafB.sourceRowIndex;
+        }
+
+        return 0;
     }
 
     /**
@@ -144,7 +151,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         }
 
         const beans = this.beans;
-        if (node.group && !beans.groupStage?.treeData && column.getColDef().showRowGroup) {
+        if (!this.treeData && node.group && column.getColDef().showRowGroup) {
             return undefined;
         }
 
