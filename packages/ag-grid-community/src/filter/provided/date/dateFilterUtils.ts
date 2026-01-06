@@ -62,7 +62,7 @@ export function setStartOfQuarter(date: Date) {
 
 export function setEndOfQuarter(date: Date) {
     const quarter = Math.floor(date.getMonth() / 3); // [0, 3]
-    date.setMonth(quarter * 3 + 2); // { 2, 5, 8, 11 }
+    date.setMonth(quarter * 3 + 2);
     return setEndOfMonth(date);
 }
 
