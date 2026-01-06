@@ -58,7 +58,7 @@
                             "link": "./vue-data-grid/column-sizing/"
                         }
                     ],
-                    "docsLink": "./vue-data-grid/key-features/"
+                    "docsLink": "./vue-data-grid/key-features/#showing-data"
                 },
                 {
                     "id": "working-with-data",
@@ -85,7 +85,7 @@
                             "link": "./vue-data-grid/row-selection/"
                         }
                     ],
-                    "docsLink": "./vue-data-grid/key-features/"
+                    "docsLink": "./vue-data-grid/key-features/#working-with-data"
                 },
                 {
                     "id": "themes-style",
@@ -112,7 +112,7 @@
                             "link": "./vue-data-grid/row-styles/"
                         }
                     ],
-                    "docsLink": "./vue-data-grid/theming/"
+                    "docsLink": "./vue-data-grid/key-features/#themes--style"
                 },
                 {
                     "id": "enterprise-features",
@@ -236,7 +236,7 @@
                 },
                 {
                     "question": "What is an AG Grid licence?",
-                    "answer": "An AG Grid licence is required to use [AG Grid Enterprise](/license-pricing/) in production. Try it for free, or request a trial licence at [info@ag-grid.com](mailto:info@ag-grid.com) to remove the watermark & console messages."
+                    "answer": "An AG Grid licence is required to use [AG Grid Enterprise](/license-pricing/) in production. Try it for free, or [request a trial licence](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence) to remove the watermark & console messages."
                 },
                 {
                     "question": "How much does AG Grid cost?",

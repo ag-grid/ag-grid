@@ -58,7 +58,7 @@
                             "link": "./react-data-grid/column-sizing/"
                         }
                     ],
-                    "docsLink": "./react-data-grid/key-features/"
+                    "docsLink": "./react-data-grid/key-features/#showing-data"
                 },
                 {
                     "id": "working-with-data",
@@ -85,7 +85,7 @@
                             "link": "./react-data-grid/row-selection/"
                         }
                     ],
-                    "docsLink": "./react-data-grid/key-features/"
+                    "docsLink": "./react-data-grid/key-features/#working-with-data"
                 },
                 {
                     "id": "themes-style",
@@ -112,7 +112,7 @@
                             "link": "./react-data-grid/row-styles/"
                         }
                     ],
-                    "docsLink": "./react-data-grid/theming/"
+                    "docsLink": "./react-data-grid/key-features/#themes--style"
                 },
                 {
                     "id": "enterprise-features",
@@ -216,7 +216,7 @@
                 },
                 {
                     "question": "Can I customise the React Data Grid?",
-                    "answer": "Yes, you can customise AG Grid [themes](./themes/) with CSS, create your own custom themes, and use our own components in cells. Visit our [Theme Builder](/theme-builder/) to start customising themes."
+                    "answer": "Yes, you can customise AG Grid [themes](./themes/) with CSS, create your own custom themes, and use your own components in cells. Visit our [Theme Builder](/theme-builder/) to start customising themes."
                 },
                 {
                     "question": "AG Grid vs. MUI",
@@ -236,7 +236,7 @@
                 },
                 {
                     "question": "What is an AG Grid licence?",
-                    "answer": "An AG Grid licence is required to use [AG Grid Enterprise](/license-pricing/) in production. Try it for free, or request a trial licence at [info@ag-grid.com](mailto:info@ag-grid.com) to remove the watermark & console messages."
+                    "answer": "An AG Grid licence is required to use [AG Grid Enterprise](/license-pricing/) in production. Try it for free, or [request a trial licence](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence) to remove the watermark & console messages."
                 },
                 {
                     "question": "How much does AG Grid cost?",

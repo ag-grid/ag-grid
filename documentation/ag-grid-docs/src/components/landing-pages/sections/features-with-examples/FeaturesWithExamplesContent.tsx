@@ -100,13 +100,15 @@ export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentPr
             <div className={styles.buttonContainer}>
                 {activeFeature.isEnterprise ? (
                     <TrialButton
+                        id="request-trial-licence"
                         className={`button-secondary ${styles.trialCta} plausible-event-name=landing-page-features-trial-cta`}
                     >
                         Start Free Trial
                     </TrialButton>
                 ) : (
                     <a
-                        href={urlWithBaseUrl('./react-data-grid/getting-started/')}
+                        id="get-started"
+                        href={urlWithBaseUrl(`${activeFeature.docsLink}`)}
                         className={`button-secondary ${styles.trialCta} plausible-event-name=landing-page-features-get-started-cta`}
                     >
                         Get Started

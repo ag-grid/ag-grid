@@ -1,6 +1,7 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { TrialLicenceForm } from '@ag-website-shared/components/trial-licence-form/TrialLicenceForm';
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 import styles from './TrialLicenceModal.module.scss';
 
@@ -45,7 +46,8 @@ export const TrialLicenceModal: React.FC<TrialLicenceModalProps> = ({ isOpen, on
 
     if (!isOpen) return null;
 
-    return (
+    // Use portal to render at document body level, escaping any stacking contexts
+    const modalContent = (
         <div className={styles.backdrop} onClick={handleBackdropClick}>
             <div className={styles.modal} ref={modalRef} role="dialog" aria-modal="true">
                 <button className={styles.closeButton} onClick={onClose} aria-label="Close modal">
@@ -64,6 +66,11 @@ export const TrialLicenceModal: React.FC<TrialLicenceModalProps> = ({ isOpen, on
             </div>
         </div>
     );
+
+    // Check for SSR - document.body may not exist during server-side rendering
+    if (typeof document === 'undefined') return null;
+
+    return createPortal(modalContent, document.body);
 };
 
 export default TrialLicenceModal;

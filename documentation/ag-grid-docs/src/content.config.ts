@@ -316,7 +316,9 @@ const pricingCardSchema = z.object({
     features: z.array(z.string()),
     ctaText: z.string(),
     ctaUrl: z.string(),
+    ctaId: z.string().optional(),
     isPrimary: z.boolean().optional(),
+    showTrialButton: z.boolean().optional(),
 });
 
 const landingPages = defineCollection({

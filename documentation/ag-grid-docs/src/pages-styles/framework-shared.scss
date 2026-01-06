@@ -94,6 +94,7 @@
     animation: fadeIn 0.7s ease 2000ms;
     opacity: 0;
     animation-fill-mode: forwards;
+    z-index: 0;
 
     // Ensure Finance component doesn't cause layout shift
     > * {

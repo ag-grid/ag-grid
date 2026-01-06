@@ -143,7 +143,9 @@ export interface PricingCard {
     features: string[];
     ctaText: string;
     ctaUrl: string;
+    ctaId?: string;
     isPrimary?: boolean;
+    showTrialButton?: boolean;
 }
 
 export interface PricingSection {
@@ -190,7 +192,4 @@ export interface LandingPageContent {
 // Helper type to extract section by type
 // ============================================================================
 
-export type ExtractSection<T extends LandingPageSectionType['type']> = Extract<
-    LandingPageSectionType,
-    { type: T }
->;
+export type ExtractSection<T extends LandingPageSectionType['type']> = Extract<LandingPageSectionType, { type: T }>;

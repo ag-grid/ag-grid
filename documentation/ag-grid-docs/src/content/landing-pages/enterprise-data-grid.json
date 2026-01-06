@@ -15,7 +15,7 @@
             "tag": "Enterprise Data Grid",
             "heading": "Enterprise Grade Data Grid for Web Apps",
             "subHeading": "Fast, secure and accessible, AG Grid Enterprise handles millions of rows and comes with advanced features, including an AI Toolkit, Integrated Charts, Grouping, and Pivoting.",
-            "showVersionBadge": false,
+            "showVersionBadge": true,
             "primaryCta": {
                 "text": "Start Free Trial",
                 "useTrialButton": true
@@ -82,8 +82,7 @@
                         },
                         {
                             "heading": "Aggregation Support",
-                            "detail": "Apply aggregations to tree data to roll up values from child nodes to parent nodes automatically.",
-                            "link": "./data-grid/tree-data-aggregation/"
+                            "detail": "Apply aggregations to tree data to roll up values from child nodes to parent nodes automatically."
                         }
                     ],
                     "docsLink": "./data-grid/tree-data/"
@@ -236,7 +235,7 @@
                         {
                             "heading": "Custom Menu Items",
                             "detail": "Add custom menu items with icons, submenus, and keyboard shortcuts. Full control over menu structure.",
-                            "link": "./data-grid/context-menu/#customising-the-context-menu"
+                            "link": "./data-grid/context-menu/#configuring-the-context-menu"
                         },
                         {
                             "heading": "Dynamic Menus",
@@ -253,12 +252,6 @@
             "headingHtml": "Integrated Charts, Powered by <a href='https://www.ag-grid.com/charts/'>AG Charts</a>",
             "subHeading": "Let your users visualise data with charts directly from the Grid. Select cells, right-click, and create beautiful charts instantly.",
             "showBackgroundGradient": true
-        },
-        {
-            "type": "theme-builder",
-            "tag": "Fully Customisable",
-            "heading": "Build Custom Themes with the Theme Builder",
-            "subHeading": "Create stunning custom themes with our visual editor. Browse and customise hundreds of theme parameters and preview changes in real-time."
         },
         {
             "type": "comparison",
@@ -285,11 +278,7 @@
                     "title": "Community",
                     "price": "Free",
                     "priceNote": "forever",
-                    "features": [
-                        "Core grid functionality",
-                        "Sorting, filtering & pagination",
-                        "MIT licensed"
-                    ],
+                    "features": ["Core grid functionality", "Sorting, filtering & pagination", "MIT licensed"],
                     "ctaText": "Get Started",
                     "ctaUrl": "./getting-started/"
                 },
@@ -297,14 +286,11 @@
                     "title": "Enterprise",
                     "price": "$999",
                     "priceNote": "per developer, perpetual licence",
-                    "features": [
-                        "All Enterprise features",
-                        "Buy once, use forever",
-                        "1 year of support & updates"
-                    ],
+                    "features": ["All Enterprise features", "Buy once, use forever", "1 year of support & updates"],
                     "ctaText": "Buy Now",
                     "ctaUrl": "https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both",
-                    "isPrimary": true
+                    "isPrimary": true,
+                    "ctaId": "buy-now"
                 },
                 {
                     "title": "Enterprise Bundle",
@@ -316,7 +302,9 @@
                         "1 year of support & updates"
                     ],
                     "ctaText": "Buy Now",
-                    "ctaUrl": "https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                    "ctaUrl": "https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both",
+                    "ctaId": "bundle-buy-now",
+                    "showTrialButton": true
                 }
             ]
         },
@@ -328,7 +316,7 @@
             "items": [
                 {
                     "question": "Can I try AG Grid Enterprise for free?",
-                    "answer": "Yes! You can install and test all AG Grid Enterprise features locally for free. A watermark and console message will appear until you add a licence key. You can also [request a trial licence](/trial-licence/) to remove these during your evaluation period."
+                    "answer": "Yes! You can install and test all AG Grid Enterprise features locally for free. A watermark and console message will appear until you add a licence key. You can also [request a trial licence](./community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence/) to remove these during your evaluation period."
                 },
                 {
                     "question": "What is the difference between AG Grid Community and Enterprise?",
