@@ -32,11 +32,7 @@ export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
     return val1Json === val2Json;
 };
 
-export type DefaultComparatorOptions = {
-    accentedCompare?: boolean;
-};
-
-export const _defaultComparator = (valueA: any, valueB: any, options?: DefaultComparatorOptions): number => {
+export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: boolean = false): number => {
     if (valueA == null) {
         return valueB == null ? 0 : -1;
     }
@@ -56,7 +52,7 @@ export const _defaultComparator = (valueA: any, valueB: any, options?: DefaultCo
         valueB = valueB.toNumber();
     }
 
-    if (typeof valueA !== 'string' || !options?.accentedCompare) {
+    if (!accentedCompare || typeof valueA !== 'string') {
         return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
     }
 

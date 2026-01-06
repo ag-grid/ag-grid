@@ -1,4 +1,3 @@
-import type { DefaultComparatorOptions } from '../agStack/utils/generic';
 import { _defaultComparator } from '../agStack/utils/generic';
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
 import type { NamedBean } from '../context/bean';
@@ -20,11 +19,9 @@ export interface SortedRowNode {
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
+    private primaryColumnsSortGroups: boolean = false;
+    private accentedSort: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
-    private primaryColumnsSortGroups: boolean;
-    private readonly comparatorOptions: DefaultComparatorOptions = {
-        accentedCompare: false,
-    };
 
     public postConstruct(): void {
         this.firstLeaf = _isClientSideRowModel(this.gos) ? _csrmFirstLeaf : defaultGetLeaf;
@@ -38,7 +35,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private updateComparatorOptions(): void {
-        this.comparatorOptions.accentedCompare = !!this.gos.get('accentedSort');
+        this.accentedSort = !!this.gos.get('accentedSort');
     }
 
     private updatePrimaryColumnsSortGroups(): void {
@@ -57,9 +54,9 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
-        const opts = this.comparatorOptions;
         const nodeA = sortedNodeA.rowNode;
         const nodeB = sortedNodeB.rowNode;
+        const accentedCompare = this.accentedSort;
 
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
@@ -82,7 +79,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                     valueB = _absoluteValueTransformer(valueB);
                 }
 
-                comparatorResult = _defaultComparator(valueA, valueB, opts);
+                comparatorResult = _defaultComparator(valueA, valueB, accentedCompare);
             }
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
@@ -149,7 +146,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         }
 
         const beans = this.beans;
-        if (node.group && column.getColDef().showRowGroup && !beans.groupStage?.treeData) {
+        if (node.group && !beans.groupStage?.treeData && column.getColDef().showRowGroup) {
             return undefined;
         }
 
