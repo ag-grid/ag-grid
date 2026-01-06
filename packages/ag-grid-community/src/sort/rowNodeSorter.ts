@@ -59,7 +59,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         const accentedCompare = this.accentedSort;
 
         // Iterate columns, return the first that doesn't match
-        for (let i = 0, len = sortOptions.length; i < len; i++) {
+        for (let i = 0, len = sortOptions.length; i < len; ++i) {
             const sortOption = sortOptions[i];
             const isDescending = sortOption.sort === 'desc';
 
@@ -84,10 +84,8 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
             // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
             // typically occurs when the comparator is used on a group row
-            const validResult = !isNaN(comparatorResult);
-
-            if (validResult && comparatorResult !== 0) {
-                return sortOption.sort === 'asc' ? comparatorResult : comparatorResult * -1;
+            if (comparatorResult) {
+                return sortOption.sort === 'asc' ? comparatorResult : -comparatorResult;
             }
         }
         // All matched, we make is so that the original sort order is kept:

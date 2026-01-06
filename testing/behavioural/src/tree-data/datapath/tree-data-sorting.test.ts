@@ -216,7 +216,7 @@ describe('tree dats sorting behaviour', () => {
         `);
     });
 
-    test.only('auto group column respects value getter comparator', async () => {
+    test('auto group column respects value getter comparator', async () => {
         const rowData = [
             { id: 'a', path: ['Root', 'AlphaLong'], label: 'AlphaLong' },
             { id: 'b', path: ['Root', 'Zed'], label: 'Zed' },

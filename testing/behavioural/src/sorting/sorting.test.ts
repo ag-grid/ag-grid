@@ -10,6 +10,44 @@ describe('Sorting', () => {
         modules: [ClientSideRowModelModule],
     });
 
+    test('user comparator returning undefined falls back to next column', async () => {
+        const api = gridMgr.createGrid('comparator-undefined', {
+            columnDefs: [
+                {
+                    colId: 'primary',
+                    field: 'primary',
+                    comparator: (a: string, b: string) => {
+                        const firstCharA = a?.[0];
+                        const firstCharB = b?.[0];
+                        if (firstCharA === firstCharB) {
+                            return undefined as any;
+                        }
+                        return firstCharA > firstCharB ? 1 : -1;
+                    },
+                },
+                { field: 'secondary' },
+            ],
+            rowData: [
+                { id: 'cmp-u-1', primary: 'ax', secondary: 'b' },
+                { id: 'cmp-u-2', primary: 'ay', secondary: 'a' },
+            ],
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({
+            state: [
+                { colId: 'primary', sort: 'asc' },
+                { colId: 'secondary', sort: 'asc' },
+            ],
+        });
+
+        await new GridRows(api, 'comparator undefined fallback').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:cmp-u-2 primary:"ay" secondary:"a"
+            └── LEAF id:cmp-u-1 primary:"ax" secondary:"b"
+        `);
+    });
+
     beforeAll(() => setupAgTestIds());
 
     afterEach(() => {
