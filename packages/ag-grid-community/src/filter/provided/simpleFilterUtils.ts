@@ -175,15 +175,15 @@ export const presetDateFilterTypeRelativeFromToMap: Record<
     last6Months: (from, to) => {
         from.setFullYear(from.getFullYear() - 1);
         from.setMonth(from.getMonth() + 6);
-        return { from, to: setEndOfDay(to) };
+        return presetDateFilterTypeRelativeFromToMap.today(from, to);
     },
     last12Months: (from, to) => {
         from.setFullYear(from.getFullYear() - 1);
-        return { from, to };
+        return presetDateFilterTypeRelativeFromToMap.today(from, to);
     },
     last24Months: (from, to) => {
         from.setFullYear(from.getFullYear() - 2);
-        return { from, to };
+        return presetDateFilterTypeRelativeFromToMap.today(from, to);
     },
 };
 const zeroInputTypes: Set<ISimpleFilterModelType> = new Set([
