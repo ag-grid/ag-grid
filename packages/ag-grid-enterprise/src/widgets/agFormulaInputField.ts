@@ -663,6 +663,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
         const colorsChanged = this.updateFormulaColorsFromValue(updated);
+        this.updateLastTokenTracking(nextRef, caretOffset, valueOffset);
         this.setEditorValue(updated);
         this.renderFormula({
             currentValue: value,
