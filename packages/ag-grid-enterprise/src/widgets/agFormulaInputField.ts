@@ -14,7 +14,7 @@ import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
 
 // Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
 const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
-const FORMULA_TOKEN_COLOR_COUNT = 6;
+const FORMULA_TOKEN_COLOR_COUNT = 7;
 const DISPLAY_OPERATOR_LOOKUP: Record<string, string> = {
     '/': '÷',
     '*': '×',
