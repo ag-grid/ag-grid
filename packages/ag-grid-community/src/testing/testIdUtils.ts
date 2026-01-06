@@ -11,7 +11,7 @@ function formatTestId(name: string, attributes: Record<string, string | number |
     return [name, params].filter((s) => s.length > 0).join(':');
 }
 
-export interface FilterToolpanelSpec {
+interface FilterToolpanelSpec {
     source: 'filter-toolpanel';
     colLabel?: string | null;
 }
@@ -22,7 +22,7 @@ export interface ColumnFilterSpec {
     index?: number;
 }
 
-export interface FloatingFilterSpec {
+interface FloatingFilterSpec {
     source: 'floating-filter';
     colId?: string | null;
 }
