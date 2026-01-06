@@ -27,7 +27,7 @@ describe('Date Range Filter', () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
                 {
-                    field: 'start date',
+                    field: 'gold',
                     filter: 'agNumberColumnFilter',
                     filterParams: {
                         filterOptions: ['inRange'],
