@@ -274,4 +274,114 @@ describe('tree dats sorting behaviour', () => {
             · └── Zed LEAF id:b ag-Grid-AutoColumn:"Zed" label:"Zed"
         `);
     });
+
+    test('numeric grouping valueGetter buckets using integer division', async () => {
+        const rowData = [
+            { id: 'v-185-a', path: ['Numbers', 185, 'upperBand', 'oneEightyFiveA'], label: '185-A', value: 185 },
+            { id: 'v-015-a', path: ['Numbers', 15, 'teens', 'fifteenA'], label: '15-A', value: 15 },
+            { id: 'v-245-a', path: ['Numbers', 245, 'extremeHigh', 'twoFortyFiveA'], label: '245-A', value: 245 },
+            { id: 'v-065-a', path: ['Numbers', 65, 'sixties', 'sixtyFiveA'], label: '65-A', value: 65 },
+            { id: 'v-105-a', path: ['Numbers', 105, 'hundreds', 'hundredFiveA'], label: '105-A', value: 105 },
+            { id: 'v-065-b', path: ['Numbers', 65, 'fiftyPlus', 'sixtyFiveB'], label: '65-B', value: 65 },
+            { id: 'v-015-b', path: ['Numbers', 15, 'innerFiller', 'deep', 'fifteenB'], label: '15-B', value: 15 },
+            { id: 'v-185-b', path: ['Numbers', 185, 'upperBand', 'oneEightyFiveB'], label: '185-B', value: 185 },
+            { id: 'v-245-b', path: ['Numbers', 245, 'extraFiller', 'twoFortyFiveB'], label: '245-B', value: 245 },
+        ];
+
+        const bucketSize = 50;
+        const computeBucketIndex = (value: unknown): number | undefined => {
+            if (value == null) {
+                return undefined;
+            }
+            const numeric = typeof value === 'number' ? value : Number(value);
+            if (!Number.isFinite(numeric)) {
+                return undefined;
+            }
+            return Math.trunc(numeric / bucketSize);
+        };
+
+        const api = gridsManager.createGrid('numericBuckets', {
+            columnDefs: [{ field: 'value', aggFunc: 'sum' }],
+            autoGroupColumnDef: {
+                headerName: 'Buckets',
+                valueGetter: ({ node, data }) => {
+                    if (node?.group) {
+                        const bucket = computeBucketIndex(node.key ?? data?.value);
+                        return bucket ?? node?.key;
+                    }
+                    return data?.label ?? node?.key;
+                },
+            },
+            alwaysAggregateAtRootLevel: true,
+            groupDefaultExpanded: -1,
+            treeData: true,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowData,
+        });
+
+        api.applyColumnState({
+            state: [{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }],
+        });
+
+        await new GridRows(api, 'numeric buckets asc').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:null value:1125
+            └─┬ Numbers filler id:row-group-0-Numbers ag-Grid-AutoColumn:"Numbers" value:1125
+            · ├─┬ 15 filler id:row-group-0-Numbers-1-15 ag-Grid-AutoColumn:0 value:30
+            · │ ├─┬ innerFiller filler id:row-group-0-Numbers-1-15-2-innerFiller ag-Grid-AutoColumn:"innerFiller" value:15
+            · │ │ └─┬ deep filler id:row-group-0-Numbers-1-15-2-innerFiller-3-deep ag-Grid-AutoColumn:"deep" value:15
+            · │ │ · └── fifteenB LEAF id:v-015-b ag-Grid-AutoColumn:"15-B" value:15
+            · │ └─┬ teens filler id:row-group-0-Numbers-1-15-2-teens ag-Grid-AutoColumn:"teens" value:15
+            · │ · └── fifteenA LEAF id:v-015-a ag-Grid-AutoColumn:"15-A" value:15
+            · ├─┬ 65 filler id:row-group-0-Numbers-1-65 ag-Grid-AutoColumn:1 value:130
+            · │ ├─┬ fiftyPlus filler id:row-group-0-Numbers-1-65-2-fiftyPlus ag-Grid-AutoColumn:"fiftyPlus" value:65
+            · │ │ └── sixtyFiveB LEAF id:v-065-b ag-Grid-AutoColumn:"65-B" value:65
+            · │ └─┬ sixties filler id:row-group-0-Numbers-1-65-2-sixties ag-Grid-AutoColumn:"sixties" value:65
+            · │ · └── sixtyFiveA LEAF id:v-065-a ag-Grid-AutoColumn:"65-A" value:65
+            · ├─┬ 105 filler id:row-group-0-Numbers-1-105 ag-Grid-AutoColumn:2 value:105
+            · │ └─┬ hundreds filler id:row-group-0-Numbers-1-105-2-hundreds ag-Grid-AutoColumn:"hundreds" value:105
+            · │ · └── hundredFiveA LEAF id:v-105-a ag-Grid-AutoColumn:"105-A" value:105
+            · ├─┬ 185 filler id:row-group-0-Numbers-1-185 ag-Grid-AutoColumn:3 value:370
+            · │ └─┬ upperBand filler id:row-group-0-Numbers-1-185-2-upperBand ag-Grid-AutoColumn:"upperBand" value:370
+            · │ · ├── oneEightyFiveA LEAF id:v-185-a ag-Grid-AutoColumn:"185-A" value:185
+            · │ · └── oneEightyFiveB LEAF id:v-185-b ag-Grid-AutoColumn:"185-B" value:185
+            · └─┬ 245 filler id:row-group-0-Numbers-1-245 ag-Grid-AutoColumn:4 value:490
+            · · ├─┬ extraFiller filler id:row-group-0-Numbers-1-245-2-extraFiller ag-Grid-AutoColumn:"extraFiller" value:245
+            · · │ └── twoFortyFiveB LEAF id:v-245-b ag-Grid-AutoColumn:"245-B" value:245
+            · · └─┬ extremeHigh filler id:row-group-0-Numbers-1-245-2-extremeHigh ag-Grid-AutoColumn:"extremeHigh" value:245
+            · · · └── twoFortyFiveA LEAF id:v-245-a ag-Grid-AutoColumn:"245-A" value:245
+        `);
+
+        api.applyColumnState({
+            state: [{ colId: 'ag-Grid-AutoColumn', sort: 'desc' }],
+        });
+
+        await new GridRows(api, 'numeric buckets desc').check(`
+            ROOT id:ROOT_NODE_ID ag-Grid-AutoColumn:null value:1125
+            └─┬ Numbers filler id:row-group-0-Numbers ag-Grid-AutoColumn:"Numbers" value:1125
+            · ├─┬ 245 filler id:row-group-0-Numbers-1-245 ag-Grid-AutoColumn:4 value:490
+            · │ ├─┬ extremeHigh filler id:row-group-0-Numbers-1-245-2-extremeHigh ag-Grid-AutoColumn:"extremeHigh" value:245
+            · │ │ └── twoFortyFiveA LEAF id:v-245-a ag-Grid-AutoColumn:"245-A" value:245
+            · │ └─┬ extraFiller filler id:row-group-0-Numbers-1-245-2-extraFiller ag-Grid-AutoColumn:"extraFiller" value:245
+            · │ · └── twoFortyFiveB LEAF id:v-245-b ag-Grid-AutoColumn:"245-B" value:245
+            · ├─┬ 185 filler id:row-group-0-Numbers-1-185 ag-Grid-AutoColumn:3 value:370
+            · │ └─┬ upperBand filler id:row-group-0-Numbers-1-185-2-upperBand ag-Grid-AutoColumn:"upperBand" value:370
+            · │ · ├── oneEightyFiveB LEAF id:v-185-b ag-Grid-AutoColumn:"185-B" value:185
+            · │ · └── oneEightyFiveA LEAF id:v-185-a ag-Grid-AutoColumn:"185-A" value:185
+            · ├─┬ 105 filler id:row-group-0-Numbers-1-105 ag-Grid-AutoColumn:2 value:105
+            · │ └─┬ hundreds filler id:row-group-0-Numbers-1-105-2-hundreds ag-Grid-AutoColumn:"hundreds" value:105
+            · │ · └── hundredFiveA LEAF id:v-105-a ag-Grid-AutoColumn:"105-A" value:105
+            · ├─┬ 65 filler id:row-group-0-Numbers-1-65 ag-Grid-AutoColumn:1 value:130
+            · │ ├─┬ sixties filler id:row-group-0-Numbers-1-65-2-sixties ag-Grid-AutoColumn:"sixties" value:65
+            · │ │ └── sixtyFiveA LEAF id:v-065-a ag-Grid-AutoColumn:"65-A" value:65
+            · │ └─┬ fiftyPlus filler id:row-group-0-Numbers-1-65-2-fiftyPlus ag-Grid-AutoColumn:"fiftyPlus" value:65
+            · │ · └── sixtyFiveB LEAF id:v-065-b ag-Grid-AutoColumn:"65-B" value:65
+            · └─┬ 15 filler id:row-group-0-Numbers-1-15 ag-Grid-AutoColumn:0 value:30
+            · · ├─┬ teens filler id:row-group-0-Numbers-1-15-2-teens ag-Grid-AutoColumn:"teens" value:15
+            · · │ └── fifteenA LEAF id:v-015-a ag-Grid-AutoColumn:"15-A" value:15
+            · · └─┬ innerFiller filler id:row-group-0-Numbers-1-15-2-innerFiller ag-Grid-AutoColumn:"innerFiller" value:15
+            · · · └─┬ deep filler id:row-group-0-Numbers-1-15-2-innerFiller-3-deep ag-Grid-AutoColumn:"deep" value:15
+            · · · · └── fifteenB LEAF id:v-015-b ag-Grid-AutoColumn:"15-B" value:15
+        `);
+    });
 });
