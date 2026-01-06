@@ -70,7 +70,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
-        const text = value ?? '';
+        const text = value == null ? '' : String(value);
         const colorsChanged = this.updateFormulaColorsFromValue(text);
         this.renderFormula({
             value: text,
@@ -181,6 +181,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private updateFormulaColorsFromValue(value: string): boolean {
+        value = value == null ? '' : String(value);
         if (!shouldUseTokenColors(this.beans)) {
             const hadColors = this.formulaColorByRef.size > 0;
             this.formulaColorByRef.clear();
@@ -244,6 +245,10 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private cellSelectionChanged(event: CellSelectionChangedEvent): void {
+        // If range selection is disabled while editing, ignore range events.
+        if (!this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()) {
+            return;
+        }
         if (this.ignoreNextRangeEvent) {
             this.ignoreNextRangeEvent = false;
             return;
@@ -472,9 +477,9 @@ export class AgFormulaInputField extends AgContentEditableField<
             // Restore any known color index for the ref (from formulaColorByRef) or infer from the range's class
             // so overlays stay consistent even if the grid recreated range objects.
             const existingColorIndex = this.formulaColorByRef.get(ref);
-            const inferredColorIndex = getColorIndexFromClass(range.colorClass);
+            const inferredColorIndex = getRangeColorIndexFromClass(range.colorClass);
             const colorIndex = existingColorIndex ?? inferredColorIndex ?? this.getColorIndexForRef(ref);
-            const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
+            const { rangeClass } = getColorClassesForRef(ref, colorIndex);
 
             if (colorIndex == null) {
                 continue;
@@ -562,7 +567,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         }
     }
 
-    private syncRangesFromFormula(value?: string | null): void {
+    public syncRangesFromFormula(value?: string | null): void {
         const text = value ?? this.getCurrentValue() ?? '';
         const refs = getRefsFromText(text);
 
@@ -618,7 +623,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             const colorIndex = this.moveColorToRef(
                 previousRef,
                 nextRef,
-                getColorIndexFromClass(range.colorClass) ?? undefined
+                getRangeColorIndexFromClass(range.colorClass) ?? undefined
             );
 
             if (!this.replaceTokenRef(previousRef, nextRef, colorIndex)) {
@@ -679,7 +684,7 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 }
 
-// Color helpers
+// Token/range color helpers
 const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     const { editSvc, rangeSvc } = beans;
     const canCreateRanges = !!rangeSvc && !!editSvc?.isRangeSelectionEnabledWhileEditing?.();
@@ -687,19 +692,25 @@ const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     return canCreateRanges;
 };
 
-const getFormulaColorClasses = (
-    ref: string,
+const getTokenColorClass = (colorIndex: number): string => `ag-formula-token-color-${colorIndex + 1}`;
+const getRangeColorClass = (colorIndex: number): string => `ag-formula-range-color-${colorIndex + 1}`;
+
+// Keep token and range overlay classes in sync for a given color index.
+const getColorClassesForRef = (
+    _ref: string,
     colorIndexOverride?: number | null
 ): { tokenClass: string; rangeClass: string; colorIndex: number } => {
-    const index = (colorIndexOverride ?? 0) + 1;
+    const index = colorIndexOverride ?? 0;
 
     return {
-        tokenClass: `ag-formula-token-color-${index}`,
-        rangeClass: `ag-formula-range-color-${index}`,
-        colorIndex: index - 1,
+        tokenClass: getTokenColorClass(index),
+        rangeClass: getRangeColorClass(index),
+        colorIndex: index,
     };
 };
-const getColorIndexFromClass = (colorClass?: string | null): number | null => {
+
+// Range overlay helpers
+const getRangeColorIndexFromClass = (colorClass?: string | null): number | null => {
     if (!colorClass) {
         return null;
     }
@@ -719,7 +730,7 @@ const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, col
         return;
     }
 
-    const { rangeClass } = getFormulaColorClasses(ref, colorIndex);
+    const { rangeClass } = getColorClassesForRef(ref, colorIndex);
     range.colorClass = rangeClass;
 };
 
@@ -739,7 +750,7 @@ const tokenize = (value: string, getColorIndexForRef: (ref: string) => number | 
             nodes.push(document.createTextNode(formatForDisplay(value.slice(lastIndex, index))));
         }
 
-        const colorIndex = getColorIndexForRef(text) ?? null;
+        const colorIndex = getColorIndexForRef(text);
         nodes.push(createReferenceNode(text, colorIndex, colorIndex != null));
         lastIndex = index + text.length;
     }
@@ -762,7 +773,7 @@ const createReferenceNode = (ref: string, colorIndex: number | null, useTokenCol
     };
     let tokenClass: string | undefined;
     if (useTokenColors && colorIndex != null) {
-        const classes = getFormulaColorClasses(ref, colorIndex);
+        const classes = getColorClassesForRef(ref, colorIndex);
         tokenClass = classes.tokenClass;
         attrs['data-formula-range-class'] = classes.rangeClass;
     }
