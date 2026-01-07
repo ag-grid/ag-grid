@@ -60,7 +60,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value == null ? '' : String(value);
-        const isFormula = this.isFormulaText(text);
+        const { isFormula, hasFormulaPrefix } = this.getFormulaState(text);
 
         if (!isFormula) {
             // Plain values: render as simple text with no token parsing or range syncing.
@@ -68,7 +68,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.renderPlainValue(text);
             const res = this.setEditorValue(text, silent);
             this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
-            this.rangeSyncFeature?.onValueUpdated(text, false);
+            this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
             return res;
         }
 
@@ -80,7 +80,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
-        this.rangeSyncFeature?.onValueUpdated(text, true);
+        this.rangeSyncFeature?.onValueUpdated(text, hasFormulaPrefix);
         return res;
     }
 
@@ -215,14 +215,14 @@ export class AgFormulaInputField extends AgContentEditableField<
         const currentValue = this.getCurrentValue();
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
-        const isFormula = this.isFormulaText(serialized);
+        const { isFormula, hasFormulaPrefix } = this.getFormulaState(serialized);
 
         if (!isFormula) {
             this.formulaColorByRef.clear();
             this.renderPlainValue(serialized, caret);
             this.setEditorValue(serialized);
             this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
-            this.rangeSyncFeature?.onValueUpdated(serialized, false);
+            this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
             return;
         }
 
@@ -234,7 +234,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         });
         this.setEditorValue(serialized);
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
-        this.rangeSyncFeature?.onValueUpdated(serialized, true);
+        this.rangeSyncFeature?.onValueUpdated(serialized, hasFormulaPrefix);
     }
 
     public insertOrReplaceToken(ref: string, isNew: boolean): string | undefined {
@@ -328,9 +328,12 @@ export class AgFormulaInputField extends AgContentEditableField<
         return previousRef;
     }
 
-    private isFormulaText(value: string): boolean {
-        const text = value == null ? '' : String(value);
-        return this.beans.formula?.isFormula(text) ?? text.trimStart().startsWith('=');
+    private getFormulaState(text: string): { isFormula: boolean; hasFormulaPrefix: boolean } {
+        // Unlike formulaSvc.isFormula (requires length > 1), we treat bare "=" as formula input
+        // so clicking a cell to insert a range doesn't close the editor.
+        const hasFormulaPrefix = text.trimStart().startsWith('=');
+        const isFormula = this.beans.formula?.isFormula(text) ?? hasFormulaPrefix;
+        return { isFormula, hasFormulaPrefix };
     }
 
     public replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number | null): boolean {

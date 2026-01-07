@@ -3,9 +3,8 @@ import type { BeanCollection, CellRange } from 'ag-grid-community';
 // Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
 export const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
 
-// Token/range color helpers
-const getTokenColorClass = (colorIndex: number): string => `ag-formula-token-color-${colorIndex + 1}`;
-export const getRangeColorClass = (colorIndex: number): string => `ag-formula-range-color-${colorIndex + 1}`;
+const FORMULA_TOKEN_COLOR_CLASS = 'ag-formula-token-color';
+const FORMULA_RANGE_COLOR_CLASS = 'ag-formula-range-color';
 
 // Keep token and range overlay classes in sync for a given color index.
 export const getColorClassesForRef = (
@@ -15,8 +14,8 @@ export const getColorClassesForRef = (
     const index = colorIndexOverride ?? 0;
 
     return {
-        tokenClass: getTokenColorClass(index),
-        rangeClass: getRangeColorClass(index),
+        tokenClass: `${FORMULA_TOKEN_COLOR_CLASS}-${index + 1}`,
+        rangeClass: `${FORMULA_RANGE_COLOR_CLASS}-${index + 1}`,
         colorIndex: index,
     };
 };

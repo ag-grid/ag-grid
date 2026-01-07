@@ -34,13 +34,13 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
         this.addDestroyFunc(() => this.disableRangeSelectionWhileEditing());
     }
 
-    public onValueUpdated(value: string, isFormula: boolean): void {
+    public onValueUpdated(value: string, hasFormulaPrefix: boolean): void {
         if (this.skipNextValueUpdate) {
             this.skipNextValueUpdate = false;
             return;
         }
 
-        if (isFormula) {
+        if (hasFormulaPrefix) {
             const newlyEnabled = this.enableRangeSelectionWhileEditing();
             if (newlyEnabled) {
                 // Re-render with colors now that range selection is on.
