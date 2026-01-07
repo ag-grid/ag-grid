@@ -1,5 +1,7 @@
 import type { Comparator } from '../iScalarFilter';
+import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
+import { presetDateFilterTypeRelativeFromToMap } from '../simpleFilterUtils';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
@@ -22,6 +24,10 @@ function defaultDateComparator(filterDate: Date, cellValue: any): number {
 export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date, IDateFilterParams> {
     public readonly filterType = 'date' as const;
     protected readonly FilterModelFormatterClass = DateFilterModelFormatter;
+    /**
+     * This is used to prevent desync when user scrolls in SSRM, and to materialise time into a grid state
+     */
+    public readonly beanCreationTime = new Date();
 
     constructor() {
         super(mapValuesFromDateFilterModel, DEFAULT_DATE_FILTER_OPTIONS);
@@ -34,5 +40,28 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
     protected override isValid(value: Date): boolean {
         const isValidDate = this.params.filterParams.isValidDate;
         return !isValidDate || isValidDate(value);
+    }
+
+    protected override evaluateNonNullValue(
+        values: Tuple<Date>,
+        cellValue: Date,
+        filterModel: DateFilterModel
+    ): boolean {
+        const type = filterModel.type;
+        const comparator = this.comparator();
+
+        if (!this.isValid(cellValue)) {
+            return type === 'notEqual' || type === 'notBlank';
+        }
+
+        if (type && type in presetDateFilterTypeRelativeFromToMap) {
+            const { from, to } = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType](
+                new Date(this.beanCreationTime),
+                new Date(this.beanCreationTime)
+            );
+            return comparator(from, cellValue) > 0 && comparator(to, cellValue) < 0;
+        }
+
+        return super.evaluateNonNullValue(values, cellValue, filterModel);
     }
 }

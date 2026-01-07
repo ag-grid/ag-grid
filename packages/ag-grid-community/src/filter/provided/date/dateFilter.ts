@@ -7,11 +7,12 @@ import type { FilterDisplayParams } from '../../../interfaces/iFilter';
 import { _createElement } from '../../../utils/element';
 import { _warn } from '../../../validation/logging';
 import type { FilterLocaleTextKey } from '../../filterLocaleText';
-import type { ICombinedSimpleModel, Tuple } from '../iSimpleFilter';
+import type { ICombinedSimpleModel, ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
 import { SimpleFilter } from '../simpleFilter';
-import { removeItems } from '../simpleFilterUtils';
+import { presetDateFilterTypeRelativeFromToMap, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
+import type { DateFilterHandler } from './dateFilterHandler';
 import { mapValuesFromDateFilterModel } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
@@ -284,9 +285,10 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
     protected createCondition(position: number): DateFilterModel {
         const type = this.getConditionType(position);
         const model: Partial<DateFilterModel> = {};
-
+        const { params, filterType } = this;
         const values = this.getValues(position);
-        const separator = this.params.useIsoSeparator ? 'T' : ' ';
+
+        const separator = params.useIsoSeparator ? 'T' : ' ';
         if (values.length > 0) {
             model.dateFrom = _serialiseDate(values[0], true, separator);
         }
@@ -294,10 +296,20 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
             model.dateTo = _serialiseDate(values[1], true, separator);
         }
 
+        if (type && type in presetDateFilterTypeRelativeFromToMap) {
+            const { beanCreationTime } = params.getHandler() as DateFilterHandler;
+            const { from, to } = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType](
+                new Date(beanCreationTime),
+                new Date(beanCreationTime)
+            );
+            model.dateFrom = _serialiseDate(from, true, separator);
+            model.dateTo = _serialiseDate(to, true, separator);
+        }
+
         return {
             dateFrom: null,
             dateTo: null,
-            filterType: this.filterType,
+            filterType,
             type,
             ...model,
         };

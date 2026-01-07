@@ -1,8 +1,8 @@
 import { _warn } from '../../validation/logging';
 import type { Comparator, IScalarFilterParams } from './iScalarFilter';
-import type { ISimpleFilterModel, ISimpleFilterModelPresetType, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
+import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
 import { SimpleFilterHandler } from './simpleFilterHandler';
-import { isBlank, presetDateFilterTypeRelativeFromToMap } from './simpleFilterUtils';
+import { isBlank } from './simpleFilterUtils';
 
 export abstract class ScalarFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -66,14 +66,6 @@ export abstract class ScalarFilterHandler<
         }
 
         const comparator = this.comparator();
-
-        if (presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType]) {
-            const { from, to } = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType](
-                new Date(),
-                new Date()
-            );
-            return comparator(from as TValue, cellValue) > 0 && comparator(to as TValue, cellValue) < 0;
-        }
 
         const compareResult = values[0] != null ? comparator(values[0], cellValue) : 0;
         switch (type) {
