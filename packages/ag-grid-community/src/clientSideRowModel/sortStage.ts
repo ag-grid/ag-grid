@@ -193,7 +193,7 @@ const doDeltaSort = (
     return mergeSortedArrays(rowNodeSorter, sortOptions, touchedRows, untouchedRows);
 };
 
-// Merge two sorted arrays into each other
+/** Merge two sorted arrays into each other. See https://en.wikipedia.org/wiki/Merge_algorithm */
 const mergeSortedArrays = (
     rowNodeSorter: RowNodeSorter,
     sortOptions: SortOption[],
@@ -216,22 +216,28 @@ const mergeSortedArrays = (
         const c = rowNodeSorter.compareRowNodes(sortOptions, a.node, b.node) || a.index - b.index;
 
         if (c < 0) {
-            result[k++] = a.node;
+            result[k] = a.node;
+            ++k;
             ++i;
         } else {
-            result[k++] = b.node;
+            result[k] = b.node;
+            ++k;
             ++j;
         }
     }
 
     // add remaining from arr1
     while (i < arr1Length) {
-        result[k++] = arr1[i++].node;
+        result[k] = arr1[i].node;
+        ++k;
+        ++i;
     }
 
     // add remaining from arr2
     while (j < arr2Length) {
-        result[k++] = arr2[j++].node;
+        result[k] = arr2[j].node;
+        ++k;
+        ++j;
     }
 
     return result;
