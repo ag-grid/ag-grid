@@ -53,7 +53,10 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
     }
 
     if (!accentedCompare || typeof valueA !== 'string') {
-        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+        if (valueA === valueB) {
+            return 0;
+        }
+        return valueA > valueB ? 1 : -1;
     }
 
     // using locale compare also allows chinese comparisons
