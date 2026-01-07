@@ -58,11 +58,15 @@ export const _injectGlobalCSS = (
         insertAfter = injection;
     }
     if (insertAfter) {
-        insertAfter.el.insertAdjacentElement('afterend', el);
+        insertAfter.el.after(el);
         const index = injections.indexOf(insertAfter);
         injections.splice(index + 1, 0, newInjection);
     } else {
-        styleContainer.insertBefore(el, styleContainer.querySelector(':not(title, meta)'));
+        if (styleContainer.nodeName === 'STYLE') {
+            styleContainer.after(el);
+        } else {
+            styleContainer.insertBefore(el, styleContainer.querySelector(':not(title, meta)'));
+        }
         injections.push(newInjection);
     }
 };
