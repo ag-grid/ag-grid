@@ -50,6 +50,10 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
+        if (nodeA === nodeB) {
+            return 0;
+        }
+
         const accentedCompare = this.accentedSort;
 
         // Iterate columns, return the first that doesn't match
