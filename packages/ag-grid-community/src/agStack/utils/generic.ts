@@ -52,10 +52,11 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         valueB = valueB.toNumber();
     }
 
+    if (valueA === valueB) {
+        return 0;
+    }
+
     if (!accentedCompare || typeof valueA !== 'string') {
-        if (valueA === valueB) {
-            return 0;
-        }
         return valueA > valueB ? 1 : -1;
     }
 
