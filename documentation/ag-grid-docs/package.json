@@ -87,7 +87,7 @@
     "react-dom": "~18.2.0",
     "react-gif-player": "0.5.1",
     "react-hook-form": "^7.62.0",
-    "react-instantsearch": "^7.7.0",
+    "react-instantsearch": "^7.22.1",
     "react-markdown": "5.0.3",
     "react-shadow": "^20.4.0",
     "sass": "^1.77.8",
