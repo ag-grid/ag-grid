@@ -73,6 +73,17 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public override setValue(value?: string | null, silent?: boolean): this {
         const text = value == null ? '' : String(value);
+        const isFormula = this.isFormulaText(text);
+
+        if (!isFormula) {
+            // Plain values: render as simple text with no token parsing or range syncing.
+            this.formulaColorByRef.clear();
+            this.renderPlainValue(text);
+            const res = this.setEditorValue(text, silent);
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            return res;
+        }
+
         const colorsChanged = this.updateFormulaColorsFromValue(text);
         this.renderFormula({
             value: text,
@@ -151,6 +162,14 @@ export class AgFormulaInputField extends AgContentEditableField<
             getColorIndexForRef: this.getColorIndexForRef.bind(this),
             ...params,
         });
+    }
+
+    private renderPlainValue(value: string, caret?: number | null): void {
+        const contentElement = this.getContentElement();
+        const caretOffset = caret ?? getCaretOffset(contentElement, this.currentValue);
+        contentElement.textContent = value ?? '';
+        const targetCaret = caretOffset != null ? Math.min(caretOffset, value.length) : null;
+        restoreCaret(contentElement, targetCaret);
     }
 
     private getColorIndexForRef(ref: string): number | null {
@@ -235,6 +254,16 @@ export class AgFormulaInputField extends AgContentEditableField<
         const currentValue = this.getCurrentValue();
         const caret = getCaretOffset(contentElement, currentValue);
         const serialized = serializeContent(contentElement);
+        const isFormula = this.isFormulaText(serialized);
+
+        if (!isFormula) {
+            this.formulaColorByRef.clear();
+            this.renderPlainValue(serialized, caret);
+            this.setEditorValue(serialized);
+            this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            return;
+        }
+
         const colorsChanged = this.updateFormulaColorsFromValue(serialized);
 
         this.renderFormula({
@@ -411,6 +440,11 @@ export class AgFormulaInputField extends AgContentEditableField<
         this.lastTokenCaretOffset = caretOffset;
         this.lastTokenRef = ref;
         return previousRef;
+    }
+
+    private isFormulaText(value: string): boolean {
+        const text = value == null ? '' : String(value);
+        return this.beans.formula?.isFormula(text) ?? text.trimStart().startsWith('=');
     }
 
     private addRangeForRef(ref: string, skipAddCellRange?: boolean): void {
