@@ -52,12 +52,14 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         valueB = valueB.toNumber();
     }
 
-    if (valueA === valueB) {
-        return 0;
-    }
-
     if (!accentedCompare || typeof valueA !== 'string') {
-        return valueA > valueB ? 1 : -1;
+        if (valueA > valueB) {
+            return 1;
+        }
+        if (valueA < valueB) {
+            return -1;
+        }
+        return 0;
     }
 
     // using locale compare also allows chinese comparisons
