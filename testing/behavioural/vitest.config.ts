@@ -31,7 +31,7 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: './vitest.setup.js',
         reporters: ['default'],
-        include: ['**/*.test.ts'],
+        include: ['**/*.test.ts', '**/*.test.tsx'],
         benchmark: {
             include: ['**/*.bench.ts'],
         },

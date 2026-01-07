@@ -21,7 +21,13 @@ const jobUrl = `${repoUrl}/actions/runs/${jobId}`;
 
 const parsedReport = parseCtrfReport(ctrfReportFile);
 
-const title = library === 'grid' ? 'AgGrid' : 'AgCharts';
+const LIBRARY_TITLES = {
+    grid: 'AgGrid',
+    charts: 'AgCharts',
+    studio: 'AgStudio',
+};
+
+const title = LIBRARY_TITLES[library] || 'AgGrid';
 const header = getHeader({
     isSuccess,
     link: slackLink,
