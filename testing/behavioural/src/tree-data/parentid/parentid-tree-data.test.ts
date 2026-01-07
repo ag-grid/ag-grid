@@ -4,7 +4,14 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager, asyncSetTimeout, getRowsSnapshot, setRowDataChecked } from '../../test-utils';
+import {
+    GridRows,
+    TestGridsManager,
+    applyTransactionChecked,
+    asyncSetTimeout,
+    getRowsSnapshot,
+    setRowDataChecked,
+} from '../../test-utils';
 import { simpleParentIdRowsSnapshot } from './simpleParentIdRowsSnapshot';
 
 describe('ag-grid tree data parent id', () => {
@@ -330,6 +337,62 @@ describe('ag-grid tree data parent id', () => {
             · └─┬ F GROUP id:F ag-Grid-AutoColumn:6 x:"e-f" id:"F" z:6
             · · └─┬ G GROUP id:G ag-Grid-AutoColumn:7 x:"e-f-g" id:"G" z:7
             · · · └── H LEAF id:H ag-Grid-AutoColumn:8 x:"e-f-g-h" id:"H" z:8
+        `);
+    });
+
+    test('delta sorting reorders parentId tree data after partial updates', async () => {
+        const rowData = [
+            { id: 'north', label: 'North', value: 30 },
+            { id: 'north-west', parentId: 'north', label: 'North West', value: 25 },
+            { id: 'north-east', parentId: 'north', label: 'North East', value: 35 },
+            { id: 'south', label: 'South', value: 10 },
+            { id: 'south-east', parentId: 'south', label: 'South East', value: 5 },
+            { id: 'south-west', parentId: 'south', label: 'South West', value: 15 },
+        ];
+
+        const rowById = Object.fromEntries(rowData.map((row) => [row.id, row])) as Record<
+            string,
+            (typeof rowData)[number]
+        >;
+
+        const api = gridsManager.createGrid('parentIdDeltaSort', {
+            columnDefs: [{ field: 'value' }],
+            autoGroupColumnDef: { headerName: 'Region', cellRendererParams: { suppressCount: true } },
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            rowData,
+            treeData: true,
+            deltaSort: true,
+            treeDataParentIdField: 'parentId',
+            getRowId: (params) => params.data.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        await new GridRows(api, 'parentId tree data initial order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ south GROUP id:south ag-Grid-AutoColumn:"south" value:10
+            │ ├── south-east LEAF id:south-east ag-Grid-AutoColumn:"south-east" value:5
+            │ └── south-west LEAF id:south-west ag-Grid-AutoColumn:"south-west" value:15
+            └─┬ north GROUP id:north ag-Grid-AutoColumn:"north" value:30
+            · ├── north-west LEAF id:north-west ag-Grid-AutoColumn:"north-west" value:25
+            · └── north-east LEAF id:north-east ag-Grid-AutoColumn:"north-east" value:35
+        `);
+
+        const updateRow = (id: string, value: number) => ({ ...rowById[id], value });
+
+        applyTransactionChecked(api, {
+            update: [updateRow('south', 40), updateRow('south-east', 45), updateRow('north-east', 1)],
+        });
+
+        await new GridRows(api, 'parentId tree data updated order').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ north GROUP id:north ag-Grid-AutoColumn:"north" value:30
+            │ ├── north-east LEAF id:north-east ag-Grid-AutoColumn:"north-east" value:1
+            │ └── north-west LEAF id:north-west ag-Grid-AutoColumn:"north-west" value:25
+            └─┬ south GROUP id:south ag-Grid-AutoColumn:"south" value:40
+            · ├── south-west LEAF id:south-west ag-Grid-AutoColumn:"south-west" value:15
+            · └── south-east LEAF id:south-east ag-Grid-AutoColumn:"south-east" value:45
         `);
     });
 });

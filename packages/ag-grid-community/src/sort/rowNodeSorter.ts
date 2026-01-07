@@ -9,11 +9,6 @@ import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { SortOption } from '../interfaces/iSortOption';
 
-export interface SortedRowNode {
-    currentPos: number;
-    rowNode: RowNode;
-}
-
 // this logic is used by both SSRM and CSRM
 
 export class RowNodeSorter extends BeanStub implements NamedBean {
@@ -49,24 +44,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         this.pivotActive = this.beans.colModel.isPivotActive();
     }
 
-    public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-        const rowNodesLength = rowNodes.length;
-        const scratch = new Array<SortedRowNode | RowNode>(rowNodesLength);
-        for (let i = 0; i < rowNodesLength; i++) {
-            scratch[i] = { currentPos: i, rowNode: rowNodes[i] };
-        }
-
-        scratch.sort((a, b) => this.compareRowNodes(sortOptions, a as SortedRowNode, b as SortedRowNode));
-
-        for (let i = 0; i < rowNodesLength; i++) {
-            scratch[i] = (scratch[i] as SortedRowNode).rowNode;
-        }
-        return scratch as RowNode[];
+    public doFullSortInPlace(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
+        // This relies on stable sorting, present since ECMAScript 2019 - all browser within AG Grid's support matrix
+        return rowNodes.sort((a, b) => this.compareRowNodes(sortOptions, a, b));
     }
 
-    public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
-        const nodeA = sortedNodeA.rowNode;
-        const nodeB = sortedNodeB.rowNode;
+    public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
         const accentedCompare = this.accentedSort;
 
         // Iterate columns, return the first that doesn't match
@@ -86,8 +69,8 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 //otherwise do our own comparison
 
                 if (sortOption.type === 'absolute') {
-                    valueA = _absoluteValueTransformer(valueA);
-                    valueB = _absoluteValueTransformer(valueB);
+                    valueA = absoluteValueTransformer(valueA);
+                    valueB = absoluteValueTransformer(valueB);
                 }
 
                 comparatorResult = _defaultComparator(valueA, valueB, accentedCompare);
@@ -100,7 +83,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             }
         }
 
-        return sortedNodeA.currentPos - sortedNodeB.currentPos;
+        return 0;
     }
 
     /**
@@ -207,7 +190,7 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
     }
 };
 
-const _absoluteValueTransformer = (value: any): number | null => {
+const absoluteValueTransformer = (value: any): number | null => {
     if (!value) {
         return value;
     }

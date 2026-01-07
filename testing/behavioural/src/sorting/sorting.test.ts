@@ -3,7 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { ClientSideRowModelModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
+import { GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from '../test-utils';
 
 describe('Sorting', () => {
     const gridMgr = new TestGridsManager({
@@ -306,6 +306,43 @@ describe('Sorting', () => {
             ├── LEAF id:negative value:-7
             ├── LEAF id:missing-null value:null
             └── LEAF id:missing-undefined
+        `);
+    });
+
+    test('delta sort keeps order', async () => {
+        const rowCount = 10;
+        const baseRowData = Array.from({ length: rowCount }, (_, i) => ({ id: `delta-${i}`, value: i }));
+
+        const api = gridMgr.createGrid('deltaSortThirtyPercent', {
+            columnDefs: [{ field: 'value' }],
+            deltaSort: true,
+            rowData: baseRowData,
+            getRowId: (params) => params.data?.id,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        const updates = [
+            { id: 'delta-1', value: 42 },
+            { id: 'delta-4', value: -5 },
+            { id: 'delta-7', value: 30 },
+        ];
+        expect(updates).toHaveLength(Math.floor(rowCount * 0.3));
+
+        applyTransactionChecked(api, { update: updates });
+
+        await new GridRows(api, 'delta sort updates 30%').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:delta-4 value:-5
+            ├── LEAF id:delta-0 value:0
+            ├── LEAF id:delta-2 value:2
+            ├── LEAF id:delta-3 value:3
+            ├── LEAF id:delta-5 value:5
+            ├── LEAF id:delta-6 value:6
+            ├── LEAF id:delta-8 value:8
+            ├── LEAF id:delta-9 value:9
+            ├── LEAF id:delta-7 value:30
+            └── LEAF id:delta-1 value:42
         `);
     });
 
