@@ -44,11 +44,11 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
     // this is for aggregations sum and avg, where the result can be a number that is wrapped.
     // if we didn't do this, then the toString() value would be used, which would result in
     // the strings getting used instead of the numbers.
-    if (typeof valueA !== 'number' && valueA.toNumber) {
+    if (typeof valueA === 'object' && valueA.toNumber) {
         valueA = valueA.toNumber();
     }
 
-    if (typeof valueB !== 'number' && valueB.toNumber) {
+    if (typeof valueB === 'object' && valueB.toNumber) {
         valueB = valueB.toNumber();
     }
 
