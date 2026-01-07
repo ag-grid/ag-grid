@@ -4,7 +4,7 @@ import type { BeanCollection, CellRange } from 'ag-grid-community';
 export const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
 
 // Token/range color helpers
-export const getTokenColorClass = (colorIndex: number): string => `ag-formula-token-color-${colorIndex + 1}`;
+const getTokenColorClass = (colorIndex: number): string => `ag-formula-token-color-${colorIndex + 1}`;
 export const getRangeColorClass = (colorIndex: number): string => `ag-formula-range-color-${colorIndex + 1}`;
 
 // Keep token and range overlay classes in sync for a given color index.
