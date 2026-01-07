@@ -448,7 +448,6 @@ export type { IRowComp, RowCtrl } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
-export { SortedRowNode } from './sort/rowNodeSorter';
 export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
