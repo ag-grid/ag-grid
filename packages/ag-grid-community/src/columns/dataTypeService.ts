@@ -5,7 +5,7 @@ import { _toStringOrNull } from '../agStack/utils/generic';
 import { _getValueUsingField } from '../agStack/utils/value';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
+import type { BeanCollection, UserComponentName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, SuppressKeyboardEventParams, ValueFormatterFunc, ValueFormatterParams } from '../entities/colDef';
 import type {
@@ -582,6 +582,20 @@ export class DataTypeService extends BeanStub implements NamedBean {
             formatValue,
         });
         Object.assign(colDef, partialColDef);
+
+        const { cellEditor, allowFormula } = colDef;
+
+        if (allowFormula) {
+            const supportedEditors: UserComponentName[] = [
+                'agFormulaCellEditor',
+                'agTextCellEditor',
+                'agLargeTextCellEditor',
+            ];
+
+            if (!supportedEditors.includes(cellEditor)) {
+                colDef.cellEditor = 'agFormulaCellEditor';
+            }
+        }
     }
 
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {

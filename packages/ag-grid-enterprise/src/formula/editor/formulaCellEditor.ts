@@ -1,11 +1,12 @@
 import type { ICellEditorParams } from 'ag-grid-community';
-import { AgAbstractCellEditor, KeyCode, RefPlaceholder } from 'ag-grid-community';
+import { AgAbstractCellEditor, KeyCode, RefPlaceholder, _isBrowserSafari } from 'ag-grid-community';
 
 import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 
 export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
     protected eEditor: AgFormulaInputField = RefPlaceholder;
     private rangeSelectionEnabled = false;
+    private focusAfterAttached = false;
 
     constructor() {
         super({ tag: 'div', cls: 'ag-cell-edit-wrapper' });
@@ -24,6 +25,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         // backspace/delete clears; otherwise use the existing value.
         let startValue: string | null | undefined;
         if (cellStartedEdit) {
+            this.focusAfterAttached = true;
             if (eventKey === KeyCode.BACKSPACE || eventKey === KeyCode.DELETE) {
                 startValue = '';
             } else if (eventKey && eventKey.length === 1) {
@@ -52,7 +54,13 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
     }
 
     public afterGuiAttached(): void {
-        this.focusIn();
+        if (!this.focusAfterAttached) {
+            return;
+        }
+
+        if (!_isBrowserSafari()) {
+            this.focusIn();
+        }
         this.eEditor.placeCaretAtEnd();
     }
 
