@@ -393,9 +393,19 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         let position: ColumnHighlightPosition;
 
         if (mouseX - start < width / 2) {
-            position = ColumnHighlightPosition.Before;
+            const targetIndex = consideredColumns.indexOf(targetColumn);
+            if (targetIndex === 0) {
+                position = ColumnHighlightPosition.Before;
+            } else {
+                position = ColumnHighlightPosition.After;
+                targetColumn = consideredColumns[targetIndex - 1];
+            }
         } else {
             position = ColumnHighlightPosition.After;
+        }
+
+        if (this.lastHighlightedColumn?.column !== targetColumn || this.lastHighlightedColumn?.position !== position) {
+            this.clearHighlighted();
         }
 
         setColumnHighlighted(targetColumn, position);
