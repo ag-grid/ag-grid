@@ -21,7 +21,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private accentedSort: boolean = false;
     private primaryColumnsSortGroups: boolean = false;
-    private treeData: boolean = false;
+    private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
 
     public postConstruct(): void {
@@ -32,24 +32,36 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             this.updateOptions.bind(this)
         );
 
+        this.addManagedEventListeners({
+            columnPivotModeChanged: this.updatePivotModeState.bind(this),
+        });
+
         this.updateOptions();
+        this.updatePivotModeState();
     }
 
     private updateOptions(): void {
         this.accentedSort = !!this.gos.get('accentedSort');
         this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(this.gos);
-        this.treeData = !!this.gos.get('treeData');
+    }
+
+    private updatePivotModeState(): void {
+        this.pivotActive = this.beans.colModel.isPivotActive();
     }
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
-        const sortedRowNodes = rowNodes.map((rowNode, currentPos) => ({
-            currentPos,
-            rowNode,
-        }));
+        const rowNodesLength = rowNodes.length;
+        const scratch = new Array<SortedRowNode | RowNode>(rowNodesLength);
+        for (let i = 0; i < rowNodesLength; i++) {
+            scratch[i] = { currentPos: i, rowNode: rowNodes[i] };
+        }
 
-        sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+        scratch.sort((a, b) => this.compareRowNodes(sortOptions, a as SortedRowNode, b as SortedRowNode));
 
-        return sortedRowNodes.map((item) => item.rowNode);
+        for (let i = 0; i < rowNodesLength; i++) {
+            scratch[i] = (scratch[i] as SortedRowNode).rowNode;
+        }
+        return scratch as RowNode[];
     }
 
     public compareRowNodes(sortOptions: SortOption[], sortedNodeA: SortedRowNode, sortedNodeB: SortedRowNode): number {
@@ -88,15 +100,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             }
         }
 
-        // All matched, we make is so that the original sort order is kept:
-        const leafA = this.firstLeaf(nodeA);
-        const leafB = this.firstLeaf(nodeB);
-
-        if (leafA && leafB) {
-            return leafA.sourceRowIndex - leafB.sourceRowIndex;
-        }
-
-        return 0;
+        return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
     /**
@@ -146,13 +150,16 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
-        if (this.primaryColumnsSortGroups && node.rowGroupColumn === column) {
-            return this.getGroupDataValue(node, column);
-        }
-
         const beans = this.beans;
-        if (!this.treeData && node.group && column.getColDef().showRowGroup) {
-            return undefined;
+
+        if (this.primaryColumnsSortGroups) {
+            if (node.rowGroupColumn === column) {
+                return this.getGroupDataValue(node, column);
+            }
+
+            if (node.group && column.getColDef().showRowGroup) {
+                return undefined;
+            }
         }
 
         const value = beans.valueSvc.getValue(column, node, false, 'api');
@@ -166,20 +173,15 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     }
 
     private getGroupDataValue(node: RowNode, column: AgColumn): any {
-        const { gos, valueSvc, colModel, showRowGroupCols } = this.beans;
-        const isGroupRows = _isGroupUseEntireRow(gos, colModel.isPivotActive());
         // because they're group rows, no display cols exist, so groupData never populated.
         // instead delegate to getting value from leaf child.
-        if (isGroupRows) {
+        if (_isGroupUseEntireRow(this.gos, this.pivotActive)) {
             const leafChild = this.firstLeaf(node);
-            return leafChild && valueSvc.getValue(column, leafChild, false, 'api');
+            return leafChild && this.beans.valueSvc.getValue(column, leafChild, false, 'api');
         }
 
-        const displayCol = showRowGroupCols?.getShowRowGroupCol(column.getId());
-        if (!displayCol) {
-            return undefined;
-        }
-        return node.groupData?.[displayCol.getId()];
+        const displayCol = this.beans.showRowGroupCols?.getShowRowGroupCol(column.getId());
+        return displayCol ? node.groupData?.[displayCol.getId()] : undefined;
     }
 }
 

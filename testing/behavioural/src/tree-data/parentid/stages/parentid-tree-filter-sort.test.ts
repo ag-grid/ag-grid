@@ -312,24 +312,24 @@ describe('ag-grid parentId tree data parentId filter sort', () => {
         api.setGridOption(
             'rowData',
             cachedJSONObjects.array([
-                { id: 'H', value: 10, x: 1, parentId: 'F' },
                 { id: 'A', value: 12, x: 1 },
-                { id: 'D', value: 13, x: 1, parentId: 'B' },
-                { id: 'C', value: 15, x: 1, parentId: 'A' },
                 { id: 'B', value: 17, x: 1, parentId: 'A' },
+                { id: 'D', value: 13, x: 1, parentId: 'B' },
+                { id: 'E', value: 11, x: 0, parentId: 'B' },
+                { id: 'C', value: 15, x: 1, parentId: 'A' },
                 { id: 'F', value: 10, x: 1 },
                 { id: 'G', value: 16, x: 0, parentId: 'F' },
-                { id: 'E', value: 11, x: 0, parentId: 'B' },
+                { id: 'H', value: 10, x: 1, parentId: 'F' },
             ])
         );
 
         await new GridRows(api, 'sort x desc rowData 3').check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:A ag-Grid-AutoColumn:"A" value:12 x:1
-            │ ├── C LEAF id:C ag-Grid-AutoColumn:"C" value:15 x:1
-            │ └─┬ B GROUP id:B ag-Grid-AutoColumn:"B" value:17 x:1
-            │ · ├── D LEAF id:D ag-Grid-AutoColumn:"D" value:13 x:1
-            │ · └── E LEAF id:E ag-Grid-AutoColumn:"E" value:11 x:0
+            │ ├─┬ B GROUP id:B ag-Grid-AutoColumn:"B" value:17 x:1
+            │ │ ├── D LEAF id:D ag-Grid-AutoColumn:"D" value:13 x:1
+            │ │ └── E LEAF id:E ag-Grid-AutoColumn:"E" value:11 x:0
+            │ └── C LEAF id:C ag-Grid-AutoColumn:"C" value:15 x:1
             └─┬ F GROUP id:F ag-Grid-AutoColumn:"F" value:10 x:1
             · ├── H LEAF id:H ag-Grid-AutoColumn:"H" value:10 x:1
             · └── G LEAF id:G ag-Grid-AutoColumn:"G" value:16 x:0
