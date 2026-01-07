@@ -41,6 +41,8 @@ export class AgFormulaInputField extends AgContentEditableField<
     private lastTokenValueLength: number | null = null;
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
+    private editingColumn?: any;
+    private editingRowIndex?: number;
     // All ranges created by this editor (used to clean up on destroy).
     private readonly trackedRangeRefs = new Set<string>();
     private readonly trackedRanges = new Map<CellRange, string>();
@@ -127,10 +129,14 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         if (!colRef || rowIndex == null || rowIndex === undefined) {
             this.editingCellRef = undefined;
+            this.editingColumn = undefined;
+            this.editingRowIndex = undefined;
             return;
         }
 
         this.editingCellRef = `${colRef}${rowIndex + 1}`;
+        this.editingColumn = column;
+        this.editingRowIndex = rowIndex;
     }
 
     private setEditorValue(value: string, silent: boolean = false): this {
@@ -271,6 +277,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         const ref = getLatestRangeRef(this.beans);
 
         if (!ref || ref === this.editingCellRef) {
+            this.refocusEditingCell();
             return;
         }
 
@@ -285,16 +292,19 @@ export class AgFormulaInputField extends AgContentEditableField<
         if (event.started && event.finished) {
             this.insertOrReplaceToken(ref, true, true);
             this.restoreCaretAfterToken();
+            this.refocusEditingCell();
             return;
         }
 
         if (!event.started && !event.finished) {
             this.insertOrReplaceToken(ref, false, false);
+            this.refocusEditingCell();
             return;
         }
 
         if (event.finished) {
             this.restoreCaretAfterToken();
+            this.refocusEditingCell();
         }
     }
 
@@ -517,6 +527,19 @@ export class AgFormulaInputField extends AgContentEditableField<
             type: 'cellSelectionChanged',
             started: false,
             finished: false,
+        });
+    }
+
+    private refocusEditingCell(): void {
+        const { focusSvc } = this.beans;
+        if (!focusSvc || this.editingColumn == null || this.editingRowIndex == null) {
+            return;
+        }
+        focusSvc.setFocusedCell({
+            column: this.editingColumn as any,
+            rowIndex: this.editingRowIndex,
+            rowPinned: null,
+            preventScrollOnBrowserFocus: true,
         });
     }
 
