@@ -94,6 +94,13 @@ jobs:
                   name: sast-code-scan
                   path: ${{ env.OUTPUT_DIR }}
 
+            - name: Fail job if scan failed
+              shell: bash
+              if: success() && steps.snyk-code-scan.outcome == 'failure'
+              run: |
+                  echo "Workflow failed, failing the build."
+                  exit 1
+
     combine-scan-results:
       needs: [code-dependency-scan, sast-code-scan]
       runs-on: ubuntu-latest

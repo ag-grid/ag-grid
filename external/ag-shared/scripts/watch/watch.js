@@ -25,6 +25,7 @@ const {
 } = require('./constants');
 const chartsConfig = require('./chartsWatch.config');
 const gridConfig = require('./gridWatch.config');
+const dashConfig = require('./dashWatch.config');
 
 const RED = '\x1b[;31m';
 const GREEN = '\x1b[;32m';
@@ -522,7 +523,7 @@ Run these commands to reset the workspace:
 
 function respawnError() {
     error(`Repeated respawn detected!
-        
+
     The Nx Daemon maybe erroring, try restarting it to resolve with either:
     - \`yarn nx daemon --stop\`
     - \`yarn\`
@@ -559,9 +560,16 @@ process.on('beforeExit', async () => {
     });
 });
 
+const LIBRARY_CONFIGS = {
+    charts: chartsConfig,
+    grid: gridConfig,
+    dash: dashConfig,
+};
+const LIBRARY_KEYS = Object.keys(LIBRARY_CONFIGS);
+
 const library = process.argv[2];
-if (!['charts', 'grid'].includes(library)) {
-    const msg = 'Invalid library to watch. Options: charts, grid';
+if (!LIBRARY_KEYS.includes(library)) {
+    const msg = `Invalid library to watch. Options: ${LIBRARY_KEYS.join()}`;
     error(msg);
     throw new Error(msg);
 }
@@ -583,7 +591,7 @@ Run these commands to reset the workspace:
 } else {
     // Write initial STARTING status
     writeStatusFile(STATUS.STARTING).then(() => {
-        const config = library === 'charts' ? chartsConfig : gridConfig;
+        const config = LIBRARY_CONFIGS[library];
         globalConfig = config; // Set global config reference
         run(config);
     });

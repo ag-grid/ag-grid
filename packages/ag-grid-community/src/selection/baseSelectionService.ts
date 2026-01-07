@@ -181,6 +181,8 @@ export abstract class BaseSelectionService extends BeanStub {
                     atLeastOneDeSelected = true;
                     break;
                 default:
+                    // If any child node has an indeterminate selection state, then its parent must also have an indeterminate state
+                    // regardless of the state of the other children, so we can return early here
                     return undefined;
             }
         }
