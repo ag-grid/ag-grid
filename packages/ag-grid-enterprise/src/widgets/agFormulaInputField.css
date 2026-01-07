@@ -26,6 +26,10 @@
     color: var(--ag-formula-token-6-color);
 }
 
+.ag-formula-token-color-7 {
+    color: var(--ag-formula-token-6-color);
+}
+
 .ag-formula-range-color-1 {
     --ag-range-selection-border-color: var(--ag-formula-token-1-color);
     --ag-range-selection-background-color: var(--ag-formula-token-1-background-color);
@@ -54,6 +58,11 @@
 .ag-formula-range-color-6 {
     --ag-range-selection-border-color: var(--ag-formula-token-6-color);
     --ag-range-selection-background-color: var(--ag-formula-token-6-background-color);
+}
+
+.ag-formula-range-color-7 {
+    --ag-range-selection-border-color: var(--ag-formula-token-7-color);
+    --ag-range-selection-background-color: var(--ag-formula-token-7-background-color);
 }
 
 /* stylelint-disable selector-max-specificity */
