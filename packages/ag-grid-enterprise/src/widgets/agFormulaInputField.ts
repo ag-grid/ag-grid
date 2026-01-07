@@ -3,17 +3,15 @@ import type {
     AgEventTypeParams,
     AgGridCommon,
     BeanCollection,
-    CellRange,
-    CellSelectionChangedEvent,
     GridOptionsService,
     GridOptionsWithDefaults,
 } from 'ag-grid-community';
-import { AgContentEditableField, _createElement, _last } from 'ag-grid-community';
+import { AgContentEditableField, _createElement } from 'ag-grid-community';
 
 import { agFormulaInputFieldCSS } from './agFormulaInputField.css-GENERATED';
+import { FormulaInputRangeSyncFeature } from './formulaInputRangeSyncFeature';
+import { CELL_OR_RANGE_REGEX, getColorClassesForRef } from './formulaRangeUtils';
 
-// Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
-const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
 const FORMULA_TOKEN_COLOR_COUNT = 7;
 const DISPLAY_OPERATOR_LOOKUP: Record<string, string> = {
     '/': '÷',
@@ -34,22 +32,13 @@ export class AgFormulaInputField extends AgContentEditableField<
     string
 > {
     private currentValue: string = '';
-    private editingCellRef?: string;
     // Caret / token bookkeeping so range updates can re-render without losing position.
     private selectionCaretOffset: number | null = null;
     private lastTokenValueOffset: number | null = null;
     private lastTokenValueLength: number | null = null;
     private lastTokenCaretOffset: number | null = null;
     private lastTokenRef?: string;
-    private editingColumn?: any;
-    private editingRowIndex?: number;
-    // All ranges created by this editor (used to clean up on destroy).
-    private readonly trackedRangeRefs = new Set<string>();
-    private readonly trackedRanges = new Map<CellRange, string>();
-    // Used to skip token logic when we dispatch synthetic refresh events.
-    private ignoreNextRangeEvent = false;
-    // Stops programmatic range updates from re-entering our range event handler.
-    private suppressRangeEvents = false;
+    private rangeSyncFeature?: FormulaInputRangeSyncFeature;
     // Stable color assignment per token/ref so resizes keep their original hue.
     private readonly formulaColorByRef = new Map<string, number>();
 
@@ -66,9 +55,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             input: this.onContentInput.bind(this),
         });
 
-        this.addManagedEventListeners({
-            cellSelectionChanged: this.cellSelectionChanged.bind(this),
-        });
+        this.rangeSyncFeature = this.createManagedBean(new FormulaInputRangeSyncFeature(this));
     }
 
     public override setValue(value?: string | null, silent?: boolean): this {
@@ -81,10 +68,11 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.renderPlainValue(text);
             const res = this.setEditorValue(text, silent);
             this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            this.rangeSyncFeature?.onValueUpdated(text, false);
             return res;
         }
 
-        const colorsChanged = this.updateFormulaColorsFromValue(text);
+        this.updateFormulaColorsFromValue(text);
         this.renderFormula({
             value: text,
             currentValue: this.getCurrentValue(),
@@ -92,20 +80,8 @@ export class AgFormulaInputField extends AgContentEditableField<
         // We render tokens ourselves, so avoid the base class' setValue (which would re-render)
         // and delegate that task to setEditorValue to keep our cached value and the superclass in sync.
         const res = this.setEditorValue(text, silent);
-        this.syncRangesFromFormula(text);
-        if (colorsChanged && this.trackedRangeRefs.size) {
-            // Keep overlays in sync with any new ref→color mapping.
-            this.refreshRangeStyling();
-        }
+        this.rangeSyncFeature?.onValueUpdated(text, true);
         return res;
-    }
-
-    public override destroy(): void {
-        super.destroy();
-        // Remove any ranges we created while editing so they don't linger after the editor closes.
-        this.trackedRangeRefs.forEach((ref) => this.removeRangeForRef(ref));
-        this.trackedRangeRefs.clear();
-        this.trackedRanges.clear();
     }
 
     public getCurrentValue(): string {
@@ -137,17 +113,20 @@ export class AgFormulaInputField extends AgContentEditableField<
 
     public setEditingCellRef(column: any, rowIndex: number | null | undefined): void {
         const colRef = column ? this.beans.formula?.getColRef(column as any) : undefined;
+        const editingCellRef =
+            colRef && rowIndex != null && rowIndex !== undefined ? `${colRef}${rowIndex + 1}` : undefined;
 
-        if (!colRef || rowIndex == null || rowIndex === undefined) {
-            this.editingCellRef = undefined;
-            this.editingColumn = undefined;
-            this.editingRowIndex = undefined;
+        if (!editingCellRef) {
+            this.rangeSyncFeature?.setEditingCellRef(undefined, undefined, undefined);
             return;
         }
 
-        this.editingCellRef = `${colRef}${rowIndex + 1}`;
-        this.editingColumn = column;
-        this.editingRowIndex = rowIndex;
+        this.rangeSyncFeature?.setEditingCellRef(column, rowIndex, editingCellRef);
+    }
+
+    public rememberCaret(): void {
+        const caretOffset = getCaretOffset(this.getContentElement(), this.getCurrentValue());
+        this.selectionCaretOffset = caretOffset ?? this.currentValue.length;
     }
 
     private setEditorValue(value: string, silent: boolean = false): this {
@@ -172,7 +151,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         restoreCaret(contentElement, targetCaret);
     }
 
-    private getColorIndexForRef(ref: string): number | null {
+    public getColorIndexForRef(ref: string): number | null {
         if (!shouldUseTokenColors(this.beans)) {
             return null;
         }
@@ -187,7 +166,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         return next;
     }
 
-    private moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number | null {
+    public moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number | null {
         const colorIndex =
             fromRef && this.formulaColorByRef.has(fromRef)
                 ? this.getColorIndexForRef(fromRef)
@@ -205,32 +184,14 @@ export class AgFormulaInputField extends AgContentEditableField<
         return colorIndex;
     }
 
-    private updateFormulaColorsFromValue(value: string): boolean {
+    private updateFormulaColorsFromValue(value: string): void {
         value = value == null ? '' : String(value);
         if (!shouldUseTokenColors(this.beans)) {
-            const hadColors = this.formulaColorByRef.size > 0;
             this.formulaColorByRef.clear();
-            return hadColors;
+            return;
         }
 
-        // Walk the formula left-to-right, capture the first occurrence of each distinct ref,
-        // and assign colors in encounter order so token colors stay stable every time the
-        // user re-enters the editor (A1 -> color1, next ref -> color2, etc.).
-        // If the order/size changes (tokens added/removed/reordered) we return `true` and
-        // callers re-render tokens and re-style tracked ranges so overlays stay in sync.
-        const refsInOrder: string[] = [];
-        const seen = new Set<string>();
-        CELL_OR_RANGE_REGEX.lastIndex = 0;
-        let match: RegExpExecArray | null;
-        while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
-            const ref = match[0];
-            if (seen.has(ref)) {
-                continue;
-            }
-            seen.add(ref);
-            refsInOrder.push(ref);
-        }
-
+        const refsInOrder = getOrderedRefs(value);
         let changed = refsInOrder.length !== this.formulaColorByRef.size;
         const nextColors = new Map<string, number>();
         refsInOrder.forEach((ref, index) => {
@@ -241,12 +202,12 @@ export class AgFormulaInputField extends AgContentEditableField<
             }
         });
 
-        if (changed) {
-            this.formulaColorByRef.clear();
-            nextColors.forEach((colorIndex, ref) => this.formulaColorByRef.set(ref, colorIndex));
+        if (!changed) {
+            return;
         }
 
-        return changed;
+        this.formulaColorByRef.clear();
+        nextColors.forEach((colorIndex, ref) => this.formulaColorByRef.set(ref, colorIndex));
     }
 
     private onContentInput(): void {
@@ -261,87 +222,26 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.renderPlainValue(serialized, caret);
             this.setEditorValue(serialized);
             this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+            this.rangeSyncFeature?.onValueUpdated(serialized, false);
             return;
         }
 
-        const colorsChanged = this.updateFormulaColorsFromValue(serialized);
-
+        this.updateFormulaColorsFromValue(serialized);
         this.renderFormula({
             currentValue,
             value: serialized,
             caret: caret ?? undefined,
         });
         this.setEditorValue(serialized);
-        this.syncRangesFromFormula(serialized);
-
-        if (colorsChanged && this.trackedRangeRefs.size) {
-            this.refreshRangeStyling();
-        }
+        this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
+        this.rangeSyncFeature?.onValueUpdated(serialized, true);
     }
 
-    private cellSelectionChanged(event: CellSelectionChangedEvent): void {
-        // If range selection is disabled while editing, ignore range events.
-        if (!this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()) {
-            return;
-        }
-        if (this.ignoreNextRangeEvent) {
-            this.ignoreNextRangeEvent = false;
-            return;
-        }
-
-        const retagged = this.ensureTrackedRangeColors();
-
-        if (this.suppressRangeEvents) {
-            if (retagged) {
-                this.refreshRangeStyling();
-            }
-            return;
-        }
-
-        // If a tracked range was resized (e.g. via handle drag), update the existing token instead of adding a new one.
-        if (this.updateTrackedRangeTokens()) {
-            return;
-        }
-
-        const ref = getLatestRangeRef(this.beans);
-
-        if (!ref || ref === this.editingCellRef) {
-            this.refocusEditingCell();
-            return;
-        }
-
-        this.tagLatestRangeForRef(ref);
-
-        if (event.started) {
-            // Remember caret to reapply after range selection inserts a token.
-            this.selectionCaretOffset =
-                getCaretOffset(this.getContentElement(), this.getCurrentValue()) ?? this.currentValue.length;
-        }
-
-        if (event.started && event.finished) {
-            this.insertOrReplaceToken(ref, true, true);
-            this.restoreCaretAfterToken();
-            this.refocusEditingCell();
-            return;
-        }
-
-        if (!event.started && !event.finished) {
-            this.insertOrReplaceToken(ref, false, false);
-            this.refocusEditingCell();
-            return;
-        }
-
-        if (event.finished) {
-            this.restoreCaretAfterToken();
-            this.refocusEditingCell();
-        }
-    }
-
-    private insertOrReplaceToken(ref: string, isNew: boolean, manageRanges: boolean): void {
+    public insertOrReplaceToken(ref: string, isNew: boolean): string | undefined {
         const offsets = this.getTokenInsertOffsets(isNew);
 
         if (!offsets) {
-            return;
+            return undefined;
         }
 
         const { caretOffset, valueOffset } = offsets;
@@ -351,7 +251,7 @@ export class AgFormulaInputField extends AgContentEditableField<
 
         const previousRef = this.updateLastTokenTracking(ref, caretOffset, valueOffset);
 
-        const colorsChanged = this.updateFormulaColorsFromValue(updatedValue);
+        this.updateFormulaColorsFromValue(updatedValue);
         this.setEditorValue(updatedValue);
         this.renderFormula({
             currentValue: value,
@@ -359,25 +259,11 @@ export class AgFormulaInputField extends AgContentEditableField<
             caret: caretOffset + ref.length,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' as any });
-        if (manageRanges) {
-            if (!isNew && previousRef && previousRef !== ref) {
-                this.removeRangeForRef(previousRef);
-            }
-            this.addRangeForRef(ref, true);
-        } else {
-            // When dragging a range, we only track the latest ref; ranges will be reconciled later.
-            if (!isNew && previousRef && previousRef !== ref) {
-                this.trackedRangeRefs.delete(previousRef);
-            }
-            this.trackedRangeRefs.add(ref);
-        }
 
-        if (colorsChanged && this.trackedRangeRefs.size) {
-            this.refreshRangeStyling();
-        }
+        return previousRef;
     }
 
-    private restoreCaretAfterToken(): void {
+    public restoreCaretAfterToken(): void {
         const caretBase =
             this.lastTokenCaretOffset ??
             getCaretOffset(this.getContentElement(), this.getCurrentValue()) ??
@@ -447,262 +333,7 @@ export class AgFormulaInputField extends AgContentEditableField<
         return this.beans.formula?.isFormula(text) ?? text.trimStart().startsWith('=');
     }
 
-    private addRangeForRef(ref: string, skipAddCellRange?: boolean): void {
-        if (this.trackedRangeRefs.has(ref)) {
-            const existing = this.beans.rangeSvc
-                ?.getCellRanges()
-                .find((range) => rangeToRef(this.beans, range) === ref);
-
-            if (existing) {
-                const colorIndex = this.getColorIndexForRef(ref) ?? undefined;
-                tagRangeWithFormulaColor(existing, ref, colorIndex);
-                this.refreshRangeStyling();
-            }
-
-            return;
-        }
-
-        const beans = this.beans;
-
-        const params = getCellRangeParams(beans, ref);
-        const rangeSvc = beans.rangeSvc;
-
-        if (!params || !rangeSvc) {
-            return;
-        }
-
-        let created: CellRange | undefined;
-
-        if (!skipAddCellRange) {
-            this.suppressRangeEvents = true;
-            created = rangeSvc.addCellRange(params);
-            this.suppressRangeEvents = false;
-        } else {
-            created = rangeSvc
-                .getCellRanges()
-                .find((range) => rangeToRef(beans, range) === ref && range.startRow != null && range.endRow != null);
-        }
-
-        if (created) {
-            const colorIndex = this.getColorIndexForRef(ref);
-            tagRangeWithFormulaColor(created, ref, colorIndex);
-            this.trackedRangeRefs.add(ref);
-            this.trackedRanges.set(created, ref);
-            this.refreshRangeStyling();
-        }
-    }
-
-    private tagLatestRangeForRef(ref: string): void {
-        const latest = _last(this.beans.rangeSvc?.getCellRanges() ?? []);
-
-        if (latest) {
-            const colorIndex = this.getColorIndexForRef(ref);
-            tagRangeWithFormulaColor(latest, ref, colorIndex);
-            this.refreshRangeStyling();
-        }
-    }
-
-    private ensureTrackedRangeColors(): boolean {
-        const rangeSvc = this.beans.rangeSvc;
-
-        if (!rangeSvc) {
-            return false;
-        }
-
-        const ranges = rangeSvc.getCellRanges();
-        let retagged = false;
-
-        for (const range of ranges) {
-            const ref = rangeToRef(this.beans, range);
-            if (!ref || !this.trackedRangeRefs.has(ref)) {
-                continue;
-            }
-
-            // Restore any known color index for the ref (from formulaColorByRef) or infer from the range's class
-            // so overlays stay consistent even if the grid recreated range objects.
-            const existingColorIndex = this.formulaColorByRef.get(ref);
-            const inferredColorIndex = getRangeColorIndexFromClass(range.colorClass);
-            const colorIndex = existingColorIndex ?? inferredColorIndex ?? this.getColorIndexForRef(ref);
-            const { rangeClass } = getColorClassesForRef(ref, colorIndex);
-
-            if (colorIndex == null) {
-                continue;
-            }
-
-            this.formulaColorByRef.set(ref, colorIndex);
-
-            if (range.colorClass !== rangeClass) {
-                // Re-tag the range with the desired class when it doesn't match our mapping.
-                tagRangeWithFormulaColor(range, ref, colorIndex);
-                retagged = true;
-            }
-
-            if (!this.trackedRanges.has(range)) {
-                // Keep the mapping between the current CellRange object and its ref so resize moves can update tokens.
-                this.trackedRanges.set(range, ref);
-            }
-        }
-
-        return retagged;
-    }
-
-    private refreshRangeStyling(): void {
-        const { eventSvc } = this.beans;
-        if (!eventSvc) {
-            return;
-        }
-
-        // Re-tag in case the range objects were replaced by the grid.
-        // ensureTrackedRangeColors pulls color indices from formulaColorByRef (which updateFormulaColorsFromValue
-        // rebuilds whenever the formula text changes) and reapplies the range classes so overlays track token colors.
-        this.ensureTrackedRangeColors();
-        this.ignoreNextRangeEvent = true;
-        eventSvc.dispatchEvent({
-            type: 'cellSelectionChanged',
-            started: false,
-            finished: false,
-        });
-    }
-
-    private refocusEditingCell(): void {
-        const { focusSvc } = this.beans;
-        if (!focusSvc || this.editingColumn == null || this.editingRowIndex == null) {
-            return;
-        }
-        focusSvc.setFocusedCell({
-            column: this.editingColumn as any,
-            rowIndex: this.editingRowIndex,
-            rowPinned: null,
-            preventScrollOnBrowserFocus: true,
-        });
-    }
-
-    private removeRangeForRef(ref: string | undefined): void {
-        if (!ref || !this.trackedRangeRefs.has(ref)) {
-            return;
-        }
-
-        const beans = this.beans;
-        const { rangeSvc } = beans;
-
-        if (!rangeSvc) {
-            this.trackedRangeRefs.delete(ref);
-            return;
-        }
-
-        const ranges = rangeSvc.getCellRanges();
-        if (!ranges?.length) {
-            this.trackedRangeRefs.delete(ref);
-            for (const [range, storedRef] of this.trackedRanges.entries()) {
-                if (storedRef === ref) {
-                    this.trackedRanges.delete(range);
-                }
-            }
-            return;
-        }
-
-        const remaining = ranges.filter((range) => rangeToRef(beans, range) !== ref);
-
-        if (remaining.length === ranges.length) {
-            this.trackedRangeRefs.delete(ref);
-            for (const [range, storedRef] of this.trackedRanges.entries()) {
-                if (storedRef === ref) {
-                    this.trackedRanges.delete(range);
-                }
-            }
-            return;
-        }
-
-        this.suppressRangeEvents = true;
-        rangeSvc.setCellRanges(remaining);
-        this.suppressRangeEvents = false;
-        this.trackedRangeRefs.delete(ref);
-        for (const [range, storedRef] of this.trackedRanges.entries()) {
-            if (storedRef === ref) {
-                this.trackedRanges.delete(range);
-            }
-        }
-    }
-
-    public syncRangesFromFormula(value?: string | null): void {
-        const text = value ?? this.getCurrentValue() ?? '';
-        const refs = getRefsFromText(text);
-
-        // Remove any tracked ranges whose refs were deleted from the formula text.
-        const toRemove: string[] = [];
-        for (const tracked of this.trackedRangeRefs) {
-            if (!refs.has(tracked)) {
-                toRemove.push(tracked);
-            }
-        }
-
-        toRemove.forEach((ref) => this.removeRangeForRef(ref));
-
-        // Ensure ranges exist (and are tracked) for all refs currently present in the formula text.
-        refs.forEach((ref) => {
-            if (ref !== this.editingCellRef) {
-                this.addRangeForRef(ref);
-            }
-        });
-
-        // Drop any range mappings that no longer exist after syncing (e.g. grid recreated range objects).
-        for (const [range, storedRef] of this.trackedRanges.entries()) {
-            const rangeWasReplaced = !this.beans.rangeSvc?.getCellRanges().includes(range);
-            if (!this.trackedRangeRefs.has(storedRef) || rangeWasReplaced) {
-                // Remove stale mapping when the ref was removed or the grid replaced the range object.
-                this.trackedRanges.delete(range);
-            }
-        }
-    }
-
-    private updateTrackedRangeTokens(): boolean {
-        const rangeSvc = this.beans.rangeSvc;
-        if (!rangeSvc) {
-            return false;
-        }
-
-        const ranges = rangeSvc.getCellRanges();
-        let updated = false;
-
-        for (const range of ranges) {
-            const previousRef = this.trackedRanges.get(range);
-            if (!previousRef) {
-                continue;
-            }
-
-            // Convert the current range shape to a ref and update the token if it changed (e.g. drag handle).
-            const nextRef = rangeToRef(this.beans, range);
-            if (!nextRef || nextRef === previousRef || nextRef === this.editingCellRef) {
-                continue;
-            }
-
-            // Keep the color with the moved ref, preferring any existing class-derived index.
-            const colorIndex = this.moveColorToRef(
-                previousRef,
-                nextRef,
-                getRangeColorIndexFromClass(range.colorClass) ?? undefined
-            );
-
-            if (!this.replaceTokenRef(previousRef, nextRef, colorIndex)) {
-                continue;
-            }
-
-            // Re-tag the range and update mappings so future events use the new ref.
-            tagRangeWithFormulaColor(range, nextRef, colorIndex);
-            this.trackedRanges.set(range, nextRef);
-            this.trackedRangeRefs.delete(previousRef);
-            this.trackedRangeRefs.add(nextRef);
-            updated = true;
-        }
-
-        if (updated) {
-            this.refreshRangeStyling();
-        }
-
-        return updated;
-    }
-
-    private replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number | null): boolean {
+    public replaceTokenRef(previousRef: string, nextRef: string, colorIndex?: number | null): boolean {
         const contentElement = this.getContentElement();
         const token = Array.from(contentElement.querySelectorAll<HTMLElement>('.ag-formula-token')).find(
             (node) => getTokenRef(node) === previousRef
@@ -724,7 +355,7 @@ export class AgFormulaInputField extends AgContentEditableField<
             this.formulaColorByRef.set(nextRef, colorIndex);
         }
         const updated = value.slice(0, valueOffset) + nextRef + value.slice(valueOffset + previousRef.length);
-        const colorsChanged = this.updateFormulaColorsFromValue(updated);
+        this.updateFormulaColorsFromValue(updated);
         this.updateLastTokenTracking(nextRef, caretOffset, valueOffset);
         this.setEditorValue(updated);
         this.renderFormula({
@@ -733,9 +364,6 @@ export class AgFormulaInputField extends AgContentEditableField<
             caret: caretOffset + nextRef.length,
         });
         this.dispatchLocalEvent({ type: 'fieldValueChanged' });
-        if (colorsChanged && this.trackedRangeRefs.size) {
-            this.refreshRangeStyling();
-        }
 
         return true;
     }
@@ -749,46 +377,23 @@ const shouldUseTokenColors = (beans: BeanCollection): boolean => {
     return canCreateRanges;
 };
 
-const getTokenColorClass = (colorIndex: number): string => `ag-formula-token-color-${colorIndex + 1}`;
-const getRangeColorClass = (colorIndex: number): string => `ag-formula-range-color-${colorIndex + 1}`;
-
-// Keep token and range overlay classes in sync for a given color index.
-const getColorClassesForRef = (
-    _ref: string,
-    colorIndexOverride?: number | null
-): { tokenClass: string; rangeClass: string; colorIndex: number } => {
-    const index = colorIndexOverride ?? 0;
-
-    return {
-        tokenClass: getTokenColorClass(index),
-        rangeClass: getRangeColorClass(index),
-        colorIndex: index,
-    };
-};
-
-// Range overlay helpers
-const getRangeColorIndexFromClass = (colorClass?: string | null): number | null => {
-    if (!colorClass) {
-        return null;
+// Walk the formula left-to-right, capture the first occurrence of each distinct ref,
+// and assign colors in encounter order so token colors stay stable every time the
+// user re-enters the editor (A1 -> color1, next ref -> color2, etc.).
+const getOrderedRefs = (value: string): string[] => {
+    const refsInOrder: string[] = [];
+    const seen = new Set<string>();
+    CELL_OR_RANGE_REGEX.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = CELL_OR_RANGE_REGEX.exec(value)) != null) {
+        const ref = match[0];
+        if (seen.has(ref)) {
+            continue;
+        }
+        seen.add(ref);
+        refsInOrder.push(ref);
     }
-
-    const match = /ag-formula-range-color-(\d+)/.exec(colorClass);
-
-    if (!match) {
-        return null;
-    }
-
-    const parsed = parseInt(match[1], 10);
-    return Number.isFinite(parsed) ? parsed - 1 : null;
-};
-
-const tagRangeWithFormulaColor = (range: CellRange | undefined, ref: string, colorIndex?: number | null): void => {
-    if (!range) {
-        return;
-    }
-
-    const { rangeClass } = getColorClassesForRef(ref, colorIndex);
-    range.colorClass = rangeClass;
+    return refsInOrder;
 };
 
 // Rendering & caret helpers
@@ -1005,100 +610,6 @@ const getNodeTextLength = (node: Node): number => {
     }
 
     return 0;
-};
-
-// Range helpers
-const getCellRangeParams = (beans: BeanCollection, ref: string) => {
-    const match = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/.exec(ref);
-    if (!match) {
-        return null;
-    }
-
-    const { formula } = beans;
-
-    const [, startColRef, startRowStr, endColRef, endRowStr] = match;
-    const startCol = formula?.getColByRef(startColRef);
-    const endCol = formula?.getColByRef(endColRef ?? startColRef);
-
-    if (!startCol || !endCol) {
-        return null;
-    }
-
-    const rowStartIndex = parseInt(startRowStr, 10) - 1;
-    const rowEndIndex = endRowStr ? parseInt(endRowStr, 10) - 1 : rowStartIndex;
-
-    return {
-        rowStartIndex,
-        rowEndIndex,
-        columnStart: startCol,
-        columnEnd: endCol,
-    };
-};
-
-const getLatestRangeRef = (beans: BeanCollection): string | null => {
-    const ranges = beans.rangeSvc?.getCellRanges();
-    const latest = ranges?.length ? _last(ranges) : null;
-
-    if (!latest) {
-        return null;
-    }
-
-    return rangeToRef(beans, latest);
-};
-
-const rangeToRef = (beans: BeanCollection, range: CellRange): string | null => {
-    const { rangeSvc, formula } = beans;
-
-    if (!rangeSvc || !formula) {
-        return null;
-    }
-
-    const startRow = rangeSvc.getRangeStartRow(range);
-    const endRow = rangeSvc.getRangeEndRow(range);
-
-    if (!startRow || !endRow || startRow.rowPinned || endRow.rowPinned) {
-        return null;
-    }
-
-    const rowStartIndex = Math.min(startRow.rowIndex!, endRow.rowIndex!) + 1;
-    const rowEndIndex = Math.max(startRow.rowIndex!, endRow.rowIndex!) + 1;
-
-    const columns = range.columns;
-
-    if (!columns?.length) {
-        return null;
-    }
-
-    const sorted = [...columns];
-    const startCol = sorted[0];
-    const endCol = sorted[sorted.length - 1];
-
-    const colStartRef = formula.getColRef(startCol as any);
-    const colEndRef = formula.getColRef(endCol as any);
-
-    if (!colStartRef || !colEndRef) {
-        return null;
-    }
-
-    const sameCol = colStartRef === colEndRef;
-    const sameRow = rowStartIndex === rowEndIndex;
-
-    if (sameCol && sameRow) {
-        return `${colStartRef}${rowStartIndex}`;
-    }
-
-    return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
-};
-
-const getRefsFromText = (text: string): Set<string> => {
-    // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
-    const refs = new Set<string>();
-    let match: RegExpExecArray | null;
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
-    while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-        refs.add(match[0]);
-    }
-    return refs;
 };
 
 // Token helpers

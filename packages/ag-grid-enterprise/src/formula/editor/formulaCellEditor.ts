@@ -5,7 +5,6 @@ import { AgFormulaInputField } from '../../widgets/agFormulaInputField';
 
 export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
     protected eEditor: AgFormulaInputField = RefPlaceholder;
-    private rangeSelectionEnabled = false;
     private focusAfterAttached = false;
 
     constructor() {
@@ -40,8 +39,6 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         const initialValue = startValue == null ? '' : String(startValue);
         this.eEditor.setEditingCellRef(params.column, params.rowIndex);
         this.eEditor.setValue(initialValue, true);
-        this.updateRangeSelectionState(initialValue);
-        this.eEditor.onValueChange((val) => this.updateRangeSelectionState(val ?? ''));
     }
 
     private getStartValue(params: ICellEditorParams): string | null | undefined {
@@ -74,7 +71,7 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
 
         // Preserve formulas exactly as typed; otherwise delegate to the column parser so numbers/strings
         // commit in their intended type.
-        if (typeof rawValue === 'string' && this.beans.formula?.isFormula(rawValue)) {
+        if (typeof rawValue === 'string' && this.isFormulaText(rawValue)) {
             return rawValue;
         }
 
@@ -97,8 +94,8 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
 
         let internalErrors: string[] | null = null;
 
-        if (typeof value === 'string' && this.beans.formula?.isFormula(value)) {
-            const normalised = this.beans.formula.normaliseFormula(value, true);
+        if (typeof value === 'string' && this.isFormulaText(value)) {
+            const normalised = this.beans.formula?.normaliseFormula(value, true);
 
             if (!normalised) {
                 internalErrors = [translate('invalidFormulaValidation', 'Invalid formula.')];
@@ -112,39 +109,8 @@ export class FormulaCellEditor extends AgAbstractCellEditor<ICellEditorParams> {
         return internalErrors;
     }
 
-    private enableRangeSelectionWhileEditing(): boolean {
-        if (this.rangeSelectionEnabled) {
-            return false;
-        }
-        this.rangeSelectionEnabled = true;
-        this.beans.editSvc?.enableRangeSelectionWhileEditing?.();
-        this.addDestroyFunc(() => this.disableRangeSelectionWhileEditing());
-        return true;
-    }
-
-    private disableRangeSelectionWhileEditing(): void {
-        if (!this.rangeSelectionEnabled) {
-            return;
-        }
-        this.rangeSelectionEnabled = false;
-        this.beans.editSvc?.disableRangeSelectionWhileEditing?.();
-        // Clear any tracked refs/ranges inside the field. If none were created, this is a no-op.
-        this.eEditor.syncRangesFromFormula('');
-    }
-
-    private updateRangeSelectionState(value: string): void {
+    private isFormulaText(value: string): boolean {
         const text = value == null ? '' : String(value);
-        const isFormula = text.trimStart().startsWith('=');
-
-        if (isFormula) {
-            const newlyEnabled = this.enableRangeSelectionWhileEditing();
-            // Re-render with colors and sync ranges now that range selection is on.
-            if (newlyEnabled) {
-                this.eEditor.setValue(text, true);
-            }
-            return;
-        }
-
-        this.disableRangeSelectionWhileEditing();
+        return this.beans.formula?.isFormula(text) ?? text.trimStart().startsWith('=');
     }
 }
