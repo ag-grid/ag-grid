@@ -14,7 +14,6 @@ import {
     accentColor,
     accentMix,
     backgroundColor,
-    foregroundBackgroundMix,
     foregroundColor,
     foregroundHeaderBackgroundMix,
     foregroundMix,
@@ -283,31 +282,6 @@ export interface CoreParams extends SharedThemeParams {
      * Color of the marker dot shown on icon buttons when styled as active. This is used for the column filter button when a filter is applied to the column.
      */
     iconButtonActiveIndicatorColor: ColorValue;
-
-    /**
-     * Background color for menus e.g. column menu and right-click context menu
-     */
-    menuBackgroundColor: ColorValue;
-
-    /**
-     * Border around menus e.g. column menu and right-click context menu
-     */
-    menuBorder: BorderValue;
-
-    /**
-     * Color of the dividing line between sections of menus e.g. column menu and right-click context menu
-     */
-    menuSeparatorColor: ColorValue;
-
-    /**
-     * Shadow for menus e.g. column menu and right-click context menu
-     */
-    menuShadow: ShadowValue;
-
-    /**
-     * Text color for menus e.g. column menu and right-click context menu
-     */
-    menuTextColor: ColorValue;
 
     /**
      * Background color of the overlay shown over the grid e.g. a data loading indicator.
@@ -727,17 +701,6 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     iconButtonActiveColor: accentColor,
     iconButtonActiveBackgroundColor: accentMix(0.28),
     iconButtonActiveIndicatorColor: accentColor,
-    menuBorder: {
-        color: foregroundMix(0.2),
-    },
-    menuBackgroundColor: foregroundBackgroundMix(0.03),
-    menuTextColor: foregroundBackgroundMix(0.95),
-    menuShadow: {
-        ref: 'popupShadow',
-    },
-    menuSeparatorColor: {
-        ref: 'borderColor',
-    },
     setFilterIndentSize: {
         ref: 'iconSize',
     },

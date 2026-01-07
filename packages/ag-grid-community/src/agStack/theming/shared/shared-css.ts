@@ -179,6 +179,31 @@ export interface SharedThemeParams {
     listItemHeight: LengthValue;
 
     /**
+     * Background color for menus e.g. column menu and right-click context menu
+     */
+    menuBackgroundColor: ColorValue;
+
+    /**
+     * Border around menus e.g. column menu and right-click context menu
+     */
+    menuBorder: BorderValue;
+
+    /**
+     * Color of the dividing line between sections of menus e.g. column menu and right-click context menu
+     */
+    menuSeparatorColor: ColorValue;
+
+    /**
+     * Shadow for menus e.g. column menu and right-click context menu
+     */
+    menuShadow: ShadowValue;
+
+    /**
+     * Text color for menus e.g. column menu and right-click context menu
+     */
+    menuTextColor: ColorValue;
+
+    /**
      * Background color for panels and dialogs such as the integrated charts and the advanced filter builder.
      */
     panelBackgroundColor: ColorValue;
@@ -475,4 +500,15 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
         calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
+    menuBorder: {
+        color: foregroundMix(0.2),
+    },
+    menuBackgroundColor: foregroundBackgroundMix(0.03),
+    menuTextColor: foregroundBackgroundMix(0.95),
+    menuShadow: {
+        ref: 'popupShadow',
+    },
+    menuSeparatorColor: {
+        ref: 'borderColor',
+    },
 };
