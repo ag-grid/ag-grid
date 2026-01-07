@@ -2,6 +2,8 @@ import type { BeanCollection, CellRange } from 'ag-grid-community';
 
 // Allow partial ranges (eg "A1:") so we keep typing within the same token until a breaking operator is entered.
 export const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
+// Parses a complete A1 reference or range like "A1" or "A1:B2" (no trailing colon).
+const FULL_CELL_OR_RANGE_REGEX = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/;
 
 const FORMULA_TOKEN_COLOR_CLASS = 'ag-formula-token-color';
 const FORMULA_RANGE_COLOR_CLASS = 'ag-formula-range-color';
@@ -51,7 +53,7 @@ export const tagRangeWithFormulaColor = (
 
 // Range helpers
 export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
-    const match = /^\$?([A-Za-z]+)\$?(\d+)(?::\$?([A-Za-z]+)\$?(\d+))?$/.exec(ref);
+    const match = FULL_CELL_OR_RANGE_REGEX.exec(ref);
     if (!match) {
         return null;
     }
