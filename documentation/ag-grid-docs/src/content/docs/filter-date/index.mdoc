@@ -37,7 +37,7 @@ const gridOptions = {
 
 ## Date Filter Parameters
 
-Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
+Date Filters are configured through the `filterParams` attribute of the column definition (`IDateFilterParams` interface):
 
 {% interfaceDocumentation interfaceName="IDateFilterParams" overrideSrc="filter-date/date-filter-params.json" config={"description":"", "sortAlphabetically":true} /%}
 
@@ -130,7 +130,7 @@ The example below demonstrates configuring a comparator:
 
 The Filter Model describes the current state of the applied Date Filter. The Date Filter Model represents the Date as a string in format `'YYYY-MM-DD'`, however when doing comparisons the date is provided as a JavaScript `Date` object as that's what date pickers typically work with. The model uses string representation to make it easier to save and avoid any timezone issues.
 
-If only one [Filter Condition](./filter-conditions/) is set, this will be a `DateFilterModel`:
+If only one [Filter Condition](./filter-conditions/#filter-options) is set, this will be a `DateFilterModel`:
 
 {% interfaceDocumentation interfaceName="DateFilterModel" config={"description":""} /%}
 
@@ -180,16 +180,16 @@ The Date Filter presents a list of [Filter Options](./filter-conditions/#filter-
 
 The list of options is as follows:
 
-| Option Name             | Option Key            | Included by Default |
-| ----------------------- | --------------------- | ------------------- |
-| Equals                  | `equals`              | Yes                 |
-| Does not equal          | `notEqual`            | Yes                 |
-| Before                  | `lessThan`            | Yes                 |
-| After                   | `greaterThan`         | Yes                 |
-| Between                 | `inRange`             | Yes                 |
-| Blank                   | `blank`               | Yes                 |
-| Not blank               | `notBlank`            | Yes                 |
-| Choose one              | `empty`               | No                  |
+| Option Name    | Option Key    | Included by Default |
+|----------------|---------------|---------------------|
+| Equals         | `equals`      | Yes                 |
+| Does not equal | `notEqual`    | Yes                 |
+| Before         | `lessThan`    | Yes                 |
+| After          | `greaterThan` | Yes                 |
+| Between        | `inRange`     | Yes                 |
+| Blank          | `blank`       | Yes                 |
+| Not blank      | `notBlank`    | Yes                 |
+| Choose one     | `empty`       | No                  |
 
 Note that the `empty` filter option is primarily used when creating [Custom Filter Options](./filter-conditions/#custom-filter-options). When 'Choose one' is displayed, the filter is not active.
 
@@ -197,12 +197,70 @@ The default option for the Date Filter is `equals`.
 
 When providing filter options, the default filter option (or the first option if no default set) must be an option that displays an input or the `empty` filter option (as a filter option with no inputs would mean the filter is active by default).
 
-## Range Input Validation and Error States
+## Built-in Named & Relative Date Ranges
 
-When using the `inRange` filter type, the grid performs input validation to ensure the bounds of the range produce a valid filter; that is, where the start date is earlier than the end date.
+Date Filter includes a set of **predefined named and relative date ranges** to make common filtering tasks easier. These ranges are relative to the browser local time. These are ideal for users who want to filter by familiar time periods like "Last Week", "Year to Date", or "Next 30 Days" without extending a grid with a custom solution.
 
-Where this is not the case, the last edited input will display a red border and a hover tooltip directing the user to enter a valid date. While the filter is in an invalid state, the filter will not be applied.
-Screen readers that respond to the `aria-invalid` attribute or the `ValidityState` of the input will detect the input as invalid.
+{% note %}
+This feature is not included by default. To enable it, you must add the options to `filterOptions` in your date filter configuration.
+{% /note %}
+
+### Available Built-in Date Filter Options
+
+| Option Name        | Option Key     | Time Range                                        |
+|--------------------|----------------|---------------------------------------------------|
+| Today              | `today`        | `[startOfToday, startOfTomorrow)`                 |
+| Yesterday          | `yesterday`    | `[startOfYesterday, startOfToday)`                |
+| Tomorrow           | `tomorrow`     | `[startOfTomorrow, startOfDayAfterTomorrow)`      |
+| This Week          | `thisWeek`     | `[startOfCurrentWeek, startOfNextWeek)`           |
+| Last Week          | `lastWeek`     | `[startOfPreviousWeek, startOfCurrentWeek)`       |
+| Next Week          | `nextWeek`     | `[startOfNextWeek, startOfWeekAfterNext)`         |
+| This Month         | `thisMonth`    | `[startOfCurrentMonth, startOfNextMonth)`         |
+| Last Month         | `lastMonth`    | `[startOfPreviousMonth, startOfCurrentMonth)`     |
+| Next Month         | `nextMonth`    | `[startOfNextMonth, startOfMonthAfterNext)`       |
+| This Quarter       | `thisQuarter`  | `[startOfCurrentQuarter, startOfNextQuarter)`     |
+| Last Quarter       | `lastQuarter`  | `[startOfPreviousQuarter, startOfCurrentQuarter)` |
+| Next Quarter       | `nextQuarter`  | `[startOfNextQuarter, startOfQuarterAfterNext)`   |
+| This Year          | `thisYear`     | `[startOfCurrentYear, startOfNextYear)`           |
+| Last Year          | `lastYear`     | `[startOfPreviousYear, startOfCurrentYear)`       |
+| Next Year          | `nextYear`     | `[startOfNextYear, startOfYearAfterNext)`         |
+| Year to Date (YTD) | `yearToDate`   | `[startOfCurrentYear, startOfTomorrow)`           |
+| Last 7 Days        | `last7Days`    | `[startOfToday − 7 days, startOfTomorrow)`        |
+| Last 30 Days       | `last30Days`   | `[startOfToday − 30 days, startOfTomorrow)`       |
+| Last 90 Days       | `last90Days`   | `[startOfToday − 90 days, startOfTomorrow)`       |
+| Last 6 Months      | `last6Months`  | `[startOfToday − 6 months, startOfTomorrow)`      |
+| Last 12 Months     | `last12Months` | `[startOfToday − 12 months, startOfTomorrow)`     |
+| Last 24 Months     | `last24Months` | `[startOfToday − 24 months, startOfTomorrow)`     |
+
+
+{% note %}
+`startOfToday`, `startOfTomorrow`, `startOfXXX` point to the beginning of the corresponding day, e.g. `00:00:00.000` in browser local timezone.   
+{% /note %}
+{% note %}
+`[A, B)` means including `A`, but excluding `B`. `[today, tomorrow)` corresponds to a range `00:00:00.000` - `23:59:59.999` 
+{% /note %}
+
+### Enabling Built-in Date Ranges
+
+To enable the built-in date ranges, add them to the `filterOptions` array in your date filter configuration. The options are not included by default.
+
+#### Example: Enable Built-in Date Ranges
+```ts
+// Enable built-in date ranges
+const dateFilterParams = {
+    filterOptions: [
+        'empty', // optional: show 'Choose one' option first
+        'today',
+        'yesterday',
+        'last7Days',
+        'thisMonth',
+        'yearToDate'
+    ],
+    // Other filter settings...
+};
+``` 
+ 
+TODO: VICTOR, ADD AN EXAMPLE HERE
 
 ## Filter Values
 
