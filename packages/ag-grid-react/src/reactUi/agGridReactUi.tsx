@@ -19,7 +19,8 @@ import type {
     GridParams,
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
-    IDetailCellRendererParams, Module,
+    IDetailCellRendererParams,
+    Module,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
@@ -31,6 +32,7 @@ import {
     _getGridRegisteredModules,
     _isClientSideRowModel,
     _isServerSideRowModel,
+    _mergeGridOptions,
     _observeResize,
     _processOnChange,
     _warn,
@@ -53,12 +55,12 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
+import { AgGridContext } from './agContext';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
-import { AgContext } from './agContext';
 
 const deprecatedProps: Pick<InternalAgGridReactProps, 'setGridApi' | 'children' | 'maxComponentCreationTimeMs'> = {
     setGridApi: undefined,
@@ -81,8 +83,7 @@ const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
-
-    const agContext = useContext(AgContext);
+    const agContext = useContext(AgGridContext);
 
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -137,7 +138,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules = [...(props.modules ?? []), ...(agContext.modules as Module[] ?? [])];
+        const modules = [...(props.modules ?? []), ...((agContext.modules as Module[]) ?? [])];
         if (agContext.licenseKey) {
             // find the EnterpriseCore module recursively and get the LicenseManager bean to initialise licensing
 
@@ -154,7 +155,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
                     }
                 }
                 return null;
-            }
+            };
             const enterpriseCoreModule = findModule('EnterpriseCore', modules);
 
             if (enterpriseCoreModule) {
@@ -178,10 +179,17 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             });
         }
 
-        const mergedGridOps = _combineAttributesAndGridOptions(
+        // Combine props.gridOptions with direct component props
+        const componentOptionsMerged = _combineAttributesAndGridOptions(
             props.gridOptions,
             props,
             Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
+        );
+
+        const mergedGridOps = _mergeGridOptions(
+            agContext.gridOptions,
+            componentOptionsMerged,
+            agContext.mergeStrategy ?? 'shallow'
         );
 
         const processQueuedUpdates = () => {
@@ -336,7 +344,8 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
-    implements FrameworkComponentWrapper {
+    implements FrameworkComponentWrapper
+{
     constructor(
         private readonly parent: PortalManager,
         private readonly gridOptions: GridOptions
@@ -344,7 +353,7 @@ class ReactFrameworkComponentWrapper
         super();
     }
 
-    protected createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
+    protected createWrapper(UserReactComponent: { new (): any }, componentType: ComponentType): WrappableInterface {
         const gridOptions = this.gridOptions;
         const reactiveCustomComponents = _getGridOption(gridOptions, 'reactiveCustomComponents');
         if (reactiveCustomComponents) {

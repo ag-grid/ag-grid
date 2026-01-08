@@ -311,7 +311,7 @@ export type { FilterValueService } from './filter/filterValueService';
 export { _getDefaultFloatingFilterType } from './filter/floating/floatingFilterMapper';
 export { _isUseApplyButton } from './filter/provided/providedFilterUtils';
 export type { FocusService } from './focusService';
-export { _getGlobalGridOption } from './globalGridOptions';
+export { _getGlobalGridOption, _mergeGridOptions } from './globalGridOptions';
 export { GridCoreCreator, GridParams } from './grid';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
