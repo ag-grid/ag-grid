@@ -1,14 +1,11 @@
-import React, { StrictMode, useState } from 'react';
+import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type { ColDef } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { AllEnterpriseModule, CellSelectionModule, LicenseManager } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-LicenseManager.setLicenseKey('your-license-key-here');
 
 // Row Data Interface
 interface IRow {
