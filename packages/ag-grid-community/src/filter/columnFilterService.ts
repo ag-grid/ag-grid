@@ -1875,33 +1875,27 @@ export class ColumnFilterService
     private onPivotModeChanged(event: AgPropertyValueChangedEvent<GridOptionsWithDefaults, 'pivotMode'>): void {
         const { colModel, pivotColsSvc } = this.beans;
         const groupFilterEnabled = !!_getGroupAggFiltering(this.gos);
+        // Can't rely on `colModel.isPivotMode()` because this event hasn't reached to colModel yet
+        const isPivotMode = event.currentValue;
 
-        let from: DoesFilterPassWrapper[];
-        let to: DoesFilterPassWrapper[];
-
-        if (event.currentValue) {
-            // move all column filters to agg filters
-            from = this.activeColumnFilters;
-            to = this.activeAggregateFilters;
-        } else {
-            // move all agg filters to column filters
-            from = this.activeAggregateFilters;
-            to = this.activeColumnFilters;
-        }
+        const from = isPivotMode ? this.activeColumnFilters : this.activeAggregateFilters;
+        const to = isPivotMode ? this.activeAggregateFilters : this.activeColumnFilters;
 
         const moved: DoesFilterPassWrapper[] = [];
 
-        from.forEach((filter) => {
+        for (const filter of from) {
             const column = colModel.getColById(filter.colId);
-            // Can't rely on `colModel.isPivotMode()` because this event hasn't reached to colModel yet
-            const isPivotMode = event.currentValue;
             // Can't rely on `colModel.isPivotActive()` because this event hasn't reached to colModel yet
             const isPivotActive = isPivotMode && !!pivotColsSvc?.columns.length;
+            // Our condition is isPivotMode === isAggFilter because:
+            // - if we've enabled pivot mode, we want to only move aggregate filters to `activeAggregateFilters`,
+            // - if we've disabled pivot mode, we want to only move non-aggregate filters to `activeColumnFilters`,
+            // and do nothing otherwise
             if (column && isPivotMode === isAggFilter(column, isPivotMode, isPivotActive, groupFilterEnabled)) {
                 to.push(filter);
                 moved.push(filter);
             }
-        });
+        }
 
         _removeAllFromArray(from, moved);
     }
