@@ -177,6 +177,12 @@ $-theme-variables: (
         material-primary-color: 'color',
         material-accent-color: 'color',
     ),
+    'rainbow': (
+        active-color: 'color',
+    ),
+    'rainbow-dark': (
+        active-color: 'color',
+    ),
 );
 
 $-theme-css-files: (
@@ -188,6 +194,8 @@ $-theme-css-files: (
     'balham-dark': 'ag-theme-balham-no-font.css',
     'material': 'ag-theme-material-no-font.css',
     'material-dark': 'ag-theme-material-no-font.css',
+    'rainbow': 'ag-theme-rainbow-no-font.css',
+    'rainbow-dark': 'ag-theme-rainbow-no-font.css',
 );
 
 $-theme-fonts: (
@@ -199,6 +207,8 @@ $-theme-fonts: (
     'balham-dark': 'agGridBalham',
     'material': 'agGridMaterial',
     'material-dark': 'agGridMaterial',
+    'rainbow': 'agGridQuartz',
+    'rainbow-dark': 'agGridQuartz',
 );
 
 @function -is-provided-theme($theme-name) {
@@ -385,6 +395,28 @@ $-theme-fonts: (
         $alpha: 0.5
     );
     @return $params;
+}
+
+@function -theme-rainbow-color-blends($params) {
+    // Simple defaults
+    $params: -param-default($params, --ag-background-color, #fff);
+    $params: -param-default($params, --ag-foreground-color, #2c3e50);
+    $params: -param-default($params, --ag-active-color, #4dabf7);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-active-color);
+
+    // Blended defaults
+    $params: -param-default($params, --ag-selected-row-background-color, --ag-active-color, $alpha: 0.12);
+    $params: -param-default($params, --ag-row-hover-color, --ag-active-color, $alpha: 0.1);
+    $params: -param-default($params, --ag-disabled-foreground-color, --ag-foreground-color, $alpha: 0.5);
+    $params: -param-default($params, --ag-chip-background-color, --ag-foreground-color, $alpha: 0.1);
+    @return $params;
+}
+
+@function -theme-rainbow-dark-color-blends($params) {
+    $params: -param-default($params, --ag-background-color, #1a1b26);
+    $params: -param-default($params, --ag-foreground-color, #c0caf5);
+
+    @return -theme-rainbow-color-blends($params);
 }
 
 // Apply a default value to a parameter

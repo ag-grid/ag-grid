@@ -1,0 +1,169 @@
+@use 'sass:color';
+
+.ag-theme-rainbow,
+.ag-theme-rainbow-dark,
+.ag-theme-rainbow-auto-dark {
+    // RAINBOW COLOURS
+    --ag-rainbow-red: #ff6b6b;
+    --ag-rainbow-orange: #ffa94d;
+    --ag-rainbow-yellow: #ffd43b;
+    --ag-rainbow-green: #69db7c;
+    --ag-rainbow-blue: #4dabf7;
+    --ag-rainbow-indigo: #748ffc;
+    --ag-rainbow-violet: #cc5de8;
+
+    // MAIN COLOURS (overridden by dark mode)
+    --ag-active-color: var(--ag-rainbow-blue);
+    --ag-background-color: #fff;
+    --ag-foreground-color: #2c3e50;
+    --ag-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 12%);
+    --ag-secondary-border-color: var(--ag-border-color);
+    --ag-header-background-color: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--ag-rainbow-red) 15%, var(--ag-background-color)),
+        color-mix(in srgb, var(--ag-rainbow-orange) 15%, var(--ag-background-color)),
+        color-mix(in srgb, var(--ag-rainbow-yellow) 15%, var(--ag-background-color)),
+        color-mix(in srgb, var(--ag-rainbow-green) 15%, var(--ag-background-color)),
+        color-mix(in srgb, var(--ag-rainbow-blue) 15%, var(--ag-background-color)),
+        color-mix(in srgb, var(--ag-rainbow-violet) 15%, var(--ag-background-color))
+    );
+    --ag-header-background-color-plain: color-mix(in srgb, var(--ag-rainbow-blue) 8%, var(--ag-background-color));
+    --ag-tooltip-background-color: var(--ag-background-color);
+    --ag-control-panel-background-color: color-mix(in srgb, var(--ag-rainbow-violet) 5%, var(--ag-background-color));
+    --ag-subheader-background-color: transparent;
+    --ag-invalid-color: var(--ag-rainbow-red);
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 30%);
+    --ag-advanced-filter-join-pill-color: var(--ag-rainbow-red);
+    --ag-advanced-filter-column-pill-color: var(--ag-rainbow-green);
+    --ag-advanced-filter-option-pill-color: var(--ag-rainbow-orange);
+    --ag-advanced-filter-value-pill-color: var(--ag-rainbow-blue);
+    --ag-header-column-resize-handle-color: var(--ag-rainbow-indigo);
+    --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
+    --ag-find-match-color: var(--ag-foreground-color);
+    --ag-find-match-background-color: var(--ag-rainbow-yellow);
+    --ag-find-active-match-color: var(--ag-foreground-color);
+    --ag-find-active-match-background-color: var(--ag-rainbow-orange);
+
+    --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 2%);
+    --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 15%);
+    --ag-menu-background-color: var(--ag-panel-background-color);
+    --ag-menu-border-color: var(--ag-panel-border-color);
+
+    // DERIVED COLOURS (shared by dark mode)
+    --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-rainbow-blue) 12%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-rainbow-violet) 10%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-input-focus-border-color: var(--ag-rainbow-indigo);
+    --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-rainbow-blue) 20%);
+    --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-rainbow-indigo) 40%);
+    --ag-input-error-focus-box-shadow: 0 0 0 3px color-mix(in srgb, var(--ag-background-color), var(--ag-rainbow-red) 40%);
+    --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-rainbow-green) 25%);
+    --ag-range-selection-background-color-3: color-mix(in srgb, transparent, var(--ag-rainbow-yellow) 30%);
+    --ag-range-selection-background-color-4: color-mix(in srgb, transparent, var(--ag-rainbow-orange) 35%);
+    --ag-row-numbers-selected-color: color-mix(in srgb, transparent, var(--ag-rainbow-indigo) 50%);
+    --ag-checkbox-background-color: var(--ag-background-color);
+    --ag-checkbox-checked-color: var(--ag-rainbow-indigo);
+    --ag-range-selection-border-color: var(--ag-rainbow-blue);
+    --ag-secondary-foreground-color: var(--ag-foreground-color);
+    --ag-input-border-color: var(--ag-border-color);
+    --ag-input-border-color-invalid: var(--ag-rainbow-red);
+    --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
+    --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-rainbow-violet) 10%);
+    --ag-chip-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-rainbow-violet) 20%);
+    --ag-input-disabled-border-color: var(--ag-border-color);
+    --ag-input-disabled-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 6%);
+    --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
+    --ag-chart-menu-label-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
+    --ag-chart-menu-pill-select-button-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
+    --ag-filter-panel-card-subtle-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 70%);
+    --ag-column-drag-indicator-color: var(--ag-rainbow-indigo);
+
+    // BORDERS
+    --ag-borders: solid 1px;
+    --ag-border-radius: 6px;
+    --ag-wrapper-border-radius: 10px;
+    --ag-borders-side-button: none;
+    --ag-side-button-selected-background-color: transparent;
+    --ag-header-column-resize-handle-display: block;
+    --ag-header-column-resize-handle-width: 2px;
+    --ag-header-column-resize-handle-height: 40%;
+
+    // SIZING
+    --ag-grid-size: 8px;
+    --ag-icon-size: 16px;
+    --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.5);
+    --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5);
+    --ag-list-item-height: calc(var(--ag-icon-size) + var(--ag-widget-vertical-spacing));
+    --ag-column-select-indent-size: var(--ag-icon-size);
+    --ag-set-filter-indent-size: var(--ag-icon-size);
+    --ag-filter-tool-panel-group-indent: var(--ag-grid-size);
+    --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
+    --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
+
+    --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-horizontal-spacing: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1);
+
+    --ag-toggle-button-height: 18px;
+    --ag-toggle-button-width: 28px;
+    --ag-toggle-button-border-width: 2px;
+
+    // FONTS
+    --ag-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+        Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-size: 14px;
+    --ag-icon-font-family: agGridQuartz;
+
+    // MISC
+    --ag-tab-min-width: 290px;
+    --ag-chart-menu-panel-width: 260px;
+
+    --ag-card-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+    --ag-popup-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.15);
+    --ag-side-bar-panel-width: 250px;
+
+    --ag-filter-panel-apply-button-color: var(--ag-background-color);
+    --ag-filter-panel-apply-button-background-color: var(--ag-rainbow-indigo);
+}
+
+@mixin -dark-vars {
+    --ag-background-color: #1a1b26;
+    --ag-foreground-color: #c0caf5;
+    --ag-border-color: rgba(255, 255, 255, 0.12);
+    --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-header-background-color-plain: color-mix(in srgb, var(--ag-rainbow-indigo) 12%, var(--ag-background-color));
+    --ag-tooltip-background-color: #24283b;
+    --ag-control-panel-background-color: #24283b;
+    --ag-input-disabled-background-color: #68686e12;
+    --ag-card-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.4);
+    --ag-input-border-color: var(--ag-border-color);
+    --ag-input-disabled-border-color: rgba(255, 255, 255, 0.07);
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-rainbow-violet) 20%);
+    --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-rainbow-blue) 18%);
+
+    --ag-panel-background-color: #24283b;
+    --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-menu-background-color: #24283b;
+    --ag-menu-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+
+    --ag-popup-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+    --ag-row-loading-skeleton-effect-color: #{color.change(#7aa2f7, $alpha: 0.3)};
+
+    --ag-cell-batch-edit-text-color: #f7768e;
+
+    color-scheme: dark;
+}
+
+.ag-theme-rainbow-dark {
+    @include -dark-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-rainbow-auto-dark {
+        @include -dark-vars();
+    }
+}
