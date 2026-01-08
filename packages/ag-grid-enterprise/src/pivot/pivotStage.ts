@@ -207,7 +207,7 @@ export class PivotStage extends BeanStub implements NamedBean, _IRowNodePivotSta
         return uniqueValues;
     }
 
-    private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
+    private bucketRowNode(rowNode: RowNode, uniqueValues: Map<string, any>): void {
         const pivotColumns = this.pivotColsSvc?.columns;
 
         if (pivotColumns?.length === 0) {
