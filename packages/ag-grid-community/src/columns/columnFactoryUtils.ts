@@ -346,8 +346,9 @@ export function _addColumnDefaultAndTypes(
     isAutoCol?: boolean
 ): ColDef {
     const { gos, dataTypeSvc } = beans;
-    // start with empty merged definition
-    const res: ColDef = {} as ColDef;
+    // Preserve inheritance for pivot result columns so they stay in sync with their value column definitions.
+    const valueColDefProto = colDef.pivotValueColumn?.getColDef();
+    const res: ColDef = (valueColDefProto ? Object.create(valueColDefProto) : {}) as ColDef;
 
     // merge properties from default column definitions
     const defaultColDef = gos.get('defaultColDef');

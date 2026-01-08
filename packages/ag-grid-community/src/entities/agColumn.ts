@@ -247,7 +247,7 @@ export class AgColumn<TValue = any>
 
         this.addManagedListeners(pivotValueColumn, {
             colDefChanged: (evt) => {
-                const colDef = pivotColDefSvc.recreateColDef(this.colDef);
+                const colDef = pivotColDefSvc.updateColDef(this.colDef);
                 this.setColDef(colDef, colDef, evt.source);
             },
         });

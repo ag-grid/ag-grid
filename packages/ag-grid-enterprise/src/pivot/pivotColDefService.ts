@@ -13,6 +13,8 @@ import { BeanStub } from 'ag-grid-community';
 
 const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
+const pivotValueGetter = (params: any) => params.data?.[params.colDef.field!];
+
 const headerNameComparator = (
     { headerName: a }: ColGroupDef | ColDef,
     { headerName: b }: ColGroupDef | ColDef
@@ -371,37 +373,21 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     /**
-     * Recreate a pivot colDef to update from a changed valueColumn colDef
+     * Updates a pivot colDef to update from a changed valueColumn colDef
      */
-    public recreateColDef(colDef: ColDef): ColDef {
-        const {
-            pivotValueColumn,
-            headerName,
-            pivotKeys,
-            pivotTotalColumnIds,
-            columnGroupShow,
-            colId,
-            valueGetter,
-            aggFunc,
-        } = colDef;
-
-        if (!pivotValueColumn) {
-            // if this is not a pivot value column, then we don't need to recreate it
-            return colDef;
+    public updateColDef(colDef: ColDef): ColDef {
+        if (colDef.pivotValueColumn) {
+            // Ensure we update based on the latest valueColumn
+            this.fixColDef(colDef);
+            this.gos.get('processPivotResultColDef')?.(colDef);
         }
+        return colDef;
+    }
 
-        const newColDef = this.createColDef(pivotValueColumn as AgColumn, headerName, pivotKeys, !!pivotTotalColumnIds);
-
-        // don't overwrite these
-        newColDef.columnGroupShow = columnGroupShow;
-        newColDef.colId = colId;
-        newColDef.valueGetter = valueGetter;
-        newColDef.aggFunc = aggFunc;
-        newColDef.pivotTotalColumnIds = pivotTotalColumnIds;
-
-        this.gos.get('processPivotResultColDef')?.(newColDef);
-
-        return newColDef;
+    private fixColDef(colDef: ColDef): void {
+        if (colDef.filter === true) {
+            colDef.filter = 'agNumberColumnFilter';
+        }
     }
 
     private createColDef(
@@ -410,16 +396,18 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         pivotKeys: string[] | undefined,
         totalColumn: boolean = false
     ): ColDef {
-        const colDef: ColDef = {};
+        let colDef: ColDef;
 
         // This is null when there are no measure columns and we're creating placeholder columns
         if (valueColumn) {
-            const colDefToCopy = valueColumn.getColDef();
-            Object.assign(colDef, colDefToCopy);
-
+            // We create an object that inherits from the value column's colDef, so that when the value column is updated,
+            // e.g. changing aggFunc, the pivot colDef gets the latest properties without any additional syncing
+            colDef = Object.create(valueColumn.getColDef());
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
+        } else {
+            colDef = {};
         }
 
         colDef.headerName = headerName;
@@ -433,13 +421,11 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         colDef.field = colDef.colId;
         // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
         // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
-        colDef.valueGetter = (params) => params.data?.[params.colDef.field!];
+        colDef.valueGetter = pivotValueGetter;
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
-        if (colDef.filter === true) {
-            colDef.filter = 'agNumberColumnFilter';
-        }
+        this.fixColDef(colDef);
 
         return colDef;
     }
