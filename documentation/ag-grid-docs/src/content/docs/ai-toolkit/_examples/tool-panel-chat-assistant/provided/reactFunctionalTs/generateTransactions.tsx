@@ -72,7 +72,7 @@ export function generateTransactions({
         { value: 'Groceries', w: 14, merchants: ['Tesco', "Sainsbury's", 'Aldi', 'Lidl', 'Waitrose'] },
         { value: 'Rent', w: 6, merchants: ['Landlord Ltd', 'Lettings Co'] },
         { value: 'Utilities', w: 8, merchants: ['British Gas', 'Octopus Energy', 'Thames Water'] },
-        { value: 'Dining', w: 10, merchants: ["Pret", "Nando's", 'PizzaExpress', 'Local Cafe'] },
+        { value: 'Dining', w: 10, merchants: ['Pret', "Nando's", 'PizzaExpress', 'Local Cafe'] },
         { value: 'Transport', w: 10, merchants: ['TfL', 'Uber', 'Bolt', 'National Rail'] },
         { value: 'Shopping', w: 12, merchants: ['Amazon', 'John Lewis', 'Argos', 'ASOS'] },
         { value: 'Travel', w: 6, merchants: ['easyJet', 'British Airways', 'Booking.com', 'Trainline'] },

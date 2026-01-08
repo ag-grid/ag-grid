@@ -2,7 +2,7 @@ import type { GridApi } from 'ag-grid-community';
 import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-import { generateTransactions, type ITransaction } from './generateTransactions';
+import { type ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
 
 ModuleRegistry.registerModules([AllEnterpriseModule]);

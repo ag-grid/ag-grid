@@ -4,7 +4,7 @@ import { ModuleRegistry } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import { generateTransactions, ITransaction } from './generateTransactions';
+import { ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
 import './styles.css';
 

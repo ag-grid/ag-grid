@@ -171,12 +171,21 @@ export const ChatToolPanel = (props: CustomToolPanelProps & IToolPanelParams) =>
 
             <div className="chat-messages" ref={chatMessagesRef} style={{ minWidth: 0, overflowX: 'hidden' }}>
                 {messages.map((message, index) => (
-                    <div key={index} className={`chat-message ${message.role}-message`} style={{ minWidth: 0, maxWidth: '85%' }}>
-                        <div className="message-bubble" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>{message.content}</div>
+                    <div
+                        key={index}
+                        className={`chat-message ${message.role}-message`}
+                        style={{ minWidth: 0, maxWidth: '85%' }}
+                    >
+                        <div className="message-bubble" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                            {message.content}
+                        </div>
                     </div>
                 ))}
                 {isLoading && (
-                    <div className="chat-message assistant-message loading-message" style={{ minWidth: 0, maxWidth: '85%' }}>
+                    <div
+                        className="chat-message assistant-message loading-message"
+                        style={{ minWidth: 0, maxWidth: '85%' }}
+                    >
                         <div className="message-bubble" style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
                             <span className="loading-dots">
                                 Thinking<span>.</span>
