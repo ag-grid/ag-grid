@@ -21,10 +21,7 @@ export const EnterpriseTrial: FunctionComponent<Props> = ({ className }) => {
                     <span>Enterprise Bundle Trial</span>
                 </h3>
 
-                <p>
-                    See the differences between our community and enterprise versions and request a
-                    trial license
-                </p>
+                <p>See the differences between our community and enterprise versions and request a trial license</p>
 
                 <a
                     className={classnames('button', styles.trialButton)}
@@ -57,8 +54,7 @@ export const EnterpriseTrial: FunctionComponent<Props> = ({ className }) => {
                     <p>
                         <b>Suppresses Console Warnings</b>
                         <br />
-                        Removes console errors and watermarks from AG Grid and
-                        AG&nbsp;Chart&nbsp;components.
+                        Removes console errors and watermarks from AG Grid and AG&nbsp;Chart&nbsp;components.
                     </p>
                 </div>
 

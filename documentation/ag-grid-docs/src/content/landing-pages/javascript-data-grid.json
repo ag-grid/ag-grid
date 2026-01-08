@@ -220,7 +220,7 @@
                 },
                 {
                     "question": "Does AG Grid work with any JavaScript framework?",
-                    "answer": "Yes, AG Grid works with vanilla JavaScript and has dedicated wrappers for [React](./react-data-grid/getting-started/), [Angular](./angular-data-grid/getting-started/), and [Vue](./vue-data-grid/getting-started/)."
+                    "answer": "Yes, AG Grid works with vanilla JavaScript and has dedicated wrappers for React, Angular, and Vue."
                 },
                 {
                     "question": "Can I use AG Grid with TypeScript?",

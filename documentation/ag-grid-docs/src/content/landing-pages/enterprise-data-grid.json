@@ -332,11 +332,11 @@
                 },
                 {
                     "question": "What does the AI Toolkit do?",
-                    "answer": "The [AI Toolkit](./data-grid/ai-toolkit/) allows you to integrate AG Grid with any LLM (like ChatGPT or Gemini) to enable natural language grid control. Users can filter, sort, group, and manipulate data using conversational queries."
+                    "answer": "The [AI Toolkit](./ai-toolkit/) allows you to integrate AG Grid with any LLM (like ChatGPT or Gemini) to enable natural language grid control. Users can filter, sort, group, and manipulate data using conversational queries."
                 },
                 {
                     "question": "What is the Server-Side Row Model?",
-                    "answer": "The [Server-Side Row Model](./data-grid/server-side-model/) loads data on-demand from your server as users scroll. It's designed for large datasets that cannot be loaded entirely into the browser, supporting server-side sorting, filtering, and grouping."
+                    "answer": "The [Server-Side Row Model](./server-side-model/) loads data on-demand from your server as users scroll. It's designed for large datasets that cannot be loaded entirely into the browser, supporting server-side sorting, filtering, and grouping."
                 },
                 {
                     "question": "How many rows can AG Grid Enterprise handle?",

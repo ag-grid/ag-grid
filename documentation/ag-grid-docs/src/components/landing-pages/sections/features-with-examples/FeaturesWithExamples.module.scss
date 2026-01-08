@@ -45,7 +45,10 @@
     border-radius: 0;
     cursor: pointer;
     outline: none;
-    transition: color 0.3s ease, border-bottom-color 0.3s ease, opacity 0.3s ease;
+    transition:
+        color 0.3s ease,
+        border-bottom-color 0.3s ease,
+        opacity 0.3s ease;
 
     &:hover {
         background: transparent;

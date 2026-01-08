@@ -86,7 +86,7 @@ const secondaryCtaAnalytics = `${pageContent.analyticsPrefix}-view-demos`;
             <div class={styles.heroSectionButtonContainer}>
                 {
                     section.primaryCta?.useTrialButton ? (
-                        <slot name="hero-trial-button"></slot>
+                        <slot name="hero-trial-button" />
                     ) : section.primaryCta ? (
                         <a
                             id="get-started"

@@ -13,21 +13,18 @@ interface Props {
 const { section, styles } = Astro.props;
 ---
 
-<LandingPageSection
-    id="contact"
-    tag={section.tag}
-    heading={section.heading}
-    subHeading={section.subHeading}
->
+<LandingPageSection id="contact" tag={section.tag} heading={section.heading} subHeading={section.subHeading}>
     <div class={styles.contactSection}>
         <div class={styles.contactInfo}>
             <div class={styles.contactFeatures}>
-                {section.features.map((feature) => (
-                    <div class={styles.contactFeature}>
-                        <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
-                        <span>{feature}</span>
-                    </div>
-                ))}
+                {
+                    section.features.map((feature) => (
+                        <div class={styles.contactFeature}>
+                            <Icon name="tick" svgClasses={styles.contactFeatureIcon} />
+                            <span>{feature}</span>
+                        </div>
+                    ))
+                }
             </div>
             <div class={styles.contactLogos}>
                 <p class={styles.contactLogosLabel}>Trusted by millions of developers:</p>

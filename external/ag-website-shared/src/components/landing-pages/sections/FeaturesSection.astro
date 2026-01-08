@@ -20,18 +20,20 @@ const { section } = Astro.props;
     <slot>
         <!-- Fallback: simple feature list without live examples -->
         <div class="features-fallback">
-            {section.items.map((item) => (
-                <div class="feature-item">
-                    <h4>{item.title}</h4>
-                    <ul>
-                        {item.features.map((f) => (
-                            <li>
-                                <strong>{f.heading}</strong>: {f.detail}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            ))}
+            {
+                section.items.map((item) => (
+                    <div class="feature-item">
+                        <h4>{item.title}</h4>
+                        <ul>
+                            {item.features.map((f) => (
+                                <li>
+                                    <strong>{f.heading}</strong>: {f.detail}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))
+            }
         </div>
     </slot>
 </LandingPageSection>

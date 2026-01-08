@@ -17,29 +17,29 @@ export const frameworkLogoMap: Record<string, { logo: string; name: string }> = 
  */
 export function normalizeFrameworkKey(frameworkKey: string | undefined): string {
     if (!frameworkKey) return '';
-    
+
     // Check if the key exists directly in the map
     if (frameworkLogoMap[frameworkKey]) {
         return frameworkKey;
     }
-    
+
     // Map framework variants to base framework keys
     const variantMapping: Record<string, string> = {
-        'vue3': 'vue',
-        'reactfunctionalt': 'react',
-        'typescript': 'javascript',
+        vue3: 'vue',
+        reactfunctionalt: 'react',
+        typescript: 'javascript',
     };
-    
+
     const normalized = frameworkKey.toLowerCase();
     if (variantMapping[frameworkKey] || variantMapping[normalized]) {
         return variantMapping[frameworkKey] || variantMapping[normalized] || '';
     }
-    
+
     // Check lowercase version as fallback
     if (frameworkLogoMap[normalized]) {
         return normalized;
     }
-    
+
     return frameworkKey;
 }
 
@@ -103,5 +103,3 @@ export function parseHeading(
     }
     return result;
 }
-
-

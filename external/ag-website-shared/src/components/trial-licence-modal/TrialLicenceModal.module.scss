@@ -51,7 +51,9 @@
     padding: $spacing-size-2;
     border-radius: var(--radius-md);
     color: var(--color-fg-secondary);
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
 
     &:hover {
         background: var(--color-bg-secondary);

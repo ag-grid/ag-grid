@@ -10,11 +10,6 @@ interface Props {
 const { section } = Astro.props;
 ---
 
-<LandingPageSection
-    id="showcase"
-    tag={section.tag}
-    heading={section.heading}
-    subHeading={section.subHeading}
->
+<LandingPageSection id="showcase" tag={section.tag} heading={section.heading} subHeading={section.subHeading}>
     <slot />
 </LandingPageSection>

@@ -27,21 +27,23 @@ const { features, framework } = Astro.props;
 
         <!-- Example runners column -->
         <div class="landing-page-examples-column">
-            {features.map((feature, index) => (
-                <div
-                    class={`landing-page-example-panel ${index === 0 ? 'active' : ''}`}
-                    data-feature-id={feature.id}
-                    data-index={index}
-                >
-                    <ExampleRunner
-                        title={feature.title}
-                        name={feature.example.exampleName}
-                        pageName={feature.example.pageName}
-                        exampleHeight={450}
-                        framework={framework}
-                    />
-                </div>
-            ))}
+            {
+                features.map((feature, index) => (
+                    <div
+                        class={`landing-page-example-panel ${index === 0 ? 'active' : ''}`}
+                        data-feature-id={feature.id}
+                        data-index={index}
+                    >
+                        <ExampleRunner
+                            title={feature.title}
+                            name={feature.example.exampleName}
+                            pageName={feature.example.pageName}
+                            exampleHeight={450}
+                            framework={framework}
+                        />
+                    </div>
+                ))
+            }
         </div>
     </div>
 </div>
@@ -90,11 +92,13 @@ const { features, framework } = Astro.props;
 
 <script>
     // Listen for tab changes from the React component
-    document.addEventListener('landing-page-feature-tab-change', ((event: CustomEvent<{ index: number; featureId: string }>) => {
+    document.addEventListener('landing-page-feature-tab-change', ((
+        event: CustomEvent<{ index: number; featureId: string }>
+    ) => {
         const { index } = event.detail;
 
         // Hide all panels
-        document.querySelectorAll('.landing-page-example-panel').forEach(panel => {
+        document.querySelectorAll('.landing-page-example-panel').forEach((panel) => {
             panel.classList.remove('active');
         });
 

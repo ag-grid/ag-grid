@@ -21,28 +21,30 @@ const { section, urlWithBaseUrl, styles } = Astro.props;
     showBackgroundGradient={section.showBackgroundGradient}
 >
     <div class={styles.examplesSectionContainer}>
-        {section.items.map((card) => (
-            <div class={styles.examplesSectionCard}>
-                <img
-                    class={styles.examplesSectionCardImage}
-                    src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
-                    alt={card.imgAlt}
-                />
+        {
+            section.items.map((card) => (
+                <div class={styles.examplesSectionCard}>
+                    <img
+                        class={styles.examplesSectionCardImage}
+                        src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
+                        alt={card.imgAlt}
+                    />
 
-                <div class={styles.examplesSectionCardDetails}>
-                    <h3>{card.title}</h3>
-                    <p>{card.content}</p>
-                </div>
+                    <div class={styles.examplesSectionCardDetails}>
+                        <h3>{card.title}</h3>
+                        <p>{card.content}</p>
+                    </div>
 
-                <div class={styles.examplesSectionCardCta}>
-                    <a href={urlWithBaseUrl(card.demo)} target="_blank">
-                        Live Demo
-                    </a>
-                    <a href={urlWithBaseUrl(card.docs)} target="_blank">
-                        Docs
-                    </a>
+                    <div class={styles.examplesSectionCardCta}>
+                        <a href={urlWithBaseUrl(card.demo)} target="_blank">
+                            Live Demo
+                        </a>
+                        <a href={urlWithBaseUrl(card.docs)} target="_blank">
+                            Docs
+                        </a>
+                    </div>
                 </div>
-            </div>
-        ))}
+            ))
+        }
     </div>
 </LandingPageSection>
