@@ -20,7 +20,6 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
-    Module,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
@@ -32,7 +31,6 @@ import {
     _getGridRegisteredModules,
     _isClientSideRowModel,
     _isServerSideRowModel,
-    _mergeGridOptions,
     _observeResize,
     _processOnChange,
     _warn,
@@ -55,7 +53,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
-import { AgGridContext } from './agContext';
+import { AgGridContext } from './agGridContext';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
@@ -138,7 +136,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules = [...(props.modules ?? []), ...((agContext.modules as Module[]) ?? [])];
+        const modules = [...(props.modules ?? []), ...(agContext.modules ?? [])];
         if (agContext.licenseKey) {
             // find the EnterpriseCore module recursively and get the LicenseManager bean to initialise licensing
 
@@ -179,17 +177,10 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             });
         }
 
-        // Combine props.gridOptions with direct component props
-        const componentOptionsMerged = _combineAttributesAndGridOptions(
+        const mergedGridOps = _combineAttributesAndGridOptions(
             props.gridOptions,
             props,
             Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
-        );
-
-        const mergedGridOps = _mergeGridOptions(
-            agContext.gridOptions,
-            componentOptionsMerged,
-            agContext.mergeStrategy ?? 'shallow'
         );
 
         const processQueuedUpdates = () => {
