@@ -10,7 +10,34 @@ export class GlobalGridOptions {
      * @returns Shallow copy of the provided options with global options merged in.
      */
     static applyGlobalGridOptions(providedOptions: GridOptions): GridOptions {
-        return _mergeGridOptions(GlobalGridOptions.gridOptions, providedOptions, GlobalGridOptions.mergeStrategy);
+        if (!GlobalGridOptions.gridOptions) {
+            // No global options provided, return a shallow copy of the provided options
+            return { ...providedOptions };
+        }
+
+        let mergedGridOps: GridOptions = {};
+        // Merge deep to avoid leaking changes to the global options
+        _mergeDeep(mergedGridOps, GlobalGridOptions.gridOptions, true, true);
+        if (GlobalGridOptions.mergeStrategy === 'deep') {
+            _mergeDeep(mergedGridOps, providedOptions, true, true);
+        } else {
+            // Shallow copy so that provided object properties completely override global options
+            mergedGridOps = { ...mergedGridOps, ...providedOptions };
+        }
+
+        if (GlobalGridOptions.gridOptions.context) {
+            // Ensure context reference is maintained if it was provided
+            mergedGridOps.context = GlobalGridOptions.gridOptions.context;
+        }
+        if (providedOptions.context) {
+            if (GlobalGridOptions.mergeStrategy === 'deep' && mergedGridOps.context) {
+                // Merge global context properties into the provided context whilst maintaining provided context reference
+                _mergeDeep(providedOptions.context, mergedGridOps.context, true, true);
+            }
+            mergedGridOps.context = providedOptions.context;
+        }
+
+        return mergedGridOps;
     }
 
     /**
@@ -59,50 +86,4 @@ export function provideGlobalGridOptions(
 
 export function _getGlobalGridOption<K extends keyof GridOptions>(gridOption: K): GridOptions[K] {
     return GlobalGridOptions.gridOptions?.[gridOption];
-}
-
-/**
- * Merge grid options using the specified strategy.
- * @param baseOptions - Base options to merge into
- * @param providedOptions - Options to merge on top
- * @param mergeStrategy - 'deep' or 'shallow' merge strategy
- * @returns Merged grid options
- */
-export function _mergeGridOptions(
-    baseOptions: GridOptions | undefined,
-    providedOptions: GridOptions | undefined,
-    mergeStrategy: GlobalGridOptionsMergeStrategy
-): GridOptions {
-    if (!baseOptions) {
-        // No baseOptions provided, return a shallow copy of the provided options
-        return providedOptions ? { ...providedOptions } : {};
-    }
-    if (!providedOptions) {
-        return { ...baseOptions };
-    }
-
-    let mergedGridOps: GridOptions = {};
-    // Merge deep to avoid leaking changes to the global options
-    _mergeDeep(mergedGridOps, baseOptions, true, true);
-    if (mergeStrategy === 'deep') {
-        _mergeDeep(mergedGridOps, providedOptions, true, true);
-    } else {
-        // Shallow copy so that provided object properties completely override global options
-        mergedGridOps = { ...mergedGridOps, ...providedOptions };
-    }
-
-    // Handle context specially to maintain reference
-    if (baseOptions.context) {
-        // Ensure context reference is maintained if it was provided
-        mergedGridOps.context = baseOptions.context;
-    }
-    if (providedOptions.context) {
-        if (mergeStrategy === 'deep' && mergedGridOps.context) {
-            // Merge global context properties into the provided context whilst maintaining provided context reference
-            _mergeDeep(providedOptions.context, mergedGridOps.context, true, true);
-        }
-        mergedGridOps.context = providedOptions.context;
-    }
-
-    return mergedGridOps;
 }
