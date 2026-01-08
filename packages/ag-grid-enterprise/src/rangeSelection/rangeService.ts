@@ -150,10 +150,12 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     // Drag And Drop Target Methods
     public onDragStart(mouseEvent: MouseEvent): void {
         const gos = this.gos;
-        if (
-            !_isCellSelectionEnabled(gos) ||
-            _getRowCtrlForEventTarget(gos, mouseEvent.target)?.isSuppressMouseEvent(mouseEvent)
-        ) {
+        const target = mouseEvent.target as HTMLElement | null;
+        if (!_isCellSelectionEnabled(gos) || _getRowCtrlForEventTarget(gos, target)?.isSuppressMouseEvent(mouseEvent)) {
+            return;
+        }
+        // Dragging to select text inside the formula editor should not start range selection.
+        if (target?.closest?.('.ag-formula-input-field')) {
             return;
         }
 
@@ -1047,6 +1049,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public intersectLastRange(fromMouseClick?: boolean) {
         // when ranges are created due to a mouse click without drag (happens in cellMouseListener)
         // this method will be called with `fromMouseClick=true`.
+        // Formula editing relies on overlapping ranges to keep token colors accurate.
+        if (this.beans.editSvc?.isRangeSelectionEnabledWhileEditing?.()) {
+            return;
+        }
         if (fromMouseClick && this.dragging) {
             return;
         }
