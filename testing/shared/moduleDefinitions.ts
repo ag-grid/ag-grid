@@ -52,7 +52,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module`, num
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, number> = {
     AdvancedFilterModule: 222.75,
     AllEnterpriseModule: 1601.05,
-    AiToolkitModule: 19.41,
+    AiToolkitModule: 36,
     BatchEditModule: 84.54,
     CellSelectionModule: 62.78,
     ClipboardModule: 49,
@@ -61,7 +61,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, numbe
     ContextMenuModule: 74.89,
     ExcelExportModule: 87.14,
     FiltersToolPanelModule: 137.67,
-    FindModule: 14.51,
+    FindModule: 31,
     FormulaModule: 81.66,
     GridChartsModule: 76.93,
     IntegratedChartsModule: 412.18,
