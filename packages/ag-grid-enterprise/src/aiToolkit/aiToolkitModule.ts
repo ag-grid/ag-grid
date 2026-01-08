@@ -5,6 +5,9 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { getStructuredSchema } from './structuredSchema';
 
+/**
+ * @feature AI Toolkit
+ */
 export const AiToolkitModule: _ModuleWithApi<_AiToolkitGridApi> = {
     moduleName: 'AiToolkit',
     version: VERSION,
