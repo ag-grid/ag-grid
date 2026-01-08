@@ -166,6 +166,10 @@ export class AgFormulaInputField extends AgContentEditableField<
         return next;
     }
 
+    public hasColorForRef(ref: string): boolean {
+        return this.formulaColorByRef.has(ref);
+    }
+
     public moveColorToRef(fromRef: string | undefined, toRef: string, fallback?: number): number | null {
         const colorIndex =
             fromRef && this.formulaColorByRef.has(fromRef)

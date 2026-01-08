@@ -265,7 +265,9 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
             }
 
             const inferredColorIndex = getRangeColorIndexFromClass(range.colorClass);
-            const colorIndex = this.field.moveColorToRef(undefined, ref, inferredColorIndex ?? undefined);
+            const colorIndex = this.field.hasColorForRef(ref)
+                ? this.field.getColorIndexForRef(ref)
+                : this.field.moveColorToRef(undefined, ref, inferredColorIndex ?? undefined);
 
             if (colorIndex == null) {
                 continue;
