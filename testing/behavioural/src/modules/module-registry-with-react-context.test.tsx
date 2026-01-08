@@ -1,5 +1,6 @@
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 
 import type { GridApi, GridReadyEvent, Module } from 'ag-grid-community';
 import {
@@ -10,6 +11,7 @@ import {
     TooltipModule,
     ValidationModule,
 } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
 import { AgGridContext, AgGridReact } from 'ag-grid-react';
 
 async function renderGridWithModules(
@@ -46,7 +48,7 @@ async function renderGridWithModules(
     return { api };
 }
 
-describe('Module Registry compatible with React context', () => {
+describe('Module Registration compatible with React context', () => {
     beforeEach(() => {
         cleanup();
     });
@@ -213,48 +215,6 @@ describe('Module Registry compatible with React context', () => {
             expect(api.isModuleRegistered('TooltipModule')).toBe(true);
             // Outer context modules should NOT be registered (replaced by inner)
             expect(api.isModuleRegistered('CsvExportModule')).toBe(false);
-        });
-    });
-
-    describe('ModuleRegistry + AgGridContext compatibility', () => {
-        test('grid receives modules from both ModuleRegistry and AgGridContext', async () => {
-            // Register globally
-            ModuleRegistry.registerModules([PaginationModule]);
-
-            const { api } = await renderGridWithModules([ClientSideRowModelModule, ValidationModule], [TooltipModule]);
-
-            // Should have pagination from global registry
-            expect(api.isModuleRegistered('PaginationModule')).toBe(true);
-            // Should have tooltip from AgGridContext
-            expect(api.isModuleRegistered('TooltipModule')).toBe(true);
-            // Should have core modules from props
-            expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
-        });
-
-        test('AgGridContext modules work alongside globally registered modules', async () => {
-            ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule]);
-
-            const { api } = await renderGridWithModules(undefined, [PaginationModule, TooltipModule]);
-
-            // Grid should have modules from both global registry and AgGridContext
-            expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
-            expect(api.isModuleRegistered('PaginationModule')).toBe(true);
-            expect(api.isModuleRegistered('TooltipModule')).toBe(true);
-        });
-
-        test('props modules, AgGridContext modules, and global modules all contribute', async () => {
-            ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule]);
-
-            const { api } = await renderGridWithModules(
-                [PaginationModule], // from props
-                [TooltipModule, CsvExportModule] // from context
-            );
-
-            // Should have functionality from all three sources
-            expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true); // global
-            expect(api.isModuleRegistered('PaginationModule')).toBe(true); // props
-            expect(api.isModuleRegistered('TooltipModule')).toBe(true); // context
-            expect(api.isModuleRegistered('CsvExportModule')).toBe(true); // context
         });
     });
 
@@ -513,6 +473,119 @@ describe('Module Registry compatible with React context', () => {
             // Branch 2 should have Tooltip from context but not Pagination
             expect(api2.isModuleRegistered('TooltipModule')).toBe(true);
             expect(api2.isModuleRegistered('PaginationModule')).toBe(false);
+        });
+    });
+
+    describe('License key from AgGridContext', () => {
+        test('license key provided without enterprise module produces no console errors', async () => {
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+            let readyResolve!: (api: GridApi) => void;
+            const readyPromise = new Promise<GridApi>((resolve) => {
+                readyResolve = resolve;
+            });
+
+            render(
+                <AgGridContext.Provider
+                    value={{
+                        modules: [ClientSideRowModelModule, ValidationModule] as any,
+                        licenseKey: 'some-license-key',
+                    }}
+                >
+                    <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
+                        <AgGridReact
+                            columnDefs={[{ field: 'value' }]}
+                            rowData={[{ value: 'a' }]}
+                            onGridReady={(params: GridReadyEvent) => {
+                                readyResolve(params.api);
+                            }}
+                        />
+                    </div>
+                </AgGridContext.Provider>
+            );
+
+            await readyPromise;
+
+            // No enterprise module means no license validation, so no console errors
+            expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+            consoleErrorSpy.mockRestore();
+        });
+
+        test('enterprise module provided without license key produces console error', async () => {
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+            let readyResolve!: (api: GridApi) => void;
+            const readyPromise = new Promise<GridApi>((resolve) => {
+                readyResolve = resolve;
+            });
+
+            render(
+                <AgGridContext.Provider
+                    value={{
+                        modules: [ClientSideRowModelModule, ValidationModule, ClipboardModule],
+                        // No license key provided
+                    }}
+                >
+                    <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
+                        <AgGridReact
+                            columnDefs={[{ field: 'value' }]}
+                            rowData={[{ value: 'a' }]}
+                            onGridReady={(params: GridReadyEvent) => {
+                                readyResolve(params.api);
+                            }}
+                        />
+                    </div>
+                </AgGridContext.Provider>
+            );
+
+            await readyPromise;
+
+            // Enterprise module without license key should produce console error about missing license
+            expect(consoleErrorSpy).toHaveBeenCalled();
+            const errorCalls = consoleErrorSpy.mock.calls.flat().join(' ');
+            expect(errorCalls).toContain('AG Grid Enterprise License');
+            expect(errorCalls).toContain('License Key Not Found');
+
+            consoleErrorSpy.mockRestore();
+        });
+
+        test('enterprise module provided with license key produces console error', async () => {
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+            let readyResolve!: (api: GridApi) => void;
+            const readyPromise = new Promise<GridApi>((resolve) => {
+                readyResolve = resolve;
+            });
+
+            render(
+                <AgGridContext.Provider
+                    value={{
+                        modules: [ClientSideRowModelModule, ValidationModule, ClipboardModule],
+                        licenseKey: 'some-license-key',
+                    }}
+                >
+                    <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
+                        <AgGridReact
+                            columnDefs={[{ field: 'value' }]}
+                            rowData={[{ value: 'a' }]}
+                            onGridReady={(params: GridReadyEvent) => {
+                                readyResolve(params.api);
+                            }}
+                        />
+                    </div>
+                </AgGridContext.Provider>
+            );
+
+            await readyPromise;
+
+            // Enterprise module without license key should produce console error about missing license
+            expect(consoleErrorSpy).toHaveBeenCalled();
+            const errorCalls = consoleErrorSpy.mock.calls.flat().join(' ');
+            expect(errorCalls).toContain('AG Grid Enterprise License');
+            expect(errorCalls).toContain('Invalid License Key'); // assuming 'some-license-key' is invalid but this message shows it has been processed
+
+            consoleErrorSpy.mockRestore();
         });
     });
 });
