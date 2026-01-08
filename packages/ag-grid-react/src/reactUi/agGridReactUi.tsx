@@ -20,6 +20,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
+    Module,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
@@ -53,7 +54,7 @@ import { warnReactiveCustomComponents } from '../shared/customComp/util';
 import type { AgGridReactProps, InternalAgGridReactProps } from '../shared/interfaces';
 import { PortalManager } from '../shared/portalManager';
 import { ReactComponent } from '../shared/reactComponent';
-import { AgGridContext } from './agGridContext';
+import { AgGridContext, findModuleByName } from './agGridContext';
 import { BeansContext, RenderModeContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
@@ -136,32 +137,14 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
             return;
         }
 
-        const modules = [...(props.modules ?? []), ...(agContext.modules ?? [])];
+        const modules: Module[] = [...(props.modules ?? []), ...(agContext.modules ?? [])];
         if (agContext.licenseKey) {
             // find the EnterpriseCore module recursively and get the LicenseManager bean to initialise licensing
-
-            const findModule = (moduleName: string, modulesToSearch: any[]): any | null => {
-                for (const mod of modulesToSearch) {
-                    if (mod.moduleName === moduleName) {
-                        return mod;
-                    }
-                    if (mod.dependsOn && mod.dependsOn.length > 0) {
-                        const found = findModule(moduleName, mod.dependsOn);
-                        if (found) {
-                            return found;
-                        }
-                    }
-                }
-                return null;
-            };
-            const enterpriseCoreModule = findModule('EnterpriseCore', modules);
-
+            const enterpriseCoreModule = findModuleByName('EnterpriseCore', modules);
             if (enterpriseCoreModule) {
                 // look for static method to set license key
                 const licenseManager = enterpriseCoreModule.beans?.find((bean: any) => bean.setLicenseKey) as any;
-                if (licenseManager) {
-                    licenseManager.setLicenseKey('YOUR_LICENSE_KEY_HERE');
-                }
+                licenseManager?.setLicenseKey(agContext.licenseKey);
             }
         }
 
