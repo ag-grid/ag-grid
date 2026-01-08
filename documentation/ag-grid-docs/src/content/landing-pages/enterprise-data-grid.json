@@ -280,7 +280,7 @@
                     "priceNote": "forever",
                     "features": ["Core grid functionality", "Sorting, filtering & pagination", "MIT licensed"],
                     "ctaText": "Get Started",
-                    "ctaUrl": "./getting-started/"
+                    "ctaUrl": "./data-grid/getting-started/"
                 },
                 {
                     "title": "Enterprise",
