@@ -1,10 +1,9 @@
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModelPresetType, Tuple } from '../iSimpleFilter';
 import { ScalarFilterHandler } from '../scalarFilterHandler';
-import { presetDateFilterTypeRelativeFromToMap } from '../simpleFilterUtils';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
-import { mapValuesFromDateFilterModel } from './dateFilterUtils';
+import { mapValuesFromDateFilterModel, presetDateFilterTypeRelativeFromToMap } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 function defaultDateComparator(filterDate: Date, cellValue: any): number {
@@ -53,12 +52,9 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         if (!this.isValid(cellValue)) {
             return type === 'notEqual' || type === 'notBlank';
         }
-
-        if (type && type in presetDateFilterTypeRelativeFromToMap) {
-            const { from, to } = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType](
-                new Date(this.beanCreationTime),
-                new Date(this.beanCreationTime)
-            );
+        const presetDateRangeFn = presetDateFilterTypeRelativeFromToMap[type as ISimpleFilterModelPresetType];
+        if (presetDateRangeFn) {
+            const { from, to } = presetDateRangeFn(new Date(this.beanCreationTime), new Date(this.beanCreationTime));
             return comparator(from, cellValue) > 0 && comparator(to, cellValue) < 0;
         }
 

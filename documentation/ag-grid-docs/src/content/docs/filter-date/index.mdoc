@@ -207,30 +207,30 @@ This feature is not included by default. To enable it, you must add the options 
 
 ### Available Built-in Date Filter Options
 
-| Option Name        | Option Key     | Time Range                                        |
-|--------------------|----------------|---------------------------------------------------|
-| Today              | `today`        | `[startOfToday, startOfTomorrow)`                 |
-| Yesterday          | `yesterday`    | `[startOfYesterday, startOfToday)`                |
-| Tomorrow           | `tomorrow`     | `[startOfTomorrow, startOfDayAfterTomorrow)`      |
-| This Week          | `thisWeek`     | `[startOfCurrentWeek, startOfNextWeek)`           |
-| Last Week          | `lastWeek`     | `[startOfPreviousWeek, startOfCurrentWeek)`       |
-| Next Week          | `nextWeek`     | `[startOfNextWeek, startOfWeekAfterNext)`         |
-| This Month         | `thisMonth`    | `[startOfCurrentMonth, startOfNextMonth)`         |
-| Last Month         | `lastMonth`    | `[startOfPreviousMonth, startOfCurrentMonth)`     |
-| Next Month         | `nextMonth`    | `[startOfNextMonth, startOfMonthAfterNext)`       |
-| This Quarter       | `thisQuarter`  | `[startOfCurrentQuarter, startOfNextQuarter)`     |
-| Last Quarter       | `lastQuarter`  | `[startOfPreviousQuarter, startOfCurrentQuarter)` |
-| Next Quarter       | `nextQuarter`  | `[startOfNextQuarter, startOfQuarterAfterNext)`   |
-| This Year          | `thisYear`     | `[startOfCurrentYear, startOfNextYear)`           |
-| Last Year          | `lastYear`     | `[startOfPreviousYear, startOfCurrentYear)`       |
-| Next Year          | `nextYear`     | `[startOfNextYear, startOfYearAfterNext)`         |
-| Year to Date (YTD) | `yearToDate`   | `[startOfCurrentYear, startOfTomorrow)`           |
-| Last 7 Days        | `last7Days`    | `[startOfToday − 7 days, startOfTomorrow)`        |
-| Last 30 Days       | `last30Days`   | `[startOfToday − 30 days, startOfTomorrow)`       |
-| Last 90 Days       | `last90Days`   | `[startOfToday − 90 days, startOfTomorrow)`       |
-| Last 6 Months      | `last6Months`  | `[startOfToday − 6 months, startOfTomorrow)`      |
-| Last 12 Months     | `last12Months` | `[startOfToday − 12 months, startOfTomorrow)`     |
-| Last 24 Months     | `last24Months` | `[startOfToday − 24 months, startOfTomorrow)`     |
+| Option Name        | Option Key     | Time Range Start >=        | Time Range End <          |
+|--------------------|----------------|----------------------------|:--------------------------|
+| Today              | `today`        | `startOfToday`             | `startOfTomorrow`         |
+| Yesterday          | `yesterday`    | `startOfYesterday`         | `startOfToday`            |
+| Tomorrow           | `tomorrow`     | `startOfTomorrow`          | `startOfDayAfterTomorrow` |
+| This Week          | `thisWeek`     | `startOfCurrentWeek`       | `startOfNextWeek`         |
+| Last Week          | `lastWeek`     | `startOfPreviousWeek`      | `startOfCurrentWeek`      |
+| Next Week          | `nextWeek`     | `startOfNextWeek`          | `startOfWeekAfterNext`    |
+| This Month         | `thisMonth`    | `startOfCurrentMonth`      | `startOfNextMonth`        |
+| Last Month         | `lastMonth`    | `startOfPreviousMonth`     | `startOfCurrentMonth`     |
+| Next Month         | `nextMonth`    | `startOfNextMonth`         | `startOfMonthAfterNext`   |
+| This Quarter       | `thisQuarter`  | `startOfCurrentQuarter`    | `startOfNextQuarter`      |
+| Last Quarter       | `lastQuarter`  | `startOfPreviousQuarter`   | `startOfCurrentQuarter`   |
+| Next Quarter       | `nextQuarter`  | `startOfNextQuarter`       | `startOfQuarterAfterNext` |
+| This Year          | `thisYear`     | `startOfCurrentYear`       | `startOfNextYear`         |
+| Last Year          | `lastYear`     | `startOfPreviousYear`      | `startOfCurrentYear`      |
+| Next Year          | `nextYear`     | `startOfNextYear`          | `startOfYearAfterNext`    |
+| Year to Date (YTD) | `yearToDate`   | `startOfCurrentYear`       | `startOfTomorrow`         |
+| Last 7 Days        | `last7Days`    | `startOfToday − 7 days`    | `startOfTomorrow`         |
+| Last 30 Days       | `last30Days`   | `startOfToday − 30 days`   | `startOfTomorrow`         |
+| Last 90 Days       | `last90Days`   | `startOfToday − 90 days`   | `startOfTomorrow`         |
+| Last 6 Months      | `last6Months`  | `startOfToday − 6 months`  | `startOfTomorrow`         |
+| Last 12 Months     | `last12Months` | `startOfToday − 12 months` | `startOfTomorrow`         |
+| Last 24 Months     | `last24Months` | `startOfToday − 24 months` | `startOfTomorrow`         |
 
 
 {% note %}
