@@ -382,11 +382,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             targetColumn = null;
         }
 
-        if (this.lastHighlightedColumn?.column !== targetColumn) {
-            this.clearHighlighted();
-        }
-
         if (targetColumn == null || start == null || width == null) {
+            if (this.lastHighlightedColumn?.column !== targetColumn) {
+                this.clearHighlighted();
+            }
             return;
         }
 
