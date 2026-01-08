@@ -16,7 +16,9 @@ export const frameworkLogoMap: Record<string, { logo: string; name: string }> = 
  * Normalize framework key from JSON content to frameworkLogoMap key
  */
 export function normalizeFrameworkKey(frameworkKey: string | undefined): string {
-    if (!frameworkKey) return '';
+    if (!frameworkKey) {
+        return '';
+    }
 
     // Check if the key exists directly in the map
     if (frameworkLogoMap[frameworkKey]) {
