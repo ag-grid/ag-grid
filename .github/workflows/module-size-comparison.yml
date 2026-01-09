@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       pr_number:
-        description: 'PR number to compare (for debugging)'
+        description: 'PR number to compare (for manual runs)'
         type: number
-        required: false
+        required: true
 
 env:
   NX_NO_CLOUD: true
@@ -18,10 +18,9 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_REGISTRY: "https://registry.ag-grid.com"
   CI: true
-  SHARD_COUNT: 3
 
 concurrency:
-  group: module-size-${{ github.event.pull_request.number || github.run_id }}
+  group: module-size-${{ github.event.pull_request.number || inputs.pr_number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
@@ -29,11 +28,56 @@ permissions:
   pull-requests: write
 
 jobs:
+  prepare:
+    name: Prepare Context
+    runs-on: ubuntu-latest
+    outputs:
+      pr-number: ${{ steps.resolve.outputs.pr-number }}
+      head-sha: ${{ steps.resolve.outputs.head-sha }}
+      is-draft: ${{ steps.resolve.outputs.is-draft }}
+    steps:
+      - name: Resolve PR details
+        id: resolve
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const eventName = context.eventName;
+            if (eventName === 'pull_request') {
+              const pr = context.payload.pull_request;
+              core.setOutput('pr-number', pr.number.toString());
+              core.setOutput('head-sha', pr.head.sha);
+              core.setOutput('is-draft', pr.draft ? 'true' : 'false');
+              return;
+            }
+
+            const manualPrNumber = context.payload?.inputs?.pr_number;
+            if (!manualPrNumber) {
+              core.setFailed('workflow_dispatch requires pr_number input.');
+              return;
+            }
+
+            const pull_number = Number(manualPrNumber);
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number,
+            });
+
+            if (!pr) {
+              core.setFailed(`Could not load pull request ${pull_number}.`);
+              return;
+            }
+
+            core.setOutput('pr-number', pr.number.toString());
+            core.setOutput('head-sha', pr.head.sha);
+            core.setOutput('is-draft', pr.draft ? 'true' : 'false');
+
   # Check for cached base results
   check-base-cache:
     name: Check Base Cache
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    needs: prepare
+    if: needs.prepare.outputs.is-draft != 'true'
     outputs:
       cache-hit: ${{ steps.cache-check.outputs.cache-hit }}
       latest-sha: ${{ steps.get-sha.outputs.sha }}
@@ -57,7 +101,8 @@ jobs:
   module-size-pr:
     name: Module Size PR (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    needs: prepare
+    if: needs.prepare.outputs.is-draft != 'true'
     strategy:
       matrix:
         shard: [1, 2, 3]
@@ -66,7 +111,7 @@ jobs:
       - name: Checkout PR
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ needs.prepare.outputs.head-sha }}
           fetch-depth: 1
 
       - name: Setup
@@ -87,7 +132,7 @@ jobs:
       - name: Upload PR shard results
         uses: actions/upload-artifact@v4
         with:
-          name: module-size-pr-shard-${{ matrix.shard }}-${{ github.event.pull_request.number }}
+          name: module-size-pr-shard-${{ matrix.shard }}-${{ needs.prepare.outputs.pr-number }}
           path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
           retention-days: 1
 
@@ -95,8 +140,8 @@ jobs:
   module-size-base:
     name: Module Size Base (${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
-    needs: check-base-cache
-    if: github.event.pull_request.draft == false && needs.check-base-cache.outputs.cache-hit != 'true'
+    needs: [prepare, check-base-cache]
+    if: needs.prepare.outputs.is-draft != 'true' && needs.check-base-cache.outputs.cache-hit != 'true'
     strategy:
       matrix:
         shard: [1, 2, 3]
@@ -127,7 +172,7 @@ jobs:
       - name: Upload base shard results
         uses: actions/upload-artifact@v4
         with:
-          name: module-size-base-shard-${{ matrix.shard }}-${{ github.event.pull_request.number }}
+          name: module-size-base-shard-${{ matrix.shard }}-${{ needs.prepare.outputs.pr-number }}
           path: testing/module-size/module-size-results-shard-${{ matrix.shard }}.json
           retention-days: 1
 
@@ -135,7 +180,7 @@ jobs:
   cache-base-results:
     name: Cache Base Results
     runs-on: ubuntu-latest
-    needs: [check-base-cache, module-size-base]
+    needs: [prepare, check-base-cache, module-size-base]
     if: always() && needs.module-size-base.result == 'success'
     steps:
       - name: Checkout
@@ -152,7 +197,7 @@ jobs:
       - name: Download all base shard results
         uses: actions/download-artifact@v4
         with:
-          pattern: module-size-base-shard-*-${{ github.event.pull_request.number }}
+          pattern: module-size-base-shard-*-${{ needs.prepare.outputs.pr-number }}
           path: ./base-shards
           merge-multiple: true
 
@@ -170,14 +215,14 @@ jobs:
   compare-and-report:
     name: Compare & Report
     runs-on: ubuntu-latest
-    needs: [check-base-cache, module-size-pr, module-size-base, cache-base-results]
+    needs: [prepare, check-base-cache, module-size-pr, module-size-base, cache-base-results]
     # Run if PR tests succeeded AND either cache hit OR base tests succeeded
     if: |
       always() &&
       needs.module-size-pr.result == 'success' &&
       (needs.check-base-cache.outputs.cache-hit == 'true' || needs.module-size-base.result == 'success')
     env:
-      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_NUMBER: ${{ needs.prepare.outputs.pr-number }}
       CACHE_HIT: ${{ needs.check-base-cache.outputs.cache-hit }}
       LATEST_SHA: ${{ needs.check-base-cache.outputs.latest-sha }}
     steps:
@@ -196,7 +241,7 @@ jobs:
       - name: Download all PR shard results
         uses: actions/download-artifact@v4
         with:
-          pattern: module-size-pr-shard-*-${{ github.event.pull_request.number }}
+          pattern: module-size-pr-shard-*-${{ env.PR_NUMBER }}
           path: ./pr-shards
           merge-multiple: true
 
@@ -218,7 +263,7 @@ jobs:
         if: env.CACHE_HIT != 'true'
         uses: actions/download-artifact@v4
         with:
-          pattern: module-size-base-shard-*-${{ github.event.pull_request.number }}
+          pattern: module-size-base-shard-*-${{ env.PR_NUMBER }}
           path: ./base-shards
           merge-multiple: true
 
@@ -290,6 +335,6 @@ jobs:
       - name: Upload comparison report
         uses: actions/upload-artifact@v4
         with:
-          name: module-size-comparison-${{ github.event.pull_request.number }}
+          name: module-size-comparison-${{ env.PR_NUMBER }}
           path: ./comparison-report.md
           retention-days: 30
