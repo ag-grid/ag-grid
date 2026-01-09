@@ -367,14 +367,20 @@ export class FormulaInputRangeSyncFeature extends BeanStub {
 
     private tagLatestRangeForRef(ref: string, tokenIndex?: number | null): void {
         // The newest range is the one the user just clicked/dragged.
-        const ranges = this.beans.rangeSvc?.getCellRanges();
+
+        const { beans, field, trackedRanges } = this;
+        const ranges = beans.rangeSvc?.getCellRanges();
         const latest = ranges?.length ? ranges[ranges.length - 1] : null;
 
-        if (latest) {
-            const colorIndex = this.field.getColorIndexForToken(tokenIndex) ?? this.field.getColorIndexForRef(ref);
-            tagRangeWithFormulaColor(latest, ref, colorIndex);
-            this.refreshRangeStyling();
+        if (!latest) {
+            return;
         }
+
+        const trackedIndex = trackedRanges.get(latest)?.tokenIndex ?? null;
+        const colorIndex = field.getColorIndexForToken(tokenIndex ?? trackedIndex) ?? field.getColorIndexForRef(ref);
+
+        tagRangeWithFormulaColor(latest, ref, colorIndex);
+        this.refreshRangeStyling();
     }
 
     private ensureTrackedRangeColors(): boolean {

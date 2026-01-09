@@ -417,8 +417,8 @@ export class AgFormulaInputField extends AgContentEditableField<
     }
 
     private getFormulaState(text: string): { isFormula: boolean; hasFormulaPrefix: boolean } {
-        // Unlike formulaSvc.isFormula (requires length > 1), we treat bare "=" as formula input
-        // so clicking a cell to insert a range doesn't close the editor.
+        // Keep "=" as a plain value for commit/validation, but still enable range selection
+        // when it appears so clicking a cell can insert a token.
         const hasFormulaPrefix = text.trimStart().startsWith('=');
         const isFormula = this.beans.formula?.isFormula(text) ?? hasFormulaPrefix;
         return { isFormula, hasFormulaPrefix };

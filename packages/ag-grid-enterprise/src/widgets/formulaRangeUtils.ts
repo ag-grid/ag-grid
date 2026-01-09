@@ -53,7 +53,9 @@ export const tagRangeWithFormulaColor = (
 
 // Range helpers
 export const getCellRangeParams = (beans: BeanCollection, ref: string) => {
-    const match = FULL_CELL_OR_RANGE_REGEX.exec(ref);
+    // Allow a trailing ":" while the user is still typing a range (e.g. "A1:").
+    const normalizedRef = ref.endsWith(':') ? ref.slice(0, -1) : ref;
+    const match = FULL_CELL_OR_RANGE_REGEX.exec(normalizedRef);
     if (!match) {
         return null;
     }
