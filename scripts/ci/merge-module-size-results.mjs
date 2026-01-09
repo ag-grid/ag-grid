@@ -23,8 +23,9 @@ function getModuleKey(modules) {
 }
 
 // Find all JSON files in the shards directory
-const files = fs.readdirSync(shardsDir)
-    .filter(f => f.endsWith('.json'))
+const files = fs
+    .readdirSync(shardsDir)
+    .filter((f) => f.endsWith('.json'))
     .sort(); // Sort to ensure consistent ordering
 
 if (files.length === 0) {
