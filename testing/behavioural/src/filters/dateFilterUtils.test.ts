@@ -3,40 +3,50 @@ import { DateFilterModule } from 'ag-grid-community';
 describe('presetDateFilterTypeRelativeFromToMap', () => {
     const { _presetDateFilterTypeRelativeFromToMap: presetFns } =
         new DateFilterModule.dynamicBeans!.agDateColumnFilterHandler()!;
-    const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0100 (British Summer Time)';
+    const BASE = 'Wed Apr 08 2020 12:34:56 GMT+0000 (Coordinated Universal Time)';
 
     const ANSWERS = {
-        startOfTodayMinus24months: 'Sun Apr 08 2018 00:00:00 GMT+0100 (British Summer Time)',
-        startOfPreviousYear: 'Tue Jan 01 2019 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfTodayMinus12months: 'Mon Apr 08 2019 00:00:00 GMT+0100 (British Summer Time)',
-        startOfTodayMinus6months: 'Tue Oct 08 2019 00:00:00 GMT+0100 (British Summer Time)',
-        startOfCurrentYear: 'Wed Jan 01 2020 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfPreviousQuarter: 'Wed Jan 01 2020 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfTodayMinus90days: 'Thu Jan 09 2020 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfPreviousMonth: 'Sun Mar 01 2020 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfTodayMinus30days: 'Mon Mar 09 2020 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfPreviousWeek: 'Mon Mar 30 2020 00:00:00 GMT+0100 (British Summer Time)',
+        startOfTodayMinus24months: 'Sun Apr 08 2018 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfPreviousYear: 'Tue Jan 01 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfTodayMinus12months: 'Mon Apr 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfTodayMinus6months: 'Tue Oct 08 2019 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfCurrentYear: 'Wed Jan 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfPreviousQuarter: 'Wed Jan 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfTodayMinus90days: 'Thu Jan 09 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfPreviousMonth: 'Sun Mar 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfTodayMinus30days: 'Mon Mar 09 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfPreviousWeek: 'Mon Mar 30 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
         previousMonth: 'Tue Mar 31 2020',
         previousQuarter: 'Tue Mar 31 2020',
-        startOfCurrentQuarter: 'Wed Apr 01 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfCurrentMonth: 'Wed Apr 01 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfTodayMinus7days: 'Wed Apr 01 2020 00:00:00 GMT+0100 (British Summer Time)',
+        startOfCurrentQuarter: 'Wed Apr 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfCurrentMonth: 'Wed Apr 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfTodayMinus7days: 'Wed Apr 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
         previousWeek: 'Sun Apr 05 2020',
-        startOfCurrentWeek: 'Mon Apr 06 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfYesterday: 'Tue Apr 07 2020 00:00:00 GMT+0100 (British Summer Time)',
+        startOfCurrentWeek: 'Mon Apr 06 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfYesterday: 'Tue Apr 07 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
         previousDay: 'Tue Apr 07 2020',
-        startOfToday: 'Wed Apr 08 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfTomorrow: 'Thu Apr 09 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfDayAfterTomorrow: 'Fri Apr 10 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfNextWeek: 'Mon Apr 13 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfWeekAfterNext: 'Mon Apr 20 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfNextMonth: 'Fri May 01 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfMonthAfterNext: 'Mon Jun 01 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfNextQuarter: 'Wed Jul 01 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfQuarterAfterNext: 'Thu Oct 01 2020 00:00:00 GMT+0100 (British Summer Time)',
-        startOfNextYear: 'Fri Jan 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)',
-        startOfYearAfterNext: 'Sat Jan 01 2022 00:00:00 GMT+0000 (Greenwich Mean Time)',
+        startOfToday: 'Wed Apr 08 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfTomorrow: 'Thu Apr 09 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfDayAfterTomorrow: 'Fri Apr 10 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfNextWeek: 'Mon Apr 13 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfWeekAfterNext: 'Mon Apr 20 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfNextMonth: 'Fri May 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfMonthAfterNext: 'Mon Jun 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfNextQuarter: 'Wed Jul 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfQuarterAfterNext: 'Thu Oct 01 2020 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfNextYear: 'Fri Jan 01 2021 00:00:00 GMT+0000 (Coordinated Universal Time)',
+        startOfYearAfterNext: 'Sat Jan 01 2022 00:00:00 GMT+0000 (Coordinated Universal Time)',
     };
+
+    let FROM: Date;
+    let TO: Date;
+
+    beforeEach(() => {
+        vi.stubEnv('TZ', 'UTC');
+        return ([FROM, TO] = [new Date(BASE), new Date(BASE)]);
+    });
+
+    afterEach(() => vi.unstubAllEnvs());
 
     it('validate answers', () =>
         Object.values(ANSWERS).forEach((date, index, arr) => {
@@ -44,11 +54,6 @@ describe('presetDateFilterTypeRelativeFromToMap', () => {
                 expect(''.toString()).toBe(`${date.toString()} <= ${arr[index + 1].toString()}`);
             }
         }));
-
-    let FROM: Date;
-    let TO: Date;
-
-    beforeEach(() => ([FROM, TO] = [new Date(BASE), new Date(BASE)]));
 
     describe.each([
         ['today', [ANSWERS.startOfToday, ANSWERS.startOfTomorrow]],
