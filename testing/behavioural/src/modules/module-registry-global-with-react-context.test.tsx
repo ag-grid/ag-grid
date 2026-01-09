@@ -10,14 +10,14 @@ import {
     TooltipModule,
     ValidationModule,
 } from 'ag-grid-community';
-import { AgGridContext, AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 // Register modules globally at file level - this ensures consistent state for all tests in this file
 ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule]);
 
 async function renderGridWithModules(
     propsModules: Module[] | undefined,
-    contextModules: Module[] | undefined
+    providerModules: Module[] | undefined
 ): Promise<{ api: GridApi }> {
     let readyResolve!: (api: GridApi) => void;
     const readyPromise = new Promise<GridApi>((resolve) => {
@@ -38,8 +38,8 @@ async function renderGridWithModules(
     );
 
     render(
-        contextModules !== undefined ? (
-            <AgGridContext.Provider value={{ modules: contextModules as any }}>{gridElement}</AgGridContext.Provider>
+        providerModules !== undefined ? (
+            <AgGridProvider modules={providerModules}>{gridElement}</AgGridProvider>
         ) : (
             gridElement
         )
@@ -49,34 +49,34 @@ async function renderGridWithModules(
     return { api };
 }
 
-describe('ModuleRegistry.registerModules() + AgGridContext compatibility', () => {
+describe('ModuleRegistry.registerModules() + AgGridProvider compatibility', () => {
     beforeEach(() => {
         cleanup();
     });
 
-    test('grid receives modules from both ModuleRegistry and AgGridContext', async () => {
+    test('grid receives modules from both ModuleRegistry and AgGridProvider', async () => {
         const { api } = await renderGridWithModules(undefined, [PaginationModule, TooltipModule]);
 
         // Should have core modules from global registry
         expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
         expect(api.isModuleRegistered('ValidationModule')).toBe(true);
-        // Should have modules from AgGridContext
+        // Should have modules from AgGridProvider
         expect(api.isModuleRegistered('PaginationModule')).toBe(true);
         expect(api.isModuleRegistered('TooltipModule')).toBe(true);
     });
 
-    test('grid receives modules from ModuleRegistry, props, and AgGridContext', async () => {
+    test('grid receives modules from ModuleRegistry, props, and AgGridProvider', async () => {
         const { api } = await renderGridWithModules(
             [PaginationModule], // from props
-            [TooltipModule, CsvExportModule] // from context
+            [TooltipModule, CsvExportModule] // from provider
         );
 
         // Should have functionality from all three sources
         expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true); // global
         expect(api.isModuleRegistered('ValidationModule')).toBe(true); // global
         expect(api.isModuleRegistered('PaginationModule')).toBe(true); // props
-        expect(api.isModuleRegistered('TooltipModule')).toBe(true); // context
-        expect(api.isModuleRegistered('CsvExportModule')).toBe(true); // context
+        expect(api.isModuleRegistered('TooltipModule')).toBe(true); // provider
+        expect(api.isModuleRegistered('CsvExportModule')).toBe(true); // provider
     });
 
     test('both branches inherit globally registered modules from ModuleRegistry', async () => {
@@ -91,8 +91,8 @@ describe('ModuleRegistry.registerModules() + AgGridContext compatibility', () =>
 
         render(
             <div>
-                {/* Branch 1 with its own AgGridContext */}
-                <AgGridContext.Provider value={{ modules: [PaginationModule] as any }}>
+                {/* Branch 1 with its own AgGridProvider */}
+                <AgGridProvider modules={[PaginationModule]}>
                     <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-1">
                         <AgGridReact
                             columnDefs={[{ field: 'value' }]}
@@ -102,10 +102,10 @@ describe('ModuleRegistry.registerModules() + AgGridContext compatibility', () =>
                             }}
                         />
                     </div>
-                </AgGridContext.Provider>
+                </AgGridProvider>
 
-                {/* Branch 2 with its own AgGridContext */}
-                <AgGridContext.Provider value={{ modules: [TooltipModule] as any }}>
+                {/* Branch 2 with its own AgGridProvider */}
+                <AgGridProvider modules={[TooltipModule]}>
                     <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-2">
                         <AgGridReact
                             columnDefs={[{ field: 'value' }]}
@@ -115,7 +115,7 @@ describe('ModuleRegistry.registerModules() + AgGridContext compatibility', () =>
                             }}
                         />
                     </div>
-                </AgGridContext.Provider>
+                </AgGridProvider>
             </div>
         );
 
@@ -127,28 +127,28 @@ describe('ModuleRegistry.registerModules() + AgGridContext compatibility', () =>
         expect(api1.isModuleRegistered('ValidationModule')).toBe(true);
         expect(api2.isModuleRegistered('ValidationModule')).toBe(true);
 
-        // Branch 1 should have its context-specific module (PaginationModule)
+        // Branch 1 should have its provider-specific module (PaginationModule)
         expect(api1.isModuleRegistered('PaginationModule')).toBe(true);
 
-        // Branch 2 should have its context-specific module (TooltipModule)
+        // Branch 2 should have its provider-specific module (TooltipModule)
         expect(api2.isModuleRegistered('TooltipModule')).toBe(true);
 
-        // Branch 1 should NOT have TooltipModule (only in Branch 2's context)
+        // Branch 1 should NOT have TooltipModule (only in Branch 2's provider)
         expect(api1.isModuleRegistered('TooltipModule')).toBe(false);
 
-        // Branch 2 should NOT have PaginationModule (only in Branch 1's context)
+        // Branch 2 should NOT have PaginationModule (only in Branch 1's provider)
         expect(api2.isModuleRegistered('PaginationModule')).toBe(false);
     });
 
-    test('globally registered modules are available even with empty context', async () => {
+    test('globally registered modules are available even with empty provider', async () => {
         const { api } = await renderGridWithModules(undefined, []);
 
-        // Should have core modules from global registry even with empty context
+        // Should have core modules from global registry even with empty provider
         expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
         expect(api.isModuleRegistered('ValidationModule')).toBe(true);
     });
 
-    test('globally registered modules are available without any context', async () => {
+    test('globally registered modules are available without any provider', async () => {
         const { api } = await renderGridWithModules(undefined, undefined);
 
         // Should have core modules from global registry

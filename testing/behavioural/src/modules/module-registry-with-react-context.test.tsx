@@ -12,11 +12,11 @@ import {
     ValidationModule,
 } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
-import { AgGridContext, AgGridReact } from 'ag-grid-react';
+import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 async function renderGridWithModules(
     propsModules: Module[] | undefined,
-    contextModules: Module[] | undefined
+    providerModules: Module[] | undefined
 ): Promise<{ api: GridApi }> {
     let readyResolve!: (api: GridApi) => void;
     const readyPromise = new Promise<GridApi>((resolve) => {
@@ -37,8 +37,8 @@ async function renderGridWithModules(
     );
 
     render(
-        contextModules !== undefined ? (
-            <AgGridContext.Provider value={{ modules: contextModules as any }}>{gridElement}</AgGridContext.Provider>
+        providerModules !== undefined ? (
+            <AgGridProvider modules={providerModules}>{gridElement}</AgGridProvider>
         ) : (
             gridElement
         )
@@ -144,8 +144,8 @@ describe('Module Registration compatible with React context', () => {
         });
     });
 
-    describe('Nested AgGridContext providers', () => {
-        async function renderNestedContextGrid(
+    describe('Nested AgGridProvider', () => {
+        async function renderNestedProviderGrid(
             outerModules: Module[],
             innerModules: Module[],
             propsModules?: Module[]
@@ -156,8 +156,8 @@ describe('Module Registration compatible with React context', () => {
             });
 
             render(
-                <AgGridContext.Provider value={{ modules: outerModules as any }}>
-                    <AgGridContext.Provider value={{ modules: innerModules as any }}>
+                <AgGridProvider modules={outerModules}>
+                    <AgGridProvider modules={innerModules}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -168,58 +168,93 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
-                </AgGridContext.Provider>
+                    </AgGridProvider>
+                </AgGridProvider>
             );
 
             const api = await readyPromise;
             return { api };
         }
 
-        test('inner AgGridContext modules are used instead of outer AgGridContext modules', async () => {
-            // Inner context completely replaces outer context (React context behavior)
-            const { api } = await renderNestedContextGrid(
+        test('inner AgGridProvider inherits and merges modules from outer AgGridProvider', async () => {
+            // Inner provider merges with outer provider modules
+            const { api } = await renderNestedProviderGrid(
                 [ClientSideRowModelModule, ValidationModule, CsvExportModule], // outer - has CsvExport
-                [ClientSideRowModelModule, ValidationModule, TooltipModule] // inner - has Tooltip instead
+                [TooltipModule] // inner - adds Tooltip
             );
 
             // Inner context modules should be registered
             expect(api.isModuleRegistered('TooltipModule')).toBe(true);
             expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
-            // CsvExport from outer context should NOT be registered (inner context replaces outer)
-            expect(api.isModuleRegistered('CsvExportModule')).toBe(false);
+            // CsvExport from outer context SHOULD be registered (merged)
+            expect(api.isModuleRegistered('CsvExportModule')).toBe(true);
         });
 
-        test('inner AgGridContext with pagination overrides outer without', async () => {
-            const { api } = await renderNestedContextGrid(
-                [ClientSideRowModelModule, ValidationModule, TooltipModule], // outer - no pagination
-                [ClientSideRowModelModule, ValidationModule, PaginationModule] // inner - has pagination
+        test('inner AgGridProvider adds pagination to outer modules', async () => {
+            const { api } = await renderNestedProviderGrid(
+                [ClientSideRowModelModule, ValidationModule, TooltipModule], // outer - has tooltip
+                [PaginationModule] // inner - adds pagination
             );
 
-            // Should have pagination from inner context
+            // Should have pagination from inner provider
             expect(api.isModuleRegistered('PaginationModule')).toBe(true);
-            // Tooltip from outer context should NOT be registered
-            expect(api.isModuleRegistered('TooltipModule')).toBe(false);
+            // Tooltip from outer provider SHOULD be registered (merged)
+            expect(api.isModuleRegistered('TooltipModule')).toBe(true);
         });
 
-        test('props modules combined with inner context modules', async () => {
-            const { api } = await renderNestedContextGrid(
-                [CsvExportModule], // outer - would provide CsvExport
-                [ClientSideRowModelModule, ValidationModule, TooltipModule], // inner - core + tooltip
+        test('props modules combined with merged provider modules', async () => {
+            const { api } = await renderNestedProviderGrid(
+                [ClientSideRowModelModule, ValidationModule, CsvExportModule], // outer - core + CsvExport
+                [TooltipModule], // inner - adds tooltip
                 [PaginationModule] // props - pagination
             );
 
             // Props modules should be registered
             expect(api.isModuleRegistered('PaginationModule')).toBe(true);
-            // Inner context modules should be registered
+            // Inner provider modules should be registered
             expect(api.isModuleRegistered('TooltipModule')).toBe(true);
-            // Outer context modules should NOT be registered (replaced by inner)
-            expect(api.isModuleRegistered('CsvExportModule')).toBe(false);
+            // Outer provider modules SHOULD be registered (merged)
+            expect(api.isModuleRegistered('CsvExportModule')).toBe(true);
+        });
+
+        test('deeply nested AgGridProviders merge all modules', async () => {
+            let readyResolve!: (api: GridApi) => void;
+            const readyPromise = new Promise<GridApi>((resolve) => {
+                readyResolve = resolve;
+            });
+
+            render(
+                <AgGridProvider modules={[ClientSideRowModelModule, ValidationModule]}>
+                    <AgGridProvider modules={[PaginationModule]}>
+                        <AgGridProvider modules={[TooltipModule]}>
+                            <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
+                                <AgGridReact
+                                    columnDefs={[{ field: 'value' }]}
+                                    rowData={[{ value: 'a' }]}
+                                    modules={[CsvExportModule]}
+                                    onGridReady={(params: GridReadyEvent) => {
+                                        readyResolve(params.api);
+                                    }}
+                                />
+                            </div>
+                        </AgGridProvider>
+                    </AgGridProvider>
+                </AgGridProvider>
+            );
+
+            const api = await readyPromise;
+
+            // All modules from all levels should be merged
+            expect(api.isModuleRegistered('ClientSideRowModelModule')).toBe(true);
+            expect(api.isModuleRegistered('ValidationModule')).toBe(true);
+            expect(api.isModuleRegistered('PaginationModule')).toBe(true);
+            expect(api.isModuleRegistered('TooltipModule')).toBe(true);
+            expect(api.isModuleRegistered('CsvExportModule')).toBe(true);
         });
     });
 
-    describe('Separate component branches with different AgGridContext', () => {
-        async function renderTwoGridsWithSeparateContexts(
+    describe('Separate component branches with different AgGridProvider', () => {
+        async function renderTwoGridsWithSeparateProviders(
             branch1Modules: Module[],
             branch2Modules: Module[]
         ): Promise<{ api1: GridApi; api2: GridApi }> {
@@ -234,8 +269,8 @@ describe('Module Registration compatible with React context', () => {
 
             render(
                 <div>
-                    {/* Branch 1 with its own AgGridContext */}
-                    <AgGridContext.Provider value={{ modules: branch1Modules as any }}>
+                    {/* Branch 1 with its own AgGridProvider */}
+                    <AgGridProvider modules={branch1Modules}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-1">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -245,10 +280,10 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
+                    </AgGridProvider>
 
-                    {/* Branch 2 with its own AgGridContext */}
-                    <AgGridContext.Provider value={{ modules: branch2Modules as any }}>
+                    {/* Branch 2 with its own AgGridProvider */}
+                    <AgGridProvider modules={branch2Modules}>
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-2">
                             <AgGridReact
                                 columnDefs={[{ field: 'value' }]}
@@ -258,7 +293,7 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
+                    </AgGridProvider>
                 </div>
             );
 
@@ -267,7 +302,7 @@ describe('Module Registration compatible with React context', () => {
         }
 
         test('two sibling branches can use completely different modules', async () => {
-            const { api1, api2 } = await renderTwoGridsWithSeparateContexts(
+            const { api1, api2 } = await renderTwoGridsWithSeparateProviders(
                 [ClientSideRowModelModule, ValidationModule, PaginationModule], // Branch 1: pagination
                 [ClientSideRowModelModule, ValidationModule, TooltipModule] // Branch 2: tooltip
             );
@@ -282,7 +317,7 @@ describe('Module Registration compatible with React context', () => {
         });
 
         test('two sibling branches can have overlapping modules with differences', async () => {
-            const { api1, api2 } = await renderTwoGridsWithSeparateContexts(
+            const { api1, api2 } = await renderTwoGridsWithSeparateProviders(
                 [ClientSideRowModelModule, ValidationModule, PaginationModule, CsvExportModule], // Branch 1
                 [ClientSideRowModelModule, ValidationModule, PaginationModule, TooltipModule] // Branch 2
             );
@@ -302,7 +337,7 @@ describe('Module Registration compatible with React context', () => {
 
         test('changes to one branch context do not affect the other branch', async () => {
             // This test ensures isolation between the two contexts
-            const { api1, api2 } = await renderTwoGridsWithSeparateContexts(
+            const { api1, api2 } = await renderTwoGridsWithSeparateProviders(
                 [ClientSideRowModelModule, ValidationModule], // Branch 1: minimal modules
                 [ClientSideRowModelModule, ValidationModule, PaginationModule, TooltipModule, CsvExportModule] // Branch 2: many modules
             );
@@ -320,7 +355,7 @@ describe('Module Registration compatible with React context', () => {
             expect(api2.isModuleRegistered('CsvExportModule')).toBe(true);
         });
 
-        test('multiple grids in same context share modules while different contexts are isolated', async () => {
+        test('multiple grids in same provider share modules while different providers are isolated', async () => {
             let ready1Resolve!: (api: GridApi) => void;
             let ready2Resolve!: (api: GridApi) => void;
             let ready3Resolve!: (api: GridApi) => void;
@@ -336,9 +371,9 @@ describe('Module Registration compatible with React context', () => {
 
             render(
                 <div>
-                    {/* Branch 1 with two grids sharing the same context */}
-                    <AgGridContext.Provider
-                        value={{ modules: [ClientSideRowModelModule, ValidationModule, PaginationModule] as any }}
+                    {/* Branch 1 with two grids sharing the same provider */}
+                    <AgGridProvider
+                        modules={[ClientSideRowModelModule, ValidationModule, PaginationModule]}
                     >
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-1a">
                             <AgGridReact
@@ -358,11 +393,11 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
+                    </AgGridProvider>
 
-                    {/* Branch 2 with different context */}
-                    <AgGridContext.Provider
-                        value={{ modules: [ClientSideRowModelModule, ValidationModule, TooltipModule] as any }}
+                    {/* Branch 2 with different provider */}
+                    <AgGridProvider
+                        modules={[ClientSideRowModelModule, ValidationModule, TooltipModule]}
                     >
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-2">
                             <AgGridReact
@@ -373,7 +408,7 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
+                    </AgGridProvider>
                 </div>
             );
 
@@ -394,7 +429,7 @@ describe('Module Registration compatible with React context', () => {
             // Register modules globally - both branches should inherit these
             ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule, CsvExportModule]);
 
-            const { api1, api2 } = await renderTwoGridsWithSeparateContexts(
+            const { api1, api2 } = await renderTwoGridsWithSeparateProviders(
                 [PaginationModule], // Branch 1: adds pagination
                 [TooltipModule] // Branch 2: adds tooltip
             );
@@ -414,7 +449,7 @@ describe('Module Registration compatible with React context', () => {
             expect(api2.isModuleRegistered('PaginationModule')).toBe(false);
         });
 
-        test('sibling branches with props modules combined with different context modules', async () => {
+        test('sibling branches with props modules combined with different provider modules', async () => {
             let ready1Resolve!: (api: GridApi) => void;
             let ready2Resolve!: (api: GridApi) => void;
             const ready1Promise = new Promise<GridApi>((resolve) => {
@@ -426,9 +461,9 @@ describe('Module Registration compatible with React context', () => {
 
             render(
                 <div>
-                    {/* Branch 1: context provides Pagination, props provide CsvExport */}
-                    <AgGridContext.Provider
-                        value={{ modules: [ClientSideRowModelModule, ValidationModule, PaginationModule] as any }}
+                    {/* Branch 1: provider provides Pagination, props provide CsvExport */}
+                    <AgGridProvider
+                        modules={[ClientSideRowModelModule, ValidationModule, PaginationModule]}
                     >
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-1">
                             <AgGridReact
@@ -440,11 +475,11 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
+                    </AgGridProvider>
 
-                    {/* Branch 2: context provides Tooltip, props provide CsvExport */}
-                    <AgGridContext.Provider
-                        value={{ modules: [ClientSideRowModelModule, ValidationModule, TooltipModule] as any }}
+                    {/* Branch 2: provider provides Tooltip, props provide CsvExport */}
+                    <AgGridProvider
+                        modules={[ClientSideRowModelModule, ValidationModule, TooltipModule]}
                     >
                         <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper-2">
                             <AgGridReact
@@ -456,7 +491,7 @@ describe('Module Registration compatible with React context', () => {
                                 }}
                             />
                         </div>
-                    </AgGridContext.Provider>
+                    </AgGridProvider>
                 </div>
             );
 
@@ -476,7 +511,7 @@ describe('Module Registration compatible with React context', () => {
         });
     });
 
-    describe('License key from AgGridContext', () => {
+    describe('License key from AgGridProvider', () => {
         test('license key provided without enterprise module produces no console errors', async () => {
             const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -486,11 +521,9 @@ describe('Module Registration compatible with React context', () => {
             });
 
             render(
-                <AgGridContext.Provider
-                    value={{
-                        modules: [ClientSideRowModelModule, ValidationModule] as any,
-                        licenseKey: 'some-license-key',
-                    }}
+                <AgGridProvider
+                    modules={[ClientSideRowModelModule, ValidationModule]}
+                    licenseKey="some-license-key"
                 >
                     <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
                         <AgGridReact
@@ -501,7 +534,7 @@ describe('Module Registration compatible with React context', () => {
                             }}
                         />
                     </div>
-                </AgGridContext.Provider>
+                </AgGridProvider>
             );
 
             await readyPromise;
@@ -521,11 +554,9 @@ describe('Module Registration compatible with React context', () => {
             });
 
             render(
-                <AgGridContext.Provider
-                    value={{
-                        modules: [ClientSideRowModelModule, ValidationModule, ClipboardModule],
-                        // No license key provided
-                    }}
+                <AgGridProvider
+                    modules={[ClientSideRowModelModule, ValidationModule, ClipboardModule]}
+                    // No license key provided
                 >
                     <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
                         <AgGridReact
@@ -536,7 +567,7 @@ describe('Module Registration compatible with React context', () => {
                             }}
                         />
                     </div>
-                </AgGridContext.Provider>
+                </AgGridProvider>
             );
 
             await readyPromise;
@@ -559,11 +590,9 @@ describe('Module Registration compatible with React context', () => {
             });
 
             render(
-                <AgGridContext.Provider
-                    value={{
-                        modules: [ClientSideRowModelModule, ValidationModule, ClipboardModule],
-                        licenseKey: 'some-license-key',
-                    }}
+                <AgGridProvider
+                    modules={[ClientSideRowModelModule, ValidationModule, ClipboardModule]}
+                    licenseKey="some-license-key"
                 >
                     <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
                         <AgGridReact
@@ -574,7 +603,7 @@ describe('Module Registration compatible with React context', () => {
                             }}
                         />
                     </div>
-                </AgGridContext.Provider>
+                </AgGridProvider>
             );
 
             await readyPromise;
@@ -584,6 +613,45 @@ describe('Module Registration compatible with React context', () => {
             const errorCalls = consoleErrorSpy.mock.calls.flat().join(' ');
             expect(errorCalls).toContain('AG Grid Enterprise License');
             expect(errorCalls).toContain('Invalid License Key'); // assuming 'some-license-key' is invalid but this message shows it has been processed
+
+            consoleErrorSpy.mockRestore();
+        });
+
+        test('nested AgGridProvider inherits license key from parent', async () => {
+            const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+            let readyResolve!: (api: GridApi) => void;
+            const readyPromise = new Promise<GridApi>((resolve) => {
+                readyResolve = resolve;
+            });
+
+            render(
+                <AgGridProvider
+                    modules={[ClientSideRowModelModule, ValidationModule]}
+                    licenseKey="some-license-key"
+                >
+                    {/* Child provider adds enterprise module but doesn't specify license key */}
+                    <AgGridProvider modules={[ClipboardModule]}>
+                        <div style={{ width: 600, height: 400 }} data-testid="grid-wrapper">
+                            <AgGridReact
+                                columnDefs={[{ field: 'value' }]}
+                                rowData={[{ value: 'a' }]}
+                                onGridReady={(params: GridReadyEvent) => {
+                                    readyResolve(params.api);
+                                }}
+                            />
+                        </div>
+                    </AgGridProvider>
+                </AgGridProvider>
+            );
+
+            await readyPromise;
+
+            // Should have inherited license key from parent, so we should see Invalid License Key (not License Key Not Found)
+            expect(consoleErrorSpy).toHaveBeenCalled();
+            const errorCalls = consoleErrorSpy.mock.calls.flat().join(' ');
+            expect(errorCalls).toContain('AG Grid Enterprise License');
+            expect(errorCalls).toContain('Invalid License Key');
 
             consoleErrorSpy.mockRestore();
         });

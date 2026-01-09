@@ -37,7 +37,7 @@ function getModuleImports(
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact } from 'ag-grid-react';",
+        "import { AgGridReact, AgGridContext} from 'ag-grid-react';",
     ];
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -375,9 +375,11 @@ ${gridReady}${useFetchHook ?? ''}${darkModeWithGridRef ? '\n' + darkModeWithGrid
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
     return  (
-            <div ${containerStyle}>
-                ${template}
-            </div>
+            <AgGridContext.Provider value={{modules: []}}>
+                <div ${containerStyle}>
+                    ${template}
+                </div>
+            </AgGridContext.Provider>
         );
 
 }
