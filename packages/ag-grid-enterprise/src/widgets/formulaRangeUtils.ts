@@ -134,13 +134,26 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
     return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
 };
 
+export type RefToken = { ref: string; index: number };
+
+export const getRefTokensFromText = (text: string): RefToken[] => {
+    // Extract A1-style refs/ranges with their occurrence index (left-to-right).
+    const tokens: RefToken[] = [];
+    let match: RegExpExecArray | null;
+    let index = 0;
+    CELL_OR_RANGE_REGEX.lastIndex = 0;
+    while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
+        tokens.push({ ref: match[0], index });
+        index += 1;
+    }
+    return tokens;
+};
+
 export const getRefsFromText = (text: string): Set<string> => {
     // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
     const refs = new Set<string>();
-    let match: RegExpExecArray | null;
-    CELL_OR_RANGE_REGEX.lastIndex = 0;
-    while ((match = CELL_OR_RANGE_REGEX.exec(text)) != null) {
-        refs.add(match[0]);
+    for (const token of getRefTokensFromText(text)) {
+        refs.add(token.ref);
     }
     return refs;
 };
