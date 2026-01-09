@@ -215,18 +215,17 @@ console.log(`Comparison report written to ${outputFile}`);
 // Output summary for CI
 console.log('\n--- Summary ---');
 console.log(`Significant changes (>= ${THRESHOLD_KB} KB): ${significantChanges.length}`);
-const hasIncrease = maxIncrease && maxIncrease.selfSizeDiff > 0;
-const hasDecrease = maxDecrease && maxDecrease.selfSizeDiff < 0;
-if (hasIncrease) {
+let hasChanges = false;
+if (maxIncrease && maxIncrease.selfSizeDiff > 0) {
     const moduleName = maxIncrease.modules.length === 0 ? 'Base (no modules)' : maxIncrease.modules.join(', ');
-    report += `📈 **Largest Increase:** ${moduleName}\n`;
-    report += `   - Self Size: ${formatSize(maxIncrease.baseSelfSize)} KB → ${formatSize(maxIncrease.prSelfSize)} KB (**${formatDiff(maxIncrease.selfSizeDiff)} KB**)\n\n`;
+    console.log(`Largest increase: ${moduleName} (+${formatSize(maxIncrease.selfSizeDiff)} KB)`);
+    hasChanges = true;
 }
-if (hasDecrease) {
+if (maxDecrease && maxDecrease.selfSizeDiff < 0) {
     const moduleName = maxDecrease.modules.length === 0 ? 'Base (no modules)' : maxDecrease.modules.join(', ');
-    report += `📉 **Largest Decrease:** ${moduleName}\n`;
-    report += `   - Self Size: ${formatSize(maxDecrease.baseSelfSize)} KB → ${formatSize(maxDecrease.prSelfSize)} KB (**${formatDiff(maxDecrease.selfSizeDiff)} KB**)\n\n`;
+    console.log(`Largest decrease: ${moduleName} (${formatSize(maxDecrease.selfSizeDiff)} KB)`);
+    hasChanges = true;
 }
-if (!hasIncrease && !hasDecrease) {
-    report += '✅ No module size changes detected.\n\n';
+if (!hasChanges) {
+    console.log('No module size changes detected.');
 }
