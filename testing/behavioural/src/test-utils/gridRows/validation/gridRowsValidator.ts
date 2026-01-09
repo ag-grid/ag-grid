@@ -423,7 +423,7 @@ export class GridRowsValidator {
             if (selected !== selectedRowSetHasRow) {
                 // Group rows are not part of the selection state when `groupSelects: 'descendants'` or `groupSelects: 'filteredDescendants'`
                 // So we ignore the case where we have a missing group row in this case.
-                if (!selectedRowsSet.has(row) && row.group && state.groupSelectsDescendants) {
+                if (!selectedRowSetHasRow && row.group && state.groupSelectsDescendants) {
                     continue;
                 }
                 rowErrors.add(
