@@ -1,4 +1,4 @@
-export const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
+const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?:?/g;
 const FULL_CELL_OR_RANGE_REGEX = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/;
 const WORD_CHAR_REGEX = /[A-Za-z0-9]/;
 
@@ -10,7 +10,7 @@ export const isFormulaIdentStart = (char: string | undefined): boolean => {
     return !!char && /[A-Za-z]/.test(char);
 };
 
-export type ParsedA1Ref = {
+type ParsedA1Ref = {
     startCol: string;
     startRow: string;
     startColAbsolute: boolean;
@@ -66,7 +66,7 @@ export const parseA1Ref = (ref: string, options: { allowTrailingColon?: boolean 
     };
 };
 
-export type RefTokenMatch = { ref: string; start: number; end: number; index: number };
+type RefTokenMatch = { ref: string; start: number; end: number; index: number };
 
 export const getRefTokenMatches = (text: string): RefTokenMatch[] => {
     const matches: RefTokenMatch[] = [];

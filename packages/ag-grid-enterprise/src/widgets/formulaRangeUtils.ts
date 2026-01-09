@@ -2,8 +2,6 @@ import type { BeanCollection, CellRange } from 'ag-grid-community';
 
 import { getRefTokenMatches, parseA1Ref } from '../formula/refUtils';
 
-export { CELL_OR_RANGE_REGEX, isStandaloneRefToken } from '../formula/refUtils';
-
 const FORMULA_TOKEN_COLOR_CLASS = 'ag-formula-token-color';
 const FORMULA_RANGE_COLOR_CLASS = 'ag-formula-range-color';
 
