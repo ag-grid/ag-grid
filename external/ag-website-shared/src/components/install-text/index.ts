@@ -1,0 +1,1 @@
+export { InstallText } from './InstallText';
