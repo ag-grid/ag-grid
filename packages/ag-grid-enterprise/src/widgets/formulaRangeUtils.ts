@@ -134,7 +134,7 @@ export const rangeToRef = (beans: BeanCollection, range: CellRange): string | nu
     return `${colStartRef}${rowStartIndex}:${colEndRef}${rowEndIndex}`;
 };
 
-export type RefToken = { ref: string; index: number };
+type RefToken = { ref: string; index: number };
 
 export const getRefTokensFromText = (text: string): RefToken[] => {
     // Extract A1-style refs/ranges with their occurrence index (left-to-right).
@@ -147,13 +147,4 @@ export const getRefTokensFromText = (text: string): RefToken[] => {
         index += 1;
     }
     return tokens;
-};
-
-export const getRefsFromText = (text: string): Set<string> => {
-    // Extract all A1-style refs/ranges from raw text to keep grid ranges in sync.
-    const refs = new Set<string>();
-    for (const token of getRefTokensFromText(text)) {
-        refs.add(token.ref);
-    }
-    return refs;
 };
