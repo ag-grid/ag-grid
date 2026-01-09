@@ -108,5 +108,5 @@ export const ContextMenuModule: _ModuleWithApi<_ContextMenuGridApi> = {
 export const MenuModule: _ModuleWithoutApi = {
     moduleName: 'Menu',
     version: VERSION,
-    dependsOn: [ColumnMenuModule, ContextMenuModule],
+    dependsOn: [], //ColumnMenuModule, ContextMenuModule
 };
